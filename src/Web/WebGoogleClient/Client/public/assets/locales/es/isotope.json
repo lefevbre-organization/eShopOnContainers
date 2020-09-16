@@ -21,7 +21,9 @@
   },
   "message-list": {
     "no-message": "No hay mensajes para esta etiqueta.",
-    "move-to-trash": "Mover a la Papelera"
+    "move-to-trash": "Mover a la Papelera",
+    "delete-permanently": "Eliminar definitivamente",
+    "empty-trash": "Vaciar la papelera"
   },
   "pager-buttons": {
     "previous-page": "Página Anterior",
@@ -56,7 +58,9 @@
     "resend": "Reenviar",
     "unread": "Marcar como no leído",
     "read": "Marcar como leído",
-    "reply-all": "Responder a todos"
+    "reply-all": "Responder a todos",
+    "delete-permanently": "Eliminar definitivamente",
+    "empty-trash": "Vaciar la papelera"
   },
   "message-footer": {
     "messages": "Mensajes"

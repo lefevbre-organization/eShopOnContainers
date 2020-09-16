@@ -81,8 +81,6 @@ export class Sidebar extends PureComponent {
     //    this.navigateToList(0, this.DefaultCalendar);
     //}
 
-
-
     renderItems(calendarList) {
         if (calendarList.length === 0) {
             return <div />;
@@ -175,6 +173,7 @@ export class Sidebar extends PureComponent {
         if (calendarsOthers != undefined) {
 
             const { t } = this.props;
+          
 
             return (
                 <React.Fragment>
@@ -188,6 +187,17 @@ export class Sidebar extends PureComponent {
                             color: "#001978",
                             size: "lg"
                         };
+
+                        //let primaryCalendar = false;
+
+                        //if (el.isPrimary) {
+                        //    primaryCalendar = true
+                        //}
+                        //else {
+                        //    primaryCalendar = false
+                        //}
+
+
                         return (
                             <CalendarItem
                                 key={el.id + "_label"}
@@ -197,7 +207,7 @@ export class Sidebar extends PureComponent {
                                 color={el.backgroundColor}
                                 accessRole={el.accessRole}
                                 iconProps={iconProps}
-                                selected={el.selected}                               
+                                selected={el.selected}                                
                             />
                         );
                     })}
@@ -208,8 +218,9 @@ export class Sidebar extends PureComponent {
 
     render() {
         const { t } = this.props;
-        const collapsed = this.props.sideBarCollapsed;    
-       
+
+        const collapsed = this.props.sideBarCollapsed;        
+
         return (
             //${ collapsed ? '' : styles['with-side-bar'] }
             <nav

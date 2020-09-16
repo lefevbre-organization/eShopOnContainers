@@ -38,16 +38,17 @@ const calendarContent = props => {
       title="CALENDARIO"
       style={style}
       sidebarDocked={sidebarDocked}
+      showExpandIcon={true}
     >
-      <div style={styles.content}>         
-         <CalendarCard />                   
+      <div style={styles.content}>      
+        <CalendarCard />                   
       </div>
     </MaterialTitlePanel>
   );
 };
 
 calendarContent.propTypes = {
-   style: PropTypes.object
+  style: PropTypes.object
 };
 
 export default calendarContent;

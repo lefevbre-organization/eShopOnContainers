@@ -98,6 +98,7 @@
     "attendees": "Invite attendees and press enter",
     "toast-processing": "Processing",
     "toast-process-complete": "Process complete",
+    "toast-process-error-exist": "An event type with the same name already exists",
     "toast-process-error": "Error",
     "validator-required": "Field is required"
   },
@@ -116,6 +117,17 @@
     "reader": "reader",
     "writer": "writer",
     "owner": "owner"
+  },
+  "eventtype": {
+    "title": "Type of events",
+    "name": "Name",
+    "color": "Color",
+    "required-name": "Name is required",
+    "required-color": "Color is required",
+    "add": "Add",
+    "modify": "Modify",
+    "cancel": "Cancel",
+    "newevent": "Add typology"
   },
   "tooltips": {
     "lexon": "Lex-on",

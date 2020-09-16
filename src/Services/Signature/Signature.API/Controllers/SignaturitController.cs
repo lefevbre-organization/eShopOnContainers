@@ -17,11 +17,13 @@
     using Microsoft.AspNetCore.Mvc;
     using Signature.API.Model;
     using RestSharp;
+    using Newtonsoft.Json;
     using System.Web;
     using Microsoft.Extensions.Configuration;
     using System.Net.Http;
     using System.Net.Http.Headers;
-    
+    using Newtonsoft.Json.Linq;
+
     #endregion
 
     [Route("api/v1/Signaturit")]
@@ -30,13 +32,15 @@
     {
         private readonly IConfiguration _configuration;
         private readonly ISignaturitService _signaturitService;
+        private readonly IOptions<SignatureSettings> _settings;
         private readonly int _timeout;
 
-        public SignaturitController(IConfiguration configuration, ISignaturitService signaturitService)
+        public SignaturitController(IConfiguration configuration, ISignaturitService signaturitService, IOptions<SignatureSettings> settings)
         {
             _configuration = configuration;
             _signaturitService = signaturitService ?? throw new ArgumentNullException(nameof(signaturitService));
             _timeout = 5000;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
 
@@ -149,43 +153,17 @@
 
             try
             {
-                //var client = new RestClient("https://api.sandbox.signaturit.com/v3/signatures.json");
-                //var i = 0;
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.POST);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-                //foreach (Recipient recipient in signatureInfo.recipients)
-                //{
-                //    request.AddParameter($"recipients[{i}][name]", recipient.name);
-                //    request.AddParameter($"recipients[{i}][email]", recipient.email);
-                //    i += 1;
-                //}
-                //i = 0;
-                //foreach (UserFile file in signatureInfo.files)
-                //{
-                //    request.AddFileBytes($"files[{i}]", file.file, file.fileName);
-                //}
-                //foreach (CustomField field in signatureInfo.customFields)
-                //{
-                //    request.AddParameter($"data[{field.name}]", field.value);
-                //}
-                //request.AddParameter("subject", signatureInfo.subject);
-                //request.AddParameter("body", signatureInfo.body);
-                //request.AddParameter("branding_id", signatureInfo.brandingId);
-                //request.AddParameter("reminders", signatureInfo.reminders);
-                //request.AddParameter("expire_time", signatureInfo.reminders);
-
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.CreateSignature(signatureInfo);
                 if (response.IsSuccessful)
                 {
+                    Console.WriteLine("Response IsSuccessful");
                     return Ok(response.Content);
                 }
                 else
                 {
-                    throw new Exception(response.ErrorException.Message);
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}" );
                 }
             }
             catch (TimeoutException)
@@ -194,7 +172,7 @@
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
             }
 
         }
@@ -458,17 +436,26 @@
 
         private bool checkToken(string authToken)
         {
-            var client = new RestClient("https://lexbox-test-apigwlex.lefebvre.es/api/v1/LexonMySql/token/validation");
+            var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/utils/Lexon/token/validation?validateCaducity=false");
             client.Timeout = 10000;
             var request = new RestRequest(Method.PUT);
             request.AddHeader("Accept", "text/plain");
             request.AddHeader("Content-Type", "application/json-patch+json");
-            request.AddHeader("Content-Type", "text/plain");
-            request.AddParameter("application/json-patch+json,text/plain", authToken, ParameterType.RequestBody);
+            //request.AddHeader("Content-Type", "text/plain");
+            request.AddParameter("application/json-patch+json,text/plain", $"\"{authToken}\"", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-            Console.WriteLine(response.Content);
 
-            return true;
+            var valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
+
+            Console.WriteLine($"TokenValid:{valid} - {authToken}");        
+
+            //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
+            //Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            //{
+            //    return true;
+            //}
+
+            return valid;
         }
     }
 }

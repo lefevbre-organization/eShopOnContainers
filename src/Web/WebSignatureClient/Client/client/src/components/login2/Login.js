@@ -144,9 +144,9 @@ class Login extends Component {
         this.setState({isloading: false});
         document.body.style.cursor='default'
         this.setState({
-            errorsMessage: {
-              auth: i18n.t('login.user-error'),
-            },
+          errorsMessage: {
+            auth: i18n.t('login.user-error'),
+          },
         });
       }
     })

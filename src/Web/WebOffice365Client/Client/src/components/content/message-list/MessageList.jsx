@@ -11,7 +11,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import ListToolbar from './list-toolbar/ListToolbar';
 import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
-import {getMessage, getLabelSentItems, moveMessage} from '../../../api_graph';
+import {getMessage, getLabelSentItems, moveMessages} from '../../../api_graph';
 import {TreeViewComponent} from "@syncfusion/ej2-react-navigations";
 
 const ViewMode = {
@@ -159,6 +159,7 @@ export class MessageList extends Component {
             key={msg.id}
             onSelectionChange={this.onSelectionChange}
             onClick={this.getMessage}
+            showCheckbox={this.state.showCheckbox}
         />
     );
   }
@@ -169,31 +170,58 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.dropIndicator = 'e-no-drop';
-    }
-    evt.draggedNodeData.isMessage = true;
     if(this.state.showCheckbox) {
       this.setState({showCheckbox: false});
     }
+
+    if(evt.draggedNodeData.isFolder) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
+
+    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
+    evt.draggedNodeData.isMessage = true;
+
   }
 
   nodeDragStop(evt) {
+    this.setState({showCheckbox: true});
+
+    if(evt.draggedNodeData && evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      alert("Folder")
+      evt.cancel = true;
+      return;
+    }
+
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       evt.cancel = true;
+      return;
     }
 
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
       setTimeout(()=>{
-        const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
-        if(msg) {
-          this.moveMessage(msg.id, evt.droppedNodeData.id, this.props.selectedFolder)
+        const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
+
+        if(msgs && msgs.length > 0) {
+          this.moveMessages(msgs, evt.droppedNodeData.id, this.props.selectedFolder)
+        } else {
+          const msg = this.props.messagesResult.messages.find(msg => msg.id === evt.draggedNodeData.id);
+          if (msg) {
+            this.moveMessages([msg.id], evt.droppedNodeData.id, this.props.selectedFolder)
+          }
         }
       })
       evt.cancel = true;
     }
+  }
 
-    this.setState({showCheckbox: true});
+  onDropNode(evt) {
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      evt.cancel = true;
+    }
   }
 
   renderMessages() {
@@ -228,11 +256,13 @@ export class MessageList extends Component {
           showCheckBox={this.state.showCheckbox}
           allowMultiSelection={true}
           fullRowSelected={true}
+          dragArea={"body"}
           nodeDragging={this.nodeDragging.bind(this)}
           nodeChecked={this.onSelectionChange}
           nodeSelected={this.showMessage}
           nodeTemplate={this.renderMessage}
           nodeDragStop={this.nodeDragStop.bind(this)}
+          nodeDropped={this.onDropNode.bind(this)}
           allowDragAndDrop={true}
           cssClass={'message-list'}
       >
@@ -322,9 +352,11 @@ export class MessageList extends Component {
     );
   }
 
-  moveMessage(id, destination, source) {
-    moveMessage({ ids: [id], destination})
-    this.props.removeMessageFromList(id);
+  moveMessages(ids, destination, source) {
+    moveMessages({ ids, destination})
+    for(let i = 0; i < ids.length; i++) {
+      this.props.removeMessageFromList(ids[i]);
+    }
   }
 
 }
@@ -346,7 +378,7 @@ const mapDispatchToProps = (dispatch) =>
       addMessage,
       deleteMessage,
       modifyMessages,
-      removeMessageFromList
+      removeMessageFromList,
     },
     dispatch
   );

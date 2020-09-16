@@ -72,23 +72,6 @@ export const addorUpdateEventType = async (eventType) => {
     }
 };
 
-//export const updateEventType = async (eventTypeId) => {
-//    const url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
-//    //const url = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/add'
-//    try {
-//        const res = await fetch(url, {
-//            method: 'POST',
-//            headers: {
-//                'Content-Type': 'application/json',
-//            },
-//            body: JSON.stringify(eventTypeId),
-//        });
-//        const eventtype = await res.json();
-//        return eventtype;
-//    } catch (err) {
-//        throw err;
-//    }
-//};
 
 export const deleteEventType = async (eventType) => {
     //const url = `https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/delete`;

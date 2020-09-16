@@ -1,7 +1,7 @@
 import {getLabelList, getMessageList} from '../../../../api';
 import { getMessage } from '../../../../api';
 import { getMessageHeader } from '../../../../api';
-import { batchModify } from '../../../../api';
+import { batchModify, batchDeleteMessages } from '../../../../api';
 import {GET_LABELS, getLabels, selectLabel} from '../../../sidebar/sidebar.actions';
 
 export const GET_MESSAGES = 'GET_MESSAGES';
@@ -21,6 +21,8 @@ export const ADD_INITIAL_PAGE_TOKEN = 'ADD_INITIAL_PAGE_TOKEN';
 export const CLEAR_PAGE_TOKENS = 'CLEAR_PAGE_TOKENS';
 export const MODIFY_MESSAGES_SUCCESS = 'MODIFY_MESSAGES_SUCCESS';
 export const MODIFY_MESSAGES_FAILED = 'MODIFY_MESSAGES_FAILED';
+export const DELETE_MESSAGES_SUCCESS = 'DELETE_MESSAGES_SUCCESS';
+export const DELETE_MESSAGES_FAILED = 'DELETE_MESSAGES_FAILED';
 export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
 export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const DELETE_MESSAGE = 'DELETE_MESSAGE';
@@ -168,6 +170,30 @@ export const modifyMessages = ({
         type: MODIFY_MESSAGES_FAILED,
       });
     });
+};
+
+export const deleteMessages = ({ids}) => (dispatch) => {
+  batchDeleteMessages({ ids })
+      .then( async (ids) => {
+        dispatch({
+          type: DELETE_MESSAGES_SUCCESS,
+          payload: { ids },
+        });
+        setTimeout(()=>{
+          getLabelList().then(labelList => {
+            dispatch({
+              type: GET_LABELS,
+              payload: labelList
+            });
+          });
+        }, 100);
+      })
+      .catch((error) => {
+        console.log(error)
+        dispatch({
+          type: DELETE_MESSAGES_FAILED,
+        });
+      });
 };
 
 export const addMessage = (message) => (dispatch) => {

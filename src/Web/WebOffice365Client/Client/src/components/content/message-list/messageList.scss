@@ -238,3 +238,42 @@ $num-width: 80px;
   }
 }
 
+
+.e-checkbox-wrapper .e-frame, .e-css.e-checkbox-wrapper .e-frame {
+  border-color: #aaa !important;
+}
+
+
+.e-checkbox-wrapper .e-frame, .e-css.e-checkbox-wrapper .e-frame {
+  border: 1px solid #aaa !important;
+  border-radius: 3px !important;
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.e-checkbox-wrapper .e-check::before, .e-css.e-checkbox-wrapper .e-check::before {
+  font-size: 12px !important;
+  font-weight: bold !important;
+}
+
+.e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
+  background-color: #f8f9fa !important;
+  color: #aaa !important;
+}
+
+.msg-list-chk-wrapper {
+  display: flex;
+  position: absolute;
+  left: -1px;
+  top: 18px;
+}
+
+.msg-list-chk-wrapper2 {
+  width: 16px;
+  height: 16px;
+  background-color: red;
+}
+
+.chk-msg-row-sc {
+  padding-left: 26px;
+}

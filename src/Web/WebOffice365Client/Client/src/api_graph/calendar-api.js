@@ -184,25 +184,70 @@ export const getEventList = (idCalendar, selectedDate) => {
     });
 };
 
+export const addCalendarEvent = (idCalendar, event) => {   
+    return new Promise(async (resolve, reject) => {
+
+        const event = {
+            subject: "Let's go for lunch",
+            body: {
+                contentType: "HTML",
+                content: "Does mid month work for you?"
+            },
+            start: {
+                dateTime: "2020-09-15T12:00:00",
+                timeZone: "Pacific Standard Time"
+            },
+            end: {
+                dateTime: "2020-09-15T14:00:00",
+                timeZone: "Pacific Standard Time"
+            },
+            location: {
+                displayName: "Harry's Bar"
+            },
+            attendees: [
+                {
+                    emailAddress: {
+                        address: "adelev@contoso.onmicrosoft.com",
+                        name: "Adele Vance"
+                    },
+                    type: "required"
+                }
+            ]
+        };
 
 
-export const addCalendarEvent = (calendar, event) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.events
-            .insert({
-                calendarId: calendar ,
-                resource: event,
-                sendUpdates: 'all',
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${idCalendar}/events`)
+            .post(event)
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
+
+
+
+//export const addCalendarEvent = (calendar, event) =>
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.events
+//            .insert({
+//                calendarId: calendar ,
+//                resource: event,
+//                sendUpdates: 'all',
+//            })
+
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
+
+//    });
 
 export const updateCalendarEvent = (calendar, eventId, event) =>
     new Promise((resolve, reject) => {
@@ -278,24 +323,7 @@ export const addAcl = (calendar, acl) =>
 
     });
 
-////https://graph.microsoft.com/v1.0/me/calendars/AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA=/calendarpermissions
-//export const listAcl = (calendar) =>
 
-//    new Promise((resolve, reject) => {
-
-
-//        window.gapi.client.calendar.acl
-//            .list({
-//                calendarId: calendar               
-//            })
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
 
 export const listAcl = (calendarId) => {
     return new Promise(async (resolve, reject) => {
@@ -369,12 +397,12 @@ function listCalendarParser(list) {
         }
     }
 
-    //let items;
-    //items = ({ items: listParse });
+    let items;
+    items = ({ items: listParse });
 
-    //return items;
+    return items;
 
-    return listParse;
+    //return listParse;
 }
 
 function getCalendarParser(list) {
@@ -414,23 +442,6 @@ function listACLParser(list) {
 function listEventsParser(list) {   
     let listParse = [];
 
-    //created: "2020-08-10T15:23:00.000Z"
-    //creator: { email: "alberto.valverde.escribano@gmail.com", self: true }
-    //end: { dateTime: "2020-08-10T10:30:00+02:00", timeZone: "Europe/Madrid" }   
-    //extendedProperties: { private: { … } }   
-    //id: "2r8cdgabbhkgivlj9o19umk4tc"   
-    //organizer: { email: "alberto.valverde.escribano@gmail.com", self: true }
-    //recurrence: ["RRULE:FREQ=DAILY;INTERVAL=1"]
-    //reminders: { useDefault: true }
-    //sequence: 1
-    //start: { dateTime: "2020-08-10T10:00:00+02:00", timeZone: "Europe/Madrid" }
-    //status: "confirmed"
-    //summary: "daily"
-    //updated: "2020-08-10T16:57:39.880Z"
-    //let when = event.start.dateTime;
-    //let start = event.start.dateTime;
-    //let end = event.end.dateTime;
-
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
              listParse.push({
@@ -460,48 +471,75 @@ function listEventsParser(list) {
 }
 
 
-        //categories: []
-        //changeKey: "HJwYii8JSkK74gfF5MMWnAABdUd83g=="
-        //createdDateTime: "2020-08-19T10:03:20.4898169Z"
-        //end: { dateTime: "2020-08-19T15:30:00.0000000", timeZone: "UTC" }
-        //hasAttachments: false
-        //iCalUId: "040000008200E00074C5B7101A82E008000000005B79EBF50F76D6010000000000000000100000008CA1C1D21B7FDA4D857F2CE94D899854"
-        //id: "AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAENAAAcnBiKLwlKQrviB8XkwxacAAF1utUgAAA="
-        //importance: "normal"
-        //isAllDay: false
-        //isCancelled: false
-        //isOnlineMeeting: true
-        //isOrganizer: false
-        //isReminderOn: true
-        //lastModifiedDateTime: "2020-08-19T14:18:56.2804738Z"
-        //location: { displayName: "", locationType: "default", uniqueIdType: "unknown", address: { … }, coordinates: { … } }
-        //locations: []
-        //onlineMeeting: { joinUrl: "https://teams.microsoft.com/l/meetup-join/19%3amee…2%3a%22efe4a456-9505-4700-ae67-7d9dee684a52%22%7d" }
-        //onlineMeetingProvider: "teamsForBusiness"
-        //onlineMeetingUrl: null
-        //organizer: { emailAddress: { … } }
-        //originalEndTimeZone: "Romance Standard Time"
-        //originalStartTimeZone: "Romance Standard Time"
-        //recurrence: null
-        //reminderMinutesBeforeStart: 15
-        //responseRequested: true
-        //responseStatus: { response: "accepted", time: "2020-08-19T10:03:41.7058983Z" }
-        //sensitivity: "normal"
-        //seriesMasterId: null
-        //showAs: "busy"
-        //start: { dateTime: "2020-08-19T15:00:00.0000000", timeZone: "UTC" }
-        //subject: "Reunión Api Jitsi"
-        //type: "singleInstance"
-        
+      
+//return event google
 
+//attendees: [{ … }]
+//created: "2020-09-15T14:45:17.000Z"
+//creator: { email: "alberto.valverde.escribano@gmail.com", self: true }
+//description: "esto es una prueba"
+//end: { dateTime: "2020-09-02T09:30:00+02:00", timeZone: "Europe/Madrid" }
+//etag: ""3200362235538000""
+//htmlLink: "https://www.google.com/calendar/event?eid=YmdmMWp1MGhobmVqMnE1cjVvMjE4dmUycWtfMjAyMDA5MDJUMDcwMDAwWiBhbGJlcnRvLnZhbHZlcmRlLmVzY3JpYmFub0Bt"
+//iCalUID: "bgf1ju0hhnej2q5r5o218ve2qk@google.com"
+//id: "bgf1ju0hhnej2q5r5o218ve2qk"
+//kind: "calendar#event"
+//organizer: { email: "alberto.valverde.escribano@gmail.com", self: true }
+//recurrence: ["RRULE:FREQ=DAILY;INTERVAL=1"]
+//reminders: { useDefault: true }
+//sequence: 0
+//start: { dateTime: "2020-09-02T09:00:00+02:00", timeZone: "Europe/Madrid" }
+//status: "confirmed"
+//summary: "prueba"
+//updated: "2020-09-15T14:45:17.769Z"
+//__proto__: Object
 
-//{
-//        "allowedRoles": ["string"],
-//        "emailAddress": { "@odata.type": "microsoft.graph.emailAddress" },
-//        "id": "String (identifier)",
-//        "isInsideOrganization": "boolean",
-//        "isRemovable": "boolean",
-//        "role": "string"
-//}
-
+//Return event Office365
+//@odata.context: "https://graph.microsoft.com/v1.0/$metadata#users('a72538e2-c9fd-4207-913c-b1104aab6407')/calendars('AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA%3D')/events/$entity"
+//@odata.etag: "W/"HJwYii8JSkK74gfF5MMWnAABiGRL5A == ""
+//allowNewTimeProposals: true
+//attendees: [{ … }]
+//body: {
+//    contentType: "html", content: "<html>
+//    ↵<head>
+//        ↵<meta http-equiv="Content-Type" co…↵Does mid month work for you?
+//↵</body>
+//↵</html >
+//    ↵"}
+//    bodyPreview: "Does mid month work for you?"
+//    categories: []
+//    changeKey: "HJwYii8JSkK74gfF5MMWnAABiGRL5A=="
+//    createdDateTime: "2020-09-15T14:26:09.8128699Z"
+//    end: { dateTime: "2020-09-15T14:00:00.0000000", timeZone: "Pacific Standard Time" }
+//    hasAttachments: false
+//    iCalUId: "040000008200E00074C5B7101A82E0080000000044ED04286C8BD60100000000000000001000000085E76C7DF914384D90EE38C722437D72"
+//    id: "AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAENAAAcnBiKLwlKQrviB8XkwxacAAGI3iNEAAA="
+//    importance: "normal"
+//    isAllDay: false
+//    isCancelled: false
+//    isOnlineMeeting: false
+//    isOrganizer: true
+//    isReminderOn: true
+//    lastModifiedDateTime: "2020-09-15T14:26:11.0401585Z"
+//    location: { displayName: "Harry's Bar", locationType: "default", uniqueId: "Harry's Bar", uniqueIdType: "private" }
+//    locations: [{ … }]
+//    onlineMeeting: null
+//    onlineMeetingProvider: "unknown"
+//    onlineMeetingUrl: null
+//    organizer: { emailAddress: { … } }
+//    originalEndTimeZone: "Pacific Standard Time"
+//    originalStartTimeZone: "Pacific Standard Time"
+//    recurrence: null
+//    reminderMinutesBeforeStart: 15
+//    responseRequested: true
+//    responseStatus: { response: "organizer", time: "0001-01-01T00:00:00Z" }
+//    sensitivity: "normal"
+//    seriesMasterId: null
+//    showAs: "busy"
+//    start: { dateTime: "2020-09-15T12:00:00.0000000", timeZone: "Pacific Standard Time" }
+//    subject: "Let's go for lunch"
+//    transactionId: null
+//    type: "singleInstance"
+//    webLink: "https://outlook.office365.com/owa/?itemid=AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAENAAAcnBiKLwlKQrviB8XkwxacAAGI3iNEAAA%3D&exvsurl=1&path=/calendar/item"
+//    __proto__: Object
 

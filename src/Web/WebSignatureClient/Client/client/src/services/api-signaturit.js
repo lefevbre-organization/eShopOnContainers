@@ -100,8 +100,8 @@ const coordinates = [
 ];
 
 
-/* 
-  SIGNATURIT API CALLS 
+/*
+  SIGNATURIT API CALLS
 */
 
 // Gets all the signatures associated with an account
@@ -114,7 +114,7 @@ export const getSignaturesSignaturit = async () => {
           'Authorization': `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`
   }
   };
-  request(options, function (error, response) { 
+  request(options, function (error, response) {
       if (error) throw new Error(error);
       console.log(response.body);
       dispatch(preDownloadSignatures(Json.parse(response.body)));
@@ -131,7 +131,7 @@ export const getSignaturesById = async (id) => {
           'Authorization': `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`
   }
   };
-  request(options, function (error, response) { 
+  request(options, function (error, response) {
       if (error) throw new Error(error);
       console.log(response.body);
       let signature = JSON.parse(response.body);
@@ -152,12 +152,12 @@ export function preloadSignatures(dispatch, filters) {
             'Authorization': `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`
     }
     };
-    request(options, function (error, response) { 
+    request(options, function (error, response) {
         if (error) {
           reject(error);
         }
         //dispatch(preDownloadSignatures(null));
-  
+
         console.log(response.body);
         let signatures = JSON.parse(response.body);
         console.log('Datos recibidos de signaturit - GetSignatures:');
@@ -177,7 +177,7 @@ export const createSignature = async (recipients, subject, body, files, reminder
     var myHeaders = new Headers();
     var i = 0;
     myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
-  
+
     var formdata = new FormData();
     recipients.forEach(element => {
       formdata.append(`recipients[${i}][name]`, element.split('@')[0]);
@@ -194,14 +194,14 @@ export const createSignature = async (recipients, subject, body, files, reminder
     formdata.append("reminders", reminders);
     formdata.append("expire_time", expiration);
     formdata.append("branding_id", brandingId);
-  
+
     var requestOptions = {
     method: 'POST',
     headers: myHeaders,
     body: formdata,
     redirect: 'follow'
     };
-  
+
     fetch("https://api.sandbox.signaturit.com/v3/signatures.json", requestOptions)
     .then(response => response.json())
     .then(result => {
@@ -216,7 +216,7 @@ export const createSignature = async (recipients, subject, body, files, reminder
   })
 }
 
-// Downloads a document that's been signed 
+// Downloads a document that's been signed
 export const downloadSignedDocument = (signId, docId, fileName) => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
@@ -358,21 +358,21 @@ export const createBranding = async template => {
 // END SIGNATURIT API CALLS
 
 
-/* 
-  LEFEBVRE SIGNATURE BACKEND API CALLS 
+/*
+  LEFEBVRE SIGNATURE BACKEND API CALLS
 */
 
 export const getUserSignatures = async userId => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
-    
+
     var requestOptions = {
       method: 'GET',
       headers: myHeaders,
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}`, requestOptions)
       .then(response => response.json())
       .then(result => resolve(result))
@@ -471,7 +471,7 @@ export const deleteUser = async userId => {
 //       method: 'GET',
 //       redirect: 'follow'
 //     };
-  
+
 //     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
 //       .then(response => response.json())
 //       .then(result => {
@@ -520,7 +520,7 @@ export const decAvailableSignatures = async userId => {
       body: '',
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/DecAvailableSignatures`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -540,7 +540,7 @@ export const getBrandingTemplate = async app => {
       method: 'GET',
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Brandings/get/${app}/template`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -560,7 +560,7 @@ export const addOrUpdateBranding = async (user, brandingInfo) => {
     myHeaders.append("Accept", "text/plain");
     myHeaders.append("Content-Type", "application/json-patch+json");
     myHeaders.append("Content-Type", "text/plain");
-    
+
     var raw = `${JSON.stringify(brandingInfo)}`;
     // \n	\"app\": \"${brandingInfo[0].app}\",
     // \n	\"externalId\": "${brandingInfo[0].externalId}"
@@ -569,15 +569,15 @@ export const addOrUpdateBranding = async (user, brandingInfo) => {
     console.log("Este es el raw de CreataddOrUpdateBrandingeUser");
     console.log(raw);
     console.log({raw});
-  
-    
+
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${user}/branding/addorupdate`, requestOptions)
       .then(response => {
         if (response.ok){
@@ -602,16 +602,16 @@ export const createTemplate = async (templateInfo) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    
+
     var raw = JSON.stringify(templateInfo);
-    
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Brandings/addBaseConfigTest`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -627,10 +627,10 @@ export const createTemplate = async (templateInfo) => {
 // END OF LEFEBVRE SIGNATURE API CALLS
 
 
-/* 
-  LEFEBVRE SIGNATURE BACKEND GATEWAY SIGNATURIT API CALLS 
+/*
+  LEFEBVRE SIGNATURE BACKEND GATEWAY SIGNATURIT API CALLS
 */
-  
+
 // Preloads all signatures associated with an account calling internal proxy api
 export function preloadSignatures2(dispatch, filters, auth) {
   return new Promise((resolve, reject) => {
@@ -647,7 +647,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
     .catch(error => {
       console.log('error', error);
       reject(error);
-    });  
+    });
   })
 }
 
@@ -655,13 +655,13 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `${auth}`);
-    
+
     var requestOptions = {
       method: 'GET',
       headers: myHeaders,
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}&offset=${offset}`, requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -721,7 +721,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     }
 
     switch (expiration){
-      case -1: 
+      case -1:
         expirationConfig = 'notConfigured';
         break;
       case 0:
@@ -733,7 +733,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     }
 
     //var fileData = '';
-    
+
     jsonObject.recipients = recipients;
 
     cc.forEach(recipient => {
@@ -777,7 +777,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
 
     //Roles config:
     recipients.forEach((recipient, i) => {
-      rolesConfig += `${recipient.name}:${i}:${recipient.role}:${recipient.signatureType}:${recipient.doubleAuthType}:${recipient.doubleAuthInfo}|`; 
+      rolesConfig += `${recipient.name}:${i}:${recipient.role}:${recipient.signatureType}:${recipient.doubleAuthType}:${recipient.doubleAuthInfo}|`;
     });
     console.log('Roles Config:' + rolesConfig);
 
@@ -798,7 +798,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     (expiration !== -1) ? jsonObject.expiration = expiration : null;
     jsonObject.brandingId = brandingId;
 
-    
+
     var raw = JSON.stringify(jsonObject);
     console.log('Raw::');
     console.log(raw);
@@ -808,7 +808,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
       body: raw,
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newSignature`, requestOptions)
       .then(response => {
         if (response.ok){
@@ -833,13 +833,13 @@ export const downloadSignedDocument2 = (signId, docId, fileName, auth) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `${auth}`);
-    
+
     var requestOptions = {
       method: 'GET',
       headers: myHeaders,
       redirect: 'follow'
     };
-    
+
     fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/signedDocument/${docId}`, requestOptions)
       .then(response => response.blob())
       .then(blob => {
@@ -1020,8 +1020,8 @@ export const createBranding2 = async (template, auth) => {
 }
 
 
-/* 
-  HELPER FUNCTIONS 
+/*
+  HELPER FUNCTIONS
 */
 
 const calculateStatus = (signatures) => {
@@ -1095,18 +1095,18 @@ const calculateStatus = (signatures) => {
 };
 
 // END HELPER FUNCTIONS
-  
+
 export const getUser = async userId => {
     const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
-    const url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
-  
+    const url2 = `${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
+
     try {
       const res = await fetch(url, { method: 'GET' });
       const user = await res.json();
       const res2 = await fetch(url2, { method: 'GET' });
       const navUser = await res2.json();
       user.data.lexonUserId = navUser.data.idUser;
-  
+
       return user;
     } catch (err) {
       throw err;
@@ -1117,16 +1117,16 @@ export const getAttachmentLex = async (bbdd, attachmentId, userId) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-    
+
     var raw = JSON.stringify({"idEntity":attachmentId,"bbdd":bbdd,"idUser":userId});
-    
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: raw,
       redirect: 'follow'
     };
-    
+
     fetch("https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/entities/files/get", requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -1145,7 +1145,7 @@ export const getAttachmentCen = async (userId, attachmentId) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
     myHeaders.append("Content-Type", "application/json-patch+json");
-        
+
     var requestOptions = {
       method: 'GET',
       headers: myHeaders,
@@ -1153,7 +1153,7 @@ export const getAttachmentCen = async (userId, attachmentId) => {
     };
 
     //userId = 'E1669460'; //Para pruebas
-    
+
     fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/concepts/files/get?idNavisionUser=${userId}&idDocument=${attachmentId}`, requestOptions)
     .then(response => response.json())
     .then(result => {
@@ -1172,13 +1172,13 @@ export const cancelSignatureCen = async (guid) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
     myHeaders.append("Content-Type", "application/json-patch+json");
-        
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
       redirect: 'follow'
     };
-    
+
     //fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}}`, requestOptions)
     fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}`, requestOptions)
     .then(response => response.json())
@@ -1197,7 +1197,7 @@ export const getAvailableSignatures = async (companyId, numDocuments) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
-    
+
     var requestOptions = {
       method: 'GET',
       headers: myHeaders,
@@ -1236,6 +1236,107 @@ export const notifySignature = async (userId, companyId, numDocuments) => {
   })
 }
 
+export const verifyJwtSignature = async(token) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+
+    var requestOptions = {
+      method: 'PUT',
+      headers: myHeaders,
+      body: `"${token}"`,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/utils/Lexon/token/validation?validateCaducity=false`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        return response.json();
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result.data.valid);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getContactsCentinela = async(user) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/contacts?idNavisionUser=${user}`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        return response.text()
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  });
+}
+
+export const getSignedToken = async (user, password) => {
+  return new Promise((resolve, reject) => {
+    // var myHeaders = new Headers();
+    // myHeaders.append("Accept", "text/plain");
+    // myHeaders.append("Content-Type", "multipart/form-data");
+
+    var formdata = new FormData();
+    
+    formdata.append(`login`, user);
+    formdata.append(`password`, password);
+    formdata.append("idApp", 0);
+    formdata.append("addTerminatorToToken", true);
+      
+
+    var requestOptions = {
+      method: 'POST',
+      //headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_UTILS_GATEWAY}/token`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        return response.json()
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  });
+}
 // export const createSignature = async (recipients, files) => {
 //     var request = require('request');
 //     var fs = require('fs');
@@ -1257,10 +1358,10 @@ export const notifySignature = async (userId, companyId, numDocuments) => {
 //             }
 //         }
 //     };
-//     request(options, function (error, response) { 
+//     request(options, function (error, response) {
 //         if (error) throw new Error(error);
 //         console.log(response.body);
-        
+
 //     });
 // }
 
@@ -1276,12 +1377,12 @@ export const notifySignature = async (userId, companyId, numDocuments) => {
 //     .field('recipients[0][email]', 'jorgevalls@hotmail.com')
 //     .attach('file', files)
 //     .field('data[lefebvre_id]', 'E1654569')
-//     .end(function (res) { 
+//     .end(function (res) {
 //         if (res.error) {
 //             console.log(res.error);
-//             throw new Error(res.error); 
+//             throw new Error(res.error);
 //         }
-        
+
 //         console.log(res.raw_body);
 //     });
 // }

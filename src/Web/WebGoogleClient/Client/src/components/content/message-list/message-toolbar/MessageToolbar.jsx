@@ -8,6 +8,7 @@ import { Button } from 'reactstrap';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import './messageToolbar.scss';
+import i18n from "i18next";
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -129,16 +130,20 @@ export class MessageToolbar extends PureComponent {
                 <FontAwesomeIcon icon={faBars} size='1x' />
               </Button>
             </span>
-            <div
-              className='action-btn mr-2'
-              title={t('message-toolbar.move-to-trash')}>
-              <button
-                className='btn'
-                onClick={this.trashHandler}
-                style={{ backgroundColor: 'transparent' }}>
-                <i className="lf-icon lf-icon-trash" style={{fontSize: 18, fontWeight: 'bold', color: '#001978'}}></i>
-              </button>
-            </div>
+            {
+              this.props.label !== 'TRASH'?(<div
+                  className='action-btn mr-2'
+                  title={t('message-toolbar.move-to-trash')}>
+                <button
+                    className='btn'
+                    onClick={this.trashHandler}
+                    style={{ backgroundColor: 'transparent' }}>
+                  <i className="lf-icon lf-icon-trash" style={{fontSize: 18, fontWeight: 'bold', color: '#001978'}}></i>
+                </button>
+              </div>):<div className="action-btn" style={{fontSize: 12, textTransform:'uppercase', width: 180, color: '#001978'}} onClick={this.trashHandler}>
+                <span>{i18n.t('message-list.delete-permanently')}</span>
+              </div>
+            }
             <div className='action-btn mr-2' title={t('message-toolbar.reply')}>
               <Link
                 to={{

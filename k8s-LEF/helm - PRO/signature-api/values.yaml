@@ -60,3 +60,5 @@ env:
       value: 'https://lexbox-apigwlex.lefebvre.es/api/v1'
     - name: CentinelaApiGwUrl
       value: 'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
+    - name: CallBackUrl
+      value: 'https://lexbox-websignature.lefebvre.es/completed'

@@ -53,4 +53,8 @@ configValues: |
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
   window.URL_GET_ACCOUNTS = 'https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
   window.URL_GET_USER = 'https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.API_GATEWAY_LEX = 'https://lexbox-apigwlex.lefebvre.es'
+  window.API_GATEWAY_CEN = 'https://lexbox-apigwcen.lefebvre.es'
+  window.API_GATEWAY_ACC = 'https://lexbox-apigwcen.lefebvre.es'
+  window.POLLING_INTERVAL = 45000
   window.RELEASE = 'RC 0.29'

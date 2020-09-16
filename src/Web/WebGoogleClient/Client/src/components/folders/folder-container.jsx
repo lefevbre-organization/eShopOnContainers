@@ -18,7 +18,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {updateLabelName} from "../../api";
 
-const moreId = uuid();
+//const moreId = uuid();
 
 class FolderContainer extends Component {
 
@@ -150,8 +150,11 @@ class FolderContainer extends Component {
                                                duration: 0
                                            }
                                        }}
+                                       dragArea={"body"}
                                        nodeDropped={this.onDropNode}
+                                       nodeDragStop={this.onDragStop.bind(this)}
                                        nodeDragStart={this.onDragStart}
+                                       nodeDragging={this.nodeDragging.bind(this)}
                                        nodeExpanded={this.onNodeExpanded}
                                        nodeCollapsed={this.onNodeCollapsed}
                                        nodeTemplate={this.nodeTemplate}
@@ -243,10 +246,30 @@ class FolderContainer extends Component {
         );
     }
 
+    async nodeDragging(event) {
+        if(event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
+        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+        }
+    }
+
+    onDragStop(event) {
+        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
+    }
+
     async onDragStart(event) {
-        console.log(event);
         for(let i = 0; i < this.props.folderTree.length; i++) {
             if(this.props.folderTree[i].id === event.draggedNodeData.id) {
+                event.draggedNodeData.isFolder = true;
                 event.draggedNodeData.node = this.props.folderTree[i]
                 break;
             }
@@ -255,7 +278,6 @@ class FolderContainer extends Component {
 
     async onDropNode(event) {
         const { droppedNodeData, draggedNodeData, dropLevel } = event;
-
         if(event.draggedNodeData.isMessage) {
             event.cancel = true;
             return;
@@ -300,33 +322,42 @@ class FolderContainer extends Component {
         const { t }  = this.props;
         const tree = [...this.props.folderTree];
 
-        tree.push({
-            id: moreId,
-            name: t('sidebar.more'),
-            text: t('sidebar.more'),
-            hasChild: true
-        })
-
         for(let i = 0; i < tree.length; i++) {
             const it = tree[i];
 
             it.icon = this.getIcon(it);
 
-            if(this.showLabel(it) === false){
-                it.pid = moreId;
-            }
-
             if(it.name.indexOf("/") > -1) {
-              const pid = this.searchParentNode(it, tree);
-
+              const {pid, name, parent} = this.searchParentNode(it, tree) || {pid: undefined, name: it.name, parent: ""};
               if(pid) {
                   it.pid = pid;
+                  if(name !== "") {
+                      it.name = name;
+                  }
+                  if(parent !== "") {
+                      it.parent = parent;
+                  }
               }
             }
         }
 
+        return this.sortTree(tree);
+    }
+    
+    sortTree(tree) {
+        const system = [
+            tree.find(e => e.name === 'INBOX'),
+            tree.find(e => e.name === 'SENT'),
+            tree.find(e => e.name === 'STARRED'),
+            tree.find(e => e.name === 'TRASH'),
+            tree.find(e => e.name === 'DRAFT'),
+            ].map( it => ({ ...it, text: this.getNodeName(it.name, it.pid, it.parent)}));
+        return  [...system, ..._.sortBy(tree.filter(tn => !this.isSystemFolder(tn) ).map( it => ({ ...it, text: this.getNodeName(it.name, it.pid, it.parent)})), ['text'])];
+    }
 
-        return  _.sortBy(tree.map( it => ({ ...it, text: this.getNodeName(it.name, it.pid)})), ['text']);
+    isSystemFolder(node) {
+        const { name } = node;
+        return (name === 'INBOX' || name === 'SENT' || name === 'TRASH' || name === 'DRAFT' || name === 'STARRED');
     }
 
     showLabel(node) {
@@ -379,22 +410,31 @@ class FolderContainer extends Component {
     searchParentNode(node, tree) {
         const parts = node.name.split("/");
         if(parts.length > 1) {
-            parts.pop();
-            const parentPath = parts.join('/');
+            let name = parts.pop();
 
-            for(let i = 0; i < tree.length; i++) {
-                if(tree[i].name === parentPath) {
-                    tree[i].hasChild = true;
-                    return tree[i].id;
+            while(parts.length > 0) {
+                for (let i = 0; i < parts.length; i++) {
+                    const parentPath = parts.join('/');
+
+                    for (let i = 0; i < tree.length; i++) {
+                        if (tree[i].name === parentPath) {
+                            tree[i].hasChild = true;
+                            return {pid: tree[i].id, name, parent: parentPath};
+                        }
+                    }
                 }
+
+                name = parts.pop() + "/" + name;
             }
         }
     }
 
-    getNodeName(folderName, parent) {
+    getNodeName(folderName, parent, parentName) {
         const { t } =this.props;
+        let name = "";
+
         const parts = folderName.split("/");
-        const name = parts.pop();
+        name = parts.pop();
 
         switch(name) {
             case "INBOX":
@@ -426,6 +466,9 @@ class FolderContainer extends Component {
             case "CATEGORY_UPDATES":
                 return t('sidebar.updates');
             default:
+                if(parentName && parentName !== "") {
+                    return folderName;
+                }
                 return parent?name:folderName;
         }
     }

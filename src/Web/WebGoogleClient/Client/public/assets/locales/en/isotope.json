@@ -21,7 +21,9 @@
   },
   "message-list": {
     "no-message": "There are no messages with this label.",
-    "move-to-trash": "Move to Trash"
+    "move-to-trash": "Move to Trash",
+    "delete-permanently": "Delete permanently",
+    "empty-trash": "Empty trash"
   },
   "pager-buttons": {
     "previous-page": "Previous Page",
@@ -56,7 +58,9 @@
     "resend": "Resend",
     "read": "Mark as read",
     "unread": "Mark as unread",
-    "reply-all": "Reply to all"
+    "reply-all": "Reply to all",
+    "delete-permanently": "Delete permanently",
+    "empty-trash": "Empty trash"
   },
   "message-footer": {
     "messages": "Messages"

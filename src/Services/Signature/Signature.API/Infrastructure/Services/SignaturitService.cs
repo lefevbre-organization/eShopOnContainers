@@ -78,25 +78,36 @@ namespace Signature.API.Infrastructure.Services
 
         public async Task<IRestResponse> CreateSignature(CreateSignaturit signatureInfo)
         {
+            Console.WriteLine("START CreateSignature");
+            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/signatures.json");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures.json");
             var i = 0;
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Adding parameters");
+
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             foreach (Recipient recipient in signatureInfo.recipients)
             {
+                Console.WriteLine($"Adding recipient_{i}");
+
                 request.AddParameter($"recipients[{i}][name]", recipient.name);
                 request.AddParameter($"recipients[{i}][email]", recipient.email);
                 request.AddParameter($"recipients[{i}][type]", recipient.role);
                 if (recipient.signatureType == "certificate")
                 {
+                    Console.WriteLine($"Adding recipient_{i} - Certificate");
                     request.AddParameter($"recipients[{i}][sign_with_digital_certificate_file]", 1);
                 }
                 if (recipient.doubleAuthType == "photo")
                 {
+                    Console.WriteLine($"Adding recipient_{i} - Photo");
                     request.AddParameter($"recipients[{i}][require_photo]", Convert.ToInt32(recipient.doubleAuthInfo));
                 } else if (recipient.doubleAuthType == "sms") 
                 {
+                    Console.WriteLine($"Adding recipient_{i} - SMS");
                     request.AddParameter($"recipients[{i}][phone]", recipient.doubleAuthInfo);
                     request.AddParameter($"recipients[{i}][require_sms_validation]", 1);
                 }
@@ -105,6 +116,7 @@ namespace Signature.API.Infrastructure.Services
             i = 0;
             foreach (Recipient recipient in signatureInfo.cc)
             {
+                Console.WriteLine($"Adding cc_{i}");
                 request.AddParameter($"cc[{i}][name]", recipient.name);
                 request.AddParameter($"cc[{i}][email]", recipient.email);
                 i += 1;
@@ -112,22 +124,51 @@ namespace Signature.API.Infrastructure.Services
             i = 0;
             foreach (UserFile file in signatureInfo.files)
             {
+                Console.WriteLine($"Adding file_{i}");
                 request.AddFileBytes($"files[{i}]", file.file, file.fileName);
                 i += 1;
             }
+            i = 0;
             foreach (CustomField field in signatureInfo.customFields)
             {
+                Console.WriteLine($"Adding CustomField: {field.name} -  {field.value} ");
                 request.AddParameter($"data[{field.name}]", field.value);
             }
+
+            Console.WriteLine($"Adding subject");
             request.AddParameter("subject", signatureInfo.subject);
+            Console.WriteLine($"Adding body");
             request.AddParameter("body", signatureInfo.body);
+            Console.WriteLine($"Adding branding_id");
             request.AddParameter("branding_id", signatureInfo.brandingId);
-            //request.AddParameter("reminders", signatureInfo.reminders);
-            request.AddParameter("reminders", $"{String.Join(",", signatureInfo.reminders.Select(p => p.ToString()).ToArray())}");
-            request.AddParameter("expire_time", signatureInfo.expiration);
+
+            if (signatureInfo.reminders != null)
+            {
+                Console.WriteLine($"Adding reminders");
+                if (signatureInfo.reminders.Length > 0)
+                {
+                    Console.WriteLine($"number: {signatureInfo.reminders.Length}");
+                    foreach (var reminder in signatureInfo.reminders)
+                    {
+                        
+                        request.AddParameter($"reminders[{i}]", reminder);
+                        i += 1;
+                    }
+                }
+            }
+
+
+            if (signatureInfo.expiration != null)
+            {
+                Console.WriteLine($"Adding expiration");
+                request.AddParameter("expire_time", signatureInfo.expiration);
+            }
+
+            Console.WriteLine($"Adding callback_url");
             request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 
 
+            Console.WriteLine($"Adding coordinates: {signatureInfo.coordinates.Count()}");
             foreach (Coordinate coordinate in signatureInfo.coordinates)
             {
                 request.AddParameter(coordinate.param, coordinate.value);
@@ -135,11 +176,17 @@ namespace Signature.API.Infrastructure.Services
 
             if (signatureInfo.coordinates.Count > 0 && signatureInfo.deliveryType != "")
             {
+                Console.WriteLine($"Adding delivery_type");
                 request.AddParameter("delivery_type", signatureInfo.deliveryType);
             }
 
+            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+            
+            Console.WriteLine($"Response: {response.Content.ToString()}");
+
+            Console.WriteLine("END CreateSignature");
 
             return response;
         }

@@ -63,7 +63,8 @@ export class CalendarItem extends PureComponent {
                           color={this.props.color}
                           onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
                           onCalendarDelete={this.props.onCalendarDelete}
-                          onCalendarColorModify={this.props.onCalendarColorModify}
+                          onCalendarColorModify={this.props.onCalendarColorModify}     
+                          isPrimary={this.props.primary}  
                       />   
               }
                              
@@ -78,7 +79,7 @@ export class CalendarItem extends PureComponent {
                     }
 
                     .e-checkbox-wrapper.${this.state.css}:hover .e-frame.e-check { /* csslint allow: adjoining-classes */
-                      background - color: ${this.props.color} !important;
+                          background-color: ${this.props.color} !important;
 }
                 `}</style>
         </Fragment>

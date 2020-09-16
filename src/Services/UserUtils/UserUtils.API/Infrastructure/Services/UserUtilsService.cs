@@ -443,11 +443,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         #region Token Validation
 
-        private TokenValidationParameters GetValidationParameters()
+        private TokenValidationParameters GetValidationParameters(bool validateCaducity = true)
         {
             return new TokenValidationParameters()
             {
-                ValidateLifetime = true, // Because there is no expiration in the generated token
+                ValidateLifetime = validateCaducity, 
                 ValidateAudience = false, // Because there is no audiance in the generated token
                 ValidateIssuer = false,   // Because there is no issuer in the generated token
                 ValidIssuer = "Lexon",
@@ -456,14 +456,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             };
         }
 
-        public async Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest)
+        public async Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest, bool validateCaducity = true)
         {
             var result = new Result<TokenData>(tokenRequest);
 
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                tokenHandler.ValidateToken(tokenRequest.token, GetValidationParameters(), out SecurityToken validatedToken);
+                tokenHandler.ValidateToken(tokenRequest.token, GetValidationParameters(validateCaducity), out SecurityToken validatedToken);
                 result.data.valid = validatedToken != null;
             }
             catch (SecurityTokenException ex)

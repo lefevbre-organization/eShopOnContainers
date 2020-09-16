@@ -141,10 +141,11 @@
 
                 if (app == "lexon")
                 {
+                    // Se comenta porque de momento no se tiene integración con lexon
                     // Call lexon api to store document
                     // Downloadfile
-                    var file = GetFile(signatureId, documentId, eventType);
-                    response = await SaveFileLexon(file);
+                    //var file = GetFile(signatureId, documentId, eventType);
+                    //response = await SaveFileLexon(file);
 
                 }
                 else if (app == "centinela")

@@ -104,13 +104,13 @@ export class Header extends PureComponent {
                     <div className='input-group w-75 ml-1 mr-auto'>
                         <input
                             type='search'
-                            className='form-control search'
+                            className={`form-control search  ${this.props.hiddeSearch ? "hidden" : ""}`}
                             placeholder={i18n.t('header.search')}
                             value={this.props.searchQuery}
                             onChange={this.handleInputChange}
                         />
                         <div
-                            className='input-group-append'
+                            className={`input-group-append  ${this.props.hiddeSearch ? "hidden" : ""}`}
                             onClick={this.handleSearchClick}>
                             <button
                                 className='btn btn-light  bg-white text-dark btn-search'
@@ -128,6 +128,7 @@ export class Header extends PureComponent {
                         fullName={fullName}
                         onSignout={this.props.onSignout}
                         picUrl={undefined}
+                        hiddeSign={this.props.hiddeSearch}
                     />
                     <MenuMinihub />                 
                 </div>

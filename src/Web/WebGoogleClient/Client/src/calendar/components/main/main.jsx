@@ -383,7 +383,7 @@ export class Main extends Component {
 
     text_truncate (str, length, ending) {
         if (length == null) {
-            length = 100;
+            length = 10;
         }
         if (ending == null) {
             ending = '...';
@@ -402,7 +402,7 @@ export class Main extends Component {
         }
         let subjectStr = props.Subject;
         if (props.Subject != undefined) {
-            props.Subject = this.text_truncate(props.Subject, 20)
+            subjectStr = this.text_truncate(props.Subject, 15)
         }
         else {
             subjectStr = i18n.t("schedule.notitle")
@@ -412,14 +412,14 @@ export class Main extends Component {
             <div Style="width: 98%;">
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
-                    <span className='eventicon truncate'>
+                    <div className='eventicon'>
                         <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
                                 ''
                             )}
-                    </span>
+                    </div>
                 </div>
 
                 {/* <div className="subject">{props.Subject}</div>
@@ -899,21 +899,8 @@ export class Main extends Component {
 
     onPopupOpen(args) {
 
-        //Not allow to update events of not owner or writer calendar permissions
-        let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
-        if (calendarRole != "owner" && 
-            calendarRole != "writer") {
-            //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
-            //var editButton = document.querySelector(buttonElementEdit);
-            //editButton.disabled = true;
 
-            var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
-            var removeButton = document.querySelector(buttonElementRemove);
-            if (removeButton != undefined) {
-                removeButton.disabled = true;
-            }
-           
-        }
+
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -982,6 +969,23 @@ export class Main extends Component {
 
 
         if (args.type === 'QuickInfo') {
+
+            //Not allow to update events of not owner or writer calendar permissions
+            let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
+            if (calendarRole != "owner" &&
+                calendarRole != "writer") {
+                //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
+                //var editButton = document.querySelector(buttonElementEdit);
+                //editButton.disabled = true;
+
+                var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
+                var removeButton = document.querySelector(buttonElementRemove);
+                if (removeButton != undefined) {
+                    removeButton.disabled = true;
+                }
+
+            }
+
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {

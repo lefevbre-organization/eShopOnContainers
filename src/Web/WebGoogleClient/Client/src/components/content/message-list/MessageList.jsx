@@ -180,6 +180,7 @@ export class MessageList extends Component {
           key={msg.id}
           onSelectionChange={this.onSelectionChange}
           onClick={this.getMessage}
+          showCheckbox={this.state.showCheckbox}
         />
       );
   }
@@ -190,35 +191,75 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.dropIndicator = 'e-no-drop';
-    }
-    evt.draggedNodeData.isMessage = true;
     if(this.state.showCheckbox) {
       this.setState({showCheckbox: false});
+    }
+    evt.draggedNodeData.isMessage = true;
+
+    if(evt.draggedNodeData.isFolder || !evt.droppedNode) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
+    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
+
+    if(evt.droppedNodeData.text === this.props.t('sidebar.more')) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
+  }
+
+  onDropNode(evt) {
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+        evt.cancel = true;
     }
   }
 
   nodeDragStop(evt) {
+    this.setState({showCheckbox: true});
+
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      alert("Folder")
+      evt.cancel = true;
+      return;
+    }
+
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       evt.cancel = true;
+      return;
     }
 
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
       setTimeout(()=>{
-        const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
-        if(msg) {
-          this.moveMessage(msg.id, evt.droppedNodeData.id, this.props.selectedFolder)
+        const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
+        if(msgs && msgs.length > 0) {
+            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
+            if(lbl) {
+              // Check all selected messages
+              this.moveMessages(msgs, evt.droppedNodeData.id, lbl.id)
+            }
+        } else {
+          const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
+          if(msg) {
+            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
+            if(lbl) {
+              this.moveMessages([msg.id], evt.droppedNodeData.id, lbl.id)
+            }
+          }
         }
       })
       evt.cancel = true;
     }
-
-    this.setState({showCheckbox: true});
   }
 
   modifyMessage(id, addLabelIds, removeLabelIds) {
     this.props.modifyMessages({ ids: [id], addLabelIds: [addLabelIds], removeLabelIds: [removeLabelIds] });
+  }
+
+  modifyMessages(ids, addLabelIds, removeLabelIds) {
+    this.props.modifyMessages({ ids, addLabelIds: [addLabelIds], removeLabelIds: [removeLabelIds] });
   }
 
    renderMessages() {
@@ -247,13 +288,15 @@ export class MessageList extends Component {
                 fields={fields}
                 delayUpdate={true}
                 showCheckBox={this.state.showCheckbox}
-                allowMultiSelection={true}
                 fullRowSelected={true}
+                dragArea={"body"}
                 nodeDragging={this.nodeDragging.bind(this)}
+                nodeDragStop={this.nodeDragStop.bind(this)}
+                nodeDropped={this.onDropNode.bind(this)}
                 nodeChecked={this.onSelectionChange}
                 nodeSelected={this.showMessage}
                 nodeTemplate={this.renderMessage}
-                nodeDragStop={this.nodeDragStop.bind(this)}
+                allowMultiSelection={true}
                 allowDragAndDrop={true}
                 cssClass={'message-list'}
             >
@@ -339,15 +382,17 @@ export class MessageList extends Component {
     );
   }
 
-  moveMessage(id, destination, source) {
-    this.modifyMessage(id, destination, source);
-    this.props.removeMessageFromList(id);
-    //this.treeViewRef.current.refresh();
+  moveMessages(ids, destination, source) {
+    this.modifyMessages(ids, destination, source);
+    for(let i = 0; i < ids.length; i++) {
+      this.props.removeMessageFromList(ids[i]);
+    }
   }
 }
 
 const mapStateToProps = (state) => {
   return {
+    labels: state.labelsResult.labels,
     selectedMessages: state.messageList.selectedMessages,
     selectedFolder: state.messagesResult.label
       ? state.messagesResult.label.result.name
