@@ -846,6 +846,7 @@
             try
             {
                 var account = await _context.AccountEvents.FindAsync(c => c.email.Equals(email.ToUpperInvariant())).Result.FirstOrDefaultAsync();
+
                 if (account == null)
                 {
                     var arrayEvents = new List<EventType>
@@ -856,13 +857,15 @@
                     var resultInsertAccountEvent = await UpsertAccountEvents(new AccountEvents() { email = email, eventTypes = arrayEvents.ToArray() });
                     account = resultInsertAccountEvent.data;
                 }
-
-                if (IdEventDontExistImNew)
-                    InsertEvent(account, eventType, result);
                 else
-                    UpdateEvent(account, eventType, result);
-
-                await _context.AccountEvents.ReplaceOneAsync(c => c.Id == account.Id, account);
+                {
+                    if (IdEventDontExistImNew)
+                        InsertEvent(account, eventType, result);
+                    else
+                        UpdateEvent(account, eventType, result);
+                    
+                    await _context.AccountEvents.ReplaceOneAsync(c => c.Id == account.Id, account);
+                }
 
                 result.data = eventType;
             }

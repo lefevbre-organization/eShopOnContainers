@@ -250,7 +250,7 @@ export class MessageList extends Component {
           showCheckBox={this.state.showCheckbox}
           allowMultiSelection={true}
           fullRowSelected={true}
-          dragArea={".main"}
+          dragArea={"body"}
           nodeDragging={this.nodeDragging.bind(this)}
           nodeChecked={this.onSelectionChange}
           nodeSelected={this.showMessage}
