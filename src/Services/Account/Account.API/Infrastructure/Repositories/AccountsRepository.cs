@@ -918,5 +918,26 @@
                     TraceInfo(result.infos, $"Modify event {ev.idEvent} -> {ev.name} with {ev.color}");
             }
         }
+
+        public async Task<Result<bool>> RemoveAccountEvent(string email)
+        {
+            var result = new Result<bool>();
+            try
+            {
+                var resultRemove = await _context.AccountEvents.DeleteOneAsync(GetFilterAccountEvents(email));
+                result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
+                if (result.data)
+                {
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}");
+                    //var eventAssoc = new RemoveUserMailIntegrationEvent(email);
+                    //_eventBus.Publish(eventAssoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
     }
 }
