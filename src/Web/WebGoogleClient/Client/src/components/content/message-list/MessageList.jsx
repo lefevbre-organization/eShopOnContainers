@@ -190,9 +190,9 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
-    if(this.state.showCheckbox) {
-      this.setState({showCheckbox: false});
-    }
+    // if(this.state.showCheckbox) {
+    //   this.setState({showCheckbox: false});
+    // }
     evt.draggedNodeData.isMessage = true;
 
     if(evt.draggedNodeData.isFolder || !evt.droppedNode) {
@@ -217,7 +217,7 @@ export class MessageList extends Component {
   }
 
   nodeDragStop(evt) {
-    this.setState({showCheckbox: true});
+    //this.setState({showCheckbox: true});
 
     if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       alert("Folder")
