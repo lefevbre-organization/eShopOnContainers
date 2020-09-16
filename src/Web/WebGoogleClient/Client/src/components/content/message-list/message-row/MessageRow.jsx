@@ -101,10 +101,12 @@ export class MessageItem extends PureComponent {
 
     return (
       <div className={`message-row-item d-flex table-row-wrapper${selected}`}>
-        {/*<MesssageCheckbox*/}
-        {/*  selected={this.props.data.selected}*/}
-        {/*  onChange={this.onSelectionChange}*/}
-        {/*/>*/}
+        {this.props.showCheckbox === false &&
+        <MesssageCheckbox
+            selected={this.props.data.selected}
+            onChange={this.onSelectionChange}
+        />
+        }
         <div
           onClick={this.getMessage}
           className={`table-row px-2 py-3${unread}`}>

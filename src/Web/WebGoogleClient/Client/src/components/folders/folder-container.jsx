@@ -18,7 +18,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {updateLabelName} from "../../api";
 
-const moreId = uuid();
+//const moreId = uuid();
 
 class FolderContainer extends Component {
 
@@ -150,7 +150,7 @@ class FolderContainer extends Component {
                                                duration: 0
                                            }
                                        }}
-                                       dragArea={".main"}
+                                       dragArea={"body"}
                                        nodeDropped={this.onDropNode}
                                        nodeDragStop={this.onDragStop.bind(this)}
                                        nodeDragStart={this.onDragStart}
@@ -322,21 +322,10 @@ class FolderContainer extends Component {
         const { t }  = this.props;
         const tree = [...this.props.folderTree];
 
-        tree.push({
-            id: moreId,
-            name: t('sidebar.more'),
-            text: t('sidebar.more'),
-            hasChild: true
-        })
-
         for(let i = 0; i < tree.length; i++) {
             const it = tree[i];
 
             it.icon = this.getIcon(it);
-
-            if(this.showLabel(it) === false){
-                it.pid = moreId;
-            }
 
             if(it.name.indexOf("/") > -1) {
               const {pid, name, parent} = this.searchParentNode(it, tree) || {pid: undefined, name: it.name, parent: ""};
@@ -352,8 +341,23 @@ class FolderContainer extends Component {
             }
         }
 
+        return this.sortTree(tree);
+    }
+    
+    sortTree(tree) {
+        const system = [
+            tree.find(e => e.name === 'INBOX'),
+            tree.find(e => e.name === 'SENT'),
+            tree.find(e => e.name === 'STARRED'),
+            tree.find(e => e.name === 'TRASH'),
+            tree.find(e => e.name === 'DRAFT'),
+            ].map( it => ({ ...it, text: this.getNodeName(it.name, it.pid, it.parent)}));
+        return  [...system, ..._.sortBy(tree.filter(tn => !this.isSystemFolder(tn) ).map( it => ({ ...it, text: this.getNodeName(it.name, it.pid, it.parent)})), ['text'])];
+    }
 
-        return  _.sortBy(tree.map( it => ({ ...it, text: this.getNodeName(it.name, it.pid, it.parent)})), ['text']);
+    isSystemFolder(node) {
+        const { name } = node;
+        return (name === 'INBOX' || name === 'SENT' || name === 'TRASH' || name === 'DRAFT' || name === 'STARRED');
     }
 
     showLabel(node) {

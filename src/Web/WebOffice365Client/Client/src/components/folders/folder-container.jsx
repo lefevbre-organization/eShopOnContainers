@@ -144,7 +144,7 @@ class FolderContainer extends Component {
                                        cssClass={'folder-tree'}
                                        delayUpdate={true}
                                        loadOnDemand={false}
-                                       dragArea={".main"}
+                                       dragArea={"body"}
                                        nodeExpanded={this.onNodeExpanded}
                                        nodeCollapsed={this.onNodeCollapsed}
                                        nodeTemplate={this.nodeTemplate}
