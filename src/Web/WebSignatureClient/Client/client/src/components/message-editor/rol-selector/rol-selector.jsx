@@ -32,7 +32,7 @@ export class RolSelector extends React.Component {
 
     this.doubleAuth = [
       { 'Id': 'none', 'Value': i18n.t('messageEditor.grid.none') },
-      { 'Id': 'sms', 'Value': i18n.t('messageEditor.grid.sms') },
+      //{ 'Id': 'sms', 'Value': i18n.t('messageEditor.grid.sms') },
       { 'Id': 'photo', 'Value': i18n.t('messageEditor.grid.photo') }
     ];
     this.dobleAuthFields = { text: 'Value', value: 'Id'};

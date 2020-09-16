@@ -84,6 +84,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpPost("delete")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteAccountEvent(
+            [FromBody] string email
+    )
+        {
+            if (string.IsNullOrEmpty(email))
+                return BadRequest("values invalid. Must be a valid email to delete");
+
+            Result<bool> result = await _service.RemoveAccountEvent(email);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost("eventtype/delete")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
