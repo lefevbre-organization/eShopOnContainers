@@ -32,7 +32,7 @@ export class RolSelector extends React.Component {
 
     this.doubleAuth = [
       { 'Id': 'none', 'Value': i18n.t('messageEditor.grid.none') },
-      { 'Id': 'sms', 'Value': i18n.t('messageEditor.grid.sms') },
+      //{ 'Id': 'sms', 'Value': i18n.t('messageEditor.grid.sms') },
       { 'Id': 'photo', 'Value': i18n.t('messageEditor.grid.photo') }
     ];
     this.dobleAuthFields = { text: 'Value', value: 'Id'};
@@ -54,7 +54,8 @@ export class RolSelector extends React.Component {
           let value = i == index ? event.value : 'none';
           newRecipients.push(
             {
-              user: user, 
+              address: user.address, 
+              name: user.name,
               role: (document.getElementById(`rol_${i}`)) ? document.getElementById(`rol_${i}`).ej2_instances[0].itemData.Id : null, 
               signatureType: (document.getElementById(`signatureType_${i}`)) ? document.getElementById(`signatureType_${i}`).ej2_instances[0].itemData.Id : null, 
               doubleAuth: value 
@@ -77,7 +78,8 @@ export class RolSelector extends React.Component {
           let value = i == index ? event.value : 'signer';
           newRecipients.push(
             {
-              user: user, 
+              address: user.address, 
+              name: user.name, 
               role: value,
               signatureType: (document.getElementById(`signatureType_${i}`)) ? document.getElementById(`signatureType_${i}`).ej2_instances[0].itemData.Id : null,
               doubleAuth: (document.getElementById(`doubleAuth_${i}`)) ? document.getElementById(`doubleAuth_${i}`).ej2_instances[0].itemData.Id : null 
@@ -100,7 +102,8 @@ export class RolSelector extends React.Component {
           let value = i == index ? event.value : 'advanced';
           newRecipients.push(
             {
-              user: user, 
+              address: user.address, 
+              name: user.name,
               role: (document.getElementById(`rol_${i}`)) ? document.getElementById(`rol_${i}`).ej2_instances[0].itemData.Id : null,
               signatureType: value,
               doubleAuth: (document.getElementById(`doubleAuth_${i}`)) ? document.getElementById(`doubleAuth_${i}`).ej2_instances[0].itemData.Id : null 
@@ -131,6 +134,10 @@ export class RolSelector extends React.Component {
     this.setState({photo: event.currentTarget.valueAsNumber});
   }
 
+  setName(event) {
+
+  }
+
   gatherInfo(){
     var info = [];  
     var i = 0;
@@ -138,7 +145,7 @@ export class RolSelector extends React.Component {
     this.props.recipients.forEach(recipient => {
       var signerInfo = {};
       signerInfo.name = document.getElementById(`first_name_${i}`) ? document.getElementById(`first_name_${i}`).value : null;
-      signerInfo.email =  recipient;
+      signerInfo.email =  recipient.address;
       signerInfo.role = document.getElementById(`rol_${i}`) ? document.getElementById(`rol_${i}`).ej2_instances[0].itemData.Id : null;
       signerInfo.signatureType = document.getElementById(`signatureType_${i}`) ? document.getElementById(`signatureType_${i}`).ej2_instances[0].itemData.Id : null;
       signerInfo.doubleAuthType = document.getElementById(`doubleAuth_${i}`) ? document.getElementById(`doubleAuth_${i}`).ej2_instances[0].itemData.Id : null;
@@ -182,23 +189,26 @@ export class RolSelector extends React.Component {
                       <th colSpan="3">{i18n.t('messageEditor.grid.doubleAuthentication')}</th>
                   </tr>
                   {recipients.map((user, i) => {
-                    console.log('recipients ->', i);
                     return(
-                    <tr>
+                    <tr key={i}>
                       <td className="name">
                         <input className={style['border-input']} 
                         placeholder={i18n.t('messageEditor.grid.name')} 
                         id={`first_name_${i}`} 
-                        type="text" />
+                        type="text" 
+                        defaultValue={`${newRecipients.length > 0 
+                          ? user.name : user.name}`} 
+                         />
                       </td>
                       <td>
                         <input 
                          value={`${newRecipients.length > 0 
-                          ? user.user : user}`} 
+                          ? user.address : user.address}`} 
                          id={`email_${i}`}
                          className={style['border-input']}
                          type="text" 
-                         disabled />
+                         disabled
+                          />
                       </td>
                       <td>
                           <div className="input-field col s5">

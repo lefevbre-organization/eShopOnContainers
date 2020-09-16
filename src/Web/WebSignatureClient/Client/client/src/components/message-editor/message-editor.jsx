@@ -1021,18 +1021,19 @@ class MessageEditor extends Component {
    * @param id
    * @param address
    */
-  addAddress(id, address) {
+  addAddress(id, address, name) {
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
+      const addressData = {address: address, name: name}
       if(updatedMessage.to.length == this.state.MaximumSigners
          && id != 'cc') {
            console.log('Maximum Signers');
-      }else if(updatedMessage.to.length == this.state.MaximumSigners 
+      } else if(updatedMessage.to.length == this.state.MaximumSigners 
         && id == 'cc') {
-        updatedMessage[id] = [...updatedMessage[id], address];
+        updatedMessage[id] = [...updatedMessage[id], addressData];
         this.props.editMessage(updatedMessage);
-      }else {
-        updatedMessage[id] = [...updatedMessage[id], address];
+      } else {
+        updatedMessage[id] = [...updatedMessage[id], addressData];
         this.props.editMessage(updatedMessage);
       }
     }
@@ -1059,12 +1060,12 @@ class MessageEditor extends Component {
    * @param toId
    * @param address
    */
-  moveAddress(fromId, toId, address) {
+  moveAddress(fromId, toId, address, name) {
     const updatedMessage = { ...this.props.editedMessage };
     // Remove
     updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
     // Add
-    updatedMessage[toId] = [...updatedMessage[toId], address];
+    updatedMessage[toId] = [...updatedMessage[toId], {address}];
     this.props.editMessage(updatedMessage);
   }
 
@@ -1248,6 +1249,7 @@ const mapStateToProps = (state) => ({
   bcc: state.application.newMessage.bcc,
   attachments: state.application.newMessage.attachments,
   subject: state.application.newMessage.subject,
+  name: state.application.newMessage.name,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,
   getAddresses: (value) => getAddresses(value, state.messages.cache),

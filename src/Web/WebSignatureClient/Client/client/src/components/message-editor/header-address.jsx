@@ -53,8 +53,8 @@ export class HeaderAddress extends Component {
         {addresses.map((address, index) => (
           <div key={index} className={`${chipClassName} ${mainCss['mdc-chip']}`}
             draggable={true}
-            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address)}>
-            <div className={mainCss['mdc-chip__text']}>{address}</div>
+            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}>
+            <div className={mainCss['mdc-chip__text']}>{address.address}</div>
             <i onClick={() => onAddressRemove(id, address)} className={`material-icons ${mainCss['mdc-chip__icon']}
                ${mainCss['mdc-chip__icon--trailing']}`}>cancel</i>
           </div>
@@ -148,7 +148,7 @@ export class HeaderAddress extends Component {
 
   onSuggestionSelected(event, { suggestionValue }) {
     this.setState({ value: '' });
-    this.props.onAddressAdd(this.props.id, suggestionValue);
+    this.props.onAddressAdd(this.props.id, suggestionValue, '');
     setTimeout(() => HeaderAddress.clearValidation(this.inputRef.current.input));
   }
 
@@ -192,7 +192,7 @@ export class HeaderAddress extends Component {
       if (this.validateEmail(event)) {
         const id = target.id;
         const value = target.value.replace(/;/g, '');
-        this.props.onAddressAdd(id, value);
+        this.props.onAddressAdd(id, value, '');
         this.setState({ value: '' });
         target.focus();
         event.preventDefault();
@@ -204,7 +204,7 @@ export class HeaderAddress extends Component {
     const target = event.target;
     if (target.value.length > 0) {
       if (this.validateEmail(event)) {
-        this.props.onAddressAdd(target.id, target.value);
+        this.props.onAddressAdd(target.id, target.value, '');
         this.setState({ value: '' });
       }
     }
@@ -237,7 +237,7 @@ HeaderAddress.propTypes = {
   chipClassName: PropTypes.string,
   autoSuggestClassName: PropTypes.string,
   autoSuggestMenuClassName: PropTypes.string,
-  addresses: PropTypes.arrayOf(PropTypes.string),
+  addresses: PropTypes.array,
   label: PropTypes.string,
   getAddresses: PropTypes.func,
   onAddressAdd: PropTypes.func,

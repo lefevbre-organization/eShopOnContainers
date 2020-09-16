@@ -58,7 +58,9 @@ const Contacts = (props) => {
   const getContactsInfo = () => {
     contacts.forEach(contact => {
         if(contact.checked) {
-          setTimeout(() => props.onAddressAdd(props.id, contact.email));
+          setTimeout(() => {
+            props.onAddressAdd(props.id, contact.email, contact.name);
+          });
         }
     });
     props.dialogClose();
