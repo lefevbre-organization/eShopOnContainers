@@ -240,7 +240,6 @@ export class MessageList extends Component {
               // Check all selected messages
               this.moveMessages(msgs, evt.droppedNodeData.id, lbl.id)
             }
-
         }
       })
       evt.cancel = true;
@@ -281,7 +280,6 @@ export class MessageList extends Component {
                 fields={fields}
                 delayUpdate={true}
                 showCheckBox={this.state.showCheckbox}
-                allowMultiSelection={true}
                 fullRowSelected={true}
                 dragArea={"body"}
                 nodeDragging={this.nodeDragging.bind(this)}

@@ -68,6 +68,7 @@ export class MessageItem extends PureComponent {
   }
 
   render() {
+    const sc = this.props.showCheckbox === false;
     const date = this.props.data.receivedDateTime;
     let formattedDate = this.getFormattedDate(date, {
       date: this.props.data.internalDate,
@@ -95,7 +96,13 @@ export class MessageItem extends PureComponent {
     }
 
     return (
-      <div className={`message-row-item d-flex table-row-wrapper${selected}`}>
+        <div className={`message-row-item d-flex table-row-wrapper${selected} chk-msg-row${sc?'-sc':''}`} >
+          <div className="msg-list-chk-wrapper">
+            <MesssageCheckbox
+                selected={this.props.data.selected}
+                onChange={this.onSelectionChange}
+            />
+          </div>
         <div
           onClick={this.getMessage}
           className={`table-row px-2 py-3${unread}`}>
