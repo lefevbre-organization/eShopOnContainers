@@ -168,6 +168,7 @@ export class RolSelector extends React.Component {
     });
 
     this.props.onFinishRoles(info);
+    this.props.dialogClose();
   }
 
   render(){

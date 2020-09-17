@@ -64,7 +64,8 @@ class MessageEditor extends Component {
       numPagesOption: 1,
       MaximumSigners: 40,
       isCallApis: false,
-      isFileType: false
+      isFileType: false,
+      isContacts: false
     };
 
     this.fileInput = null;
@@ -290,6 +291,10 @@ class MessageEditor extends Component {
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
+   const userBranding = this.props.lefebvre.userBrandings.some(userBranding => {
+      return (userBranding.app === 'centinela') 
+    })
+    this.setState({isContacts: userBranding});
     //createSignature();
   }
 
@@ -396,7 +401,7 @@ class MessageEditor extends Component {
 
     console.log(this.state.centinelaDownloadError);
     console.log(this.props.attachmentsDownloadError);
-
+ 
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -432,6 +437,7 @@ class MessageEditor extends Component {
               getAddresses={this.props.getAddresses}
               label={i18n.t('messageEditor.to')}
               lefebvre={lefebvre}
+              isContacts={this.state.isContacts}
             />
             <HeaderAddress
               id={'cc'}
@@ -555,6 +561,7 @@ class MessageEditor extends Component {
           <RolSelector 
           recipients={to}
           onFinishRoles={this.getRoleInfo}
+          dialogClose={this.dialogClose.bind(this)}
           />
         </DialogComponent>
         <style jsx global>
@@ -1015,6 +1022,21 @@ class MessageEditor extends Component {
     });
   }
 
+  validateAddress(updatedMessage, id, address, name) {
+    const addressData = {address: address, name: name}
+    if(updatedMessage.to.length == this.state.MaximumSigners
+       && id != 'cc') {
+         console.log('Maximum Signers');
+    } else if(updatedMessage.to.length == this.state.MaximumSigners 
+      && id == 'cc') {
+      updatedMessage[id] = [...updatedMessage[id], addressData];
+      this.props.editMessage(updatedMessage);
+    } else {
+      updatedMessage[id] = [...updatedMessage[id], addressData];
+      this.props.editMessage(updatedMessage);
+    }
+  }
+
   /**
    * Adds an address to the list matching the id.
    *
@@ -1024,18 +1046,14 @@ class MessageEditor extends Component {
   addAddress(id, address, name) {
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
-      const addressData = {address: address, name: name}
-      if(updatedMessage.to.length == this.state.MaximumSigners
-         && id != 'cc') {
-           console.log('Maximum Signers');
-      } else if(updatedMessage.to.length == this.state.MaximumSigners 
-        && id == 'cc') {
-        updatedMessage[id] = [...updatedMessage[id], addressData];
-        this.props.editMessage(updatedMessage);
-      } else {
-        updatedMessage[id] = [...updatedMessage[id], addressData];
-        this.props.editMessage(updatedMessage);
-      }
+      const recipientRepeats = updatedMessage.to.some(data => {
+      return (data.address === address);    
+     });
+   
+     if(!recipientRepeats){
+      this.validateAddress(updatedMessage, id, address, name);
+     }
+      
     }
   }
 

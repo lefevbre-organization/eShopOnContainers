@@ -43,7 +43,7 @@ export class HeaderAddress extends Component {
     const {
       id,
       className, chipClassName, autoSuggestClassName, autoSuggestMenuClassName,
-      label, addresses, onAddressRemove, lefebvre
+      label, addresses, onAddressRemove, lefebvre, isContacts
     } = this.props;
     const { suggestions, value } = this.state;
     return (
@@ -87,8 +87,10 @@ export class HeaderAddress extends Component {
         />
         {id == 'to' ? 
         <div>
-         <a href="#" className={styles['contact']} onClick={this.openContact}>Contactos <span className="lf-icon-notebook"></span>
-         </a>
+        {isContacts ? 
+        <a href="#" className={styles['contact']} onClick={this.openContact}>Contactos <span className="lf-icon-notebook"></span>
+        </a> 
+        : null }
         </div> : null}
 
         <DialogComponent 
