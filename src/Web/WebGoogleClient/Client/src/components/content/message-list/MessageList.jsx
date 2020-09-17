@@ -347,7 +347,12 @@ export class MessageList extends Component {
 
   onDeletedMessages(messages) {
     for (let i = 0; i < messages.length; i++) {
-      this.onSelectionChange(false, messages[i]);
+      this.onSelectionChange({
+        action: "uncheck",
+        data: [{
+          id: messages[i].id
+        }]
+      });
     }
   }
 
@@ -383,10 +388,18 @@ export class MessageList extends Component {
   }
 
   moveMessages(ids, destination, source) {
-    this.modifyMessages(ids, destination, source);
+    // uncheck messages
     for(let i = 0; i < ids.length; i++) {
+      this.onSelectionChange({
+        action: 'uncheck',
+        data: [{
+          id: ids[i]
+        }]
+      });
       this.props.removeMessageFromList(ids[i]);
     }
+
+    this.modifyMessages(ids, destination, source);
   }
 }
 
