@@ -449,11 +449,11 @@
 
             Console.WriteLine($"TokenValid:{valid} - {authToken}");        
 
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
-            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-            {
-                return true;
-            }
+            //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
+            //Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            //{
+            //    return true;
+            //}
 
             return valid;
         }

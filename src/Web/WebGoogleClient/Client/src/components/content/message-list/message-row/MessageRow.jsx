@@ -15,6 +15,9 @@ export class MessageItem extends PureComponent {
   }
 
   onSelectionChange(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
     this.props.onSelectionChange(evt.target.checked, this.props.data);
   }
 
@@ -66,6 +69,7 @@ export class MessageItem extends PureComponent {
   }
 
   render() {
+    const sc = this.props.showCheckbox === false;
     const receivedHeader = this.props.data.payload.headers.find(
       (el) => el.name.toUpperCase() === 'X-RECEIVED'
     );
@@ -100,16 +104,16 @@ export class MessageItem extends PureComponent {
     }
 
     return (
-      <div className={`message-row-item d-flex table-row-wrapper${selected}`}>
-        {this.props.showCheckbox === false &&
-        <MesssageCheckbox
-            selected={this.props.data.selected}
-            onChange={this.onSelectionChange}
-        />
-        }
+      <div className={`message-row-item d-flex table-row-wrapper${selected} chk-msg-row${sc?'-sc':''}`} >
+            <div className="msg-list-chk-wrapper">
+              <MesssageCheckbox
+                  selected={this.props.data.selected}
+                  onChange={this.onSelectionChange}
+              />
+              </div>
         <div
           onClick={this.getMessage}
-          className={`table-row px-2 py-3${unread}`}>
+          className={`table-row px-0 py-3${unread}`}>
           <NameSubjectFields fromName={fromName} subject={subject} />
           <AttachmentDateFields
             formattedDate={formattedDate}

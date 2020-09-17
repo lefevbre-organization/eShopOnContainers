@@ -240,7 +240,14 @@ export class MessageList extends Component {
               // Check all selected messages
               this.moveMessages(msgs, evt.droppedNodeData.id, lbl.id)
             }
-
+        } else {
+          const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
+          if(msg) {
+            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
+            if(lbl) {
+              this.moveMessages([msg.id], evt.droppedNodeData.id, lbl.id)
+            }
+          }
         }
       })
       evt.cancel = true;
@@ -281,7 +288,6 @@ export class MessageList extends Component {
                 fields={fields}
                 delayUpdate={true}
                 showCheckBox={this.state.showCheckbox}
-                allowMultiSelection={true}
                 fullRowSelected={true}
                 dragArea={"body"}
                 nodeDragging={this.nodeDragging.bind(this)}
@@ -341,15 +347,21 @@ export class MessageList extends Component {
 
   onDeletedMessages(messages) {
     for (let i = 0; i < messages.length; i++) {
-      this.onSelectionChange(false, messages[i]);
+      this.onSelectionChange({
+        action: "uncheck",
+        data: [{
+          id: messages[i].id
+        }]
+      });
     }
   }
 
   render() {
     const { messagesResult } = this.props;
-    const messagesTotal = messagesResult.label
-      ? messagesResult.label.result.messagesTotal
-      : 0;
+    const messagesTotal = messagesResult.messages.length;
+    // messagesResult.label
+    //   ? messagesResult.label.result.messagesTotal
+    //   : 0;
     const { nextToken, prevToken } = this.getPageTokens();
 
     const collapsed = this.props.sideBarCollapsed;
@@ -377,10 +389,18 @@ export class MessageList extends Component {
   }
 
   moveMessages(ids, destination, source) {
-    this.modifyMessages(ids, destination, source);
+    // uncheck messages
     for(let i = 0; i < ids.length; i++) {
+      this.onSelectionChange({
+        action: 'uncheck',
+        data: [{
+          id: ids[i]
+        }]
+      });
       this.props.removeMessageFromList(ids[i]);
     }
+
+    this.modifyMessages(ids, destination, source);
   }
 }
 
