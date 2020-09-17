@@ -92,7 +92,7 @@ export class HeaderAddress extends Component {
         </a> 
         : null }
         </div> : null}
-
+      {isContacts ? 
         <DialogComponent 
           id="contactDialog" 
           visible={this.state.hideContactDialog} 
@@ -109,7 +109,7 @@ export class HeaderAddress extends Component {
             lefebvre={lefebvre}
           />
          
-        </DialogComponent>
+        </DialogComponent> : null}
 
         <style jsx global>
           {` 

@@ -34,7 +34,6 @@ const Contacts = (props) => {
   const getDataCentinela = async () => {
     if(contacts.length == 0 ) {
       const user = props.lefebvre.userId;
-      console.log(props.lefebvre);
       const contactsCentinela = await getContactsCentinela(user);
       const newContactsCentinela = [];
       contactsCentinela.data.forEach(contact => {
