@@ -224,7 +224,7 @@ export class HeaderAddress extends Component {
       if (id && id !== payload.id) {
         const fromId = payload.id;
         const address = payload.address;
-        this.props.onAddressMove(fromId, id, address);
+        this.props.onAddressMove(fromId, id, address, '');
       }
     }
   }

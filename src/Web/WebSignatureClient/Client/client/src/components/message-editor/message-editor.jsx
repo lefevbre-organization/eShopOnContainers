@@ -1062,10 +1062,11 @@ class MessageEditor extends Component {
    */
   moveAddress(fromId, toId, address, name) {
     const updatedMessage = { ...this.props.editedMessage };
+    const addressData = {address: address, name: name}
     // Remove
     updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
     // Add
-    updatedMessage[toId] = [...updatedMessage[toId], {address}];
+    updatedMessage[toId] = [...updatedMessage[toId], addressData];
     this.props.editMessage(updatedMessage);
   }
 
