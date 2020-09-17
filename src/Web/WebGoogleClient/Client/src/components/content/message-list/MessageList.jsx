@@ -358,9 +358,10 @@ export class MessageList extends Component {
 
   render() {
     const { messagesResult } = this.props;
-    const messagesTotal = messagesResult.label
-      ? messagesResult.label.result.messagesTotal
-      : 0;
+    const messagesTotal = messagesResult.messages.length;
+    // messagesResult.label
+    //   ? messagesResult.label.result.messagesTotal
+    //   : 0;
     const { nextToken, prevToken } = this.getPageTokens();
 
     const collapsed = this.props.sideBarCollapsed;
