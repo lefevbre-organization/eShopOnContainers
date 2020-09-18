@@ -36,7 +36,8 @@ class Login extends Component {
         password: '',
         auth: '',
       },
-
+      isloading: false,
+      keyCodeEnter: 13,
       shopTitle: this.props.t('login.shop'),
       notClient: this.props.t('login.notClient'),
       requestInfo: this.props.t('login.requestInfo'),
@@ -135,14 +136,18 @@ class Login extends Component {
     getSignedToken(this.state.form.login, this.state.form.password)
     .then(info => {
       if (info.data.valid){
+        this.setState({isloading: false});
+        document.body.style.cursor='default'
         this.props.history.push(`/access/${info.data.token}`)
       }
       else {
+        this.setState({isloading: false});
+        document.body.style.cursor='default'
         this.setState({
-              errorsMessage: {
-                auth: i18n.t('login.user-error'),
-              },
-            });
+          errorsMessage: {
+            auth: i18n.t('login.user-error'),
+          },
+        });
       }
     })
     
@@ -160,11 +165,19 @@ class Login extends Component {
     this.props.history.push("/")
   };
 
-  handleEventAddon = (e) => {
+  handleEventLogin = (e) => {
     if (this.validateForm()) {
+      this.setState({isloading: true});
+      document.body.style.cursor = 'wait';
       this.getUser();
     }
   };
+
+  keyUpHandler = (event) => {
+    if(event.keyCode === this.state.keyCodeEnter) {
+      this.handleEventLogin();
+    }
+  }
 
   componentDidMount(){
     const { user } = this.state.form.login;
@@ -200,12 +213,14 @@ class Login extends Component {
           // logoLexon={logoLexon}
           handleChange={this.handleChange}
           errorsMessage={this.state.errorsMessage}
-          handleEventAddon={this.handleEventAddon}
+          handleEventLogin={this.handleEventLogin}
+          keyUpHandler={this.keyUpHandler}
           notClient={this.state.notClient}
           requestInfo={this.state.requestInfo}
           needHelp={this.state.needHelp}
           phoneNumber={this.state.phoneNumber}
           client={this.state.client}
+          isloading={this.state.isloading}
         />
         <Footer></Footer>
         
@@ -228,6 +243,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(translate()(withRouter(Login)));
-
-
-//export default Login;

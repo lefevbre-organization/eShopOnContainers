@@ -685,6 +685,27 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
   })
 }
 
+export const getCertifiedEmails = async () => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy");
+    
+    var formdata = new FormData();
+    
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+    
+    fetch("https://api.sandbox.signaturit.com/v3/emails.json", requestOptions)
+      .then(response => response.json())
+      .then(result => resolve(result))
+      .catch(error => reject('error', error));
+  })
+}
+
 // Creates a new signature calling internal proxy api
 //export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
   export const createSignature2 = async (recipients, cc, subject, body, files, pagesConfig, reminders, expiration, lefebvreId, guid, brandingId, auth, roles) => {

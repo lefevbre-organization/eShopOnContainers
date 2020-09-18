@@ -30,7 +30,8 @@
     "user-error": "Usuario o Contraseña inválidos",
     "user": "Usuario",
     "password": "Contraseña",
-    "login": "INICIAR SESIÓN"
+    "login": "INICIAR SESIÓN",
+    "load": "Loading..."
   },
   "sideBar": {
     "newRequest": "Nouvelle signature",
@@ -351,5 +352,11 @@
     "title": "Erreur d'accès",
     "subtitle": "Vous n'êtes pas autorisé à utiliser cette application.",
     "footer": "Tu as besoin d'aide?"
+  },
+  "contacts": {
+    "lexon": "Contact Lex-ON",
+    "centinela": "Contact Centinela",
+    "search": "Trouver un contact",
+    "selected": "choisi"
   }
 }
