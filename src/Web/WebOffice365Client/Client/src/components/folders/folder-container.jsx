@@ -1,19 +1,8 @@
 import React, {Component, createRef} from 'react';
 import {connect} from 'react-redux';
 import {TreeViewComponent} from '@syncfusion/ej2-react-navigations';
-import {
-    faBookmark,
-    faCommentDots,
-    faEnvelopeSquare,
-    faExclamationTriangle, faEyeSlash,
-    faFile, faFolder,
-    faInbox,
-    faStar,
-    faTrashAlt
-} from "@fortawesome/free-solid-svg-icons";
 import { withTranslation } from "react-i18next";
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {updateLabelName} from "../../api_graph";
 import * as _ from 'lodash';
 
@@ -112,7 +101,7 @@ class FolderContainer extends Component {
             <div className="tree-folder-item">
                 <div className="treeviewdiv">
                     <div className="textcontent">
-                        <FontAwesomeIcon icon={faFolder} className="label-icon" />
+                        <i className={"lf-icon-folder"} style={{fontSize: 20, color: '#001978'}}></i>
                         <span className="treeName">{data.displayName}</span>
                         { data.displayName !== "SENT" && data.unreadItemCount > 0 && <span className="msg-count">{data.unreadItemCount}</span> }
                     </div>
@@ -210,7 +199,12 @@ class FolderContainer extends Component {
           
                     .treeName {
                       color: #001978;
-                      margin-left: 20px;
+                      margin-left: 10px;
+                    }
+                    
+                    .textcontent {
+                        display: flex;
+                        align-items: center;
                     }
                     
                     .label-icon {                    

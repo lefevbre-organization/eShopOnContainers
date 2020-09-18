@@ -623,7 +623,7 @@ export const batchModify = async ({
   return ids;
 };
 
-export const moveMessage = async ({
+export const moveMessages = async ({
                                     ids,
                                     destination,
 

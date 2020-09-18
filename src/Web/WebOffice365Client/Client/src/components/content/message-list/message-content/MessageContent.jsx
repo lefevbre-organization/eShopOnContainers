@@ -332,7 +332,8 @@ export class MessageContent extends Component {
   modifyMessage(addLabelIds, removeLabelIds) {
     if (addLabelIds[0] === 'UNREAD') {
       setMessageAsUnread(this.props.emailMessageResult.result.id);
-      this.renderInbox();
+      this.props.history.goBack();
+      //this.renderInbox();
       return;
     }
 

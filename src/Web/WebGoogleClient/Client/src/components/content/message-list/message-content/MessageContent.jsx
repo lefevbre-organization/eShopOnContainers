@@ -450,7 +450,11 @@ export class MessageContent extends Component {
       this.props.modifyMessages({ ids: [id], ...actionParams });
     }
 
-    this.renderInbox();
+    if(this.props.selectedFolderId === "TRASH") {
+      this.renderTrash();
+    } else {
+      this.renderInbox();
+    }
   }
 
   render() {

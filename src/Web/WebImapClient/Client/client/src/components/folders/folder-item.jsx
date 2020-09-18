@@ -43,20 +43,21 @@ class FolderItem extends Component {
       onMouseLeave={event => this.hideContextMenu(event)}
       >
         <span className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.graphic}`}>
-          {graphic}
+          <i className={this.getIcon(graphic)} style={{fontSize: 20, color: '#001978'}}></i>
         </span>
+
         <span className={`${mainCss['mdc-list-item__primary-text']} ${styles.primaryText}
           ${newMessageCount > 0 ? styles.hasNewMessages : ''}`}>
           {labelWithCount}
         </span>
         <span className={styles.actions}>
-          <span className={`${styles.contextMenu} ${this.state.contextMenuVisible ? styles.visible : ''}`}>
-            {onDelete !== null && <i className={'material-icons'} onClick={onDelete}>delete_outline</i>}
-            {onAddChild !== null && <i className={'material-icons'} onClick={onAddChild}>add</i>}
-            {onRename !== null && <i className={'material-icons'} onClick={onRename}>edit</i>}
+          <span className={`${styles.contextMenu} ${this.state.contextMenuVisible ? styles.visible : ''}`} style={{marginRight: 5}}>
+            {onDelete !== null && <i className={'lf-icon-trash'} style={{fontSize: 20, marginRight: 5}} onClick={onDelete}></i>}
+            {onAddChild !== null && <i className={'lf-icon-folder-new'} style={{fontSize: 20, marginRight: 5}} onClick={onAddChild}></i>}
+            {onRename !== null && <i className={'lf-icon-pencil'} style={{fontSize: 20, marginRight: 5}} onClick={onRename}></i>}
           </span>
           {hasContextMenu && !this.state.contextMenuVisible
-            && <i className={'material-icons'} onClick={event => this.showContextMenu(event)}>more_vert</i>}
+            && <i className={'material-icons'} style={{marginRight: 5}} onClick={event => this.showContextMenu(event)}>more_vert</i>}
         </span>
       </a>
     );
@@ -96,6 +97,21 @@ class FolderItem extends Component {
 
   hideContextMenu() {
     this.setState({contextMenuVisible: false});
+  }
+
+  getIcon(graphic) {
+    switch(graphic) {
+      case "move_to_inbox":
+        return "lf-icon-inbox";
+      case "delete_outline":
+        return "lf-icon-trash";
+      case "border_color":
+        return "lf-icon-document";
+      case "send":
+        return "lf-icon-send";
+      default:
+        return "lf-icon-folder";
+    }
   }
 }
 
