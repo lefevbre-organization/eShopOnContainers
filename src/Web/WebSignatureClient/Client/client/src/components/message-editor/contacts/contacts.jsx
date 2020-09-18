@@ -132,7 +132,7 @@ const Contacts = (props) => {
             {` 
               #contactDialog_dialog-content {
                 padding: 0px !important;
-                overflow: hidden;
+                overflow: auto;
               } 
               .position-icon {
                 top: -31px;

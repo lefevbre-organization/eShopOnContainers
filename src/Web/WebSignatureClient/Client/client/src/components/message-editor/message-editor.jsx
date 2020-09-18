@@ -291,10 +291,8 @@ class MessageEditor extends Component {
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
-   const userBranding = this.props.lefebvre.userBrandings.some(userBranding => {
-      return (userBranding.app === 'centinela') 
-    })
-    this.setState({isContacts: userBranding});
+    
+    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
     //createSignature();
   }
 
