@@ -3,7 +3,10 @@ import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
 import { validateEmail } from '../../services/validation';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import Contacts from './contacts/contacts';
 import mainCss from '../../styles/main.scss';
+import styles from './message-editor.scss';
 
 export class HeaderAddress extends Component {
   constructor(props) {
@@ -18,15 +21,29 @@ export class HeaderAddress extends Component {
 
     this.state = {
       value: '',
-      suggestions: []
+      suggestions: [],
+      hideContactDialog: false
     };
+    this.dialogClose = this.dialogClose.bind(this);
+  }
+
+  openContact = () => {
+    this.setState({hideContactDialog: true});
+  }
+
+  dialogClose(){
+    
+    this.setState({
+      hideContactDialog: false, 
+      
+    });
   }
 
   render() {
     const {
       id,
       className, chipClassName, autoSuggestClassName, autoSuggestMenuClassName,
-      label, addresses, onAddressRemove
+      label, addresses, onAddressRemove, lefebvre, isContacts
     } = this.props;
     const { suggestions, value } = this.state;
     return (
@@ -36,8 +53,8 @@ export class HeaderAddress extends Component {
         {addresses.map((address, index) => (
           <div key={index} className={`${chipClassName} ${mainCss['mdc-chip']}`}
             draggable={true}
-            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address)}>
-            <div className={mainCss['mdc-chip__text']}>{address}</div>
+            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}>
+            <div className={mainCss['mdc-chip__text']}>{address.address}</div>
             <i onClick={() => onAddressRemove(id, address)} className={`material-icons ${mainCss['mdc-chip__icon']}
                ${mainCss['mdc-chip__icon--trailing']}`}>cancel</i>
           </div>
@@ -68,6 +85,40 @@ export class HeaderAddress extends Component {
             suggestionHighlighted: mainCss['mdc-list-item--activated']
           }}
         />
+        {id == 'to' ? 
+        <div>
+        {isContacts ? 
+        <a href="#" className={styles['contact']} onClick={this.openContact}>Contactos <span className="lf-icon-notebook"></span>
+        </a> 
+        : null }
+        </div> : null}
+      {isContacts ? 
+        <DialogComponent 
+          id="contactDialog" 
+          visible={this.state.hideContactDialog} 
+          animationSettings={this.animationSettings} 
+          width='45%'
+          height='80%'
+          ref={dialog => this.contactDialog = dialog} 
+          close={this.dialogClose}
+        >
+          <Contacts 
+            id={id}
+            onAddressAdd={this.props.onAddressAdd}
+            dialogClose={this.dialogClose}
+            lefebvre={lefebvre}
+          />
+         
+        </DialogComponent> : null}
+
+        <style jsx global>
+          {` 
+            #contactDialog {
+              top: 17% !important;
+            }
+          `}
+        </style>
+        
       </div>
     );
   }
@@ -99,7 +150,7 @@ export class HeaderAddress extends Component {
 
   onSuggestionSelected(event, { suggestionValue }) {
     this.setState({ value: '' });
-    this.props.onAddressAdd(this.props.id, suggestionValue);
+    this.props.onAddressAdd(this.props.id, suggestionValue, '');
     setTimeout(() => HeaderAddress.clearValidation(this.inputRef.current.input));
   }
 
@@ -143,7 +194,7 @@ export class HeaderAddress extends Component {
       if (this.validateEmail(event)) {
         const id = target.id;
         const value = target.value.replace(/;/g, '');
-        this.props.onAddressAdd(id, value);
+        this.props.onAddressAdd(id, value, '');
         this.setState({ value: '' });
         target.focus();
         event.preventDefault();
@@ -155,7 +206,7 @@ export class HeaderAddress extends Component {
     const target = event.target;
     if (target.value.length > 0) {
       if (this.validateEmail(event)) {
-        this.props.onAddressAdd(target.id, target.value);
+        this.props.onAddressAdd(target.id, target.value, '');
         this.setState({ value: '' });
       }
     }
@@ -175,7 +226,7 @@ export class HeaderAddress extends Component {
       if (id && id !== payload.id) {
         const fromId = payload.id;
         const address = payload.address;
-        this.props.onAddressMove(fromId, id, address);
+        this.props.onAddressMove(fromId, id, address, '');
       }
     }
   }
@@ -188,7 +239,7 @@ HeaderAddress.propTypes = {
   chipClassName: PropTypes.string,
   autoSuggestClassName: PropTypes.string,
   autoSuggestMenuClassName: PropTypes.string,
-  addresses: PropTypes.arrayOf(PropTypes.string),
+  addresses: PropTypes.array,
   label: PropTypes.string,
   getAddresses: PropTypes.func,
   onAddressAdd: PropTypes.func,

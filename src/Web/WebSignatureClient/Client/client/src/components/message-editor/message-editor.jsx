@@ -64,7 +64,8 @@ class MessageEditor extends Component {
       numPagesOption: 1,
       MaximumSigners: 40,
       isCallApis: false,
-      isFileType: false
+      isFileType: false,
+      isContacts: false
     };
 
     this.fileInput = null;
@@ -245,7 +246,6 @@ class MessageEditor extends Component {
   }
 
   dialogClose(){
-    console.log('hideRolDialog', this.state);
     if (this.state.centinelaDownloadError === true){
       this.props.onShowError();
     }
@@ -291,6 +291,8 @@ class MessageEditor extends Component {
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
+    
+    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
     //createSignature();
   }
 
@@ -392,11 +394,12 @@ class MessageEditor extends Component {
       attachments,
       subject,
       content,
+      lefebvre
     } = this.props;
 
     console.log(this.state.centinelaDownloadError);
     console.log(this.props.attachmentsDownloadError);
-
+ 
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -431,6 +434,8 @@ class MessageEditor extends Component {
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
               label={i18n.t('messageEditor.to')}
+              lefebvre={lefebvre}
+              isContacts={this.state.isContacts}
             />
             <HeaderAddress
               id={'cc'}
@@ -444,6 +449,7 @@ class MessageEditor extends Component {
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
               label={t('messageEditor.cc')}
+              lefebvre={lefebvre}
             />
             <div className={styles.subject}>
               <input
@@ -553,6 +559,7 @@ class MessageEditor extends Component {
           <RolSelector 
           recipients={to}
           onFinishRoles={this.getRoleInfo}
+          dialogClose={this.dialogClose.bind(this)}
           />
         </DialogComponent>
         <style jsx global>
@@ -1013,26 +1020,38 @@ class MessageEditor extends Component {
     });
   }
 
+  validateAddress(updatedMessage, id, address, name) {
+    const addressData = {address: address, name: name}
+    if(updatedMessage.to.length == this.state.MaximumSigners
+       && id != 'cc') {
+         console.log('Maximum Signers');
+    } else if(updatedMessage.to.length == this.state.MaximumSigners 
+      && id == 'cc') {
+      updatedMessage[id] = [...updatedMessage[id], addressData];
+      this.props.editMessage(updatedMessage);
+    } else {
+      updatedMessage[id] = [...updatedMessage[id], addressData];
+      this.props.editMessage(updatedMessage);
+    }
+  }
+
   /**
    * Adds an address to the list matching the id.
    *
    * @param id
    * @param address
    */
-  addAddress(id, address) {
+  addAddress(id, address, name) {
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
-      if(updatedMessage.to.length == this.state.MaximumSigners
-         && id != 'cc') {
-           console.log('Maximum Signers');
-      }else if(updatedMessage.to.length == this.state.MaximumSigners 
-        && id == 'cc') {
-        updatedMessage[id] = [...updatedMessage[id], address];
-        this.props.editMessage(updatedMessage);
-      }else {
-        updatedMessage[id] = [...updatedMessage[id], address];
-        this.props.editMessage(updatedMessage);
-      }
+      const recipientRepeats = updatedMessage.to.some(data => {
+      return (data.address === address);    
+     });
+   
+     if(!recipientRepeats){
+      this.validateAddress(updatedMessage, id, address, name);
+     }
+      
     }
   }
 
@@ -1057,12 +1076,13 @@ class MessageEditor extends Component {
    * @param toId
    * @param address
    */
-  moveAddress(fromId, toId, address) {
+  moveAddress(fromId, toId, address, name) {
     const updatedMessage = { ...this.props.editedMessage };
+    const addressData = {address: address, name: name}
     // Remove
     updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
     // Add
-    updatedMessage[toId] = [...updatedMessage[toId], address];
+    updatedMessage[toId] = [...updatedMessage[toId], addressData];
     this.props.editMessage(updatedMessage);
   }
 
@@ -1246,6 +1266,7 @@ const mapStateToProps = (state) => ({
   bcc: state.application.newMessage.bcc,
   attachments: state.application.newMessage.attachments,
   subject: state.application.newMessage.subject,
+  name: state.application.newMessage.name,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,
   getAddresses: (value) => getAddresses(value, state.messages.cache),
