@@ -109,7 +109,7 @@ class FolderContainer extends Component {
             <div className="tree-folder-item">
                 <div className="treeviewdiv">
                     <div className="textcontent">
-                        <FontAwesomeIcon icon={data.icon} className="label-icon" />
+                        <i className={data.icon} style={{fontSize: 20, color: '#001978'}}></i>
                         <span className="treeName">{data.text || data.name}</span>
                         { data.name !== "SENT" && data.messagesUnread > 0 && <span className="msg-count">{data.messagesUnread}</span> }
                     </div>
@@ -136,7 +136,7 @@ class FolderContainer extends Component {
                 </div>
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
-                                        allowDragAndDrop={true}
+                                       allowDragAndDrop={true}
                                        delayUpdate={true}
                                        fields={this.fields}
                                        loadOnDemand={false}
@@ -210,7 +210,12 @@ class FolderContainer extends Component {
           
                     .treeName {
                       color: #001978;
-                      margin-left: 20px;
+                      margin-left: 10px;
+                    }
+                    
+                    .textcontent {
+                        display: flex;
+                        align-items: center;
                     }
                     
                     .label-icon {                    
@@ -375,35 +380,25 @@ class FolderContainer extends Component {
     getIcon(node) {
         switch(node.name) {
             case "INBOX":
-                return faInbox;
+                return "lf-icon-inbox";
             case "SENT":
-                return faEnvelopeSquare;
+                return "lf-icon-send";
             case "TRASH":
-                return faTrashAlt;
+                return "lf-icon-trash";
             case "SPAM":
-                return faExclamationTriangle;
+                return "lf-icon-alert";
             case "DRAFT":
-                return faFile;
+                return "lf-icon-document";
             case "STARRED":
-                return faStar;
+                return "lf-icon-favorite-full";
             case "UNREAD":
-                return faEyeSlash;
+                return "lf-icon-mail";
             case "CHAT":
-                return faCommentDots;
+                return "lf-icon-chat";
             case "IMPORTANT":
-                return faBookmark;
-            case "CATEGORY_PERSONAL":
-                return faFolder;
-            case "CATEGORY_FORUMS":
-                return faFolder;
-            case "CATEGORY_PROMOTIONS":
-                return faFolder;
-            case "CATEGORY_SOCIAL":
-                return faFolder;
-            case "CATEGORY_UPDATES":
-                return faFolder;
+                return "lf-icon-bookmarks-active";
             default:
-                return faFolder;
+                return "lf-icon-folder";
         }
     }
 
