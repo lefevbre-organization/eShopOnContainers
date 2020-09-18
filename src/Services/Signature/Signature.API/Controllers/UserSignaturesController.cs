@@ -207,7 +207,7 @@
         [ProducesResponseType(typeof(Result<UserSignatures>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ResetUserBrandings([FromHeader] string password, [FromRoute] string user)
         {
-            if (password != _configuration.GetValue<string>("EventControllerPass"))
+            if (password != _configuration.GetValue<string>("EventController"))
                 return Unauthorized();
 
             if (string.IsNullOrEmpty(user))

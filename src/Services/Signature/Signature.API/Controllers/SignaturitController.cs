@@ -434,6 +434,7 @@
         }
 
 
+
         private bool checkToken(string authToken)
         {
             var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/utils/Lexon/token/validation?validateCaducity=false");
