@@ -222,7 +222,7 @@ export const addCalendarEvent = (idCalendar, event) => {
             .api(`me/calendars/${idCalendar}/events`)
             .post(event)
             .then((response) =>
-                resolve(response))
+                resolve(returnCreateEventParser(response)))
             .catch((err) => {
                 reject(err);
             });
@@ -268,23 +268,38 @@ export const updateCalendarEvent = (calendar, eventId, event) =>
 
     });
 
-export const deleteCalendarEvent = (calendar, eventId) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.events
-            .delete({
-                calendarId: calendar,
-                eventId: eventId,
-                sendUpdates: 'all'
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+export const deleteCalendarEvent = (calendar, eventId) => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/events/${eventId}`)
+            .delete()
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+}
+
+//export const deleteCalendarEvent = (calendar, eventId) =>
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.events
+//            .delete({
+//                calendarId: calendar,
+//                eventId: eventId,
+//                sendUpdates: 'all'
+//            })
+
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
+
+//    });
 
 export const requestRecurringEvent = (calendar, eventId) =>
     new Promise((resolve, reject) => {
@@ -468,6 +483,34 @@ function listEventsParser(list) {
     result = ({ result: items });
 
     return result
+}
+
+function returnCreateEventParser(list) {
+    let listParse = []; 
+    listParse.push({
+        attendees: list.attendees,
+        created: list.createdDateTime,
+        creator: { email: "", self: true },
+        description: list.bodyPreview,
+        end: { dateTime: list.end.dateTime, timeZone: list.end.timeZone },
+        etag: "",
+        htmlLink: "",
+        iCalUID: list.iCalUId,
+        id: list.id,
+        kind: "calendar#event",
+        organizer: { email: "", self: true },
+        recurrence: [list.recurrence],
+        reminders: { useDefault: true },
+        sequence: 0,
+        start: { dateTime: list.start.dateTime, timeZone: list.start.timeZone },
+        status: "confirmed",
+        summary: list.subject,
+        updated: list.lastModifiedDateTime,
+        __proto__: Object,
+    })
+
+    let listToReturn = listParse[0]
+    return listToReturn;
 }
 
 

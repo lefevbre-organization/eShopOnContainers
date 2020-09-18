@@ -69,7 +69,12 @@ export class Eventtype extends React.Component {
 
     onModifyEventTypeState(args) {
         this.setState({ updatemode: true })
-        let idEventType = args.target.parentElement.lastChild.innerText       
+        let idEventType = args.target.parentElement.lastChild.innerText   
+        if (idEventType == undefined) {
+            if (this.state.idEvent != undefined || this.state.idEvent != "") {
+                idEventType = this.state.idEvent
+            }
+        }
         var itemE = this.eventTypeData.find(function (e) {
             return e.Id == idEventType
         })
@@ -197,6 +202,14 @@ export class Eventtype extends React.Component {
                     else {
                         throw true
                     }                   
+                }
+
+                dataEventType = []
+
+                dataEventType = {
+                    "Id": result.data.idEvent,
+                    "Text": this.TitleTypeEventObj.value,
+                    "Color": this.state.color
                 }
                     
                 this.toastObj.timeOut = 1000;
