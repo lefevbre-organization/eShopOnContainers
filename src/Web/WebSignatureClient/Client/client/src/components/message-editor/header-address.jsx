@@ -98,7 +98,6 @@ export class HeaderAddress extends Component {
           visible={this.state.hideContactDialog} 
           animationSettings={this.animationSettings} 
           width='45%'
-          height='80%'
           ref={dialog => this.contactDialog = dialog} 
           close={this.dialogClose}
         >

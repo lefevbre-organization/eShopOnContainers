@@ -34,7 +34,8 @@
     "load": "Cargando..."
   },
   "sideBar": {
-    "newRequest": "Nueva firma",
+    "newRequest": "Nuevo envío",
+    "typeSending": "Selecciona el tipo de envio",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",

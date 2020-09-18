@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
+import i18n from 'i18next';
 import MenuContainer from '../folders/menu-container';
 import { DroppablePayloadTypes } from '../folders/menu-list';
 import IconButton from '../buttons/icon-button';
@@ -15,6 +16,7 @@ import { getAvailableSignatures } from '../../services/api-signaturit';
 import { setAvailableSignatures } from '../../actions/lefebvre';
 import { setTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import SendingTypeSelector from './sending-type-selector/sending-type-selector';
 
 class SideBar extends Component {
   constructor(props) {
@@ -22,12 +24,14 @@ class SideBar extends Component {
     super(props);
     this.state = {
       dragOver: false,
-      hideAlertDialog: false
+      hideAlertDialog: false,
+      hideSendingTypeDialog: false
     };
     this.handleOnDragOver = this.onDragOver.bind(this);
     this.handleOnDragLeave = this.onDragLeave.bind(this);
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
+    this.handleOnNewSending = this.onNewSending.bind(this);
     
     //Sin firmas 
     this.animationSettings = { effect: 'None' };
@@ -54,6 +58,12 @@ class SideBar extends Component {
         hideAlertDialog: false
     });
     //this.alertButtonEle.style.display = 'inline-block';
+  }
+
+  sendTypeDialogClose() {
+    this.setState({
+      hideSendingTypeDialog: false
+  });
   }
 
   dialogOpen() {
@@ -159,7 +169,7 @@ class SideBar extends Component {
               style={{ height: 48 }}
               className={`${mainCss['mdc-button']}
                       ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
-              onClick={this.handleOnNewMessage}>
+              onClick={this.handleOnNewSending}>
               {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
               <img
                 className={styles.plusbuttton}
@@ -176,6 +186,20 @@ class SideBar extends Component {
         <PerfectScrollbar>
           <MenuContainer collapsed={collapsed} />
         </PerfectScrollbar>
+        <DialogComponent 
+          id="sendingTypeDialog" 
+          header={i18n.t('sideBar.typeSending')} 
+          visible={this.state.hideSendingTypeDialog} 
+          animationSettings={this.animationSettings} 
+          width='30%' 
+          showCloseIcon={true} 
+          // isModal={true}
+          open={this.dialogOpen.bind(this)} 
+          close={this.sendTypeDialogClose.bind(this)} >
+          <SendingTypeSelector 
+            onNewMessage={this.handleOnNewMessage}
+          />
+        </DialogComponent>
         <DialogComponent 
           id="noSignaturesDialog" 
           header=' ' 
@@ -201,25 +225,56 @@ class SideBar extends Component {
               z-index: 1001;
               //transform: translateY(+200%);
             }
+
+            #sendingTypeDialog{
+              top: 17% !important;
+            }
+
+            #sendingTypeDialog .e-dlg-header{
+              width: 60% !important;
+            }
+
             #noSignaturesDialog_dialog-header, #noSignaturesDialog_title, #noSignaturesDialog_dialog-content, .e-footer-content{
               background: #c5343f;
               color: #fff;
               display:flex;
             }
+
             .e-dlg-header {
               width: 1% !important;
             }
+
+            .e-dialog .e-icon-dlg-close::before {
+              content: '\e7fc';
+              position: relative;
+              font-size: 15px;
+            }
+
+            #sendingTypeDialog_dialog-header > button > span::before {
+              color: #001978;
+            }
+
             noSignaturesDialog .e-btn.e-flat.e-primary {
               color: #fff !important;
             }
+
             .material-icons {
               font-size: 18px !important;
               color: #001978 !important;
+            }
+
+            .right-icon {
+              position: absolute;
+              right: 0px;
             }
           `}
         </style>
       </aside>
     );
+  }
+
+  onNewSending() {
+    this.setState({hideSendingTypeDialog: true});
   }
 
   onNewMessage() {
@@ -255,6 +310,7 @@ class SideBar extends Component {
         }
       }
     })
+    this.sendTypeDialogClose();
   }
 
   onDragOver(event) {

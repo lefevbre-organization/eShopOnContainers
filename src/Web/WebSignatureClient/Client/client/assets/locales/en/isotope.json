@@ -15,7 +15,8 @@
     "load": "Loading..."
   },
   "sideBar": {
-    "newRequest": "New signature",
+    "newRequest": "New sending",
+    "typeSending": "Select the type of sending",
     "hide": "Hide sidebar",
     "errors": {
       "noSSL": "Connection to server is not secure",
