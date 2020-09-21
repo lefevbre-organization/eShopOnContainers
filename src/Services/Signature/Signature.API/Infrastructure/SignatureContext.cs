@@ -77,6 +77,7 @@ namespace Signature.API.Infrastructure
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserSignatures))) { BsonClassMap.RegisterClassMap<UserSignatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseBrandings))) { BsonClassMap.RegisterClassMap<BaseBrandings>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(SignEventInfo))) { BsonClassMap.RegisterClassMap<SignEventInfo>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserEmails))) { BsonClassMap.RegisterClassMap<UserEmails>(); }
             //if (!BsonClassMap.IsClassMapRegistered(typeof(Signature.API.Model.EventInfo))) { BsonClassMap.RegisterClassMap<Signature.API.Model.EventInfo>(); }
         }
 
@@ -126,6 +127,13 @@ namespace Signature.API.Infrastructure
         public IMongoCollection<BaseBrandings> TestBrandingsTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<BaseBrandings>(_settings.Value.CollectionTest);
+        }
+
+        public IMongoCollection<UserEmails> Emails => Database.GetCollection<UserEmails>(_settings.Value.CollectionEmails);
+
+        public IMongoCollection<UserEmails> EmailsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserEmails>(_settings.Value.CollectionEmails);
         }
 
         //public IMongoCollection<SignatureMaster> SignatureMasters
