@@ -160,8 +160,14 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
     }
 
     case ActionTypes.APPLICATION_TITLE: {
-      return {...state, title: action.payload
+      return {
+      ...state, title: action.payload
+     }
     }
+    case ActionTypes.APPLICATION_APP_TITLE: {
+      return {
+      ...state, appTitle: action.payload
+     }
     }
     default:
       return state;

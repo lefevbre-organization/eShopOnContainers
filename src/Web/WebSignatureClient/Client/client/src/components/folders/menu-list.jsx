@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import i18n from '../../services/i18n';
 
 import MenuItem from './menu-item';
-import {selectFolder, setTitle, editMessage} from '../../actions/application';
+import {selectFolder, setTitle, editMessage, setAppTitle} from '../../actions/application';
 import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
@@ -14,6 +14,7 @@ import styles from './menu-list.scss';
 import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import { AccordionComponent, AccordionItemDirective, AccordionItemsDirective } from '@syncfusion/ej2-react-navigations';
 import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
 
 export const DroppablePayloadTypes = {
@@ -25,17 +26,76 @@ export class MenuListClass extends Component {
   constructor(props){
     super(props);
     this.state = {
-      hideConfirmDialog: false
+      hideConfirmDialog: false,
+      isDisable: true
     }
+
+  }
+
+  expanding = (e) => {
+    if(e.index == 0) {
+      this.props.setAppTitle(i18n.t('topBar.app'));
+    } else {
+      this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+    }
+  }
+
+  content = () => {
+    const { collapsed } = this.props;
+    const option1 = 'En progreso';
+    const option2 = 'Completadas';
+    const option3 = 'Mostrar todas';
+    const option4 = 'Canceladas';
+    return (
+      <ul className={`${styles['nav-firmas']}`}>
+        <li className={`${styles.todas}`}>
+          <a href="#" id={option3} onClick={event => this.onClick(event, option3)}>
+            <span className="lf-icon-folder"> 
+            </span> 
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterAll')}</span>
+             } 
+          </a>
+        </li>
+        <li className={`${styles['en-progreso']}`}>
+          <a href="#" id={option1} onClick={event => this.onClick(event, option1)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterInProgress')}</span>
+            } 
+          </a>
+        </li>
+        <li className={`${styles.completadas}`}>
+          <a href="#" id={option2} onClick={event => this.onClick(event, option2)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterCompleted')}</span>
+            } 
+          </a>
+        </li>
+        <li className={`${styles.canceladas}`}>
+          <a href="#" id={option4} onClick={event => this.onClick(event, option4)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterCancelled')}</span>
+            } 
+          </a>
+        </li>
+      </ul>
+ 
+    ); 
   }
 
   render() {
     const { collapsed } = this.props;
     const selectedFilter = this.props.application.signaturesFilterKey;
-    const option1 = 'En progreso';
-    const option2 = 'Completadas';
-    const option3 = 'Mostrar todas';
-    const option4 = 'Canceladas';
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center; 
@@ -58,78 +118,58 @@ export class MenuListClass extends Component {
           buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
       }
     ];
-
-
     return (
         // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-        { 
-         collapsed ?  
-         <div className={`${styles['title-nav-firmas']}`}>
-            <span className="lf-icon-signature">
-            </span>
-          </div> :  
-          <div className={`${styles['title-nav-firmas']}`}>
-            <span className="lf-icon-signature">
-            </span>{i18n.t('sideBar.filterMenu')}
-          </div>
-          }
-          <ul className={`${styles['nav-firmas']}`}>
-                <li className={`${styles.todas}`}>
-                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}>
-                      <span className="lf-icon-folder"> 
-                      </span> 
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterAll')}</span>
-                       } 
-                    </a>
-                </li>
-                <li className={`${styles['en-progreso']}`}>
-                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}>
-                      <span className="lf-icon-folder">
-                      </span>
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterInProgress')}</span>
-                      } 
-                    </a>
-                </li>
-                <li className={`${styles.completadas}`}>
-                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}>
-                      <span className="lf-icon-folder">
-                      </span>
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterCompleted')}</span>
-                      } 
-                    </a>
-                </li>
-                <li className={`${styles.canceladas}`}>
-                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}>
-                      <span className="lf-icon-folder">
-                      </span>
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterCancelled')}</span>
-                      } 
-                    </a>
-                </li>
-            </ul>
-            <DialogComponent 
-              id="confirmDialog" 
-              header=' ' 
-              visible={this.state.hideConfirmDialog} 
-              showCloseIcon={true} 
-              animationSettings={this.animationSettings} 
-              width='60%' 
-              content={confirmDiscard} 
-              ref={dialog => this.confirmDialogInstance = dialog} 
-              //target='#target' 
-              buttons={confirmButtons} 
-              open={() => this.dialogOpen} 
-              close={() => this.dialogClose}
-            />
+          <AccordionComponent expandMode='Single' expanding={this.expanding}  >
+            <div>  
+              { 
+               collapsed ?  
+                <div className={`${styles['title-nav-firmas']}`} >
+                 <span className="lf-icon-signature">
+                 </span>
+                </div> :  
+                <div className={`${styles['title-nav-firmas']}`}>
+                 <span className="lf-icon-signature">
+                 </span>{i18n.t('sideBar.filterMenu')}
+                </div>
+              }  
+              <div>
+               {this.content()}
+              </div>
+            </div>
+            <div className={'event-disable'}>
+              { 
+               collapsed ?  
+                <div className={`${styles['title-nav-firmas']}`}>
+                 <span className="lf-icon-mail">
+                 </span>
+                </div> :  
+                <div className={`${styles['title-nav-firmas']}`}>
+                 <span className="lf-icon-mail">
+                 </span>{i18n.t('sideBar.filterMenuEmail')}
+                </div>
+              }  
+              <div>
+               {this.content()}
+              </div>
+            </div>
+          </AccordionComponent>
+        
+          <DialogComponent 
+            id="confirmDialog" 
+            header=' ' 
+            visible={this.state.hideConfirmDialog} 
+            showCloseIcon={true} 
+            animationSettings={this.animationSettings} 
+            width='60%' 
+            content={confirmDiscard} 
+            ref={dialog => this.confirmDialogInstance = dialog} 
+            //target='#target' 
+            buttons={confirmButtons} 
+            open={() => this.dialogOpen} 
+            close={() => this.dialogClose}
+          />
           {/* <MenuItem
             label={'Firmas'} 
             graphic={'input'}
@@ -141,8 +181,47 @@ export class MenuListClass extends Component {
               <MenuItem label={option2} graphic={'stop'} selected = {option2 === selectedFilter} onClick={event => this.onClick(event, option2)}/>
               <MenuItem label={option3} graphic={'stop'} selected = {option3 === selectedFilter} onClick={event => this.onClick(event, option3)}/>
             </nav>    */}
+
+          <style jsx global>
+            {` 
+              .e-acrdn-header {
+               padding: 12px 8px 7px 10px !important;
+               background: #001978;
+              }
+              .e-accordion .e-acrdn-item .e-acrdn-header:hover {
+                background: #001978;
+              }
+              .e-accordion .e-acrdn-item .e-acrdn-header:active {
+                background: #001978 !important;
+              }
+              .e-accordion .e-acrdn-item .e-acrdn-header:focus {
+                background: #001978 !important;
+              }
+              .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header, 
+              .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header {
+                background: #001978;
+              }
+              .e-accordion .e-acrdn-item 
+              .e-acrdn-header .e-toggle-icon {
+                display: none;
+              }
+              .e-accordion .e-acrdn-item .e-acrdn-panel .e-acrdn-content {
+                padding: 0px;
+              }
+              .event-disable {
+                pointer-events: none;
+                opacity: 0.5;
+                background: #CCC;
+              }
+            `}
+          </style>
         </div>
     );
+  }
+
+  expanded = (e) => {
+    console.log(e);
+    
   }
 
   onClick(event, key) {
@@ -210,6 +289,7 @@ const mapDispatchToProps = dispatch => ({
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   setTitle: title => dispatch(setTitle(title)),
+  setAppTitle: title => dispatch(setAppTitle(title)),
   close: (application) => {
     dispatch(editMessage(null));
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)

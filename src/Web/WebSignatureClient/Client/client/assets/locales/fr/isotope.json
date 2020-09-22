@@ -34,7 +34,7 @@
     "load": "Loading..."
   },
   "sideBar": {
-    "newRequest": "Nouvelle envoi",
+    "newRequest": "Nouvelle requête",
     "typeSending": "Sélectionnez le type d'envoi",
     "hide": "Ocultar barra lateral",
     "errors": {
@@ -42,10 +42,13 @@
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
     "filterMenu": "Signatures demandées",
+    "filterMenuEmail": "Email certifié",
     "filterAll": "Montrer toutes",
     "filterInProgress": "En progrés",
     "filterCompleted": "Complétées",
-    "filterCancelled": "Anulées"
+    "filterCancelled": "Anulées",
+    "signature": "Signature avancée",
+    "certifiedEmail": "Email certifié"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -63,7 +66,8 @@
       "delete": "Borrar",
       "cancel": "Cancelar"
     },
-    "app": "SIGNATURE"
+    "app": "SIGNATURE",
+    "filterMenuEmail": "Email certifié",
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",

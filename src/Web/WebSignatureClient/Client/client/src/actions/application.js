@@ -1,6 +1,7 @@
 import {ActionTypes} from './action-types';
 
 export const setTitle = (title) => ({type: ActionTypes.APPLICATION_TITLE, payload: title});
+export const setAppTitle = (appTitle) => ({type: ActionTypes.APPLICATION_APP_TITLE, payload: appTitle});
 export const backendRequest = () => ({type: ActionTypes.APPLICATION_BE_REQUEST});
 export const backendRequestCompleted = () => ({type: ActionTypes.APPLICATION_BE_REQUEST_COMPLETED});
 export const clearUserCredentials = () => ({type: ActionTypes.APPLICATION_USER_CREDENTIALS_CLEAR});

@@ -188,10 +188,10 @@ class SideBar extends Component {
         </PerfectScrollbar>
         <DialogComponent 
           id="sendingTypeDialog" 
-          header={i18n.t('sideBar.typeSending')} 
+          // header={i18n.t('sideBar.typeSending')} 
           visible={this.state.hideSendingTypeDialog} 
           animationSettings={this.animationSettings} 
-          width='30%' 
+          width='35%' 
           showCloseIcon={true} 
           // isModal={true}
           open={this.dialogOpen.bind(this)} 
@@ -240,6 +240,11 @@ class SideBar extends Component {
               display:flex;
             }
 
+            #sendingTypeDialog_dialog-header, #sendingTypeDialog_title, #sendingTypeDialog_dialog-content, .e-footer-content{
+              background: #001978;
+              color: #fff;
+            }
+
             .e-dlg-header {
               width: 1% !important;
             }
@@ -247,11 +252,7 @@ class SideBar extends Component {
             .e-dialog .e-icon-dlg-close::before {
               content: '\e7fc';
               position: relative;
-              font-size: 15px;
-            }
-
-            #sendingTypeDialog_dialog-header > button > span::before {
-              color: #001978;
+              font-size: 12px
             }
 
             noSignaturesDialog .e-btn.e-flat.e-primary {

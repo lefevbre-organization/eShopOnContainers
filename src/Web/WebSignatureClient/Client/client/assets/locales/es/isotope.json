@@ -34,7 +34,7 @@
     "load": "Cargando..."
   },
   "sideBar": {
-    "newRequest": "Nuevo envío",
+    "newRequest": "Nueva Petición",
     "typeSending": "Selecciona el tipo de envio",
     "hide": "Ocultar barra lateral",
     "errors": {
@@ -42,10 +42,13 @@
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
     "filterMenu": "FIRMAS SOLICITADAS",
+    "filterMenuEmail": "EMAIL CERTIFICADO",
     "filterAll": "Mostrar todas",
     "filterInProgress": "En progreso",
     "filterCompleted": "Completadas",
-    "filterCancelled": "Canceladas"
+    "filterCancelled": "Canceladas",
+    "signature": "Firma avanzada",
+    "certifiedEmail": "Email certificado"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -64,7 +67,8 @@
       "delete": "Borrar",
       "cancel": "Cancelar"
     },
-    "app": "FIRMA"
+    "app": "FIRMA",
+    "certifiedEmail": "EMAIL CERTIFICADO"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",

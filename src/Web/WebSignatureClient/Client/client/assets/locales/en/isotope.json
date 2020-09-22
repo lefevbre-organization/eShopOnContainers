@@ -15,7 +15,7 @@
     "load": "Loading..."
   },
   "sideBar": {
-    "newRequest": "New sending",
+    "newRequest": "New request",
     "typeSending": "Select the type of sending",
     "hide": "Hide sidebar",
     "errors": {
@@ -23,10 +23,13 @@
       "diskQuotaExceeded": "Disk quota exceeded (IndexedDB)"
     },
     "filterMenu": "SIGNATURES",
+    "filterMenuEmail": "CERTIFIED EMAIL",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
-    "filterCancelled": "Cancelled"
+    "filterCancelled": "Cancelled",
+    "signature": "Advanced signature",
+    "certifiedEmail": "Certified email"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -45,7 +48,8 @@
       "delete": "Delete",
       "cancel": "Cancel"
     },
-    "app": "SIGNATURE"
+    "app": "SIGNATURE",
+    "filterMenuEmail": "CERTIFIED EMAIL",
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
