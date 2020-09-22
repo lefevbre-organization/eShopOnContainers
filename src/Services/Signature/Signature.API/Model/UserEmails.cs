@@ -17,58 +17,58 @@
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [JsonProperty("user", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("user")]
         public string User { get; set; }
 
-        [JsonProperty("brandings", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("brandings")]
         public List<UserBranding> Brandings { get; set; }
 
-        [JsonProperty("certifiedEmails", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("certifiedEmails")]
         public List<CertifiedEmail> CertifiedEmails { get; set; }
     }
 
     public partial class CertifiedEmail
     {
-        [JsonProperty("guid", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("guid")]
         public string Guid { get; set; }
 
-        [JsonProperty("externalId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("externalId")]
         public string ExternalId { get; set; }
 
-        [JsonProperty("app", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("app")]
         public string App { get; set; }
 
-        [JsonProperty("created_at", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("created_at")]
         public string CreatedAt { get; set; }
 
-        [JsonProperty("type", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("type")]
         public string CertificationType { get; set; }
 
-        [JsonProperty("certificate", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("certificate")]
         public List<Certificate> Certificates { get; set; }
     }
 
     public partial class Certificate
     {
-        [JsonProperty("email", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("email")]
         public string Email { get; set; }
 
-        [JsonProperty("name", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("externalId", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("externalId")]
         public string ExternalId { get; set; }
 
-        [JsonProperty("document", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("document")]
         public EmailDocument Document { get; set; }
     }
 
     public partial class EmailDocument
     {
-        [JsonProperty("externalFileName", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("externalFileName")]
         public string ExternalFileName { get; set; }
 
-        [JsonProperty("internalInfo", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("internalInfo")]
         public InternalInfo InternalInfo { get; set; }
     }
 

@@ -273,6 +273,97 @@ namespace Signature.API.Infrastructure.Services
 
             return response;
         }
+
+        public async Task<IRestResponse> GetEmails(string user)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails.json?lefebvre_id={user}");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+            //Console.WriteLine(response.Content);
+
+            return response;
+        }
+
+        public async Task<IRestResponse> CreateEmail(CreateEmail emailInfo)
+        {
+            Console.WriteLine("START CreateEmail");
+            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/emails.json");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails.json");
+            var i = 0;
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Adding parameters");
+
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            foreach (Recipient recipient in emailInfo.recipients)
+            {
+                Console.WriteLine($"Adding recipient_{i}");
+
+                request.AddParameter($"recipients[to][{i}][name]", recipient.name);
+                request.AddParameter($"recipients[to][{i}][email]", recipient.email);
+                i += 1;
+            }
+            i = 0;
+            foreach (Recipient recipient in emailInfo.cc)
+            {
+                Console.WriteLine($"Adding cc_{i}");
+                request.AddParameter($"recipients[cc][{i}][name]", recipient.name);
+                request.AddParameter($"recipients[cc][{i}][email]", recipient.email);
+                i += 1;
+            }
+            i = 0;
+            foreach (UserFile file in emailInfo.files)
+            {
+                Console.WriteLine($"Adding attachment_{i}");
+                request.AddFileBytes($"attachments[{i}]", file.file, file.fileName);
+                i += 1;
+            }
+            i = 0;
+            foreach (CustomField field in emailInfo.customFields)
+            {
+                Console.WriteLine($"Adding CustomField: {field.name} -  {field.value} ");
+                request.AddParameter($"data[{field.name}]", field.value);
+            }
+
+            Console.WriteLine($"Adding type: {emailInfo.certificationType}");
+            request.AddParameter($"type", emailInfo.certificationType);
+
+            Console.WriteLine($"Adding subject");
+            request.AddParameter("subject", emailInfo.subject);
+            Console.WriteLine($"Adding body");
+            request.AddParameter("body", emailInfo.body);
+            Console.WriteLine($"Adding branding_id");
+            request.AddParameter("branding_id", emailInfo.brandingId);
+
+            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            Console.WriteLine($"Response: {response.Content.ToString()}");
+
+            Console.WriteLine("END CreateSignature");
+
+            return response;
+        }
+
+        public async Task<IRestResponse> DownloadCertification(string emailId, string certificationId)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails/{emailId}/certificates/{certificationId}/download/audit_trail");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = await client.ExecuteAsync(request);
+            //Console.WriteLine(response.Content);
+
+            return response;
+        }
+
         #endregion
     }
 }

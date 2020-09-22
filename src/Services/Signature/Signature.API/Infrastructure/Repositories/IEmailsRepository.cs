@@ -12,6 +12,8 @@
     {
         Task<Result<UserEmails>> GetUser(string user);
 
+        Task<Result<List<UserEmails>>> GetAll();
+
         Task<Result<UserEmails>> Create(UserEmails email);
 
         Task<Result<bool>> Remove(string user);

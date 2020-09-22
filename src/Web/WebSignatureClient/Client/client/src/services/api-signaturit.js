@@ -662,7 +662,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}&offset=${offset}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/getSignatures/${filters}&offset=${offset}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -809,7 +809,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newSignature`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/newSignature`, requestOptions)
       .then(response => {
         if (response.ok){
           return response.json();
@@ -840,7 +840,7 @@ export const downloadSignedDocument2 = (signId, docId, fileName, auth) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/signedDocument/${docId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/download/${signId}/signedDocument/${docId}`, requestOptions)
       .then(response => response.blob())
       .then(blob => {
         console.log(blob);
@@ -869,7 +869,7 @@ export const downloadTrailDocument2 = (signId, docId, fileName, auth) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/trailDocument/${docId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/download/${signId}/trailDocument/${docId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);
@@ -884,7 +884,6 @@ export const downloadTrailDocument2 = (signId, docId, fileName, auth) => {
     .catch(error => console.log('error', error));
 }
 
-
 // Downloads the attachments information of a signed document calling internal proxy api
 export const downloadAttachments2 = (signId, docId, fileName, auth) => {
   var myHeaders = new Headers();
@@ -898,7 +897,7 @@ export const downloadAttachments2 = (signId, docId, fileName, auth) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/attachments/${docId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/download/${signId}/attachments/${docId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);
@@ -924,7 +923,7 @@ export const sendReminder2 = async (signatureId, auth) => {
   redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/reminder/${signatureId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/reminder/${signatureId}`, requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -942,7 +941,7 @@ export const cancelSignature2 = async (signatureId, auth) => {
     redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/cancelSignature/${signatureId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/cancelSignature/${signatureId}`, requestOptions)
     .then(response => response.text())
     .then(result => {
       console.log(result);
@@ -999,7 +998,7 @@ export const createBranding2 = async (template, auth) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newBranding`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/newBranding`, requestOptions)
       .then(response => {
         if (response.ok){
           return response.json();
@@ -1017,6 +1016,60 @@ export const createBranding2 = async (template, auth) => {
         reject(error)
       });
   });
+}
+
+
+export function preloadEmails2(dispatch, filters, auth) {
+  return new Promise((resolve, reject) => {
+
+    let offset = 0;
+
+    getEmails(filters, auth, offset)
+    .then(emails => {
+      emails = calculateStatusEmails(emails);
+      console.log({signatures});
+      dispatch(preDownloadEmails(emails));
+      resolve(emails);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getEmails = async (filters, auth, offset, emails = []) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${auth}`);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/getEmails/${filters}&offset=${offset}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        emails = emails.concat(result);
+        if (result.length === 100){
+          resolve(getEmails(filters, auth, offset + result.length, emails));
+        } else {
+          // console.log('Datos recibidos de signaturit - GetSignatures:');
+          // console.log({signatures});
+          // signatures = calculateStatus(signatures);
+          // console.log({signatures});
+          // dispatch(preDownloadSignatures(signatures));
+          resolve(emails);
+        }
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
 }
 
 

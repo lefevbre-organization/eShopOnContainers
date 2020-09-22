@@ -12,6 +12,8 @@
     {
         Task<Result<UserEmails>> GetEmails(string user);
 
+        Task<Result<List<UserEmails>>> GetAll();
+
         Task<Result<UserEmails>> CreateEmail(UserEmails signature);
 
         Task<Result<bool>> Remove(string user);

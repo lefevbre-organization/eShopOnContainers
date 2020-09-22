@@ -96,6 +96,31 @@
             return result;
         }
 
+        public async Task<Result<List<UserEmails>>> GetAll()
+        {
+            var result = new Result<List<UserEmails>>();
+
+            try
+            {
+                result.data = await _context.Emails.Find(f => true).ToListAsync();
+
+                if (result.data == null)
+                {
+                    TraceMessage(result.errors, new Exception($"No se encuentra información"), "1003");
+                }
+                else
+                {
+                    var info = result.data?.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al obtener datos: {ex.Message}"); ;
+            }
+
+            return result;
+        }
+
         public async Task<Result<UserEmails>> Create(UserEmails userEmail)
         {
             var result = new Result<UserEmails>();
@@ -240,13 +265,13 @@
                 {
                     resultUpdate = await _context.Emails.UpdateManyAsync(
                         f => true,
-                        Builders<UserEmails>.Update.Set("brandings", new BsonArray()));
+                        Builders<UserEmails>.Update.Set("Brandings", new BsonArray()));
                 }
                 else
                 {
                     resultUpdate = await _context.Emails.UpdateManyAsync(
                         u => u.User == user,
-                        Builders<UserEmails>.Update.Set("brandings", new BsonArray())
+                        Builders<UserEmails>.Update.Set("Brandings", new BsonArray())
                     );
                 };
 
@@ -283,7 +308,7 @@
 
         #endregion
 
-        #region Helpers
+         #region Helpers
         private string ManageCreateSignature(string msgError, string msgModify, string msgInsert, Result<UserEmails> result, ReplaceOneResult resultReplace)
         {
             if (resultReplace.IsAcknowledged)

@@ -22,13 +22,13 @@
 
     [Route("api/v1/CertifiedEmails")]
     [ApiController]
-    public class CertifiedEmailsController : ControllerBase
+    public class UserEmailsController : ControllerBase
     {
         private readonly IEmailsService _emailsService;
         private readonly SignatureSettings _settings;
         private readonly IConfiguration _configuration;
 
-        public CertifiedEmailsController(
+        public UserEmailsController(
             IEmailsService emailsService
             , IOptionsSnapshot<SignatureSettings> signatureSettings
             , IConfiguration configuration
@@ -56,8 +56,22 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet]
+        [Route("all")]
+        [ProducesResponseType(typeof(Result<CertifiedEmail>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<CertifiedEmail>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAll()
+        {
+            
+            var result = await _emailsService.GetAll();
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+
         // Create a new user with a certified email
         [HttpPost]
+        [Route("addUser")]
         [ProducesResponseType(typeof(Result<UserEmails>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserEmails>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostUser([FromBody] UserEmails emailIn)
@@ -98,6 +112,24 @@
                 return BadRequest("values invalid. Must be a valid user, branding app and branding externalId");
 
             var result = await _emailsService.UpSertBranding(user, brandingIn);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+
+        [HttpPost]
+        [Route("{user}/resetUserBranding")]
+        [ProducesResponseType(typeof(Result<UserSignatures>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserSignatures>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ResetUserBrandings([FromHeader] string password, [FromRoute] string user)
+        {
+            if (password != _configuration.GetValue<string>("EventController"))
+                return Unauthorized();
+
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("values invalid. Must be a valid user or \"all\"");
+
+            var result = await _emailsService.ResetUserBrandings(user);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

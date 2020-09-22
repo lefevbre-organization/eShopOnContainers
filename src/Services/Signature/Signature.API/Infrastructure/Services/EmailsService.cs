@@ -33,7 +33,7 @@
 
         public EmailsService(
             IOptions<SignatureSettings> settings
-            ,IEmailsRepository emailsRepository
+            , IEmailsRepository emailsRepository
             , IConfiguration configuration
             //, IEventBus eventBus
             )
@@ -51,6 +51,11 @@
             return await _emailsRepository.GetUser(user);
         }
 
+        public async Task<Result<List<UserEmails>>> GetAll()
+        {
+            return await _emailsRepository.GetAll();
+        }
+            
         public async Task<Result<UserEmails>> CreateEmail(UserEmails email)
         {
             return await _emailsRepository.Create(email);
