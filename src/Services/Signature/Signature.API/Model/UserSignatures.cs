@@ -1,11 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-//namespace Signature.API.Model
+﻿//namespace Signature.API.Model
 //{
 //    [BsonIgnoreExtraElements]
 //    public class UserSignatures// : MongoModel
@@ -44,6 +37,9 @@ using System.Threading.Tasks;
 
 namespace Signature.API.Model
 {
+    using MongoDB.Bson;
+    using MongoDB.Bson.Serialization.Attributes;
+
     using System;
     using System.Collections.Generic;
 

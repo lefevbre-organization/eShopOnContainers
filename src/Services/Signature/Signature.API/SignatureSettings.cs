@@ -9,6 +9,7 @@
         public string CollectionSignatureEvents { get; set; }
         public string CollectionEvents { get; set; }
         public string CollectionTest { get; set; }
+        public string CollectionEmails { get; set; }
 
         //public string CollectionMasters { get; set; }
 

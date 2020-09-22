@@ -5,7 +5,7 @@ import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import i18n from 'i18next';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
-import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api/accounts";
+import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api_graph/accounts";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import './eventtype.scss';
 

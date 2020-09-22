@@ -62,3 +62,5 @@ env:
       value: 'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
       value: 'https://lexbox-websignature.lefebvre.es/completed'
+    - name: Signaturit
+      value: 'rRSMTouEvOtQsisUtwpiKBSxVxemmfNCMqUIqvzzwzVsxZsYXxIkyzKOWLgCJhSsBwTgiaNWklPFVtcGBTEEDq'

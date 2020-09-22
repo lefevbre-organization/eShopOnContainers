@@ -106,6 +106,7 @@ export class HeaderAddress extends Component {
             onAddressAdd={this.props.onAddressAdd}
             dialogClose={this.dialogClose}
             lefebvre={lefebvre}
+            addresses={addresses}
           />
          
         </DialogComponent> : null}
@@ -123,7 +124,7 @@ export class HeaderAddress extends Component {
   }
 
   fieldClick() {
-    this.inputRef.current.input.focus();
+    this.inputRef.current.input;
   }
 
   /**

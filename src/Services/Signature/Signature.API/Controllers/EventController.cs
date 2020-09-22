@@ -107,7 +107,7 @@
             try
             {
                 
-                if (password != _configuration.GetValue<string>("EventControllerPass"))
+                if (password != _configuration.GetValue<string>("EventController"))
                 {
                     return Unauthorized();
                 }

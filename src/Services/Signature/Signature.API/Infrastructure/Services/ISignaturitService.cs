@@ -26,5 +26,11 @@
 
         Task<RestSharp.IRestResponse> CreateBranding(BrandingConfiguration brandingInfo);
 
+        Task<RestSharp.IRestResponse> GetEmails(string user);
+
+        Task<RestSharp.IRestResponse> CreateEmail(CreateEmail emailInfo);
+
+        Task<RestSharp.IRestResponse> DownloadCertification(string emailId, string certificationId);
+
     }
 }

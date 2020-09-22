@@ -3,6 +3,7 @@ import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import i18n from 'i18next';
 import { getContactsCentinela } from '../../../services/api-signaturit';
 import style from './contacts.scss';
+import Checkbox from "../../form/checkbox/checkbox";
 
 const Contacts = (props) => {
   
@@ -36,9 +37,13 @@ const Contacts = (props) => {
       const user = props.lefebvre.userId;
       const contactsCentinela = await getContactsCentinela(user);
       const newContactsCentinela = [];
-      contactsCentinela.data.forEach(contact => {
-      contact.checked = false;
-      newContactsCentinela.push(contact);
+       contactsCentinela.data.forEach(contact => {
+        const emailExists = props.addresses.some(address => {
+           return (address.address === contact.email)
+         });
+         console.log('emailExists', emailExists)
+        contact.checked = emailExists;
+        newContactsCentinela.push(contact);
       });
       setContacts([...newContactsCentinela]);        
     }
@@ -63,6 +68,12 @@ const Contacts = (props) => {
           });
         }
     });
+    setContacts([]); 
+    props.dialogClose();
+  }
+
+  const dialogClose = () => {
+    setContacts([]); 
     props.dialogClose();
   }
 
@@ -76,7 +87,6 @@ const Contacts = (props) => {
                   placeholder={i18n.t('contacts.search')} 
                   className={style['serch-contacts']} 
                   onChange={filterContact}  
-                  ref={input => input && input.focus()}
                    />
                   <span className="lf-icon-search position-icon"></span>
               </div>
@@ -95,6 +105,8 @@ const Contacts = (props) => {
           <ul className="contactos">
            {contacts
            .filter(contact => filter === '' 
+           || contact.name.includes(filter)
+           || contact.email.includes(filter)
            || contact.name.toLowerCase().includes(filter)
            || contact.email.toLowerCase().includes(filter)
            || contact.name.toUpperCase().includes(filter)
@@ -102,15 +114,23 @@ const Contacts = (props) => {
            .map((contact, i) => 
               <li key={i}>
                 <label>
-                  <input type="checkbox"  
+                  <input 
+                  type="checkbox"  
                   checked={contact.checked} 
                   onChange={handleChecked}
                   name="checked"
                   value={i}
                   />
+                   <Checkbox
+                   checked={contact.checked} 
+                   onChange={handleChecked}
+                   name="checked"
+                   value={i}
+                />
                   <span>{contact.name}</span>
                   <div className={style['email']}>{contact.email}</div>
                 </label>
+               
               </li> 
            )}
           </ul>
@@ -118,7 +138,7 @@ const Contacts = (props) => {
            <div className="col s5 select-contacts">{numberCheckeds}/{contacts.length} {i18n.t('contacts.selected')}</div>
                  <div className="col s7 right-align">
                       <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}
-                      onClick={props.dialogClose} >
+                      onClick={dialogClose} >
                         {i18n.t('expirationWidget.cancelButton')} 
                       </button>
                       <button className={`${style['btn-modal']} ${style['btn-gen']}`}
@@ -132,7 +152,7 @@ const Contacts = (props) => {
             {` 
               #contactDialog_dialog-content {
                 padding: 0px !important;
-                overflow: hidde;
+                overflow: hidden;
               } 
               .position-icon {
                 top: -31px;

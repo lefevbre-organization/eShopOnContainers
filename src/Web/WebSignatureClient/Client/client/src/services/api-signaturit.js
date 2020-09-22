@@ -662,7 +662,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}&offset=${offset}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/getSignatures/${filters}&offset=${offset}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -830,7 +830,7 @@ export const getCertifiedEmails = async () => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newSignature`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/newSignature`, requestOptions)
       .then(response => {
         if (response.ok){
           return response.json();
@@ -861,7 +861,7 @@ export const downloadSignedDocument2 = (signId, docId, fileName, auth) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/signedDocument/${docId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/download/${signId}/signedDocument/${docId}`, requestOptions)
       .then(response => response.blob())
       .then(blob => {
         console.log(blob);
@@ -890,7 +890,7 @@ export const downloadTrailDocument2 = (signId, docId, fileName, auth) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/trailDocument/${docId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/download/${signId}/trailDocument/${docId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);
@@ -905,7 +905,6 @@ export const downloadTrailDocument2 = (signId, docId, fileName, auth) => {
     .catch(error => console.log('error', error));
 }
 
-
 // Downloads the attachments information of a signed document calling internal proxy api
 export const downloadAttachments2 = (signId, docId, fileName, auth) => {
   var myHeaders = new Headers();
@@ -919,7 +918,7 @@ export const downloadAttachments2 = (signId, docId, fileName, auth) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/attachments/${docId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/download/${signId}/attachments/${docId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);
@@ -945,7 +944,7 @@ export const sendReminder2 = async (signatureId, auth) => {
   redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/reminder/${signatureId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/reminder/${signatureId}`, requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -963,7 +962,7 @@ export const cancelSignature2 = async (signatureId, auth) => {
     redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/cancelSignature/${signatureId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/cancelSignature/${signatureId}`, requestOptions)
     .then(response => response.text())
     .then(result => {
       console.log(result);
@@ -1020,7 +1019,7 @@ export const createBranding2 = async (template, auth) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newBranding`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/signatures/newBranding`, requestOptions)
       .then(response => {
         if (response.ok){
           return response.json();
@@ -1040,6 +1039,157 @@ export const createBranding2 = async (template, auth) => {
   });
 }
 
+
+export function preloadEmails2(dispatch, filters, auth) {
+  return new Promise((resolve, reject) => {
+
+    let offset = 0;
+
+    getEmails(filters, auth, offset)
+    .then(emails => {
+      emails = calculateStatusEmails(emails);
+      console.log({signatures});
+      dispatch(preDownloadEmails(emails));
+      resolve(emails);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getEmails = async (filters, auth, offset, emails = []) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${auth}`);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/getEmails/${filters}&offset=${offset}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        emails = emails.concat(result);
+        if (result.length === 100){
+          resolve(getEmails(filters, auth, offset + result.length, emails));
+        } else {
+          // console.log('Datos recibidos de signaturit - GetSignatures:');
+          // console.log({signatures});
+          // signatures = calculateStatus(signatures);
+          // console.log({signatures});
+          // dispatch(preDownloadSignatures(signatures));
+          resolve(emails);
+        }
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+// Creates a new email calling internal proxy api
+export const createEmail2 = async (recipients, cc, subject, body, files, lefebvreId, guid, type, brandingId, auth) => {
+    return new Promise((resolve, reject) => {
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "text/plain");
+      myHeaders.append("Content-Type", "application/json-patch+json");
+      myHeaders.append("Content-Type", "text/plain");
+      myHeaders.append("Authorization", `${auth}`);
+  
+      var jsonObject = {};
+      var recipientsData = [];
+      var ccData = [];
+      var filesData = [];
+      var customFieldsData = [];
+  
+      jsonObject.recipients = recipients;
+  
+      cc.forEach(recipient => {
+        ccData.push({name: recipient.split('@')[0], email: recipient})
+      });
+      jsonObject.cc = ccData;
+
+      files.forEach(file => {
+        filesData.push({file: file.content, fileName: file.fileName})
+      })
+      jsonObject.files = filesData;
+
+      jsonObject.certificationType = type;
+  
+  
+      customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
+      customFieldsData.push({name: "lefebvre_guid", value: guid});
+      customFieldsData.push({name: "subject", value: subject});
+      customFieldsData.push({name: "body", value: body});
+      jsonObject.customFields = customFieldsData;
+  
+      jsonObject.subject = subject;
+      jsonObject.body = body;
+      (reminders[0] !== -1) ? jsonObject.reminders = reminders : null;
+      (expiration !== -1) ? jsonObject.expiration = expiration : null;
+      jsonObject.brandingId = brandingId;
+  
+  
+      var raw = JSON.stringify(jsonObject);
+      console.log('Raw::');
+      console.log(raw);
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/newSignature`, requestOptions)
+        .then(response => {
+          if (response.ok){
+            return response.json();
+          } else {
+            return response.text();
+          }
+        })
+        .then(result => {
+          console.log(result)
+          resolve(result)
+        })
+        .catch(error => {
+          reject(error);
+          console.log('error', error)
+        });
+    })
+}
+  
+// Downloads the trail information of a certified email calling internal proxy api
+export const downloadCertificationDocument2 = (emailId, certificationId, fileName, auth) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `${auth}`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/download/${emailId}/certificate/${certificationId}`, requestOptions)
+    .then(response => response.blob())
+    .then(blob => {
+      console.log(blob);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'audit-'+fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+    .catch(error => console.log('error', error));
+}
 
 /*
   HELPER FUNCTIONS
