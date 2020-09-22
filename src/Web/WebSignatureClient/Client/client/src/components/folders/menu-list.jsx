@@ -130,6 +130,9 @@ export class MenuListClass extends Component {
               open={() => this.dialogOpen} 
               close={() => this.dialogClose}
             />
+          
+            <span className="lf-icon-mail" onClick={event => this.onClickMail(event)}>
+            </span>EMAILS CERTIFICADOS
           {/* <MenuItem
             label={'Firmas'} 
             graphic={'input'}
@@ -157,6 +160,14 @@ export class MenuListClass extends Component {
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
     }
   }
+
+  onClickMail(event){
+    event.stopPropagation();
+    this.props.signatureClicked(null);
+    this.props.close(this.props.application);
+    this.props.setSignaturesFilterKey(key);
+    this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+}
 
   dialogClose(){
     this.setState({
