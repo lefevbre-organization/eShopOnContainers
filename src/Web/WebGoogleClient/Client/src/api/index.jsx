@@ -25,17 +25,18 @@ const getLabelDetails = (labelList) => {
   });
 };
 
-export const getLabelList = () =>
-  new Promise((resolve, reject) => {
+export const getLabelList = () => {
+  return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.labels
-      .list({
-        userId: 'me',
-      })
-      .then(getLabelDetails)
-      .then((response) => {
-        resolve(response.map((el) => el.result));
-      });
-  });
+        .list({
+          userId: 'me',
+        })
+        .then(getLabelDetails)
+        .then((response) => {
+          resolve(response.map((el) => el.result));
+        });
+  })
+};
 
 export const updateLabelName = (labelId, newName) => {
   return new Promise((resolve, reject) => {

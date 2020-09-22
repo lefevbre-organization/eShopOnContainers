@@ -54,6 +54,7 @@
     "delete": "Borrar",
     "markUnread": "Marcar como no leído",
     "markRead": "Marcar como leído",
+    "search": "Buscar",
     "returnlexon": "Volver a Lex-on",
     "deleteFromTrashDialog": {
       "title": "Confirmar borrado",
@@ -108,7 +109,25 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
-    "title": "CREAR NUEVA FIRMA"
+    "grid": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "signatureType": "Tipo de firma",
+      "doubleAuthentication": "Doble autenticación",
+      "recipientsRole": "ROL DE LOS DESTINATARIOS",
+      "signer": "Firmante",
+      "validator": "Validador",
+      "advancedSignature": "Firma avanzada",
+      "userCertificate": "Certificado de usuario", 
+      "none": "No",
+      "sms": "SMS",
+      "photo": "Foto",
+      "finish": "FINALIZAR",
+      "photoNumber": "Número de fotos",
+      "phone": "Número de teléfono"
+    },
+    "title": "SOLICITUD DE FIRMA"
   },
   "forwardAction": {
     "From": "De",
@@ -177,7 +196,14 @@
     "statusCompleted": "Completado",
     "statusExpired": "Expirado",
     "statusDeclined": "Declinado",
-    "statusInProgress": "En progreso"
+    "statusInProgress": "En progreso",
+    "statusError": "Error",
+    "statusPending": "Pendiente",
+    "filters": {
+      "contains": "Contiene",
+      "startsWith": "Empieza por",
+      "equal": "Es igual a"
+    }
   },
   "confirmationModal": {
     "yes": "Si",
@@ -190,13 +216,35 @@
     "text": "¿Está seguro de que quiere cancelar la firma seleccionada?",
     "text2": "¿Está seguro de que quiere cancelar el proceso de firma actual?"
   },
+  "cancelCentinelaConfirmation":{
+    "text": "¿Está seguro de que quiere cancelar el proceso de firma de documentos de Centinela?"
+  },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio"
+    "text": "Se acaba de enviar un recordatorio al Firmante"
+  },
+  "noSignersModal": {
+    "text": "Debe especificar al menos un firmante para poder enviar la solicitud."
+  },
+  "noAttachmentsModal": {
+    "text": "Debe adjuntar un documento para poder enviar la solicitud."
+  },
+  "bigFileModal": {
+    "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
+  },
+  "attachNotFoundCentinela":{
+    "text": "No se han podido descargar los documentos desde Centinela."
+  },
+  "downloadindCentinelaModal":{
+    "text": "Descargando documentos de centinela"
   },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
-    "pagesConfiguration": "Firmar documento en una sola hoja"
+    "pagesConfiguration": {
+      "single": "Firmar documento en una sola hoja",
+      "all": "Firmar documento en todas las hojas" 
+    },
+    "messageAlert": "Tipo de archivo seleccionado no válido."
   },
   "expirationWidget":{
     "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
@@ -237,8 +285,22 @@
     },
     "signerCard": {
       "title": {
-        "signers": "FIRMANTES",
-        "signer": "Firmante"
+        "signers": "FIRMANTE",
+        "signer": "Destinatario",
+        "validators": "VALIDADOR",
+        "validator": "Destinatario",
+        "type": {
+          "title": "Tipo de firma",
+          "advanced": "Firma avanzada",
+          "certificate": "Firma con certificado"
+        },
+        "DoubleAuthentication": {
+          "title": "Doble autenticación",
+          "sms": "SMS",
+          "photo": "Fotografía",
+          "none": "No",
+          "photoNumber": "__ fotos adjuntas"
+        }
       },
       "body": {
         "title": "PROGRESO PETICIÓN",
@@ -246,10 +308,12 @@
         "emailDelivered": "Email entregado",
         "emailOpened": "Email abierto",
         "docOpened": "Documento abierto",
-        "docSigned": "Documento firmado"
+        "docSigned": "Documento firmado",
+        "docValidated": "Documento validado"
       },
       "footer": {
-        "title": "RECORDATORIOS ENVIADOS"
+        "title": "RECORDATORIOS ENVIADOS",
+        "subtitle": "A este firmante no se le ha enviado ningún recordatorio."
       }
     },
     "widgets": {
@@ -263,7 +327,8 @@
         "title": "RECORDATORIOS PROGRAMADOS",
         "notConfigured": "No hay recordatorios programados.",
         "daily": "Recordatorios diarios",
-        "weekly": "Recordatorios semanales"
+        "weekly": "Recordatorios semanales",
+        "everyXdays": "Recordatorios cada ___ días."
       }
     },
     "title": "DETALLES DE LA FIRMA"
@@ -282,5 +347,9 @@
     "title": "Error de acceso.",
     "subtitle": "No tiene permiso para usar esta aplicación.",
     "footer": "¿Necesitas ayuda?"
+  },
+  "contacts": {
+    "lexon": "Contactos Lex-ON",
+    "centinela": "Contactos Centinela"
   }
 }

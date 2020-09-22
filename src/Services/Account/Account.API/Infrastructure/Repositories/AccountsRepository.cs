@@ -884,19 +884,19 @@
             {
                 var evByName = account.eventTypes.FirstOrDefault(s => s.name.ToUpperInvariant().Equals(eventType.name.ToUpperInvariant()));
                 if (evByName != null)
-                    TraceOutputMessage(result.errors, $"Error, exist other name with same name {eventType.name}, review it ", null, "EventIdExist");
+                    TraceOutputMessage(result.errors, $"Error, exist other eventType with same name {eventType.name}, review it ", null, "EventIdExist");
                 else
                 {
                     var listEvents = account.eventTypes.ToList();
 
                     listEvents.Add(eventType);
                     account.eventTypes = listEvents.ToArray();
-                    TraceInfo(result.infos, $"insert new event {eventType.idEvent}-{eventType.name}");
+                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}");
                 }
             }
             else
             {
-                TraceOutputMessage(result.errors, $"Error, Event id exist, review {eventType.idEvent}  or correct account ", null, "EventIdExist");
+                TraceOutputMessage(result.errors, $"Error, eventType id exist, review {eventType.idEvent}  or correct account ", null, "EventIdExist");
             }
         }
 
@@ -905,7 +905,7 @@
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
-                TraceOutputMessage(result.errors, $"Error, Event id don´t exist, review {eventType.idEvent}  or correct account ", null, "EventIdUnknow");
+                TraceOutputMessage(result.errors, $"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account ", null, "EventIdUnknow");
             }
             else
             {
@@ -913,9 +913,9 @@
                 ev.color = eventType.color;
 
                 if (ev.name.ToUpperInvariant() == eventType.name?.ToUpperInvariant())
-                    TraceInfo(result.infos, $"Same name, modify event {ev.idEvent} -> {ev.name} with new color");
+                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color");
                 else
-                    TraceInfo(result.infos, $"Modify event {ev.idEvent} -> {ev.name} with {ev.color}");
+                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}");
             }
         }
 

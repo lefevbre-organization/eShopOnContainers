@@ -5,7 +5,7 @@ import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import i18n from 'i18next';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
-import { getEventTypes, addorUpdateEventType, deleteEventType } from "../../../api_graph/accounts";
+import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api_graph/accounts";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import './eventtype.scss';
 
@@ -69,7 +69,12 @@ export class Eventtype extends React.Component {
 
     onModifyEventTypeState(args) {
         this.setState({ updatemode: true })
-        let idEventType = args.target.parentElement.lastChild.innerText       
+        let idEventType = args.target.parentElement.lastChild.innerText   
+        if (idEventType == undefined) {
+            if (this.state.idEvent != undefined || this.state.idEvent != "") {
+                idEventType = this.state.idEvent
+            }
+        }
         var itemE = this.eventTypeData.find(function (e) {
             return e.Id == idEventType
         })
@@ -107,7 +112,7 @@ export class Eventtype extends React.Component {
         this.eventTypeData = [];
         this.eventTypeData = vowels;
 
-        let email = this.props.user.email;      
+        let email = this.props.googleUser.getBasicProfile().getEmail();      
         let dataEventTypeAPI = {            
             "idEvent": args.target.parentElement.lastChild.innerText,
              "email": email
@@ -160,7 +165,7 @@ export class Eventtype extends React.Component {
 
 
         let dataEventTypeAPI = [];
-        let email = this.props.user.email;      
+        let email = this.props.googleUser.getBasicProfile().getEmail();      
         if (this.state.idEvent != undefined) {
             dataEventTypeAPI = {
                 "email": email,
@@ -197,6 +202,14 @@ export class Eventtype extends React.Component {
                     else {
                         throw true
                     }                   
+                }
+
+                dataEventType = []
+
+                dataEventType = {
+                    "Id": result.data.idEvent,
+                    "Text": this.TitleTypeEventObj.value,
+                    "Color": this.state.color
                 }
                     
                 this.toastObj.timeOut = 1000;
@@ -262,7 +275,7 @@ export class Eventtype extends React.Component {
     }
 
     getlistEventTypes() {
-        let email = this.props.user.email;
+        let email  = this.props.googleUser.getBasicProfile().getEmail();
         getEventTypes(email)
             .then(result => {
                 this.onDataBinding(result.data.eventTypes)
