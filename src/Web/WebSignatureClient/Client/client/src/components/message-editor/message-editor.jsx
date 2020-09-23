@@ -549,7 +549,6 @@ class MessageEditor extends Component {
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
           width='80%'
-          height='50%'
           //content={RolSelector} 
           ref={dialog => this.rolDialog = dialog} 
           //target='#target' 
@@ -584,7 +583,7 @@ class MessageEditor extends Component {
               z-index: 1001;
             }
             #rolDialog {
-              top: 24% !important;
+              top: 20% !important;
             }
             #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
             #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {
@@ -605,7 +604,6 @@ class MessageEditor extends Component {
               color: #001970;
               font-weight: bold;
               font-size: 15px;
-              padding-left: 17px;
             }
             .e-btn.e-flat.e-primary {
               color: #fff !important;
@@ -627,7 +625,7 @@ class MessageEditor extends Component {
               font-size: 15px;
             }
             #rolDialog_dialog-header > button {
-              margin-right: 30px;
+              margin-right: 10px;
             }
             #rolDialog_dialog-header > button > span {
               color: #001978;
