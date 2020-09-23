@@ -614,8 +614,11 @@ class App extends Component {
     document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
     var self = this;
-    const dataMailContacts = [{address: mailContacts[0], name: ''}];
-    const dataAdminContacts = [{address: adminContacts[0], name: ''}];
+    let dataMailContacts = [];
+    let dataAdminContacts = []; 
+
+    mailContacts.map(c => { return dataMailContacts.push({address: c, name: ''}) });
+    adminContacts.map(c => { return dataAdminContacts.push({address: c, name: ''}) });
     
     //Starting poll to update the inbox automatically
     //this.startPoll();

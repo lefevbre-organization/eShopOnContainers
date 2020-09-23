@@ -744,7 +744,7 @@ export class Main extends Component {
         var event = {
             'summary': values.Subject,
             'location': values.Location,
-            'description': values.Description,
+            'description': values.Description,           
 
             'start': {
                 'dateTime': values.StartTime,
@@ -754,6 +754,10 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
+
+           // 'isAllDay': values.IsAllDay,
+
+            
 
         }
 
@@ -1302,19 +1306,25 @@ export class Main extends Component {
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
-                        if (error.result.error.errors[0] != undefined) {
-                            if (error.result.error.errors[0].reason == "requiredAccessLevel") {  
-                                this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' },);
-                                console.log('error ->', error); 
-                                delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
-                                this.scheduleObj.refreshEvents();
-                                return;
+                        if (error.result != undefined) {
+                            if (error.result.error.errors[0] != undefined) {
+                                if (error.result.error.errors[0].reason == "requiredAccessLevel") {  
+                                    this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' },);
+                                    console.log('error ->', error); 
+                                    delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
+                                    this.scheduleObj.refreshEvents();
+                                    return;
+                                }
                             }
-                        }
-                        else {
-                            this.toastObj.show(this.toasts[2]);
-                            console.log('error ->', error);
-                        }                       
+                            else {
+                                this.toastObj.show(this.toasts[2]);
+                                console.log('error ->', error);
+                            }
+                        } 
+                         else {
+                                this.toastObj.show(this.toasts[2]);
+                                console.log('error ->', error);
+                            }
                     })
               
                 break;
