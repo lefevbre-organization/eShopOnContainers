@@ -1,9 +1,10 @@
-import { getLabelList, getLabelInbox, getChildLabel } from "../../api_graph";
+import { getLabelList, getLabelInbox, getChildLabel, getLabelSpecial } from "../../api_graph";
 
 export const GET_LABELS = "GET_LABELS";
 export const GET_CHILD_LABEL = "GET_CHILD_LABELS";
 export const SELECT_LABEL = "SELECT_LABEL";
 export const INBOX_LABEL = "INBOX_LABEL";
+export const SPECIAL_LABEL = "SPECIAL_LABEL";
 
 export const getLabels = () => dispatch => {
   getLabelList().then(labelList => {
@@ -40,3 +41,11 @@ export const getInbox = () => dispatch => {
   });
 };
 
+export const getSpecialFolder = (labelName) => dispatch => {
+  getLabelSpecial(labelName).then(label => {
+    dispatch({
+      type: SPECIAL_LABEL,
+      payload: label
+    })
+  })
+};
