@@ -48,7 +48,9 @@
     "filterCompleted": "Complétées",
     "filterCancelled": "Anulées",
     "signature": "Signature avancée",
-    "certifiedEmail": "Email certifié"
+    "certifiedEmail": "Email certifié",
+    "sendingTypeSignature": "Signature avec données biométriques",
+    "sendingTypeEmail": "Certifiez vos communications"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",

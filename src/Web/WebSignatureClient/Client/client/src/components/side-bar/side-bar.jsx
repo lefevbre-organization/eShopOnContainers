@@ -31,6 +31,7 @@ class SideBar extends Component {
     this.handleOnDragLeave = this.onDragLeave.bind(this);
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
+    this.handleOnNewEmailCertificate = this.onNewEmailCertificate.bind(this);
     this.handleOnNewSending = this.onNewSending.bind(this);
     
     //Sin firmas 
@@ -198,6 +199,7 @@ class SideBar extends Component {
           close={this.sendTypeDialogClose.bind(this)} >
           <SendingTypeSelector 
             onNewMessage={this.handleOnNewMessage}
+            onNewEmailCertificate={this.handleOnNewEmailCertificate}
           />
         </DialogComponent>
         <DialogComponent 
@@ -312,6 +314,10 @@ class SideBar extends Component {
       }
     })
     this.sendTypeDialogClose();
+  }
+
+  onNewEmailCertificate() {
+    console.log('onNewEmailCertificate');
   }
 
   onDragOver(event) {

@@ -10,16 +10,16 @@ const SendingTypeSelector = (props) => {
              {/* <span className='lf-icon-check-round icon-color'></span> */}
              {i18n.t('sideBar.signature')}
              <br />
-             Firma con datos biométricos
+             {i18n.t('sideBar.sendingTypeSignature')}
             </p>
             <div className="space-icon-right"><span className='lf-icon-angle-right'></span></div>
        </div>
-        <div className="box-sending sending-email box-space">
+        <div className="box-sending sending-email box-space" onClick={props.onNewEmailCertificate}>
             <p>
              {/* <span className='lf-icon-mail icon-color'></span> */}
              {i18n.t('sideBar.certifiedEmail')}
              <br/>
-             Certifica tus comunicaciones
+             {i18n.t('sideBar.sendingTypeEmail')}
             </p>
             <div className="space-icon-right"><span className='lf-icon-angle-right'></span></div>
         </div>

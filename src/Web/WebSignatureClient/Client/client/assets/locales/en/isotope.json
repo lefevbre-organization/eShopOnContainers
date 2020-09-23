@@ -29,7 +29,9 @@
     "filterCompleted": "Completed",
     "filterCancelled": "Cancelled",
     "signature": "Advanced signature",
-    "certifiedEmail": "Certified email"
+    "certifiedEmail": "Certified email",
+    "sendingTypeSignature": "Signature with biometric data",
+    "sendingTypeEmail": "Certify your communications"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
