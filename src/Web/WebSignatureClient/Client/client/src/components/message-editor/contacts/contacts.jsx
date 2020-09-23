@@ -14,7 +14,7 @@ const Contacts = (props) => {
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
-    const numberCheckeds = contacts.filter(conatct => conatct.checked == true);
+    const numberCheckeds = contacts.filter(contact => contact.checked == true);
     setNumberCheckeds(numberCheckeds.length);
     getDataCentinela();
   });
@@ -41,7 +41,6 @@ const Contacts = (props) => {
         const emailExists = props.addresses.some(address => {
            return (address.address === contact.email)
          });
-         console.log('emailExists', emailExists)
         contact.checked = emailExists;
         newContactsCentinela.push(contact);
       });
@@ -54,9 +53,13 @@ const Contacts = (props) => {
   }
 
   const handleChecked = (e) => {
-    const isCheck = !e.target.checked ? false : true;
-    const index = e.target.value;
-    contacts[index].checked = isCheck;
+    let isCheck = !e.target.checked ? false : true;
+    let contactId = e.target.value;
+    contacts.forEach(contact => {
+        if(contact.contactId == contactId) {
+          contact.checked = isCheck;
+        }
+    });
     setContacts([...contacts]);
   }
 
@@ -119,13 +122,13 @@ const Contacts = (props) => {
                   checked={contact.checked} 
                   onChange={handleChecked}
                   name="checked"
-                  value={i}
+                  value={contact.contactId}
                   />
                    <Checkbox
                    checked={contact.checked} 
                    onChange={handleChecked}
                    name="checked"
-                   value={i}
+                   value={contact.contactId}
                 />
                   <span>{contact.name}</span>
                   <div className={style['email']}>{contact.email}</div>
