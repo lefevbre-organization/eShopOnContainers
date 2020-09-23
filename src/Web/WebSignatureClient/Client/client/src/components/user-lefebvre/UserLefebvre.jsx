@@ -153,7 +153,7 @@ class UserLefebvre extends Component {
                                     var auxTemplate = JSON.stringify(template.data.configuration);
                                     auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
                                     var newTemplate = JSON.parse(auxTemplate);
-                                    createBranding2(newTemplate)
+                                    createBranding2(newTemplate, token)
                                     .then( res => {
                                         var userBranding = [{app: app, externalId: res.id}];
                                         createUser(user, userBranding);
@@ -169,7 +169,7 @@ class UserLefebvre extends Component {
                                         var auxTemplate = JSON.stringify(template.data.configuration);
                                         auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
                                         var newTemplate = JSON.parse(auxTemplate);
-                                        createBranding2(newTemplate)
+                                        createBranding2(newTemplate, token)
                                         .then( res => {
                                             console.log('Resultado de creación de Branding');
                                             console.log(res);
