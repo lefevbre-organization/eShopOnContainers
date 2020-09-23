@@ -542,7 +542,14 @@ export const getBrandingTemplate = async app => {
     };
 
     fetch(`${window.API_SIGN_GATEWAY}/Brandings/get/${app}/template`, requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok){
+          return response.json()
+        }
+        else {
+          return response.json()
+        }
+      })
       .then(result => {
         console.log(result);
         resolve(result);
@@ -612,7 +619,7 @@ export const createTemplate = async (templateInfo) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Brandings/addBaseConfigTest`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Brandings/add`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);

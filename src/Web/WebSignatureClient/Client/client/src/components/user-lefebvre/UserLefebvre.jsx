@@ -75,8 +75,8 @@ class UserLefebvre extends Component {
         var mailContacts = (this.props.match.params.token ? getMailContacts(payload) : null);
         var adminContacts = (this.props.match.params.token ? getAdminContacts(payload) : null);
         
-        var configureBaseTemplates = (this.props.match.params.token ? getConfigureBaseTemplates(payload) : false);
-        var configureDefaultTemplates = (this.props.match.params.token ? getConfigureDefaultTemplates(payload) : false);
+        // var configureBaseTemplates = (this.props.match.params.token ? getConfigureBaseTemplates(payload) : false);
+        // var configureDefaultTemplates = (this.props.match.params.token ? getConfigureDefaultTemplates(payload) : false);
        
 
         this.props.setUser(`IM0${user}`);
@@ -103,9 +103,7 @@ class UserLefebvre extends Component {
             this.setState({type: 'expired'});
         } else {
             var roleOk = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
-            //const validToken = verifyJwtSignature(this.props.match.params.token);
-            console.log('Resultado - validToken:');
-            //console.log(validToken);
+            console.log('Resultado - validToken:' + roleOk);
 
             // if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
             //     validToken = true;
@@ -116,13 +114,20 @@ class UserLefebvre extends Component {
             }
 
             if (roleOk){    
+
+                getBrandingTemplate(app)
+                .then(res => {
+                    if (res.data == null || res.data == false) {
+                        this.configureTemplates("baseTemplates");
+                    }
+                })
                 
-                if (configureBaseTemplates){
-                    await this.configureTemplates("baseTemplates");
-                } 
-                if (configureDefaultTemplates){
-                    await this.configureDefaultTemplates("defaultTemplates");
-                }
+                // if (configureBaseTemplates){
+                //     await this.configureTemplates("baseTemplates");
+                // } 
+                // if (configureDefaultTemplates){
+                //     await this.configureDefaultTemplates("defaultTemplates");
+                // }
         
                 verifyJwtSignature(this.props.match.params.token)
                 .then( res => {
