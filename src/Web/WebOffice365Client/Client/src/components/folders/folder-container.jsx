@@ -127,7 +127,7 @@ class FolderContainer extends Component {
                 </div>
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
-                                       allowDragAndDrop={true}
+                                       allowDragAndDrop={false}
                                        fields={this.fields}
                                        enablePersistence={false}
                                        cssClass={'folder-tree'}
