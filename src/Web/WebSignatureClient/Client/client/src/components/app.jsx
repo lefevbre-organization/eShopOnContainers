@@ -614,6 +614,12 @@ class App extends Component {
     document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
     var self = this;
+    let dataMailContacts = [];
+    let dataAdminContacts = []; 
+
+    mailContacts.map(c => { return dataMailContacts.push({address: c, name: ''}) });
+    adminContacts.map(c => { return dataAdminContacts.push({address: c, name: ''}) });
+    
     //Starting poll to update the inbox automatically
     //this.startPoll();
     setInterval(this.startPoll.bind(this), window.POLLING_INTERVAL);
@@ -651,7 +657,7 @@ class App extends Component {
             this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
             .then((attachment) => {
                 if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
-                  this.props.newMessage(mailContacts, adminContacts);
+                  this.props.newMessage(dataMailContacts, dataAdminContacts);
                 }
                 else {
                   const length = attachment.data.length;
@@ -662,10 +668,10 @@ class App extends Component {
                     contentType: getFileType(fileName),
                     content: attachment.data
                   }]
-                  this.props.newMessage(mailContacts, adminContacts, null, newAttachment);
+                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
                 }
             })
-            .catch(() => this.props.newMessage(mailContacts, adminContacts));
+            .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
           } 
           else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
             let documentsInfo = []; 
@@ -690,7 +696,7 @@ class App extends Component {
                   })
                   this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
                   this.props.setUserApp('lefebvre');
-                  this.props.newMessage(mailContacts, adminContacts);
+                  this.props.newMessage(dataMailContacts, dataAdminContacts);
                 }
                 else {
 
@@ -711,7 +717,7 @@ class App extends Component {
                   this.setState({hideAlertDialog: false});
                   this.props.backendRequestCompleted();
                   this.props.setIdDocuments(documentsInfo);
-                  this.props.newMessage(mailContacts, adminContacts, null, attachmentsList);
+                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, attachmentsList);
                   // Aquí hay que cerrar el modal de descarga
                   
                 }
@@ -719,7 +725,7 @@ class App extends Component {
               .catch(() => {
                 this.setState({hideAlertDialog: false});
                 this.props.backendRequestCompleted();
-                this.props.newMessage(mailContacts, adminContacts);
+                this.props.newMessage(dataMailContacts, dataAdminContacts);
                 // Aquí hay que cerrar el modal de descarga
               });        
             });

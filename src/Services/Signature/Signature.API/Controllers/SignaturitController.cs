@@ -26,7 +26,7 @@
 
     #endregion
 
-    [Route("api/v1/Signaturit")]
+    [Route("api/v1/Signaturit/")]
     [ApiController]
     public class SignaturitController : ControllerBase
     {
@@ -45,7 +45,7 @@
 
 
         [HttpGet]
-        [Route("getSignatures/{user}")]
+        [Route("signatures/getSignatures/{user}")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -89,7 +89,7 @@
 
 
         [HttpPatch]
-        [Route("cancelSignature/{id}")]
+        [Route("signatures/cancelSignature/{id}")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -133,7 +133,7 @@
         }
 
         [HttpPost]
-        [Route("newSignature")]
+        [Route("signatures/newSignature")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -178,7 +178,7 @@
         }
 
         [HttpGet]
-        [Route("download/{signatureId}/signedDocument/{documentId}/")]
+        [Route("signatures/download/{signatureId}/signedDocument/{documentId}/")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -226,7 +226,7 @@
         }
 
         [HttpGet]
-        [Route("download/{signatureId}/trailDocument/{documentId}/")]
+        [Route("signatures/download/{signatureId}/trailDocument/{documentId}/")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -274,7 +274,7 @@
         }
 
         [HttpGet]
-        [Route("download/{signatureId}/attachments/{documentId}/")]
+        [Route("signatures/download/{signatureId}/attachments/{documentId}/")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -314,7 +314,7 @@
         }
 
         [HttpPost]
-        [Route("reminder/{signatureId}")]
+        [Route("signatures/reminder/{signatureId}")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -357,7 +357,7 @@
         }
 
         [HttpPost]
-        [Route("newBranding")]
+        [Route("signatures/newBranding")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -433,6 +433,129 @@
 
         }
 
+
+        [HttpGet]
+        [Route("emails/getEmails/{user}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> GetEmails([FromRoute] string user, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("A user must be provided");
+
+            try
+            {
+                var response = await _signaturitService.GetEmails(user);
+
+                return Ok(response.Content);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+            }
+        }
+
+
+        [HttpPost]
+        [Route("emails/newEmail")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> CreateEmail([FromBody] CreateEmail emailInfo, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (Object.Equals(emailInfo, null))
+                return BadRequest("Signature information must be provided.");
+
+            try
+            {
+                var response = await _signaturitService.CreateEmail(emailInfo);
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Response IsSuccessful");
+                    return Ok(response.Content);
+                }
+                else
+                {
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}");
+                }
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("emails/download/{emailId}/certificate/{certificateId}/")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> DownloadCertification([FromRoute] string emailId, [FromRoute] string certificateId, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(emailId) || string.IsNullOrEmpty(certificateId))
+                return BadRequest("A signatureId and documentId must be provided.");
+
+            try
+            {
+
+                var response = await _signaturitService.DownloadCertification(emailId, certificateId);
+
+                var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+                string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+                return File(response.RawBytes, response.ContentType, fileName);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+
+            }
+        }
 
         private bool checkToken(string authToken)
         {

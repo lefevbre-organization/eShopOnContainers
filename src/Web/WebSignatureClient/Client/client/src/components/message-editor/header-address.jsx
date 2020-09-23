@@ -98,7 +98,6 @@ export class HeaderAddress extends Component {
           visible={this.state.hideContactDialog} 
           animationSettings={this.animationSettings} 
           width='45%'
-          height='80%'
           ref={dialog => this.contactDialog = dialog} 
           close={this.dialogClose}
         >
@@ -107,6 +106,7 @@ export class HeaderAddress extends Component {
             onAddressAdd={this.props.onAddressAdd}
             dialogClose={this.dialogClose}
             lefebvre={lefebvre}
+            addresses={addresses}
           />
          
         </DialogComponent> : null}
@@ -124,7 +124,7 @@ export class HeaderAddress extends Component {
   }
 
   fieldClick() {
-    this.inputRef.current.input.focus();
+    this.inputRef.current.input;
   }
 
   /**

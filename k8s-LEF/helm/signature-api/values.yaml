@@ -49,11 +49,11 @@ env:
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
-      value: Development
+      value: Staging
     - name: OrchestratorType
       value: 'K8S'
     - name: SignaturitApiUrl
-      value: 'https://api.signaturit.com/v3'
+      value: 'https://api.sandbox.signaturit.com/v3'
     - name: LexonFilesUrl
       value: 'https://led-dev-lexon.eu.els.local/index.php'
     - name: LexonApiGwUrl
@@ -62,3 +62,5 @@ env:
       value: 'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
       value: 'https://lexbox-test-websignature.lefebvre.es/completed'
+    - name: Signaturit
+      value: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'
