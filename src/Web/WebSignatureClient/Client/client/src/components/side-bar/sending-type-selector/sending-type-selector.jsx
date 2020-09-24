@@ -4,11 +4,10 @@ import i18n from 'i18next';
 const SendingTypeSelector = (props) => {
     return (
       <>
-      <p>{i18n.t('sideBar.typeSending')}:</p>
        <div className="box-sending sending-signature" onClick={props.onNewMessage}>
             <p>
              {/* <span className='lf-icon-check-round icon-color'></span> */}
-             {i18n.t('sideBar.signature')}
+             <b>{i18n.t('sideBar.signature')}</b>
              <br />
              {i18n.t('sideBar.sendingTypeSignature')}
             </p>
@@ -17,7 +16,7 @@ const SendingTypeSelector = (props) => {
         <div className="box-sending sending-email box-space" onClick={props.onNewEmailCertificate}>
             <p>
              {/* <span className='lf-icon-mail icon-color'></span> */}
-             {i18n.t('sideBar.certifiedEmail')}
+             <b>{i18n.t('sideBar.certifiedEmail')}</b>
              <br/>
              {i18n.t('sideBar.sendingTypeEmail')}
             </p>
@@ -26,9 +25,12 @@ const SendingTypeSelector = (props) => {
        <style jsx global>
         {` 
             .box-sending {
-             border: 1px solid white;
+             border: 1px solid #001978;
              height: 70px;
              cursor: pointer;
+             color: #001978;
+             width: 90%;
+             margin-left: 22px;
             }
 
             .box-sending p {
@@ -39,13 +41,13 @@ const SendingTypeSelector = (props) => {
             }
 
             .sending-signature:hover {
-              background-color: white;
-              color: #001978;
+              background-color: #001978 ;
+              color: white;
             }
 
             .sending-email:hover {
-              background-color: white;
-              color: #001978;
+              background-color: #001978 ;
+              color: white;
             }
 
             .box-space {

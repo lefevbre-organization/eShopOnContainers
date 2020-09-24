@@ -127,6 +127,18 @@ export function editNewMessage(dispatch, to = [], cc = [], sign = null, attachme
   );
 }
 
+export function editNewEmailCertificate(dispatch, to = [], cc = [], emailCertificate = null) {
+  dispatch(
+    editMessage({
+      to: to,
+      cc: cc,
+      bcc: [],
+      subject: '',
+      content: `<br/>${emailCertificate?emailCertificate:''}`
+    })
+  );
+}
+
 export function editMessageAsNew(dispatch, message) {
   const recipientMapper = r => r.address;
   const to = message.recipients

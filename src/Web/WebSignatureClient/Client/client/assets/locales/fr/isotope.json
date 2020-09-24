@@ -35,7 +35,7 @@
   },
   "sideBar": {
     "newRequest": "Nouvelle requête",
-    "typeSending": "Sélectionnez le type d'envoi",
+    "typeSending": "Sélectionnez le type requête:",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",

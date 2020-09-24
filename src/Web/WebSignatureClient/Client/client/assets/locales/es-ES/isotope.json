@@ -35,7 +35,7 @@
   },
   "sideBar": {
     "newRequest": "Nueva Petición",
-    "typeSending": "Selecciona el tipo de envio",
+    "typeSending": "Selecciona el tipo de petición:",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",

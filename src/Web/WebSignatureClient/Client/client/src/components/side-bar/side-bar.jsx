@@ -9,7 +9,7 @@ import IconButton from '../buttons/icon-button';
 import { moveFolder } from '../../services/folder';
 import mainCss from '../../styles/main.scss';
 import styles from './side-bar.scss';
-import { editNewMessage } from '../../services/application';
+import { editNewMessage, editNewEmailCertificate } from '../../services/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { getAvailableSignatures } from '../../services/api-signaturit';
@@ -189,10 +189,10 @@ class SideBar extends Component {
         </PerfectScrollbar>
         <DialogComponent 
           id="sendingTypeDialog" 
-          // header={i18n.t('sideBar.typeSending')} 
+          header={i18n.t('sideBar.typeSending')}
           visible={this.state.hideSendingTypeDialog} 
           animationSettings={this.animationSettings} 
-          width='35%' 
+          width='40%' 
           showCloseIcon={true} 
           // isModal={true}
           open={this.dialogOpen.bind(this)} 
@@ -242,9 +242,30 @@ class SideBar extends Component {
               display:flex;
             }
 
-            #sendingTypeDialog_dialog-header, #sendingTypeDialog_title, #sendingTypeDialog_dialog-content, .e-footer-content{
+            #sendingTypeDialog_dialog-header, #sendingTypeDialog_title {
               background: #001978;
               color: #fff;
+              font-size: 14px;
+              padding-left: 22px;
+            }
+
+            #sendingTypeDialog_dialog-header {
+              padding: 24px !important;
+            }
+
+            #sendingTypeDialog_dialog-content {
+              padding-top: 15px;
+              padding-bottom: 30px;
+            }
+
+            #confirmDialog_dialog-header > button > span {
+              color: white;
+              font-size: 12px;
+            }
+
+            #sendingTypeDialog_dialog-header > button > span {
+              color: white;
+              font-size: 12px;
             }
 
             .e-dlg-header {
@@ -317,7 +338,7 @@ class SideBar extends Component {
   }
 
   onNewEmailCertificate() {
-    console.log('onNewEmailCertificate');
+    this.props.newNewEmailCertificate('emailCertificate');
   }
 
   onDragOver(event) {
@@ -376,6 +397,7 @@ const mapDispatchToProps = dispatch => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
   newMessage: sign => editNewMessage(dispatch, [], [], sign),
+  newNewEmailCertificate: emailCertificate => editNewEmailCertificate(dispatch, [], [], emailCertificate),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
   setTitle: title => dispatch(setTitle(title))
 });

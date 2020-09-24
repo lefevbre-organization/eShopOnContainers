@@ -418,6 +418,7 @@ class App extends Component {
 
   renderContent() {
     const { application } = this.props;
+    console.log('renderContent', application);
     // const content = `
     //   <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
     //   <div style='text-align: justify; text-justify: inter-word; align-self: center;'>

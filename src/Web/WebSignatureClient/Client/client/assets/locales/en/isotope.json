@@ -16,7 +16,7 @@
   },
   "sideBar": {
     "newRequest": "New request",
-    "typeSending": "Select the type of sending",
+    "typeSending": "Select the type of request:",
     "hide": "Hide sidebar",
     "errors": {
       "noSSL": "Connection to server is not secure",
