@@ -49,10 +49,6 @@ env:
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: LexonMySqlUrl
-      value: 'http://lexonmysql-api/api/v1/LexonMySql'
-    - name: LexonFilesUrl
-      value: 'https://www-led-pre.lex-on.es/index.php'
     - name: OrchestratorType
       value: 'K8S'
     - name: DefaultEnvironment
@@ -62,25 +58,25 @@ env:
     - name: LexonUrls__0__env
       value: DEVS
     - name: LexonUrls__0__conn
-      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
+      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connect Timeout=90
     - name: LexonUrls__0__url
       value: https://www.lex-on.es/index.php
     - name: LexonUrls__1__env
       value: DEV
     - name: LexonUrls__1__conn
-      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
+      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connect Timeout=90
     - name: LexonUrls__1__url
       value: https://www.lex-on.es/index.php
     - name: LexonUrls__2__env
       value: QA
     - name: LexonUrls__2__conn
-      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
+      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connect Timeout=90
     - name: LexonUrls__2__url
       value: https://www.lex-on.es/index.php
     - name: LexonUrls__3__env
       value: PRE
     - name: LexonUrls__3__conn
-      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
+      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connect Timeout=90
     - name: LexonUrls__3__url
       value: https://www.lex-on.es/index.php
     - name: LexonUrls__4__env
@@ -89,4 +85,3 @@ env:
       value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
     - name: LexonUrls_4_url
       value: https://www.lex-on.es/index.php
-
