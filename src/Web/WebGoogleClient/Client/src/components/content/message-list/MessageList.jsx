@@ -299,7 +299,7 @@ export class MessageList extends Component {
                 nodeSelected={this.showMessage}
                 nodeTemplate={this.renderMessage}
                 allowMultiSelection={true}
-                allowDragAndDrop={false}
+                allowDragAndDrop={true}
                 cssClass={'message-list'}
             >
             </TreeViewComponent>
