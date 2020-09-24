@@ -50,7 +50,7 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: CentinelaUrl
-      value: 'https://centinela-api.lefebvre.es/api/secure/conectamail'
+      value: 'https://centinela-api.lefebvre.es/api/secure'
     - name: CentinelaPassword
       value: 'muWeEtF3ht#9yJPB'
     - name: CentinelaLogin

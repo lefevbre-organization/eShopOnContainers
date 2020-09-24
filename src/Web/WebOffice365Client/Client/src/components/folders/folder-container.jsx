@@ -97,11 +97,17 @@ class FolderContainer extends Component {
     }
 
     nodeTemplate(data) {
+        let icon = "lf-icon-folder";
+        const sf = this.props.specialFolders.find( f => f.id === data.id);
+        if(sf) {
+            icon = this.getIcon(sf);
+        }
+
         return (
             <div className="tree-folder-item">
                 <div className="treeviewdiv">
                     <div className="textcontent">
-                        <i className={"lf-icon-folder"} style={{fontSize: 20, color: '#001978'}}></i>
+                        <i className={icon} style={{fontSize: 20, color: '#001978'}}></i>
                         <span className="treeName">{data.displayName}</span>
                         { data.displayName !== "SENT" && data.unreadItemCount > 0 && <span className="msg-count">{data.unreadItemCount}</span> }
                     </div>
@@ -109,6 +115,23 @@ class FolderContainer extends Component {
             </div>
         )
     };
+
+    getIcon(node) {
+        switch(node.name) {
+            case "inbox":
+                return "lf-icon-inbox";
+            case "sentitems":
+                return "lf-icon-send";
+            case "deleteditems":
+                return "lf-icon-trash";
+            case "junkemail":
+                return "lf-icon-alert";
+            case "drafts":
+                return "lf-icon-document";
+            default:
+                return "lf-icon-folder";
+        }
+    }
 
     render() {
         const { t } = this.props;
@@ -127,7 +150,7 @@ class FolderContainer extends Component {
                 </div>
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
-                                       allowDragAndDrop={false}
+                                       allowDragAndDrop={true}
                                        fields={this.fields}
                                        enablePersistence={false}
                                        cssClass={'folder-tree'}
@@ -301,7 +324,9 @@ class FolderContainer extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        specialFolders: state.labelsResult.specialFolders
+    };
 }
 
 function mapDispatchToProps(dispatch) {
