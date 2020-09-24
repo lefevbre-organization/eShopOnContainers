@@ -49,10 +49,6 @@ env:
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: LexonMySqlUrl
-      value: 'http://lexonmysql-api/api/v1/LexonMySql'
-    - name: LexonFilesUrl
-      value: 'https://www-led-pre.lex-on.es/index.php'
     - name: OrchestratorType
       value: 'K8S'
     - name: DefaultEnvironment

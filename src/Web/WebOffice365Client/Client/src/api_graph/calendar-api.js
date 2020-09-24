@@ -524,19 +524,28 @@ function EventParser(event) {
         },
         location: {
             displayName: event.location
-        },
-        //attendees: [
-        //    {
-        //        emailAddress: {
-        //            address: "alberto.valverde.escribano@gmail.com",
-        //            name: "Alberto"
-        //        },
-        //        type: "required"
-        //    }
-        //],
+        },      
+
         isAllDay: event.isAllDay,
     };
 
+    //Atendees
+    let arr = event.attendees
+    let ateendeeObj = [];
+    if (arr.length > 0) {
+        Object.keys(arr).forEach(function (key) {
+            let item = 
+                {
+                    emailAddress: {
+                        address: arr[key].email,
+                        name: ""
+                    },
+                    type: "required"
+                } 
+            ateendeeObj.push(item);
+        });
+    }
+    eventParse.attendees = ateendeeObj;
 
     return eventParse;
 }

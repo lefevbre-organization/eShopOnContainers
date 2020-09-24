@@ -765,7 +765,7 @@ export const getCertifiedEmails = async () => {
     jsonObject.recipients = recipients;
 
     cc.forEach(recipient => {
-      ccData.push({name: recipient.split('@')[0], email: recipient})
+      ccData.push({name: recipient.address.split('@')[0], email: recipient.address})
     });
     jsonObject.cc = ccData;
     //filesData.push({file: filesData, fileName: files.name})
