@@ -35,11 +35,9 @@ export const labelsResult = (state = defaultLabelState, action) => {
         labelInbox: action.payload
       };
     case SPECIAL_LABEL:
-      const sf = [ ...state.specialFolders ];
-      sf[action.payload.name] = action.payload;
       const ns =  {
         ...state,
-        specialFolders: [...sf]
+        specialFolders: [...state.specialFolders, action.payload]
       };
       if(action.payload.name === 'inbox') {
         ns.labelInbox = action.payload;

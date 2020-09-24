@@ -329,7 +329,7 @@ export class Main extends Component {
   }
 
   loadSpecialFolders() {
-    const specialFolders= ['inbox', 'archive', 'deleteditems', 'drafts', 'junkemail', 'outbox', 'sentitems'];
+    const specialFolders= ['inbox', 'deleteditems', 'drafts', 'junkemail', 'outbox', 'sentitems'];
     const it = setInterval(()=>{
       if(specialFolders.length === 0) {
         clearInterval(it);
