@@ -169,6 +169,17 @@ export const getLabelInbox = () =>
       });
   });
 
+export const getLabelSpecial = (name) =>
+    new Promise(async (resolve, reject) => {
+      const accessToken = await getAccessTokenSilent();
+      const client = getAuthenticatedClient(accessToken);
+      client
+          .api(`/me/mailFolders/${name}`)
+          .get()
+          .then((response) => {resolve({ name, ...response });
+          });
+    });
+
 export const getLabelSentItems = async () => {
   const accessToken = await getAccessTokenSilent();
   const client = getAuthenticatedClient(accessToken);
