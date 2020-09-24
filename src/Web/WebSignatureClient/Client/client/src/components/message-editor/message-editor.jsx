@@ -122,6 +122,15 @@ class MessageEditor extends Component {
     this.setState({isFileType: false});
   }
 
+  resetReceivedInfo(){
+    this.props.setMailContacts(null);
+    this.props.setAdminContacts(null);
+    this.props.setUserApp('lefebvre');
+    this.props.setGuid(null);
+    this.props.setTitle('');
+    this.props.setIdDocuments(null);
+  }
+
   getRoleInfo(recipients){
     console.log('Roleinfo:');
     console.log(recipients);
@@ -238,7 +247,7 @@ class MessageEditor extends Component {
             expiration,
             lefebvre.userId,
             guid,
-            userBranding.externalId
+            (userBranding && userBranding.externalId) ? userBranding.externalId : ''
           );
         }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
@@ -273,18 +282,8 @@ class MessageEditor extends Component {
     })
 
     this.setState({ hideConfirmDialog: false });
-      if (lefebvre.mailContacts) {
-        this.props.setMailContacts(null);
-      }
-      if (lefebvre.adminContacts){
-        this.props.setAdminContacts(null);
-      }
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
-      //this.props.setTitle(this.props.application.signaturesFilterKey);
-      this.props.setTitle('');
-      this.props.setIdDocuments(null);
-      close(application);
+    this.resetReceivedInfo();
+    close(application);
 }
 
   componentDidMount() {
@@ -302,13 +301,7 @@ class MessageEditor extends Component {
     if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
       this.setState({hideConfirmDialog: true});
     } else {
-      if (lefebvre.mailContacts) {
-        this.props.setMailContacts(null);
-      }
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
-      //this.props.setTitle(this.props.application.signaturesFilterKey);
-      this.props.setTitle('');
+      this.resetReceivedInfo();
       close(aplication);
     }
   }
@@ -1014,6 +1007,12 @@ class MessageEditor extends Component {
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setUserApp('lefebvre');
+      this.props.setGuid(null);
+      this.props.setTitle('');
+      this.props.setIdDocuments(null);
       this.props.close(this.props.application);
     });
   }
