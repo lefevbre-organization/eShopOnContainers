@@ -233,9 +233,9 @@ export class MessageList extends Component {
 
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
       setTimeout(()=>{
-        //const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
+        // Set this line to get all checked, instead of dragged
+        // const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
         const msgs = this.props.messagesResult.messages.filter( msg => evt.draggedNodeData.id === msg.id).map(msg => msg.id);
-
         if(msgs && msgs.length > 0) {
             const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
             if(lbl) {

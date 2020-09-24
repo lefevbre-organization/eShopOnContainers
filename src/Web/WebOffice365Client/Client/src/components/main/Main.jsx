@@ -13,7 +13,7 @@ import './main.scss';
 import MessageList from '../content/message-list/MessageList';
 import MessageContent from '../content/message-list/message-content/MessageContent';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { getLabels, getInbox } from '../sidebar/sidebar.actions';
+import { getLabels, getInbox, getSpecialFolder } from '../sidebar/sidebar.actions';
 import {
   getLabelMessages,
   emptyLabelMessages,
@@ -46,7 +46,7 @@ import {
 import { PROVIDER } from '../../constants';
 import MessageNotFound from '../message-not-found/MessageNotFound';
 import CalendarComponent from '../../apps/calendar_content';
-import { addContact, getContacts } from '../../api_graph';
+import {addContact, getContacts} from '../../api_graph';
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 
 export class Main extends Component {
@@ -328,8 +328,22 @@ export class Main extends Component {
     this.props.setBBDD(event.detail.bbdd);
   }
 
+  loadSpecialFolders() {
+    const specialFolders= ['inbox', 'deleteditems', 'drafts', 'junkemail', 'outbox', 'sentitems'];
+    const it = setInterval(()=>{
+      if(specialFolders.length === 0) {
+        clearInterval(it);
+        return;
+      }
+
+      const f = specialFolders.pop();
+      this.props.getSpecialFolder(f);
+      }, 200);
+  }
+
   async componentDidMount() {
     this.getLabelList();
+    this.loadSpecialFolders();
     this.getLabelInbox();
 
     window.addEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
@@ -586,7 +600,8 @@ export class Main extends Component {
 
   getLabelInbox() {
     if (this.props.idEmail === undefined) {
-      this.props.getInbox();
+      // this.props.getInbox();
+      this.props.getSpecialFolder('inbox');
     }
   }
 
@@ -866,6 +881,7 @@ const mapDispatchToProps = (dispatch) =>
     {
       getLabels,
       getInbox,
+      getSpecialFolder,
       getLabelMessages,
       emptyLabelMessages,
       toggleSelected,
