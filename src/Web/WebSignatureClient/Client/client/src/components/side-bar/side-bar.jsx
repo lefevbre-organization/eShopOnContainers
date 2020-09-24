@@ -9,12 +9,12 @@ import IconButton from '../buttons/icon-button';
 import { moveFolder } from '../../services/folder';
 import mainCss from '../../styles/main.scss';
 import styles from './side-bar.scss';
-import { editNewMessage, editNewEmailCertificate } from '../../services/application';
+import { editNewMessage } from '../../services/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { getAvailableSignatures } from '../../services/api-signaturit';
 import { setAvailableSignatures } from '../../actions/lefebvre';
-import { setTitle } from '../../actions/application';
+import { setTitle, setAppTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import SendingTypeSelector from './sending-type-selector/sending-type-selector';
 
@@ -314,12 +314,14 @@ class SideBar extends Component {
         if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
           this.props.setAvailableSignatures(response.data);
           this.props.setTitle(t('messageEditor.title'));
-          this.props.newMessage(lefebvre.sign);
+          this.props.setAppTitle(i18n.t('topBar.app'));
+          this.props.newMessage('signature', lefebvre.sign);
         }
       } else {
         this.props.setAvailableSignatures(response.data);
         this.props.setTitle(t('messageEditor.title'));
-        this.props.newMessage(lefebvre.sign);
+        this.props.setAppTitle(i18n.t('topBar.app'));
+        this.props.newMessage('signature', lefebvre.sign);
       }
     })
     .catch(err => {
@@ -329,8 +331,9 @@ class SideBar extends Component {
         this.setState({ hideAlertDialog: true });
         // this.props.setAvailableSignatures(1);
         if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-          this.props.newMessage(lefebvre.sign);
+          this.props.newMessage('signature', lefebvre.sign);
           this.props.setTitle(t('messageEditor.title'));
+          this.props.setAppTitle(i18n.t('topBar.app'));
         }
       }
     })
@@ -338,7 +341,10 @@ class SideBar extends Component {
   }
 
   onNewEmailCertificate() {
-    this.props.newNewEmailCertificate('emailCertificate');
+    this.props.newMessage('emailCertificate', null);
+    this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+    this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+    this.sendTypeDialogClose();
   }
 
   onDragOver(event) {
@@ -396,10 +402,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
-  newMessage: sign => editNewMessage(dispatch, [], [], sign),
-  newNewEmailCertificate: emailCertificate => editNewEmailCertificate(dispatch, [], [], emailCertificate),
+  newMessage: (sendingType, sign) => editNewMessage(dispatch, sendingType, [], [], sign),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
-  setTitle: title => dispatch(setTitle(title))
+  setTitle: title => dispatch(setTitle(title)),
+  setAppTitle: title => dispatch(setAppTitle(title))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>

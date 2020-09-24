@@ -135,7 +135,8 @@
       "photoNumber": "Número de fotos",
       "phone": "Número de teléfono"
     },
-    "title": "SOLICITUD DE FIRMA"
+    "title": "SOLICITUD DE FIRMA",
+    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO"
   },
   "forwardAction": {
     "From": "De",

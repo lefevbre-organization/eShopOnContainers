@@ -12,6 +12,7 @@ import TopBar from './top-bar/top-bar';
 import MainBar from './main-bar/main-bar';
 import SideBar from './side-bar/side-bar';
 import MessageEditor from './message-editor/message-editor';
+import EmailMessageEditor from './message-editor/email-message-editor';
 import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import MessageSnackbar from './message-snackbar/message-snackbar';
@@ -418,7 +419,7 @@ class App extends Component {
 
   renderContent() {
     const { application } = this.props;
-    console.log('renderContent', application);
+    console.log('renderContent', application.newMessage);
     // const content = `
     //   <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
     //   <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
@@ -440,11 +441,16 @@ class App extends Component {
     if (
       application.newMessage &&
       Object.keys(application.newMessage).length > 0
+      && application.newMessage.sendingType == 'signature'
     ) {
       return <MessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     }else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
-    }
+    } else if(application.newMessage &&
+      Object.keys(application.newMessage).length > 0
+      && application.newMessage.sendingType == 'emailCertificate') {
+        return <EmailMessageEditor />;
+      }
     return (
       <Fragment>
         <MessageList className={styles['message-grid']} />

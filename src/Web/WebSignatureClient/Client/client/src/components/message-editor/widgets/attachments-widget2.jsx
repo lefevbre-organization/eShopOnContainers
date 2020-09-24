@@ -29,6 +29,7 @@ class AttachmentsWidget extends Component{
       }
 
     render(){
+        console.log('AttachmentsWidget',this.props.sendingType);
         return (
             <div className={styles['widget']}>
                 <div className={styles['p10']}>
@@ -61,8 +62,8 @@ class AttachmentsWidget extends Component{
                    {i18n.t('attachmentsWidget.messageAlert')}
                     <i className='lf-icon-close-round-full'></i>
                 </span> : ''}
-                <div className={styles["sign"]}>
-                
+                {this.props.sendingType == 'signature' ?  
+                   <div className={styles["sign"]}>
                     {/* <span className={(this.state.optionSelected === 1 ? 'lf-icon-box-active' : 'lf-icon-box-inactive')}></span>
                     <a href="#" onClick={()=> this.setState({optionSelected: 1})}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
                     <br></br>
@@ -80,14 +81,15 @@ class AttachmentsWidget extends Component{
                     <br></br>
                     <span className={(this.state.optionSelected === 2 ? 'lf-icon-radio-button-active' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
                     <a href="#" onClick={()=> this.setState({optionSelected: 2})}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a> */}
-
+                    
                     <span className={(this.state.optionSelected === 1 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')} style={{color: '#001970'}}></span>
                     <a href="#" onClick={()=> {this.setState({optionSelected: 1}); this.props.onSelectNumPages(1)}}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
                     <br></br>
                     <span className={(this.state.optionSelected === 2 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
                     <a href="#" onClick={()=> {this.setState({optionSelected: 2}); this.props.onSelectNumPages(2)}}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a>
-
-                </div>
+                    
+                   </div> 
+                : null}
                 <div className="clearfix"></div>
             </div>)
     }
