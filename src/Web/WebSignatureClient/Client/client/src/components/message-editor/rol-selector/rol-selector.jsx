@@ -179,163 +179,171 @@ export class RolSelector extends React.Component {
     console.log('render', newRecipients);
     return (
       <div className="container">
-          <div className="contenido-central">
+          <div className="contenido-central mb-3">
               {/* <p className="title-modal">ROL DE LOS DESTINATARIOS</p> */}
               <table className={style['detail-rol']}>
-                  <tr>
-                      <th>{i18n.t('messageEditor.grid.name')}</th>
-                      <th>{i18n.t('messageEditor.grid.email')}</th>
-                      <th>{i18n.t('messageEditor.grid.role')}</th>
-                      <th>{i18n.t('messageEditor.grid.signatureType')}</th>
-                      <th colSpan="3">{i18n.t('messageEditor.grid.doubleAuthentication')}</th>
-                  </tr>
-                  {recipients.map((user, i) => {
-                    return(
-                    <tr key={i}>
-                      <td className="name">
-                        <input className={style['border-input']} 
-                        placeholder={i18n.t('messageEditor.grid.name')} 
-                        id={`first_name_${i}`} 
-                        type="text" 
-                        defaultValue={`${newRecipients.length > 0 
-                          ? user.name : user.name}`} 
-                         />
-                      </td>
-                      <td>
-                        <input 
-                         value={`${newRecipients.length > 0 
-                          ? user.address : user.address}`} 
-                         id={`email_${i}`}
-                         className={style['border-input']}
-                         type="text" 
-                         disabled
-                          />
-                      </td>
-                      <td>
-                          <div className="input-field col s5">
-                              <div className="select-wrapper">
-                                <DropDownListComponent 
-                                id={`rol_${i}`}
-                                className={style['selector-rol']} 
-                                dataSource={this.roles} 
-                                ref={(dropdownlist) => { this.listObject = dropdownlist }} 
-                                fields={this.roleFields} 
-                                change={this.onChange.bind(this, i)} 
-                                placeholder="Select a role" 
-                                value={this.roleValue} 
-                                popupHeight="220px" />
-                              </div>
-                          </div>
-                      </td>
-                      <td>
-                        <div className="select-wrapper">
-                          <DropDownListComponent 
-                          id={`signatureType_${i}`}
-                          dataSource={this.signatureTypes} 
-                          ref={(dropdownlist) => { this.listObject= dropdownlist }} 
-                          fields={this.signTypesFields} 
-                          change={this.onChange.bind(this, i)} 
-                          placeholder="Select a type of signature" 
-                          value={`${newRecipients.length > 0 
-                            ? user.signatureType 
-                            : this.signTypeValue}`} 
-                          popupHeight="220px"
-                          enabled={(user.role === 'signer' || user.role === undefined)}
-                          />
-                        </div>
-                      </td>
-                      <td>
-                          <div className="select-wrapper left s3">
-                            <DropDownListComponent 
-                            id={`doubleAuth_${i}`}
-                            dataSource={this.doubleAuth} 
-                            ref={(dropdownlist) => { this.listObject = dropdownlist }} 
-                            fields={this.dobleAuthFields} 
-                            change={this.onChange.bind(this, i)} 
-                            placeholder="Select a double authentication method"
-                            value={`${newRecipients.length > 0 
-                              ? user.doubleAuth 
-                              : this.dobleAuthValue}`} 
-                            popupHeight="220px" 
-                            enabled={(user.signatureType === 'advanced' || user.signatureType === undefined)}/>
-                          </div>
-                      </td>
-                      { (user.doubleAuth === "photo") ? 
-                        <>
-                        <td>
-                            <a className="tooltipped" 
-                             data-position="bottom" 
-                             data-delay="50" 
-                             data-tooltip="Número de fotos adjuntas" 
-                             data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.photoNumber')}
-                             <span className="lf-icon-information"></span>
-                            </a>
-                        </td>
-
-                        <td>
-                          <div className="select-wrapper left s3">
-                          <input 
-                           id={`n_photo_${i}`}
-                           className={`${style['border-input']} ${style['photo-input']}`} 
-                           type="number" 
-                           min="1" 
-                          //  disabled={option !== 1} 
-                           value={photo} 
-                           onChange={this.setPhotos.bind(this)}
-                          />
-                          </div>
-                        </td>
-                        </>
-                      : null
-                      }
-
-                       { (user.doubleAuth === "sms" ) ? 
-                        <>
-                        <td>
-                            <a className="tooltipped" 
-                             data-position="bottom" 
-                             data-delay="50" 
-                             data-tooltip="phone" 
-                             data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.phone')}
-                             <span className="lf-icon-information"></span>
-                            </a>
-                        </td>
-
-                        <td>
-                          <div className="select-wrapper left s3">
-                          <input 
-                           id={`n_phone_${i}`}
-                           className={`${style['border-input']}`} 
-                           type="text" 
-                          />
-                          </div>
-                        </td>
-                        </>
-                      : null
-                      }
-
-                    { (user.doubleAuth === "none" ) ? 
-                        <>
-                        <td></td>
-                        <td></td>
-                        </>
-                      : null
-                      }
-                      
+                  <thead>
+                    <tr>
+                        <th>{i18n.t('messageEditor.grid.name')}</th>
+                        <th>{i18n.t('messageEditor.grid.email')}</th>
+                        <th>{i18n.t('messageEditor.grid.role')}</th>
+                        <th>{i18n.t('messageEditor.grid.signatureType')}</th>
+                        <th colSpan="3">{i18n.t('messageEditor.grid.doubleAuthentication')}</th>
                     </tr>
+                  </thead>
+                  <tbody>
+                  {recipients.map((user, i) => {
+                  return(
+                      <tr key={i}>
+                        <td className="name">
+                          <input className={style['border-input']} 
+                          placeholder={i18n.t('messageEditor.grid.name')} 
+                          id={`first_name_${i}`} 
+                          type="text" 
+                          defaultValue={`${newRecipients.length > 0 
+                            ? user.name : user.name}`} 
+                           />
+                        </td>
+                        <td>
+                          <input 
+                           value={`${newRecipients.length > 0 
+                            ? user.address : user.address}`} 
+                           id={`email_${i}`}
+                           className={style['border-input']}
+                           type="text" 
+                           disabled
+                            />
+                        </td>
+                        <td>
+                            <div className="input-field col s5">
+                                <div className="select-wrapper">
+                                  <DropDownListComponent 
+                                  id={`rol_${i}`}
+                                  className={style['selector-rol']} 
+                                  dataSource={this.roles} 
+                                  ref={(dropdownlist) => { this.listObject = dropdownlist }} 
+                                  fields={this.roleFields} 
+                                  change={this.onChange.bind(this, i)} 
+                                  placeholder="Select a role" 
+                                  value={this.roleValue} 
+                                  popupHeight="220px" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                          <div className="select-wrapper">
+                            <DropDownListComponent 
+                            id={`signatureType_${i}`}
+                            dataSource={this.signatureTypes} 
+                            ref={(dropdownlist) => { this.listObject= dropdownlist }} 
+                            fields={this.signTypesFields} 
+                            change={this.onChange.bind(this, i)} 
+                            placeholder="Select a type of signature" 
+                            value={`${newRecipients.length > 0 
+                              ? user.signatureType 
+                              : this.signTypeValue}`} 
+                            popupHeight="220px"
+                            enabled={(user.role === 'signer' || user.role === undefined)}
+                            />
+                          </div>
+                        </td>
+                        <td>
+                            <div className="select-wrapper left s3">
+                              <DropDownListComponent 
+                              id={`doubleAuth_${i}`}
+                              dataSource={this.doubleAuth} 
+                              ref={(dropdownlist) => { this.listObject = dropdownlist }} 
+                              fields={this.dobleAuthFields} 
+                              change={this.onChange.bind(this, i)} 
+                              placeholder="Select a double authentication method"
+                              value={`${newRecipients.length > 0 
+                                ? user.doubleAuth 
+                                : this.dobleAuthValue}`} 
+                              popupHeight="220px" 
+                              enabled={(user.signatureType === 'advanced' || user.signatureType === undefined)}/>
+                            </div>
+                        </td>
+                        { (user.doubleAuth === "photo") ? 
+                          <>
+                          <td>
+                              <a className="tooltipped" 
+                               data-position="bottom" 
+                               data-delay="50" 
+                               data-tooltip="Número de fotos adjuntas" 
+                               data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.photoNumber')}
+                               <span className="lf-icon-information"></span>
+                              </a>
+                          </td>
+  
+                          <td>
+                            <div className="select-wrapper left s3">
+                            <input 
+                             id={`n_photo_${i}`}
+                             className={`${style['border-input']} ${style['photo-input']}`} 
+                             type="number" 
+                             min="1" 
+                            //  disabled={option !== 1} 
+                             value={photo} 
+                             onChange={this.setPhotos.bind(this)}
+                            />
+                            </div>
+                          </td>
+                          </>
+                        : null
+                        }
+  
+                         { (user.doubleAuth === "sms" ) ? 
+                          <>
+                          <td>
+                              <a className="tooltipped" 
+                               data-position="bottom" 
+                               data-delay="50" 
+                               data-tooltip="phone" 
+                               data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.phone')}
+                               <span className="lf-icon-information"></span>
+                              </a>
+                          </td>
+  
+                          <td>
+                            <div className="select-wrapper left s3">
+                            <input 
+                             id={`n_phone_${i}`}
+                             className={`${style['border-input']}`} 
+                             type="text" 
+                            />
+                            </div>
+                          </td>
+                          </>
+                        : null
+                        }
+  
+                      { (user.doubleAuth === "none" ) ? 
+                          <>
+                          <td></td>
+                          <td></td>
+                          </>
+                        : null
+                        }
+                        
+                      </tr>
                     );
                   })}
+                  </tbody>
               </table>
-              <div className="center-align">
-                <button 
-                className={style['btn-gen']} 
-                //href="#demo-modal"
-                onClick={this.gatherInfo.bind(this)}>{i18n.t('messageEditor.grid.finish')}
-                </button>
-              </div>
+          </div>
+          <div className="center-align mb-3">
+            <button 
+            className={style['btn-gen']} 
+            //href="#demo-modal"
+            onClick={this.gatherInfo.bind(this)}>{i18n.t('messageEditor.grid.finish')}
+            </button>
           </div>
           <style jsx global>
           {` 
+            #rolDialog_dialog-content {
+             padding: 0px !important;
+             overflow: hidden;
+            } 
             .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
             .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
             .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 

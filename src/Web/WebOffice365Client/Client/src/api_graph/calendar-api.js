@@ -187,35 +187,8 @@ export const getEventList = (idCalendar, selectedDate) => {
 export const addCalendarEvent = (idCalendar, event) => {   
     return new Promise(async (resolve, reject) => {
 
-        const event = {
-            subject: "Let's go for lunch",
-            body: {
-                contentType: "HTML",
-                content: "Does mid month work for you?"
-            },
-            start: {
-                dateTime: "2020-09-15T12:00:00",
-                timeZone: "Pacific Standard Time"
-            },
-            end: {
-                dateTime: "2020-09-15T14:00:00",
-                timeZone: "Pacific Standard Time"
-            },
-            location: {
-                displayName: "Harry's Bar"
-            },
-            attendees: [
-                {
-                    emailAddress: {
-                        address: "adelev@contoso.onmicrosoft.com",
-                        name: "Adele Vance"
-                    },
-                    type: "required"
-                }
-            ]
-        };
-
-
+        event = EventParser(event);
+      
         const accessToken = await getAccessTokenSilent();
         const client = getAuthenticatedClient(accessToken);
         client
@@ -249,24 +222,42 @@ export const addCalendarEvent = (idCalendar, event) => {
 
 //    });
 
-export const updateCalendarEvent = (calendar, eventId, event) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.events
-            .update({
-                calendarId: calendar,
-                eventId: eventId,
-                resource: event,
-                sendUpdates: 'all'
-            })
+//export const updateCalendarEvent = (calendar, eventId, event) =>
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.events
+//            .update({
+//                calendarId: calendar,
+//                eventId: eventId,
+//                resource: event,
+//                sendUpdates: 'all'
+//            })
 
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
+
+//    });
+
+export const updateCalendarEvent = (idCalendar, eventId, event) => {
+    return new Promise(async (resolve, reject) => {
+
+        event = EventParser(event);
+
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`/me/events/${eventId}`)
+            .update(event)
+            .then((response) =>
+                resolve(returnCreateEventParser(response)))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
 
 export const deleteCalendarEvent = (calendar, eventId) => {
     return new Promise(async (resolve, reject) => {
@@ -467,7 +458,7 @@ function listEventsParser(list) {
                             Description: list[i].bodyPreview,
                             start: { dateTime: list[i].start.dateTime },
                             end: { dateTime: list[i].end.dateTime },
-                            IsAllDay: !list[i].start.dateTime,
+                            IsAllDay: list[i].IsAllDay,
                             RecurrenceRule: null,
                             ImageName: "lefebvre",
                             Attendees: undefined,
@@ -511,6 +502,43 @@ function returnCreateEventParser(list) {
 
     let listToReturn = listParse[0]
     return listToReturn;
+}
+
+function EventParser(event) {
+    let eventParse;
+
+    eventParse = {       
+
+        subject: event.summary,
+        body: {
+            contentType: "HTML",
+            content: event.description
+        },
+        start: {
+            dateTime: event.start.dateTime,
+            timeZone: 'Europe/Paris',
+        },
+        end: {
+            dateTime: event.end.dateTime,
+            timeZone: 'Europe/Paris',
+        },
+        location: {
+            displayName: event.location
+        },
+        //attendees: [
+        //    {
+        //        emailAddress: {
+        //            address: "alberto.valverde.escribano@gmail.com",
+        //            name: "Alberto"
+        //        },
+        //        type: "required"
+        //    }
+        //],
+        isAllDay: event.isAllDay,
+    };
+
+
+    return eventParse;
 }
 
 
