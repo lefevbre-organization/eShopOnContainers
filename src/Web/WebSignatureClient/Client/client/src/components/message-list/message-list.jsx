@@ -697,23 +697,25 @@ class MessageList extends Component {
         const filterCheckBox = {
             type: 'CheckBox'
         }
-
+        console.log('selectedService', this.props.selectedService);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
+        var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
+        var selectedServices = (this.props.selectedService && this.props.selectedService.selectedService == 'signature') ? firmas : emails;
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
-        return( (firmas && firmas.length > 0) ?
+        return( (selectedServices && selectedServices.length > 0) ?
             <div className={styles['main-grid']}>
             <div>
                 <GridComponent 
-                    dataSource={firmas}
+                    dataSource={selectedServices}
                     allowSorting={true}
                     allowResizing={true} 
                     allowFiltering={true} 
                     allowGrouping={false}
-                    allowPaging={(firmas.length > 10 ? true : false)} 
+                    allowPaging={(selectedServices.length > 10 ? true : false)} 
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
@@ -1598,6 +1600,8 @@ const mapStateToProps = state => ({
     selectedMessages: state.messages.selected,
     downloadedMessages: state.application.downloadedMessages,
     signatures: state.application.signatures,
+    emails: state.application.emails,
+    selectedService: state.application.selectedService,
     signatureFilter: state.application.signaturesFilterKey,
     lefebvre: state.lefebvre,
     auth: state.application.user.credentials.encrypted,

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import i18n from '../../services/i18n';
 
 import MenuItem from './menu-item';
-import {selectFolder, setTitle, editMessage, setAppTitle} from '../../actions/application';
+import {selectFolder, setTitle, editMessage, setAppTitle, setSelectedService} from '../../actions/application';
 import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
@@ -35,8 +35,10 @@ export class MenuListClass extends Component {
   expanding = (e) => {
     if(e.index == 0) {
       this.props.setAppTitle(i18n.t('topBar.app'));
+      this.props.setSelectedService({selectedService:'signature'}); 
     } else {
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+      this.props.setSelectedService({selectedService: 'certifiecateEmail'}); 
     }
   }
 
@@ -290,6 +292,7 @@ const mapDispatchToProps = dispatch => ({
   signatureClicked: signature => dispatch(selectSignature(signature)),
   setTitle: title => dispatch(setTitle(title)),
   setAppTitle: title => dispatch(setAppTitle(title)),
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
   close: (application) => {
     dispatch(editMessage(null));
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
