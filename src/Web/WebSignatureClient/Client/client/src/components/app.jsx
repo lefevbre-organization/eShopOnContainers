@@ -69,7 +69,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
+import { preloadEmails, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -637,110 +637,113 @@ class App extends Component {
 
     const { lefebvre } = this.props;
 
-    console.log('******************************');
-    console.log('******************************');
-    console.log('******************************');
-    console.log('');
     console.log('App.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
-    console.log('******************************');
-    console.log('******************************');
-    console.log('******************************');
-    console.log('');
 
-    this.props.preloadSignatures(lefebvre.userId)
-    .then( () => {
-      if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
-        const { signatures } = this.props.application;
-        let newSignature = true;
-        if (signatures && signatures.length > 0){
-          (signatures.some(s => 
-            (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
-              ? newSignature = this.openSignature(s) 
-              : null)
-          )
-        } 
-        if (newSignature) {
-          if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
-            this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
-            .then((attachment) => {
-                if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
-                  this.props.newMessage(dataMailContacts, dataAdminContacts);
-                }
-                else {
-                  const length = attachment.data.length;
-                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
-                  const newAttachment = [{
-                    fileName: fileName,
-                    size: length,
-                    contentType: getFileType(fileName),
-                    content: attachment.data
-                  }]
-                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
-                }
-            })
-            .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
+    if (lefebvre.roles.includes('Firma Digital')){
+      this.props.preloadSignatures(lefebvre.userId)
+      .then( () => {
+        if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
+          const { signatures } = this.props.application;
+          let newSignature = true;
+          if (signatures && signatures.length > 0){
+            (signatures.some(s => 
+              (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
+                ? newSignature = this.openSignature(s) 
+                : null)
+            )
           } 
-          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
-            let documentsInfo = []; 
-            let attachmentsList = [];
-            let i = 0;
-
-            if (lefebvre.idDocuments.length > 0){
-              this.props.backendRequest();
-              this.setState({hideAlertDialog: true});
-            }
-
-            lefebvre.idDocuments.forEach(document => {
-              this.props.getAttachmentCen(lefebvre.userId, document.docId)
+          if (newSignature) {
+            if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+              this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
               .then((attachment) => {
-                if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
-                  cancelSignatureCen(document.docId)
-                  .then(res => {
-                    console.log(res);
-                  })
-                  .catch(err => {
-                    console.log(err);
-                  })
-                  this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
-                  this.props.setUserApp('lefebvre');
-                  this.props.newMessage(dataMailContacts, dataAdminContacts);
-                }
-                else {
-
-                  const length = attachment.data.length;
-                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
-                  const newAttachment = {
-                    fileName: fileName,
-                    size: length,
-                    contentType: getFileType(fileName),
-                    content: attachment.data
+                  if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
+                    this.props.newMessage(dataMailContacts, dataAdminContacts);
                   }
-                  attachmentsList.push(newAttachment);
-                  documentsInfo.push({docId: document.docId, docName: fileName});
-                }
-                i += 1;
-
-                if (i > 0 && i === attachmentsList.length){
+                  else {
+                    const length = attachment.data.length;
+                    const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                    const newAttachment = [{
+                      fileName: fileName,
+                      size: length,
+                      contentType: getFileType(fileName),
+                      content: attachment.data
+                    }]
+                    this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
+                  }
+              })
+              .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
+            } 
+            else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+              let documentsInfo = []; 
+              let attachmentsList = [];
+              let i = 0;
+  
+              if (lefebvre.idDocuments.length > 0){
+                this.props.backendRequest();
+                this.setState({hideAlertDialog: true});
+              }
+  
+              lefebvre.idDocuments.forEach(document => {
+                this.props.getAttachmentCen(lefebvre.userId, document.docId)
+                .then((attachment) => {
+                  if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
+                    cancelSignatureCen(document.docId)
+                    .then(res => {
+                      console.log(res);
+                    })
+                    .catch(err => {
+                      console.log(err);
+                    })
+                    this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
+                    this.props.setUserApp('lefebvre');
+                    this.props.newMessage(dataMailContacts, dataAdminContacts);
+                  }
+                  else {
+  
+                    const length = attachment.data.length;
+                    const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                    const newAttachment = {
+                      fileName: fileName,
+                      size: length,
+                      contentType: getFileType(fileName),
+                      content: attachment.data
+                    }
+                    attachmentsList.push(newAttachment);
+                    documentsInfo.push({docId: document.docId, docName: fileName});
+                  }
+                  i += 1;
+  
+                  if (i > 0 && i === attachmentsList.length){
+                    this.setState({hideAlertDialog: false});
+                    this.props.backendRequestCompleted();
+                    this.props.setIdDocuments(documentsInfo);
+                    this.props.newMessage(dataMailContacts, dataAdminContacts, null, attachmentsList);
+                    // Aquí hay que cerrar el modal de descarga
+                    
+                  }
+                })
+                .catch(() => {
                   this.setState({hideAlertDialog: false});
                   this.props.backendRequestCompleted();
-                  this.props.setIdDocuments(documentsInfo);
-                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, attachmentsList);
+                  this.props.newMessage(dataMailContacts, dataAdminContacts);
                   // Aquí hay que cerrar el modal de descarga
-                  
-                }
-              })
-              .catch(() => {
-                this.setState({hideAlertDialog: false});
-                this.props.backendRequestCompleted();
-                this.props.newMessage(dataMailContacts, dataAdminContacts);
-                // Aquí hay que cerrar el modal de descarga
-              });        
-            });
-          }
-        }  
-      }
-    })
-    .catch(err => { throw new Error(err);} );
+                });        
+              });
+            }
+          }  
+        }
+      })
+      .catch(err => { throw new Error(err);} );
+    }
+
+    if (lefebvre.roles.includes('Email Certificado')){
+      this.props.preloadEmails(lefebvre.userId)
+      .then(// to do
+        )
+      .catch(// to do
+        )
+    }
+    
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
   }
@@ -1033,6 +1036,7 @@ const mapDispatchToProps = dispatch => ({
   setGUID: guid => dispatch(setGUID(guid)),
   setSign: sign => dispatch(setSign(sign)),
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
+  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   getAttachmentLex: (bbdd, id, user) => getAttachmentLex(bbdd, id, user),
   getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
@@ -1070,6 +1074,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     setIdDocuments: ids => dispatchProps.setIdDocuments(ids),
     backendRequest: () => dispatchProps.backendRequest(),
     backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
+    preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted)
   });
 
 

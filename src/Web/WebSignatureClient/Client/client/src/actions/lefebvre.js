@@ -105,6 +105,11 @@ export const setAdminContacts = email => ({
     payload: email
 })
 
+export const setRoles = roles => ({
+    type: ActionTypes.LEFEBVRE_ROLES, 
+    payload: roles
+})
+
 
 export default {
     setUser,
@@ -127,5 +132,6 @@ export default {
     setIdEntity,
     setIdUserApp,
     setIdDocuments,
-    setAdminContacts
+    setAdminContacts,
+    setRoles
 };

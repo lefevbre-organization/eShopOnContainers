@@ -17,6 +17,8 @@ export const INITIAL_STATE = {
         renameFolderId: null,
         selectedMessage: null,
         selectedSignature: null,
+        selectedEmail: null,
+        selectedService: null,
         downloadedMessages: {},
         outbox: null,
         pollInterval: 15000,
@@ -27,6 +29,7 @@ export const INITIAL_STATE = {
         refreshMessageActiveRequests: 0,
         activeRequests: 0,
         signatures: {},
+        emails: {},
         signaturesFilterKey: 'Mostrar todas'
     },
     folders: {
@@ -68,7 +71,8 @@ export const INITIAL_STATE = {
         bbdd: null,
         idDocuments: [],
         mailContacts: [],
-        adminContacts: []
+        adminContacts: [],
+        roles: []
     }
 };
 

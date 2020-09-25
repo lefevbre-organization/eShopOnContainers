@@ -18,6 +18,8 @@ export const setMessageFilterKeyword = messageFilterKeyword => ({type: ActionTyp
 
 export const selectMessage = message => ({type: ActionTypes.APPLICATION_MESSAGE_SELECT, payload: message});
 export const selectSignature = signature => ({type: ActionTypes.APPLICATION_SIGNATURE_SELECT, payload: signature});
+export const selectEmail = email => ({type: ActionTypes.APPLICATION_EMAIL_SELECT, payload: email});
+export const setSelectedService = service => ({type: ActionTypes.APPLICATION_SERVICE_SELECT, payload: service});
 /**
  * Refreshes the current selectedMessage if it's still the same (same selectedFolder and same selectedMessage)
  *
@@ -30,6 +32,7 @@ export const refreshMessageBackendRequest = () => ({type: ActionTypes.APPLICATIO
 export const refreshMessageBackendRequestCompleted = () => ({type: ActionTypes.APPLICATION_MESSAGE_REFRESH_BE_REQUEST_COMPLETED});
 export const preDownloadMessages = messages => ({type: ActionTypes.APPLICATION_MESSAGE_PRE_DOWNLOAD, payload: {messages}});
 export const preDownloadSignatures = signatures => ({type: ActionTypes.APPLICATION_SIGNATURE_PRE_DOWNLOAD, payload: {signatures}});
+export const preDownloadEmails = emails => ({type: ActionTypes.APPLICATION_EMAILS_PRE_DOWNLOAD, payload: {emails}});
 export const replaceMessageEmbeddedImages = (folder, message, attachment, blob) => ({type: ActionTypes.APPLICATION_MESSAGE_REPLACE_IMAGE, payload: {folder, message, attachment, blob}});
 export const setError = (type, value) => ({type: ActionTypes.APPLICATION_ERROR_SET, payload: {type, value}});
 
