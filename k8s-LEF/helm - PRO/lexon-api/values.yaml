@@ -83,5 +83,5 @@ env:
       value: PRO
     - name: LexonUrls__4__conn
       value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
-    - name: LexonUrls_4_url
+    - name: LexonUrls__4__url
       value: https://www.lex-on.es/index.php
