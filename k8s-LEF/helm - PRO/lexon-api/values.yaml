@@ -51,6 +51,8 @@ env:
       value: Development
     - name: OrchestratorType
       value: 'K8S'
+    - name: Environments
+      value: ['PRO']
     - name: DefaultEnvironment
       value: PRO
     - name: UseMongo

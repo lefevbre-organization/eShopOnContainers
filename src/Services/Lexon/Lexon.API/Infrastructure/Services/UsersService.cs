@@ -41,7 +41,7 @@ namespace Lexon.Infrastructure.Services
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            GetUrlsByEnvironment(null);
+            GetUrlsByEnvironment(null, null);
 
             var handler = new HttpClientHandler()
             {
@@ -52,10 +52,14 @@ namespace Lexon.Infrastructure.Services
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        private void GetUrlsByEnvironment(string env)
+        private void GetUrlsByEnvironment(string env, List<Info> infos)
         {
-            if (env == null)
+            if (env == null || !_settings.Value.Environments.Contains(env))
+            {
+                if (infos != null)
+                    TraceInfo(infos, $"Received {env} - Get Default Env {_settings.Value.DefaultEnvironment}");
                 env = _settings.Value.DefaultEnvironment;
+            }
 
             _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.conn;
             _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.url;
@@ -66,7 +70,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser, string env)
         {
             var result = new Result<LexUser>(new LexUser());
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -111,7 +115,7 @@ namespace Lexon.Infrastructure.Services
         {
             var result = new Result<List<LexCompany>>(new List<LexCompany>());
             var resultUser = new Result<LexUser>(new LexUser());
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -275,7 +279,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser, string env)
         {
             var result = new Result<LexUserSimple>(new LexUserSimple());
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -317,7 +321,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
         {
             var result = new Result<List<int>>(new List<int>());
-            GetUrlsByEnvironment(classificationAdd.env);
+            GetUrlsByEnvironment(classificationAdd.env, result.infos);
 
             try
             {
@@ -378,7 +382,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
             var result = new Result<int>(0);
-            GetUrlsByEnvironment(classification.env);
+            GetUrlsByEnvironment(classification.env, result.infos);
 
             classification.mail.Subject = RemoveProblematicChars(classification.mail.Subject);
 
@@ -416,7 +420,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
         {
             var result = new Result<long>(0);
-            GetUrlsByEnvironment(classificationRemove.env);
+            GetUrlsByEnvironment(classificationRemove.env, result.infos);
 
             var mailInfo = new MailInfo(classificationRemove.Provider, classificationRemove.MailAccount, classificationRemove.idMail);
 
@@ -473,7 +477,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classification)
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.SearchRelations, classification.pageIndex, classification.pageSize, classification.bbdd, classification.idType);
-            GetUrlsByEnvironment(classification.env);
+            GetUrlsByEnvironment(classification.env, resultMySql.Infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -532,7 +536,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
-            GetUrlsByEnvironment(entitySearch.env);
+            GetUrlsByEnvironment(entitySearch.env, resultMySql.Infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -592,7 +596,7 @@ namespace Lexon.Infrastructure.Services
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.GetEntity, 1, 1, entitySearch.bbdd, entitySearch.idType);
             var result = new Result<LexEntity>(new LexEntity());
-            GetUrlsByEnvironment(entitySearch.env);
+            GetUrlsByEnvironment(entitySearch.env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -639,7 +643,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync(string env)
         {
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, resultMySql.Infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -684,7 +688,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
             var result = new Result<LexContact>(new LexContact());
-            GetUrlsByEnvironment(entitySearch.env);
+            GetUrlsByEnvironment(entitySearch.env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -729,7 +733,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
             var result = new Result<List<LexContact>>(new List<LexContact>());
-            GetUrlsByEnvironment(search.env);
+            GetUrlsByEnvironment(search.env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -791,7 +795,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, string env, MailInfo mail)
         {
             var result = new Result<LexUserSimpleCheck>(new LexUserSimpleCheck());
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -973,7 +977,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity folderToEntity)
         {
             var result = new Result<long>(0);
-            GetUrlsByEnvironment(folderToEntity.env);
+            GetUrlsByEnvironment(folderToEntity.env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -1241,7 +1245,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
         {
             var result = new Result<string>(null);
-            GetUrlsByEnvironment(fileMail.env);
+            GetUrlsByEnvironment(fileMail.env, result.infos);
             try
             {
                 var lexonFile = new LexonGetFile
@@ -1286,7 +1290,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
         {
             var result = new Result<bool>(false);
-            GetUrlsByEnvironment(fileMail.env);
+            GetUrlsByEnvironment(fileMail.env, result.infos);
 
             try
             {
@@ -1379,7 +1383,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<int>> AddAppointmentAsync(LexAppointment appointment, string env, string idUser)
         {
             var result = new Result<int>(0);
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             try
             {
@@ -1415,7 +1419,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<int>> RemoveAppointmentAsync(LexAppointmentSimple appointment, string env, string idUser)
         {
             var result = new Result<int>(0);
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -1451,7 +1455,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<int>> AddAppointmentActionAsync(LexAppointmentActuation appointment, string env, string idUser)
         {
             var result = new Result<int>(0);
-            GetUrlsByEnvironment(env);
+            GetUrlsByEnvironment(env, result.infos);
 
             try
             {
