@@ -8,9 +8,6 @@
         public string CollectionMasters { get; set; }
         public string CollectionEvents { get; set; }
 
-        //public string LexonMySqlUrl { get; set; }
-        //public string LexonFilesUrl { get; set; }
-
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }
         public string EventBusPassword { get; set; }
