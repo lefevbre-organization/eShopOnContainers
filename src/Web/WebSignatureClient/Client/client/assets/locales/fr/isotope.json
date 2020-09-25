@@ -280,6 +280,9 @@
     "option2": "Rappels par semaine",
     "option3": "Rappels par jour"
   },
+  "certificatesWidget": {
+    "title": "SOUHAIT CERTIFIER:",
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",

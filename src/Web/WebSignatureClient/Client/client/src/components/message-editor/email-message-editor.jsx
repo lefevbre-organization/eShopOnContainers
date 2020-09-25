@@ -35,6 +35,7 @@ import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
 import  AttachmentsWidget  from './widgets/attachments-widget2';
+import  CertificatesWidget  from './widgets/certificates-widget';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
 
@@ -46,8 +47,6 @@ class EmailMessageEditor extends Component {
       linkDialogVisible: false,
       linkDialogUrl: '',
       dropZoneActive: false,
-      // Stores state of current selection in the dialog (is title, underlined... H1, H2, ..., italic, underline)
-      // Used in editor buttons to activate/deactivate them
       editorState: {},
       selectedReminderOption: '',
       reminderDays: 0,
@@ -224,7 +223,6 @@ class EmailMessageEditor extends Component {
       }
     ];
 
-
     const {
       t,
       className,
@@ -238,9 +236,6 @@ class EmailMessageEditor extends Component {
       content,
       lefebvre
     } = this.props;
-
-    console.log(this.state.centinelaDownloadError);
-    console.log(this.props.attachmentsDownloadError);
  
     return (
       <div
@@ -320,7 +315,7 @@ class EmailMessageEditor extends Component {
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
             ></AttachmentsWidget>
-
+            <CertificatesWidget />
           </div>
           <div className={styles['action-buttons']}>
             <button
@@ -338,18 +333,6 @@ class EmailMessageEditor extends Component {
           </div>
         </div>
 
-        {/* <InsertLinkDialog
-          visible={this.state.linkDialogVisible}
-          closeDialog={() =>
-            this.setState({
-              linkDialogVisible: false,
-              linkDialogInitialUrl: '',
-            })
-          }
-          onChange={(e) => this.setState({ linkDialogUrl: e.target.value })}
-          url={this.state.linkDialogUrl}
-          insertLink={this.handleEditorInsertLink}
-        /> */}
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
@@ -357,14 +340,10 @@ class EmailMessageEditor extends Component {
           animationSettings={this.animationSettings} 
           width='60%' 
           content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
-          //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          //buttons={this.alertButtons} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
           showCloseIcon={true}
-          //position={ this.position }
         />
         <DialogComponent 
           id="confirmDialog" 
@@ -375,7 +354,6 @@ class EmailMessageEditor extends Component {
           width='60%' 
           content={confirmDiscard} 
           ref={dialog => this.confirmDialogInstance = dialog} 
-          //target='#target' 
           buttons={confirmButtons} 
           open={() => this.dialogOpen} 
           close={() => this.dialogClose}

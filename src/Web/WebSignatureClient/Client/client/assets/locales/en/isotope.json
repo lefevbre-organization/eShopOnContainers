@@ -262,6 +262,9 @@
     "option2": "Daily reminders",
     "option3": "Weekly reminders"
   },
+  "certificatesWidget": {
+    "title": "WISH TO CERTIFY THAT:",
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",

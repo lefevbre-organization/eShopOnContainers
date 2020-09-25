@@ -282,6 +282,9 @@
     "option2": "Recordatorios diarios",
     "option3": "Recordatorios semanales"
   },
+  "certificatesWidget": {
+    "title": "DESEO CERTIFICAR QUE:"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Documento",
