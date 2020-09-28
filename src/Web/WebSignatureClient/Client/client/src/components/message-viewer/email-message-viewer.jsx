@@ -14,12 +14,10 @@ import {
   downloadTrailDocument, 
   downloadTrailDocument2,
   downloadAttachments2,
-  sendReminder, 
-  sendReminder2, 
   cancelSignature,
    cancelSignature2 
 } from "../../services/api-signaturit";
-import SignatureList from './signature-list/signature-list';
+import EmailList from './email-list/email-list';
 import SignatureDetails from './signature-details/signature-details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -36,13 +34,6 @@ export function addressGroups(address) {
   return ret;
 }
 
-export const modalReminder = `
-  <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      Se acaba de enviar un recordatorio.
-    </div>
-`;
-
 export const modalCancelOk = `
   <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
@@ -50,11 +41,8 @@ export const modalCancelOk = `
     </div>
 `;
 
-
-
-export class MessageViewer extends Component {
+export class EmailMessageViewer extends Component {
   constructor(props) {
-    console.log('Entra en el MessageViewer');
     super(props);
     this.state = {
       hideAlertDialog: false,
@@ -69,9 +57,6 @@ export class MessageViewer extends Component {
 
     //Sin firmas 
     this.animationSettings = { effect: 'None' };
-    // this.alertButtonRef = element => {
-    //   this.alertButtonEle = element;
-    // };
     this.alertButtons = [{
       // Click the footer buttons to hide the Dialog
       click: () => {
@@ -80,9 +65,6 @@ export class MessageViewer extends Component {
       buttonModel: { content: 'Aceptar', isPrimary: true }
     }];
 
-    // this.confirmButtonRef = element => {
-    //   this.confirmButtonEle = element;
-    // };
     this.confirmButtons = [{
         click: () => {
             this.setState({ hideConfirmDialog: false });
@@ -174,27 +156,8 @@ export class MessageViewer extends Component {
     return result;
   }
 
-  onSendReminder(signatureId, documents, auth){
-    sendReminder2(signatureId, auth);
-    documents.forEach((document, index) => {
-      var signers = document.events
-      if(signers.length > 0) {
-        signers.forEach((signer) => {
-            if(signer.type != 'document_signed'){
-                this.setState({ 
-                  hideAlertDialog: true, 
-                  signer: (index + 1) 
-                });
-                return;
-            }
-        });
-      }
-    });
-  }
-
   onCancelSignature(signatureId, auth){
     this.setState({ hideConfirmDialog: true, signatureId: signatureId, auth: auth });
-    //cancelSignature2(signatureId, auth);
   }
 
   onCancelSignatureOk(){
@@ -222,86 +185,30 @@ export class MessageViewer extends Component {
     this.alertDialogInstance.cssClass = 'e-fixed';
   }
 
-  getDaysBetweenDates(date1, date2) {
-   
-    // To calculate the time difference of two dates 
-    var Difference_In_Time = date2.getTime() - date1.getTime(); 
-    
-    // To calculate the no. of days between two dates 
-    var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24); 
-  
-    return Math.round(Difference_In_Days);
-  }
-
-
+ 
   render() {
-    console.log('Entra en el message viewer');
     const signature = this.props.selectedSignature;
     let status;
     let status_style;
-    const contenido = `
-    <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
-      ${i18n.t('reminderSentModal.text') + ' ' 
-      + this.state.signer + '.'}
-    </div>`;
 
-    const contenido2 = `
+    const contenido = `
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
       ${i18n.t('cancelledSignatureModal.text')}
     </div>`;
 
-    const contenido3 = `
+    const contenido1 = `
     <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
       ${i18n.t('cancelConfirmationModal.text2')}
     </div>`;
 
-    let reminderText;
-    let expirationDays = signature.data.find(x => x.key === 'expiration');
-    let expirationText = i18n.t('signatureViewer.widgets.expiration.doesntExpires');
-    let passedTime =  this.getDaysBetweenDates(new Date(signature.created_at), new Date());
-    let reminderConfig = signature.data.find(x => x.key === "reminders");
+   
     let signatureConfig = signature.data.find(x => x.key === "roles");
 
-    
-    if (reminderConfig === undefined || reminderConfig === null){
-      reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
-    } else {
-      switch (reminderConfig.value) {
-        case 'notConfigured':
-          reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
-          break;
-        case 'Daily':
-          reminderText = i18n.t('signatureViewer.widgets.reminders.daily');
-          break;
-        case 'Weekly':
-          reminderText = i18n.t('signatureViewer.widgets.reminders.weekly');
-          break;
-        default:
-          if (reminderConfig.value.startsWith('Custom')){
-            reminderText = i18n.t('signatureViewer.widgets.reminders.everyXdays').replace('___', reminderConfig.value.split(':')[1]);
-          } else {
-            reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
-          }
-          break;
-      }
-    }
-    
-    if ((expirationDays && expirationDays.value === 0) || expirationDays === undefined || expirationDays.value === "notConfigured"){
-      expirationText = i18n.t('signatureViewer.widgets.expiration.notConfigured');
-    }
-    else {
-      if (expirationDays.value !== "never"){
-        expirationText = i18n.t('signatureViewer.widgets.expiration.expires')
-        .replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
-      }
-    }
-
+  
     switch (signature.status) {
       case 'canceled':
         status = i18n.t('signaturesGrid.statusCancelled');
@@ -345,33 +252,20 @@ export class MessageViewer extends Component {
          signature={signature}
          getSigners={this.getSigners}
         />
-       
-      
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
-            <div className={`${materialize.col} ${materialize['l4']} right`}>
-                <div className={styles['cont-generico']}>
-                    <span className="lf-icon-calendar-cross"></span><span className={styles['title-generico']}>{i18n.t('signatureViewer.widgets.expiration.title')}</span>
-                    <p style={{paddingTop: '10px'}}>{expirationText}</p>
-                    <div className={styles.clearfix}></div>
-                </div>
-                <div className={styles['cont-generico']}>
-                    <span className="lf-icon-calendar"></span><span className={styles['title-generico']}>{i18n.t('signatureViewer.widgets.reminders.title')}</span>
-                    <p style={{paddingTop: '10px'}}>{reminderText}</p>
-                    <div className={styles.clearfix}></div>
-                </div>
-               
+            {/* <div className={`${materialize.col} ${materialize['l4']} right`}>
                 <button 
                   className={`${styles['btn-gen']} modal-trigger right`}
                   onClick={() => downloadTrailDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
                   disabled={signature.status !=='completed'}>
                     {i18n.t('signatureViewer.buttons.downloadTrail')}
                 </button>
-            </div>            
-            <div className={`${materialize.col} ${materialize['l8']} left`}>
+            </div>             */}
+            <div className={`${materialize.col} ${materialize['l12']} left`}>
               {signature.documents.map((signer, index) => {
               return (
-                <SignatureList 
+                <EmailList 
                  signer={signer}
                  signatureConfig={signatureConfig ? signatureConfig.value.split('|')[index].split(':') : null}
                  signatureId={signature.id}
@@ -382,7 +276,7 @@ export class MessageViewer extends Component {
                  getEventStatus={this.getEventStatus}
                  getSingleEventDate={this.getSingleEventDate}
                  auth={this.props.auth}
-                ></SignatureList>            
+                ></EmailList>            
                 )
               })}
             </div>
@@ -395,14 +289,11 @@ export class MessageViewer extends Component {
           visible={this.state.hideAlertDialog || this.state.hideAlertDialog2} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.hideAlertDialog) ? contenido : contenido2}//'Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí' 
+          content={contenido}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          //buttons={this.alertButtons} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
           showCloseIcon={true}
-          //position={ this.position }
         ></DialogComponent>
         <DialogComponent 
           id="confirmDialog" 
@@ -411,9 +302,8 @@ export class MessageViewer extends Component {
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
           width='60%'
-          content={contenido3} 
+          content={contenido1} 
           ref={dialog => this.confirmDialogInstance = dialog} 
-          //target='#target' 
           buttons={this.confirmButtons} 
           open={() => this.dialogOpen} 
           close={() => this.dialogClose}
@@ -543,13 +433,13 @@ export class MessageViewer extends Component {
   }
 }
 
-MessageViewer.propTypes = {
+EmailMessageViewer.propTypes = {
   refreshMessageActiveRequests: PropTypes.number,
   selectedMessage: PropTypes.object,
   className: PropTypes.string
 };
 
-MessageViewer.defaultProps = {
+EmailMessageViewer.defaultProps = {
   className: ''
 };
 
@@ -572,8 +462,7 @@ const mapDispatchToProps = dispatch => ({
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
   },
-  // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MessageViewer);
+export default connect(mapStateToProps, mapDispatchToProps)(EmailMessageViewer);
