@@ -586,6 +586,7 @@ export class Main extends Component {
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
+                    app: 'calendar',
                     env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
                 }
             })

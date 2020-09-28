@@ -241,6 +241,7 @@ class Main extends Component {
       idCompany,
       provider = 'DEFAULT',
       account = 'default@default.def',
+        app = "mail",
       env = 'DEV'
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
@@ -250,12 +251,14 @@ class Main extends Component {
         idCompany,
         provider,
         account,
-        env
+        env,
+        app
       });
     }
 
     window.currentEnv = env;
 
+    this.props.setApp(app);
     if(provider && provider !== '') {
       this.props.setProvider(provider);
     }
@@ -453,6 +456,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   setProvider: (item) => dispatch(SELECTION_ACTIONS.setProvider(item)),
+  setApp: (item) => dispatch(SELECTION_ACTIONS.setApp(item)),
   setInitialBBDD: (item) => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
   setUser: (item) => dispatch(SELECTION_ACTIONS.setUser(item)),
   addMessage: (item) => dispatch(ACTIONS.addMessage(item)),
