@@ -510,7 +510,7 @@ const mapStateToProps = (state) => ({
   emailMessageResult: state.emailMessageResult,
   emailHeaderMessageResult: state.emailHeaderMessageResult,
   selectedMessages: state.messageList.selectedMessages,
-  selectedFolderId: state.messagesResult.label.result.id,
+  selectedFolderId: (state.messageResult && state.messageResult.label && state.messageResult.label.result) ? state.messagesResult.label.result.id : '',
   selectedFolder: state.messagesResult.label
     ? state.messagesResult.label.result.name
     : '',
