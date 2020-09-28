@@ -23,6 +23,7 @@
         public long IdAppNavision { get; set; }
 
         public EnvironmentModel[] LexonUrls { get; set; }
+        public string[] Environments { get; set; }
         public string DefaultEnvironment { get; set; }
 
         public StoreProcedures SP { get; set; }

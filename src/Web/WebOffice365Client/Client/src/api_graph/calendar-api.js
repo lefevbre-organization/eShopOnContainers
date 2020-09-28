@@ -461,7 +461,7 @@ function listEventsParser(list) {
                             IsAllDay: list[i].IsAllDay,
                             RecurrenceRule: null,
                             ImageName: "lefebvre",
-                            Attendees: undefined,
+                            Attendees: list[i].attendees,
                             EventType: undefined,
                           
              });
