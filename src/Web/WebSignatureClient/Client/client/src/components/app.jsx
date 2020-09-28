@@ -15,6 +15,7 @@ import MessageEditor from './message-editor/message-editor';
 import EmailMessageEditor from './message-editor/email-message-editor';
 import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
+import EmailMessageViewer from './message-viewer/email-message-viewer';
 import MessageSnackbar from './message-snackbar/message-snackbar';
 import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
 
