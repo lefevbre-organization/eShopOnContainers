@@ -60,6 +60,11 @@ namespace Lexon.Infrastructure.Services
                     TraceInfo(infos, $"Received {env} - Get Default Env {_settings.Value.DefaultEnvironment}");
                 env = _settings.Value.DefaultEnvironment;
             }
+            else
+            {
+                if (infos != null)
+                    TraceInfo(infos, $"Received {env} from client");
+            }
 
             _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.conn;
             _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.url;
