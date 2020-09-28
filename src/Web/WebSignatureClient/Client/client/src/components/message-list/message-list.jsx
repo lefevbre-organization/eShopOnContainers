@@ -248,14 +248,22 @@ class MessageList extends Component {
         }
     }
 
-    getSignersInfo(signature){
+    getRecipientsInfo(element){
         var result = []
 
-        signature.documents.map(d => {
-            if (result.filter(e => e.name === d.name && e.email === d.email).length === 0){
-                result.push({name: d.name, email: d.email})
-            }
-        });
+        if (this.props.selectedService == 'signature'){
+            element.documents.map(d => {
+                if (result.filter(e => e.name === d.name && e.email === d.email).length === 0){
+                    result.push({name: d.name, email: d.email})
+                }
+            });
+        } else {
+            element.certificates.map(d => {
+                if (result.filter(e => e.name === d.name && e.email === d.email).length === 0){
+                    result.push({name: d.name, email: d.email})
+                }
+            });
+        }
         return result;
     }
 
@@ -291,6 +299,15 @@ class MessageList extends Component {
         return result;
     }
 
+    /*
+          _____      _     _   __  __      _   _               _     
+         / ____|    (_)   | | |  \/  |    | | | |             | |    
+        | |  __ _ __ _  __| | | \  / | ___| |_| |__   ___   __| |___ 
+        | | |_ | '__| |/ _` | | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+        | |__| | |  | | (_| | | |  | |  __/ |_| | | | (_) | (_| \__ \
+         \_____|_|  |_|\__,_| |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+    */
+
     getSignatures(signatures){
         let filteredSignatures = [];
         signatures.map( sig => {
@@ -325,30 +342,54 @@ class MessageList extends Component {
             // })
             date = new Date(signature.created_at);
             status = signature.documents[signature.documents.length-1].status;
-           
+        
             newStatus = this.getNewStatus(status);
-         
+        
             res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
         });
         return (res.length === 0 ? [{}] : res);
     }
 
-    getNewStatus = (status) => {
-        if(status == "canceled") {
-           return i18n.t('signaturesGrid.statusCancelled');
-        } else if(status == "declined") {
-            return i18n.t('signaturesGrid.statusDeclined');
-        } else if(status == "expired") {
-            return i18n.t('signaturesGrid.statusExpired');
-        } else if(status == "completed") {
-            return i18n.t('signaturesGrid.statusCompleted');
-        } else if(status == "ready") {
-            return i18n.t('signaturesGrid.statusInProgress');
-        } else if(status == "error") {
-            return i18n.t('signaturesGrid.statusError');
-        } else if(status == "in_queue") {
-            return i18n.t('signaturesGrid.statusPending');
-        }
+    getEmails(emails){
+        let filteredEmails = [];
+        emails.map( email => {
+            if ((email.status === 'En progreso' || email.status === 'ready' || email.status === 'pending') && (this.props.signatureFilter === "En progreso")){
+                filteredEmails.push(email);
+            } else if ((email.status === 'Completadas' || email.status === 'completed') && (this.props.signatureFilter === "Completadas")){
+                filteredEmails.push(email);
+            } else if ((email.status === 'Canceladas' || email.status === 'canceled' || email.status === 'expired' || email.status ==='declined' || email.status === 'error') && (this.props.signatureFilter === 'Canceladas')) {
+                filteredEmails.push(email);    
+            } else if (this.props.signatureFilter === "Mostrar todas") {
+                filteredEmails.push(email);
+            }
+        });
+        
+
+        let res = [];
+
+        filteredEmails.map(email => {
+            let documentName = '';
+            let subject = '';
+            let recipients = '';
+            let date = '';
+            let status = '';
+            let newStatus = '';
+
+            documentName = (email.certificates[0].file && email.certificates[0].file.name) ? email.certificates[0].file.name : ''
+            subject = (email.data.find(x => x.key === "subject")) ? email.data.find(x => x.key === "subject").value : 'Sin asunto';
+            email.certificates.map(d => recipients = `${recipients}${d.email}; `);
+            // date = new Date(signature.created_at).toLocaleString(navigator.language, {
+            //     year: 'numeric', month: '2-digit', day: '2-digit',
+            //     hour: '2-digit', minute: '2-digit', second: '2-digit'
+            // })
+            date = new Date(email.created_at);
+            status = email.status;
+           
+            newStatus = this.getNewStatus(status);
+         
+            res.push({Id: email.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
+        });
+        return (res.length === 0 ? [{}] : res);
     }
 
     gridTemplate(props) {
@@ -422,7 +463,6 @@ class MessageList extends Component {
        
     }
 
-
     recipientsGridTemplate(props){
         let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
@@ -449,30 +489,36 @@ class MessageList extends Component {
         }
 
         let recipientsList = [];
-        let signature = this.props.signatures.find(s => s.id === props.Id)
+        let data;
+        if (this.props.selectedService == 'signature'){
+            data = this.props.signatures.find(s => s.id === props.Id)
+        } else {
+            data = this.props.emails.find(e => e.id === props.Id)
+        }
+        
 
-        if (signature ){
-            var signersInfo = this.getSignersInfo(signature);
-            signersInfo.forEach((signer, i) => {
-                console.log(signer);
-                if (i === signersInfo.length -1 ){
+        if (data){
+            var recipientsInfo = this.getRecipientsInfo(data);
+            recipientsInfo.forEach((recipient, i) => {
+                console.log(recipient);
+                if (i === recipientsInfo.length -1 ){
                     recipientsList.push(
                         {
-                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
+                            text: (recipient.name === '') ? recipient.email.split('@')[0] : recipient.name,
                             cssClass: 'test'
                         },
                         {
-                            text: signer.email
+                            text: recipient.email
                         }
                     )  
                 } else {
                     recipientsList.push(
                         {
-                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
+                            text: (recipient.name === '') ? recipient.email.split('@')[0] : recipient.name,
                             cssClass: 'test'
                         },
                         {
-                            text: signer.email
+                            text: recipient.email
                         },
                         {   
                             separator: true
@@ -499,7 +545,7 @@ class MessageList extends Component {
                 </div>     
                 {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
                 <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>
-                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
+                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{recipientsInfo.length}</DropDownButtonComponent>
                 </div>
             </div>
         )
@@ -558,6 +604,33 @@ class MessageList extends Component {
         )
     }
 
+    getNewStatus = (status) => {
+        if(status == "canceled") {
+           return i18n.t('signaturesGrid.statusCancelled');
+        } else if(status == "declined") {
+            return i18n.t('signaturesGrid.statusDeclined');
+        } else if(status == "expired") {
+            return i18n.t('signaturesGrid.statusExpired');
+        } else if(status == "completed") {
+            return i18n.t('signaturesGrid.statusCompleted');
+        } else if(status == "ready") {
+            return i18n.t('signaturesGrid.statusInProgress');
+        } else if(status == "error") {
+            return i18n.t('signaturesGrid.statusError');
+        } else if(status == "in_queue") {
+            return i18n.t('signaturesGrid.statusPending');
+        }
+    }
+
+    /*
+          _____      _     _                       _   _                 
+         / ____|    (_)   | |                     | | (_)                
+        | |  __ _ __ _  __| |  ______    __ _  ___| |_ _  ___  _ __  ___ 
+        | | |_ | '__| |/ _` | |______|  / _` |/ __| __| |/ _ \| '_ \/ __|
+        | |__| | |  | | (_| |          | (_| | (__| |_| | (_) | | | \__ \
+         \_____|_|  |_|\__,_|           \__,_|\___|\__|_|\___/|_| |_|___/
+    */
+   
     onRowSelected(event) {
         console.log(event);
         var signature = this.props.signatures.find(s => s.id === event.data.Id);
@@ -574,27 +647,27 @@ class MessageList extends Component {
         //     this.gridRef && this.gridRef.refresh();
         //   }
         // );
-      }
+    }
 
     toolbarClick(event){
         if (this.grid && event.item.id.includes('pdfexport') ) {
             let pdfdata = [];
             const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
             for(let i=0; i<query.queries.length; i++ ){
-              if(query.queries[i].fn === 'onPage'){
+            if(query.queries[i].fn === 'onPage'){
                 query.queries.splice(i,1);// remove page query to get all records
                 break;
-              }
+            }
             }
             new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
-              .then((e) => {
+            .then((e) => {
                 pdfdata = e.result;   // get all filtered records
                 const exportProperties= {
-                  dataSource: pdfdata,
-                  pageOrientation: 'Landscape'
+                dataSource: pdfdata,
+                pageOrientation: 'Landscape'
                 };
                 if (this.grid) {
-                  this.grid.pdfExport(exportProperties);
+                this.grid.pdfExport(exportProperties);
                 }
             }).catch((e) => true);
         } else if (this.grid && event.item.id.includes('excel')){
@@ -624,13 +697,13 @@ class MessageList extends Component {
     onCancelSignatureOk(){
         const signatureId = this.state.signatureId;
         const auth = this.state.auth;
-    
+
         cancelSignature2(signatureId, auth)
         .then(() => {
-          this.setState({ hideAlertDialog: true, signatureId: '', auth: '' });
+        this.setState({ hideAlertDialog: true, signatureId: '', auth: '' });
         })
         .catch(() => {
-          this.setState({ hideAlertDialog: true, signatureId: '', auth: '' });
+        this.setState({ hideAlertDialog: true, signatureId: '', auth: '' });
         });
     }
 
@@ -645,6 +718,110 @@ class MessageList extends Component {
         this.alertDialogInstance.cssClass = 'e-fixed';
     }
 
+    isEmpty(obj) {
+        for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            return false;
+        }
+        }
+    
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
+    
+    onresize(e) {     
+        
+        var rowHeight = this.grid.getRowHeight(); //height of the each row     
+        var gridHeight = Number(window.innerHeight - 120); //grid height
+        var pageSize = Number(this.grid.pageSettings.pageSize) + 10; //initial page size
+        var pageResize = (gridHeight - (pageSize * rowHeight)) / rowHeight;
+        this.grid.pageSettings.pageSize = pageSize + Math.round(pageResize);
+    }    
+                                                                      
+    /*
+         _      _  __      _____           _        __  __      _   _               _     
+        | |    (_)/ _|    / ____|         | |      |  \/  |    | | | |             | |    
+        | |     _| |_ ___| |    _   _  ___| | ___  | \  / | ___| |_| |__   ___   __| |___ 
+        | |    | |  _/ _ \ |   | | | |/ __| |/ _ \ | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+        | |____| | ||  __/ |___| |_| | (__| |  __/ | |  | |  __/ |_| | | | (_) | (_| \__ \
+        |______|_|_| \___|\_____\__, |\___|_|\___| |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+                                __/ |                                                    
+                                |___/                                                     
+    */
+
+   componentDidMount() {
+        const { lefebvre } = this.props;
+        console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
+
+        this.props.preloadSignatures(lefebvre.userId);
+
+        // window.addEventListener('resize', this.onresize.bind(this));
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.sign_ready === false){
+            if (this.props.signatures && this.props.signatures.length){
+                this.setState({sign_ready: true, rowCount: this.getCount()});
+            }
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        const difP = detailedDiff(this.props, nextProps);
+        const difSt = detailedDiff(this.state, nextState);
+
+        if (difP && difP.updated !== undefined){
+            if (difP.updated.hasOwnProperty('preloadSignatures') 
+                && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
+                && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
+                && Object.keys(difP.updated).length === 5
+                && Object.keys(difP.added).length === 0
+                && Object.keys(difP.deleted).length === 0){
+                    return false;
+            }
+        } else {
+            if (
+                this.isEmpty(difP.updated) &&
+                this.isEmpty(difP.added) &&
+                this.isEmpty(difP.deleted) &&
+                this.isEmpty(difSt.updated) &&
+                this.isEmpty(difSt.added) &&
+                this.isEmpty(difSt.deleted)
+            ) {
+                return false;
+            }
+        }
+
+        // if (difP && difP.updated !== undefined
+        //     && difP.updated.hasOwnProperty('preloadSignatures') 
+        //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
+        //     && difP.update.hasOwnProperty('signatureClicked') && difP.update.hasOwnProperty('setTitle')
+        //     && Object.keys(difP.updated).length === 5){
+        //         return false;
+        // } else {
+        //     if (
+        //         this.isEmpty(difP.updated) &&
+        //         this.isEmpty(difP.added) &&
+        //         this.isEmpty(difP.deleted) &&
+        //         this.isEmpty(difSt.updated) &&
+        //         this.isEmpty(difSt.added) &&
+        //         this.isEmpty(difSt.deleted)
+        //       ) {
+        //         return false;
+        //       }
+        // }
+
+        return true;
+    }
+
+
+    /*
+         _____                _             __  __      _   _               _     
+        |  __ \              | |           |  \/  |    | | | |             | |    
+        | |__) |___ _ __   __| | ___ _ __  | \  / | ___| |_| |__   ___   __| |___ 
+        |  _  // _ \ '_ \ / _` |/ _ \ '__| | |\/| |/ _ \ __| '_ \ / _ \ / _` / __|
+        | | \ \  __/ | | | (_| |  __/ |    | |  | |  __/ |_| | | | (_) | (_| \__ \
+        |_|  \_\___|_| |_|\__,_|\___|_|    |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
+    */
     render() {
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
@@ -691,7 +868,7 @@ class MessageList extends Component {
                     { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan')},
                     { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal')}
                 ],
-             } 
+            } 
         };
 
         const filterCheckBox = {
@@ -700,8 +877,9 @@ class MessageList extends Component {
         console.log('selectedService', this.props.selectedService);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
-        var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
-        var selectedServices = (this.props.selectedService && this.props.selectedService.selectedService == 'signature') ? firmas : emails;
+        //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
+        var emails = (this.props.emails && this.props.emails.length > 0) ? this.getEmails(this.props.emails) : [{}];
+        var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
@@ -806,7 +984,7 @@ class MessageList extends Component {
                         cursor: pointer;
                         background: #c90223;
                     }
-                   
+                
                     .e-grid .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop) {
                         color: #fff;
                     
@@ -876,7 +1054,7 @@ class MessageList extends Component {
                     .signature-poppup ul .e-item.e-separator{
                         border-bottom: 1px solid #001970;
                         margin: 6px 4px;
-                       
+                    
                     }
                     .e-dropdown-popup ul .e-item {
                         font-weight: bold;
@@ -896,7 +1074,7 @@ class MessageList extends Component {
                     .e-input-in-wrap::after {
                         background: #001970;
                     }
-   
+
                     .test{
                         color: #fff;
                     }
@@ -928,8 +1106,8 @@ class MessageList extends Component {
                     }
                     
                     .e-input-group:not(.e-success):not(.e-warning):not(.e-error) input.e-input:focus {
-                      border-bottom: none;
-                      box-shadow: none;
+                    border-bottom: none;
+                    box-shadow: none;
                     }
 
                     .e-toolbar .e-toolbar-items {
@@ -940,9 +1118,9 @@ class MessageList extends Component {
                         vertical-align: middle;
                     }
                     #confirmDialog { 
-                      //top: -10px !important;
+                    //top: -10px !important;
                     }
-    
+
                     #infoDialog, #confirmDialog {
                         max-height: 927px;
                         width: 300px;
@@ -1007,13 +1185,13 @@ class MessageList extends Component {
                         border: 2px solid #fff !important;
                         min-width: 80px;
                     }
-                      
+                    
                     #confirmDialog .e-btn.e-flat.e-primary:hover {
                         background-color: #e5e8f1 !important;
                         background: #e5e8f1 !important;
                         color: #001978 !important;
                     }
-                      
+                    
                     #confirmDialog .e-btn.e-flat.e-primary:active {
                         background-color: #e5e8f1 !important;
                         background: #e5e8f1 !important;
@@ -1032,104 +1210,104 @@ class MessageList extends Component {
                         border-radius: 0 !important;
                         border: 2px solid #fff !important;
                     }
-                      
+                    
                     .btn-modal-close:hover {
-                     background-color: #e5e8f1 !important;
-                     background: #e5e8f1 !important;
-                     color: #001978 !important;
+                    background-color: #e5e8f1 !important;
+                    background: #e5e8f1 !important;
+                    color: #001978 !important;
                     }
-                   
+                
                     .btn-modal-close:active {
-                     background-color: #e5e8f1 !important;
-                     background: #e5e8f1 !important;
-                     color: #001978 !important;
+                    background-color: #e5e8f1 !important;
+                    background: #e5e8f1 !important;
+                    color: #001978 !important;
                     }
             
                     .e-toolbar-right {
-                      right: 13% !important;
-                      display: table-column !important;
+                    right: 13% !important;
+                    display: table-column !important;
                     }
                     .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-left {
-                     left: auto;
-                     line-height: 47px !important;
+                    left: auto;
+                    line-height: 47px !important;
                     }
                     .e-toolbar-left {
-                     right: 0 !important;
-                     background-color: #DDE0DF;
-                     height: 95% !important;
-                     top: 2px !important;
-                     border-top-left-radius: 23px;
-                     border-bottom-left-radius: 23px;
+                    right: 0 !important;
+                    background-color: #DDE0DF;
+                    height: 95% !important;
+                    top: 2px !important;
+                    border-top-left-radius: 23px;
+                    border-bottom-left-radius: 23px;
                     }
                     .e-tbar-btn-text {
-                      display: none !important;
+                    display: none !important;
                     } 
                     .e-toolbar .e-toolbar-items .e-toolbar-left 
                     .e-toolbar-item:first-child {
-                      margin-left: 15px;
+                    margin-left: 15px;
                     }
                     .e-toolbar .e-toolbar-items .e-toolbar-left 
                     .e-toolbar-item:nth-child(3) {
-                      margin-right: 15px;
+                    margin-right: 15px;
                     }
                     .e-toolbar .e-tbar-btn {
-                      background: #001978;
-                      border-radius: 15px;
+                    background: #001978;
+                    border-radius: 15px;
                     }
                     .e-toolbar .e-toolbar-items .e-toolbar-item 
                     .e-tbar-btn.e-btn.e-tbtn-txt 
                     .e-icons.e-btn-icon {
-                     color: #fbfbfb;
+                    color: #fbfbfb;
                     }
                     .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn {
-                     height: calc(100% - 15px);
-                     padding: 0 3.5px;
+                    height: calc(100% - 15px);
+                    padding: 0 3.5px;
                     }
                     .e-grid {
-                      border: 1px solid #001970;
-                      border-top: 6px solid #001970;
+                    border: 1px solid #001970;
+                    border-top: 6px solid #001970;
                     }
                     .e-grid .e-toolbar-items .e-toolbar-item.e-search-wrapper 
                     .e-search .e-search-icon {
-                     min-width: 29px !important;
-                     border-left: 1px solid #001978 !important;
-                     font-size: 16px !important;
+                    min-width: 29px !important;
+                    border-left: 1px solid #001978 !important;
+                    font-size: 16px !important;
                     }
                     .e-search   {
-                      border: 1px solid #001970 !important;
-                      height: 32px;
-                      padding: 1px;
-                      padding-left: 4px;
+                    border: 1px solid #001970 !important;
+                    height: 32px;
+                    padding: 1px;
+                    padding-left: 4px;
                     }
                     .e-grid .e-content {
-                      overflow-y: hidden !important;
+                    overflow-y: hidden !important;
                     }
                     .e-toolbar .e-tbar-btn:hover {
-                      border-radius: 14px;
+                    border-radius: 14px;
                     }
                     .e-toolbar .e-tbar-btn:focus {
-                      border-radius: 14px;
+                    border-radius: 14px;
                     }
                     .e-toolbar .e-tbar-btn:active {
-                      border-radius: 14px;
+                    border-radius: 14px;
                     }
                     .e-grid.e-default tr td:first-child {
-                      background-color: #6C77AF;
+                    background-color: #6C77AF;
                     }
                     .e-btn.e-icon-btn {
-                      background-color: transparent !important;
+                    background-color: transparent !important;
                     }
                     .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
-                      color: white;
+                    color: white;
                     }
                     .e-btn:active .e-btn-icon {
-                      color: #001978 !important;
+                    color: #001978 !important;
                     }
                     .e-btn:focus .e-btn-icon {
-                      color: #001978 !important;
+                    color: #001978 !important;
                     }
                     .e-btn:hover .e-btn-icon {
-                     color: #001978 !important;
+                    color: #001978 !important;
                     }
                     .e-grid .e-gridheader tr th:first-child {
                         padding: 0;
@@ -1148,9 +1326,9 @@ class MessageList extends Component {
                         border-radius: 1px;
                     }
                     .e-pager .e-numericitem {
-                      line-height: 0.5;
-                       min-width: 16px;
-                       font-size: 14px;
+                    line-height: 0.5;
+                    min-width: 16px;
+                    font-size: 14px;
                     }
                     .e-pager div.e-icons {
                         color: #001970;
@@ -1183,9 +1361,9 @@ class MessageList extends Component {
                         content: '\eaa3';
                     }
                     .e-pager .e-pagerdropdown {
-                     margin-top: 0 !important; 
-                     vertical-align: sub !important;
-                     height: 35px !important;
+                    margin-top: 0 !important; 
+                    vertical-align: sub !important;
+                    height: 35px !important;
                     }
                     input.e-input::selection, textarea.e-input::selection, 
                     .e-input-group input.e-input::selection, 
@@ -1277,92 +1455,6 @@ class MessageList extends Component {
         )
     }
 
-    componentDidMount() {
-        const { lefebvre } = this.props;
-        console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
-    
-        this.props.preloadSignatures(lefebvre.userId);
-
-        // window.addEventListener('resize', this.onresize.bind(this));
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.sign_ready === false){
-            if (this.props.signatures && this.props.signatures.length){
-                this.setState({sign_ready: true, rowCount: this.getCount()});
-            }
-        }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        const difP = detailedDiff(this.props, nextProps);
-        const difSt = detailedDiff(this.state, nextState);
-
-        if (difP && difP.updated !== undefined){
-            if (difP.updated.hasOwnProperty('preloadSignatures') 
-                && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
-                && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
-                && Object.keys(difP.updated).length === 5
-                && Object.keys(difP.added).length === 0
-                && Object.keys(difP.deleted).length === 0){
-                    return false;
-            }
-        } else {
-            if (
-                this.isEmpty(difP.updated) &&
-                this.isEmpty(difP.added) &&
-                this.isEmpty(difP.deleted) &&
-                this.isEmpty(difSt.updated) &&
-                this.isEmpty(difSt.added) &&
-                this.isEmpty(difSt.deleted)
-              ) {
-                return false;
-              }
-        }
-    
-        // if (difP && difP.updated !== undefined
-        //     && difP.updated.hasOwnProperty('preloadSignatures') 
-        //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
-        //     && difP.update.hasOwnProperty('signatureClicked') && difP.update.hasOwnProperty('setTitle')
-        //     && Object.keys(difP.updated).length === 5){
-        //         return false;
-        // } else {
-        //     if (
-        //         this.isEmpty(difP.updated) &&
-        //         this.isEmpty(difP.added) &&
-        //         this.isEmpty(difP.deleted) &&
-        //         this.isEmpty(difSt.updated) &&
-        //         this.isEmpty(difSt.added) &&
-        //         this.isEmpty(difSt.deleted)
-        //       ) {
-        //         return false;
-        //       }
-        // }
-    
-        return true;
-    }
-
-    isEmpty(obj) {
-        for (var prop in obj) {
-          if (obj.hasOwnProperty(prop)) {
-            return false;
-          }
-        }
-      
-        return JSON.stringify(obj) === JSON.stringify({});
-    }
-      
-
-    onresize(e) {     
-        
-        var rowHeight = this.grid.getRowHeight(); //height of the each row     
-        var gridHeight = Number(window.innerHeight - 120); //grid height
-        var pageSize = Number(this.grid.pageSettings.pageSize) + 10; //initial page size
-        var pageResize = (gridHeight - (pageSize * rowHeight)) / rowHeight;
-        this.grid.pageSettings.pageSize = pageSize + Math.round(pageResize);
-      }
-
-
     renderItem({ index, key, style }) {
         let status;
         let coloredStatus;
@@ -1447,138 +1539,6 @@ class MessageList extends Component {
                 </span>
             </li>
             );
-    }
-
-    /**
-     * Select/unselects the message for which the checkbox is changed.
-     *
-     * If the shift key is pressed, and it's a select operation, a range of messages will be selected. The range will be
-     * the one consisting in the last selected message and the current message in any direction.
-     *
-     * @param event
-     * @param signature
-     */
-    selectSignature(event, message) {
-        event.stopPropagation();
-        const checked = event.target.checked;
-        if (
-            checked &&
-            event.nativeEvent &&
-            event.nativeEvent.shiftKey &&
-            this.props.selectedMessages.length > 0
-        ) {
-            // Range selection
-            const messagesToSelect = [];
-            const lastSelectedMessageUid = this.props.selectedMessages[
-                this.props.selectedMessages.length - 1
-            ];
-            let selecting = false;
-            this.props.messages.forEach(m => {
-                if (m.messageId === message.messageId || m.messageId === lastSelectedMessageUid) {
-                    selecting = !selecting;
-                    messagesToSelect.push(m);
-                } else if (selecting) {
-                    messagesToSelect.push(m);
-                }
-            });
-            this.props.messageSelected(messagesToSelect, checked, this.props.selectedFolder.fullName);
-
-            if (checked === true) {
-                window.dispatchEvent(new CustomEvent("LoadingMessage"))
-            }
-
-            const prs = [];
-            for (let i = 0; i < messagesToSelect.length; i++) {
-                const message = messagesToSelect[i];
-                if (checked === true) {
-                    prs.push(readMessageRaw(null, this.props.credentials, null, this.props.selectedFolder, message))
-                } else {
-                    window.dispatchEvent(
-                        new CustomEvent("Checkclick", {
-                            detail: {
-                                id: message.messageId,
-                                extMessageId: message.messageId,
-                                subject: message.subject,
-                                sentDateTime: message.receivedDate,
-                                chkselected: checked,
-                                account: this.props.all.login.formValues.user,
-                                folder: this.props.selectedFolder.fullName,
-                                provider: "IMAP",
-                                raw: null
-                            }
-                        })
-                    )
-                }
-            }
-
-            if (checked === true) {
-                Promise.all(prs).then((msgs) => {
-                    for (let i = 0; i < msgs.length; i++) {
-                        const msg = msgs[i];
-                        window.dispatchEvent(
-                            new CustomEvent("Checkclick", {
-                                detail: {
-                                    id: msg.message.messageId,
-                                    extMessageId: msg.message.messageId,
-                                    subject: msg.message.subject,
-                                    sentDateTime: msg.message.receivedDate,
-                                    chkselected: checked,
-                                    account: this.props.all.login.formValues.user,
-                                    folder: this.props.selectedFolder.fullName,
-                                    provider: "IMAP",
-                                    raw: msg.raw
-                                }
-                            })
-                        );
-                    }
-                    window.dispatchEvent(new CustomEvent("LoadedMessage"))
-                });
-            }
-        } else {
-            // Single selection
-            this.props.messageSelected([message], checked, this.props.selectedFolder.fullName);
-
-            if (checked === true) {
-                window.dispatchEvent(new CustomEvent("LoadingMessage"))
-                const rm = readMessageRaw(null, this.props.credentials, null, this.props.selectedFolder, message).then((response) => {
-                    console.log("IdMessage seleccionado: " + message.messageId + "  Folder: " + this.props.selectedFolder.fullName);
-                    // Send message to connectors
-                    window.dispatchEvent(
-                        new CustomEvent("Checkclick", {
-                            detail: {
-                                id: message.messageId,
-                                extMessageId: message.messageId,
-                                subject: message.subject,
-                                sentDateTime: message.receivedDate,
-                                chkselected: checked,
-                                account: this.props.all.login.formValues.user,
-                                folder: this.props.selectedFolder.fullName,
-                                provider: "IMAP",
-                                raw: response
-                            }
-                        })
-                    );
-                    window.dispatchEvent(new CustomEvent("LoadedMessage"))
-                })
-            } else {
-                console.log("IdMessage seleccionado: " + message.messageId + "  Folder: " + this.props.selectedFolder.fullName);
-                window.dispatchEvent(
-                    new CustomEvent("Checkclick", {
-                        detail: {
-                            id: message.messageId,
-                            extMessageId: message.messageId,
-                            subject: message.subject,
-                            sentDateTime: message.receivedDate,
-                            chkselected: checked,
-                            account: this.props.all.login.formValues.user,
-                            folder: this.props.selectedFolder.fullName,
-                            provider: "IMAP",
-                            raw: null
-                        }
-                    })
-                );
-            }
-        }
     }
 }
 

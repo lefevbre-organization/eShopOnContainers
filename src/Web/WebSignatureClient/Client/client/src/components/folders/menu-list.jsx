@@ -35,10 +35,10 @@ export class MenuListClass extends Component {
   expanding = (e) => {
     if(e.index == 0) {
       this.props.setAppTitle(i18n.t('topBar.app'));
-      this.props.setSelectedService({selectedService:'signature'}); 
+      this.props.setSelectedService('signature'); 
     } else {
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
-      this.props.setSelectedService({selectedService: 'certifiecateEmail'}); 
+      this.props.setSelectedService('certifiedEmail'); 
     }
   }
 

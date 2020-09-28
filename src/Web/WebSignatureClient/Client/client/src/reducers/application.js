@@ -81,7 +81,7 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
       return {...state, selectedEmail: {...action.payload}};
 
     case ActionTypes.APPLICATION_SERVICE_SELECT:
-      return {...state, selectedService: {...action.payload}};
+      return {...state, selectedService: action.payload};
       
     case ActionTypes.APPLICATION_MESSAGE_REFRESH: {
       const newState = {...state};

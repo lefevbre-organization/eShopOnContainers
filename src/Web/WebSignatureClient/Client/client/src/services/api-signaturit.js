@@ -949,7 +949,10 @@ export function preloadEmails(dispatch, filters, auth) {
 
     getEmails(filters, auth, offset)
     .then(emails => {
+      console.log('Emails Before:')
+      console.log(emails);
       emails = calculateStatusEmails(emails);
+      console.log('Emails After:')
       console.log({emails});
       dispatch(preDownloadEmails(emails));
       resolve(emails);
@@ -1168,8 +1171,67 @@ const calculateStatus = (signatures) => {
   return signatures;
 };
 
+const getRecipientsEmail= (email) => {
+  var lookup = {};
+  var items = email.certificates;
+  var result = [];
+
+  for (var item, i = 0; item = items[i++];) {
+    var name = item.email;
+
+    if (!(name in lookup)) {
+      lookup[name] = 1;
+      result.push(name);
+    }
+  }
+  return result;
+}
+
+const getDocumentsEmail = (email) => {
+  var documents = [];
+  email.certificates.forEach(certificate => {
+    if (!documents.find(document => document == JSON.stringify(certificate.file))){
+      documents.push(JSON.stringify(certificate.file));
+    }
+  });
+  return documents;
+}
+
+const countCertificationEvents = (email) => {
+  var counter = 0;
+  email.certificates.forEach(certificate => {
+    if (certificate.events.find(ev => ev.type == "certification_completed")){
+      counter++;
+    }
+  })
+  return counter;
+}
+
+const countDistinctEmails = (email) => {
+  var distinctEmails = getRecipientsEmail(email)
+  return distinctEmails.length;
+}
+
+const countDistinctDocuments = (email) => {
+  var distinctDocuments = getDocumentsEmail(email)
+  return distinctDocuments.length;
+}
+
 const calculateStatusEmails = (emails) => {
   // To do
+  emails.forEach(email => {
+    var numNodes = email.certificates.length;
+    var numRecipients = countDistinctEmails(email);
+    var numDocuments = countDistinctDocuments(email);
+    var numCertifiedEvents = countCertificationEvents(email);
+
+    if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
+      email.status = 'completed'
+    } else {
+      email.status = 'ready'
+    }
+
+  })
   return emails
 }
 
