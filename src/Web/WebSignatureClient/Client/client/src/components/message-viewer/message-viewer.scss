@@ -253,6 +253,12 @@
       color:#001978;
       font-weight:600;
     }
+    .certification-email {
+      color:#001978;
+    }
+    .mt-n10 {
+      margin-top: -10px;
+    }
     .separador{
       border-bottom: 2px solid #e6e9f2;
     }
@@ -299,6 +305,67 @@
           position: absolute;
           left: -46%;
           z-index: 1;
+          &.primer-estado{
+            left: 46%!important;
+          }
+        }
+        .info{
+          color:#777;
+          font-size:13px;
+          padding-top:40px;
+          .estado{
+            color:#001978;
+            font-weight:500;
+            margin-bottom:10px;
+          }
+        }
+      }
+    }
+     .seguimiento-certification-individual {
+      width: 30%;
+      text-align:center;
+      font-size:40px;
+      color:#001978;
+      float:left;
+      margin-top:20px;
+      margin-left: -5%;
+      &.no-completado{
+        color:#a0a1a4;
+        .linea{
+          border-bottom: 2px solid #a0a1a4!important;
+          &.primer-estado{
+            left: 46%!important;
+          }
+        }
+        .check-seguimiento{
+          top:15px!important;
+          width: 12px;
+          height: 12px;
+          border:3px solid #a0a1a4;
+        }
+        .estado{color:#777!important}
+      }
+      .cont-check-seguimiento {
+        position: relative;
+        .check-seguimiento {
+          position: absolute;
+          color: #001978;
+          top: 10px;
+          background: #f4f4f4;
+          border-radius: 50%;
+          left: 44%;
+          font-size: 18px;
+          z-index: 2;
+        }
+
+        .linea {
+          border-bottom: 2px solid #001978;
+          width: 80%;
+          margin-top: 20px;
+          position: absolute;
+          left: -52%;
+          z-index: 1;
+          margin-left: 16%;
           &.primer-estado{
             left: 46%!important;
           }
