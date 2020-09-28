@@ -265,6 +265,11 @@
   "certificatesWidget": {
     "title": "WISH TO CERTIFY THAT:",
   },
+  "emailViewer": {
+    "buttons": {
+      "downloadTrail": "Download audit"
+    }
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",

@@ -283,6 +283,11 @@
   "certificatesWidget": {
     "title": "SOUHAIT CERTIFIER:",
   },
+  "emailViewer": {
+    "buttons": {
+      "downloadTrail": "Télécharger audit"
+    }
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",

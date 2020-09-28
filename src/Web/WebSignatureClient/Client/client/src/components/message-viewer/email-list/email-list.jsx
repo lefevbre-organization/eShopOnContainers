@@ -7,14 +7,14 @@ const EmailList = (props) => {
     return( 
         <div className={props.styles['cont-info-firmantes']}>
             <div className={`${props.styles.p15} ${props.styles.separador}`}>
-              <span className={`${props.styles['certification-email']}`}>Destinatarios</span>
+              <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}</span>
               <span className={`${props.styles['certification-email']} ml-4`}>Maria Cruces: maria.cruces@g2.com</span>
               <div className={`${props.styles['certification-email']} right ${props.styles['mt-n10']}`}>
                <span><b>Certificación:</b> el receptor ha abierto el mail</span>
                <div className="text-right"> 
                <a href="#"> 
                 <span className="lf-icon-download mr-2"></span> 
-                 Descargar auditoria 
+                {i18n.t('emailViewer.buttons.downloadTrail')}
                </a>
                </div>
               

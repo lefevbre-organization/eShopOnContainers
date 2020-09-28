@@ -285,6 +285,11 @@
   "certificatesWidget": {
     "title": "DESEO CERTIFICAR QUE:",
   },
+  "emailViewer": {
+    "buttons": {
+      "downloadTrail": "Descargar auditoria"
+    }
+  },
   "signatureViewer":{
     "grid": {
       "document": "Documento",

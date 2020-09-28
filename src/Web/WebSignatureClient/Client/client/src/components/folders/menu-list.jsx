@@ -27,6 +27,7 @@ export class MenuListClass extends Component {
     super(props);
     this.state = {
       hideConfirmDialog: false,
+      hideAlertDialog: false,
       isDisable: true
     }
 
@@ -39,6 +40,7 @@ export class MenuListClass extends Component {
     } else {
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
       this.props.setSelectedService('certifiedEmail'); 
+      this.setState({hideAlertDialog: true});
     }
   }
 
@@ -105,6 +107,12 @@ export class MenuListClass extends Component {
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
+    const contenido = `
+    <img border='0' src='assets/images/icon-warning.png'></img>
+    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      Lo sentimos. No tienes contratado este servicio de certifiación. 
+      Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>
+    </div>`;
     const confirmButtons = [
       {
           click: () => {
@@ -172,17 +180,17 @@ export class MenuListClass extends Component {
             open={() => this.dialogOpen} 
             close={() => this.dialogClose}
           />
-          {/* <MenuItem
-            label={'Firmas'} 
-            graphic={'input'}
-            className={styles.item}
-            selected={true}
-            />
-            <nav className={`${mainCss['mdc-list']} ${styles.childList}`}>
-              <MenuItem label={option1} graphic={'stop'} selected = {option1 === selectedFilter} onClick={event => this.onClick(event, option1)}/>
-              <MenuItem label={option2} graphic={'stop'} selected = {option2 === selectedFilter} onClick={event => this.onClick(event, option2)}/>
-              <MenuItem label={option3} graphic={'stop'} selected = {option3 === selectedFilter} onClick={event => this.onClick(event, option3)}/>
-            </nav>    */}
+          <DialogComponent 
+           id="noServiceDialog" 
+           visible={this.state.hideAlertDialog} 
+           animationSettings={this.animationSettings} 
+           width='50%' 
+           showCloseIcon={true} 
+           content={contenido}
+           ref={alertdialog => this.alertDialogInstance = alertdialog} 
+           open={() => this.dialogOpen} 
+           close={() => this.dialogClose}
+          ></DialogComponent>
 
           <style jsx global>
             {` 
@@ -210,6 +218,11 @@ export class MenuListClass extends Component {
               .e-accordion .e-acrdn-item .e-acrdn-panel .e-acrdn-content {
                 padding: 0px;
               }
+              #noServiceDialog_dialog-header, #noServiceDialog_title, #noServiceDialog_dialog-content, .e-footer-content{
+                background: #c5343f;
+                color: #fff;
+                display:flex;
+              }
               .event-disable {
                 pointer-events: none;
                 opacity: 0.5;
@@ -219,11 +232,6 @@ export class MenuListClass extends Component {
           </style>
         </div>
     );
-  }
-
-  expanded = (e) => {
-    console.log(e);
-    
   }
 
   onClick(event, key) {
@@ -241,7 +249,11 @@ export class MenuListClass extends Component {
 
   dialogClose(){
     this.setState({
-        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false, hideConfirmDialog: false
+        hideAlertDialog: false, 
+        bigAttachments: false,
+        entinelaDownloadError: false,
+        hideConfirmDialog: false,
+        hideAlertDialog: false
     });
   }
 
