@@ -196,6 +196,7 @@ export class Login extends Component {
               </div>
               <TextField
                 id='user'
+                text='text'
                 fieldClass={`${styles.formField} ${styles.fullWidth}`}
                 value={user}
                 onChange={this.onFieldChange}
@@ -341,10 +342,10 @@ export class Login extends Component {
   login(event) {
     event.preventDefault();
 
-    if (this.validateEmail(event) === true) {
+    //if (this.validateEmail(event) === true) {
       this.saveLoginConfig();
       this.props.dispatchLogin(this.state.values);
-    }
+    //}
   }
 
   async saveLoginConfig() {
