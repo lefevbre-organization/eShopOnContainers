@@ -18,15 +18,25 @@ export class CalendarMenu extends PureComponent {
   constructor(props) {
     super(props);        
       this.roundedPaletteColors = {
-          'custom1': ['#750c20', '#0e2b21', '#a4864a', '#30197e',
-              '#914150', '#435850', '#b69e70', '5c4b98',
-              '#ab1279', '#ced038', '#d4bb8a', '13439b',
-              '#bc4594', '#d8da62', '#ddc9a2', '466ab0',
-              '#e6879e', '#68747c', '#d6b43c', '40b6b5',
-              '#eb9fb3', '879096', '#dec365', '68c5c3']
+          'custom1': ['#0078d4', '#498205', '#da3b01', '#69797e',
+              '#ffff00', '#18a7b5', '#e3008c', '#b5651d',
+              '#c50f1f']
       }; 
      // this.roundedPaletteColors.custom1.push(this.props.color); 
-    }    
+    }  
+
+
+    //const CalendarColors = [
+    //    { value: 'LightBlue', color: '#0078d4' },
+    //    { value: 'LightGreen', color: '#498205' },
+    //    { value: 'LightOrange', color: '#da3b01' },
+    //    { value: 'LightGray', color: '#69797e' },
+    //    { value: 'LightYellow', color: '#ffff00' },
+    //    { value: 'LightTeal', color: '#18a7b5' },
+    //    { value: 'LightPink', color: '#e3008c' },
+    //    { value: 'LightBrown', color: '#b5651d' },
+    //    { value: 'LightRed', color: '#c50f1f' }
+    //];
    
   beforeRoundedTileRender(args) {
         args.element.classList.add('e-rounded-palette');

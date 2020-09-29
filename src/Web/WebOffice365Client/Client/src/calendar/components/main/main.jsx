@@ -27,7 +27,7 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../../api_graph/calendar-api';
+import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, updateCalendar, listCalendarList, updateCalendarList } from '../../../api_graph/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -48,7 +48,8 @@ import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../eventtypes/eventtype';
-import { getEventTypes } from "../../../api_graph/accounts";
+//import { getEventTypes } from "../../../api_graph/accounts";
+import { getEventTypes } from "../../../api_graph/calendar-api";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 import AttendeeAddress from './attendee/attendee-address';
 
@@ -229,7 +230,7 @@ export class Main extends Component {
         }
 
 
-        updateCalendarList(calendarId, calendarData)
+        updateCalendar(calendarId, calendarData)
             .then(result => {
                 console.log(result)
                 this.toastObj.hide('All');
@@ -535,7 +536,13 @@ export class Main extends Component {
                 if (event.extendedProperties != undefined) {
                     eventType.name = event.extendedProperties.private.eventTypeName;
                     eventType.id = event.extendedProperties.private.eventTypeId;
-                    eventType.color = event.extendedProperties.private.eventTypeColor;
+                    if (eventType.color === undefined) {
+                        eventType.color = this.eventTypeDataSource.find(x => x.text == event.extendedProperties.private.eventTypeName).backgroundColor;
+                    }
+                    else {
+                        eventType.color = event.extendedProperties.private.eventTypeColor;
+                    }
+                    
                 }
 
                 let reminders = []
@@ -1124,41 +1131,41 @@ export class Main extends Component {
 
         switch (args.requestType) {
 
-            case 'toolBarItemRendered':
+            //case 'toolBarItemRendered':
 
-                let scheduleElement = document.getElementById('schedule');
-                if (args.requestType === 'toolBarItemRendered') {
-                    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                    userIconEle.onclick = () => {
-                        this.profilePopup.relateTo = userIconEle;
-                        this.profilePopup.dataBind();
-                        if (this.profilePopup.element.classList.contains('e-popup-close')) {
-                            this.profilePopup.show();
-                        }
-                        else {
-                            this.profilePopup.hide();
-                        }
-                    };
-                }
-                let userContentEle = createElement('div', {
-                    className: 'e-profile-wrapper'
-                });
-                scheduleElement.parentElement.appendChild(userContentEle);
-                let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                let output = this.buttonEventTypeObj.element;
-                this.profilePopup = new Popup(userContentEle, {
-                    content: output,
-                    relateTo: userIconEle,
-                    position: { X: 'left', Y: 'bottom' },
-                    collision: { X: 'flip', Y: 'flip' },
-                    targetType: 'relative',
-                    viewPortElement: scheduleElement,
-                    width: 150,
-                    height: 60
-                });
-                this.profilePopup.hide();
+            //    let scheduleElement = document.getElementById('schedule');
+            //    if (args.requestType === 'toolBarItemRendered') {
+            //        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+            //        userIconEle.onclick = () => {
+            //            this.profilePopup.relateTo = userIconEle;
+            //            this.profilePopup.dataBind();
+            //            if (this.profilePopup.element.classList.contains('e-popup-close')) {
+            //                this.profilePopup.show();
+            //            }
+            //            else {
+            //                this.profilePopup.hide();
+            //            }
+            //        };
+            //    }
+            //    let userContentEle = createElement('div', {
+            //        className: 'e-profile-wrapper'
+            //    });
+            //    scheduleElement.parentElement.appendChild(userContentEle);
+            //    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+            //    let output = this.buttonEventTypeObj.element;
+            //    this.profilePopup = new Popup(userContentEle, {
+            //        content: output,
+            //        relateTo: userIconEle,
+            //        position: { X: 'left', Y: 'bottom' },
+            //        collision: { X: 'flip', Y: 'flip' },
+            //        targetType: 'relative',
+            //        viewPortElement: scheduleElement,
+            //        width: 150,
+            //        height: 60
+            //    });
+            //    this.profilePopup.hide();
 
-                break;
+            //    break;
 
             case 'eventChanged':
 
@@ -1569,19 +1576,19 @@ export class Main extends Component {
     }
 
     onActionBegin(args) {
-        if (args.requestType === 'toolbarItemRendering') {
-            if (args.requestType === 'toolbarItemRendering') {
-                let userIconItem = {
-                    align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
-                };
-                args.items.push(userIconItem);
-            }
-        }
+        //if (args.requestType === 'toolbarItemRendering') {
+        //    if (args.requestType === 'toolbarItemRendering') {
+        //        let userIconItem = {
+        //            align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+        //        };
+        //        args.items.push(userIconItem);
+        //    }
+        //}
     }
 
     onEventTypeClick() {
-        this.profilePopup.hide();
-        this.openEventTypeView();
+        //this.profilePopup.hide();
+        //this.openEventTypeView();
     }
 
     /**

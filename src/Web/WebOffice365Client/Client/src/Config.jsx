@@ -7,7 +7,9 @@ module.exports = {
         'mail.read',
         'mail.readwrite',
         'mail.send',
-        'contacts.readwrite'
+        'contacts.readwrite',
+        'MailboxSettings.ReadWrite'
+
     ]
 };
 
