@@ -16,8 +16,6 @@ const CalendarColors = [
     { value: 'lightRed', color: '#c50f1f', id: '8' }    
 ];
 
-
-
 const PresetColors = [ 
     { value: 'preset0', color: '#E74856' },
     { value: 'preset1', color: '#FF8C00' },
@@ -96,7 +94,6 @@ export const getEventTypes = () => {
     });
 };
 
-
 export const listCalendarList = () => {
     return new Promise(async (resolve, reject) => {
         const accessToken = await getAccessTokenSilent();
@@ -112,24 +109,7 @@ export const listCalendarList = () => {
     });
 };
 
-//export const getCalendarList = (calendar) => {
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.calendarList
-//            .get({
-//                calendarId: calendar,
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
-//};
-
-export const updateCalendarList = (calendarId, calendar) =>
+export const updateCalendarList = (calendarId, calendar) => {
 
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.calendarList
@@ -147,6 +127,7 @@ export const updateCalendarList = (calendarId, calendar) =>
             });
 
     });
+};
 
 
 //Calendars Api
@@ -209,18 +190,13 @@ export const deleteCalendar = (idCalendar) => {
                 reject(err);
             });
     });
-};
-   
-
-
+}; 
 
 
 // Events Api
-//GET /me/calendars/{id}/events
 
-export const getEventList = (idCalendar, selectedDate) => {
-    //to delete
-   // idCalendar = "AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA=";
+
+export const getEventList = (idCalendar, selectedDate) => {    
     return new Promise(async (resolve, reject) => {
         const accessToken = await getAccessTokenSilent();
         const client = getAuthenticatedClient(accessToken);
@@ -252,45 +228,6 @@ export const addCalendarEvent = (idCalendar, event) => {
             });
     });
 };
-
-
-
-//export const addCalendarEvent = (calendar, event) =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.events
-//            .insert({
-//                calendarId: calendar ,
-//                resource: event,
-//                sendUpdates: 'all',
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
-
-//export const updateCalendarEvent = (calendar, eventId, event) =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.events
-//            .update({
-//                calendarId: calendar,
-//                eventId: eventId,
-//                resource: event,
-//                sendUpdates: 'all'
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
 
 export const updateCalendarEvent = (idCalendar, eventId, event) => {
     return new Promise(async (resolve, reject) => {
@@ -325,25 +262,7 @@ export const deleteCalendarEvent = (calendar, eventId) => {
     });
 }
 
-//export const deleteCalendarEvent = (calendar, eventId) =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.events
-//            .delete({
-//                calendarId: calendar,
-//                eventId: eventId,
-//                sendUpdates: 'all'
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
-
-export const requestRecurringEvent = (calendar, eventId) =>
+export const requestRecurringEvent = (calendar, eventId) => {
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .get({
@@ -359,7 +278,7 @@ export const requestRecurringEvent = (calendar, eventId) =>
             });
 
     });
-
+};
 
 // Acl api
 
