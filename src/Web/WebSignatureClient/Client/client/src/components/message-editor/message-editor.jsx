@@ -1003,17 +1003,17 @@ class MessageEditor extends Component {
             lefebvre.idUserApp,
             documentsInfo.length
           );
+          this.props.setMailContacts(null);
+          this.props.setAdminContacts(null);
+          this.props.setUserApp('lefebvre');
+          this.props.setGuid(null);
+          this.props.setTitle('');
+          this.props.setIdDocuments(null);
+          this.props.close(this.props.application);
           this.props.preloadSignatures(lefebvre.userId)
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
-      this.props.setMailContacts(null);
-      this.props.setAdminContacts(null);
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
-      this.props.setTitle('');
-      this.props.setIdDocuments(null);
-      this.props.close(this.props.application);
     });
   }
 
