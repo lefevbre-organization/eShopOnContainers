@@ -1,4 +1,5 @@
 ﻿using Lexon.API;
+using Lexon.API.Infrastructure.Exceptions;
 using Lexon.API.Infrastructure.Repositories;
 using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -57,13 +58,13 @@ namespace Lexon.Infrastructure.Services
             if (env == null || !_settings.Value.Environments.Contains(env))
             {
                 if (infos != null)
-                    TraceInfo(infos, $"Received {env} - Get Default Env {_settings.Value.DefaultEnvironment}");
+                    TraceInfo(infos, $"Received {env} - Get Default Env {_settings.Value.DefaultEnvironment}", "LX01");
                 env = _settings.Value.DefaultEnvironment;
             }
             else
             {
                 if (infos != null)
-                    TraceInfo(infos, $"Received {env} from client");
+                    TraceInfo(infos, $"Received {env} from client", "LX01");
             }
 
             _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.conn;
@@ -81,15 +82,14 @@ namespace Lexon.Infrastructure.Services
             {
                 try
                 {
-                    //TODO: Delete token of user
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
                     await GetUserCommon(result, conn, filtro);
-                    await AddTokenProvisional(result, idNavisionUser);
+                    //await AddTokenProvisional(result, idNavisionUser);
                 }
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceRepositoryError(result.errors, ex);
+                    TraceRepositoryError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), "LX02", "MYSQLCONN");
                 }
             }
 
@@ -101,7 +101,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, "Mysql don´t recover the user", null, "Mysql_Empty");
+                    TraceRepositoryError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), "LX02", "MYSQLCONN");
                     var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -133,7 +133,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceRepositoryError(result.errors, ex);
+                    TraceRepositoryError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), "LX03", "MYSQL");
                 }
             }
 
@@ -145,7 +145,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", null, "Mysql Recover");
+                    TraceRepositoryError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), "LX03", "MYSQL");
                     var resultMongo = await _usersRepository.GetUserAsync(idUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -169,6 +169,7 @@ namespace Lexon.Infrastructure.Services
                 AddListSearchParameters(0, 1, null, null, command);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
+                    //TraceRepositoryError(result.errors, new LexonDomainException())
                     TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                     if (EvaluateErrorCommand(result.errors, command) == 0)
                         while (reader.Read())
@@ -181,105 +182,105 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        private async Task AddTokenProvisional(Result<LexUser> resultado, string idUser)
-        {
-            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
-            {
-                idClienteNavision = idUser,
-                name = resultado?.data?.name,
-                idUserApp = GetLongIdUser(resultado?.data?.idUser),
-                //bbdd = bbdd,
-                //provider = provider,
-                //mailAccount = mailAccount,
-                //folder = folder,
-                //idMail = uidMail,
-                //idEntityType = idEntityType,
-                //idEntity = idEntity,
-                //mailContacts = mailContacts,
-                roles = await GetRolesOfUserAsync(idUser, null, null)
-            }).Result;
-        }
+        //private async Task AddTokenProvisional(Result<LexUser> resultado, string idUser)
+        //{
+        //    resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
+        //    {
+        //        idClienteNavision = idUser,
+        //        name = resultado?.data?.name,
+        //        idUserApp = GetLongIdUser(resultado?.data?.idUser),
+        //        //bbdd = bbdd,
+        //        //provider = provider,
+        //        //mailAccount = mailAccount,
+        //        //folder = folder,
+        //        //idMail = uidMail,
+        //        //idEntityType = idEntityType,
+        //        //idEntity = idEntity,
+        //        //mailContacts = mailContacts,
+        //        roles = await GetRolesOfUserAsync(idUser, null, null)
+        //    }).Result;
+        //}
 
-        private long? GetLongIdUser(string idUser)
-        {
-            long.TryParse(idUser, out long idUserLong);
-            return idUserLong;
-        }
-        /// <summary>
-        ///   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task<string> BuildTokenWithPayloadAsync(TokenModel token)
-        {
-            var accion = await Task.Run(() =>
-            {
-                //_logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
+        //private long? GetLongIdUser(string idUser)
+        //{
+        //    long.TryParse(idUser, out long idUserLong);
+        //    return idUserLong;
+        //}
+        
+        ///// <summary>
+        /////   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
+        ///// </summary>
+        ///// <param name="token"></param>
+        ///// <returns></returns>
+        //public async Task<string> BuildTokenWithPayloadAsync(TokenModel token)
+        //{
+        //    var accion = await Task.Run(() =>
+        //    {
+        //        //_logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
 
-                var exp = DateTime.UtcNow.AddSeconds(1500);
-                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
+        //        var exp = DateTime.UtcNow.AddSeconds(1500);
+        //        var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
 
-                AddValuesToPayload(payload, token);
+        //        AddValuesToPayload(payload, token);
 
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        //        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"));
+        //        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
-                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            });
+        //        var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+        //        return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        //    });
 
-            //_logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
+        //    //_logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
 
-            return accion;
-        }
+        //    return accion;
+        //}
 
-        private void AddValuesToPayload(JwtPayload payload, TokenModel modelo)
-        {
-            if (modelo is TokenModel clienteModel)
-            {
-                //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
-                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
-                AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
-                AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
-                AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
-                AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
-                AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
-                AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
-                AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
-                AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
-                AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
-                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
-                AddClaimToPayload(payload, clienteModel.mailContacts, nameof(clienteModel.mailContacts));
-            }
-        }
+        //private void AddValuesToPayload(JwtPayload payload, TokenModel modelo)
+        //{
+        //    if (modelo is TokenModel clienteModel)
+        //    {
+        //        //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
+        //        AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+        //        AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
+        //        AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
+        //        AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
+        //        AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
+        //        AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
+        //        AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
+        //        AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
+        //        AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
+        //        AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
+        //        AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+        //        AddClaimToPayload(payload, clienteModel.mailContacts, nameof(clienteModel.mailContacts));
+        //    }
+        //}
 
-        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
-        {
-            if (valorClaim == null) return;
+        //private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
+        //{
+        //    if (valorClaim == null) return;
 
-            //_logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
-            payload.Add(nombreClaim, valorClaim);
-        }
+        //    //_logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+        //    payload.Add(nombreClaim, valorClaim);
+        //}
 
-        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
-        {
-            //var apps = await GetUserMiniHubAsync(idClienteNavision);
-            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
-            //foreach (var app in apps.data)
-            //{
-            //    appsWithAccess.Add(app.descHerramienta);
-            //}
+        //private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
+        //{
+        //    //var apps = await GetUserMiniHubAsync(idClienteNavision);
+        //    var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
+        //    //foreach (var app in apps.data)
+        //    //{
+        //    //    appsWithAccess.Add(app.descHerramienta);
+        //    //}
 
-            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
-            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
-            {
-                appsWithAccess.Add("gmailpanel");
-                appsWithAccess.Add("outlookpanel");
-            }
+        //    var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
+        //    if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
+        //    {
+        //        appsWithAccess.Add("gmailpanel");
+        //        appsWithAccess.Add("outlookpanel");
+        //    }
 
-            return appsWithAccess;
-        }
-
+        //    return appsWithAccess;
+        //}
 
         public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser, string env)
         {
@@ -1010,8 +1011,8 @@ namespace Lexon.Infrastructure.Services
         }
 
         #endregion Folders
+      
         #region Common
-
         private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}", bool addParameterId = false)
         {
             command.Parameters.Add(new MySqlParameter(nameFilter, MySqlDbType.String) { Value = filterValue });
@@ -1243,7 +1244,6 @@ namespace Lexon.Infrastructure.Services
         }
 
         #endregion Common
-
 
         #region Files
 

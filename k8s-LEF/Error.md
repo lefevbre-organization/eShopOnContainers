@@ -43,6 +43,16 @@ Se especifican tipos de error por Dominio, tenemos:
 * **AC43**: Error que se produce al insertar EventTypes en un AccountEventTypes, se pueden producir multiples variantes dependiendo de que se produczca actualizaciones o inservciones de AccountEventTypes.
 * **AC44**: Error que se produce al eliminar AccountEventTypes. 
 
+## Errores en Lexon.Api
+
+* **LX01**: Info que se registra con los entornos enviados desde os clientes, importante revisarlos a efectos de comporbar cambios en los mismos.
+
+### UserUtils.api - User
+* **LX02**: Error que se produce al obtener un LexUser, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
+* **LX03**: Error que se produce al obtener Companies de un  LexUser, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
+* **LX04**: Error que se produce al obtener un LexUserSimple, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
+* 
+
 # Eventos de Bus
 
 ## Eventos de Bus en Accont.Api

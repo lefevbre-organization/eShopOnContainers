@@ -40,6 +40,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             List<ErrorInfo> errors,
             Exception ex,
             string codeError = "XX00",
+            string areaError = "MONGO",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
@@ -48,6 +49,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
             var errorInfo = new ErrorInfo
             {
+                area = areaError,
                 code = codeError,
                 message = ex.Message,
                 member = memberName,
@@ -91,6 +93,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             WriteLine(builder.ToString());
         }
+
+        //public Exception GetInfoErrorFromParameters(object codeError, object valueError)
+        //{
+        //    if (codeError == null || exMessage == null || !(exMessage is string))
+        //        return;
+        //}
 
         public void TraceOutputMessage(
             List<ErrorInfo> errors,
