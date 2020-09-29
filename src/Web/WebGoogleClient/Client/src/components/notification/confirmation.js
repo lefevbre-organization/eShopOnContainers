@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./confirmation.css";
+import "./confirmation.scss";
 import i18n from "i18next";
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
@@ -20,6 +20,7 @@ export class Confirmation extends Component {
         centered
         dialogClassName="modal"
         animation={false}>
+          <div className={"confirmation"}>
           <Modal.Header closeButton>
           </Modal.Header>
           <Modal.Body>
@@ -60,6 +61,7 @@ export class Confirmation extends Component {
             </Button>
             
           </Modal.Footer>
+          </div>
         </Modal>
     );
   }

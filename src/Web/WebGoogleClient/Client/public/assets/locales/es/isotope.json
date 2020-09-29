@@ -23,7 +23,8 @@
     "no-message": "No hay mensajes para esta etiqueta.",
     "move-to-trash": "Mover a la Papelera",
     "delete-permanently": "Eliminar definitivamente",
-    "empty-trash": "Vaciar la papelera"
+    "empty-trash": "Vaciar la papelera ahora",
+    "empty-trash-confirmation": "Esta acción afectará a los %d mensajes de Papelera. ¿Seguro que quieres continuar?"
   },
   "pager-buttons": {
     "previous-page": "Página Anterior",
@@ -60,7 +61,7 @@
     "read": "Marcar como leído",
     "reply-all": "Responder a todos",
     "delete-permanently": "Eliminar definitivamente",
-    "empty-trash": "Vaciar la papelera"
+    "empty-trash": "Vaciar la papelera ahora"
   },
   "message-footer": {
     "messages": "Mensajes"
@@ -102,6 +103,7 @@
     "mycalendars": "Mis calendarios",
     "othercalendars": "Otros calendarios",
     "configandshare": "Configurar y Compartir",
+    "permission": "Uso compartido y permisos",
     "remove": "Eliminar"
   },
   "schedule": {

@@ -23,7 +23,8 @@
     "no-message": "There are no messages with this label.",
     "move-to-trash": "Move to Trash",
     "delete-permanently": "Delete permanently",
-    "empty-trash": "Empty trash"
+    "empty-trash": "Empty trash now",
+    "empty-trash-confirmation": "This action will affect %d Trash messages. Are you sure you want to continue?"
   },
   "pager-buttons": {
     "previous-page": "Previous Page",
@@ -60,7 +61,7 @@
     "unread": "Mark as unread",
     "reply-all": "Reply to all",
     "delete-permanently": "Delete permanently",
-    "empty-trash": "Empty trash"
+    "empty-trash": "Empty trash now"
   },
   "message-footer": {
     "messages": "Messages"
@@ -102,6 +103,7 @@
     "mycalendars": "My calendars",
     "othercalendars": "Other calendars",
     "configandshare": "Config and Share",
+    "permission": "Calendar share and permissions",
     "remove": "Remove"
   },
   "schedule": {
