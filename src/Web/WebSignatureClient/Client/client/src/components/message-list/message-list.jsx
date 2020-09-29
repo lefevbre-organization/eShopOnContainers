@@ -9,7 +9,7 @@ import { getCredentials } from "../../selectors/application";
 import { getSelectedFolder } from "../../selectors/folders";
 import { getSelectedFolderMessageList } from "../../selectors/messages";
 import { prettyDate } from "../../services/prettify";
-import { selectSignature, setTitle } from "../../actions/application";
+import { selectSignature, selectEmail, setTitle } from "../../actions/application";
 import { readMessageRaw } from "../../services/message-read";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -677,11 +677,18 @@ class MessageList extends Component {
 
     dropDownOptionSelected (args){
         console.log(args);
-        if (args.item.text === i18n.t('signaturesGrid.menuEdit')){
+        if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
+        this.props.selectedService == 'signature') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const signature = this.props.signatures.find(s => s.id === id);
             this.props.setTitle('PROGRESO DE FIRMA');
             this.props.signatureClicked(signature);
+        } else if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
+        this.props.selectedService == 'certifiedEmail') {
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const email = this.props.emails.find(s => s.id === id);
+            this.props.setTitle('PROGRESO DE EMAIL CERTIFICADO');
+            this.props.emailClicked(email);
         } else if (args.item.text === i18n.t('signaturesGrid.menuCancel')){
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
@@ -1573,6 +1580,9 @@ const mapDispatchToProps = dispatch => ({
     signatureClicked: signature => {
         dispatch(selectSignature(signature));
     },
+    emailClicked: email => {
+        dispatch(selectEmail(email));
+    },
     backendRequest: () => dispatch(backendRequest()),
     backendRequestCompleted: () => dispatch(backendRequestCompleted()),
     setTitle: (title) => dispatch(setTitle(title))
@@ -1582,6 +1592,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     Object.assign({}, stateProps, dispatchProps, ownProps, {
         preloadSignatures: filter => dispatchProps.preloadSignatures(filter, stateProps.credentials.encrypted),
         signatureClicked: signature => dispatchProps.signatureClicked(signature),
+        emailClicked: email => dispatchProps.emailClicked(email),
         backendRequest: () => dispatchProps.backendRequest(),
         backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
         setTitle: title => dispatchProps.setTitle(title)
