@@ -53,12 +53,12 @@
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserMail))) { BsonClassMap.RegisterClassMap<UserMail>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(AccountEvents))) { BsonClassMap.RegisterClassMap<AccountEvents>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(AccountEventTypes))) { BsonClassMap.RegisterClassMap<AccountEventTypes>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(RawMessageProvider))) { BsonClassMap.RegisterClassMap<RawMessageProvider>(); }
         }
 
         public IMongoCollection<UserMail> Accounts => Database.GetCollection<UserMail>(_settings.Value.Collection);
-        public IMongoCollection<AccountEvents> AccountEvents => Database.GetCollection<AccountEvents>(_settings.Value.CollectionCalendar);
+        public IMongoCollection<AccountEventTypes> AccountEvents => Database.GetCollection<AccountEventTypes>(_settings.Value.CollectionCalendar);
         public IMongoCollection<RawMessageProvider> RawMessages => Database.GetCollection<RawMessageProvider>(_settings.Value.CollectionRaw);
 
         public IMongoCollection<UserMail> AccountsTransaction(IClientSessionHandle session)
@@ -66,9 +66,9 @@
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserMail>(_settings.Value.Collection);
         }
 
-        public IMongoCollection<AccountEvents> AccountEventsTransaction(IClientSessionHandle session)
+        public IMongoCollection<AccountEventTypes> AccountEventsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<AccountEvents>(_settings.Value.CollectionCalendar);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<AccountEventTypes>(_settings.Value.CollectionCalendar);
         }
 
         public IMongoCollection<RawMessageProvider> RawMessagesTransaction(IClientSessionHandle session)

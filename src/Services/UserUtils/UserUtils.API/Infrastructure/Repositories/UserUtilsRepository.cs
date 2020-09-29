@@ -53,11 +53,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
                 result.data = await _context.ByPassModels.Find(filter).ToListAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún servicio en bypass"), "ErrorByPassGet");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún servicio en bypass"), "ErrorByPassGet");
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -83,7 +83,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -138,7 +138,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -166,11 +166,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
                 result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }

@@ -4,8 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
  
-
-    public class AccountEvents
+    public class AccountEventTypes
     {
         [BsonId]
         [BsonIgnoreIfDefault]

@@ -108,7 +108,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ninguna firma para el usuario {user}"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ninguna firma para el usuario {user}"), "1003");
                 }
                 else
                 {
@@ -164,7 +164,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -192,7 +192,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
 
             result.data = true;
@@ -213,7 +213,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -232,7 +232,7 @@
 
                 if (userInfo.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra información del usuario {user}"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra información del usuario {user}"), "1003");
                 }
                 else
                 {
@@ -258,7 +258,7 @@
             catch (Exception ex)
             {
 
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -322,7 +322,7 @@
 
                 if (userInfo.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra información del usuario {user}"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra información del usuario {user}"), "1003");
                 }
                 else
                 {
@@ -332,7 +332,7 @@
             catch (Exception ex)
             {
 
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -360,7 +360,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
 
             result.data = true;
@@ -382,7 +382,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ninguna firma para el id {signatureId}"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ninguna firma para el id {signatureId}"), "1003");
                 }
             }
             catch (Exception ex)
@@ -411,7 +411,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "2000");
+                TraceRepositoryError(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "2000");
             }
             return result;
         }
@@ -446,7 +446,7 @@
 
                 if (result.data == null || result.data.Count == 0)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún evento para la firma {signatureId}"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún evento para la firma {signatureId}"), "1003");
                 }
                 else
                 {
@@ -543,7 +543,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -571,7 +571,7 @@
             }
             else
             {
-                TraceMessage(result.errors, new Exception(msgError), "1003");
+                TraceRepositoryError(result.errors, new Exception(msgError), "1003");
             }
             return null;
         }

@@ -14,20 +14,22 @@
         public bool DefaultAccount { get; set; }
 
         public ConfigImapAccount Config { get; set; }
-
+        public bool CreateUser { get; set; }
 
         public UpsertAccountIntegrationEvent(
             string user,
             string provider,
             string email,
             bool defaultAccount,
-            ConfigImapAccount config)
+            ConfigImapAccount config,
+            bool createUser = false)
         {
             User = user;
             Provider = provider;
             Email = email;
             DefaultAccount = defaultAccount;
             Config = config;
+            CreateUser = createUser;
         }
     }
 }

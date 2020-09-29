@@ -730,7 +730,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -800,7 +800,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceMessage(resultContact.errors, ex);
+                TraceRepositoryError(resultContact.errors, ex);
             }
             return resultContact;
         }
@@ -831,7 +831,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }
@@ -862,7 +862,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
             return result;
         }

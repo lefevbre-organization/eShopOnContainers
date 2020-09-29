@@ -36,15 +36,15 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return latinText;
         }
 
-        public void TraceMessage(
+        public void TraceRepositoryError(
             List<ErrorInfo> errors,
             Exception ex,
-            string codeError = "1000",
+            string codeError = "XX00",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            if (codeError == "0") return;
+            if (codeError == "XX00") return;
 
             var errorInfo = new ErrorInfo
             {
@@ -122,7 +122,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         public int GetIntOutputParameter(object outputData)
         {
-            //    return;
             if (outputData == null || !(outputData is int))
                 return 0;
 
@@ -132,9 +131,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public void TraceInfo(
             List<Info> infos,
             string message,
-            string codeInfo = "1")
+            string codeInfo = "XX00")
         {
-            if (codeInfo == "0") return;
+            if (codeInfo == "XX00") return;
 
             var info = new Info
             {
@@ -167,7 +166,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             else
             {
-                TraceMessage(errors, new Exception(msgError), "CreateRawError");
+                TraceRepositoryError(errors, new Exception(msgError), "CreateRawError");
             }
             return null;
         }

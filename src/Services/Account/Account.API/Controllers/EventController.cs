@@ -53,15 +53,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
 
 
         [HttpPost("get")]
-        [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<AccountEventTypes>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Result<AccountEventTypes>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByAccount(
             [FromBody] AccountEventRequest accountIn)
         {
             if (string.IsNullOrEmpty(accountIn.Email))
                 return BadRequest("email invalid. Must be a valid account to search the events");
 
-            Result<AccountEvents> result = await _service.GetEventsByAccount(accountIn.Email);
+            Result<AccountEventTypes> result = await _service.GetEventsByAccount(accountIn.Email);
 
             if (result.errors.Count == 0 && result.data == null)
                 return NotFound(result);
@@ -70,16 +70,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
         }
 
         [HttpPost("post")]
-        [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<AccountEventTypes>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<AccountEventTypes>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostAccount(
-            [FromBody] AccountEvents accountIn
+            [FromBody] AccountEventTypes accountIn
             )
         {
             if (string.IsNullOrEmpty(accountIn.email))
                 return BadRequest("email invalid.Must be a valid account to search the events");
 
-            Result<AccountEvents> result = await _service.UpsertAccountEvents(accountIn);
+            Result<AccountEventTypes> result = await _service.UpsertAccountEvents(accountIn);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

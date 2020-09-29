@@ -96,7 +96,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
                 }
                 else
                 {
@@ -122,7 +122,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "1003");
                 }
                 else
                 {
@@ -148,7 +148,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "1003");
                 }
                 else
                 {
@@ -224,7 +224,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
                 }
                 else
                 {
@@ -264,7 +264,7 @@
             }
             else
             {
-                TraceMessage(result.errors, new Exception(msgError), "1003");
+                TraceRepositoryError(result.errors, new Exception(msgError), "1003");
             }
             return null;
         }

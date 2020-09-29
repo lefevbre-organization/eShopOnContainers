@@ -3,6 +3,7 @@
     #region using
 
     using IntegrationEvents.Events;
+    using Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions;
     using Lefebvre.eLefebvreOnContainers.Services.Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -56,31 +57,10 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when create user mail", ex), "AC01");
             }
             return result;
         }
-
-        //private string ManageCreateUser(string msgError, string msgModify, string msgInsert, Result<UserMail> result, ReplaceOneResult resultReplace)
-        //{
-        //    if (resultReplace.IsAcknowledged)
-        //    {
-        //        if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-        //        {
-        //            TraceInfo(result.infos, msgModify);
-        //        }
-        //        else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-        //        {
-        //            TraceInfo(result.infos, msgInsert);
-        //            return resultReplace.UpsertedId.ToString();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        TraceMessage(result.errors, new Exception(msgError), "CreateUserError");
-        //    }
-        //    return null;
-        //}
 
         private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
         {
@@ -88,41 +68,20 @@
             {
                 if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, msgModify);
+                    TraceInfo(result.infos, msgModify, "AC02");
                 }
                 else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
                 {
-                    TraceInfo(result.infos, msgInsert);
+                    TraceInfo(result.infos, msgInsert, "AC02");
                     return resultReplace.UpsertedId.ToString();
                 }
             }
             else
             {
-                TraceMessage(result.errors, new Exception(msgError), "Upsert Error");
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when upsert user mail"), "AC02");
             }
             return null;
         }
-
-        //private string ManageCreateRawMessage(string msgError, string msgModify, string msgInsert, Result<RawMessageProvider> result, ReplaceOneResult resultReplace)
-        //{
-        //    if (resultReplace.IsAcknowledged)
-        //    {
-        //        if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-        //        {
-        //            TraceInfo(result.infos, msgModify);
-        //        }
-        //        else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-        //        {
-        //            TraceInfo(result.infos, msgInsert);
-        //            return resultReplace.UpsertedId.ToString();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        TraceMessage(result.errors, new Exception(msgError), "CreateRawError");
-        //    }
-        //    return null;
-        //}
 
         public async Task<Result<UserMail>> GetUser(string user)
         {
@@ -132,7 +91,7 @@
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
+                    TraceRepositoryError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user}"), "AC03");
                 else
                 {
                     var orderAccounts = result.data?.accounts.OrderByDescending(x => x.defaultAccount).ToList();
@@ -142,7 +101,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when get UserMail", ex), "AC03");
             }
             return result;
         }
@@ -163,7 +122,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when remove UserMail", ex), "AC03");
             }
             return result;
         }
@@ -188,7 +147,8 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when changue state of UserMail", ex), "AC04");
+
             }
             return result;
         }
@@ -210,7 +170,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when upsert config of UserMail", ex), "AC05");
             }
 
             return result;
@@ -228,18 +188,17 @@
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (usuario == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user} del que obtener cuenta"), "1003");
-                //  TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
+                    TraceRepositoryError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta"), "AC10");
                 else
                 {
                     result.data = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
                     if (result.data == null)
-                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}");
+                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}", "AC10");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when get Account", ex), "AC10");
             }
             return result;
         }
@@ -251,17 +210,17 @@
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
                 if (usuario == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"), "1003");
+                    TraceRepositoryError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"), "AC11");
                 else
                 {
                     result.data = usuario?.accounts.Find(x => x.defaultAccount == true);
                     if (result.data == null)
-                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}");
+                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}", "AC11");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error al obtener cuenta por defecto de {user}", ex), "AC11");
             }
             return result;
         }
@@ -282,19 +241,19 @@
 
                 if (userUpdate != null)
                 {
-                    TraceInfo(result.infos, $"Se ha removido la cuenta {provider}-{mail} del usuario {user}");
+                    TraceInfo(result.infos, $"Se ha removido la cuenta {provider}-{mail} del usuario {user}", "AC12");
                     result.data = userUpdate;
                     var eventAssoc = new RemoveAccountIntegrationEvent(user, provider, mail);
                     _eventBus.Publish(eventAssoc);
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider}-{mail}");
+                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider}-{mail}", "AC12");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove account of {user}", ex), "AC12");
             }
             return result;
         }
@@ -315,7 +274,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when reset defaut account of {user}", ex), "AC13");
             }
             return result;
         }
@@ -333,9 +292,9 @@
                 if (userDb == null)
                 {
                     userDb = userMail;
-                    TraceInfo(result.infos, $"Se inserta el usuario {userMail.User}");
+                    TraceInfo(result.infos, $"Se inserta el usuario {userMail.User} al crear la cuenta {accountIn.email}", "AC14");
 
-                    var eventAssoc = new AddUserMailIntegrationEvent(userMail.User, userMail.configUser);
+                    var eventAssoc = new UpsertAccountIntegrationEvent(userMail.User, accountIn.provider, accountIn.email, accountIn.defaultAccount, accountIn.configAccount, true);
                     _eventBus.Publish(eventAssoc);
                 }
                 else
@@ -352,7 +311,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert account of {user}", ex), "AC14");
             }
 
             result.data = true;
@@ -367,12 +326,12 @@
             if (accountDb == null)
             {
                 userDb.accounts.Add(accountIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}", "AC14");
             }
             else
             {
                 UpdateAccountWithOther(accountIn, accountDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la cuenta para {accountIn.provider}-{accountIn.email}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la cuenta para {accountIn.provider}-{accountIn.email}", "AC14");
             }
         }
 
@@ -388,7 +347,6 @@
         public async Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail, ConfigImapAccount config)
         {
             var result = new Result<bool>();
-
             var arrayFilters = GetFilterFromAccount(provider, mail);
 
             try
@@ -401,17 +359,17 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the account config"), "1003");
+                    TraceRepositoryError(result.errors, new AccountDomainException($"Don´t insert or modify the account config"), "AC15");
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {user} creando o modificando la configuracion de cuenta {provider}-{mail} con imap: {config.imap} port: {config.imapPort} user a {config.imapUser}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {user} creando o modificando la configuracion de cuenta {provider}-{mail} con imap: {config.imap} port: {config.imapPort} user: {config.imapUser}", "AC15");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert account config of {user}", ex), "AC15");
             }
 
             return result;
@@ -440,7 +398,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert relation of {user}", ex), "AC20");
             }
 
             return result;
@@ -465,7 +423,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove relation of {user}", ex), "AC21");
             }
 
             return result;
@@ -478,7 +436,7 @@
             {
                 var resultUser = await GetUser(user);
                 if (resultUser.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
+                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "AC22");
                 else
                 {
                     if (resultUser.data?.accounts?.Count > 0)
@@ -487,13 +445,13 @@
                         result.data = cuenta?.mails?.FindAll(c => c.uid == uid);
 
                         if (result.data == null)
-                            TraceInfo(result.infos, $"No se encuentra ningúna relación en la cuenta {provider} - {mail} del usuario {user}");
+                            TraceInfo(result.infos, $"No se encuentra ningúna relación en la cuenta {provider} - {mail} del usuario {user}", "AC22");
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when get relations of {user}", ex), "AC22");
             }
             return result;
         }
@@ -508,21 +466,21 @@
             {
                 if (resultUpdate.MatchedCount == 0)
                 {
-                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo");
+                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo", "AC06");
                 }
                 else if (resultUpdate.MatchedCount > 0)
                 {
                     if (resultUpdate.ModifiedCount == 0)
-                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones");
+                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", "AC06");
                     else
-                        TraceInfo(result.infos, modifyMsg);
+                        TraceInfo(result.infos, modifyMsg, "AC06");
 
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             else
             {
-                TraceMessage(result.errors, new Exception(errorMsg), "1003");
+                TraceRepositoryError(result.errors, new AccountDomainException("Error when update UserMail"), "AC06");
             }
         }
 
@@ -541,7 +499,7 @@
             }
         }
 
-        private void ReviewAccountEventsMail(AccountEvents account)
+        private void ReviewAccountEventsMail(AccountEventTypes account)
         {
             account.email = account.email.ToUpperInvariant();
 
@@ -606,18 +564,18 @@
             return arrayFilters;
         }
 
-        private static List<ArrayFilterDefinition> GetFilterFromAccountEventName(string nameEvent)
-        {
-            var arrayFilters = new List<ArrayFilterDefinition>();
-            var dictionary = new Dictionary<string, string>
-            {
-                { "i.name", nameEvent },
-            };
-            var doc = new BsonDocument(dictionary);
-            var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
-            arrayFilters.Add(docarrayFilter);
-            return arrayFilters;
-        }
+        //private static List<ArrayFilterDefinition> GetFilterFromAccountEventName(string nameEvent)
+        //{
+        //    var arrayFilters = new List<ArrayFilterDefinition>();
+        //    var dictionary = new Dictionary<string, string>
+        //    {
+        //        { "i.name", nameEvent },
+        //    };
+        //    var doc = new BsonDocument(dictionary);
+        //    var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
+        //    arrayFilters.Add(docarrayFilter);
+        //    return arrayFilters;
+        //}
 
         private static UpdateOptions FindAccountsDefaultsInCollection()
         {
@@ -642,9 +600,9 @@
             return Builders<UserMail>.Filter.Eq(u => u.User, idUser.ToUpperInvariant());
         }
 
-        private static FilterDefinition<AccountEvents> GetFilterAccountEvents(string mail)
+        private static FilterDefinition<AccountEventTypes> GetFilterAccountEvents(string mail)
         {
-            return Builders<AccountEvents>.Filter.Eq(u => u.email, mail.ToUpperInvariant());
+            return Builders<AccountEventTypes>.Filter.Eq(u => u.email, mail.ToUpperInvariant());
         }
 
         private static FilterDefinition<RawMessageProvider> GetFilterRawMessage(string idUser, string provider, string account, string messageId)
@@ -687,11 +645,12 @@
                 result.data = await _context.RawMessages.Find(GetFilterRawMessage(user, provider, account, messageId)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
+                    TraceRepositoryError(result.errors, new AccountDomainException($"Don´t exist {user} to get the raw"), "AC30");
+
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when get raw of {user}", ex), "AC30");
             }
             return result;
         }
@@ -720,7 +679,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when insert raw in {rawMessage.User}", ex), "AC31");
             }
             return result;
         }
@@ -736,29 +695,29 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente el raw de {rawMessage.MessageId}");
-                    //var eventAssoc = new RemoveUserMailIntegrationEvent(user);
-                    //_eventBus.Publish(eventAssoc);
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente el raw de {rawMessage.MessageId}", "AC32");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove raw in {rawMessage.User}", ex), "AC32");
             }
             return result;
         }
 
         #endregion RawMessage
 
-        public async Task<Result<AccountEvents>> GetEventsByAccount(string account)
+        #region EventTypes
+
+        public async Task<Result<AccountEventTypes>> GetEventTypesByAccount(string account)
         {
-            var result = new Result<AccountEvents>();
+            var result = new Result<AccountEventTypes>();
             try
             {
                 result.data = await _context.AccountEvents.Find(GetFilterAccountEvents(account)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún evento para esa cuenta {account}", "Mail Not Found");
+                    TraceInfo(result.infos, $"No se encuentra ningún EventTypes para esa cuenta {account}", "AC40");
                 else
                 {
                     var orderEvents = result.data?.eventTypes.OrderByDescending(x => x.name).ToList();
@@ -768,75 +727,70 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when get EventTypes of {account}", ex), "AC40");
             }
             return result;
         }
 
-        public async Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn)
+        public async Task<Result<AccountEventTypes>> UpsertAccountEventTypes(AccountEventTypes accountIn)
         {
-            var result = new Result<AccountEvents>();
+            var result = new Result<AccountEventTypes>();
             ReviewAccountEventsMail(accountIn);
 
             try
             {
                 var resultReplace = await _context.AccountEvents.ReplaceOneAsync(GetFilterAccountEvents(accountIn.email), accountIn, GetUpsertOptions());
 
-                accountIn.Id = ManageUpsert<AccountEvents>($"Don´t insert or modify the user {accountIn.email}",
+                accountIn.Id = ManageUpsert<AccountEventTypes>($"Don´t insert or modify the user {accountIn.email}",
                     $"Se modifica la cuenta {accountIn.email}",
                     $"Se inserta la cuenta {accountIn.email} con {resultReplace.UpsertedId}",
                      result, resultReplace);
 
                 result.data = accountIn;
-
-                //var eventAssoc = new AddUserMailIntegrationEvent(userMail.User, userMail.configUser);
-                //_eventBus.Publish(eventAssoc);
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert EventTypes of {accountIn.email}", ex), "AC41");
             }
             return result;
         }
 
-        public async Task<Result<bool>> RemoveEvent(string email, string idEvent)
+        public async Task<Result<bool>> RemoveEventType(string email, string idEvent)
         {
             var result = new Result<bool>();
-            var resultAccount = new Result<AccountEvents>();
-            var options = new FindOneAndUpdateOptions<AccountEvents> { ReturnDocument = ReturnDocument.After };
+            var resultAccount = new Result<AccountEventTypes>();
+            var options = new FindOneAndUpdateOptions<AccountEventTypes> { ReturnDocument = ReturnDocument.After };
             try
             {
-                var update = Builders<AccountEvents>.Update.PullFilter(
+                var update = Builders<AccountEventTypes>.Update.PullFilter(
                     p => p.eventTypes,
                     f => f.idEvent.Equals(idEvent.ToLowerInvariant())
                     );
 
-                var userUpdate = await _context.AccountEvents.FindOneAndUpdateAsync<AccountEvents>(
+                var userUpdate = await _context.AccountEvents.FindOneAndUpdateAsync<AccountEventTypes>(
                     GetFilterAccountEvents(email),
                     update, options);
 
                 if (userUpdate != null)
                 {
-                    TraceInfo(result.infos, $"Se ha removido el evento {idEvent} de la cuenta {email}");
+                    TraceInfo(result.infos, $"Se ha removido el evento {idEvent} de la cuenta {email}", "AC42");
                     resultAccount.data = userUpdate;
                     result.data = true;
-                    //var eventAssoc = new RemoveAccountIntegrationEvent(user, provider, mail);
-                    //_eventBus.Publish(eventAssoc);
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra la cuenta {email} para remover el evento {idEvent}");
+                    TraceInfo(result.infos, $"No se encuentra la cuenta {email} para remover el evento {idEvent}", "AC42");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove EventTypes of {email}", ex), "AC42");
             }
 
             return result;
         }
 
-        public async Task<Result<EventType>> AddEvent(string email, EventType eventType)
+        public async Task<Result<EventType>> AddEventType(string email, EventType eventType)
         {
             var resultBoolean = new Result<bool>();
             var result = new Result<EventType>();
@@ -849,20 +803,17 @@
 
                 if (account == null)
                 {
-                    var arrayEvents = new List<EventType>
-                    {
-                        eventType
-                    };
+                    var arrayEvents = new List<EventType> { eventType };
 
-                    var resultInsertAccountEvent = await UpsertAccountEvents(new AccountEvents() { email = email, eventTypes = arrayEvents.ToArray() });
+                    var resultInsertAccountEvent = await UpsertAccountEventTypes(new AccountEventTypes() { email = email, eventTypes = arrayEvents.ToArray() });
                     account = resultInsertAccountEvent.data;
                 }
                 else
                 {
                     if (IdEventDontExistImNew)
-                        InsertEvent(account, eventType, result);
+                        InsertEventType(account, eventType, result);
                     else
-                        UpdateEvent(account, eventType, result);
+                        UpdateEventType(account, eventType, result);
                     
                     await _context.AccountEvents.ReplaceOneAsync(c => c.Id == account.Id, account);
                 }
@@ -871,40 +822,47 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when add EventTypes of {email}", ex), "AC43");
             }
 
             return result;
         }
 
-        private void InsertEvent(AccountEvents account, EventType eventType, Result<EventType> result)
+        private void InsertEventType(AccountEventTypes account, EventType eventType, Result<EventType> result)
         {
+            //TODO: cambiar "EventIdExist" 
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
                 var evByName = account.eventTypes.FirstOrDefault(s => s.name.ToUpperInvariant().Equals(eventType.name.ToUpperInvariant()));
                 if (evByName != null)
+                {
+                    TraceRepositoryError(result.errors, new AccountDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), "AC43");
                     TraceOutputMessage(result.errors, $"Error, exist other eventType with same name {eventType.name}, review it ", null, "EventIdExist");
+                }
                 else
                 {
                     var listEvents = account.eventTypes.ToList();
 
                     listEvents.Add(eventType);
                     account.eventTypes = listEvents.ToArray();
-                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}");
+                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}", "AC43");
                 }
             }
             else
             {
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), "AC43");
                 TraceOutputMessage(result.errors, $"Error, eventType id exist, review {eventType.idEvent}  or correct account ", null, "EventIdExist");
             }
         }
 
-        private void UpdateEvent(AccountEvents account, EventType eventType, Result<EventType> result)
+        private void UpdateEventType(AccountEventTypes account, EventType eventType, Result<EventType> result)
         {
+            //TODO: quitar EventIdUnknow
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), "AC43");
                 TraceOutputMessage(result.errors, $"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account ", null, "EventIdUnknow");
             }
             else
@@ -913,13 +871,13 @@
                 ev.color = eventType.color;
 
                 if (ev.name.ToUpperInvariant() == eventType.name?.ToUpperInvariant())
-                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color");
+                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color", "AC43");
                 else
-                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}");
+                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}", "AC43");
             }
         }
 
-        public async Task<Result<bool>> RemoveAccountEvent(string email)
+        public async Task<Result<bool>> RemoveAccountEventType(string email)
         {
             var result = new Result<bool>();
             try
@@ -928,16 +886,16 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}");
-                    //var eventAssoc = new RemoveUserMailIntegrationEvent(email);
-                    //_eventBus.Publish(eventAssoc);
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}", "AC44");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove eventType of {email}", ex), "AC44");
             }
             return result;
         }
+
+        #endregion Events
     }
 }

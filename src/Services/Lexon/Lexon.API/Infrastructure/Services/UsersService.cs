@@ -89,7 +89,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -133,7 +133,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -312,7 +312,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -358,7 +358,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
 
             return result;
@@ -408,7 +408,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
             if (_settings.Value.UseMongo)
@@ -446,7 +446,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -520,7 +520,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceRepositoryError(resultMySql.Errors, ex);
                 }
             }
 
@@ -579,7 +579,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceRepositoryError(resultMySql.Errors, ex);
                 }
             }
 
@@ -638,7 +638,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -679,7 +679,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceRepositoryError(resultMySql.Errors, ex);
                 }
             }
 
@@ -728,7 +728,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -773,7 +773,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
             return result;
@@ -834,7 +834,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
             return result;
@@ -972,7 +972,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceRepositoryError(resultMySql.Errors, ex);
                 }
             }
 
@@ -1002,7 +1002,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -1415,7 +1415,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
 
             return result;
@@ -1443,7 +1443,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceRepositoryError(result.errors, ex);
                 }
             }
 
@@ -1487,7 +1487,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceRepositoryError(result.errors, ex);
             }
 
             return result;
