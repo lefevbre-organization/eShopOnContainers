@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { getMessage } from '../../../../api';
 import i18n from 'i18next';
+import { Confirmation } from '../../../notification/confirmation';
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -33,9 +34,11 @@ export class MessageToolbar extends PureComponent {
     this.getLabelMessagesSynk = this.getLabelMessagesSynk.bind(this);
     this.markAsRead = this.markAsRead.bind(this);
     this.markAsUnread = this.markAsUnread.bind(this);
+    this.askEmptyTrash = this.askEmptyTrash.bind(this);
 
     this.state = {
       selectedMessageIds: [],
+      showEmptyTrashConfirmation: false
     };
   }
 
@@ -119,13 +122,18 @@ export class MessageToolbar extends PureComponent {
     this.modifyMessages(['UNREAD'], []);
   }
 
+  askEmptyTrash() {
+    this.setState({showEmptyTrashConfirmation: true});
+  }
+
   emptyTrash() {
-    const ids = this.props.messagesResult.messages
-        .map((el) => el.id);
-    this.props.onDeletedMessages(
-        this.props.messagesResult.messages.filter((el) => el.selected)
-    );
-    this.props.deleteMessages({ ids });
+    this.setState({showEmptyTrashConfirmation: false}, ()=>{
+      const ids = this.props.messagesResult.messages
+          .map((el) => el.id);
+      this.props.onDeletedMessages(
+          this.props.messagesResult.messages.filter((el) => el.selected)
+      );
+      this.props.deleteMessages({ ids });    })
   }
 
   modifyMessages(addLabelIds, removeLabelIds) {
@@ -187,8 +195,16 @@ export class MessageToolbar extends PureComponent {
     }
 
     const showEmptyTrash = this.props.selectedFolderId === "TRASH" && this.props.messagesResult.messages.length > 0;
+    const emptyTrashMessage = i18n.t('message-list.empty-trash-confirmation').replace('%d', this.props.messagesResult.messages.length);
     return (
       <>
+        <Confirmation initialModalState={this.state.showEmptyTrashConfirmation}
+                      onAccept={this.emptyTrash}
+                                onCancel={() => {
+                                  this.setState({showEmptyTrashConfirmation: false})
+                                }}
+                                message={emptyTrashMessage}
+        ></Confirmation>
         <div className='msg-toolbar'>
           <div className='pl-2 py-2 pr-4 d-flex align-items-center bd-highlight  align-center '>
             <div className='d-flex align-content-center align-items-center '>
@@ -210,7 +226,7 @@ export class MessageToolbar extends PureComponent {
                   {selectedMessages.length ? (
                     <ListActionButtons onClick={this.modifyMessages} folder={this.props.selectedFolderId}/>
                   ) : showEmptyTrash? <div>
-                    <div className="action-btn" style={{width: 180, color: '#001978'}} onClick={this.emptyTrash}>
+                    <div className="action-btn" style={{width: 180, color: '#001978'}} onClick={this.askEmptyTrash}>
                       <span>{i18n.t('message-list.empty-trash')}</span>
                     </div>
                   </div> : ''

@@ -69,8 +69,8 @@
   }
 
   .modal-footer .modal-primary {
-    background: #001978;
-    color: white;
+    background: #001978 !important;
+    color: white !important;
     border-color: white;
     border-radius: 0%;
     height: 42px;
