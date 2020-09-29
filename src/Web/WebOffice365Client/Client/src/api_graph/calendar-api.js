@@ -281,23 +281,23 @@ export const requestRecurringEvent = (calendar, eventId) => {
 
 // Acl api
 
-export const addAcl = (calendar, acl) => {
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.acl
-            .insert({
-                calendarId: calendar,
-                sendNotifications: true,
-                resource: acl
-            })
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
-                reject(err);
-            });
+//export const addAcl = (calendar, acl) => {
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.acl
+//            .insert({
+//                calendarId: calendar,
+//                sendNotifications: true,
+//                resource: acl
+//            })
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
 
-    });
-};
+//    });
+//};
 
 export const listAcl = (calendarId) => {
     return new Promise(async (resolve, reject) => {
@@ -314,22 +314,22 @@ export const listAcl = (calendarId) => {
     });
 };
 
-export const deleteAcl = (calendar, ruleId) => {
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.acl
-            .delete({
-                calendarId: calendar,
-                ruleId: ruleId
-            })
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
-                reject(err);
-            });
+//export const deleteAcl = (calendar, ruleId) => {
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.acl
+//            .delete({
+//                calendarId: calendar,
+//                ruleId: ruleId
+//            })
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
 
-    });
-};
+//    });
+//};
 
 // PARSERS
 
