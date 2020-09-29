@@ -5,9 +5,7 @@ let clickEle;
 export const MenuContainer = (props) => {
   const { collapsed } = props;
   return (
-    <nav className={`${mainCss['mdc-list']}`}>
-      <FolderList collapsed={collapsed}  data={clickEle}/>
-    </nav>
+    <FolderList collapsed={collapsed}  data={clickEle}/>  
   );
 };
 
