@@ -5,7 +5,8 @@ import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import i18n from 'i18next';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
-import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api_graph/accounts";
+//import { getEventTypes, addorUpdateEventType, deleteEventType } from "../../../api_graph/accounts";
+import { getEventTypes } from '../../../api_graph/calendar-api';
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import './eventtype.scss';
 
@@ -101,151 +102,151 @@ export class Eventtype extends React.Component {
        this.setState({ newmode: false })
     }
 
-    deleteEventType(args) {
-        args.stopPropagation();
-        let liItem = args.target.parentElement.parentElement;
-        this.listEventType.removeElement(liItem);
-        function remove(array, element) {
-            return array.filter(el => el.Text + el.Id !== element);
-        }
-        let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
-        this.eventTypeData = [];
-        this.eventTypeData = vowels;
+    //deleteEventType(args) {
+    //    args.stopPropagation();
+    //    let liItem = args.target.parentElement.parentElement;
+    //    this.listEventType.removeElement(liItem);
+    //    function remove(array, element) {
+    //        return array.filter(el => el.Text + el.Id !== element);
+    //    }
+    //    let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
+    //    this.eventTypeData = [];
+    //    this.eventTypeData = vowels;
 
-        let email = this.props.googleUser.getBasicProfile().getEmail();      
-        let dataEventTypeAPI = {            
-            "idEvent": args.target.parentElement.lastChild.innerText,
-             "email": email
-        }
+    //    let email = this.props.googleUser.getBasicProfile().getEmail();      
+    //    let dataEventTypeAPI = {            
+    //        "idEvent": args.target.parentElement.lastChild.innerText,
+    //         "email": email
+    //    }
 
-        deleteEventType(dataEventTypeAPI)
-            .then(result => { 
-                this.toastObj.hide('All');
-                this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[1]);
-                this.props.getlistEventTypes();
-            })
-            .catch(error => {
-                console.log('error ->', error);
-                if (this.toastObj != undefined) {
-                    this.toastObj.showProgressBar = false;
-                    this.toastObj.hide('All');
-                    this.toastObj.timeOut = 1000;
-                    this.toastObj.show(this.toasts[2]);
-                }
-            });
+    //    deleteEventType(dataEventTypeAPI)
+    //        .then(result => { 
+    //            this.toastObj.hide('All');
+    //            this.toastObj.timeOut = 1000;
+    //            this.toastObj.show(this.toasts[1]);
+    //            this.props.getlistEventTypes();
+    //        })
+    //        .catch(error => {
+    //            console.log('error ->', error);
+    //            if (this.toastObj != undefined) {
+    //                this.toastObj.showProgressBar = false;
+    //                this.toastObj.hide('All');
+    //                this.toastObj.timeOut = 1000;
+    //                this.toastObj.show(this.toasts[2]);
+    //            }
+    //        });
 
-    } 
+    //} 
 
-    AddorUpdateEventType(args) {
+    //AddorUpdateEventType(args) {
 
-        this.state.name = this.TitleTypeEventObj.value;
+    //    this.state.name = this.TitleTypeEventObj.value;
 
-        if (this.TitleTypeEventObj.value == undefined) {
-            this.setState({ errorName: 'Dato obligatorio' })
-            return
-        }
-        else {
-            this.setState({ errorName: '' })
-        }
+    //    if (this.TitleTypeEventObj.value == undefined) {
+    //        this.setState({ errorName: 'Dato obligatorio' })
+    //        return
+    //    }
+    //    else {
+    //        this.setState({ errorName: '' })
+    //    }
 
-        if (this.state.color === undefined) {
-            this.setState({ errorColor: 'Debe seleccionar un color' })
-            return
-        }
-        else {
-            this.setState({ errorColor: '' })
-        }        
+    //    if (this.state.color === undefined) {
+    //        this.setState({ errorColor: 'Debe seleccionar un color' })
+    //        return
+    //    }
+    //    else {
+    //        this.setState({ errorColor: '' })
+    //    }        
       
-        let dataEventType = {
-            "Id": "id",
-            "Text": this.TitleTypeEventObj.value,
-            "Color": this.state.color 
-        }
+    //    let dataEventType = {
+    //        "Id": "id",
+    //        "Text": this.TitleTypeEventObj.value,
+    //        "Color": this.state.color 
+    //    }
 
 
-        let dataEventTypeAPI = [];
-        let email = this.props.googleUser.getBasicProfile().getEmail();      
-        if (this.state.idEvent != undefined) {
-            dataEventTypeAPI = {
-                "email": email,
-                "eventType":
-                {
-                    "idEvent": this.state.idEvent,
-                    "name": this.TitleTypeEventObj.value,
-                    "color": this.state.color
-                }
-            } 
-        }
-        else {
+    //    let dataEventTypeAPI = [];
+    //    let email = this.props.googleUser.getBasicProfile().getEmail();      
+    //    if (this.state.idEvent != undefined) {
+    //        dataEventTypeAPI = {
+    //            "email": email,
+    //            "eventType":
+    //            {
+    //                "idEvent": this.state.idEvent,
+    //                "name": this.TitleTypeEventObj.value,
+    //                "color": this.state.color
+    //            }
+    //        } 
+    //    }
+    //    else {
            
-            dataEventTypeAPI = {
-                "email": email,
-                "eventType":
-                {                  
-                    "name": this.TitleTypeEventObj.value,
-                    "color": this.state.color
-                }
-            } 
+    //        dataEventTypeAPI = {
+    //            "email": email,
+    //            "eventType":
+    //            {                  
+    //                "name": this.TitleTypeEventObj.value,
+    //                "color": this.state.color
+    //            }
+    //        } 
 
-        }  
+    //    }  
         
       
-        addorUpdateEventType(dataEventTypeAPI)
-            .then(result => {  
+    //    addorUpdateEventType(dataEventTypeAPI)
+    //        .then(result => {  
 
-                if (result.errors.length > 0) {
-                    if (result.errors[0].errorcode = 'EventExist') {
-                        this.toastObj.show(this.toasts[3]);
-                        return;
-                    }
-                    else {
-                        throw true
-                    }                   
-                }
+    //            if (result.errors.length > 0) {
+    //                if (result.errors[0].errorcode = 'EventExist') {
+    //                    this.toastObj.show(this.toasts[3]);
+    //                    return;
+    //                }
+    //                else {
+    //                    throw true
+    //                }                   
+    //            }
 
-                dataEventType = []
+    //            dataEventType = []
 
-                dataEventType = {
-                    "Id": result.data.idEvent,
-                    "Text": this.TitleTypeEventObj.value,
-                    "Color": this.state.color
-                }
+    //            dataEventType = {
+    //                "Id": result.data.idEvent,
+    //                "Text": this.TitleTypeEventObj.value,
+    //                "Color": this.state.color
+    //            }
                     
-                this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[1]);
+    //            this.toastObj.timeOut = 1000;
+    //            this.toastObj.show(this.toasts[1]);
 
-                if (this.state.idEvent != undefined) {
-                    //modify current event type
-                    let IdEvent = this.state.idEvent;
-                    var item = this.eventTypeData.find(function (e) {
-                        return e.Id == IdEvent
-                    })
-                    item.Text = this.TitleTypeEventObj.value;                   
-                    item.Color = this.state.color                
-                }
-                else {
-                    //new event type
-                    this.eventTypeData.push(dataEventType);
-                }
+    //            if (this.state.idEvent != undefined) {
+    //                //modify current event type
+    //                let IdEvent = this.state.idEvent;
+    //                var item = this.eventTypeData.find(function (e) {
+    //                    return e.Id == IdEvent
+    //                })
+    //                item.Text = this.TitleTypeEventObj.value;                   
+    //                item.Color = this.state.color                
+    //            }
+    //            else {
+    //                //new event type
+    //                this.eventTypeData.push(dataEventType);
+    //            }
                
-                this.setState({ updatemode: false })
-                this.setState({ newmode: false })
-                this.setState({ idEvent: undefined })             
+    //            this.setState({ updatemode: false })
+    //            this.setState({ newmode: false })
+    //            this.setState({ idEvent: undefined })             
 
-                this.props.getlistEventTypes();
+    //            this.props.getlistEventTypes();
 
-            })
-            .catch(error => {
-                console.log('error ->', error);
-                if (this.toastObj != undefined) {
-                    this.toastObj.showProgressBar = false;
-                    this.toastObj.hide('All');
-                    this.toastObj.timeOut = 1000;
-                    this.toastObj.show(this.toasts[2]);
-                }
-            });
-    }
+    //        })
+    //        .catch(error => {
+    //            console.log('error ->', error);
+    //            if (this.toastObj != undefined) {
+    //                this.toastObj.showProgressBar = false;
+    //                this.toastObj.hide('All');
+    //                this.toastObj.timeOut = 1000;
+    //                this.toastObj.show(this.toasts[2]);
+    //            }
+    //        });
+    //}
 
     onPressActionButton(args) { 
         switch (args.target.id) {           
@@ -275,8 +276,8 @@ export class Eventtype extends React.Component {
     }
 
     getlistEventTypes() {
-        let email  = this.props.googleUser.getBasicProfile().getEmail();
-        getEventTypes(email)
+      //  let email  = this.props.googleUser.getBasicProfile().getEmail();
+        getEventTypes()
             .then(result => {
                 this.onDataBinding(result.data.eventTypes)
             })

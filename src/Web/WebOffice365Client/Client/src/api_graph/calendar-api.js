@@ -3,6 +3,38 @@ import config from '../Config';
 import { UserAgentApplication } from 'msal';
 
 const graph = require('@microsoft/microsoft-graph-client');
+
+const CalendarColors = [
+    { value: 'lightBlue', color: '#0078d4', id : '0' },
+    { value: 'lightGreen', color: '#498205', id: '1' },
+    { value: 'lightOrange', color: '#da3b01', id: '2'},
+    { value: 'lightGray', color: '#69797e', id: '3'},
+    { value: 'lightYellow', color: '#ffff00', id: '4' },
+    { value: 'lightTeal', color: '#18a7b5', id: '5' },
+    { value: 'lightPink', color: '#e3008c', id: '6'},
+    { value: 'lightBrown', color: '#b5651d', id: '7' },
+    { value: 'lightRed', color: '#c50f1f', id: '8' }    
+];
+
+const PresetColors = [ 
+    { value: 'preset0', color: '#E74856' },
+    { value: 'preset1', color: '#FF8C00' },
+    { value: 'preset2', color: '#FFAB45' },
+    { value: 'preset3', color: '#FFF100' },
+    { value: 'preset4', color: '#47D041' },
+    { value: 'preset5', color: '#30C6CC' },
+    { value: 'preset6', color: '#73AA24' },
+    { value: 'preset7', color: '#00BCF2' },
+    { value: 'preset8', color: '#8764B8' },
+    //{ value: 'Preset9', color: '#30C6CC' },
+    { value: 'preset10', color: '#A0AEB2' },
+    { value: 'preset11', color: '#004B60' },
+    { value: 'preset12', color: '#B1ADAB' },
+    { value: 'preset13', color: '#5D5A58' },
+    { value: 'preset14', color: '#000000' },
+    { value: 'preset15', color: '#750B1C' },
+];
+
 let userAgentApplication = null;
 
 export const getUserApplication = () => {
@@ -44,7 +76,23 @@ export const getAccessTokenSilent = async () => {
     return await window.msal.acquireTokenSilent({ scopes: config.scopes });
 };
 
+// Categories
+
 //Calendarlist Api
+export const getEventTypes = () => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`/me/outlook/masterCategories`)
+            .get()
+            .then((response) =>
+                resolve(GetEventTypeParser(response.value)))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
 
 export const listCalendarList = () => {
     return new Promise(async (resolve, reject) => {
@@ -61,24 +109,7 @@ export const listCalendarList = () => {
     });
 };
 
-//export const getCalendarList = (calendar) => {
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.calendarList
-//            .get({
-//                calendarId: calendar,
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
-//};
-
-export const updateCalendarList = (calendarId, calendar) =>
+export const updateCalendarList = (calendarId, calendar) => {
 
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.calendarList
@@ -96,7 +127,7 @@ export const updateCalendarList = (calendarId, calendar) =>
             });
 
     });
-
+};
 
 //Calendars Api
 
@@ -158,18 +189,13 @@ export const deleteCalendar = (idCalendar) => {
                 reject(err);
             });
     });
-};
-   
-
-
+}; 
 
 
 // Events Api
-//GET /me/calendars/{id}/events
 
-export const getEventList = (idCalendar, selectedDate) => {
-    //to delete
-   // idCalendar = "AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA=";
+
+export const getEventList = (idCalendar, selectedDate) => {    
     return new Promise(async (resolve, reject) => {
         const accessToken = await getAccessTokenSilent();
         const client = getAuthenticatedClient(accessToken);
@@ -201,45 +227,6 @@ export const addCalendarEvent = (idCalendar, event) => {
             });
     });
 };
-
-
-
-//export const addCalendarEvent = (calendar, event) =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.events
-//            .insert({
-//                calendarId: calendar ,
-//                resource: event,
-//                sendUpdates: 'all',
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
-
-//export const updateCalendarEvent = (calendar, eventId, event) =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.events
-//            .update({
-//                calendarId: calendar,
-//                eventId: eventId,
-//                resource: event,
-//                sendUpdates: 'all'
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
 
 export const updateCalendarEvent = (idCalendar, eventId, event) => {
     return new Promise(async (resolve, reject) => {
@@ -274,25 +261,7 @@ export const deleteCalendarEvent = (calendar, eventId) => {
     });
 }
 
-//export const deleteCalendarEvent = (calendar, eventId) =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.events
-//            .delete({
-//                calendarId: calendar,
-//                eventId: eventId,
-//                sendUpdates: 'all'
-//            })
-
-//            .then(response => {
-//                resolve(response.result);
-//            })
-//            .catch(err => {
-//                reject(err);
-//            });
-
-//    });
-
-export const requestRecurringEvent = (calendar, eventId) =>
+export const requestRecurringEvent = (calendar, eventId) => {
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .get({
@@ -308,11 +277,11 @@ export const requestRecurringEvent = (calendar, eventId) =>
             });
 
     });
-
+};
 
 // Acl api
 
-export const addAcl = (calendar, acl) =>
+export const addAcl = (calendar, acl) => {
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.acl
             .insert({
@@ -328,8 +297,7 @@ export const addAcl = (calendar, acl) =>
             });
 
     });
-
-
+};
 
 export const listAcl = (calendarId) => {
     return new Promise(async (resolve, reject) => {
@@ -346,8 +314,7 @@ export const listAcl = (calendarId) => {
     });
 };
 
-
-export const deleteAcl = (calendar, ruleId) =>
+export const deleteAcl = (calendar, ruleId) => {
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.acl
             .delete({
@@ -362,7 +329,31 @@ export const deleteAcl = (calendar, ruleId) =>
             });
 
     });
+};
 
+// PARSERS
+
+function GetEventTypeParser(list) {
+    let listParse = [];
+
+    if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+            listParse.push({
+                color: PresetColors.find(x => x.value == list[i].color).color,
+                idEvent: list[i].id,
+                name: list[i].displayName,
+            });
+        }
+    }
+   
+    let items;
+    items = ({ eventTypes: listParse });
+
+    let eventTypes;
+    eventTypes = ({ data:items });
+
+    return eventTypes;
+}
 
 function listCalendarParser(list) {
     let listParse = [];
@@ -384,8 +375,8 @@ function listCalendarParser(list) {
             }
 
             let color = "#0693e3";
-            if (list[i].color != "auto") {
-                color = list[i].color
+            if (list[i].color != "auto") {               
+                color = CalendarColors.find(x => x.value == list[i].color).color
             }           
 
             listParse.push({
@@ -405,10 +396,7 @@ function listCalendarParser(list) {
 
     let items;
     items = ({ items: listParse });
-
     return items;
-
-    //return listParse;
 }
 
 function getCalendarParser(list) {
@@ -419,9 +407,16 @@ function getCalendarParser(list) {
 }
 
 function addCalendarParser(list) {
-    let listParse  = {
-        name: list.summary
-    };
+    let listParse = {};
+
+    if (list.backgroundColor != undefined) {
+        listParse.color = CalendarColors.find(x => x.color == list.backgroundColor).value
+
+    }
+    if (list.summary != undefined) {
+        listParse.name = list.summary
+    }
+
     return listParse;
 }
 
@@ -450,20 +445,64 @@ function listEventsParser(list) {
 
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
-             listParse.push({
-                   
-                            id: list[i].id,
-                            summary: list[i].subject,
-                            Location: list[i].location.displayName,
-                            Description: list[i].bodyPreview,
-                            start: { dateTime: list[i].start.dateTime },
-                            end: { dateTime: list[i].end.dateTime },
-                            IsAllDay: list[i].IsAllDay,
-                            RecurrenceRule: null,
-                            ImageName: "lefebvre",
-                            Attendees: list[i].attendees,
-                            EventType: undefined,
-                          
+
+            let attendees = []
+            if (list[i].attendees != undefined) {
+                Object.keys(list[i].attendees).forEach(function (key) {
+                    attendees.push(
+                        { 'email': list[i].attendees[key].emailAddress.name }
+                    );
+                });
+            }    
+
+            let recurrenceRule = [] ;           
+            if (list[i].recurrence != undefined) {               
+                let str;
+                let value;
+                Object.keys(list[i].recurrence.pattern).forEach(function (key) {                   
+                    value = list[i].recurrence.pattern[key]
+                    key = key.replace("type", "FREQ");
+                    str = (typeof str !== "undefined" ? str + key + "=" + value + ";" : key + "=" + value + ";");
+                })
+                console.log(str);
+                recurrenceRule.push("RRULE:" + str.toUpperCase())
+                console.log(recurrenceRule[0]);
+               // recurrenceRule.push("RRULE:FREQ=DAILY;MONTH=0;INDEX=1;INTERVAL=1")
+            }
+            else {
+                recurrenceRule = null;
+            }
+
+
+            //EventType
+            let category;
+            if (list[i].categories != undefined && list[i].categories.length > 0 ) {
+                category = {                   
+                        private:
+                        {
+                            eventTypeColor: undefined,
+                            eventTypeId: undefined,
+                            eventTypeName: list[i].categories[0]
+                        }
+                };
+            }
+            else {
+                category = undefined
+            }
+
+
+            listParse.push({                   
+                id: list[i].id,
+                summary: list[i].subject,
+                Location: list[i].location.displayName,
+                Description: list[i].bodyPreview,
+                start: { dateTime: list[i].start.dateTime },
+                end: { dateTime: list[i].end.dateTime },
+                IsAllDay: list[i].IsAllDay,
+                recurrence: recurrenceRule,
+                ImageName: "lefebvre",
+                attendees: attendees,
+                extendedProperties: category,                          
              });
         }
     }
@@ -529,6 +568,56 @@ function EventParser(event) {
         isAllDay: event.isAllDay,
     };
 
+    // Recurrence
+    
+    //let rec = event.recurrence[0]
+    //let recObj;
+    //let jsonObj   = '{"pattern":[]}';
+
+    //if (rec != undefined) {  
+    //    recObj = rec.replace("RRULE:", "").split(";");
+
+    //    let recValueObj;
+       
+    //    Object.keys(recObj).forEach(function (key) {
+    //        console.table(recObj[key]);
+    //        let recJsonKey = recObj[key].split("=")[0] + " : " + recObj[key].split("=")[1];
+    //        let recJsonValue = recObj[key].split("=")[1];
+
+    //        var obj = JSON.parse(jsonObj);
+    //        obj['pattern'].push({ recJsonKey });
+    //        jsonStr = JSON.stringify(obj);
+
+    //    })
+        
+    //    let item =
+    //        {
+    //            "pattern":
+    //            {
+    //                 "type": "weekly",
+    //                 "interval": 2,
+    //                    "daysOfWeek":
+    //                        [
+    //                         "Monday",
+    //                         "Tuesday"
+    //                        ]
+    //            }
+    //         }
+        
+             
+    //}
+   
+
+    //"pattern": {
+    //    "type": "weekly",
+    //        "interval": 2,
+    //            "daysOfWeek": [
+    //                "Monday",
+    //                "Tuesday"
+    //            ]
+    //}
+
+
     //Atendees
     let arr = event.attendees
     let ateendeeObj = [];
@@ -547,79 +636,19 @@ function EventParser(event) {
     }
     eventParse.attendees = ateendeeObj;
 
+    //Categories
+    if (event.extendedProperties != undefined) {
+        let item =
+            [
+            event.extendedProperties.private.eventTypeName 
+            ]
+        eventParse.categories = item;
+        //event.eventype = cat
+    }
+    
+   
+
+
+
     return eventParse;
 }
-
-
-      
-//return event google
-
-//attendees: [{ … }]
-//created: "2020-09-15T14:45:17.000Z"
-//creator: { email: "alberto.valverde.escribano@gmail.com", self: true }
-//description: "esto es una prueba"
-//end: { dateTime: "2020-09-02T09:30:00+02:00", timeZone: "Europe/Madrid" }
-//etag: ""3200362235538000""
-//htmlLink: "https://www.google.com/calendar/event?eid=YmdmMWp1MGhobmVqMnE1cjVvMjE4dmUycWtfMjAyMDA5MDJUMDcwMDAwWiBhbGJlcnRvLnZhbHZlcmRlLmVzY3JpYmFub0Bt"
-//iCalUID: "bgf1ju0hhnej2q5r5o218ve2qk@google.com"
-//id: "bgf1ju0hhnej2q5r5o218ve2qk"
-//kind: "calendar#event"
-//organizer: { email: "alberto.valverde.escribano@gmail.com", self: true }
-//recurrence: ["RRULE:FREQ=DAILY;INTERVAL=1"]
-//reminders: { useDefault: true }
-//sequence: 0
-//start: { dateTime: "2020-09-02T09:00:00+02:00", timeZone: "Europe/Madrid" }
-//status: "confirmed"
-//summary: "prueba"
-//updated: "2020-09-15T14:45:17.769Z"
-//__proto__: Object
-
-//Return event Office365
-//@odata.context: "https://graph.microsoft.com/v1.0/$metadata#users('a72538e2-c9fd-4207-913c-b1104aab6407')/calendars('AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA%3D')/events/$entity"
-//@odata.etag: "W/"HJwYii8JSkK74gfF5MMWnAABiGRL5A == ""
-//allowNewTimeProposals: true
-//attendees: [{ … }]
-//body: {
-//    contentType: "html", content: "<html>
-//    ↵<head>
-//        ↵<meta http-equiv="Content-Type" co…↵Does mid month work for you?
-//↵</body>
-//↵</html >
-//    ↵"}
-//    bodyPreview: "Does mid month work for you?"
-//    categories: []
-//    changeKey: "HJwYii8JSkK74gfF5MMWnAABiGRL5A=="
-//    createdDateTime: "2020-09-15T14:26:09.8128699Z"
-//    end: { dateTime: "2020-09-15T14:00:00.0000000", timeZone: "Pacific Standard Time" }
-//    hasAttachments: false
-//    iCalUId: "040000008200E00074C5B7101A82E0080000000044ED04286C8BD60100000000000000001000000085E76C7DF914384D90EE38C722437D72"
-//    id: "AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAENAAAcnBiKLwlKQrviB8XkwxacAAGI3iNEAAA="
-//    importance: "normal"
-//    isAllDay: false
-//    isCancelled: false
-//    isOnlineMeeting: false
-//    isOrganizer: true
-//    isReminderOn: true
-//    lastModifiedDateTime: "2020-09-15T14:26:11.0401585Z"
-//    location: { displayName: "Harry's Bar", locationType: "default", uniqueId: "Harry's Bar", uniqueIdType: "private" }
-//    locations: [{ … }]
-//    onlineMeeting: null
-//    onlineMeetingProvider: "unknown"
-//    onlineMeetingUrl: null
-//    organizer: { emailAddress: { … } }
-//    originalEndTimeZone: "Pacific Standard Time"
-//    originalStartTimeZone: "Pacific Standard Time"
-//    recurrence: null
-//    reminderMinutesBeforeStart: 15
-//    responseRequested: true
-//    responseStatus: { response: "organizer", time: "0001-01-01T00:00:00Z" }
-//    sensitivity: "normal"
-//    seriesMasterId: null
-//    showAs: "busy"
-//    start: { dateTime: "2020-09-15T12:00:00.0000000", timeZone: "Pacific Standard Time" }
-//    subject: "Let's go for lunch"
-//    transactionId: null
-//    type: "singleInstance"
-//    webLink: "https://outlook.office365.com/owa/?itemid=AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAENAAAcnBiKLwlKQrviB8XkwxacAAGI3iNEAAA%3D&exvsurl=1&path=/calendar/item"
-//    __proto__: Object
-
