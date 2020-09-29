@@ -129,7 +129,6 @@ export const updateCalendarList = (calendarId, calendar) => {
     });
 };
 
-
 //Calendars Api
 
 export const updateCalendar = (calendarId, calendar) => {
