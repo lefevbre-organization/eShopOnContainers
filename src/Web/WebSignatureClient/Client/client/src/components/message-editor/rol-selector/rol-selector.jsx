@@ -179,7 +179,7 @@ export class RolSelector extends React.Component {
     console.log('render', newRecipients);
     return (
       <div className="container">
-          <div className="contenido-central mb-3">
+          <div className={`${style['table-scrollbar']} mb-3`}>
               {/* <p className="title-modal">ROL DE LOS DESTINATARIOS</p> */}
               <table className={style['detail-rol']}>
                   <thead>
