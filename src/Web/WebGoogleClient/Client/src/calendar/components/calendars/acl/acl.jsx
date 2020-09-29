@@ -173,7 +173,8 @@ export class Acl extends React.Component {
     }
 
    render() {
-        return (<div>
+       return (<div>
+           <label id="label_name" for="name">{i18n.t("calendar-sidebar.permission")}</label>
             <ListViewComponent
                 id="sample-list"
                 dataSource={this.dataACLSource}

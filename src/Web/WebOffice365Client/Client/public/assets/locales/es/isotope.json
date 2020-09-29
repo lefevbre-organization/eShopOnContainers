@@ -88,7 +88,8 @@
     "compose": "Nuevo Evento",
     "mycalendars": "Mis calendarios",
     "othercalendars": "Otros calendarios",
-    "configandshare": "Cambiar el nombre",
+    "configandshare": "Configuración",
+    "permission": "Uso compartido y permisos",
     "remove": "Eliminar"
   },
   "schedule": {

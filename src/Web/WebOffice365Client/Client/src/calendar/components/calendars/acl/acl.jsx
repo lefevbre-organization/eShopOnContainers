@@ -152,19 +152,10 @@ export class Acl extends React.Component {
     }
 
     listTemplate(data) {
-        let owner = false
-        if (data.role == "owner") {
-            owner = true
-        }
+       
 
         return (<div className="text-content">
-            {data.text} ({data.role})
-             {!owner ? (
-                <span className="listicons lf-icon-close-round" onClick={this.deleteItem.bind(this)} />
-            ) : (
-                    ''
-                )}
-
+            {data.text} ({data.role}) 
         </div>);
     }  
 
@@ -173,7 +164,8 @@ export class Acl extends React.Component {
     }
 
    render() {
-        return (<div>
+       return (<div>
+           <label id="label_name" for="name">{i18n.t("calendar-sidebar.permission")}</label>
             <ListViewComponent
                 id="sample-list"
                 dataSource={this.dataACLSource}
@@ -182,7 +174,7 @@ export class Acl extends React.Component {
                     this.listviewInstance = listview;
                 }} />
 
-            <div className="row">
+            <div className="row hidden">
                 <div className="col-xs-6 col-sm-6 col-lg-6 col-md-6">
                     <div className="form-group">
                         <div className="e-float-input">
