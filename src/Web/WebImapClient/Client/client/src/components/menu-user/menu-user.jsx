@@ -55,6 +55,7 @@ class MenuUser extends Component {
         if (lexon.userId) {
             getUser(lexon.userId)
                 .then(result => {
+                    window.currentUser = result.data.tokenDecoded;
                     this.props.setCurrentUser(result.data.tokenDecoded);
 
                     if (result.errors.length === 0) {

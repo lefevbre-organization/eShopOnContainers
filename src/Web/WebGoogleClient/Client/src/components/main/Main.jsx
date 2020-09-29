@@ -140,7 +140,7 @@ export class Main extends Component {
           provider: this.props.lexon.provider,
           //account: googleUser.Qt.zu
           account: googleUser.getBasicProfile().getEmail(),
-          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+          env: window.currentUser?window.currentUser.env:null
         },
       })
     );
@@ -373,6 +373,7 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
       console.log(user);
+      window.currentUser = user.data.tokenDecoded;
       this.props.setCurrentUser(user.data.tokenDecoded);
 
       let sign = '';
@@ -473,6 +474,7 @@ export class Main extends Component {
 
   sendMessageCentinelaPutUser(user) {
     const { selectedMessages, googleUser } = this.props;
+    debugger
     window.dispatchEvent(
       new CustomEvent('PutUserFromCentinelaConnector', {
         detail: {
@@ -483,7 +485,7 @@ export class Main extends Component {
           })),
           provider: this.props.lexon.provider,
           account: googleUser.getBasicProfile().getEmail(),
-          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+          env: window.currentUser?window.currentUser.env:null
         },
       })
     );
