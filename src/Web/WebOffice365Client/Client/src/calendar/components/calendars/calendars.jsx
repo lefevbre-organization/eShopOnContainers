@@ -140,7 +140,7 @@ export class Calendars extends React.Component {
                                     </div>
                                     <div id="userError" />
                                 </div>
-                                <div className="form-group">
+                                <div className="form-group hidden">
                                     <div className="e-float-input">
                                         <TextBoxComponent
                                             id='description'
@@ -178,7 +178,7 @@ export class Calendars extends React.Component {
                                 <div >                                 
 
                                     <h4 className="e-dlg-header">{i18n.t("calendar.sharewithpeople")}</h4>
-                                    <Acl calendarId={this.state.calendarid} />                                   
+                                    {/* <Acl calendarId={this.state.calendarid} />*/}                                   
 
                                 </div >
                             ) : (
