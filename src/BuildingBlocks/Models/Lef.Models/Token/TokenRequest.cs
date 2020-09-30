@@ -6,6 +6,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
     {
         public int? idApp { get; set; }
         public string idClienteNavision { get; set; }
+
+        public int? idClienteLef { get; set; }
+
         public string name { get; set; }
         public string idUserApp { get; set; }
         public List<string> roles { get; set; }

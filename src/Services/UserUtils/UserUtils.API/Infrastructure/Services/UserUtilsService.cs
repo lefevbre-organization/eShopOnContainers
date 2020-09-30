@@ -501,6 +501,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
             AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
+            AddClaimToPayload(payload, tokenRequest.idClienteLef, nameof(tokenRequest.idClienteLef));
             AddClaimToPayload(payload, tokenRequest.roles, nameof(tokenRequest.roles));
             AddClaimToPayload(payload, tokenRequest.name, nameof(tokenRequest.name));
             AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
@@ -626,6 +627,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     result.data.valid = true;
                     token.idClienteNavision = userLefebvreResult?.data?._idEntrada;
+                    token.idClienteLef = userLefebvreResult?.data?._idClienteNav;
                     token.name = userLefebvreResult?.data?.name;
                     token.roles = new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" };
                 }
