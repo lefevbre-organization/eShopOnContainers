@@ -569,26 +569,53 @@ function EventParser(event) {
     };
 
     // Recurrence
-    
-    //let rec = event.recurrence[0]
-    //let recObj;
-    //let jsonObj   = '{"pattern":[]}';
+    let rec
+    if (event.recurrence != undefined) {
+       rec = event.recurrence[0]   
+        let recObj = rec.replace("RRULE:", "").split(";").slice(0, -1);
 
-    //if (rec != undefined) {  
-    //    recObj = rec.replace("RRULE:", "").split(";");
-
-    //    let recValueObj;
+        var pattern = {};
+        var range = {};
+        
+        Object.keys(recObj).forEach(function (key) {   
+            if (recObj[key] != undefined) {
+                let recJsonKey;
+                let recJsonValue;
+                range['endDate'] = event.end.dateTime
+                switch (recObj[key].split("=")[0]) {
+                    //pattern
+                    case 'FREQ': case 'INTERVAL': 
+                   
+                        recJsonKey = recObj[key].split("=")[0].replace('FREQ', 'type').toLowerCase()
+                        recJsonValue = recObj[key].split("=")[1];
+                        pattern[recJsonKey] = recJsonValue;                       
+                        break;
+                    //range
+                    case 'UNTIL':
+                        recJsonKey = recObj[key].split("=")[0].replace('UNTIL', 'endDate')
+                        recJsonValue = recObj[key].split("=")[1];
+                        range[recJsonKey] = recJsonValue;    
+                        break;
+                    default:
+                    // code block
+                }               
+            }           
+        })
        
-    //    Object.keys(recObj).forEach(function (key) {
-    //        console.table(recObj[key]);
-    //        let recJsonKey = recObj[key].split("=")[0] + " : " + recObj[key].split("=")[1];
-    //        let recJsonValue = recObj[key].split("=")[1];
+        let recurrence = {};
+       // let item = {};
+        
+       // item.pattern = pattern;
 
-    //        var obj = JSON.parse(jsonObj);
-    //        obj['pattern'].push({ recJsonKey });
-    //        jsonStr = JSON.stringify(obj);
+        let item = {
+            pattern,
+            range
+        }
+        eventParse.recurrence = item;
 
-    //    })
+       // recurrence.pattern = pattern;
+       // eventParse.recurrence = recurrence;
+        console.table(eventParse.recurrence);
         
     //    let item =
     //        {
@@ -605,17 +632,21 @@ function EventParser(event) {
     //         }
         
              
-    //}
+    }
    
 
-    //"pattern": {
-    //    "type": "weekly",
-    //        "interval": 2,
-    //            "daysOfWeek": [
-    //                "Monday",
-    //                "Tuesday"
-    //            ]
-    //}
+    //"recurrence": {
+    //    "pattern": {
+    //        "type": "weekly",
+    //            "interval": 1,
+    //                "daysOfWeek": ["Monday"]
+    //    },
+    //    "range": {
+    //        "type": "endDate",
+    //            "startDate": "2017-09-04",
+    //                "endDate": "2017-12-31"
+    //    }
+    //},
 
 
     //Atendees
