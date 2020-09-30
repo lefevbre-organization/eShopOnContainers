@@ -340,6 +340,7 @@ class SideBar extends Component {
         }
       }
     })
+    this.sendTypeDialogClose();
   }
   
   onNewEmailCertificate() {
