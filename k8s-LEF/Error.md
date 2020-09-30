@@ -1,5 +1,15 @@
 # Metotodos de gestion de errores
 
+# Areas de Error
+
+Son los ámbitos diferenciados donde pueden producirse los errores, tenemos:
+* MYSQLCONN: Se intenta llamar a MySql pero no se consigue realizar la conexión
+* MYSQL : Se ha llamado al MySql y el procedimiento almacenado devuelve un error controlado en su colección de parámetros
+* MONGO : Se ha llamado a Mongo, y Mongo ha devuelto un error controlado
+* MONGOCONN :  Se intentaa llamar a Mongo pero no se puede realizar la conexión
+* LEXONSVC : Servicio externo de Lexón 
+
+
 # Tipos de Error
 
 Se especifican tipos de error por Dominio, tenemos:
@@ -51,7 +61,32 @@ Se especifican tipos de error por Dominio, tenemos:
 * **LX02**: Error que se produce al obtener un LexUser, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
 * **LX03**: Error que se produce al obtener Companies de un  LexUser, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
 * **LX04**: Error que se produce al obtener un LexUserSimple, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
-* 
+
+### UserUtils.api - Classifications
+* **LX10**: Error que se produce al añadir un ClassificationAddView a un LexUser, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
+* **LX11**: Error que se produce al añadir un ClassificationContactView a un LexUser
+* **LX12**: Error que se produce al eliminar un ClassificationAddView a un LexUser, se puede producir en el área de MYSQL o en la de MONGO (habiendo fallado antes en MYSQL)
+* **LX13**: Erro que se produce al recuperar LexMailActuation, es importante comporbar el mensaje de error, porque se han dado resultados que parecen correctos pero que traen cadenas vacias o mal formadas 
+* **LX14**: Error que se produce al recuperar Entities, es importante comporbar el mensaje de error, porque se han dado resultados que parecen correctos pero que traen cadenas vacias o mal formadas 
+* **LX15**: Error que se produce al recuperar Entities, es importante comporbar el mensaje de error, porque se han dado resultados que parecen correctos pero que traen cadenas vacias o mal formadas 
+* **LX16**: Error que se produce al recuperar las entidades maestras 
+* **LX17**: Error que se produce al chequear las relaciones de un email
+  
+### UserUtils.api - Classifications/Contacts
+* **LX20**: Error que se produce al recuperar un contacto
+* **LX21**: Error que se produce al recuperar todos los contactos
+  
+### UserUtils.api - Classifications/Folders
+* **LX30**: Info que se produce al solicitar entidades de tipo documento (14) o carpeta (13)
+* **LX31**: Error que se produce al recuperar archivos y carpetas anidadas, lo que puede provocar fallos de varios tipos , interesa hacer un seguimiento del rendimiento de estos métodos debido a la sobrecarga que realizan
+
+### UserUtils.api - Classifications/Files
+* **LX40**: Error que se produce al intentar recuperar un archivo en el servicio de LexOn
+* **LX41**:  Error que se produce al intentar guardar un archivo en el servicio de LexOn
+  
+### UserUtils.api - Appointments
+* **LX50**: Error que se produce al intentar recuperar un archivo en el servicio de LexOn
+* **LX51**:  Error que se produce al intentar guardar un archivo en el servicio de LexOn
 
 # Eventos de Bus
 

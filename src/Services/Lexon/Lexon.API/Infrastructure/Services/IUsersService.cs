@@ -13,7 +13,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
-        Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch);
+        Task<Result<LexEntity>> GetEntityByIdAsync(EntitySearchById entitySearch);
 
         Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch);
 

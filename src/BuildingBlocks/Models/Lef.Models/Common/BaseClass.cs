@@ -9,7 +9,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
     public class BaseClass<T>
     {
         internal readonly ILogger<T> log;
-
+            
         public BaseClass(
             ILogger<T> logger)
         {
