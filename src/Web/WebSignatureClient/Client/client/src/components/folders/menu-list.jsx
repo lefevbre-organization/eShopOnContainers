@@ -15,6 +15,7 @@ import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
+import { cancelSignatureCen } from "../../services/api-signaturit";
 
 export const DroppablePayloadTypes = {
   FOLDER: 'FOLDER',
