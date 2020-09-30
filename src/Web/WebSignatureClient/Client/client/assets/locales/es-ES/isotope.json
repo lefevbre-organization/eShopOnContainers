@@ -298,6 +298,7 @@
       "document": "Documento",
       "subject": "Asunto",
       "signers": "Firmantes",
+      "recipients": "Destinatarios",
       "date": "Fecha",
       "status": "Estado"
     },

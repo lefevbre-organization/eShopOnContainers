@@ -4,7 +4,7 @@ import i18n from '../../services/i18n';
 
 import MenuItem from './menu-item';
 import {selectFolder, setTitle, editMessage, setAppTitle, setSelectedService} from '../../actions/application';
-import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
+import { setSignaturesFilterKey, selectSignature, selectEmail } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
 import {clearSelectedMessage} from '../../services/application';
@@ -282,6 +282,7 @@ export class MenuListClass extends Component {
     } else {
       event.stopPropagation();
       this.props.signatureClicked(null);
+      this.props.emailClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setUserApp('lefebvre');
@@ -301,6 +302,8 @@ export class MenuListClass extends Component {
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
+      this.props.emailClicked(null);
+      this.props.signatureClicked(null);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
       this.props.setSelectedService('certifiedEmail'); 
@@ -365,6 +368,7 @@ const mapDispatchToProps = dispatch => ({
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
   signatureClicked: signature => dispatch(selectSignature(signature)),
+  emailClicked: email => { dispatch(selectEmail(email));},
   setTitle: title => dispatch(setTitle(title)),
   setAppTitle: title => dispatch(setAppTitle(title)),
   setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
@@ -386,6 +390,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, s
     dispatchProps.selectFolder(folder, stateProps.application.user),
   setSignaturesFilterKey: key => dispatchProps.setSignaturesFilterKey(key),
   signatureClicked: signature => dispatchProps.signatureClicked(signature),
+  emailClicked: email => dispatchProps.emailClicked(email),
   setTitle: title => dispatchProps.setTitle(title),
   setMailContacts: contacts => dispatchProps.setMailContacts(contacts),
   setAdminContacts: contacts => dispatchProps.setAdminContacts(contacts),

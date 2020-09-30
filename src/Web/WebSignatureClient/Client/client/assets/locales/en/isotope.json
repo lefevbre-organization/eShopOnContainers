@@ -278,6 +278,7 @@
       "document": "Document",
       "subject": "Subject",
       "signers": "Signers",
+      "recipients": "Recipients",
       "date": "Date",
       "status": "Status"
     },

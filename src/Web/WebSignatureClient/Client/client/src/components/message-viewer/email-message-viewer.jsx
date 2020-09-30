@@ -18,7 +18,7 @@ import {
    cancelSignature2 
 } from "../../services/api-signaturit";
 import EmailList from './email-list/email-list';
-import SignatureDetails from './signature-details/signature-details';
+import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
@@ -140,9 +140,9 @@ export class EmailMessageViewer extends Component {
     return result;
   }
 
-  getSigners(signature){
+  getRecipients(email){
     var lookup = {};
-    var items = signature.documents;
+    var items = email.certificates;
     var result = [];
 
     for (var item, i = 0; item = items[i++];) {
@@ -187,7 +187,7 @@ export class EmailMessageViewer extends Component {
 
  
   render() {
-    const signature = this.props.selectedSignature;
+    const email = this.props.selectedEmail;
     let status;
     let status_style;
 
@@ -206,10 +206,10 @@ export class EmailMessageViewer extends Component {
     </div>`;
 
    
-    let signatureConfig = signature.data.find(x => x.key === "roles");
+    let emailConfig = email.data.find(x => x.key === "roles");
 
   
-    switch (signature.status) {
+    switch (email.status) {
       case 'canceled':
         status = i18n.t('signaturesGrid.statusCancelled');
         status_style = 'cancelada';
@@ -245,12 +245,13 @@ export class EmailMessageViewer extends Component {
     return (
       <div className={`col l9 ${styles['contenido-central']}`}>
       <div className={styles['cont-progreso-peticion-firma']}>
-        <SignatureDetails 
+        <Details 
          styles={styles}
          status_style={status_style}
          status={status}
-         signature={signature}
-         getSigners={this.getSigners}
+         detail={email}
+         getSigners={this.getRecipients}
+         service={'email'}
         />
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
@@ -262,8 +263,8 @@ export class EmailMessageViewer extends Component {
                     {i18n.t('signatureViewer.buttons.downloadTrail')}
                 </button>
             </div>             */}
-            <div className={`${materialize.col} ${materialize['l12']} left`}>
-              {signature.documents.map((signer, index) => {
+            {/* <div className={`${materialize.col} ${materialize['l12']} left`}>
+              {email.documents.map((signer, index) => {
               return (
                 <EmailList 
                  signer={signer}
@@ -279,7 +280,7 @@ export class EmailMessageViewer extends Component {
                 ></EmailList>            
                 )
               })}
-            </div>
+            </div> */}
             <div className={styles.clearfix}></div>
         </div>
       </div>
@@ -452,7 +453,7 @@ const mapStateToProps = state => {
     lefebvre: state.lefebvre,
     login: state.login,
     credentials: state.application.user.credentials,
-    selectedSignature: state.application.selectedSignature,
+    selectedEmail: state.application.selectedEmail,
     auth: state.application.user.credentials.encrypted
   }
 };

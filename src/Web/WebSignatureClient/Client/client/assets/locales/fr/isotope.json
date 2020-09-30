@@ -296,6 +296,7 @@
       "document": "Document",
       "subject": "Sujet",
       "signers": "Destinataires",
+      "recipients": "Destinataires",
       "date": "Date",
       "status": "État"
     },
