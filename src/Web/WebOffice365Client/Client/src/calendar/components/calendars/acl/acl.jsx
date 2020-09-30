@@ -1,7 +1,8 @@
 import * as React from "react";
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
-import { addAcl, listAcl, deleteAcl } from "../../../../api_graph/calendar-api";
+//import { addAcl, listAcl, deleteAcl } from "../../../../api_graph/calendar-api";
+import { listAcl } from "../../../../api_graph/calendar-api";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
@@ -20,7 +21,7 @@ export class Acl extends React.Component {
         this.listviewInstance = null;     
         this.dataACLSource = [];
         this.fieldsList = { text: "text", iconCss: "icon" };
-        this.onAddPermission = this.onAddPermission.bind(this);
+        //this.onAddPermission = this.onAddPermission.bind(this);
         this.getlistAcl = this.getlistAcl.bind(this);
        
 
@@ -47,78 +48,78 @@ export class Acl extends React.Component {
         show: { duration: '200' }
     };
 
-    onAddPermission(args) {
-        let id = "user:" + this.mailaccountObj.value;
-        let aclData = {
-            "role": this.permissionObj.value,
-            "scope":
-            {
-                "type": "user",
-                "value": this.mailaccountObj.value
-            },
-            "kind": "calendar#aclRule",
-            "id": id
-        }
+    //onAddPermission(args) {
+    //    let id = "user:" + this.mailaccountObj.value;
+    //    let aclData = {
+    //        "role": this.permissionObj.value,
+    //        "scope":
+    //        {
+    //            "type": "user",
+    //            "value": this.mailaccountObj.value
+    //        },
+    //        "kind": "calendar#aclRule",
+    //        "id": id
+    //    }
 
-        this.toastObj.timeOut = 10000;
-        this.toastObj.showProgressBar = true;
-        this.toastObj.show(this.toasts[0]);
-        addAcl(this.state.calendarid, aclData)
-            .then(result => {
+    //    this.toastObj.timeOut = 10000;
+    //    this.toastObj.showProgressBar = true;
+    //    this.toastObj.show(this.toasts[0]);
+    //    addAcl(this.state.calendarid, aclData)
+    //        .then(result => {
 
-                this.toastObj.hide('All');
-                this.toastObj.showProgressBar = false;
-                this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[1]);
+    //            this.toastObj.hide('All');
+    //            this.toastObj.showProgressBar = false;
+    //            this.toastObj.timeOut = 1000;
+    //            this.toastObj.show(this.toasts[1]);
 
 
-                let dataPermission = {
-                    text: this.mailaccountObj.value,
-                    role: this.permissionObj.value,
-                    id: id,
-                    icon: "delete-icon"
-                };
-                this.listviewInstance.addItem([dataPermission]);
+    //            let dataPermission = {
+    //                text: this.mailaccountObj.value,
+    //                role: this.permissionObj.value,
+    //                id: id,
+    //                icon: "delete-icon"
+    //            };
+    //            this.listviewInstance.addItem([dataPermission]);
 
-            })
-            .catch(error => {
-                console.log('error ->', error);
-                if (this.toastObj != undefined) {
-                    this.toastObj.showProgressBar = false;
-                    this.toastObj.hide('All');
-                    this.toastObj.timeOut = 1000;
-                    this.toastObj.show(this.toasts[2]);
-                }               
+    //        })
+    //        .catch(error => {
+    //            console.log('error ->', error);
+    //            if (this.toastObj != undefined) {
+    //                this.toastObj.showProgressBar = false;
+    //                this.toastObj.hide('All');
+    //                this.toastObj.timeOut = 1000;
+    //                this.toastObj.show(this.toasts[2]);
+    //            }               
                
-            });
-    }
+    //        });
+    //}
 
-    deleteItem(args) {
-        args.stopPropagation();
-        let liItem = args.target.parentElement.parentElement;
+    //deleteItem(args) {
+    //    args.stopPropagation();
+    //    let liItem = args.target.parentElement.parentElement;
 
-        this.toastObj.timeOut = 10000;
-        this.toastObj.showProgressBar = true
-        this.toastObj.show(this.toasts[0]);
-        deleteAcl(this.state.calendarid, liItem.dataset.uid)
-            .then(result => {
-                this.toastObj.hide('All');
-                this.toastObj.showProgressBar = false
-                this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[1]);
-                this.listviewInstance.removeItem(liItem);
-            })
-            .catch(error => {
-                console.log('error ->', error);
-                if (this.toastObj != undefined) {
-                    this.toastObj.showProgressBar = false;
-                    this.toastObj.hide('All');
-                    this.toastObj.timeOut = 1000;
-                    this.toastObj.show(this.toasts[2]);
-                }
-            });
+    //    this.toastObj.timeOut = 10000;
+    //    this.toastObj.showProgressBar = true
+    //    this.toastObj.show(this.toasts[0]);
+    //    deleteAcl(this.state.calendarid, liItem.dataset.uid)
+    //        .then(result => {
+    //            this.toastObj.hide('All');
+    //            this.toastObj.showProgressBar = false
+    //            this.toastObj.timeOut = 1000;
+    //            this.toastObj.show(this.toasts[1]);
+    //            this.listviewInstance.removeItem(liItem);
+    //        })
+    //        .catch(error => {
+    //            console.log('error ->', error);
+    //            if (this.toastObj != undefined) {
+    //                this.toastObj.showProgressBar = false;
+    //                this.toastObj.hide('All');
+    //                this.toastObj.timeOut = 1000;
+    //                this.toastObj.show(this.toasts[2]);
+    //            }
+    //        });
 
-    }
+    //}
 
     onChange() {
         let value = document.getElementById('value');
@@ -152,19 +153,10 @@ export class Acl extends React.Component {
     }
 
     listTemplate(data) {
-        let owner = false
-        if (data.role == "owner") {
-            owner = true
-        }
+       
 
         return (<div className="text-content">
-            {data.text} ({data.role})
-             {!owner ? (
-                <span className="listicons lf-icon-close-round" onClick={this.deleteItem.bind(this)} />
-            ) : (
-                    ''
-                )}
-
+            {data.text} ({data.role}) 
         </div>);
     }  
 
@@ -173,7 +165,8 @@ export class Acl extends React.Component {
     }
 
    render() {
-        return (<div>
+       return (<div>
+           <label id="label_name" for="name">{i18n.t("calendar-sidebar.permission")}</label>
             <ListViewComponent
                 id="sample-list"
                 dataSource={this.dataACLSource}
@@ -182,7 +175,7 @@ export class Acl extends React.Component {
                     this.listviewInstance = listview;
                 }} />
 
-            <div className="row">
+            <div className="row hidden">
                 <div className="col-xs-6 col-sm-6 col-lg-6 col-md-6">
                     <div className="form-group">
                         <div className="e-float-input">

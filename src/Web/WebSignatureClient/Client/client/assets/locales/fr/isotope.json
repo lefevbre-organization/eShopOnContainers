@@ -247,7 +247,10 @@
   },
   "downloadindCentinelaModal":{
     "text": "Téléchargement de documents depuis Centinela."
-  },  
+  },
+  "signatureNotFoundCentinela": {
+    "text": "La signature que vous souhaitez afficher n'existe pas. Veuillez retourner à Sentinel et faire une nouvelle demande."
+  },
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",

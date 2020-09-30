@@ -184,6 +184,7 @@ class MessageList extends Component {
             rowCount: 0,
             hideAlertDialog: false,
             hideConfirmDialog: false,
+            //hideGuidNotFoundDialog: (props.guidNotFound !== undefined) ? props.guidNotFound : false,
             signatureId: '',
             auth: ''
         }
@@ -496,12 +497,11 @@ class MessageList extends Component {
             data = this.props.emails.find(e => e.id === props.Id)
         }
         
-
         if (data){
             var recipientsInfo = this.getRecipientsInfo(data);
             recipientsInfo.forEach((recipient, i) => {
                 console.log(recipient);
-                if (i === recipientsInfo.length -1 ){
+                if (i === recipientsInfo.length -1 ) {
                     recipientsList.push(
                         {
                             text: (recipient.name === '') ? recipient.email.split('@')[0] : recipient.name,
@@ -528,7 +528,7 @@ class MessageList extends Component {
             });
         }
         
-        console.log(props);
+        //console.log(props);
         return (
             // <div>
             //     <span className='email'>
@@ -715,9 +715,16 @@ class MessageList extends Component {
     }
 
     dialogClose(){
+        //console.log(this.state.hideGuidNotFoundDialog);
+        console.log(this.props.guidNotFound);
+        //if (this.state.hideGuidNotFoundDialog === true){
+        if (this.props.guidNotFound === true){
+            this.props.onShowGuidNotFound();
+        }
         this.setState({
             hideAlertDialog: false,
-            hideConfirmDialog: false
+            hideConfirmDialog: false//,
+            //hideGuidNotFoundDialog: false
         });
     }
 
@@ -830,6 +837,10 @@ class MessageList extends Component {
         |_|  \_\___|_| |_|\__,_|\___|_|    |_|  |_|\___|\__|_| |_|\___/ \__,_|___/
     */
     render() {
+        console.log('MESSAGELIST.RENDER()');
+        //console.log('MESSAGELIST.RENDER().state.hideGuidNotFoundDialog: '+this.state.hideGuidNotFoundDialog);
+        console.log('MESSAGELIST.RENDER().props.guidNotFound: '+this.props.guidNotFound);
+
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
             <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -842,6 +853,13 @@ class MessageList extends Component {
             <div style='text-align: justify; text-justify: inter-word; align-self: center; 
             font-size: 17.5px !important; padding-left: 20px;'>
             ${i18n.t('cancelConfirmationModal.text')}
+            </div>`;
+        
+        const contenido3 = `
+            <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+            <div style='text-align: justify; text-justify: inter-word; align-self: center;
+            font-size: 17.5px !important; padding-left: 20px;'>
+            ${i18n.t('signatureNotFoundCentinela.text')}
             </div>`;
 
         const confirmButtons = [
@@ -891,6 +909,7 @@ class MessageList extends Component {
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
+        const position = { X: 160, Y: 240 };
         return( (selectedServices && selectedServices.length > 0) ?
             <div className={styles['main-grid']}>
             <div>
@@ -957,6 +976,22 @@ class MessageList extends Component {
                     buttons={confirmButtons} 
                     open={this.dialogOpen} 
                     close={this.dialogClose}
+                />
+                <DialogComponent 
+                    id="infoDialog" 
+                    //header=' ' 
+                    visible={this.props.guidNotFound} 
+                    animationSettings={this.animationSettings} 
+                    width='60%' 
+                    content={contenido3}
+                    ref={alertdialog => this.alertDialogInstance = alertdialog} 
+                    //target='#target' 
+                    //buttons={this.alertButtons} 
+                    open={this.dialogOpen} 
+                    close={this.dialogClose}
+                    showCloseIcon={true}
+                    //isModal={true}
+                    //position={ position }
                 />
             </div>
             <style jsx global>
@@ -1124,11 +1159,12 @@ class MessageList extends Component {
                         min-height: 53px;
                         vertical-align: middle;
                     }
+                    
                     #confirmDialog { 
                     //top: -10px !important;
                     }
 
-                    #infoDialog, #confirmDialog {
+                    #infoDialog, #confirmDialog, #infoDialog2 {
                         max-height: 927px;
                         width: 300px;
                         left: 770px;
@@ -1136,6 +1172,7 @@ class MessageList extends Component {
                         z-index: 1001;
                         //transform: translateY(+150%);
                     }
+
                     #confirmDialog_dialog-header, 
                     #confirmDialog_title, 
                     #confirmDialog_dialog-content, 
@@ -1148,6 +1185,12 @@ class MessageList extends Component {
 
                     #infoDialog_dialog-header, #infoDialog_title, 
                     #infoDialog_dialog-content, .e-footer-content{
+                        background: #001970;
+                        color: #fff;
+                        display:flex;
+                    }
+                    #infoDialog2_dialog-header, #infoDialog2_title, 
+                    #infoDialog2_dialog-content, .e-footer-content{
                         background: #001970;
                         color: #fff;
                         display:flex;
@@ -1461,6 +1504,99 @@ class MessageList extends Component {
             : null
         )
     }
+
+    componentDidMount() {
+
+        const { lefebvre } = this.props;
+        console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
+    
+        this.props.preloadSignatures(lefebvre.userId);
+
+        // window.addEventListener('resize', this.onresize.bind(this));
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevState.sign_ready === false){
+            if (this.props.signatures && this.props.signatures.length){
+                this.setState({sign_ready: true, rowCount: this.getCount()});
+            }
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE()');
+        const difP = detailedDiff(this.props, nextProps);
+        const difSt = detailedDiff(this.state, nextState);
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difP');
+        console.log(difP);
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difSt');
+        console.log(difSt);
+
+        if (difP && difP.updated !== undefined){
+            if (difP.updated.hasOwnProperty('preloadSignatures') 
+                && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
+                && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
+                && Object.keys(difP.updated).length === 5
+                && Object.keys(difP.added).length === 0
+                && Object.keys(difP.deleted).length === 0){
+                    console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().if: ' + false);
+                    return false;
+            }
+        } else {
+            if (
+                this.isEmpty(difP.updated) &&
+                this.isEmpty(difP.added) &&
+                this.isEmpty(difP.deleted) &&
+                this.isEmpty(difSt.updated) &&
+                this.isEmpty(difSt.added) &&
+                this.isEmpty(difSt.deleted)
+              ) {
+                console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().else: ' + false);
+                return false;
+              }
+        }
+    
+        // if (difP && difP.updated !== undefined
+        //     && difP.updated.hasOwnProperty('preloadSignatures') 
+        //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
+        //     && difP.update.hasOwnProperty('signatureClicked') && difP.update.hasOwnProperty('setTitle')
+        //     && Object.keys(difP.updated).length === 5){
+        //         return false;
+        // } else {
+        //     if (
+        //         this.isEmpty(difP.updated) &&
+        //         this.isEmpty(difP.added) &&
+        //         this.isEmpty(difP.deleted) &&
+        //         this.isEmpty(difSt.updated) &&
+        //         this.isEmpty(difSt.added) &&
+        //         this.isEmpty(difSt.deleted)
+        //       ) {
+        //         return false;
+        //       }
+        // }
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().other: ' + true);
+        return true;
+    }
+
+    isEmpty(obj) {
+        for (var prop in obj) {
+          if (obj.hasOwnProperty(prop)) {
+            return false;
+          }
+        }
+      
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
+      
+
+    onresize(e) {     
+        
+        var rowHeight = this.grid.getRowHeight(); //height of the each row     
+        var gridHeight = Number(window.innerHeight - 120); //grid height
+        var pageSize = Number(this.grid.pageSettings.pageSize) + 10; //initial page size
+        var pageResize = (gridHeight - (pageSize * rowHeight)) / rowHeight;
+        this.grid.pageSettings.pageSize = pageSize + Math.round(pageResize);
+      }
 
     renderItem({ index, key, style }) {
         let status;

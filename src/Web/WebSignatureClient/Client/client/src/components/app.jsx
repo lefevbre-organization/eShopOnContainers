@@ -108,6 +108,7 @@ class App extends Component {
       isUpdatedDefaultAccount: (this.props.application.user) ? true: false,
       attachmentsDownloadError: false,
       hideAlertDialog: false,
+      guidNotFound: false
     };
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
@@ -119,6 +120,8 @@ class App extends Component {
     this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
     this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(this);
     this.resetDownloadError = this.resetDownloadError.bind(this);
+    this.resetGuidNotFound = this.resetGuidNotFound.bind(this);
+    //this.dialogClose = this.dialogClose.bind(this);
   }
 
   onSetSidebarOpenCalendar(open) {
@@ -208,6 +211,8 @@ class App extends Component {
   }
 
   render() {
+    console.log('APP.RENDER()');
+    console.log('APP.RENDER().state.guidNotFound:'+ this.state.guidNotFound);
     const { t, lefebvre } = this.props;
     const { sideBar, isUpdatedDefaultAccount } = this.state;
 
@@ -418,7 +423,26 @@ class App extends Component {
     this.setState({ attachmentsDownloadError: false});
   }
 
+  resetGuidNotFound(){
+    var guid = this.props.lefebvre.guid;
+    this.setState({ guidNotFound: false});
+    this.props.setUserApp('lefebvre');
+    this.props.setGUID(null);
+    cancelSignatureCen(guid)
+    .then(res => console.log('Cancelación en centinela: ' + res))
+    .catch(err => console.log('Error cancelación centinela: ' + err));
+  }
+
+  // guidNotFoundDialogClose(){
+  //   this.setState({ showGuidNotFoundCenDialog: false});
+  //   cancelSignatureCen(this.props.lefebvre.guid);
+  //   this.props.setUserApp('lefebvre');
+  //   this.props.setGuid(null);
+  // }
+
   renderContent() {
+    console.log('APP.RENDERCONTENT()');
+    console.log('APP.RENDERCONTENT().state.guidNotFound:'+ this.state.guidNotFound);
     const { application } = this.props;
     console.log('renderContent', application.newMessage);
     // const content = `
@@ -436,7 +460,14 @@ class App extends Component {
         </div>
         <div class='${styles['progress-line']}'/>
       </div>
-  `;
+    `;
+
+    // const content2 = `
+    //   <div style='width: 100%;'>  
+    //   <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+    //     ${i18n.t('signatureNotFoundCentinela.text')}
+    //   </div>
+    // `;
     
 
     if (
@@ -456,7 +487,7 @@ class App extends Component {
       }
     return (
       <Fragment>
-        <MessageList className={styles['message-grid']} />
+        <MessageList className={styles['message-grid']} guidNotFound={this.state.guidNotFound} onShowGuidNotFound={this.resetGuidNotFound}/>
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
@@ -464,7 +495,7 @@ class App extends Component {
           // visible={true} 
           animationSettings={this.animationSettings} 
           width='500px' 
-          content={content}
+          content={ content }
           //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           isModal={true}
@@ -475,6 +506,16 @@ class App extends Component {
           // showCloseIcon={true}
           //position={ this.position }
         />
+        {/* <DialogComponent
+          id = "infoDialogGuidNotFound"
+          visible = { this.state.showGuidNotFoundCenDialog }
+          animationSettings={this.animationSettings} 
+          width='500px'
+          content={ content2 }
+          ref = {alertdialog2 => this.alertDialogInstance2 = alertdialog2} 
+          isModal = { true }
+          close ={ this.dialogClose }
+        /> */}
         {/*<div className={styles["fab-container"]}>
           {outbox === null ? (
             <button
@@ -627,8 +668,8 @@ class App extends Component {
     let dataMailContacts = [];
     let dataAdminContacts = []; 
 
-    mailContacts.map(c => { return dataMailContacts.push({address: c, name: ''}) });
-    adminContacts.map(c => { return dataAdminContacts.push({address: c, name: ''}) });
+    (mailContacts) ? mailContacts.map(c => { return dataMailContacts.push({address: c, name: ''}) }) : null;
+    (adminContacts) ? adminContacts.map(c => { return dataAdminContacts.push({address: c, name: ''}) }) : null;
     
     //Starting poll to update the inbox automatically
     //this.startPoll();
@@ -640,43 +681,51 @@ class App extends Component {
 
     const { lefebvre } = this.props;
 
+    console.log('******************************');
+    console.log('******************************');
+    console.log('******************************');
+    console.log('');
     console.log('App.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
+    console.log('******************************');
+    console.log('******************************');
+    console.log('******************************');
+    console.log('');
 
-    if (lefebvre.roles.includes('Firma Digital')){
-      this.props.preloadSignatures(lefebvre.userId)
-      .then( () => {
-        if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
-          const { signatures } = this.props.application;
-          let newSignature = true;
-          if (signatures && signatures.length > 0){
-            (signatures.some(s => 
-              (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
-                ? newSignature = this.openSignature(s) 
-                : null)
-            )
+    this.props.preloadSignatures(lefebvre.userId)
+    .then( () => {
+      if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
+        const { signatures } = this.props.application;
+        let newSignature = true;
+        if (signatures && signatures.length > 0){
+          (signatures.some(s => 
+            (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
+              ? newSignature = this.openSignature(s) 
+              : null)
+          )
+        } 
+        if (newSignature) {
+          if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+            this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
+            .then((attachment) => {
+                if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
+                  this.props.newMessage(dataMailContacts, dataAdminContacts);
+                }
+                else {
+                  const length = attachment.data.length;
+                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                  const newAttachment = [{
+                    fileName: fileName,
+                    size: length,
+                    contentType: getFileType(fileName),
+                    content: attachment.data
+                  }]
+                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
+                }
+            })
+            .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
           } 
-          if (newSignature) {
-            if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
-              this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
-              .then((attachment) => {
-                  if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
-                    this.props.newMessage(dataMailContacts, dataAdminContacts);
-                  }
-                  else {
-                    const length = attachment.data.length;
-                    const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
-                    const newAttachment = [{
-                      fileName: fileName,
-                      size: length,
-                      contentType: getFileType(fileName),
-                      content: attachment.data
-                    }]
-                    this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
-                  }
-              })
-              .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
-            } 
-            else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
+            if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
               let documentsInfo = []; 
               let attachmentsList = [];
               let i = 0;
@@ -733,11 +782,19 @@ class App extends Component {
                 });        
               });
             }
-          }  
-        }
-      })
-      .catch(err => { throw new Error(err);} );
-    }
+            else {
+              // Received guid is of a document that is in signing process in centinela's backend but we don´t have it
+              // Show modal
+              // Send Centinela a Cancelation Request for that guid.
+              console.log('NO SE ENCUENTRA EL GUID, SE DEBE DE MOSTRAR AVISO');
+              console.log('guidNotFound se pasa a true');
+              this.setState({guidNotFound: true})
+            }
+          }
+        }  
+      }
+    })
+    .catch(err => { throw new Error(err);} );
 
     if (lefebvre.roles.includes('Email Certificado')){
       this.props.preloadEmails(lefebvre.userId)
@@ -746,7 +803,6 @@ class App extends Component {
       .catch(// to do
         )
     }
-    
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
   }
@@ -1038,6 +1094,7 @@ const mapDispatchToProps = dispatch => ({
   //   dispatch(setSelected(messages, selected, shiftKey)),
   setGUID: guid => dispatch(setGUID(guid)),
   setSign: sign => dispatch(setSign(sign)),
+  setUserApp: app => dispatch(setUserApp(app)),
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
   signatureClicked: signature => dispatch(selectSignature(signature)),
@@ -1046,7 +1103,6 @@ const mapDispatchToProps = dispatch => ({
   setIdDocuments: ids => dispatch(setIdDocuments(ids)),
   backendRequest: () => dispatch(backendRequest()),
   backendRequestCompleted: () => dispatch(backendRequestCompleted()),
-  setUserApp: app => dispatch(setUserApp(app))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>

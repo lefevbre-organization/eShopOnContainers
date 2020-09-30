@@ -250,6 +250,9 @@
   "downloadindCentinelaModal":{
     "text": "Descargando documentos de centinela"
   },
+  "signatureNotFoundCentinela": {
+    "text": "La solicitud de firma que quiere visualizar no existe. Por favor vuelva a Centinela y realice una nueva solicitud."
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",

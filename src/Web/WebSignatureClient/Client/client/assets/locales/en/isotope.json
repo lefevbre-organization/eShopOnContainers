@@ -230,6 +230,9 @@
   "downloadindCentinelaModal":{
     "text": "Downloading documents from Centinela."
   },
+  "signatureNotFoundCentinela": {
+    "text": "Signature request not found. Please return to centinela and send it again."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
