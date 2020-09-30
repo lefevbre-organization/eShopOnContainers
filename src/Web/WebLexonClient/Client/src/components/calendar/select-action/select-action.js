@@ -3,7 +3,7 @@ import './select-action.css';
 import PropTypes from 'prop-types';
 
 import CalendarSelectActionHeader from './select-action-header/select-action-header';
-import SelectActionTab from '../../select-action/select-action-tab/select-action-tab';
+import SelectActionTab from './select-action-tab/select-action-tab';
 import { PAGE_SELECT_COMPANY } from '../../../constants';
 
 class CalendarSelectAction extends Component {
@@ -39,20 +39,20 @@ class CalendarSelectAction extends Component {
           companies={companies}
           changePage={this.props.changePage}
         />
-        {showDocuments === true && (
+        {/*{showDocuments === true && (*/}
           <SelectActionTab
             composerOpen={composerOpen}
             user={user}
             toggleNotification={toggleNotification}
           />
-        )}
+        {/*)}*/}
       </div>
     );
   }
 }
 
 CalendarSelectAction.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   companies: PropTypes.array.isRequired,
   changePage: PropTypes.func.isRequired,
   toggleNotification: PropTypes.func.isRequired

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import i18n from 'i18next';
 import { connect } from 'react-redux';
 
-import { removeClassification } from '../../../services/services-lexon';
+import { removeClassification } from '../../../../services/services-lexon';
 
 class Classification extends Component {
   constructor(props) {

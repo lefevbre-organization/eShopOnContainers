@@ -12,34 +12,33 @@ class SelectActionTab extends Component {
     const { user, toggleNotification, composerOpen = false } = this.props;
 
     return (
-      <Tabs id='uncontrolled-tab-example' bsPrefix='menu-lexon-actions'>
-        {composerOpen === false && (
-          <Tab
-            eventKey='connect'
-            title={i18n.t('select-action.connect-messages')}>
-            <TabConnectMessage
-              user={user}
-              toggleNotification={toggleNotification}
-            />
-          </Tab>
-        )}
-        {composerOpen === true && (
-          <Tab
-            eventKey='attach'
-            title={i18n.t('select-action.attach-documents')}>
-            <TabAttachDocument
-              user={user}
-              toggleNotification={toggleNotification}
-            />
-          </Tab>
-        )}
-      </Tabs>
+      <React.Fragment>
+        <Tabs id='uncontrolled-tab-example' bsPrefix='menu-lexon-actions'>
+            <Tab
+              eventKey='connect'
+              title={i18n.t('select-action.connect-messages')}>
+              <TabConnectMessage
+                user={user}
+                toggleNotification={toggleNotification}
+              />
+            </Tab>
+        </Tabs>
+        <style jsx>{`
+          .menu-lexon-actions.menu-lexon-actions-tabs {
+            padding-bottom: 4px;
+          }
+          
+          .menu-lexon-actions a {
+          padding: 13px 50px 7px 8px;
+          }
+        `}</style>
+      </React.Fragment>
     );
   }
 }
 
 SelectActionTab.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   toggleNotification: PropTypes.func.isRequired
 };
 

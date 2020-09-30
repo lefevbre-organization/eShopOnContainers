@@ -1,12 +1,12 @@
 import React, { Component, Fragment } from "react";
 import "./tab-classify.css";
 import PropTypes from "prop-types";
-import { getClassifications } from "../../../services/services-lexon";
+import { getClassifications } from "../../../../services/services-lexon";
 import i18n from "i18next";
 import { connect } from "react-redux";
 
-import ClassifyEmails from "../../classify-emails/classify-emails";
-import ConfirmRemoveClassification from "../../confirm-remove-classification/confirm-remove-classification";
+import ClassifyEmails from "../../../classify-emails/classify-emails";
+import ConfirmRemoveClassification from "../../../confirm-remove-classification/confirm-remove-classification";
 import NewClassification from "../new-classification/new-classification";
 import ListClassifications from "../list-classifications/list-classifications";
 

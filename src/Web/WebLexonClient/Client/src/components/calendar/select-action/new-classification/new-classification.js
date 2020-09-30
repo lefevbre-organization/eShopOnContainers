@@ -20,22 +20,22 @@ class NewClassification extends Component {
   render() {
     const { selectedMessages } = this.props;
 
-    if (selectedMessages.length === 0) {
-      return (
-        <p className="add-more-container add-more">
-          <span className="lf-icon-add-round"></span>
-          <strong>{i18n.t("new-classification.new-classification")}</strong>
-        </p>
-      );
-    }
-
     return (
-      <p className="add-more-container">
-        <a href="#/" className="add-more" onClick={this._handleOnClick}>
-          <span className="lf-icon-add-round"></span>
-          <strong>{i18n.t("new-classification.new-classification")}</strong>
-        </a>
-      </p>
+      <React.Fragment>
+        <p className="add-more-container">
+          <a href="#/" className="add-more" onClick={this._handleOnClick}>
+            <span className="lf-icon-add-round"></span>
+            <strong>ljknlkn{i18n.t("new-classification.new-classification")}</strong>
+          </a>
+        </p>
+        <style jsx>{`
+          .add-more-container {
+            position: absolute;
+            top: 100px;
+            left: calc(100% - 190px);
+          }
+        `}</style>
+      </React.Fragment>
     );
   }
 }

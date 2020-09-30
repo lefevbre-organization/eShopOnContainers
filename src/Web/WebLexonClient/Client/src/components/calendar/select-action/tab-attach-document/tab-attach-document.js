@@ -3,9 +3,9 @@ import './tab-attach-document.css';
 import PropTypes from 'prop-types';
 import i18n from 'i18next';
 import { connect } from 'react-redux';
-import Spinner from '../../spinner/spinner';
-import ModalAttachDocuments from '../../modal-attach-documents/modal-attach-documents';
-import ACTIONS from '../../../actions/documentsAction';
+import Spinner from '../../../spinner/spinner';
+import ModalAttachDocuments from '../../../modal-attach-documents/modal-attach-documents';
+import ACTIONS from '../../../../actions/documentsAction';
 
 class TabAttachDocument extends Component {
   componentDidMount() {}
@@ -49,7 +49,7 @@ class TabAttachDocument extends Component {
 }
 
 TabAttachDocument.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({

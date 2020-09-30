@@ -56,8 +56,6 @@ class Routing extends Component {
       composerOpen
     } = this.props;
 
-    console.log("Actual Page: " + actualPage);
-    debugger
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return (
@@ -136,8 +134,6 @@ class Routing extends Component {
       composerOpen
     } = this.props;
 
-    console.log("Actual Page: " + actualPage);
-    debugger
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return (
@@ -206,20 +202,6 @@ class Routing extends Component {
   render() {
     if(this.props.app === 'calendar') {
       return <React.Fragment>
-        {this.state.actualPage === PAGE_SELECT_ACTION && (
-            <div
-                className='lex-on-configuration'
-                onClick={() => {
-                  this.changePage(PAGE_CONFIGURATION);
-                }}>
-              <a href='#/' className='lex-on-configuration-trigger'>
-                <strong className='sr-only sr-only-focusable'>
-                  Opciones de configuración
-                </strong>
-                <span className='lf-icon-configuration'></span>
-              </a>
-            </div>
-        )}
         {this.renderCalendarPage()}
       </React.Fragment>
     }

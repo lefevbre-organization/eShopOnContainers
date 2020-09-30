@@ -4,18 +4,18 @@ import PropTypes from 'prop-types';
 import SaveDocument from '../save-document/save-document';
 import i18n from 'i18next';
 import { connect } from 'react-redux';
-import { getClassifications } from '../../../services/services-lexon';
-import ModalConnectingEmails from '../../modal-connecting-emails/modal-connecting-emails';
+import { getClassifications } from '../../../../services/services-lexon';
+import ModalConnectingEmails from '../../../modal-connecting-emails/modal-connecting-emails';
 import ListClassifications from '../list-classifications/list-classifications';
-import ConfirmRemoveClassification from '../../confirm-remove-classification/confirm-remove-classification';
-import Spinner from '../../../components/spinner/spinner';
+import ConfirmRemoveClassification from '../../../confirm-remove-classification/confirm-remove-classification';
+import Spinner from '../../../../components/spinner/spinner';
 
 class TabConnectMessage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showClassifications: false,
+      showClassifications: true,
       showConfirmRemoveClassification: false,
     };
     this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(
@@ -106,13 +106,9 @@ class TabConnectMessage extends Component {
   }
 
   renderShowSaveDocument() {
-    const { user, selectedMessages } = this.props;
+    const { user } = this.props;
 
-    if (selectedMessages.length > 0) {
       return <SaveDocument user={user} />;
-    } else {
-      return <strong>{i18n.t('tab-connect.select-mail')}</strong>;
-    }
   }
 
   render() {
@@ -152,7 +148,7 @@ class TabConnectMessage extends Component {
 }
 
 TabConnectMessage.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => {
