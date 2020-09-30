@@ -15,6 +15,7 @@ import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
+import { cancelSignatureCen } from "../../services/api-signaturit";
 
 export const DroppablePayloadTypes = {
   FOLDER: 'FOLDER',
@@ -146,15 +147,20 @@ export class MenuListClass extends Component {
   }
 
   onClick(event, key) {
-    const { close, lefebvre } = this.props;
-    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+    const { close, lefebvre, application } = this.props;
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || application.selectedSignature === {})){
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
       this.props.signatureClicked(null);
-      this.props.close(this.props.application);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setUserApp('lefebvre');
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setGuid(null);
+      this.props.setIdDocuments(null);
+      this.props.close(this.props.application);
     }
   }
 
@@ -166,13 +172,14 @@ export class MenuListClass extends Component {
 
   onDiscardSignatureOk(){
     const {close, lefebvre, application} = this.props
-    // cancelSignatureCen(lefebvre.guid)
-    // .then(res => {
-    //   console.log(res);
-    // })
-    // .catch(err => {
-    //   console.log(err);
-    // })
+
+    cancelSignatureCen(lefebvre.guid)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
 
     this.setState({ hideConfirmDialog: false });
       if (lefebvre.mailContacts) {

@@ -184,6 +184,7 @@ class MessageList extends Component {
             rowCount: 0,
             hideAlertDialog: false,
             hideConfirmDialog: false,
+            //hideGuidNotFoundDialog: (props.guidNotFound !== undefined) ? props.guidNotFound : false,
             signatureId: '',
             auth: ''
         }
@@ -454,7 +455,7 @@ class MessageList extends Component {
         if (signature ){
             var signersInfo = this.getSignersInfo(signature);
             signersInfo.forEach((signer, i) => {
-                console.log(signer);
+                //console.log(signer);
                 if (i === signersInfo.length -1 ){
                     recipientsList.push(
                         {
@@ -482,7 +483,7 @@ class MessageList extends Component {
             });
         }
         
-        console.log(props);
+        //console.log(props);
         return (
             // <div>
             //     <span className='email'>
@@ -635,9 +636,16 @@ class MessageList extends Component {
     }
 
     dialogClose(){
+        //console.log(this.state.hideGuidNotFoundDialog);
+        console.log(this.props.guidNotFound);
+        //if (this.state.hideGuidNotFoundDialog === true){
+        if (this.props.guidNotFound === true){
+            this.props.onShowGuidNotFound();
+        }
         this.setState({
             hideAlertDialog: false,
-            hideConfirmDialog: false
+            hideConfirmDialog: false//,
+            //hideGuidNotFoundDialog: false
         });
     }
 
@@ -646,6 +654,10 @@ class MessageList extends Component {
     }
 
     render() {
+        console.log('MESSAGELIST.RENDER()');
+        //console.log('MESSAGELIST.RENDER().state.hideGuidNotFoundDialog: '+this.state.hideGuidNotFoundDialog);
+        console.log('MESSAGELIST.RENDER().props.guidNotFound: '+this.props.guidNotFound);
+
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
             <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -658,6 +670,13 @@ class MessageList extends Component {
             <div style='text-align: justify; text-justify: inter-word; align-self: center; 
             font-size: 17.5px !important; padding-left: 20px;'>
             ${i18n.t('cancelConfirmationModal.text')}
+            </div>`;
+        
+        const contenido3 = `
+            <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+            <div style='text-align: justify; text-justify: inter-word; align-self: center;
+            font-size: 17.5px !important; padding-left: 20px;'>
+            ${i18n.t('signatureNotFoundCentinela.text')}
             </div>`;
 
         const confirmButtons = [
@@ -704,6 +723,7 @@ class MessageList extends Component {
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
+        const position = { X: 160, Y: 240 };
         return( (firmas && firmas.length > 0) ?
             <div className={styles['main-grid']}>
             <div>
@@ -770,6 +790,22 @@ class MessageList extends Component {
                     buttons={confirmButtons} 
                     open={this.dialogOpen} 
                     close={this.dialogClose}
+                />
+                <DialogComponent 
+                    id="infoDialog" 
+                    //header=' ' 
+                    visible={this.props.guidNotFound} 
+                    animationSettings={this.animationSettings} 
+                    width='60%' 
+                    content={contenido3}
+                    ref={alertdialog => this.alertDialogInstance = alertdialog} 
+                    //target='#target' 
+                    //buttons={this.alertButtons} 
+                    open={this.dialogOpen} 
+                    close={this.dialogClose}
+                    showCloseIcon={true}
+                    //isModal={true}
+                    //position={ position }
                 />
             </div>
             <style jsx global>
@@ -941,7 +977,7 @@ class MessageList extends Component {
                       //top: -10px !important;
                     }
     
-                    #infoDialog, #confirmDialog {
+                    #infoDialog, #confirmDialog, #infoDialog2 {
                         max-height: 927px;
                         width: 300px;
                         left: 770px;
@@ -961,6 +997,12 @@ class MessageList extends Component {
 
                     #infoDialog_dialog-header, #infoDialog_title, 
                     #infoDialog_dialog-content, .e-footer-content{
+                        background: #001970;
+                        color: #fff;
+                        display:flex;
+                    }
+                    #infoDialog2_dialog-header, #infoDialog2_title, 
+                    #infoDialog2_dialog-content, .e-footer-content{
                         background: #001970;
                         color: #fff;
                         display:flex;
@@ -1276,6 +1318,7 @@ class MessageList extends Component {
     }
 
     componentDidMount() {
+
         const { lefebvre } = this.props;
         console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
     
@@ -1293,8 +1336,13 @@ class MessageList extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE()');
         const difP = detailedDiff(this.props, nextProps);
         const difSt = detailedDiff(this.state, nextState);
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difP');
+        console.log(difP);
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difSt');
+        console.log(difSt);
 
         if (difP && difP.updated !== undefined){
             if (difP.updated.hasOwnProperty('preloadSignatures') 
@@ -1303,6 +1351,7 @@ class MessageList extends Component {
                 && Object.keys(difP.updated).length === 5
                 && Object.keys(difP.added).length === 0
                 && Object.keys(difP.deleted).length === 0){
+                    console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().if: ' + false);
                     return false;
             }
         } else {
@@ -1314,6 +1363,7 @@ class MessageList extends Component {
                 this.isEmpty(difSt.added) &&
                 this.isEmpty(difSt.deleted)
               ) {
+                console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().else: ' + false);
                 return false;
               }
         }
@@ -1336,7 +1386,7 @@ class MessageList extends Component {
         //         return false;
         //       }
         // }
-    
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().other: ' + true);
         return true;
     }
 

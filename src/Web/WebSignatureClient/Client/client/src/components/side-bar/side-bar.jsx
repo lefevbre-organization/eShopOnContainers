@@ -12,7 +12,7 @@ import { editNewMessage } from '../../services/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { getAvailableSignatures } from '../../services/api-signaturit';
-import { setAvailableSignatures } from '../../actions/lefebvre';
+import { setAvailableSignatures, setUserApp } from '../../actions/lefebvre';
 import { setTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
@@ -236,11 +236,13 @@ class SideBar extends Component {
           this.props.setAvailableSignatures(response.data);
           this.props.setTitle(t('messageEditor.title'));
           this.props.newMessage(lefebvre.sign);
+          this.props.setUserApp('lefebvre');
         }
       } else {
         this.props.setAvailableSignatures(response.data);
         this.props.setTitle(t('messageEditor.title'));
         this.props.newMessage(lefebvre.sign);
+        this.props.setUserApp('lefebvre');
       }
     })
     .catch(err => {
@@ -252,6 +254,7 @@ class SideBar extends Component {
         if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
           this.props.newMessage(lefebvre.sign);
           this.props.setTitle(t('messageEditor.title'));
+          this.props.setUserApp('lefebvre');
         }
       }
     })
@@ -314,7 +317,8 @@ const mapDispatchToProps = dispatch => ({
     moveFolder(dispatch, user, folder, null),
   newMessage: sign => editNewMessage(dispatch, [], [], sign),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
-  setTitle: title => dispatch(setTitle(title))
+  setTitle: title => dispatch(setTitle(title)),
+  setUserApp: app => dispatch(setUserApp(app))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -322,7 +326,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     moveFolderToFirstLevel: folder =>
       dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder),
     setAvailableSignatures: num => dispatchProps.setAvailableSignatures(num),
-    setTitle: title => dispatchProps.setTitle(title)
+    setTitle: title => dispatchProps.setTitle(title),
+    setUserApp: app => dispatchProps.setUserApp(app)
   });
 
 export default connect(

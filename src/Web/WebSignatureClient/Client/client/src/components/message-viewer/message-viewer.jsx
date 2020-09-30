@@ -204,6 +204,8 @@ export class MessageViewer extends Component {
     cancelSignature2(signatureId, auth)
     .then(() => {
       this.setState({ hideAlertDialog2: true, signatureId: '', auth: '' });
+      this.props.setUserApp('lefebvre');
+      this.props.setGuid(null);
     })
     .catch(() => {
       this.setState({ hideAlertDialog2: true, signatureId: '', auth: '' });
@@ -591,6 +593,8 @@ const mapDispatchToProps = dispatch => ({
   },
   // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
+  setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
+  setGuid: guid => dispatch(ACTIONS.setGUID(guid))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageViewer);
