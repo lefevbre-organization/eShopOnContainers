@@ -1305,7 +1305,7 @@ export const getAttachmentLex = async (bbdd, attachmentId, userId) => {
       redirect: 'follow'
     };
 
-    fetch("https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/entities/files/get", requestOptions)
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/entities/files/get`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -1332,7 +1332,7 @@ export const getAttachmentCen = async (userId, attachmentId) => {
 
     //userId = 'E1669460'; //Para pruebas
 
-    fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/concepts/files/get?idNavisionUser=${userId}&idDocument=${attachmentId}`, requestOptions)
+    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/concepts/files/get?idNavisionUser=${userId}&idDocument=${attachmentId}`, requestOptions)
     .then(response => response.json())
     .then(result => {
       console.log(result);
@@ -1358,7 +1358,7 @@ export const cancelSignatureCen = async (guid) => {
     };
 
     //fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}}`, requestOptions)
-    fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}`, requestOptions)
+    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/signatures/cancelation/${guid}`, requestOptions)
     .then(response => response.json())
     .then(result => {
       console.log(result);
