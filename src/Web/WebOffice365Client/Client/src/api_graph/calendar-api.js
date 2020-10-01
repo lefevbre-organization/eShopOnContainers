@@ -1,4 +1,4 @@
-﻿
+﻿import moment from 'moment';
 import config from '../Config';
 import { UserAgentApplication } from 'msal';
 
@@ -459,11 +459,29 @@ function listEventsParser(list) {
             if (list[i].recurrence != undefined) {               
                 let str;
                 let value;
+                //pattern
                 Object.keys(list[i].recurrence.pattern).forEach(function (key) {                   
                     value = list[i].recurrence.pattern[key]
                     key = key.replace("type", "FREQ");
                     str = (typeof str !== "undefined" ? str + key + "=" + value + ";" : key + "=" + value + ";");
                 })
+                //range
+                Object.keys(list[i].recurrence.range).forEach(function (key2) {
+                    switch (key2) {
+                        case 'endDate':
+                            value = list[i].recurrence.range[key2]
+                            key2 = key2.replace("endDate", "UNTIL");
+                            var dateStartTime = new Date(value);
+                            var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
+                            var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                            str = (str + key2 + "=" + ExcRecurenceDate + ";");
+                            break;
+                        default:
+                        // code block
+                    }               
+                })
+
+               // "RRULE:FREQ=DAILY;UNTIL=20201129T230000Z;INTERVAL=1"
                 console.log(str);
                 recurrenceRule.push("RRULE:" + str.toUpperCase())
                 console.log(recurrenceRule[0]);
@@ -581,20 +599,26 @@ function EventParser(event) {
             if (recObj[key] != undefined) {
                 let recJsonKey;
                 let recJsonValue;
-                range['endDate'] = event.end.dateTime
+               // range['endDate'] = "2020-10-31"//Date.parse(event.end.dateTime);
+
+               // range['type'] = 'noEnd';
+                range['startDate'] = formatDate(event.start.dateTime);
+               
                 switch (recObj[key].split("=")[0]) {
                     //pattern
-                    case 'FREQ': case 'INTERVAL': 
-                   
+                    case 'FREQ': case 'INTERVAL':
                         recJsonKey = recObj[key].split("=")[0].replace('FREQ', 'type').toLowerCase()
                         recJsonValue = recObj[key].split("=")[1];
                         pattern[recJsonKey] = recJsonValue;                       
                         break;
                     //range
                     case 'UNTIL':
+                        //range['endDate'] = formatDate(event.end.dateTime)
                         recJsonKey = recObj[key].split("=")[0].replace('UNTIL', 'endDate')
-                        recJsonValue = recObj[key].split("=")[1];
-                        range[recJsonKey] = recJsonValue;    
+                        recJsonValue = recObj[key].split("=")[1]; 
+                        var dateRec = recJsonValue.substring(4, 0) + "-" + recJsonValue.substring(4, 6) + "-" + recJsonValue.substring(6, 8)
+                        range[recJsonKey] = dateRec; 
+                        //range['type'] = 'noEnd';
                         break;
                     default:
                     // code block
@@ -633,7 +657,21 @@ function EventParser(event) {
         
              
     }
-   
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
 
     //"recurrence": {
     //    "pattern": {
