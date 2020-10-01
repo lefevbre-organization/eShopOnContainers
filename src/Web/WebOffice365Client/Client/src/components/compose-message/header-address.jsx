@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
 import {validateEmail} from '../../services/validation';
 import mainCss from './composeMessage.scss';
-import { getContacts } from "../../api_graph/contacts-api";
+import { getContacts } from "../../api_graph";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
