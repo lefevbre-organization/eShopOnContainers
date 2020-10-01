@@ -343,5 +343,9 @@
     "centinela": "Contact Centinela",
     "search": "Search contact",
     "selected": "selected"
+  },
+  "menu-minihub": {
+    "products": "Lefebvre Products",
+    "footer": "Use this menu to directly launch another Lefebvre products."
   }
 }

@@ -216,8 +216,8 @@ class MenuUser extends Component {
                                                     <img src='/assets/images/notification-icon.png' alt='icon' />                                                    
                                                 </a>
                                             </div>
-                                            <span className='user-name text-center'>{`Firmas disponibles: ${lefebvre.availableSignatures}`}</span>
-                                            <span className='user-name text-center'>{`${lefebvre.userName}-(${lefebvre.userId})`}</span>
+                                            {/* <span className='user-name text-center'>{`Firmas disponibles: ${lefebvre.availableSignatures}`}</span> */}
+                                            <span className='user-name text-center'>{`${lefebvre.userName}`}</span>
                                             <span className='company-name text-center'>
                                                 Lefebvre-El Derecho, S.A.
                                             </span>
@@ -229,6 +229,7 @@ class MenuUser extends Component {
                                                     {i18n.t('menu-user.close-session')}
                                                 </button>
                                             </div>
+                                            <span className='text-center' style={{color: 'white', fontSize: '5px'}}>{`${lefebvre.userId}`}</span>
                                         </Fragment>
                                     )}
                                 </div>
