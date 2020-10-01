@@ -80,6 +80,23 @@ export class EmailMessageViewer extends Component {
       }];
   }
 
+  getReceiverEvent(receiver) {
+    console.log('getReceiverEvent', receiver);
+    switch (receiver) {
+      case 'email_delivered':
+        return (i18n.t('emailViewer.emailDelivered'));
+
+      case 'email_opened': 
+        return (i18n.t('emailViewer.emailOpened'));
+
+      case 'documents_opened': 
+      return (i18n.t('emailViewer.docOpened'));
+
+      default:
+        return (i18n.t('emailViewer.emailDelivered'));
+    }
+  }
+
   getEventStatus(signer, ev){
     let result;
     console.log({signer});
@@ -154,6 +171,10 @@ export class EmailMessageViewer extends Component {
       }
     }
     return result;
+  }
+
+  downloadTrailDocument(emailId, id, name, auth) {
+    downloadTrailDocument2(emailId, id, name, auth);
   }
 
   onCancelSignature(signatureId, auth){
@@ -255,32 +276,26 @@ export class EmailMessageViewer extends Component {
         />
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
-            {/* <div className={`${materialize.col} ${materialize['l4']} right`}>
-                <button 
-                  className={`${styles['btn-gen']} modal-trigger right`}
-                  onClick={() => downloadTrailDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
-                  disabled={signature.status !=='completed'}>
-                    {i18n.t('signatureViewer.buttons.downloadTrail')}
-                </button>
-            </div>             */}
-            {/* <div className={`${materialize.col} ${materialize['l12']} left`}>
-              {email.documents.map((signer, index) => {
+            <div className={`${materialize.col} ${materialize['l12']} left`}>
+              {email.certificates.map((signer, index) => {
               return (
                 <EmailList 
                  signer={signer}
-                 signatureConfig={signatureConfig ? signatureConfig.value.split('|')[index].split(':') : null}
-                 signatureId={signature.id}
+                 signatureConfig={emailConfig ? emailConfig.value.split('|')[index].split(':') : null}
+                 emailId={email.id}
                  index={index}
                  key={signer.id}
                  styles={styles}
+                 getReceiverEvent={this.getReceiverEvent}
                  getEventDate={this.getEventDate}
                  getEventStatus={this.getEventStatus}
                  getSingleEventDate={this.getSingleEventDate}
+                 downloadTrailDocument={this.downloadTrailDocument}
                  auth={this.props.auth}
                 ></EmailList>            
                 )
               })}
-            </div> */}
+            </div>
             <div className={styles.clearfix}></div>
         </div>
       </div>

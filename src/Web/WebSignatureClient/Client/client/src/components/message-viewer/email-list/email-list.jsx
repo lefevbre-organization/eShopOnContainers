@@ -8,15 +8,27 @@ const EmailList = (props) => {
         <div className={props.styles['cont-info-firmantes']}>
             <div className={`${props.styles.p15} ${props.styles.separador}`}>
               <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}</span>
-              <span className={`${props.styles['certification-email']} ml-4`}>Maria Cruces: maria.cruces@g2.com</span>
+              <span className={`${props.styles['certification-email']} ml-4`}>{props.signer.name}: {props.signer.email}</span>
               <div className={`${props.styles['certification-email']} right ${props.styles['mt-n10']}`}>
-               <span><b>Certificación:</b> el receptor ha abierto el mail</span>
+               <span>
+                <b className="mr-1">{i18n.t('emailViewer.certification')}</b> 
+                {props.getReceiverEvent(props.signer.events[props.signer.events.length - 1].type)} 
+               </span>
                <div className="text-right"> 
-               <a href="#"> 
+               <a href="#" onClick={() => props.downloadTrailDocument(props.emailId, props.signer.id, props.signer.file.name, props.auth)}> 
                 <span className="lf-icon-download mr-2"></span> 
                 {i18n.t('emailViewer.buttons.downloadTrail')}
                </a>
                </div>
+
+                {/* <div className={`${materialize.col} ${materialize['l4']} right`}>
+                <button 
+                  className={`${styles['btn-gen']} modal-trigger right`}
+                  onClick={() => downloadTrailDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
+                  disabled={signature.status !=='completed'}>
+                    {i18n.t('signatureViewer.buttons.downloadTrail')}
+                </button>
+            </div>             */}
               
             </div>
             </div>

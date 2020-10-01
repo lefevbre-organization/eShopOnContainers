@@ -21,7 +21,9 @@ const Details = (props) => {
               {
                props.service == 'signature' ?  
                props.detail.documents[0].file.name
-               : props.detail.certificates[0].file.name
+               : 
+               props.detail.certificates[0].file ?
+                props.detail.certificates[0].file.name : ''
               }</td>
               <td>{(props.detail.data.find(x => x.key === "subject")) ? 
               props.detail.data.find(x => x.key === "subject").value : "Sin asunto"} </td>

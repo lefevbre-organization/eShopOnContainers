@@ -289,6 +289,10 @@
     "title": "DESEO CERTIFICAR QUE:"
   },
   "emailViewer": {
+    "certification": "Certificación:",
+    "emailDelivered": "el receptor ha recibido el mail",
+    "emailOpened": "el receptor ha abierto el mail",
+    "docOpened": "el receptor ha abierto los documentos",
     "buttons": {
       "downloadTrail": "Descargar auditoria"
     }
