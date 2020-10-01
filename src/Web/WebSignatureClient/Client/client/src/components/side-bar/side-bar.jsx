@@ -30,6 +30,7 @@ class SideBar extends Component {
     this.handleOnDragLeave = this.onDragLeave.bind(this);
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
+    this.dialogClose = this.dialogClose.bind(this);
     
     //Sin firmas 
     this.animationSettings = { effect: 'None' };
@@ -53,7 +54,8 @@ class SideBar extends Component {
 
   dialogClose() {
     this.setState({
-        hideAlertDialog: false
+        hideAlertDialog: false,
+        hideConfirmDialog: false
     });
     //this.alertButtonEle.style.display = 'inline-block';
   }
@@ -191,7 +193,7 @@ class SideBar extends Component {
           //target='#target' 
           // buttons={this.alertButtons} 
           open={this.dialogOpen.bind(this)} 
-          close={this.dialogClose.bind(this)}
+          close={this.dialogClose}
           //position={ this.position }
         ></DialogComponent>
         <DialogComponent 
@@ -206,7 +208,7 @@ class SideBar extends Component {
               //target='#target' 
               buttons={confirmButtons} 
               open={this.dialogOpen.bind(this)} 
-              close={this.dialogClose.bind(this)}
+              close={this.dialogClose}
             />
         <style jsx global>
           {`
@@ -239,11 +241,11 @@ class SideBar extends Component {
     );
   }
 
-  dialogClose(){
-    this.setState({
-        hideConfirmDialog: false
-    });
-  }
+  // dialogClose(){
+  //   this.setState({
+  //       hideConfirmDialog: false
+  //   });
+  // }
 
   onDiscardSignatureOk(){
     const {lefebvre, application} = this.props
@@ -322,10 +324,12 @@ class SideBar extends Component {
           this.setState({ hideAlertDialog: true });
           // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-            this.props.setAvailableSignatures(response.data);
-            this.props.setTitle(t('messageEditor.title'));
-            this.props.newMessage(lefebvre.sign);
-            this.props.setUserApp('lefebvre');
+            if (lefebvre.userId === 'E1654569' || lefebvre.userId === 'E1621396'){
+              this.props.setAvailableSignatures(response.data);
+              this.props.setTitle(t('messageEditor.title'));
+              this.props.newMessage(lefebvre.sign);
+              this.props.setUserApp('lefebvre');
+            }
           }
         } else {
           this.props.setAvailableSignatures(response.data);
@@ -341,9 +345,11 @@ class SideBar extends Component {
           this.setState({ hideAlertDialog: true });
           // this.props.setAvailableSignatures(1);
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-            this.props.newMessage(lefebvre.sign);
-            this.props.setTitle(t('messageEditor.title'));
-            this.props.setUserApp('lefebvre');
+            if (lefebvre.userId === 'E1654569' || lefebvre.userId === 'E1621396'){
+              this.props.newMessage(lefebvre.sign);
+              this.props.setTitle(t('messageEditor.title'));
+              this.props.setUserApp('lefebvre');
+            }
           }
         }
       })
