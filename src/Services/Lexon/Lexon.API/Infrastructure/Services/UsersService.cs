@@ -89,7 +89,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), "LX02", "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), "LX02", "MYSQLCONN");
                 }
             }
 
@@ -101,7 +101,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), "LX02", "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), "LX02", "MYSQLCONN");
                     var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -133,7 +133,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), "LX03", "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), "LX03", "MYSQL");
                 }
             }
 
@@ -145,7 +145,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), "LX03", "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), "LX03", "MYSQL");
                     var resultMongo = await _usersRepository.GetUserAsync(idUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -315,7 +315,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Error when get exon user id", ex), "LX04", "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get exon user id", ex), "LX04", "MYSQLCONN");
                 }
             }
 
@@ -355,7 +355,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when add classification", ex),"LX10", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add classification", ex),"LX10", "MYSQLCONN");
             }
 
             if (_settings.Value.UseMongo)
@@ -413,7 +413,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), "LX11", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), "LX11", "MYSQLCONN");
             }
             
             if (_settings.Value.UseMongo)
@@ -450,13 +450,13 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when remove classification", ex), "LX12", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when remove classification", ex), "LX12", "MYSQLCONN");
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Mysql don´t remove of the classification"), "LX12", "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove of the classification"), "LX12", "MYSQL");
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }
@@ -513,7 +513,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceRepositoryError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX13", "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX13", "MYSQL");
 
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", "LX13");
@@ -525,7 +525,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.Errors, new LexonDomainException($"Error when get classifications", ex), "LX13", "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get classifications", ex), "LX13", "MYSQLCONN");
             }
 
             if (_settings.Value.UseMongo)
@@ -573,7 +573,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceRepositoryError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX14", "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX14", "MYSQL");
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", "LX14");
 
@@ -585,7 +585,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.Errors, new LexonDomainException($"Error when get entities", ex), "LX14", "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get entities", ex), "LX14", "MYSQLCONN");
             }
 
             if (_settings.Value.UseMongo)
@@ -635,7 +635,7 @@ namespace Lexon.Infrastructure.Services
                                     else
                                     {
                                         if (resultMySql.Infos.Count > 1)
-                                            TraceRepositoryError(resultMySql.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX15", "MYSQL");
+                                            TraceError(resultMySql.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX15", "MYSQL");
                                         else
                                             TraceInfo(resultMySql.Infos, "MySql get and empty string with this search", "LX15");
 
@@ -648,7 +648,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when get entitiy by id", ex), "LX15", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get entitiy by id", ex), "LX15", "MYSQLCONN");
             }
 
             return result;
@@ -689,7 +689,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.Errors, new LexonDomainException($"Error when get master entities", ex), "LX16", "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get master entities", ex), "LX16", "MYSQLCONN");
 
             }
 
@@ -732,7 +732,7 @@ namespace Lexon.Infrastructure.Services
                                     }
                                     else
                                     {
-                                        TraceRepositoryError(result.errors, new LexonDomainException("MySql get and empty string with this search"), "LX17", "MYSQL");
+                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), "LX17", "MYSQL");
                                     }
                                 }
                         }
@@ -741,7 +741,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when check relations from mail", ex), "LX17", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when check relations from mail", ex), "LX17", "MYSQLCONN");
             }
             return result;
         }
@@ -780,7 +780,7 @@ namespace Lexon.Infrastructure.Services
                                     }
                                     else
                                     {
-                                        TraceRepositoryError(result.errors, new LexonDomainException("MySql get and empty string with this search"), "LX20", "MYSQL");
+                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), "LX20", "MYSQL");
                                     }
                                 }
                         }
@@ -789,7 +789,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when get contact", ex), "LX20", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get contact", ex), "LX20", "MYSQLCONN");
             }
 
             return result;
@@ -827,7 +827,7 @@ namespace Lexon.Infrastructure.Services
                                     }
                                     else
                                     {
-                                        TraceRepositoryError(result.errors, new LexonDomainException("MySql get and empty string with this search"), "LX21", "MYSQL");
+                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), "LX21", "MYSQL");
                                     }
                                 }
                         }
@@ -836,7 +836,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when get all contacts", ex), "LX21", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get all contacts", ex), "LX21", "MYSQLCONN");
             }
             return result;
         }
@@ -983,7 +983,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceRepositoryError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX31", "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX31", "MYSQL");
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", "LX31");
 
@@ -995,7 +995,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.Errors, new LexonDomainException($"Error when get folder and files entities", ex), "LX31", "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get folder and files entities", ex), "LX31", "MYSQLCONN");
             }
 
             return result;
@@ -1027,7 +1027,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when add folder to entity", ex), "LX32", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add folder to entity", ex), "LX32", "MYSQLCONN");
             }
 
             return result;
@@ -1074,13 +1074,13 @@ namespace Lexon.Infrastructure.Services
                     else
                     {
                         var responseText = await response.Content.ReadAsStringAsync();
-                        TraceRepositoryError(result.errors, new LexonDomainException($"Response not ok : ({responseText}) with external service of lexon code -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "LX40", "LEXONSVC");
+                        TraceError(result.errors, new LexonDomainException($"Response not ok : ({responseText}) with external service of lexon code -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "LX40", "LEXONSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error al obtener el archivo {fileMail.idEntity} -> {ex.Message}", ex), "LX40", "LEXONSVC");
+                TraceError(result.errors, new LexonDomainException($"Error al obtener el archivo {fileMail.idEntity} -> {ex.Message}", ex), "LX40", "LEXONSVC");
             }
 
             TraceInfo(result.infos, $"La peticíón se empezó a {inicio} y terminó {DateTime.Now}", "LX40");
@@ -1124,13 +1124,13 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceRepositoryError(result.errors, new LexonDomainException($"Response not ok : ({responseText}) with external service of lexon code -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "LX41", "LEXONSVC");
+                        TraceError(result.errors, new LexonDomainException($"Response not ok : ({responseText}) with external service of lexon code -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "LX41", "LEXONSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error al guardar el archivo {fileMail.Name} -> {ex.Message}", ex), "LX41", "LEXONSVC");
+                TraceError(result.errors, new LexonDomainException($"Error al guardar el archivo {fileMail.Name} -> {ex.Message}", ex), "LX41", "LEXONSVC");
             }
 
             TraceInfo(result.infos, $"La peticíón se empezó a {inicio} y terminó {DateTime.Now}", "LX41");
@@ -1215,7 +1215,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when add appointment to lexon", ex), "LX50", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add appointment to lexon", ex), "LX50", "MYSQLCONN");
             }
 
             return result;
@@ -1247,13 +1247,13 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), "LX51", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), "LX51", "MYSQLCONN");
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceRepositoryError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), "LX51", "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), "LX51", "MYSQL");
 
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
@@ -1293,7 +1293,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new LexonDomainException($"Error when add appointment to action", ex), "LX52", "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add appointment to action", ex), "LX52", "MYSQLCONN");
             }
 
             return result;
@@ -1320,7 +1320,7 @@ namespace Lexon.Infrastructure.Services
 
                 codeError += $" in {procCaller} - SP[{command.CommandText}]";
                 //TraceLog(parameters: new string[] { $"ERROR:{codeError}" });
-                TraceRepositoryError(errors, new LexonDomainException(codeError), idError, "MYSQL");
+                TraceError(errors, new LexonDomainException(codeError), idError, "MYSQL");
             }
         }
 
@@ -1357,7 +1357,7 @@ namespace Lexon.Infrastructure.Services
             if (command.Parameters["P_IDERROR"].Value is int)
             {
                 int.TryParse(command.Parameters["P_IDERROR"].Value.ToString(), out idError);
-                TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, null, idError);
+                //TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, null, idError);
             }
 
             return idError;

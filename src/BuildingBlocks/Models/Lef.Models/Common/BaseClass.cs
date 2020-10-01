@@ -36,7 +36,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return latinText;
         }
 
-        public void TraceRepositoryError(
+        public void TraceError(
             List<ErrorInfo> errors,
             Exception ex,
             string codeError = "XX00",
@@ -158,23 +158,24 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             string msgInsert,
             List<Info> infos,
             List<ErrorInfo> errors,
-            ReplaceOneResult resultReplace)
+            ReplaceOneResult resultReplace,
+            string codeError)
         {
             if (resultReplace.IsAcknowledged)
             {
                 if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
                 {
-                    TraceInfo(infos, msgModify);
+                    TraceInfo(infos, msgModify, codeError);
                 }
                 else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
                 {
-                    TraceInfo(infos, msgInsert);
+                    TraceInfo(infos, msgInsert, codeError);
                     return resultReplace.UpsertedId.ToString();
                 }
             }
             else
             {
-                TraceRepositoryError(errors, new Exception(msgError), "CreateRawError");
+                TraceError(errors, new Exception(msgError), codeError, "MONGO");
             }
             return null;
         }

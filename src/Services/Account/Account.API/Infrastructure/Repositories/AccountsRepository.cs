@@ -57,7 +57,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when create user mail", ex), "AC01");
+                TraceError(result.errors, new AccountDomainException("Error when create user mail", ex), "AC01");
             }
             return result;
         }
@@ -78,7 +78,7 @@
             }
             else
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when upsert user mail"), "AC02");
+                TraceError(result.errors, new AccountDomainException("Error when upsert user mail"), "AC02");
             }
             return null;
         }
@@ -91,7 +91,7 @@
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceRepositoryError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user}"), "AC03");
+                    TraceError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user}"), "AC03");
                 else
                 {
                     var orderAccounts = result.data?.accounts.OrderByDescending(x => x.defaultAccount).ToList();
@@ -101,7 +101,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when get UserMail", ex), "AC03");
+                TraceError(result.errors, new AccountDomainException("Error when get UserMail", ex), "AC03");
             }
             return result;
         }
@@ -122,7 +122,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when remove UserMail", ex), "AC03");
+                TraceError(result.errors, new AccountDomainException("Error when remove UserMail", ex), "AC03");
             }
             return result;
         }
@@ -147,7 +147,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when changue state of UserMail", ex), "AC04");
+                TraceError(result.errors, new AccountDomainException("Error when changue state of UserMail", ex), "AC04");
 
             }
             return result;
@@ -170,7 +170,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when upsert config of UserMail", ex), "AC05");
+                TraceError(result.errors, new AccountDomainException("Error when upsert config of UserMail", ex), "AC05");
             }
 
             return result;
@@ -188,7 +188,7 @@
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (usuario == null)
-                    TraceRepositoryError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta"), "AC10");
+                    TraceError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta"), "AC10");
                 else
                 {
                     result.data = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
@@ -198,7 +198,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when get Account", ex), "AC10");
+                TraceError(result.errors, new AccountDomainException("Error when get Account", ex), "AC10");
             }
             return result;
         }
@@ -210,7 +210,7 @@
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
                 if (usuario == null)
-                    TraceRepositoryError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"), "AC11");
+                    TraceError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"), "AC11");
                 else
                 {
                     result.data = usuario?.accounts.Find(x => x.defaultAccount == true);
@@ -220,7 +220,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error al obtener cuenta por defecto de {user}", ex), "AC11");
+                TraceError(result.errors, new AccountDomainException($"Error al obtener cuenta por defecto de {user}", ex), "AC11");
             }
             return result;
         }
@@ -253,7 +253,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove account of {user}", ex), "AC12");
+                TraceError(result.errors, new AccountDomainException($"Error when remove account of {user}", ex), "AC12");
             }
             return result;
         }
@@ -274,7 +274,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when reset defaut account of {user}", ex), "AC13");
+                TraceError(result.errors, new AccountDomainException($"Error when reset defaut account of {user}", ex), "AC13");
             }
             return result;
         }
@@ -311,7 +311,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert account of {user}", ex), "AC14");
+                TraceError(result.errors, new AccountDomainException($"Error when upsert account of {user}", ex), "AC14");
             }
 
             result.data = true;
@@ -359,7 +359,7 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceRepositoryError(result.errors, new AccountDomainException($"Don´t insert or modify the account config"), "AC15");
+                    TraceError(result.errors, new AccountDomainException($"Don´t insert or modify the account config"), "AC15");
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
@@ -369,7 +369,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert account config of {user}", ex), "AC15");
+                TraceError(result.errors, new AccountDomainException($"Error when upsert account config of {user}", ex), "AC15");
             }
 
             return result;
@@ -398,7 +398,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert relation of {user}", ex), "AC20");
+                TraceError(result.errors, new AccountDomainException($"Error when upsert relation of {user}", ex), "AC20");
             }
 
             return result;
@@ -423,7 +423,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove relation of {user}", ex), "AC21");
+                TraceError(result.errors, new AccountDomainException($"Error when remove relation of {user}", ex), "AC21");
             }
 
             return result;
@@ -436,7 +436,7 @@
             {
                 var resultUser = await GetUser(user);
                 if (resultUser.data == null)
-                    TraceRepositoryError(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "AC22");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "AC22");
                 else
                 {
                     if (resultUser.data?.accounts?.Count > 0)
@@ -451,7 +451,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when get relations of {user}", ex), "AC22");
+                TraceError(result.errors, new AccountDomainException($"Error when get relations of {user}", ex), "AC22");
             }
             return result;
         }
@@ -480,7 +480,7 @@
             }
             else
             {
-                TraceRepositoryError(result.errors, new AccountDomainException("Error when update UserMail"), "AC06");
+                TraceError(result.errors, new AccountDomainException("Error when update UserMail"), "AC06");
             }
         }
 
@@ -645,12 +645,12 @@
                 result.data = await _context.RawMessages.Find(GetFilterRawMessage(user, provider, account, messageId)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceRepositoryError(result.errors, new AccountDomainException($"Don´t exist {user} to get the raw"), "AC30");
+                    TraceError(result.errors, new AccountDomainException($"Don´t exist {user} to get the raw"), "AC30");
 
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when get raw of {user}", ex), "AC30");
+                TraceError(result.errors, new AccountDomainException($"Error when get raw of {user}", ex), "AC30");
             }
             return result;
         }
@@ -679,7 +679,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when insert raw in {rawMessage.User}", ex), "AC31");
+                TraceError(result.errors, new AccountDomainException($"Error when insert raw in {rawMessage.User}", ex), "AC31");
             }
             return result;
         }
@@ -700,7 +700,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove raw in {rawMessage.User}", ex), "AC32");
+                TraceError(result.errors, new AccountDomainException($"Error when remove raw in {rawMessage.User}", ex), "AC32");
             }
             return result;
         }
@@ -727,7 +727,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when get EventTypes of {account}", ex), "AC40");
+                TraceError(result.errors, new AccountDomainException($"Error when get EventTypes of {account}", ex), "AC40");
             }
             return result;
         }
@@ -750,7 +750,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when upsert EventTypes of {accountIn.email}", ex), "AC41");
+                TraceError(result.errors, new AccountDomainException($"Error when upsert EventTypes of {accountIn.email}", ex), "AC41");
             }
             return result;
         }
@@ -784,7 +784,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove EventTypes of {email}", ex), "AC42");
+                TraceError(result.errors, new AccountDomainException($"Error when remove EventTypes of {email}", ex), "AC42");
             }
 
             return result;
@@ -822,7 +822,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when add EventTypes of {email}", ex), "AC43");
+                TraceError(result.errors, new AccountDomainException($"Error when add EventTypes of {email}", ex), "AC43");
             }
 
             return result;
@@ -837,8 +837,8 @@
                 var evByName = account.eventTypes.FirstOrDefault(s => s.name.ToUpperInvariant().Equals(eventType.name.ToUpperInvariant()));
                 if (evByName != null)
                 {
-                    TraceRepositoryError(result.errors, new AccountDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), "AC43");
-                    TraceOutputMessage(result.errors, $"Error, exist other eventType with same name {eventType.name}, review it ", null, "EventIdExist");
+                    TraceError(result.errors, new AccountDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), "AC43");
+                    //TraceOutputMessage(result.errors, $"Error, exist other eventType with same name {eventType.name}, review it ", null, "EventIdExist");
                 }
                 else
                 {
@@ -851,8 +851,8 @@
             }
             else
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), "AC43");
-                TraceOutputMessage(result.errors, $"Error, eventType id exist, review {eventType.idEvent}  or correct account ", null, "EventIdExist");
+                TraceError(result.errors, new AccountDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), "AC43");
+                //TraceOutputMessage(result.errors, $"Error, eventType id exist, review {eventType.idEvent}  or correct account ", null, "EventIdExist");
             }
         }
 
@@ -862,8 +862,8 @@
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), "AC43");
-                TraceOutputMessage(result.errors, $"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account ", null, "EventIdUnknow");
+                TraceError(result.errors, new AccountDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), "AC43");
+                //TraceOutputMessage(result.errors, $"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account ", null, "EventIdUnknow");
             }
             else
             {
@@ -891,7 +891,7 @@
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, new AccountDomainException($"Error when remove eventType of {email}", ex), "AC44");
+                TraceError(result.errors, new AccountDomainException($"Error when remove eventType of {email}", ex), "AC44");
             }
             return result;
         }

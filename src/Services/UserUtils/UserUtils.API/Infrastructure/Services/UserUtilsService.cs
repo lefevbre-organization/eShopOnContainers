@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -48,14 +49,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
             _clientMinihub = _clientFactory.CreateClient();
             _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
-            //_clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
 
             _clientLogin = _clientFactory.CreateClient();
             _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
             _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
-
-            //_clientOnline = _clientFactory.CreateClient();
-            //_clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
 
             var handler = new HttpClientHandler()
             {
@@ -105,22 +102,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "EncodeUser_StatusCode",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get encode user ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU10", "ONLINESVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "EncodeUser",
-                    detail = $"General error when call online service -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get encode user: {idNavisionUser} in {_settings.Value.OnlineUrl}", ex), "UU10", "ONLINESVC");
             }
 
             return result;
@@ -148,22 +136,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "DecodeUser_WebStatus",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get decode user ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU11", "ONLINESVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "DecodeUser",
-                    detail = $"General error when call online service -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get decode user: {idEncodeNavisionUser} in {_settings.Value.OnlineUrl}", ex), "UU11", "ONLINESVC");
             }
 
             return result;
@@ -195,22 +174,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "Minihub_WebStatus",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get tools of user ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU12", "ONLINESVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Minihub",
-                    detail = $"General error in call Minihub data -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get tools of user: {idNavisionUser} in {_settings.Value.MinihubUrl}", ex), "UU12", "ONLINESVC");
             }
 
             return result;
@@ -226,14 +196,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                errors.Add(new ErrorInfo
-                {
-                    code = "UpdateByPass",
-                    detail = $"General error in update bypass data",
-                    message = ex.Message
-                });
+                TraceError(errors, new UserUtilsDomainException($"Error when update list of bypass of user {idNavisionUser}", ex), "UU12", "ONLINESVC");
             }
-            // modelo.apps = cleanListApp.ToArray();
             return modelo.apps.ToList();
         }
 
@@ -260,22 +224,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "GetUserWithLogin_WebStatus",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get data of user ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU13", "SVCCOMSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "GetUserWithLogin",
-                    detail = $"General error when call commontool service -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get data of user {login} in {_settings.Value.LoginUrl}", ex), "UU13", "SVCCOMSVC");
             }
 
             return result;
@@ -306,22 +261,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "GetUserWithEntry_Webstatus",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get data of user ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU14", "SVCCOMSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "GetUserWithEntry",
-                    detail = $"General error when call commontool service -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get data of user {idNavisionUser} in {_settings.Value.LoginUrl}", ex), "UU13", "SVCCOMSVC");
             }
 
             return result;
@@ -349,23 +295,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "GetAreas_Webstatus",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get areas of user ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU14", "SVCCOMSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "GetAreas",
-                    detail = $"General error when call online service -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get areas of user {idNavisionUser} in {_settings.Value.LoginUrl}", ex), "UU14", "SVCCOMSVC");
             }
+
 
             return result;
         }
@@ -416,22 +354,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "ErrorFinalLink_WebStatus",
-                            detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                         TraceError(result.errors, new UserUtilsDomainException($"Error when get bypass url ({newUrl}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU15", "HUBSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "FinalLink",
-                    detail = $"General error in call Final Link -> {ex.InnerException}",
-                    message = ex.Message
-                });
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get final link of bypass {newUrl}", ex), "UU15", "HUBSVC");
             }
 
             return result;
@@ -546,7 +475,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             if (valorClaim == null) return;
 
-            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            //_logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
             payload.Add(nombreClaim, valorClaim);
         }
 
@@ -618,8 +547,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
             try
             {
-                var userLefebvreResult = (token is TokenRequestLogin)
-                     ? await GetUserDataWithLoginAsync(((TokenRequestLogin)token).login, ((TokenRequestLogin)token).password)
+                var userLefebvreResult = (token is TokenRequestLogin myToken)
+                     ? await GetUserDataWithLoginAsync(myToken.login, myToken.password)
                      : await GetUserDataWithEntryAsync(token.idClienteNavision);
 
                 if (userLefebvreResult?.data?._idEntrada != null)
@@ -632,7 +561,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 else
                 {
                     result.data.valid = false;
-                    TraceOutputMessage(result.errors, $"Error validation user > User login or user idEntry don´t exist", null, "Error Validation User");
+                    TraceError(result.errors, new UserUtilsDomainException($"Error when validation user > User login or user idEntry don´t exist"), "UU20", "API");
                     return result;
                 }
 
@@ -650,7 +579,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error validation user => {ex.Message}", null, "Error Validation");
+                TraceError(result.errors, new UserUtilsDomainException($"Error when validation user"), "UU20", "API");
             }
             return result;
         }
@@ -670,7 +599,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 var lexUserResult = await GetLexonUserIdAsync(tokenRequest.idClienteNavision);
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idUser))
-                    TraceOutputMessage(result.errors, $"Error get user from lexon", null, "Error Get Lexon Token");
+                    TraceError(result.errors, new UserUtilsDomainException($"Error get user from lexon"), "UU20", "API");
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
             }
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
@@ -724,13 +653,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
+                        TraceError(result.errors, new UserUtilsDomainException($"Probably error in mysql, view rest collection of errors -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU21", "APISVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, ex);
+                TraceError(result.errors, new UserUtilsDomainException($"Error when call internal service in Amazon", ex), "UU21", "APISVC");
             }
             return result;
         }
@@ -745,6 +674,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var resultLexUser = new Result<LexUser>(lexUser);
             resultLexUser.errors.AddRange(tokenResult.errors);
             resultLexUser.infos.AddRange(tokenResult.infos);
+
+            TraceInfo(resultLexUser.infos, $"The Token is type {tokenRequest.GetType()}", "UU20");
 
             return resultLexUser;
         }
@@ -784,7 +715,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         private async Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
         {
-            var resultContact = new Result<LexContact>(new LexContact());
+            var result = new Result<LexContact>(new LexContact());
 
             try
             {
@@ -793,16 +724,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 using (var response = await _clientLexonApi.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
-                        resultContact = await response.Content.ReadAsAsync<Result<LexContact>>();
+                        result = await response.Content.ReadAsAsync<Result<LexContact>>();
                     else
-                        TraceOutputMessage(resultContact.errors, $"Response not ok with lexon.api with code-> {response.StatusCode} - {response.ReasonPhrase}", null, 2003);
+                        TraceError(result.errors, new UserUtilsDomainException($"Probably error in mysql when get contacts, view collection of errors -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU22", "APISVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(resultContact.errors, ex);
+                TraceError(result.errors, new UserUtilsDomainException($"Error when call internal service in Amazon", ex), "UU22", "APISVC");
             }
-            return resultContact;
+            return result;
         }
 
         public async Task<Result<bool>> FirmCheckAsync(string idClient, string numDocs)
@@ -825,13 +756,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else                         
                     {
-                        TraceOutputMessage(result.errors, "Response not ok when check firm", null, 2003);
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to check firm -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU30", "CLAVESSVC");
                     }                                                     
                 }
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, ex);
+                  TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl}", ex), "UU30", "CLAVESSVC");
             }
             return result;
         }
@@ -856,13 +787,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok when use firm", null, 2003);
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU31", "CLAVESSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceRepositoryError(result.errors, ex);
+                 TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm", ex), "UU31", "CLAVESSVC");
             }
             return result;
         }
