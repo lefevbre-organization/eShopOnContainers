@@ -593,7 +593,7 @@ export class Main extends Component {
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
-                    env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+                    env: window.currentUser?window.currentUser.env:null
                 }
             })
         );
@@ -910,8 +910,7 @@ export class Main extends Component {
 
     onPopupOpen(args) {
 
-
-
+       
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -1007,6 +1006,10 @@ export class Main extends Component {
         }
         if (args.type === 'Editor') {
 
+            //office365 calendar is not enabled recurrence count
+            this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
+
+           // this.scheduleObj.eventWindow.recurrenceEditor.untilDateObj.enabled= false
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;

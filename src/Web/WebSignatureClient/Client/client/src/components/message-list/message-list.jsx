@@ -633,9 +633,14 @@ class MessageList extends Component {
    
     onRowSelected(event) {
         console.log(event);
-        var signature = this.props.signatures.find(s => s.id === event.data.Id);
-        this.props.setTitle(i18n.t('signatureViewer.title'));
-        this.props.signatureClicked(signature);
+        if (event.target.className !== "e-btn-icon lf-icon-kebab-menu" //Actions
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // Signers
+            ){
+            var signature = this.props.signatures.find(s => s.id === event.data.Id);
+            this.props.setTitle(i18n.t('signatureViewer.title'));
+            this.props.signatureClicked(signature);
+        }
+        
         // this.setState(
         //   { rowSelected: event.data.idRelated + '_' + event.data.idType },
         //   () => {
@@ -925,9 +930,9 @@ class MessageList extends Component {
                     allowTextWrap={false}
                     height='100%'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: [5, 10, 20, 50, 75, 100] }}//pageSizeList: [8,12,9,5]}} 
-                    // rowSelected={event => {
-                    //     this.onRowSelected(event);
-                    // }}
+                    rowSelected={event => {
+                        this.onRowSelected(event);
+                    }}
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
                     // locale={navigator.language}

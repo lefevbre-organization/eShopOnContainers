@@ -379,5 +379,9 @@
     "centinela": "Contact Centinela",
     "search": "Buscar un contacto",
     "selected": "seleccionados"
+  },
+  "menu-minihub": {
+    "products": "Productos Lefebvre",
+    "footer": "Utiliza este menú para iniciar directamente otro producto de Lefebvre."
   }
 }

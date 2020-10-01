@@ -1,4 +1,4 @@
-﻿
+﻿import moment from 'moment';
 import config from '../Config';
 import { UserAgentApplication } from 'msal';
 
@@ -459,11 +459,29 @@ function listEventsParser(list) {
             if (list[i].recurrence != undefined) {               
                 let str;
                 let value;
+                //pattern
                 Object.keys(list[i].recurrence.pattern).forEach(function (key) {                   
                     value = list[i].recurrence.pattern[key]
                     key = key.replace("type", "FREQ");
                     str = (typeof str !== "undefined" ? str + key + "=" + value + ";" : key + "=" + value + ";");
                 })
+                //range
+                Object.keys(list[i].recurrence.range).forEach(function (key2) {
+                    switch (key2) {
+                        case 'endDate':
+                            value = list[i].recurrence.range[key2]
+                            key2 = key2.replace("endDate", "UNTIL");
+                            var dateStartTime = new Date(value);
+                            var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
+                            var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                            str = (str + key2 + "=" + ExcRecurenceDate + ";");
+                            break;
+                        default:
+                        // code block
+                    }               
+                })
+
+               // "RRULE:FREQ=DAILY;UNTIL=20201129T230000Z;INTERVAL=1"
                 console.log(str);
                 recurrenceRule.push("RRULE:" + str.toUpperCase())
                 console.log(recurrenceRule[0]);
@@ -569,26 +587,59 @@ function EventParser(event) {
     };
 
     // Recurrence
-    
-    //let rec = event.recurrence[0]
-    //let recObj;
-    //let jsonObj   = '{"pattern":[]}';
+    let rec
+    if (event.recurrence != undefined) {
+       rec = event.recurrence[0]   
+        let recObj = rec.replace("RRULE:", "").split(";").slice(0, -1);
 
-    //if (rec != undefined) {  
-    //    recObj = rec.replace("RRULE:", "").split(";");
+        var pattern = {};
+        var range = {};
+        
+        Object.keys(recObj).forEach(function (key) {   
+            if (recObj[key] != undefined) {
+                let recJsonKey;
+                let recJsonValue;
+               // range['endDate'] = "2020-10-31"//Date.parse(event.end.dateTime);
 
-    //    let recValueObj;
+               // range['type'] = 'noEnd';
+                range['startDate'] = formatDate(event.start.dateTime);
+               
+                switch (recObj[key].split("=")[0]) {
+                    //pattern
+                    case 'FREQ': case 'INTERVAL':
+                        recJsonKey = recObj[key].split("=")[0].replace('FREQ', 'type').toLowerCase()
+                        recJsonValue = recObj[key].split("=")[1];
+                        pattern[recJsonKey] = recJsonValue;                       
+                        break;
+                    //range
+                    case 'UNTIL':
+                        //range['endDate'] = formatDate(event.end.dateTime)
+                        recJsonKey = recObj[key].split("=")[0].replace('UNTIL', 'endDate')
+                        recJsonValue = recObj[key].split("=")[1]; 
+                        var dateRec = recJsonValue.substring(4, 0) + "-" + recJsonValue.substring(4, 6) + "-" + recJsonValue.substring(6, 8)
+                        range[recJsonKey] = dateRec; 
+                        //range['type'] = 'noEnd';
+                        break;
+                    default:
+                    // code block
+                }               
+            }           
+        })
        
-    //    Object.keys(recObj).forEach(function (key) {
-    //        console.table(recObj[key]);
-    //        let recJsonKey = recObj[key].split("=")[0] + " : " + recObj[key].split("=")[1];
-    //        let recJsonValue = recObj[key].split("=")[1];
+        let recurrence = {};
+       // let item = {};
+        
+       // item.pattern = pattern;
 
-    //        var obj = JSON.parse(jsonObj);
-    //        obj['pattern'].push({ recJsonKey });
-    //        jsonStr = JSON.stringify(obj);
+        let item = {
+            pattern,
+            range
+        }
+        eventParse.recurrence = item;
 
-    //    })
+       // recurrence.pattern = pattern;
+       // eventParse.recurrence = recurrence;
+        console.table(eventParse.recurrence);
         
     //    let item =
     //        {
@@ -605,17 +656,35 @@ function EventParser(event) {
     //         }
         
              
-    //}
-   
+    }
 
-    //"pattern": {
-    //    "type": "weekly",
-    //        "interval": 2,
-    //            "daysOfWeek": [
-    //                "Monday",
-    //                "Tuesday"
-    //            ]
-    //}
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+
+    //"recurrence": {
+    //    "pattern": {
+    //        "type": "weekly",
+    //            "interval": 1,
+    //                "daysOfWeek": ["Monday"]
+    //    },
+    //    "range": {
+    //        "type": "endDate",
+    //            "startDate": "2017-09-04",
+    //                "endDate": "2017-12-31"
+    //    }
+    //},
 
 
     //Atendees

@@ -20,17 +20,24 @@ class Classification extends Component {
 
   async getClassificationData() {
     const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/getbyid`;
+
+    const body = {
+      idType: this.props.classification.entityIdType,
+      idEntity: this.props.classification.idRelated,
+      bbdd: this.props.companySelected.bbdd,
+      idUser: this.props.user.idUser
+    };
+
+    if(window.currentEnv) {
+      body.env = window.currentEnv;
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        idType: this.props.classification.entityIdType,
-        idEntity: this.props.classification.idRelated,
-        bbdd: this.props.companySelected.bbdd,
-        idUser: this.props.user.idUser
-      })
+      body: JSON.stringify(body)
     });
     const data = await response.json();
     this.setState({ data: data.data });

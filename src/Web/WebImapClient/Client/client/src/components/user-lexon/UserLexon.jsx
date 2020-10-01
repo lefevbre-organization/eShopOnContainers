@@ -184,6 +184,7 @@ class UserLexon extends Component {
     const { lexon } = this.props;
     try {
       const result = getUser(lexon.userId);
+      window.currentUser = result.data.tokenDecoded;
       this.props.setCurrentUser(result.data.tokenDecoded);
 
       if (result.errors.length === 0) {
