@@ -273,6 +273,11 @@
     "title": "WISH TO CERTIFY THAT:",
   },
   "emailViewer": {
+    "certification": "Certification:",
+    "emailDelivered": "the recipient has received the mail",
+    "emailOpened": "the recipient has opened the mail",
+    "docOpened": "the recipient has opened the documents",
+    "docDownloaded": "the recipient has downloaded the documents",
     "buttons": {
       "downloadTrail": "Download audit"
     }

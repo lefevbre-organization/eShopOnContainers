@@ -291,6 +291,11 @@
     "title": "SOUHAIT CERTIFIER:",
   },
   "emailViewer": {
+    "certification": "Certification:",
+    "emailDelivered": "le destinataire a reçu le mail",
+    "emailOpened": "le destinataire a ouvert le mail",
+    "docOpened": "le destinataire a ouvert les documents",
+    "docDownloaded": "le destinataire a téléchargé les documents",
     "buttons": {
       "downloadTrail": "Télécharger audit"
     }

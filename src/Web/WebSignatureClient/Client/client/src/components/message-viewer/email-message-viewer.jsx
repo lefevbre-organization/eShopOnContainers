@@ -81,7 +81,6 @@ export class EmailMessageViewer extends Component {
   }
 
   getReceiverEvent(receiver) {
-    console.log('getReceiverEvent', receiver);
     switch (receiver) {
       case 'email_delivered':
         return (i18n.t('emailViewer.emailDelivered'));
@@ -92,6 +91,15 @@ export class EmailMessageViewer extends Component {
       case 'documents_opened': 
       return (i18n.t('emailViewer.docOpened'));
 
+      case 'document_opened': 
+      return (i18n.t('emailViewer.docOpened'));
+
+      case 'document_downloaded': 
+      return (i18n.t('emailViewer.docDownloaded'));
+
+      case 'documents_downloaded': 
+      return (i18n.t('emailViewer.docDownloaded'));
+      
       default:
         return (i18n.t('emailViewer.emailDelivered'));
     }

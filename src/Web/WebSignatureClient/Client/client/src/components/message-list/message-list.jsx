@@ -422,9 +422,11 @@ class MessageList extends Component {
     }
 
     menuGridTemplate(props){
+
         let items = [];
 
-        if (props.Estado === i18n.t('signaturesGrid.statusInProgress')){
+        if (props.Estado === i18n.t('signaturesGrid.statusInProgress') 
+        && this.props.selectedService == 'signature') {
             items = [
                 {
                     text: i18n.t('signaturesGrid.menuEdit'),
