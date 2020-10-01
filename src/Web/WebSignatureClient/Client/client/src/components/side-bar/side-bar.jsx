@@ -17,6 +17,7 @@ import { setAvailableSignatures, setUserApp } from '../../actions/lefebvre';
 import { setTitle, setAppTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import SendingTypeSelector from './sending-type-selector/sending-type-selector';
+import i18n from '../../services/i18n';
 
 class SideBar extends Component {
   constructor(props) {
@@ -26,6 +27,7 @@ class SideBar extends Component {
       dragOver: false,
       hideAlertDialog: false,
       hideSendingTypeDialog: false
+      hideConfirmDialog: false
     };
     this.handleOnDragOver = this.onDragOver.bind(this);
     this.handleOnDragLeave = this.onDragLeave.bind(this);
@@ -83,37 +85,38 @@ class SideBar extends Component {
   render() {
     const { t, collapsed } = this.props;
     const { dragOver } = this.state;
+
     const contenido = `
       <img border='0' src='assets/images/icon-warning.png'></img>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-        Lo sentimos has agotado el número máximo de firmas contratadas. 
-        Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>
+        ${i18n.t('noCreditsModal.text')}
+        ${i18n.t('noCreditsModal.text2')}
       </div>`;
-    // const contenido = `
-    //   <div id='demo-modal' className='modal modal-warning'>
-    //       <div className='modal-content'>
-    //           <a href='#!' className='right modal-action modal-close waves-effect waves-red btn close-alert'><span class=' lf-icon-close'></span></a>
-    //           <span className='lf-icon-warning left icon-alert'></span>
-    //           <div class='right w-75'>
-    //               <p>Lo sentimos, has agotado el número máximo de firmas contratadas.
-    //                   Si lo deseas, puedes contactar con nuestro departamento de atención al
-    //                   cliente en el teléfono 911231231 o pinchando <a href='#' class='underline'>aquí</a>.</p>
-    //           </div>
-    //           <div class='clearfix'></div>
-    //       </div>
-    //   </div>
-    // `
-    
-    // const contenido = `
-    // <div>
-    //   <span style='padding-right:3px; padding-top: 3px; display:inline-block;'>
-    //     <img border='0' src='assets/images/icon-warning.png'></img>
-    //   </span>
-    //   <div><p>
-    //   Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí
-    //   </p></div>
-    // </div>
-    // `
+
+    const confirmDiscard = `
+      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('cancelCentinelaConfirmation.text')}
+      </div>
+    `;
+
+    const confirmButtons = [
+      {
+          click: () => {
+          this.setState({ hideConfirmDialog: false });
+          },
+          buttonModel: {  content: i18n.t('confirmationModal.no'), cssClass: 'btn-modal-close' }
+      },
+      {
+          click: () => {
+              this.setState({ hideConfirmDialog: false });
+              this.onDiscardSignatureOk();
+          },
+          buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
+      }
+    ];
+
     return (
    
       <aside
@@ -217,6 +220,20 @@ class SideBar extends Component {
           close={this.dialogClose.bind(this)}
           //position={ this.position }
         ></DialogComponent>
+        <DialogComponent 
+              id="confirmDialog" 
+              header=' ' 
+              visible={this.state.hideConfirmDialog} 
+              showCloseIcon={true} 
+              animationSettings={this.animationSettings} 
+              width='60%' 
+              content={confirmDiscard} 
+              ref={dialog => this.confirmDialogInstance = dialog} 
+              //target='#target' 
+              buttons={confirmButtons} 
+              open={this.dialogOpen.bind(this)} 
+              close={this.dialogClose.bind(this)}
+            />
         <style jsx global>
           {`
             #noSignaturesDialog{
@@ -301,48 +318,124 @@ class SideBar extends Component {
     this.setState({hideSendingTypeDialog: true});
   }
 
-  onNewMessage() {
-    const { lefebvre, t } = this.props;
+  dialogClose(){
+    this.setState({
+        hideConfirmDialog: false
+    });
+  }
+
+   onDiscardSignatureOk(){
+    const {lefebvre, application} = this.props
+
+    cancelSignatureCen(lefebvre.guid)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
+    this.setState({ hideConfirmDialog: false });
 
     getAvailableSignatures(lefebvre.idUserApp, 1)
-    .then(response => {
-      setAvailableSignatures(response.data);
-      if (response.data === false || response.data === "false"){
-        //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
-        this.setState({ hideAlertDialog: true });
-        // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
-        if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+      .then(response => {
+        setAvailableSignatures(response.data);
+        if (response.data === false || response.data === "false"){
+          //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
+          this.setState({ hideAlertDialog: true });
+          // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
+          if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            this.props.setAvailableSignatures(response.data);
+            this.props.setTitle(t('messageEditor.title'));
+            this.props.setAppTitle(i18n.t('topBar.app'));
+            this.props.newMessage('signature', lefebvre.sign);
+            this.props.setUserApp('lefebvre');
+            this.props.setMailContacts(null);
+            this.props.setAdminContacts(null);
+            this.props.setGuid(null);
+            this.props.setIdDocuments(null);
+
+          }
+        } else {
+          this.props.setAvailableSignatures(response.data);
+          this.props.setTitle(t('messageEditor.title'));
+          this.props.setAppTitle(i18n.t('topBar.app'));
+          this.props.newMessage('signature', lefebvre.sign);
+          this.props.setUserApp('lefebvre');
+          this.props.setMailContacts(null);
+          this.props.setAdminContacts(null);
+          this.props.setGuid(null);
+          this.props.setIdDocuments(null);
+        }
+      })
+      .catch(err => {
+        if (err.message === "Failed to fetch"){
+          //Mostrar aviso no se han podido recuperar firmas
+          //alert('No se ha podido comprobar si tiene firmas disponibles');
+          this.setState({ hideAlertDialog: true });
+          // this.props.setAvailableSignatures(1);
+          if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            this.props.setAppTitle(i18n.t('topBar.app'));
+            this.props.newMessage('signature', lefebvre.sign);
+            this.props.setTitle(t('messageEditor.title'));
+            this.props.setUserApp('lefebvre');
+            this.props.setMailContacts(null);
+            this.props.setAdminContacts(null);
+            this.props.setGuid(null);
+            this.props.setIdDocuments(null);
+          }
+        }
+      })
+  }
+
+
+  onNewMessage() {
+    const { lefebvre, t, application } = this.props;
+
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || application.selectedSignature === {})){
+      this.setState({hideConfirmDialog: true});
+    } 
+    else {
+      getAvailableSignatures(lefebvre.idUserApp, 1)
+      .then(response => {
+        setAvailableSignatures(response.data);
+        if (response.data === false || response.data === "false"){
+          //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
+          this.setState({ hideAlertDialog: true });
+          // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
+          if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            this.props.setAvailableSignatures(response.data);
+            this.props.setTitle(t('messageEditor.title'));
+            this.props.setAppTitle(i18n.t('topBar.app'));
+            this.props.newMessage('signature', lefebvre.sign);
+            this.props.setUserApp('lefebvre');
+          }
+        } else {
           this.props.setAvailableSignatures(response.data);
           this.props.setTitle(t('messageEditor.title'));
           this.props.setAppTitle(i18n.t('topBar.app'));
           this.props.newMessage('signature', lefebvre.sign);
           this.props.setUserApp('lefebvre');
         }
-      } else {
-        this.props.setAvailableSignatures(response.data);
-        this.props.setTitle(t('messageEditor.title'));
-        this.props.setAppTitle(i18n.t('topBar.app'));
-        this.props.newMessage('signature', lefebvre.sign);
-        this.props.setUserApp('lefebvre');
-      }
-    })
-    .catch(err => {
-      if (err.message === "Failed to fetch"){
-        //Mostrar aviso no se han podido recuperar firmas
-        //alert('No se ha podido comprobar si tiene firmas disponibles');
-        this.setState({ hideAlertDialog: true });
-        // this.props.setAvailableSignatures(1);
-        if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-          this.props.setAppTitle(i18n.t('topBar.app'));
-          this.props.newMessage('signature', lefebvre.sign);
-          this.props.setTitle(t('messageEditor.title'));
-          this.props.setUserApp('lefebvre');
+      })
+      .catch(err => {
+        if (err.message === "Failed to fetch"){
+          //Mostrar aviso no se han podido recuperar firmas
+          //alert('No se ha podido comprobar si tiene firmas disponibles');
+          this.setState({ hideAlertDialog: true });
+          // this.props.setAvailableSignatures(1);
+          if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            this.props.setAppTitle(i18n.t('topBar.app'));
+            this.props.newMessage('signature', lefebvre.sign);
+            this.props.setTitle(t('messageEditor.title'));
+            this.props.setUserApp('lefebvre');
+          }
         }
-      }
-    })
+      })
+    }
     this.sendTypeDialogClose();
   }
-  
+
   onNewEmailCertificate() {
     this.props.newMessage('emailCertificate', null);
     this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));

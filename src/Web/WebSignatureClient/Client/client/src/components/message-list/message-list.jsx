@@ -465,8 +465,11 @@ class MessageList extends Component {
     }
 
     recipientsGridTemplate(props){
+        if (props.Destinatarios === undefined){
+            return null
+        }
         let firstEmail = props.Destinatarios.split(';')[0];
-        var chunks = props.Destinatarios.split(' ');
+        //var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
 
         switch (props.Estado) {

@@ -219,8 +219,9 @@ export class MenuListClass extends Component {
             ref={dialog => this.confirmDialogInstance = dialog} 
             buttons={confirmButtons} 
             open={() => this.dialogOpen} 
-            close={() => this.dialogClose}
+            close={this.dialogClose.bind(this)}
           />
+          
           <DialogComponent 
            id="noServiceDialog" 
            visible={this.state.hideAlertDialog} 
@@ -230,7 +231,7 @@ export class MenuListClass extends Component {
            content={contenido}
            ref={alertdialog => this.alertDialogInstance = alertdialog} 
            open={() => this.dialogOpen} 
-           close={() => this.dialogClose}
+           close={this.dialogClose.bind(this)}
           ></DialogComponent>
 
           <style jsx global>
