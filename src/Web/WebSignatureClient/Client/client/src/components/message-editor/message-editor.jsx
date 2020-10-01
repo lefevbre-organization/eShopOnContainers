@@ -532,8 +532,8 @@ class MessageEditor extends Component {
           ref={dialog => this.confirmDialogInstance = dialog} 
           //target='#target' 
           buttons={confirmButtons} 
-          open={() => this.dialogOpen} 
-          close={() => this.dialogClose}
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose.bind(this)}
         />
         <DialogComponent 
           id="rolDialog" 
@@ -545,7 +545,7 @@ class MessageEditor extends Component {
           //content={RolSelector} 
           ref={dialog => this.rolDialog = dialog} 
           //target='#target' 
-          open={() => this.dialogOpen} 
+          open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
         >
           <RolSelector 

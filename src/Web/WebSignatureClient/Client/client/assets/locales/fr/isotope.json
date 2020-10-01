@@ -244,6 +244,10 @@
   "signatureNotFoundCentinela": {
     "text": "La signature que vous souhaitez afficher n'existe pas. Veuillez retourner à Sentinel et faire une nouvelle demande."
   },
+  "noCreditsModal":{
+    "text": "We apologize, you've already used all your available signatures.",
+    "text2": "If you wish, you can contact our Customer Support Service calling 912108000 or by clicking <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>here</u></a>"
+  },
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",

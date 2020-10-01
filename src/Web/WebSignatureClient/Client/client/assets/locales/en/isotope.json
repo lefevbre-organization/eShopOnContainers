@@ -226,6 +226,10 @@
   "signatureNotFoundCentinela": {
     "text": "Signature request not found. Please return to centinela and send it again."
   },
+  "noCreditsModal":{
+    "text": "We apologize, you've already used all your available signatures.",
+    "text2": "If you wish, you can contact our Customer Support Service calling 912108000 or by clicking <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>here</u></a>"
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",

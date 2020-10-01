@@ -129,7 +129,7 @@ export class MenuListClass extends Component {
               //target='#target' 
               buttons={confirmButtons} 
               open={() => this.dialogOpen} 
-              close={() => this.dialogClose}
+              close={this.dialogClose.bind(this)}
             />
           {/* <MenuItem
             label={'Firmas'} 
