@@ -59,6 +59,7 @@ class AppContainerGraph extends Component {
 
         const currentUser = stateStorage.currentUser;
         if (!user && currentUser) {
+            window.currentUser = currentUser;
             this.props.setCurrentUser(currentUser);
         }
 

@@ -26,9 +26,6 @@ export const getUser = async (userId) => {
 
 export const addOrUpdateAccount = async (userId, account) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
-  if(window.currentUser && window.currentUser.env) {
-    url += `?env=${window.currentUser.env}`;
-  }
 
   console.log(account);
   try {
@@ -49,9 +46,6 @@ export const addOrUpdateAccount = async (userId, account) => {
 
 export const resetDefaultAccount = async (userId) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/reset`;
-  if(window.currentUser && window.currentUser.env) {
-    url += `?env=${window.currentUser.env}`;
-  }
 
   try {
     const res = await fetch(url, {
