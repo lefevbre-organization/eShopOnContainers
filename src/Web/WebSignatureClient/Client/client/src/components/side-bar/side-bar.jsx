@@ -17,7 +17,6 @@ import { setAvailableSignatures, setUserApp } from '../../actions/lefebvre';
 import { setTitle, setAppTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import SendingTypeSelector from './sending-type-selector/sending-type-selector';
-import i18n from '../../services/i18n';
 
 class SideBar extends Component {
   constructor(props) {
@@ -26,7 +25,7 @@ class SideBar extends Component {
     this.state = {
       dragOver: false,
       hideAlertDialog: false,
-      hideSendingTypeDialog: false
+      hideSendingTypeDialog: false,
       hideConfirmDialog: false
     };
     this.handleOnDragOver = this.onDragOver.bind(this);
