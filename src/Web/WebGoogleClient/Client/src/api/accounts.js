@@ -26,9 +26,7 @@ export const getUser = async (userId) => {
 
 export const getEventTypes = async (account) => {
     let url = `${window.URL_GET_EVENTSTYPE}/ev/get`;
-    if(window.currentUser && window.currentUser.env) {
-        url += `?env=${window.currentUser.env}`;
-    }
+
    // const url = "https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/get";
 
     let value = {
@@ -53,9 +51,7 @@ export const getEventTypes = async (account) => {
 
 export const addorUpdateEventType = async (eventType) => { 
     let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
-    if(window.currentUser && window.currentUser.env) {
-        url += `?env=${window.currentUser.env}`;
-    }
+
     //const url = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/add'
     try {
         const res = await fetch(url, {
@@ -76,9 +72,7 @@ export const addorUpdateEventType = async (eventType) => {
 export const deleteEventType = async (eventType) => {
     //const url = `https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/delete`;
     let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/delete`;
-    if(window.currentUser && window.currentUser.env) {
-        url += `?env=${window.currentUser.env}`;
-    }
+
     try {
         const res = await fetch(url, {
             method: 'POST',
@@ -96,9 +90,7 @@ export const deleteEventType = async (eventType) => {
 
 export const addOrUpdateAccount = async (userId, account) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
-    if(window.currentUser && window.currentUser.env) {
-        url += `?env=${window.currentUser.env}`;
-    }
+
   try {
     const res = await fetch(url, {
       method: 'POST',
@@ -117,9 +109,6 @@ export const addOrUpdateAccount = async (userId, account) => {
 
 export const resetDefaultAccount = async (userId) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/reset`;
-    if(window.currentUser && window.currentUser.env) {
-        url += `?env=${window.currentUser.env}`;
-    }
   try {
     const res = await fetch(url, {
       method: 'POST',
@@ -145,9 +134,6 @@ export const classifyEmail = async (
 ) => {
   const m = moment(date).format('YYYY-MM-DD HH:mm:ss');
   let url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contacts/add`;
-  if(window.currentUser && window.currentUser.env) {
-    url += `?env=${window.currentUser.env}`;
-  }
   const classification = {
     contactList: [...to],
     mail: {

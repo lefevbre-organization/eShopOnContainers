@@ -199,7 +199,7 @@ class App extends Component {
           idFolder: this.props.lexon.idFolder,
           account: this.props.all.login.formValues.user,
           provider: 'IMAP',
-          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+          env: window.currentUser?window.currentUser.env:null
         },
       })
     );
@@ -243,7 +243,7 @@ class App extends Component {
           selectedMessages: selectedMessages,
           account: this.props.all.login.formValues.user,
           provider: 'IMAP',
-          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+          env: window.currentUser?window.currentUser.env:null
         },
       })
     );

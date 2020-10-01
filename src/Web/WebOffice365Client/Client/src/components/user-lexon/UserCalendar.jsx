@@ -41,6 +41,8 @@ class UserCalendar extends Component {
     if (payload) {
       const aux = { ...payload };
       delete aux.exp;
+
+      window.currentUser = aux;
       this.props.setCurrentUser(aux);
     }
 

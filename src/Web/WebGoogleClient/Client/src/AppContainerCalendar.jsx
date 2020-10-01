@@ -51,6 +51,7 @@ class AppContainer extends Component {
 
     const currentUser = stateStorageLexon.currentUser;
       if (!user && currentUser) {
+        window.currentUser = currentUser;
         this.props.setCurrentUser(currentUser);
       }
 
