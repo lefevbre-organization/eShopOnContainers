@@ -124,6 +124,7 @@ class TabConnectMessage extends Component {
 
     return (
       <Fragment>
+        <p>No se ha encontrado ninguna clasificación asociada a esta empresa. Asocia un evento a LEX-ON pulsando Nueva clasificación</p>
         <ModalConnectingEmails
           user={user}
           updateClassifications={this.getClassifications}

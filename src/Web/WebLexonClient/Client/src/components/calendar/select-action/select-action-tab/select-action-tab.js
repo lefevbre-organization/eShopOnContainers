@@ -16,7 +16,7 @@ class SelectActionTab extends Component {
         <Tabs id='uncontrolled-tab-example' bsPrefix='menu-lexon-actions'>
             <Tab
               eventKey='connect'
-              title={i18n.t('select-action.connect-messages')}>
+              title={i18n.t('classification-calendar.connect-messages')}>
               <TabConnectMessage
                 user={user}
                 toggleNotification={toggleNotification}

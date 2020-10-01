@@ -91,6 +91,9 @@
     "documents-saved-ok": "The documents has been saved correctly",
     "documents-saved-ko": "There was an error saving the documents"
   },
+  "classification-calendar" : {
+    "connect-messages": "Classifications"
+  },
   "classification-type": {
     "type": "Type",
     "select": "--Select--"

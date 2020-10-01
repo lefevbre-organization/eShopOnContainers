@@ -91,6 +91,9 @@
     "classification-removed-ko": "Ha habido un error borrando la clasificación",
     "classification-selection-ko": "Debes seleccionar un Tipo y una Entidad para poder clasificar"
   },
+  "classification-calendar" : {
+    "connect-messages": "Clasificaciones"
+  },
   "classification-type": {
     "type": "Tipo",
     "select": "--Seleccionar--"
