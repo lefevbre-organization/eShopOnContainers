@@ -4,7 +4,9 @@ import i18n from 'i18next';
 const SendingTypeSelector = (props) => {
     return (
       <>
-       <div className="box-sending sending-signature" onClick={props.onNewMessage}>
+        { 
+          props.lefebvre.roles && props.lefebvre.roles.includes('Firma Digital') ? 
+          <div className="box-sending sending-signature" onClick={props.onNewMessage}>
             <p>
              {/* <span className='lf-icon-check-round icon-color'></span> */}
              <b>{i18n.t('sideBar.signature')}</b>
@@ -12,16 +14,20 @@ const SendingTypeSelector = (props) => {
              {i18n.t('sideBar.sendingTypeSignature')}
             </p>
             <div className="space-icon-right"><span className='lf-icon-angle-right'></span></div>
-       </div>
-        <div className="box-sending sending-email box-space" onClick={props.onNewEmailCertificate}>
-            <p>
-             {/* <span className='lf-icon-mail icon-color'></span> */}
-             <b>{i18n.t('sideBar.certifiedEmail')}</b>
-             <br/>
-             {i18n.t('sideBar.sendingTypeEmail')}
-            </p>
-            <div className="space-icon-right"><span className='lf-icon-angle-right'></span></div>
-        </div>
+           </div>
+          : null}
+        { 
+          props.lefebvre.roles && props.lefebvre.roles.includes('Email Certificado') ?
+          <div className="box-sending sending-email box-space" onClick={props.onNewEmailCertificate}>
+              <p>
+               {/* <span className='lf-icon-mail icon-color'></span> */}
+               <b>{i18n.t('sideBar.certifiedEmail')}</b>
+               <br/>
+               {i18n.t('sideBar.sendingTypeEmail')}
+              </p>
+              <div className="space-icon-right"><span className='lf-icon-angle-right'></span></div>
+          </div>
+        : null}
        <style jsx global>
         {` 
             .box-sending {

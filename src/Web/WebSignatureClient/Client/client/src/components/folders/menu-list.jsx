@@ -14,7 +14,6 @@ import styles from './menu-list.scss';
 import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-// import { AccordionComponent, AccordionItemDirective, AccordionItemsDirective } from '@syncfusion/ej2-react-navigations';
 import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
 import { cancelSignatureCen } from "../../services/api-signaturit";
 
@@ -39,17 +38,6 @@ export class MenuListClass extends Component {
     this.props.setSelectedService('signature'); 
   }
   
-  // expanding = (e) => {
-  //   if(e.index == 0) {
-  //     this.props.setAppTitle(i18n.t('topBar.app'));
-  //     this.props.setSelectedService('signature'); 
-  //   } else {
-  //     this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
-  //     this.props.setSelectedService('certifiedEmail'); 
-  //     this.setState({hideAlertDialog: true});
-  //   }
-  // }
-
   signatureContent = () => {
     const { collapsed } = this.props;
     const option1 = 'En progreso';
@@ -146,8 +134,12 @@ export class MenuListClass extends Component {
     ); 
   }
 
+  getConfirm = () => {
+    this.setState({hideAlertDialog: true});
+  }
+
   render() {
-    const { collapsed } = this.props;
+    const { collapsed, lefebvre } = this.props;
     const selectedFilter = this.props.application.signaturesFilterKey;
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
@@ -178,13 +170,23 @@ export class MenuListClass extends Component {
       }
     ];
     return (
-        // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-          {/* <AccordionComponent expandMode='Single' expanding={this.expanding}  >
-          </AccordionComponent> */}
-       
-           { 
-            collapsed ?  
+          { 
+            lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
+            <>
+             { 
+              collapsed ?  
+               <div className={`${styles['title-nav-firmas']}`} >
+                <span className="lf-icon-signature">
+                </span>
+               </div> :  
+               <div className={`${styles['title-nav-firmas']}`}>
+                <span className="lf-icon-signature">
+                </span>{i18n.t('sideBar.filterMenu')}
+               </div>
+              }  
+              {this.signatureContent()}
+            </> : collapsed ?  
              <div className={`${styles['title-nav-firmas']}`} >
               <span className="lf-icon-signature">
               </span>
@@ -192,21 +194,39 @@ export class MenuListClass extends Component {
              <div className={`${styles['title-nav-firmas']}`}>
               <span className="lf-icon-signature">
               </span>{i18n.t('sideBar.filterMenu')}
-             </div>
-            }  
-            {this.signatureContent()}
-           { 
-            collapsed ?  
-             <div className={`${styles['title-nav-emails']}`}>
-              <span className="lf-icon-mail">
-              </span>
-             </div> :  
-             <div className={`${styles['title-nav-emails']}`}>
-              <span className="lf-icon-mail">
-              </span>{i18n.t('sideBar.filterMenuEmail')}
-             </div>
-           }  
-            {this.emailContent()}
+             </div>  
+          }
+
+          { 
+            lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
+            <>
+               { 
+              collapsed ?  
+                <div className={`${styles['title-nav-emails']}`}>
+                 <span className="lf-icon-mail">
+                 </span>
+                </div> :  
+                <div className={`${styles['title-nav-emails']}`}>
+                 <span className="lf-icon-mail">
+                 </span>{i18n.t('sideBar.filterMenuEmail')}
+                </div>
+               }  
+                {this.emailContent()}
+            </> : 
+              collapsed ?  
+               <div 
+                className={`${styles['title-nav-emails']} ${styles['title-nav-disble']}`}
+                onClick={this.getConfirm} >
+                <span className="lf-icon-mail">
+                </span>
+               </div> :  
+               <div 
+                className={`${styles['title-nav-emails']} ${styles['title-nav-disble']}`}
+                onClick={this.getConfirm} >
+                <span className="lf-icon-mail">
+                </span>{i18n.t('sideBar.filterMenuEmail')}
+               </div> 
+          }
       
           <DialogComponent 
             id="confirmDialog" 
@@ -236,30 +256,6 @@ export class MenuListClass extends Component {
 
           <style jsx global>
             {` 
-              // .e-acrdn-header {
-              //  padding: 12px 8px 7px 10px !important;
-              //  background: #001978;
-              // }
-              // .e-accordion .e-acrdn-item .e-acrdn-header:hover {
-              //   background: #001978;
-              // }
-              // .e-accordion .e-acrdn-item .e-acrdn-header:active {
-              //   background: #001978 !important;
-              // }
-              // .e-accordion .e-acrdn-item .e-acrdn-header:focus {
-              //   background: #001978 !important;
-              // }
-              // .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header, 
-              // .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header {
-              //   background: #001978;
-              // }
-              // .e-accordion .e-acrdn-item 
-              // .e-acrdn-header .e-toggle-icon {
-              //   display: none;
-              // }
-              // .e-accordion .e-acrdn-item .e-acrdn-panel .e-acrdn-content {
-              //   padding: 0px;
-              // }
               #noServiceDialog_dialog-header, #noServiceDialog_title, #noServiceDialog_dialog-content, .e-footer-content{
                 background: #c5343f;
                 color: #fff;

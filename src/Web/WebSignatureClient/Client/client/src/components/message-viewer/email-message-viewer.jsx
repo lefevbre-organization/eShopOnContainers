@@ -9,13 +9,10 @@ import styles from './message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
 import { 
-  downloadSignedDocument,  
-  downloadSignedDocument2, 
   downloadTrailDocument, 
   downloadTrailDocument2,
-  downloadAttachments2,
   cancelSignature,
-   cancelSignature2 
+  cancelSignature2 
 } from "../../services/api-signaturit";
 import EmailList from './email-list/email-list';
 import Details from './details/details';
