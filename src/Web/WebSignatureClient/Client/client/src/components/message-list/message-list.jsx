@@ -639,8 +639,14 @@ class MessageList extends Component {
         });
     }
 
-    dialogOpen(){
-        this.alertDialogInstance.cssClass = 'e-fixed';
+    dialogOpen(instance){
+        switch (instance) {
+            case "alertDialog":
+                (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
+                break;
+            default:
+                break;
+        }
     }
 
     render() {
@@ -762,7 +768,7 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("infoDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
                     //position={ this.position }
@@ -778,7 +784,7 @@ class MessageList extends Component {
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
                     buttons={confirmButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("confirmDialog")} 
                     close={this.dialogClose}
                 />
                 <DialogComponent 
@@ -791,7 +797,7 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("alertDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
                     //isModal={true}

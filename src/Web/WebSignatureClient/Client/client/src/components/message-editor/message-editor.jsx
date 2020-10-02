@@ -99,8 +99,8 @@ class MessageEditor extends Component {
     this.onChangeReminder = this.onChangeReminder.bind(this);
     this.onChangeExpiration = this.onChangeExpiration.bind(this);
 
-    this.dialogClose = this.dialogClose;
-    this.dialogOpen = this.dialogOpen;
+    this.dialogClose = this.dialogClose.bind(this);
+    this.dialogOpen = this.dialogOpen.bind(this);
     this.animationSettings = { effect: 'None' };
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
@@ -267,9 +267,15 @@ class MessageEditor extends Component {
     });
   }
 
-  dialogOpen(){
-      this.alertDialogInstance.cssClass = 'e-fixed';
-  }
+  dialogOpen(instance){
+    switch (instance) {
+        case "alertDialog":
+            (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
+            break;
+        default:
+            break;
+    }
+}
 
   onDiscardSignatureOk(){
     const {close, lefebvre, application} = this.props
@@ -516,8 +522,8 @@ class MessageEditor extends Component {
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           //target='#target' 
           //buttons={this.alertButtons} 
-          open={this.dialogOpen.bind(this)} 
-          close={this.dialogClose.bind(this)}
+          open={this.dialogOpen("info2Dialog")} 
+          close={this.dialogClose}
           showCloseIcon={true}
           //position={ this.position }
         />
@@ -532,7 +538,7 @@ class MessageEditor extends Component {
           ref={dialog => this.confirmDialogInstance = dialog} 
           //target='#target' 
           buttons={confirmButtons} 
-          open={this.dialogOpen.bind(this)} 
+          open={this.dialogOpen("confirmDialog")} 
           close={this.dialogClose.bind(this)}
         />
         <DialogComponent 
@@ -545,8 +551,8 @@ class MessageEditor extends Component {
           //content={RolSelector} 
           ref={dialog => this.rolDialog = dialog} 
           //target='#target' 
-          open={this.dialogOpen.bind(this)} 
-          close={this.dialogClose.bind(this)}
+          open={this.dialogOpen("rolDialog")} 
+          close={this.dialogClose}
         >
           <RolSelector 
           recipients={to}
