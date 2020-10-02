@@ -5,9 +5,9 @@
     "id_signaturit": "null",
     "configuration": {
         "application_texts": {
-            "sign_button": "FIRMAR DOCUMENTO",
+            "sign_button": "FIRMAR",
             "send_button": "ENVIAR",
-            "open_sign_button": "FIRMAR DOCUMENTO",
+            "open_sign_button": "FIRMAR",
             "open_email_button": "ABRIR",
             "terms_and_conditions": "Términos y condiciones"
         },

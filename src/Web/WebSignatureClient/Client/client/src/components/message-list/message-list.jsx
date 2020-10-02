@@ -1500,6 +1500,22 @@ class MessageList extends Component {
                         border: 1px solid #001970;
                         color: #001970;
                     }
+
+                    [type="checkbox"]:indeterminate+span:not(.lever___3ADj_):before {
+                        transform: rotate(1deg);
+                        top: 2px;
+                        left: 2px;
+                        border: none;
+                        margin-top: 2px;
+                    }
+
+                    [type="checkbox"]:checked+span:not(.lever___3ADj_):before {
+                        transform: rotate(6deg);
+                        top: 2px;
+                        left: -1px;
+                        border: none;
+                        margin-top: 2px;
+                    }
                 `}
                 </style>
             </div>
