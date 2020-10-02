@@ -466,12 +466,12 @@ class MessageList extends Component {
        
     }
 
-    recipientsGridTemplate(props){
+    recipientsGridTemplate(props) {
         if (props.Destinatarios === undefined){
-            return null
+            return null;
         }
         let firstEmail = props.Destinatarios.split(';')[0];
-        //var chunks = props.Destinatarios.split(' ');
+        var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
 
         switch (props.Estado) {
@@ -495,35 +495,36 @@ class MessageList extends Component {
         }
 
         let recipientsList = [];
+        
         let data;
         if (this.props.selectedService == 'signature'){
             data = this.props.signatures.find(s => s.id === props.Id)
         } else {
             data = this.props.emails.find(e => e.id === props.Id)
         }
-        
+
         if (data){
-            var recipientsInfo = this.getRecipientsInfo(data);
-            recipientsInfo.forEach((recipient, i) => {
-                console.log(recipient);
-                if (i === recipientsInfo.length -1 ) {
+            var signersInfo = this.getSignersInfo(signature);
+            signersInfo.forEach((signer, i) => {
+                //console.log(signer);
+                if (i === signersInfo.length -1 ){
                     recipientsList.push(
                         {
-                            text: (recipient.name === '') ? recipient.email.split('@')[0] : recipient.name,
+                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
                             cssClass: 'test'
                         },
                         {
-                            text: recipient.email
+                            text: signer.email
                         }
                     )  
                 } else {
                     recipientsList.push(
                         {
-                            text: (recipient.name === '') ? recipient.email.split('@')[0] : recipient.name,
+                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
                             cssClass: 'test'
                         },
                         {
-                            text: recipient.email
+                            text: signer.email
                         },
                         {   
                             separator: true
@@ -534,15 +535,24 @@ class MessageList extends Component {
         }
         
         //console.log(props);
-        return (
-            // <div>
-            //     <span className='email'>
-            //         {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail}
-            //     </span>                
-            //     <span className={`bola-firmantes ${recipientsClass}`}>
-            //         <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
-            //     </span>
-            // </div>
+        return ( 
+
+            <div id='container' style={{width: '100%', textAlign: 'center'}}>
+                <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                    {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
+                    {firstEmail}
+                </div>     
+                {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
+                <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>
+                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
+                </div>
+            </div>
+        )
+    }
+        
+        //console.log(props);
+        return ( 
+
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
                 <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                     {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
@@ -645,18 +655,6 @@ class MessageList extends Component {
             this.props.setTitle(i18n.t('signatureViewer.title'));
             this.props.signatureClicked(signature);
         }
-        
-        // this.setState(
-        //   { rowSelected: event.data.idRelated + '_' + event.data.idType },
-        //   () => {
-        //     this.props.onSelectedEntity &&
-        //       this.props.onSelectedEntity({
-        //         ...event.data,
-        //         id: event.data.idRelated
-        //       });
-        //     this.gridRef && this.gridRef.refresh();
-        //   }
-        // );
     }
 
     toolbarClick(event){
@@ -738,8 +736,14 @@ class MessageList extends Component {
         });
     }
 
-    dialogOpen(){
-        this.alertDialogInstance.cssClass = 'e-fixed';
+    dialogOpen(instance){
+        switch (instance) {
+            case "alertDialog":
+                (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
+                break;
+            default:
+                break;
+        }
     }
 
     isEmpty(obj) {
@@ -911,16 +915,19 @@ class MessageList extends Component {
         }
         console.log('selectedService', this.props.selectedService);
         //var firmas = this.props.signatures;
+
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
         var emails = (this.props.emails && this.props.emails.length > 0) ? this.getEmails(this.props.emails) : [{}];
         var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
+
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
         const position = { X: 160, Y: 240 };
-        return( (selectedServices && selectedServices.length > 0) ?
+
+        return( 
             <div className={styles['main-grid']}>
             <div>
                 <GridComponent 
@@ -968,7 +975,7 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("infoDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
                     //position={ this.position }
@@ -984,7 +991,7 @@ class MessageList extends Component {
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
                     buttons={confirmButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("confirmDialog")} 
                     close={this.dialogClose}
                 />
                 <DialogComponent 
@@ -997,7 +1004,7 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("alertDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
                     //isModal={true}
@@ -1511,7 +1518,6 @@ class MessageList extends Component {
                 `}
                 </style>
             </div>
-            : null
         )
     }
 
