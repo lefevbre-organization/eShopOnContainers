@@ -426,10 +426,10 @@ class MessageList extends Component {
 
     recipientsGridTemplate(props){
         if (props.Destinatarios === undefined){
-            return null
+            return null;
         }
         let firstEmail = props.Destinatarios.split(';')[0];
-        //var chunks = props.Destinatarios.split(' ');
+        var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
 
         switch (props.Estado) {
@@ -453,7 +453,7 @@ class MessageList extends Component {
         }
 
         let recipientsList = [];
-        let signature = this.props.signatures.find(s => s.id === props.Id)
+        let signature = this.props.signatures.find(s => s.id === props.Id);
 
         if (signature ){
             var signersInfo = this.getSignersInfo(signature);
@@ -487,15 +487,8 @@ class MessageList extends Component {
         }
         
         //console.log(props);
-        return (
-            // <div>
-            //     <span className='email'>
-            //         {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail}
-            //     </span>                
-            //     <span className={`bola-firmantes ${recipientsClass}`}>
-            //         <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
-            //     </span>
-            // </div>
+        return ( 
+
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
                 <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                     {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
@@ -571,19 +564,8 @@ class MessageList extends Component {
             this.props.setTitle(i18n.t('signatureViewer.title'));
             this.props.signatureClicked(signature);
         }
-        
-        // this.setState(
-        //   { rowSelected: event.data.idRelated + '_' + event.data.idType },
-        //   () => {
-        //     this.props.onSelectedEntity &&
-        //       this.props.onSelectedEntity({
-        //         ...event.data,
-        //         id: event.data.idRelated
-        //       });
-        //     this.gridRef && this.gridRef.refresh();
-        //   }
-        // );
-      }
+    }
+
 
     toolbarClick(event){
         if (this.grid && event.item.id.includes('pdfexport') ) {
@@ -726,13 +708,13 @@ class MessageList extends Component {
         }
 
         //var firmas = this.props.signatures;
-        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
+        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
         const position = { X: 160, Y: 240 };
-        return( (firmas && firmas.length > 0) ?
+        return( 
             <div className={styles['main-grid']}>
             <div>
                 <GridComponent 
@@ -1321,7 +1303,6 @@ class MessageList extends Component {
                 `}
                 </style>
             </div>
-            : null
         )
     }
 

@@ -324,7 +324,7 @@ class SideBar extends Component {
           this.setState({ hideAlertDialog: true });
           // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-            if (lefebvre.userId === 'E1654569' || lefebvre.userId === 'E1621396'){
+            if (lefebvre.userId === 'E1654569'){
               this.props.setAvailableSignatures(response.data);
               this.props.setTitle(t('messageEditor.title'));
               this.props.newMessage(lefebvre.sign);
@@ -345,7 +345,7 @@ class SideBar extends Component {
           this.setState({ hideAlertDialog: true });
           // this.props.setAvailableSignatures(1);
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-            if (lefebvre.userId === 'E1654569' || lefebvre.userId === 'E1621396'){
+            if (lefebvre.userId === 'E1654569'){
               this.props.newMessage(lefebvre.sign);
               this.props.setTitle(t('messageEditor.title'));
               this.props.setUserApp('lefebvre');
