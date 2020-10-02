@@ -495,7 +495,7 @@ class MessageList extends Component {
         }
 
         let recipientsList = [];
-        
+
         let data;
         if (this.props.selectedService == 'signature'){
             data = this.props.signatures.find(s => s.id === props.Id)
@@ -550,22 +550,6 @@ class MessageList extends Component {
         )
     }
         
-        //console.log(props);
-        return ( 
-
-            <div id='container' style={{width: '100%', textAlign: 'center'}}>
-                <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
-                    {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
-                    {firstEmail}
-                </div>     
-                {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
-                <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>
-                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{recipientsInfo.length}</DropDownButtonComponent>
-                </div>
-            </div>
-        )
-    }
-
     dropDownRecipientRender(args){
         if (args.item.text.includes('@')){
             args.element.style.color = '#777777';
