@@ -498,9 +498,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return idUserLong;
         }
 
+        private long? GetIntIdCompany(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
+        }
+
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
             AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
+            AddClaimToPayload(payload, tokenRequest.idClienteLef, nameof(tokenRequest.idClienteLef));
             AddClaimToPayload(payload, tokenRequest.roles, nameof(tokenRequest.roles));
             AddClaimToPayload(payload, tokenRequest.name, nameof(tokenRequest.name));
             AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
@@ -626,6 +633,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     result.data.valid = true;
                     token.idClienteNavision = userLefebvreResult?.data?._idEntrada;
+                    token.idClienteLef = userLefebvreResult?.data?._idClienteNav;
                     token.name = userLefebvreResult?.data?.name;
                     token.roles = new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" };
                 }
@@ -673,6 +681,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     TraceOutputMessage(result.errors, $"Error get user from lexon", null, "Error Get Lexon Token");
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
             }
+            else
+            {
+                tokenRequest.idUserApp = tokenRequest.idClienteLef.ToString();
+            }
+
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
                 tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
 
