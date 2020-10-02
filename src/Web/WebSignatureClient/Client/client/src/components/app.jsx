@@ -796,7 +796,7 @@ class App extends Component {
     })
     .catch(err => { throw new Error(err);} );
 
-    if (lefebvre.roles.includes('Email Certificado')){
+    if (lefebvre && lefebvre.roles && lefebvre.roles.includes('Email Certificado')){
       this.props.preloadEmails(lefebvre.userId)
       .then(// to do
         )

@@ -473,6 +473,7 @@ class MessageList extends Component {
         let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
+        let signersInfo;
 
         switch (props.Estado) {
             case i18n.t('signaturesGrid.statusCancelled'):
@@ -504,7 +505,7 @@ class MessageList extends Component {
         }
 
         if (data){
-            var signersInfo = this.getSignersInfo(signature);
+            signersInfo = this.getRecipientsInfo(data);
             signersInfo.forEach((signer, i) => {
                 //console.log(signer);
                 if (i === signersInfo.length -1 ){
@@ -544,7 +545,7 @@ class MessageList extends Component {
                 </div>     
                 {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
                 <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>
-                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
+                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{(signersInfo && signersInfo.length) ? signersInfo.length : ''}</DropDownButtonComponent>
                 </div>
             </div>
         )
