@@ -31,7 +31,8 @@ const LoginComponents = (children) => {
             justifyContent: 'space-between',
           }}>
           <div className='text-center login-title-space'>
-            <p className='lefebvre-mail-service'>FIRMA</p>
+            <img className='logo-firma' src={"/assets/images/LogoLefebvreFirma.png"} />  
+            {/* <p className='lefebvre-mail-service'>FIRMA</p> */}
           </div>
           <div className='row' style={{ flexDirection: 'column' }}>
             <div className='input-group login-input-group'>
@@ -315,6 +316,11 @@ const LoginComponents = (children) => {
           height: 42px;
           background-color: #7b7b7d !important;
           border-radius: inherit !important;
+        }
+
+        .logo-firma{
+          width: 45%;
+          padding-bottom: 15px;
         }
             
         `}

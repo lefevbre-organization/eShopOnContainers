@@ -245,6 +245,10 @@
   "signatureNotFoundCentinela": {
     "text": "La solicitud de firma que quiere visualizar no existe. Por favor vuelva a Centinela y realice una nueva solicitud."
   },
+  "noCreditsModal":{
+    "text": "Lo sentimos has agotado el número máximo de firmas contratadas.",
+    "text2": "Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>"
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
@@ -362,5 +366,9 @@
     "centinela": "Contactos Centinela",
     "search": "Buscar un contacto",
     "selected": "seleccionados"
+  },
+  "menu-minihub": {
+    "products": "Productos Lefebvre",
+    "footer": "Utiliza este menú para iniciar directamente otro producto de Lefebvre."
   }
 }

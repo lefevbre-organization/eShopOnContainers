@@ -425,6 +425,9 @@ class MessageList extends Component {
 
 
     recipientsGridTemplate(props){
+        if (props.Destinatarios === undefined){
+            return null;
+        }
         let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
@@ -450,7 +453,7 @@ class MessageList extends Component {
         }
 
         let recipientsList = [];
-        let signature = this.props.signatures.find(s => s.id === props.Id)
+        let signature = this.props.signatures.find(s => s.id === props.Id);
 
         if (signature ){
             var signersInfo = this.getSignersInfo(signature);
@@ -484,15 +487,8 @@ class MessageList extends Component {
         }
         
         //console.log(props);
-        return (
-            // <div>
-            //     <span className='email'>
-            //         {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail}
-            //     </span>                
-            //     <span className={`bola-firmantes ${recipientsClass}`}>
-            //         <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
-            //     </span>
-            // </div>
+        return ( 
+
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
                 <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                     {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
@@ -561,21 +557,15 @@ class MessageList extends Component {
 
     onRowSelected(event) {
         console.log(event);
-        var signature = this.props.signatures.find(s => s.id === event.data.Id);
-        this.props.setTitle(i18n.t('signatureViewer.title'));
-        this.props.signatureClicked(signature);
-        // this.setState(
-        //   { rowSelected: event.data.idRelated + '_' + event.data.idType },
-        //   () => {
-        //     this.props.onSelectedEntity &&
-        //       this.props.onSelectedEntity({
-        //         ...event.data,
-        //         id: event.data.idRelated
-        //       });
-        //     this.gridRef && this.gridRef.refresh();
-        //   }
-        // );
-      }
+        if (event.target.className !== "e-btn-icon lf-icon-kebab-menu" //Actions
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // Signers
+            ){
+            var signature = this.props.signatures.find(s => s.id === event.data.Id);
+            this.props.setTitle(i18n.t('signatureViewer.title'));
+            this.props.signatureClicked(signature);
+        }
+    }
+
 
     toolbarClick(event){
         if (this.grid && event.item.id.includes('pdfexport') ) {
@@ -649,8 +639,14 @@ class MessageList extends Component {
         });
     }
 
-    dialogOpen(){
-        this.alertDialogInstance.cssClass = 'e-fixed';
+    dialogOpen(instance){
+        switch (instance) {
+            case "alertDialog":
+                (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
+                break;
+            default:
+                break;
+        }
     }
 
     render() {
@@ -718,13 +714,13 @@ class MessageList extends Component {
         }
 
         //var firmas = this.props.signatures;
-        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
+        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
         const position = { X: 160, Y: 240 };
-        return( (firmas && firmas.length > 0) ?
+        return( 
             <div className={styles['main-grid']}>
             <div>
                 <GridComponent 
@@ -739,9 +735,9 @@ class MessageList extends Component {
                     allowTextWrap={false}
                     height='100%'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: [5, 10, 20, 50, 75, 100] }}//pageSizeList: [8,12,9,5]}} 
-                    // rowSelected={event => {
-                    //     this.onRowSelected(event);
-                    // }}
+                    rowSelected={event => {
+                        this.onRowSelected(event);
+                    }}
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
                     // locale={navigator.language}
@@ -772,7 +768,7 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("infoDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
                     //position={ this.position }
@@ -788,7 +784,7 @@ class MessageList extends Component {
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
                     buttons={confirmButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("confirmDialog")} 
                     close={this.dialogClose}
                 />
                 <DialogComponent 
@@ -801,7 +797,7 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen} 
+                    open={this.dialogOpen("alertDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
                     //isModal={true}
@@ -1310,10 +1306,25 @@ class MessageList extends Component {
                         border: 1px solid #001970;
                         color: #001970;
                     }
+
+                    [type="checkbox"]:indeterminate+span:not(.lever___3ADj_):before {
+                        transform: rotate(1deg);
+                        top: 2px;
+                        left: 2px;
+                        border: none;
+                        margin-top: 2px;
+                    }
+
+                    [type="checkbox"]:checked+span:not(.lever___3ADj_):before {
+                        transform: rotate(6deg);
+                        top: 2px;
+                        left: -1px;
+                        border: none;
+                        margin-top: 2px;
+                    }
                 `}
                 </style>
             </div>
-            : null
         )
     }
 

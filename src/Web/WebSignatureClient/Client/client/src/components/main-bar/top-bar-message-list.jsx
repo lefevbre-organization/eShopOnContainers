@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import {translate} from 'react-i18next';
 import ButtonModules from './button-modules';
 import ButtonUser from './button-user';
+import ButtonMinihub from './button-minihub';
 import mainCss from '../../styles/main.scss';
 import styles from './top-bar-message-list.scss';
 import {Link} from "react-router-dom";
@@ -11,6 +12,7 @@ import { setMessageFilterKey, setMessageFilterKeyword } from "../../actions/appl
 
 
 const picUrl = 'assets/images/LogoLefebvre.png';
+const picUrl2 = '/assets/images/LogoLefebvreFirma_negativo.png';
 
 export class TopBarMessageList extends React.Component{
     constructor(props){
@@ -23,7 +25,7 @@ export class TopBarMessageList extends React.Component{
         
             <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-start']}  ${styles['modules-item-custom']}`}>  
                     <div>
-                        <Link to="/"><img className={`${styles['main-header-img']}`} border="0" alt="Lefebvre" src={picUrl}></img></Link>
+                        <Link to="/"><img className={`${styles['main-header-img']}`} border="0" alt="Lefebvre" src={picUrl2}></img></Link>
                     </div>
 
                 {/* <div className={`${styles['main-header-imap-div']}`}>
@@ -59,7 +61,7 @@ export class TopBarMessageList extends React.Component{
             <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-end']}  ${styles['modules-item-custom']}`}>
                         <ButtonUser className={`${styles['modules-item-custom']}`} />
                         <div className={`${styles['modules-item-custom-space']}`}></div>
-                        <ButtonModules className={`${styles['modules-item-custom']}`} />
+                        <ButtonMinihub className={`${styles['modules-item-custom']}`} />
             </section>              
         </div>
       )       
