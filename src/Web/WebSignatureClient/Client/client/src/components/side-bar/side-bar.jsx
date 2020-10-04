@@ -84,7 +84,7 @@ class SideBar extends Component {
 
 
   render() {
-    const { t, collapsed } = this.props;
+    const { t, collapsed, lefebvre } = this.props;
     const { dragOver } = this.state;
 
     const contenido = `
@@ -204,6 +204,7 @@ class SideBar extends Component {
           <SendingTypeSelector 
             onNewMessage={this.handleOnNewMessage}
             onNewEmailCertificate={this.handleOnNewEmailCertificate}
+            lefebvre={lefebvre}
           />
         </DialogComponent>
         <DialogComponent 

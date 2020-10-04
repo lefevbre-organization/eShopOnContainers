@@ -444,7 +444,7 @@ class App extends Component {
     console.log('APP.RENDERCONTENT()');
     console.log('APP.RENDERCONTENT().state.guidNotFound:'+ this.state.guidNotFound);
     const { application } = this.props;
-    console.log('renderContent', application.newMessage);
+    console.log('application.newMessage', application.newMessage);
     // const content = `
     //   <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
     //   <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
@@ -469,22 +469,21 @@ class App extends Component {
     //   </div>
     // `;
     
-
     if (
       application.newMessage &&
       Object.keys(application.newMessage).length > 0
       && application.newMessage.sendingType == 'signature'
     ) {
       return <MessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
-    } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
-      return <MessageViewer className={styles['message-viewer']} />;
-    } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {
-      return <EmailMessageViewer className={styles['message-viewer']} />;
     } else if(application.newMessage &&
       Object.keys(application.newMessage).length > 0
       && application.newMessage.sendingType == 'emailCertificate') {
         return <EmailMessageEditor />;
-      }
+    } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
+      return <MessageViewer className={styles['message-viewer']} />;
+    } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {
+      return <EmailMessageViewer className={styles['message-viewer']} />;
+    } 
     return (
       <Fragment>
         <MessageList className={styles['message-grid']} guidNotFound={this.state.guidNotFound} onShowGuidNotFound={this.resetGuidNotFound}/>
