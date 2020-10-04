@@ -436,7 +436,7 @@ export class MessageViewer extends Component {
           //target='#target' 
           buttons={this.confirmButtons} 
           open={() => this.dialogOpen} 
-          close={() => this.dialogClose}
+          close={this.dialogClose.bind(this)}
         ></DialogComponent>
         <style global jsx>
           {`
