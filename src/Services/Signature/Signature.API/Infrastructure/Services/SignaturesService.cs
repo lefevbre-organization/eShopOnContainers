@@ -35,6 +35,8 @@
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
         private readonly int _timeout;
+        private readonly int _timeoutGetSendFile;
+
 
         //public UsersService(
         //        IOptions<SignatureSettings> settings
@@ -59,6 +61,7 @@
             //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
             _configuration = configuration;
             _timeout = 5000;
+            _timeoutGetSendFile = 90000;
 
         }
 
@@ -197,7 +200,7 @@
             var client = new RestClient(url);
             var request = new RestRequest(Method.GET);
 
-            client.Timeout = 5000;
+            client.Timeout = _timeoutGetSendFile;
 
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
@@ -269,7 +272,7 @@
             var request = new RestRequest(Method.POST);
             var values = new Dictionary<string, string>();
 
-            client.Timeout = -1;
+            client.Timeout = _timeoutGetSendFile;
             
             values.Add("idNavision", user);
             values.Add("conceptId", cenDocId);
@@ -317,6 +320,8 @@
             var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/cancelation/{cenDocId}";
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
+
+            client.Timeout = _timeout;
 
             Console.WriteLine($"Call to {url}");
 
