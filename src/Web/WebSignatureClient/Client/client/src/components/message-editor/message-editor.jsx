@@ -1113,8 +1113,8 @@ class MessageEditor extends Component {
     
     const addAttachment = (file, dataUrl) => {
        const fileType = file.name.split('.');
-        if(fileType[1] == 'pdf' || fileType[1] == 'docx' 
-        || fileType[1] == 'doc') {
+        if(fileType[fileType.length-1] == 'pdf' || fileType[fileType.length-1] == 'docx' 
+        || fileType[fileType.length-1] == 'doc') {
 
           const newAttachment = {
             fileName: file.name,
@@ -1126,7 +1126,7 @@ class MessageEditor extends Component {
             ),
             };
 
-          if (fileType[1] === 'pdf'){
+          if (fileType[fileType.length-1] === 'pdf'){
             const pdfjsLib = require('pdfjs-dist');
             pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
 
