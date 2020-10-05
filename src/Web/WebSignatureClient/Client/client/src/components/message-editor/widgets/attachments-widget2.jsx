@@ -119,7 +119,7 @@ class AttachmentsWidget extends Component{
                     ),
                 };
 
-                if (fileType[1] === 'pdf'){
+                if (fileType[fileType.length-1] === 'pdf'){
                     const pdfjsLib = require('pdfjs-dist');
                     pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
         

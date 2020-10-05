@@ -349,8 +349,8 @@
     "title": "SIGNATURE DETAILS"
   },
   "completedPage":{
-    "title": "Document has been signed successfully.",
-    "subtitle": "A copy has been sent to your email account.",
+    "title": "Document has been processed successfully.",
+    "subtitle": "A copy will be sent to your email account when the signing process ends.",
     "footer": "Need help?"
   },
   "expiredPage":{

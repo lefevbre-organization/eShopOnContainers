@@ -64,8 +64,8 @@ export class MessageViewer extends Component {
       auth: '',
       signer: 0,
     };
-    this.dialogClose = this.dialogClose;
-    this.dialogOpen = this.dialogOpen;
+    this.dialogClose = this.dialogClose.bind(this);
+    this.dialogOpen = this.dialogOpen.bind(this);
 
     //Sin firmas 
     this.animationSettings = { effect: 'None' };
@@ -220,8 +220,17 @@ export class MessageViewer extends Component {
   });
   }
 
-  dialogOpen(){
-    this.alertDialogInstance.cssClass = 'e-fixed';
+  dialogOpen(instance){
+    switch (instance) {
+      case "alertDialog":
+        (this.alertDialogInstance) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;   
+        break;
+      case "confirmDialog":
+        (this.confirmDialogInstance) ? this.confirmDialogInstance.cssClass = 'e-fixed' : null;
+        break;
+      default:
+        break;
+    }
   }
 
   getDaysBetweenDates(date1, date2) {
@@ -419,8 +428,8 @@ export class MessageViewer extends Component {
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           //target='#target' 
           //buttons={this.alertButtons} 
-          open={this.dialogOpen.bind(this)} 
-          close={this.dialogClose.bind(this)}
+          open={this.dialogOpen("infoDialog")} 
+          close={this.dialogClose}
           showCloseIcon={true}
           //position={ this.position }
         ></DialogComponent>
@@ -435,8 +444,8 @@ export class MessageViewer extends Component {
           ref={dialog => this.confirmDialogInstance = dialog} 
           //target='#target' 
           buttons={this.confirmButtons} 
-          open={() => this.dialogOpen} 
-          close={this.dialogClose.bind(this)}
+          open={this.dialogOpen("confirmDialog")} 
+          close={this.dialogClose}
         ></DialogComponent>
         <style global jsx>
           {`

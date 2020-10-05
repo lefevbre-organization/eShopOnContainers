@@ -369,8 +369,8 @@
     "title": "DETALLES DE LA FIRMA"
   },
   "completedPage":{
-    "title": "El documento se ha firmado correctamente.",
-    "subtitle": "Te hemos enviado una copia a tu dirección de email.",
+    "title": "El documento se ha procesado correctamente.",
+    "subtitle": "Cuando finalice el proceso de firma recibirás una copia en tu correo electrónico.",
     "footer": "¿Necesitas ayuda?"
   },
   "expiredPage":{

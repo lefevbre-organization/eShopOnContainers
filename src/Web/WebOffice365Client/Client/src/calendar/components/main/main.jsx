@@ -508,7 +508,13 @@ export class Main extends Component {
 
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
+                var dateStart = new Date(start);
+                start = dateStart;
+               
+                
                 let end = event.end.dateTime;
+                var dateEnd = new Date(end);
+                end = dateEnd;
                 if (!when) {
                     when = event.start.date;
                     start = event.start.date;
@@ -559,7 +565,9 @@ export class Main extends Component {
                     Description: event.description,
                     StartTime: new Date(start),
                     EndTime: new Date(end),
-                    IsAllDay: !event.start.dateTime,
+                    //StartTimezone: 'Europe/Paris',
+                    //EndTimezone: 'Europe/Paris',
+                    IsAllDay: event.IsAllDay,
                     RecurrenceRule: recurrenceRule,
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
@@ -747,6 +755,17 @@ export class Main extends Component {
 
     buildEventoGoogle(values) {
 
+
+        let timezoneEnd = 'Europe/Madrid'
+        if (values.EndTimezone != undefined) {
+            timezoneEnd = values.EndTimezone
+        }
+
+        let timezoneStart = 'Europe/Madrid'
+        if (values.StartTimezone != undefined) {
+            timezoneStart = values.StartTimezone
+        }
+
         //Event basic data
         var event = {
             'summary': values.Subject,
@@ -755,14 +774,14 @@ export class Main extends Component {
 
             'start': {
                 'dateTime': values.StartTime,
-                'timeZone': 'Europe/Madrid',
+                'timeZone': timezoneStart,
             },
             'end': {
                 'dateTime': values.EndTime,
-                'timeZone': 'Europe/Madrid',
+                'timeZone': timezoneEnd,
             },
 
-           // 'isAllDay': values.IsAllDay,
+            'isAllDay': values.IsAllDay,
 
             
 
@@ -1007,7 +1026,7 @@ export class Main extends Component {
         if (args.type === 'Editor') {
 
             //office365 calendar is not enabled recurrence count
-            this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
+            this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily'];
 
            // this.scheduleObj.eventWindow.recurrenceEditor.untilDateObj.enabled= false
 
@@ -1386,20 +1405,22 @@ export class Main extends Component {
                 }
             })
             .catch(error => {
-                if (error.result.error.errors[0] != undefined) {
-                    if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
-                        error.result.error.errors[0].reason == "forbidden") {
-                        this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
-                        this.scheduleObj.refreshEvents();                       
-                        this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                        console.log('error ->', error);                       
-                        return;
+                if (error.result != undefined) {
+                    if (error.result.error.errors[0] != undefined) {
+                        if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
+                            error.result.error.errors[0].reason == "forbidden") {
+                            this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
+                            this.scheduleObj.refreshEvents();                       
+                            this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
+                            console.log('error ->', error);                       
+                            return;
+                        }
                     }
+                    else {
+                        this.toastObj.show(this.toasts[2]);
+                        console.log('error ->', error);
+                        }  
                 }
-                else {
-                    this.toastObj.show(this.toasts[2]);
-                    console.log('error ->', error);
-                }    
             })
     }
 
@@ -1774,7 +1795,8 @@ export class Main extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent
+                                            <ScheduleComponent    
+                                               
                                                 //delayUpdate='false' 
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'

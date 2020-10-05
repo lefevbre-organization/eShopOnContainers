@@ -470,11 +470,14 @@ function listEventsParser(list) {
                     switch (key2) {
                         case 'endDate':
                             value = list[i].recurrence.range[key2]
-                            key2 = key2.replace("endDate", "UNTIL");
-                            var dateStartTime = new Date(value);
-                            var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
-                            var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
-                            str = (str + key2 + "=" + ExcRecurenceDate + ";");
+                            if (value != "0001-01-01") {
+                                key2 = key2.replace("endDate", "UNTIL");
+                                var dateStartTime = new Date(value);
+                                // dateStartTime = dateStartTime.setDate(dateStartTime.getDate() + 1);
+                                var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
+                                var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                                str = (str + key2 + "=" + ExcRecurenceDate + ";");
+                            }                           
                             break;
                         default:
                         // code block
@@ -509,14 +512,31 @@ function listEventsParser(list) {
             }
 
 
+            //let StartDate;
+            //let EndDate;
+
+            //if (list[i].isAllDay) {
+            //    StartDate = list[i].start.dateTime;
+            //    EndDate = list[i].end.dateTime;
+            //}
+            //else {
+            //    StartDate: convertUTCDateToLocalDate(new Date(list[i].start.dateTime))
+            //    EndDate: convertUTCDateToLocalDate(new Date(list[i].end.dateTime))
+            //}           
+
+
             listParse.push({                   
                 id: list[i].id,
                 summary: list[i].subject,
                 Location: list[i].location.displayName,
                 Description: list[i].bodyPreview,
-                start: { dateTime: list[i].start.dateTime },
-                end: { dateTime: list[i].end.dateTime },
-                IsAllDay: list[i].IsAllDay,
+                //start: { dateTime: StartDate, timeZone: list[i].start.timeZone },
+                //end: { dateTime: EndDate, timeZone: list[i].end.timeZone },
+                start: { dateTime: convertUTCDateToLocalDate(new Date(list[i].start.dateTime), list[i].isAllDay), timeZone: list[i].start.timeZone },
+                end: { dateTime: convertUTCDateToLocalDate(new Date(list[i].end.dateTime), list[i].isAllDay), timeZone: list[i].end.timeZone },
+                //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
+                //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
+                IsAllDay: list[i].isAllDay,
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
@@ -564,6 +584,23 @@ function returnCreateEventParser(list) {
 function EventParser(event) {
     let eventParse;
 
+    //var localZone = TimeZone.CurrentTimeZone;
+    //var timezone = localZone.StandardName;
+
+    //Start = new DateTimeTimeZone { DateTime = eventDate, TimeZone = timezone },
+    //End = new DateTimeTimeZone { DateTime = eventDate.AddDays(1), TimeZone = timezone },
+
+    var startDate = new Date(event.start.dateTime);
+    var endDate = new Date(event.end.dateTime);
+
+   
+    
+    if (event.isAllDay) {  
+        startDate = moment(startDate).format('YYYY-MM-DD');
+        endDate = moment(endDate).format('YYYY-MM-DD')
+    }
+
+
     eventParse = {       
 
         subject: event.summary,
@@ -572,18 +609,18 @@ function EventParser(event) {
             content: event.description
         },
         start: {
-            dateTime: event.start.dateTime,
-            timeZone: 'Europe/Paris',
+            dateTime: startDate,
+            timeZone: event.start.timeZone,
         },
         end: {
-            dateTime: event.end.dateTime,
-            timeZone: 'Europe/Paris',
+            dateTime: endDate,
+            timeZone: event.end.timeZone,
         },
         location: {
             displayName: event.location
         },      
 
-        isAllDay: event.isAllDay,
+        IsAllDay: event.isAllDay
     };
 
     // Recurrence
@@ -601,7 +638,7 @@ function EventParser(event) {
                 let recJsonValue;
                // range['endDate'] = "2020-10-31"//Date.parse(event.end.dateTime);
 
-               // range['type'] = 'noEnd';
+                range['type'] = 'noEnd';
                 range['startDate'] = formatDate(event.start.dateTime);
                
                 switch (recObj[key].split("=")[0]) {
@@ -618,6 +655,7 @@ function EventParser(event) {
                         recJsonValue = recObj[key].split("=")[1]; 
                         var dateRec = recJsonValue.substring(4, 0) + "-" + recJsonValue.substring(4, 6) + "-" + recJsonValue.substring(6, 8)
                         range[recJsonKey] = dateRec; 
+                        delete range.type;
                         //range['type'] = 'noEnd';
                         break;
                     default:
@@ -658,35 +696,6 @@ function EventParser(event) {
              
     }
 
-    function formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('-');
-    }
-
-
-    //"recurrence": {
-    //    "pattern": {
-    //        "type": "weekly",
-    //            "interval": 1,
-    //                "daysOfWeek": ["Monday"]
-    //    },
-    //    "range": {
-    //        "type": "endDate",
-    //            "startDate": "2017-09-04",
-    //                "endDate": "2017-12-31"
-    //    }
-    //},
-
-
     //Atendees
     let arr = event.attendees
     let ateendeeObj = [];
@@ -714,10 +723,34 @@ function EventParser(event) {
         eventParse.categories = item;
         //event.eventype = cat
     }
-    
-   
-
-
 
     return eventParse;
+}
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+function convertUTCDateToLocalDate(date, isAllDay) {
+    var newDate = date
+    if (!isAllDay) {
+        newDate = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
+
+        var offset = date.getTimezoneOffset() / 60;
+        var hours = date.getHours();
+
+        newDate.setHours(hours - offset);
+    }  
+
+    return newDate;
 }
