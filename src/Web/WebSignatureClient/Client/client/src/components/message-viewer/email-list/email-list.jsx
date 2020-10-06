@@ -12,7 +12,7 @@ const EmailList = (props) => {
               <div className={`${props.styles['certification-email']} right ${props.styles['mt-n10']}`}>
                <span>
                 <b className="mr-1">{i18n.t('emailViewer.certification')}</b> 
-                {props.getReceiverEvent(props.signer.events[props.signer.events.length - 1].type)} 
+                {props.getReceiverEvent(props.certificationType.value)} 
                </span>
                <div className="text-right"> 
                <a href="#" onClick={() => props.downloadTrailDocument(props.emailId, props.signer.id, props.signer.file.name, props.auth)}> 

@@ -17,13 +17,22 @@ const Details = (props) => {
             <th>{i18n.t('signatureViewer.grid.status')}</th>
           </tr>            
           <tr>
-              <td className={props.styles.documento}>
+          {/* props.detail.certificates[0].file.name  */}
+              <td >
               {
                props.service == 'signature' ?  
                props.detail.documents[0].file.name
                : 
                props.detail.certificates[0].file ?
-                props.detail.certificates[0].file.name : ''
+              //  <span>{props.detail.certificates[0].file.name}</span>
+              <div>
+                <span>{props.detail.certificates[0].file.name}</span>
+                <span className={`${props.styles['bola-firmantes']} ${props.styles['gray']}`}>
+                 {props.getFiles(props.detail).length }
+                </span>
+              </div>
+              
+                : ''
               }</td>
               <td>{(props.detail.data.find(x => x.key === "subject")) ? 
               props.detail.data.find(x => x.key === "subject").value : "Sin asunto"} </td>

@@ -69,7 +69,7 @@
       "cancel": "Cancelar"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "Email certifié",
+    "filterMenuEmail": "Email certifié"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -288,14 +288,16 @@
     "option3": "Rappels par jour"
   },
   "certificatesWidget": {
-    "title": "SOUHAIT CERTIFIER:",
+    "title": "SOUHAIT CERTIFIER:"
   },
   "emailViewer": {
     "certification": "Certification:",
     "emailDelivered": "le destinataire a reçu le mail",
     "emailOpened": "le destinataire a ouvert le mail",
-    "docOpened": "le destinataire a ouvert les documents",
-    "docDownloaded": "le destinataire a téléchargé les documents",
+    "docOpened": "le destinataire a ouvert les document",
+    "openEveryDocument": "Le destinataire a ouvert tous les documents",
+    "docDownloaded": "le destinataire a téléchargé les document",
+    "downloadEveryDocument": "le destinataire a téléchargé tous les documents",
     "buttons": {
       "downloadTrail": "Télécharger audit"
     }

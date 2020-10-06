@@ -88,24 +88,25 @@ export class EmailMessageViewer extends Component {
   
 
   getReceiverEvent(receiver) {
+    console.log('getReceiverEvent', receiver);
     switch (receiver) {
-      case 'email_delivered':
+      case 'delivery':
         return (i18n.t('emailViewer.emailDelivered'));
 
-      case 'email_opened': 
+      case 'open_email': 
         return (i18n.t('emailViewer.emailOpened'));
 
-      case 'documents_opened': 
+      case 'open_document': 
       return (i18n.t('emailViewer.docOpened'));
 
-      case 'document_opened': 
-      return (i18n.t('emailViewer.docOpened'));
+      case 'open_every_document': 
+      return (i18n.t('emailViewer.openEveryDocument'));
 
-      case 'document_downloaded': 
+      case 'download_document': 
       return (i18n.t('emailViewer.docDownloaded'));
 
-      case 'documents_downloaded': 
-      return (i18n.t('emailViewer.docDownloaded'));
+      case 'download_every_document': 
+      return (i18n.t('emailViewer.downloadEveryDocument'));
       
       default:
         return (i18n.t('emailViewer.emailDelivered'));
@@ -172,6 +173,22 @@ export class EmailMessageViewer extends Component {
     return result;
   }
 
+  getFiles(email) {
+    var lookup = {};
+    var items = email.certificates;
+    var result = [];
+
+    for (var item, i = 0; item = items[i++];) {
+      var name = item.file.name;
+
+      if (!(name in lookup)) {
+        lookup[name] = 1;
+        result.push(name);
+      }
+    }
+    return result;
+  }
+
   getRecipients(email){
     var lookup = {};
     var items = email.certificates;
@@ -224,7 +241,7 @@ export class EmailMessageViewer extends Component {
  
   render() {
     const email = this.props.selectedEmail;
-    console.log('email.certificates', this.state.filterCertificates);
+
     let status;
     let status_style;
    
@@ -244,8 +261,8 @@ export class EmailMessageViewer extends Component {
 
    
     let emailConfig = email.data.find(x => x.key === "roles");
+    let certificationType = email.data.find(x => x.key === "certification_type" || x.key === "type");
 
-  
     switch (email.status) {
       case 'canceled':
         status = i18n.t('signaturesGrid.statusCancelled');
@@ -288,6 +305,7 @@ export class EmailMessageViewer extends Component {
          status={status}
          detail={email}
          getSigners={this.getRecipients}
+         getFiles={this.getFiles}
          service={'email'}
         />
         <div className={styles.clearfix}></div>
@@ -303,6 +321,7 @@ export class EmailMessageViewer extends Component {
                  key={signer.id}
                  styles={styles}
                  getReceiverEvent={this.getReceiverEvent}
+                 certificationType={certificationType}
                  getEventDate={this.getEventDate}
                  getEventStatus={this.getEventStatus}
                  getSingleEventDate={this.getSingleEventDate}

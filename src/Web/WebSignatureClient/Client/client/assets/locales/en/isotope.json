@@ -51,7 +51,7 @@
       "cancel": "Cancel"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "CERTIFIED EMAIL",
+    "filterMenuEmail": "CERTIFIED EMAIL"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -270,14 +270,16 @@
     "option3": "Weekly reminders"
   },
   "certificatesWidget": {
-    "title": "WISH TO CERTIFY THAT:",
+    "title": "WISH TO CERTIFY THAT:"
   },
   "emailViewer": {
     "certification": "Certification:",
     "emailDelivered": "the recipient has received the mail",
     "emailOpened": "the recipient has opened the mail",
-    "docOpened": "the recipient has opened the documents",
-    "docDownloaded": "the recipient has downloaded the documents",
+    "docOpened": "the recipient has opened the document",
+    "openEveryDocument": "The recipient has opened the every documents",
+    "docDownloaded": "the recipient has downloaded the document",
+    "downloadEveryDocument": "the recipient has downloaded the every documents",
     "buttons": {
       "downloadTrail": "Download audit"
     }

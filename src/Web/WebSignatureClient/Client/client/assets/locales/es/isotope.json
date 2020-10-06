@@ -296,8 +296,10 @@
     "certification": "Certificación:",
     "emailDelivered": "el receptor ha recibido el mail",
     "emailOpened": "el receptor ha abierto el mail",
-    "docOpened": "el receptor ha abierto los documentos",
-    "docDownloaded": "el receptor se ha descargado los documentos",
+    "docOpened": "El receptor ha visto los documentos",
+    "openEveryDocument": "El receptor ha abierto todos los documentos",
+    "docDownloaded": "El receptor se ha descargado el documento",
+    "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
     "buttons": {
       "downloadTrail": "Descargar auditoria"
     }
