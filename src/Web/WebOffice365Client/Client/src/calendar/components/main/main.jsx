@@ -1025,10 +1025,9 @@ export class Main extends Component {
         }
         if (args.type === 'Editor') {
 
-            //office365 calendar is not enabled recurrence count
-            this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily'];
+         
+            this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
 
-           // this.scheduleObj.eventWindow.recurrenceEditor.untilDateObj.enabled= false
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;
