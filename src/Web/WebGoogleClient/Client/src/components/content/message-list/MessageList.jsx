@@ -13,6 +13,8 @@ import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
 import { getMessage } from '../../../api';
 import {TreeViewComponent} from "@syncfusion/ej2-react-navigations";
+import { Container, Draggable } from 'react-smooth-dnd';
+import $ from 'jquery'
 
 const ViewMode = {
   LIST: 1,
@@ -284,41 +286,63 @@ export class MessageList extends Component {
       );
     }
 
-    return (<div className='message-list-tree'>
-      { this.props.selectedFolder === 'TRASH' && <div className={"trash-notice"}><p>{t('message-list.trash-notice')}</p></div>}
-            <TreeViewComponent
-                ref={this.treeViewRef}
-                fields={fields}
-                delayUpdate={true}
-                showCheckBox={this.state.showCheckbox}
-                fullRowSelected={true}
-                dragArea={"body"}
-                nodeDragging={this.nodeDragging.bind(this)}
-                nodeDragStop={this.nodeDragStop.bind(this)}
-                nodeDropped={this.onDropNode.bind(this)}
-                nodeChecked={this.onSelectionChange}
-                nodeSelected={this.showMessage}
-                nodeTemplate={this.renderMessage}
-                allowMultiSelection={true}
-                allowDragAndDrop={true}
-                cssClass={'message-list'}
-            >
-            </TreeViewComponent>
-            <style jsx>{` 
-              .trash-notice p{
-                font-size: 14px;
-                font-weight: normal;
-                margin: 0;
-                }
-              .trash-notice {
-                padding: 10px;
-                text-align: center;
-                width: 100%;
-                background-color: #e8f0fe;
-                }
-                
-            `}</style>
-          </div>);
+     return this.props.messagesResult.messages.map((el) => {
+       if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
+         el.selected = true;
+       } else {
+         el.selected = false;
+       }
+
+       return (
+           <Draggable  key={el.id}>
+             <MessageRow
+                 data={el}
+                 isSent={this.isSentFolder}
+                 key={el.id}
+                 onSelectionChange={this.onSelectionChange}
+                 //onClick={this.getMessage}
+             />
+           </Draggable>
+       );
+     });
+
+
+     // return (<div className='message-list-tree'>
+    //   { this.props.selectedFolder === 'TRASH' && <div className={"trash-notice"}><p>{t('message-list.trash-notice')}</p></div>}
+    //
+    //         <TreeViewComponent
+    //             ref={this.treeViewRef}
+    //             fields={fields}
+    //             delayUpdate={true}
+    //             showCheckBox={this.state.showCheckbox}
+    //             fullRowSelected={true}
+    //             dragArea={"body"}
+    //             nodeDragging={this.nodeDragging.bind(this)}
+    //             nodeDragStop={this.nodeDragStop.bind(this)}
+    //             nodeDropped={this.onDropNode.bind(this)}
+    //             nodeChecked={this.onSelectionChange}
+    //             nodeSelected={this.showMessage}
+    //             nodeTemplate={this.renderMessage}
+    //             allowMultiSelection={true}
+    //             allowDragAndDrop={true}
+    //             cssClass={'message-list'}
+    //         >
+    //         </TreeViewComponent>
+    //         <style jsx>{`
+    //           .trash-notice p{
+    //             font-size: 14px;
+    //             font-weight: normal;
+    //             margin: 0;
+    //             }
+    //           .trash-notice {
+    //             padding: 10px;
+    //             text-align: center;
+    //             width: 100%;
+    //             background-color: #e8f0fe;
+    //             }
+    //
+    //         `}</style>
+    //       </div>);
   }
 
   renderView() {
@@ -329,7 +353,14 @@ export class MessageList extends Component {
         return this.renderEditView();
 
       default:
-        return this.renderMessages();
+        return (
+        <Container removeOnDropOut={true} onDrop={()=> { alert("Dropped"); return true} } shouldAcceptDrop={()=>{
+          var element = document.elementFromPoint(x, y);
+
+        }}>
+          { this.renderMessages() }
+        </Container>
+      )
     }
   }
 

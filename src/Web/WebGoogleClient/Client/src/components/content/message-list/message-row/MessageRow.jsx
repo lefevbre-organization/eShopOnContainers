@@ -22,7 +22,7 @@ export class MessageItem extends PureComponent {
   }
 
   getMessage(evt) {
-    this.props.history.push(`/${this.props.data.id}`);
+    //this.props.history.push(`/${this.props.data.id}`);
   }
 
   getFromName(from) {

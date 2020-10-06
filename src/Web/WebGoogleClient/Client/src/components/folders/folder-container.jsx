@@ -17,6 +17,7 @@ import * as uuid from 'uuid/v4';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {updateLabelName} from "../../api";
+import { Container, Draggable } from 'react-smooth-dnd';
 
 //const moreId = uuid();
 
@@ -106,15 +107,15 @@ class FolderContainer extends Component {
 
     nodeTemplate(data) {
         return (
-            <div className="tree-folder-item">
-                <div className="treeviewdiv">
-                    <div className="textcontent">
-                        <i className={data.icon} style={{fontSize: 20, color: '#001978'}}></i>
-                        <span className="treeName">{data.text || data.name}</span>
-                        { data.name !== "SENT" && data.messagesUnread > 0 && <span className="msg-count">{data.messagesUnread}</span> }
+                <div className="tree-folder-item">
+                    <div className="treeviewdiv">
+                        <div className="textcontent">
+                            <i className={data.icon} style={{fontSize: 20, color: '#001978'}}></i>
+                            <span className="treeName">{data.text || data.name}</span>
+                            { data.name !== "SENT" && data.messagesUnread > 0 && <span className="msg-count">{data.messagesUnread}</span> }
+                        </div>
                     </div>
                 </div>
-            </div>
         )
     };
 
@@ -134,7 +135,7 @@ class FolderContainer extends Component {
                     ></img>
                     {t("sidebar.folders")}
                 </div>
-                    <TreeViewComponent id='foldertree'
+                        <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
                                        allowDragAndDrop={true}
                                        delayUpdate={true}
@@ -160,7 +161,7 @@ class FolderContainer extends Component {
                                        nodeTemplate={this.nodeTemplate}
                                        nodeClicked={this.onNodeClicked}
 
-                    >
+                        >
                     </TreeViewComponent>
                 </PerfectScrollbar>
                 <style jsx>{`
