@@ -584,7 +584,10 @@ export const batchDeleteMessages = ({ ids }) =>
             })
             .then((response) => {
                 resolve(ids);
-            });
+            })    
+          .catch((error) => {
+            reject(error);
+          });
     });
 
 /**

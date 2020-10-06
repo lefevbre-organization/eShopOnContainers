@@ -462,8 +462,38 @@ function listEventsParser(list) {
                 //pattern
                 Object.keys(list[i].recurrence.pattern).forEach(function (key) {                   
                     value = list[i].recurrence.pattern[key]
-                    key = key.replace("type", "FREQ");
-                    str = (typeof str !== "undefined" ? str + key + "=" + value + ";" : key + "=" + value + ";");
+
+                    let KeyPattern = key
+                    let ValuePattern = value
+                    switch (key) {                       
+                        case "type":
+                            KeyPattern = "FREQ";
+                            break
+                        case "daysOfWeek":
+                            KeyPattern = "BYDAY"; 
+                            let strv
+                            value.forEach(element =>
+                                strv = (typeof strv !== "undefined" ?  strv + "," + element : element )
+                            );
+                            strv = strv.replace("monday", "MO")
+                            strv = strv.replace("tuesday", "TU")
+                            strv = strv.replace("wednesday", "WE")
+                            strv = strv.replace("thursday", "TH")
+                            strv = strv.replace("friday", "FR")
+                            strv = strv.replace("sunday", "SU")
+
+                           // strv= strv.slice(0, -1)
+                            console.log(strv)
+
+                            ValuePattern = strv
+                            break
+                           
+                    }
+
+                   
+                    str = (typeof str !== "undefined" ? str + KeyPattern + "=" + ValuePattern + ";" : KeyPattern + "=" + ValuePattern + ";");
+
+                   // str= "FREQ=WEEKLY;COUNT=10;INTERVAL=1;BYDAY=MO,TU,TH"
                 })
                 //range
                 Object.keys(list[i].recurrence.range).forEach(function (key2) {
@@ -471,7 +501,7 @@ function listEventsParser(list) {
                         case 'endDate':
                             value = list[i].recurrence.range[key2]
                             if (value != "0001-01-01") {
-                                key2 = key2.replace("endDate", "UNTIL");
+                                key2 = key2.replace("endDate", "UNTIL");                               
                                 var dateStartTime = new Date(value);
                                 // dateStartTime = dateStartTime.setDate(dateStartTime.getDate() + 1);
                                 var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
@@ -510,19 +540,6 @@ function listEventsParser(list) {
             else {
                 category = undefined
             }
-
-
-            //let StartDate;
-            //let EndDate;
-
-            //if (list[i].isAllDay) {
-            //    StartDate = list[i].start.dateTime;
-            //    EndDate = list[i].end.dateTime;
-            //}
-            //else {
-            //    StartDate: convertUTCDateToLocalDate(new Date(list[i].start.dateTime))
-            //    EndDate: convertUTCDateToLocalDate(new Date(list[i].end.dateTime))
-            //}           
 
 
             listParse.push({                   
@@ -584,22 +601,13 @@ function returnCreateEventParser(list) {
 function EventParser(event) {
     let eventParse;
 
-    //var localZone = TimeZone.CurrentTimeZone;
-    //var timezone = localZone.StandardName;
-
-    //Start = new DateTimeTimeZone { DateTime = eventDate, TimeZone = timezone },
-    //End = new DateTimeTimeZone { DateTime = eventDate.AddDays(1), TimeZone = timezone },
-
     var startDate = new Date(event.start.dateTime);
     var endDate = new Date(event.end.dateTime);
-
-   
     
     if (event.isAllDay) {  
         startDate = moment(startDate).format('YYYY-MM-DD');
         endDate = moment(endDate).format('YYYY-MM-DD')
     }
-
 
     eventParse = {       
 
@@ -643,10 +651,55 @@ function EventParser(event) {
                
                 switch (recObj[key].split("=")[0]) {
                     //pattern
-                    case 'FREQ': case 'INTERVAL':
+                    case 'FREQ':
                         recJsonKey = recObj[key].split("=")[0].replace('FREQ', 'type').toLowerCase()
                         recJsonValue = recObj[key].split("=")[1];
-                        pattern[recJsonKey] = recJsonValue;                       
+                        pattern[recJsonKey] = recJsonValue;
+                        break;
+
+                    case 'INTERVAL':
+                        recJsonKey = recObj[key].split("=")[0].replace('FREQ', 'type').toLowerCase()
+                        recJsonValue = recObj[key].split("=")[1];
+                        pattern[recJsonKey] = recJsonValue;
+
+                        function getKeyByValue(object, value) {
+                            return Object.keys(object).find(key => object[key] === value);
+                        }
+
+                        //if (getKeyByValue(pattern, "WEEKLY") != undefined) {
+
+                        //        //pattern['daysOfWeek'] =
+                        //        //    [
+                        //        //        "Monday",
+                        //        //        "Tuesday"
+                        //        //    ]
+
+                        //}
+
+                        break;
+
+                    case 'BYDAY':
+
+                        alert('procesamos fecha')
+
+                        let arr = []
+                        let valueBYDAY = recObj[key].split("=")[1]
+                       
+                        valueBYDAY = valueBYDAY.replace("MO", "monday");
+                        valueBYDAY = valueBYDAY.replace("TU", "tuesday");
+                        valueBYDAY = valueBYDAY.replace("WE", "wednesday");
+                        valueBYDAY = valueBYDAY.replace("TH", "thursday");
+                        valueBYDAY = valueBYDAY.replace("FR", "friday");
+                        valueBYDAY = valueBYDAY.replace("SU", "sunday");
+
+                        valueBYDAY = valueBYDAY.split(",");
+
+                        valueBYDAY.forEach(element =>  
+                            arr.push(element),
+                        );
+
+                        pattern['daysOfWeek']= arr
+                        console.log('daysOfWeek=' + arr);
                         break;
                     //range
                     case 'UNTIL':
