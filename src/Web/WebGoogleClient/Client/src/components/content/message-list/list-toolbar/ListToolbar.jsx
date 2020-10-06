@@ -195,7 +195,7 @@ export class MessageToolbar extends PureComponent {
     }
 
     const showEmptyTrash = false;
-    const emptyTrashMessage = i18n.t('message-list.empty-trash-confirmation').replace('%d', this.props.messagesResult.messages.length);
+    // const emptyTrashMessage = i18n.t('message-list.empty-trash-confirmation').replace('%d', this.props.messagesResult.messages.length);
     return (
       <>
         {/*<Confirmation initialModalState={this.state.showEmptyTrashConfirmation}*/}

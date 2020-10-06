@@ -24,7 +24,8 @@
     "move-to-trash": "Mover a la Papelera",
     "delete-permanently": "Eliminar definitivamente",
     "empty-trash": "Vaciar la papelera ahora",
-    "empty-trash-confirmation": "Esta acción afectará a los %d mensajes de Papelera. ¿Seguro que quieres continuar?"
+    "empty-trash-confirmation": "Esta acción afectará a los %d mensajes de Papelera. ¿Seguro que quieres continuar?",
+    "trash-notice": "Los mensajes que lleven más de 30 días en la papelera se eliminarán automáticamente."
   },
   "pager-buttons": {
     "previous-page": "Página Anterior",

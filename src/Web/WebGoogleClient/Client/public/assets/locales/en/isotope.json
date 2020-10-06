@@ -24,7 +24,8 @@
     "move-to-trash": "Move to Trash",
     "delete-permanently": "Delete permanently",
     "empty-trash": "Empty trash now",
-    "empty-trash-confirmation": "This action will affect %d Trash messages. Are you sure you want to continue?"
+    "empty-trash-confirmation": "This action will affect %d Trash messages. Are you sure you want to continue?",
+    "trash-notice": "Messages that have been in the trash for more than 30 days will be automatically deleted."
   },
   "pager-buttons": {
     "previous-page": "Previous Page",
