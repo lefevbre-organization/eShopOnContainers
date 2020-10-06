@@ -899,10 +899,6 @@ export class Main extends Component {
     }
 
     onPopupOpen(args) {
-
-
-
-
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
         
@@ -1019,8 +1015,8 @@ export class Main extends Component {
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
-            args.element.style.width = "700px";
-            args.element.style.height = "95%";
+            args.element.style.width = "900px";
+            args.element.style.height = "800px";
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {

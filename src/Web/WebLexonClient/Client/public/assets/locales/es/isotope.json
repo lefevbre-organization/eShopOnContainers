@@ -92,7 +92,26 @@
     "classification-selection-ko": "Debes seleccionar un Tipo y una Entidad para poder clasificar"
   },
   "classification-calendar" : {
-    "connect-messages": "Clasificaciones"
+    "connect-messages": "Clasificaciones",
+    "empty": "No se ha encontrado ninguna clasificación asociada a esta empresa. Asocia un evento a LEX-ON pulsando ",
+    "new-classification": "Nueva clasificación",
+    "step1": {
+      "q1": "¿Qué acción quieres realizar con el nuevo evento?",
+      "classify-casefile": "Clasificar evento en un expediente",
+      "classify-actuation": "Clasificar evento dentro de una actuación",
+      "classify-new": "Crear una nueva actuación y asociar el evento"
+    },
+    "step1b": {
+      "q1": "¿Con qué tipo de actuación quieres clasificar el evento?",
+      "1": "Llamada",
+      "2": "Reunión",
+      "3": "Trámites",
+      "4": "Otras",
+      "5": "Lexnet"
+    },
+    "step2": {
+      "q3_1" : "¿En qué expediente quieres clasificar el evento?"
+    }
   },
   "classification-type": {
     "type": "Tipo",

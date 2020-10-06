@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import CalendarSelectActionHeader from './select-action-header/select-action-header';
 import SelectActionTab from './select-action-tab/select-action-tab';
 import { PAGE_SELECT_COMPANY } from '../../../constants';
+import {connect} from "react-redux";
+import ModalConnectingEvents from "../modal-connecting-events/modal-connecting-events";
 
 class CalendarSelectAction extends Component {
   constructor(props) {
@@ -33,6 +35,15 @@ class CalendarSelectAction extends Component {
       composerOpen = false
     } = this.props;
     const { showDocuments } = this.state;
+
+    if(this.props.showModalDocuments === true) {
+      return <ModalConnectingEvents
+          user={user}
+          updateClassifications={this.geEventClassification}
+          toggleNotification={toggleNotification}
+      />
+    }
+
     return (
       <div className='container-fluid'>
         <CalendarSelectActionHeader
@@ -58,4 +69,11 @@ CalendarSelectAction.propTypes = {
   toggleNotification: PropTypes.func.isRequired
 };
 
-export default CalendarSelectAction;
+const mapStateToProps = (state) => {
+  return {
+    showModalDocuments: state.documentsReducer.showModalDocuments,
+  };
+};
+
+export default connect(mapStateToProps)(CalendarSelectAction);
+

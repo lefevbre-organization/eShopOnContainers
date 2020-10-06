@@ -9,6 +9,7 @@ import ModalConnectingEmails from '../../../modal-connecting-emails/modal-connec
 import ListClassifications from '../list-classifications/list-classifications';
 import ConfirmRemoveClassification from '../../../confirm-remove-classification/confirm-remove-classification';
 import Spinner from '../../../../components/spinner/spinner';
+import ModalConnectingEvents from "../../modal-connecting-events/modal-connecting-events";
 
 class TabConnectMessage extends Component {
   constructor(props) {
@@ -122,14 +123,10 @@ class TabConnectMessage extends Component {
       return <Spinner />;
     }
 
+
     return (
       <Fragment>
-        <p>No se ha encontrado ninguna clasificación asociada a esta empresa. Asocia un evento a LEX-ON pulsando Nueva clasificación</p>
-        <ModalConnectingEmails
-          user={user}
-          updateClassifications={this.getClassifications}
-          toggleNotification={toggleNotification}
-        />
+        <p className={"empty-text"}>{i18n.t('classification-calendar.empty')} <span>{i18n.t('classification-calendar.new-classification')}</span></p>
         <ConfirmRemoveClassification
           user={user}
           initialModalState={showConfirmRemoveClassification}
@@ -143,6 +140,21 @@ class TabConnectMessage extends Component {
 
         {this.renderShowSaveDocument()}
         {this.renderShowClassifications()}
+
+        <style jsx>{`
+          .empty-text {
+            font-weight: 500;
+            font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+            font-size: 16px;
+            color: #333;
+          }
+          
+          .empty-text span {
+              color: #001978;
+              font-weight: bold;
+              cursor: pointer;
+            }
+        `}</style>
       </Fragment>
     );
   }
@@ -154,6 +166,7 @@ TabConnectMessage.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
+    showModalDocuments: state.documentsReducer.showModalDocuments,
     selectedMessages: state.email.selectedMessages,
     companySelected: state.selections.companySelected,
     showSpinner: state.applicationReducer.showSpinner,
