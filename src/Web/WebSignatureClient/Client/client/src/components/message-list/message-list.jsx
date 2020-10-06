@@ -520,7 +520,7 @@ class MessageList extends Component {
 
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
                 <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
-                    {firstFiles}
+                {firstFiles != '' ? <span style={{fontSize: '15px'}} className='lf-icon-add'></span> : null }{firstFiles}
                 </div>     
                 {firstFiles != '' && fileList.length > 2 ? 
                  <div id='right' className={`bola-firmantes gray`} style={{float: 'right', width: '25%', height: '20px'}}>
