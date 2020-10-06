@@ -901,9 +901,9 @@ class MessageList extends Component {
         console.log('selectedService', this.props.selectedService);
         //var firmas = this.props.signatures;
 
-        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
+        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
         //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
-        var emails = (this.props.emails && this.props.emails.length > 0) ? this.getEmails(this.props.emails) : [{}];
+        var emails = (this.props.emails && this.props.emails.length > 0) ? this.getEmails(this.props.emails) : [];
         var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
 
         var customAttributes = {class: 'customcss'};

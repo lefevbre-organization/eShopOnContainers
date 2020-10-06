@@ -6,7 +6,7 @@ import { clearUserCredentials, setUserCredentials } from "../../actions/applicat
 import history from "../../routes/history";
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts } from "../../services/jwt";
 import Cookies from 'js-cookie';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
@@ -197,8 +197,62 @@ class UserLefebvre extends Component {
                         }
 
                         if (emailRole){
-                            // Add user creation / recovery
-                            // Add branding creation for the user
+                            getUserEmails(user)
+                            .then(userInfo => {
+                                if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
+                                    getBrandingTemplate(app)
+                                    .then(template => {
+                                        var auxTemplate = JSON.stringify(template.data.configuration);
+                                        auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                        var newTemplate = JSON.parse(auxTemplate);
+                                        createBranding2(newTemplate, token)
+                                        .then( res => {
+                                            var userBranding = [{app: app, externalId: res.id}];
+                                            createUserEmail(user, userBranding);
+                                            this.props.setUserBrandings(userBranding);
+                                            //this.props.setAvailableSignatures(0);
+                                         })
+                                         .catch( err => {
+                                             console.log("Se ha producido un error al crear el branding");
+                                             console.log(err);
+                                         })
+                                    });
+                                
+                                } else {
+                                    if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                                        getBrandingTemplate(app)
+                                        .then(template => {
+                                            var auxTemplate = JSON.stringify(template.data.configuration);
+                                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                            var newTemplate = JSON.parse(auxTemplate);
+                                            createBranding2(newTemplate, token)
+                                            .then( res => {
+                                                console.log('Resultado de creación de Branding');
+                                                console.log(res);
+                                                var userBranding = [{app: app, externalId: res.id}];
+                                                addOrUpdateBranding(user, userBranding[0]);
+                                                this.props.setUserBrandings(userBranding);
+                                            })
+                                            .catch( err => {
+                                                console.log('Se ha producido un error al guardar el branding');
+                                                console.log(err);
+                                            })
+                                        });
+                                    } else {
+                                        this.props.setUserBrandings(userInfo.data.brandings);
+                                        if (idDocuments && idDocuments.length > 0){
+                                            getAvailableSignatures(idUserApp, idDocuments.length)
+                                            .then(response => this.props.setAvailableSignatures(response.data))
+                                            .catch(err => {
+                                                console.log(err);
+                                                if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
+                                                    this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                                                }
+                                            });  
+                                        }
+                                    }
+                                } 
+                            });
                         }
                         this.setState({readyToRedirect: true})
                     }

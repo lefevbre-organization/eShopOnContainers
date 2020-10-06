@@ -954,8 +954,9 @@ export function preloadEmails(dispatch, filters, auth) {
       emails = calculateStatusEmails(emails);
       console.log('Emails After:')
       console.log({emails});
-      dispatch(preDownloadEmails(emails));
-      resolve(emails);
+      var sortedEmails = emails.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0));
+      dispatch(preDownloadEmails(sortedEmails));
+      resolve(sortedEmails);
     })
     .catch(error => {
       console.log('error', error);
@@ -1012,9 +1013,12 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
       var ccData = [];
       var filesData = [];
       var customFieldsData = [];
-  
-      jsonObject.recipients = recipients;
-  
+
+      recipients.forEach(recipient => {
+        recipientsData.push({name: recipient.address.split('@')[0], email: recipient.address})
+      })
+      jsonObject.recipients = recipientsData;
+    
       cc.forEach(recipient => {
         ccData.push({name: recipient.split('@')[0], email: recipient})
       });
@@ -1032,12 +1036,11 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
       customFieldsData.push({name: "lefebvre_guid", value: guid});
       customFieldsData.push({name: "subject", value: subject});
       customFieldsData.push({name: "body", value: body});
+      customFieldsData.push({name: "certification_type", value: type})
       jsonObject.customFields = customFieldsData;
   
       jsonObject.subject = subject;
       jsonObject.body = body;
-      (reminders[0] !== -1) ? jsonObject.reminders = reminders : null;
-      (expiration !== -1) ? jsonObject.expiration = expiration : null;
       jsonObject.brandingId = brandingId;
   
   
@@ -1051,7 +1054,7 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
         redirect: 'follow'
       };
   
-      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/newSignature`, requestOptions)
+      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/newEmail`, requestOptions)
         .then(response => {
           if (response.ok){
             return response.json();

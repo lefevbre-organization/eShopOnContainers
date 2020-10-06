@@ -105,7 +105,7 @@ export class TopBar extends Component {
           `${ !collapsed ? 
            styles['pasos-firma'] : 
            styles['firma-without-side-bar']}`} >
-          <span className={styles['producto-procedente']}>LEX-ON</span> { !appTitle ? i18n.t('topBar.app') : appTitle} 
+          <span className={styles['producto-procedente']}></span> { !appTitle ? i18n.t('topBar.app') : appTitle} 
           <span className={styles.miga}>{title}</span>
         </div>
       // </div>

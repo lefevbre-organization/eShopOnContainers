@@ -20,15 +20,12 @@ import ComposeMessageEditor from './composeMessageEditor.jsx';
 
 import Spinner from "../spinner/spinner";
 import {
-  createSignature,
-  createSignature2,
-  addOrUpdateSignature,
-  getUserSignatures,
-  createUser,
-  decAvailableSignatures,
+  createEmail,
+  addOrUpdateEmail,
+  getUserEmails,
   notifySignature,
   cancelSignatureCen,
-  preloadSignatures2
+  preloadEmails
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
@@ -48,8 +45,8 @@ class EmailMessageEditor extends Component {
       linkDialogUrl: '',
       dropZoneActive: false,
       editorState: {},
-      selectedReminderOption: '',
-      selectedExpirationOption: '',
+      selectedCertificationOption: '',
+      certificationType: '',
       hideAlertDialog: false,
       hideConfirmDialog: false,
       bigAttachments: false,
@@ -86,6 +83,7 @@ class EmailMessageEditor extends Component {
     this.getDocumentsNames = this.getDocumentsNames.bind(this);
     this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
 
+    this.onChangeCertification = this.onChangeCertification.bind(this);
 
     this.dialogClose = this.dialogClose;
     this.dialogOpen = this.dialogOpen;
@@ -94,6 +92,31 @@ class EmailMessageEditor extends Component {
    
     this.resetIsFileDrop = this.resetIsFileDrop.bind(this);
   }
+
+  onChangeCertification(certificates) {
+    let selectedOptions = [];
+    let max = 0;
+    certificates.forEach(certificate => {
+      if (certificate.checked){
+        selectedOptions.push({option: certificate.option, certificate: certificate.id});
+        (max <= certificate.option) ? max = certificate.option : null;
+      }
+    });
+    this.setState({
+      selectedCertificationOption: max,
+      certificationType: selectedOptions[max-1].certificate
+    })
+    console.log("***++++++****+++++****++++****++++");
+    console.log('Selected Options:')
+    console.log(selectedOptions);
+    console.log('max:')
+    console.log(max);
+    console.log('Lo que voy a guardar en selectedCertificationOption:' + max);
+    console.log('Lo que voy a guardar en certificationType: ' + selectedOptions[max-1].certificate);
+    console.log(this.state.selectedCertificationOption);
+    console.log(this.state.certificationType);
+  }
+
 
   showCancelCenModal(){
     this.setState({ hideConfirmDialog: true});
@@ -313,7 +336,7 @@ class EmailMessageEditor extends Component {
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
             ></AttachmentsWidget>
-            <CertificatesWidget />
+            <CertificatesWidget onChange={this.onChangeCertification}/>
           </div>
           <div className={styles['action-buttons']}>
             <button
@@ -508,121 +531,45 @@ class EmailMessageEditor extends Component {
       this.setState({ hideAlertDialog: true, bigAttachments: true});
     }
     else {
-      // if (this.headerFormRef.current.reportValidity()) {
-      //   // Get content directly from editor, state content may not contain latest changes
-      //   const content = this.getEditor().getContent();
-      //   const { to, cc, subject } = this.props;
-      //   const { lefebvre } = this.props;
-      //   // const userBranding = lefebvre.userBrandings.find(
-      //   //   (b) => b.app === lefebvre.userApp
-      //   // );
+      if (this.headerFormRef.current.reportValidity()) {
+        // Get content directly from editor, state content may not contain latest changes
+        const content = this.getEditor().getContent();
+        const { to, cc, subject } = this.props;
+        const { lefebvre } = this.props;
+        const userBranding = (lefebvre && lefebvre.userBrandings) ? lefebvre.userBrandings.find(
+          (b) => b.app === lefebvre.userApp
+        ) : '';
+          
+        let guid = lefebvre.guid;
+        if (guid === null) {
+          guid = uuid();
+        }
   
-      //   let reminders = [];
-      //   switch (this.state.selectedReminderOption) {
-      //     case 'option1': // every x days
-      //       if (this.state.selectedExpirationOption === 'exp_option1') {
-      //         for (let index = 0; index < this.state.expirationDays; index++) {
-      //           if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
-      //             reminders[index] = this.state.reminderDays * (index + 1);
-      //           }
-      //         }
-      //       } else {
-      //         for (let index = 0; index < 30; index++) {
-      //           reminders[index] = this.state.reminderDays * (index + 1);
-      //         }
-      //       }
-      //       break;
-      //     case 'option2': //daily
-      //       if (this.state.selectedExpirationOption === 'exp_option1') {
-      //         for (let index = 0; index < this.state.expirationDays; index++) {
-      //           reminders[index] = index + 1;
-      //           //reminders.push(index + 1);
-      //         }
-      //       } else {
-      //         for (let index = 0; index < 30; index++) {
-      //           reminders[index] = index + 1;
-      //         }
-      //       }
-      //       break;
-      //     case 'option3': //weekly
-      //       if (this.state.selectedExpirationOption === 'exp_option1') {
-      //         for (let index = 0; index < this.state.expirationDays; index++) {
-      //           if (7 * (index + 1) < this.state.expirationDays) {
-      //             reminders[index] = 7 * (index + 1);
-      //           }
-      //         }
-      //       } else {
-      //         for (let index = 0; index < 30; index++) {
-      //           reminders[index] = 7 * (index + 1);
-      //         }
-      //       }
-      //       break;
-      //     default:
-      //       reminders[0] = -1;
-      //       break;
-      //   }
-  
-      //   let expiration;
-      //   switch (this.state.selectedExpirationOption) {
-      //     case 'exp_option1': // expires
-      //       expiration = this.state.expirationDays;
-      //       break;
-      //     case 'exp_option2': // never expires
-      //       expiration = 0;
-      //       break;
-      //     default:
-      //       expiration = -1;
-      //       break;
-      //   }
-  
-      //   console.log('Recordatorios y exp: ');
-      //   console.log({ reminders });
-      //   console.log(expiration);
-  
-      //   let guid = lefebvre.guid;
-      //   if (guid === null) {
-      //     guid = uuid();
-      //   }
-  
-      //   // if (document.getElementById('file-input').files[0]){
-      //   //     var reader = new FileReader();
-      //   //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
-      //   //     reader.onloadend = (evt) => {
-      //   //        console.log(evt.target.result);
-      //   //        var fileData = evt.target.result.split('base64,')[1];
-      //   //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-      //   //     }
-      //   //     reader.onerror = function (evt) {
-      //   //         console.log("error reading file");
-      //   //     }
-      //   // } else
-      //   if (this.props.attachments) {
-      //     let attachmentsList = [];
-      //     this.props.attachments.forEach((attachment) => {
-      //       //var attachment = this.props.attachments[0];
-      //       var file = new File([attachment.content], attachment.fileName, {
-      //         type: getFileType(attachment.fileName),
-      //         lastModified: new Date(),
-      //       });
-      //       attachmentsList.push({file: file, pages: attachment.pages});
-      //       debugger;
-      //     });
-      //     //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-      //     this.callApis(
-      //       to,
-      //       cc,
-      //       subject,
-      //       content.innerHTML,
-      //       this.props.attachments,
-      //       reminders,
-      //       expiration,
-      //       lefebvre.userId,
-      //       guid,
-      //       ''
-      //     );
-      //   }
-      //   //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
-      // }
+        if (this.props.attachments) {
+          let attachmentsList = [];
+          this.props.attachments.forEach((attachment) => {
+            //var attachment = this.props.attachments[0];
+            var file = new File([attachment.content], attachment.fileName, {
+              type: getFileType(attachment.fileName),
+              lastModified: new Date(),
+            });
+            attachmentsList.push({file: file, pages: attachment.pages});
+            debugger;
+          });
+          this.callApis(
+            to,
+            cc,
+            subject,
+            content.innerHTML,
+            this.props.attachments,
+            lefebvre.userId,
+            guid,
+            this.state.certificationType,
+            userBranding
+          );
+        }
+        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+      }
     }
   }
 
@@ -706,14 +653,14 @@ class EmailMessageEditor extends Component {
     return merged;
   }
 
-  buildDocumentsInfo(signature) {
+  buildDocumentsInfo(email) {
     let result;
 
-    result = signature.documents.map((e) => {
+    result = email.documents.map((e) => {
       return {
         externalFileName: e.file.name,
         externalId: e.id,
-        signer: { name: e.name, email: e.email },
+        recipient: { name: e.name, email: e.email },
         internalInfo: this.props.lefebvre.idDocuments.find((d) => {
           if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
             return d.docId;
@@ -726,23 +673,20 @@ class EmailMessageEditor extends Component {
     return result;
   }
 
-  //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
   callApis(
     recipients,
     cc,
     subject,
     content,
     files,
-    reminders,
-    expiration,
     userId,
     guid,
+    type,
     userBrandingId
   ) {
     const { lefebvre } = this.props;
     this.setState({isCallApis: true});
-    //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
-    createSignature2(
+    createEmail(
       recipients,
       cc,
       subject,
@@ -750,7 +694,8 @@ class EmailMessageEditor extends Component {
       files,
       userId,
       guid,
-      userBrandingId,
+      type,
+      userBrandingId.externalId,
       this.props.credentials.encrypted
     ).then((signatureInfo) => {
       console.log(signatureInfo);
@@ -762,15 +707,17 @@ class EmailMessageEditor extends Component {
           signatureInfo.message
         );
       } else {
-        getUserSignatures(userId).then((userInfo) => {
+        getUserEmails(userId).then((userInfo) => {
           var documentsInfo = this.buildDocumentsInfo(signatureInfo);
           debugger;
-          console.log('Insertando sólo firma');
-          addOrUpdateSignature(
+          console.log('Insertando sólo email');
+          addOrUpdateEmail(
             userId,
             signatureInfo.id,
             guid,
             lefebvre.userApp,
+            signatureInfo.created_at,
+            type,
             documentsInfo
           );
           //}
@@ -781,7 +728,7 @@ class EmailMessageEditor extends Component {
             lefebvre.idUserApp,
             documentsInfo.length
           );
-          this.props.preloadSignatures(lefebvre.userId)
+          this.props.preloadEmails(lefebvre.userId)
         });
       }
       this.setState({isCallApis: false});
@@ -1073,7 +1020,7 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
+  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth)
 });
 
 export default connect(

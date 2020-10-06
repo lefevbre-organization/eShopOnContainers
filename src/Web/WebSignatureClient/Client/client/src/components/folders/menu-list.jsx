@@ -301,6 +301,7 @@ export class MenuListClass extends Component {
       event.stopPropagation();
       this.props.emailClicked(null);
       this.props.signatureClicked(null);
+      this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
       this.props.setSelectedService('certifiedEmail'); 
