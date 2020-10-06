@@ -85,11 +85,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
                 SerializeToMultiPart(fileMail, name, route, out string url, out MultipartFormDataContent multipartContent);
 
+                _client.Timeout = new TimeSpan(0, 0, 90);
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 Console.WriteLine($"[{DateTime.Now}] Call to: {url}");
                 using var response = await _client.PostAsync(url, multipartContent);
                 Console.WriteLine($"[{DateTime.Now}] Response: {response.ToString()}");
                 //WriteError($"Se recibe contestación {DateTime.Now}");
+                _client.Timeout = new TimeSpan(0, 0, 10);
 
                 var responseText = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
