@@ -194,17 +194,17 @@ export class MessageToolbar extends PureComponent {
       showUnread = read.length > 0;
     }
 
-    const showEmptyTrash = this.props.selectedFolderId === "TRASH" && this.props.messagesResult.messages.length > 0;
+    const showEmptyTrash = false;
     const emptyTrashMessage = i18n.t('message-list.empty-trash-confirmation').replace('%d', this.props.messagesResult.messages.length);
     return (
       <>
-        <Confirmation initialModalState={this.state.showEmptyTrashConfirmation}
-                      onAccept={this.emptyTrash}
-                                onCancel={() => {
-                                  this.setState({showEmptyTrashConfirmation: false})
-                                }}
-                                message={emptyTrashMessage}
-        ></Confirmation>
+        {/*<Confirmation initialModalState={this.state.showEmptyTrashConfirmation}*/}
+        {/*              onAccept={this.emptyTrash}*/}
+        {/*                        onCancel={() => {*/}
+        {/*                          this.setState({showEmptyTrashConfirmation: false})*/}
+        {/*                        }}*/}
+        {/*                        message={emptyTrashMessage}*/}
+        {/*></Confirmation>*/}
         <div className='msg-toolbar'>
           <div className='pl-2 py-2 pr-4 d-flex align-items-center bd-highlight  align-center '>
             <div className='d-flex align-content-center align-items-center '>
