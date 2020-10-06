@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import i18n from '../../services/i18n';
+import i18n from 'i18next';
 
 import MenuItem from './menu-item';
 import {selectFolder, setTitle, editMessage, setAppTitle, setSelectedService} from '../../actions/application';

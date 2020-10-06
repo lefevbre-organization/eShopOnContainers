@@ -48,6 +48,7 @@ export class EmailMessageViewer extends Component {
       signatureId: '',
       auth: '',
       signer: 0,
+      filterCertificates: []
     };
     this.dialogClose = this.dialogClose;
     this.dialogOpen = this.dialogOpen;
@@ -76,6 +77,15 @@ export class EmailMessageViewer extends Component {
         buttonModel: { content: 'Si', isPrimary: true }
       }];
   }
+
+  componentDidMount() {
+    const email = this.props.selectedEmail;
+    const filter = email.certificates.filter((certificate, index, self) => 
+      self.findIndex(x =>(x.email === certificate.email)) === index
+    );
+    this.setState({filterCertificates: filter});
+  }
+  
 
   getReceiverEvent(receiver) {
     switch (receiver) {
@@ -214,9 +224,10 @@ export class EmailMessageViewer extends Component {
  
   render() {
     const email = this.props.selectedEmail;
+    console.log('email.certificates', this.state.filterCertificates);
     let status;
     let status_style;
-
+   
     const contenido = `
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -282,7 +293,7 @@ export class EmailMessageViewer extends Component {
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
             <div className={`${materialize.col} ${materialize['l12']} left`}>
-              {email.certificates.map((signer, index) => {
+              {this.state.filterCertificates.map((signer, index) => {
               return (
                 <EmailList 
                  signer={signer}
