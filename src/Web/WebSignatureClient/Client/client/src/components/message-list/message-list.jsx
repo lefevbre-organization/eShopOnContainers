@@ -191,6 +191,7 @@ class MessageList extends Component {
         this.template = this.gridTemplate;
         this.menuTemplate = this.menuGridTemplate.bind(this);
         this.statusTemplate = this.statusGridTemplate;
+        this.filesTable = this.filesGridTemplate;
         this.recipientsTable = this.recipientsGridTemplate;
         this.menuOptionSelected = this.dropDownOptionSelected;
         this.recipientRender = this.dropDownRecipientRender;
@@ -249,19 +250,30 @@ class MessageList extends Component {
         }
     }
 
+    getFilesInfo(element){
+        var result = []
+        element.certificates.map(d => {
+            if (d.file && result.filter(e => e.name === d.file.name).length === 0) {
+                result.push({name: d.file.name}); 
+            }
+        });
+        
+        return result;
+    }
+
     getRecipientsInfo(element){
         var result = []
 
         if (this.props.selectedService == 'signature'){
             element.documents.map(d => {
-                if (result.filter(e => e.name === d.name && e.email === d.email).length === 0){
-                    result.push({name: d.name, email: d.email})
+                if (result.filter(e => e.name === d.name && e.email === d.email).length === 0) {
+                    result.push({name: d.name, email: d.email});
                 }
             });
         } else {
             element.certificates.map(d => {
-                if (result.filter(e => e.name === d.name && e.email === d.email).length === 0){
-                    result.push({name: d.name, email: d.email})
+                if (result.filter(e => e.name === d.name && e.email === d.email).length === 0) {
+                    result.push({name: d.name, email: d.email});
                 }
             });
         }
@@ -351,7 +363,7 @@ class MessageList extends Component {
         return (res.length === 0 ? [{}] : res);
     }
 
-    getEmails(emails){
+    getEmails(emails) {
         let filteredEmails = [];
         emails.map( email => {
             if ((email.status === 'En progreso' || email.status === 'ready' || email.status === 'pending') && (this.props.signatureFilter === "En progreso")){
@@ -372,23 +384,22 @@ class MessageList extends Component {
             let documentName = '';
             let subject = '';
             let recipients = '';
+            let files = '';
             let date = '';
             let status = '';
             let newStatus = '';
-
-            documentName = (email.certificates[0].file && email.certificates[0].file.name) ? email.certificates[0].file.name : ''
             subject = (email.data.find(x => x.key === "subject")) ? email.data.find(x => x.key === "subject").value : 'Sin asunto';
             email.certificates.map(d => recipients = `${recipients}${d.email}; `);
-            // date = new Date(signature.created_at).toLocaleString(navigator.language, {
-            //     year: 'numeric', month: '2-digit', day: '2-digit',
-            //     hour: '2-digit', minute: '2-digit', second: '2-digit'
-            // })
+            email.certificates.map(d => 
+                files = (email.certificates[0].file && email.certificates[0].file.name) 
+                ? `${files}${d.file.name}; ` 
+                : '');
+ 
             date = new Date(email.created_at);
             status = email.status;
            
             newStatus = this.getNewStatus(status);
-         
-            res.push({Id: email.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
+            res.push({Id: email.id, Documento: files, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
         });
         return (res.length === 0 ? [{}] : res);
     }
@@ -464,6 +475,60 @@ class MessageList extends Component {
                 </div>
             </div>);
        
+    }
+
+    filesGridTemplate(props) {
+        if (props.Documento === undefined){
+            return null;
+        }
+
+        let firstFiles = props.Documento.split(';')[0];
+        var chunks = props.Documento.split(' ');
+        let emailsInfo;
+        let fileList = [];
+        let data;
+
+        data = this.props.emails.find(e => e.id === props.Id);
+        if (data){
+            emailsInfo = this.getFilesInfo(data);
+            emailsInfo.forEach((email, i) => {
+                //console.log(signer);
+                if (i === emailsInfo.length -1){
+                    fileList.push(
+                        {
+                            text:  email.name,
+                            cssClass: 'test'
+                        }
+                    )  
+                } else {
+                    fileList.push(
+                        {
+                            text: email.name,
+                            cssClass: 'test'
+                        },
+                        {   
+                            separator: true
+                        }
+                    )
+                }
+            });
+        }
+
+        console.log('filesGridTemplate', fileList);
+        
+        return ( 
+
+            <div id='container' style={{width: '100%', textAlign: 'center'}}>
+                <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                {firstFiles != '' ? <span style={{fontSize: '15px'}} className='lf-icon-add'></span> : null }{firstFiles}
+                </div>     
+                {firstFiles != '' && fileList.length > 2 ? 
+                 <div id='right' className={`bola-firmantes gray`} style={{float: 'right', width: '25%', height: '20px'}}>
+                 <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={fileList}>{(emailsInfo && emailsInfo.length) ? emailsInfo.length : ''}</DropDownButtonComponent>
+                 </div> : null}
+            </div>
+        )
+   
     }
 
     recipientsGridTemplate(props) {
@@ -911,7 +976,7 @@ class MessageList extends Component {
         const languageSpit = (navigator.language).split('-');
         const navigatorLanguage = languageSpit[0];
         const position = { X: 160, Y: 240 };
-
+        
         return( 
             <div className={styles['main-grid']}>
             <div>
@@ -941,7 +1006,7 @@ class MessageList extends Component {
                 >
                     <ColumnsDirective>
                         <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />
-                        <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
+                        <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} />
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
                         <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
@@ -1027,6 +1092,14 @@ class MessageList extends Component {
                         padding: 3px 15px;
                         cursor: pointer;
                         background: #c90223;
+                    }
+
+                    .bola-firmantes.gray .e-dropdown-btn.e-dropdown-btn.e-btn{
+                        border-radius: 100px;
+                        color: #434246;
+                        padding: 4px 9px;
+                        cursor: pointer;
+                        background: #CFCED3;
                     }
                 
                     .e-grid .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop) {
