@@ -13,6 +13,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Diagnostics;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -120,12 +121,14 @@
 
         #region Events
         public async Task<Result<bool>> SaveEvent(SignEventInfo eventInfo)
-        {       
+        {
+            Console.WriteLine($"START SaveEvent");
             return await _signaturesRepository.SaveEvent(eventInfo);
         }
 
         public async Task<Result<bool>> ProcessEvent(string signatureId, string documentId, string eventType)
         {
+            Console.WriteLine($"START ProcessEvent");
             ////var result = new Result<BsonDocument>();
             var response = new Result<bool>();
 
@@ -188,6 +191,8 @@
         #region HelperFunctions
         public BsonDocument GetFile(string signatureId, string documentId, string eventType)
         {
+            Console.WriteLine($"START GetFile");
+
             var url = "";
             if (eventType == "document_completed")
             {
@@ -197,6 +202,7 @@
                 url = $"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/audit_trail";
             }
 
+            
             var client = new RestClient(url);
             var request = new RestRequest(Method.GET);
 
@@ -205,11 +211,17 @@
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
 
+            Console.WriteLine($"Calling {url}");
+
             IRestResponse response = client.Execute(request);
             //Console.WriteLine(response.Content);
 
+            Console.WriteLine($"Response: {response.StatusCode}");
+
             var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
             string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+            Console.WriteLine($"END GetFile");
 
             return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
         }
@@ -289,7 +301,7 @@
 
             IRestResponse response = await client.ExecuteAsync(request);
 
-            Console.WriteLine($"Response: {response.ToString()}");
+            Console.WriteLine($"Response: {response.Content} - {response.StatusCode}");
 
             JObject responseJson = JObject.Parse(response.Content);
             List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
