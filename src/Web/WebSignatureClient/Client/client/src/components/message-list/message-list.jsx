@@ -9,7 +9,7 @@ import { getCredentials } from "../../selectors/application";
 import { getSelectedFolder } from "../../selectors/folders";
 import { getSelectedFolderMessageList } from "../../selectors/messages";
 import { prettyDate } from "../../services/prettify";
-import { selectSignature, selectEmail, setTitle } from "../../actions/application";
+import { selectSignature, selectEmail, setTitle, setSelectedService } from "../../actions/application";
 import { readMessageRaw } from "../../services/message-read";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -488,7 +488,7 @@ class MessageList extends Component {
         let fileList = [];
         let data;
 
-        data = this.props.emails.find(e => e.id === props.Id);
+        data = (this.props.emails && this.props.emails.length > 0) ? this.props.emails.find(e => e.id === props.Id) : undefined;
         if (data){
             emailsInfo = this.getFilesInfo(data);
             emailsInfo.forEach((email, i) => {
@@ -826,11 +826,28 @@ class MessageList extends Component {
                                 |___/                                                     
     */
 
-   componentDidMount() {
+    componentDidMount() {
         const { lefebvre } = this.props;
         console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
 
-        this.props.preloadSignatures(lefebvre.userId);
+        if (lefebvre.roles && lefebvre.roles.length == 1){
+            if (lefebvre.roles[0] === 'Email Certificado'){
+                this.props.setSelectedService('certifiedEmail');
+                //this.props.preloadEmails()
+            } else if (lefebvre.roles[0] === "Firma Digital" || lefebvre.roles[0] === "Signaturit"){
+                this.props.setSelectedService('signature');
+                this.props.preloadSignatures(lefebvre.userId);
+            } else {
+                // De momento por defecto signature, después hay que añadir control de qué aplicación llama y para qué llama
+                this.props.setSelectedService('signature'); 
+                this.props.preloadSignatures(lefebvre.userId);
+            }
+        } else {
+            // De momento por defecto signature, después hay que añadir control de qué aplicación llama y para qué llama
+            this.props.setSelectedService('signature'); 
+            //this.props.preloadSignatures(lefebvre.userId);
+        }
+       
 
         // window.addEventListener('resize', this.onresize.bind(this));
     }
@@ -844,8 +861,13 @@ class MessageList extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE()');
         const difP = detailedDiff(this.props, nextProps);
         const difSt = detailedDiff(this.state, nextState);
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difP');
+        console.log(difP);
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difSt');
+        console.log(difSt);
 
         if (difP && difP.updated !== undefined){
             if (difP.updated.hasOwnProperty('preloadSignatures') 
@@ -854,6 +876,7 @@ class MessageList extends Component {
                 && Object.keys(difP.updated).length === 5
                 && Object.keys(difP.added).length === 0
                 && Object.keys(difP.deleted).length === 0){
+                    console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().if: ' + false);
                     return false;
             }
         } else {
@@ -864,11 +887,12 @@ class MessageList extends Component {
                 this.isEmpty(difSt.updated) &&
                 this.isEmpty(difSt.added) &&
                 this.isEmpty(difSt.deleted)
-            ) {
+              ) {
+                console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().else: ' + false);
                 return false;
-            }
+              }
         }
-
+    
         // if (difP && difP.updated !== undefined
         //     && difP.updated.hasOwnProperty('preloadSignatures') 
         //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
@@ -887,7 +911,7 @@ class MessageList extends Component {
         //         return false;
         //       }
         // }
-
+        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().other: ' + true);
         return true;
     }
 
@@ -1595,78 +1619,25 @@ class MessageList extends Component {
         )
     }
 
-    componentDidMount() {
+    // componentDidMount() {
 
-        const { lefebvre } = this.props;
-        console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
+    //     const { lefebvre } = this.props;
+    //     console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
     
-        this.props.preloadSignatures(lefebvre.userId);
+    //     this.props.preloadSignatures(lefebvre.userId);
 
-        // window.addEventListener('resize', this.onresize.bind(this));
-    }
+    //     // window.addEventListener('resize', this.onresize.bind(this));
+    // }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevState.sign_ready === false){
-            if (this.props.signatures && this.props.signatures.length){
-                this.setState({sign_ready: true, rowCount: this.getCount()});
-            }
-        }
-    }
+    // componentDidUpdate(prevProps, prevState) {
+    //     if (prevState.sign_ready === false){
+    //         if (this.props.signatures && this.props.signatures.length){
+    //             this.setState({sign_ready: true, rowCount: this.getCount()});
+    //         }
+    //     }
+    // }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE()');
-        const difP = detailedDiff(this.props, nextProps);
-        const difSt = detailedDiff(this.state, nextState);
-        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difP');
-        console.log(difP);
-        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().difSt');
-        console.log(difSt);
-
-        if (difP && difP.updated !== undefined){
-            if (difP.updated.hasOwnProperty('preloadSignatures') 
-                && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
-                && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
-                && Object.keys(difP.updated).length === 5
-                && Object.keys(difP.added).length === 0
-                && Object.keys(difP.deleted).length === 0){
-                    console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().if: ' + false);
-                    return false;
-            }
-        } else {
-            if (
-                this.isEmpty(difP.updated) &&
-                this.isEmpty(difP.added) &&
-                this.isEmpty(difP.deleted) &&
-                this.isEmpty(difSt.updated) &&
-                this.isEmpty(difSt.added) &&
-                this.isEmpty(difSt.deleted)
-              ) {
-                console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().else: ' + false);
-                return false;
-              }
-        }
     
-        // if (difP && difP.updated !== undefined
-        //     && difP.updated.hasOwnProperty('preloadSignatures') 
-        //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
-        //     && difP.update.hasOwnProperty('signatureClicked') && difP.update.hasOwnProperty('setTitle')
-        //     && Object.keys(difP.updated).length === 5){
-        //         return false;
-        // } else {
-        //     if (
-        //         this.isEmpty(difP.updated) &&
-        //         this.isEmpty(difP.added) &&
-        //         this.isEmpty(difP.deleted) &&
-        //         this.isEmpty(difSt.updated) &&
-        //         this.isEmpty(difSt.added) &&
-        //         this.isEmpty(difSt.deleted)
-        //       ) {
-        //         return false;
-        //       }
-        // }
-        console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().other: ' + true);
-        return true;
-    }
 
     isEmpty(obj) {
         for (var prop in obj) {
@@ -1811,7 +1782,8 @@ const mapDispatchToProps = dispatch => ({
     },
     backendRequest: () => dispatch(backendRequest()),
     backendRequestCompleted: () => dispatch(backendRequestCompleted()),
-    setTitle: (title) => dispatch(setTitle(title))
+    setTitle: (title) => dispatch(setTitle(title)),
+    setSelectedService: selectService  => dispatch(setSelectedService(selectService))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>

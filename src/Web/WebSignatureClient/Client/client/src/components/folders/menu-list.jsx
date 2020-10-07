@@ -14,7 +14,7 @@ import styles from './menu-list.scss';
 import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
+import lefebvre, { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
 import { cancelSignatureCen } from "../../services/api-signaturit";
 
 export const DroppablePayloadTypes = {
@@ -35,7 +35,7 @@ export class MenuListClass extends Component {
 
   componentDidMount() {
     this.props.setAppTitle(i18n.t('topBar.app'));
-    this.props.setSelectedService('signature'); 
+    
   }
   
   signatureContent = () => {
@@ -191,7 +191,9 @@ export class MenuListClass extends Component {
               <span className="lf-icon-signature">
               </span>
              </div> :  
-             <div className={`${styles['title-nav-firmas']}`}>
+             <div 
+              className={`${styles['title-nav-firmas']} ${styles['title-nav-disble']}`}
+              onClick={this.getConfirm}>
               <span className="lf-icon-signature">
               </span>{i18n.t('sideBar.filterMenu')}
              </div>  
@@ -354,7 +356,7 @@ const mapStateToProps = state => ({
   selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
   messages: state.messages,
-  lefebvre: state.lefebvre,
+  lefebvre: state.lefebvre
 });
 
 const mapDispatchToProps = dispatch => ({
