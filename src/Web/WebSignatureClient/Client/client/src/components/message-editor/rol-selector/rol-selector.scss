@@ -1,7 +1,7 @@
 
 .table-scrollbar {
   position: relative;
-  height: 200px;
+  height: 248px;
   overflow-y: auto;
 }
 
@@ -32,6 +32,11 @@
    td:last-child, th:last-child {
       border-right: 2px solid #001978;
    }
+}
+
+.action {
+  top: -10px;
+  position: relative;
 }
 
 .btn-gen {
