@@ -331,7 +331,7 @@ export class RolSelector extends React.Component {
                   </tbody>
               </table>
           </div>
-          <div className="center-align mb-3">
+          <div className="center-align mb-3 action">
             <button 
             className={style['btn-gen']} 
             //href="#demo-modal"
