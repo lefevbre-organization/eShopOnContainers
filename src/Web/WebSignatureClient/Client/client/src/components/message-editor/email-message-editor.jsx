@@ -525,10 +525,14 @@ class EmailMessageEditor extends Component {
 
   
   submit() {
-    if (this.props.to.length === 0 || this.props.attachments.length === 0){
+    if (this.props.to.length === 0 ){
       this.setState({ hideAlertDialog: true });
-    } else if (this.bigAttachments()){
-      this.setState({ hideAlertDialog: true, bigAttachments: true});
+    } else if ( this.props.attachments.length === 0 
+      && (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')){
+        this.setState({hideAlertDialog: true})
+    } 
+    else if (this.bigAttachments()){
+      this.setState({ hideAlertDialog: true});
     }
     else {
       if (this.headerFormRef.current.reportValidity()) {
