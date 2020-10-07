@@ -254,7 +254,7 @@ export class MenuListClass extends Component {
            ref={alertdialog => this.alertDialogInstance = alertdialog} 
            open={() => this.dialogOpen} 
            close={this.dialogClose.bind(this)}
-          ></DialogComponent>
+          />
 
           <style jsx global>
             {` 

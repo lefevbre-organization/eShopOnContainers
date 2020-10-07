@@ -183,7 +183,12 @@ export class EmailMessageViewer extends Component {
 
       if (!(name in lookup)) {
         lookup[name] = 1;
-        result.push(name);
+        result.push(
+          {
+              text:  name,
+         
+          }
+      )  ;
       }
     }
     return result;
@@ -472,6 +477,10 @@ export class EmailMessageViewer extends Component {
             #infoDialog, .e-dialog .e-dlg-content {
               font-size: 17.5px !important;
             }
+
+            .e-btn .e-btn-icon.e-icon-right, .e-css.e-btn .e-btn-icon.e-icon-right {
+              display: none;
+           }
           
           `}
         </style>

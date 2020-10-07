@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import i18n from 'i18next';
+import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 
 const Details = (props) => {
  return (
@@ -27,8 +28,10 @@ const Details = (props) => {
               //  <span>{props.detail.certificates[0].file.name}</span>
               <div>
                 <span>{props.detail.certificates[0].file.name}</span>
-                <span className={`${props.styles['bola-firmantes']} ${props.styles['gray']}`}>
-                 {props.getFiles(props.detail).length }
+                <span>
+                 {/* {props.getFiles(props.detail).length } */}
+                 {/* beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={fileList} */}
+                 <DropDownButtonComponent cssClass={`${props.styles['bola-firmantes']} ${props.styles['gray']}`}  items={props.getFiles(props.detail)}>{props.getFiles(props.detail).length}</DropDownButtonComponent>
                 </span>
               </div>
               
