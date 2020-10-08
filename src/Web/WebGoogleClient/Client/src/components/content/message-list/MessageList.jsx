@@ -285,6 +285,7 @@ export class MessageList extends Component {
     }
 
     return (<div className='message-list-tree'>
+      { this.props.selectedFolder === 'TRASH' && <div className={"trash-notice"}><p>{t('message-list.trash-notice')}</p></div>}
             <TreeViewComponent
                 ref={this.treeViewRef}
                 fields={fields}
@@ -303,6 +304,20 @@ export class MessageList extends Component {
                 cssClass={'message-list'}
             >
             </TreeViewComponent>
+            <style jsx>{` 
+              .trash-notice p{
+                font-size: 14px;
+                font-weight: normal;
+                margin: 0;
+                }
+              .trash-notice {
+                padding: 10px;
+                text-align: center;
+                width: 100%;
+                background-color: #e8f0fe;
+                }
+                
+            `}</style>
           </div>);
   }
 
