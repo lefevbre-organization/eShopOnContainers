@@ -1065,12 +1065,12 @@ export class Main extends Component {
             if (!args.element.querySelector('.custom-field-row')) {
                 let row = createElement('div', { className: 'custom-field-row' });
                 let rowAttendes = createElement('div', { className: 'custom-field-row' });
-                let rowReminders = createElement('div', { className: 'custom-field-row' });
+               // let rowReminders = createElement('div', { className: 'custom-field-row' });
                 let formElement = args.element.querySelector('.e-schedule-form');
 
                 formElement.firstChild.insertBefore(rowAttendes, formElement.firstChild.firstChild);
                 formElement.firstChild.insertBefore(row, formElement.lastChild.lastChild);
-                formElement.firstChild.insertBefore(rowReminders, formElement.lastChild.lastChild);
+              //  formElement.firstChild.insertBefore(rowReminders, formElement.lastChild.lastChild);
 
 
                 // Adding event type element
@@ -1103,10 +1103,10 @@ export class Main extends Component {
                 //containerTab.appendChild(nodeA);
 
                 // Adding reminder element  
-                let containerRem = createElement('div', { className: 'custom-field-container' });
-                rowReminders.appendChild(containerRem);
-                var nodeR = ReactDOM.findDOMNode(this.remObj);
-                containerRem.appendChild(nodeR);
+                //let containerRem = createElement('div', { className: 'custom-field-container' });
+                //rowReminders.appendChild(containerRem);
+                //var nodeR = ReactDOM.findDOMNode(this.remObj);
+                //containerRem.appendChild(nodeR);
 
             }
 

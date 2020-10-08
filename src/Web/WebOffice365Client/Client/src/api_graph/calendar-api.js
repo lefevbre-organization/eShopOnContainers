@@ -628,7 +628,10 @@ function EventParser(event) {
             displayName: event.location
         },      
 
-        IsAllDay: event.isAllDay
+        IsAllDay: event.isAllDay,
+        //isReminderOn: true,
+        //reminderMinutesBeforeStart: 1,
+
     };
 
     // Recurrence
