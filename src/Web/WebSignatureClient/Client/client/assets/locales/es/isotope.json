@@ -200,6 +200,7 @@
     "statusInProgress": "En progreso",
     "statusError": "Error",
     "statusPending": "Pendiente",
+    "statusSigning": "Firmando",
     "filters": {
       "contains": "Contiene",
       "startsWith": "Empieza por",
@@ -254,7 +255,7 @@
     "attachButton": "ADJUNTAR DOCUMENTO",
     "pagesConfiguration": {
       "single": "Firmar documento en una sola hoja",
-      "all": "Firmar documento en todas las hojas" 
+      "all": "Firmar documento en todas las hojas (solo pdf)" 
     },
     "messageAlert": "Tipo de archivo seleccionado no válido."
   },
