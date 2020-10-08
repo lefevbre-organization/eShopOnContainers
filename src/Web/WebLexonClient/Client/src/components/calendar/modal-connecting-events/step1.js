@@ -12,7 +12,7 @@ export class ConnectingEmailsStep1 extends React.Component {
     this.state = {
       types: [],
       actuation: 1,
-      entity: -1
+      entity: 1
     };
   }
 
@@ -74,8 +74,8 @@ export class ConnectingEmailsStep1 extends React.Component {
                     label={i18n.t('classification-calendar.step1.classify-new')}
                     checked={this.state.actuation === 3}
                     change={event => {
-                      this.setState({ actuation: 3 }, () => {
-                        // this.onChangeData();
+                      this.setState({ actuation: 3, entity: -1 }, () => {
+                         this.onChangeData();
                       });
                     }}
                   />

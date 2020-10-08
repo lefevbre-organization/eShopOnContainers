@@ -3,7 +3,7 @@ import i18n from "i18next";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-export class ConnectingEmailsStep4 extends React.Component {
+export class ConnectingEmailsStep1c extends React.Component {
     constructor() {
         super()
 
@@ -37,32 +37,23 @@ export class ConnectingEmailsStep4 extends React.Component {
             <div className="step4-container">
                 <ol style={{ textAlign: "center" }}>
                     <li className="index-5">
-                        <span>{i18n.t(`connecting.q5`)}</span>
+                        <span>{i18n.t(`classification-calendar.step1c.q1`)}</span>
                     </li>
                 </ol>
-                <p className="step4-subtitle">{i18n.t(`connecting.qs5`)}</p>
-                <section className="panel-4 section-border">
-                    <ul className="subjects-list">
-                        <PerfectScrollbar style={{ height: "400px", paddingRight: "40px" }}>
-                            {this.props.messages.map(msg => {
-                                return (<li key={msg.id}>
-                                    <p className="input-label">{i18n.t(`connecting.actuation-title`)}</p>
-                                    <TextBoxComponent type="" placeholder="" cssClass="e-outline" autocomplete="off" value={msg.subject} change={(event)=>{
-                                        this.onChange(msg.id, event.value)
-                                    }}/>
-                                </li>)
-                            })} 
-                        </PerfectScrollbar>
-                    </ul>
-                </section>
+                <p className="step4-subtitle">{i18n.t(`classification-calendar.step1c.q2`)}</p>
+                    <p className="input-label">{i18n.t(`classification-calendar.step1c.actuation-title`)}</p>
+                    <TextBoxComponent type="" placeholder={i18n.t(`classification-calendar.step1c.placeholder`)} cssClass="e-outline" autocomplete="off" value="" change={(event)=>{
+                        //this.onChange(msg.id, event.value)
+                    }}/>
             </div>
             <style jsx>{`
                 input.e-input::selection {
                     background-color: #001978 !important;
                 }
 
-                .step3-container {
+                .step4-container {
                     margin: 30px;
+                    height: 360px;
                 }
 
                 .subjects-list {
@@ -75,7 +66,7 @@ export class ConnectingEmailsStep4 extends React.Component {
                 }
 
                 ol>li.index-5::before {
-                    content: '${this.props.step}'; 
+                    content: '3'; 
                     color: #001978;
                     display: inline-block; 
                     width: 1em;
@@ -92,7 +83,11 @@ export class ConnectingEmailsStep4 extends React.Component {
 
                 .step4-subtitle {
                     color: #333333 !important;
-                    text-align: center !important;
+                    font-family: "MTTMilano-Medium";	
+                    font-size: 14px;
+                    color: #333;
+                    margin-top: 40px;
+                    margin-bottom: 30px;
                 }
                 
                 .panel-4 {

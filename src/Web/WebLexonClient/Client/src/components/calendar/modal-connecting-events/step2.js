@@ -72,6 +72,7 @@ export class ConnectingEmailsStep2 extends React.Component {
     ) {
       try {
         this.setState({ showSpinner: true });
+        debugger
         const response = await getResults(
           user,
           bbdd,
@@ -95,10 +96,12 @@ export class ConnectingEmailsStep2 extends React.Component {
           );
         }
       } catch (err) {
-        this.props.toggleNotification(
-          'Errores: ' + err.errors.map(e => e.message).join('; '),
-          true
-        );
+        if(err && err.errors) {
+          this.props.toggleNotification(
+              'Errores: ' + err.errors.map(e => e.message).join('; '),
+              true
+          );
+        }
         this.setState({
           entities: [],
           counter: 0,

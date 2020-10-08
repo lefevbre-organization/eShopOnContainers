@@ -6,9 +6,8 @@ import { Base64 } from 'js-base64';
 import parse from 'emailjs-mime-parser';
 import { ConnectingEmailsStep1 } from './step1';
 import { ConnectingEmailsStep2 } from './step2';
-import { ConnectingEmailsStep3 } from './step3';
-import { ConnectingEmailsStep4 } from './step4';
 import {ConnectingEmailsStep1b} from "./step1b";
+import {ConnectingEmailsStep1c} from "./step1c";
 import { addClassification, uploadFile } from '../../../services/services-lexon';
 import ACTIONS from '../../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -22,7 +21,7 @@ class ModalConnectingEvents extends Component {
       step: 1,
       step1Data: {
         actuation: 0,
-        entity: -1,
+        entity: 1,
       },
       step2Data: {
         id: -1,
@@ -56,7 +55,6 @@ class ModalConnectingEvents extends Component {
 
   nextStep() {
     const { step, step1Data } = this.state;
-
     if (step === 1) {
       if(step1Data.actuation === 1) {
         this.setState({ step: 2 });
@@ -64,7 +62,11 @@ class ModalConnectingEvents extends Component {
         this.setState({ step: 11})
       }
     } else if(step === 11) {
-      this.setState({ step: 2 });
+      if(step1Data.actuation === 3) {
+        this.setState({step: 12});
+      } else {
+        this.setState({step: 2});
+      }
     } else if (step === 2) {
       if (
         step1Data.copyDocuments === false &&
@@ -78,8 +80,6 @@ class ModalConnectingEvents extends Component {
           this.setState({ step: 3 });
         }
       }
-    } else if (step === 3) {
-      this.setState({ step: 4 });
     }
   }
 
@@ -90,6 +90,8 @@ class ModalConnectingEvents extends Component {
       this.setState({ step: 1 });
     } else if (step === 3) {
       this.setState({ step: 2 });
+    }else if (step === 12) {
+      this.setState({ step: 11 });
     } else if (step === 4) {
       if (
         step1Data.copyDocuments === false &&
@@ -115,10 +117,17 @@ class ModalConnectingEvents extends Component {
       };
     }
 
+    debugger
     this.setState({ step1Data: data, step2Data });
   }
 
   changeStep1bData(data) {
+    let step2Data = this.state.step2Data;
+
+    this.setState( prevState => ({ step1Data: { ...prevState.step1Data, entity: data} }));
+  }
+
+  changeStep1cData(data) {
     let step2Data = this.state.step2Data;
     // if (this.state.step1Data.entity !== data.entity) {
     //   step2Data = {
@@ -128,8 +137,9 @@ class ModalConnectingEvents extends Component {
     // }
     //
 
-    this.setState( prevState => ({ step1Data: { ...prevState.step1Data, entity: data} }));
+    //this.setState( prevState => ({ step1Data: { ...prevState.step1Data, entity: data} }));
   }
+
 
   changeStep2Data(data) {
     this.setState({ step2Data: { ...data } });
@@ -403,6 +413,34 @@ class ModalConnectingEvents extends Component {
             </Button>
           </Fragment>
         );
+      case 12:
+          return (
+              <Fragment>
+                <Button
+                    bsPrefix='btn btn-outline-primary'
+                    onClick={() => {
+                      this.closeDialog();
+                    }}>
+                  {i18n.t('classify-emails.cancel')}
+                </Button>
+                <Button
+                    bsPrefix='btn btn-outline-primary'
+                    onClick={() => {
+                      this.prevStep();
+                    }}>
+                  {i18n.t('classify-emails.back')}
+                </Button>
+                <Button
+                    disabled={this.saveDisabled()}
+                    bsPrefix='btn btn-primary'
+                    onClick={() => {
+                      this.onSaveStep2();
+                    }}>
+                  {i18n.t('classify-emails.save')}
+                </Button>
+              </Fragment>
+          );
+          break;
       case 3:
         return (
           <Fragment>
@@ -501,38 +539,25 @@ class ModalConnectingEvents extends Component {
                       this.changeStep1bData(data);
                     }}></ConnectingEmailsStep1b>
               </div>
-
+              <div
+                  style={{ display: this.state.step === 12 ? 'block' : 'none' }}>
+                <ConnectingEmailsStep1c
+                    show={this.state.step === 12}
+                    onChange={(data) => {
+                      this.changeStep1cData(data);
+                    }}></ConnectingEmailsStep1c>
+              </div>
               <div
                 style={{ display: this.state.step === 2 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep2
                   show={this.state.step === 2}
                   user={user}
                   bbdd={companySelected}
-                  entity={this.state.step1Data.entity}
+                  entity={1}
                   toggleNotification={toggleNotification}
                   onSelectedEntity={(data) =>
                     this.changeStep2Data(data)
                   }></ConnectingEmailsStep2>
-              </div>
-              <div
-                style={{ display: this.state.step === 3 ? 'block' : 'none' }}>
-                <ConnectingEmailsStep3
-                  show={this.state.step === 3}
-                  user={user}
-                  bbdd={companySelected}
-                  entity={this.state.step2Data}
-                  toggleNotification={toggleNotification}
-                  onSelectedDirectory={(data) =>
-                    this.changeStep3Data(data)
-                  }></ConnectingEmailsStep3>
-              </div>
-              <div
-                style={{ display: this.state.step === 4 ? 'block' : 'none' }}>
-                <ConnectingEmailsStep4
-                  show={this.state.step === 4}
-                  step={4}
-                  messages={messages}
-                  onChange={this.changeSubject}></ConnectingEmailsStep4>
               </div>
             </Container>
             <Modal.Footer>{this.renderButtons()}</Modal.Footer>

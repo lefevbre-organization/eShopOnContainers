@@ -83,7 +83,18 @@ export class ConnectingEmailsStep1b extends React.Component {
             
             .step1b-container ol > li:before {
               content: '2';
-            }
+              color: #001978;
+              display: inline-block;
+              width: 1em;
+              margin-left: -1em;
+              background-color: #e5e8f1;
+              border-radius: 50%;
+              height: 32px;
+              width: 32px;
+              text-align: center;
+              font-family: 'MTTMilano-Medium';
+              font-size: 16px;
+              font-weight: bold;            }
             
             ol > li > span {
               margin-left: 8px;

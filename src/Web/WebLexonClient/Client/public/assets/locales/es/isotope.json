@@ -109,6 +109,12 @@
       "4": "Otras",
       "5": "Lexnet"
     },
+    "step1c": {
+      "q1": "Cumplimentar los datos de la nueva actuación",
+      "q2": "Si lo deseas, puedes renombrar aquí el asunto",
+      "actuation-title": "Asunto",
+      "placeholder": "Título del nuevo evento*"
+    },
     "step2": {
       "q3_1" : "¿En qué expediente quieres clasificar el evento?"
     }
