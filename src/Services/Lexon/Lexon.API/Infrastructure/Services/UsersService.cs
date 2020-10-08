@@ -66,8 +66,8 @@ namespace Lexon.Infrastructure.Services
                     TraceInfo(infos, $"Received {env} from client");
             }
 
-            _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.conn;
-            _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.url;
+            _conn = _settings.Value.envModels.First(x => x.env.Equals(env))?.conn;
+            _urlLexon = _settings.Value.envModels.First(x => x.env.Equals(env))?.url;
         }
 
         #region user
@@ -645,9 +645,9 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync(string env)
+        public async Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync(string env)
         {
-            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
+            var resultMySql = new MySqlList<LexEntityTypeList, LexEntityType>(new LexEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
             GetUrlsByEnvironment(env, resultMySql.Infos);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -670,7 +670,7 @@ namespace Lexon.Infrastructure.Services
                                 while (reader.Read())
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
-                                    var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(rawJson));
+                                    var resultado = (JsonConvert.DeserializeObject<LexEntityTypeList>(rawJson));
                                     resultMySql.AddData(resultado, resultado.Entities);
                                 }
                             }
@@ -1253,7 +1253,7 @@ namespace Lexon.Infrastructure.Services
             GetUrlsByEnvironment(fileMail.env, result.infos);
             try
             {
-                var lexonFile = new LexonGetFile
+                var lexonFile = new LexGetFile
                 {
                     idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
                     idUser = fileMail.idUser,
@@ -1350,9 +1350,9 @@ namespace Lexon.Infrastructure.Services
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
-        private async Task<LexonPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        private async Task<LexPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
         {
-            var lexonFile = new LexonPostFile
+            var lexonFile = new LexPostFile
             {
                 idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
                 fileName = fileMail.Name,

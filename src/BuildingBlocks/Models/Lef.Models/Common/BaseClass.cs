@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
@@ -174,6 +175,24 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public static UpdateOptions GetUpsertOptions()
         {
             return new UpdateOptions { IsUpsert = true };
+        }
+
+        public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl)
+        {
+            if (env == null || !envSettings.Environments.Contains(env))
+            {
+                if (infos != null)
+                    TraceInfo(infos, $"Received {env} - Get Default Env {envSettings.DefaultEnvironment}");
+                env = envSettings.DefaultEnvironment;
+            }
+            else
+            {
+                if (infos != null)
+                    TraceInfo(infos, $"Received {env} from client");
+            }
+
+            finalConn = envSettings.envModels.First(x => x.env.Equals(env))?.conn;
+            finalUrl = envSettings.envModels.First(x => x.env.Equals(env))?.url;
         }
     }
 }
