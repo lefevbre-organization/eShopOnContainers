@@ -373,7 +373,7 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
       console.log(user);
-      window.currentUser = user.data.tokenDecoded;
+      //window.currentUser = user.data.tokenDecoded;
       this.props.setCurrentUser(user.data.tokenDecoded);
 
       let sign = '';
@@ -474,7 +474,6 @@ export class Main extends Component {
 
   sendMessageCentinelaPutUser(user) {
     const { selectedMessages, googleUser } = this.props;
-    debugger
     window.dispatchEvent(
       new CustomEvent('PutUserFromCentinelaConnector', {
         detail: {
