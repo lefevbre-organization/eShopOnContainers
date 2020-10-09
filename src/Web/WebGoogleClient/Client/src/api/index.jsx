@@ -2,6 +2,7 @@ import { MAX_RESULTS } from '../constants';
 import { getBody, isHTML, base64MimeType, base64Data } from './utils';
 import base64url from 'base64url';
 import quotedPrintable from 'quoted-printable';
+import utf8 from 'utf8';
 import { Base64 } from 'js-base64';
 
 const getLabelDetailPromise = (labelId) => {
@@ -466,32 +467,29 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   }
   email += `\r\n`;
   email += `--${guidAlternative}\r\n`;
-  email += `Content-Type: text/plain; charset="iso-8859-1"\r\n`;
+  email += `Content-Type: text/plain; charset="utf8"\r\n`;
   email += `Content-Transfer-Encoding: quoted-printable\r\n`;
   email += `\r\n`;
   //email += `${chunkString(removeHtmlTags(body))}\r\n`;
   //email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
   if (embeddedImages) {
     email += `${
-      plainTextBody.length === 0 ? '' : quotedPrintable.encode(plainTextBody)
+      plainTextBody.length === 0 ? '' : quotedPrintable.encode(utf8.encode(plainTextBody))
     }\r\n`;
   } else {
     email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
   }
   email += `\r\n`;
   email += `--${guidAlternative}\r\n`;
-  email += `Content-Type: text/html; charset="iso-8859-1"\r\n`;
+  email += `Content-Type: text/html; charset="utf8"\r\n`;
   email += `Content-Transfer-Encoding: quoted-printable\r\n`;
   email += `\r\n`;
-  //email += `<div>${chunkString(body)}</div>\r\n`
-  //email += `${limitLineLengthHtml(formattedBody)}\r\n`
   email += `${
-    formattedBody.length === 0 ? '' : quotedPrintable.encode(formattedBody)
+    formattedBody.length === 0 ? '' : quotedPrintable.encode(utf8.encode(formattedBody))
   }\r\n`;
   email += `\r\n`;
   email += `--${guidAlternative}--\r\n`;
   if (embeddedImages) {
-    console.log('Enters here');
     for (var i = 0; i < embeddedImagesList.length; i++) {
       let imgName = getContentName(embeddedImagesList[i]);
       let imgType = getContentType(embeddedImagesList[i]);
