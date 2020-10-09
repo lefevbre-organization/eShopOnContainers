@@ -12,7 +12,7 @@ namespace Lexon.Infrastructure.Services
         Task<Result<int>> AddAppointmentActionAsync(LexAppointmentActuation appointment, string env, string idUser);
         Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetMasterActuationsAsync(string env);
         Task<Result<PaginatedItemsViewModel<LexActuation>>> GetActuationsAsync(string idType, string idUser, string env, int pageSize, int pageIndex);
-        Task<Result<PaginatedItemsViewModel<LexActuation>>> GetClassificationsFromAppointmentAsync(string idType, string idUser, string env, int pageSize, int pageIndex);
+        Task<Result<PaginatedItemsViewModel<LexActuation>>> GetClassificationsFromAppointmentAsync(string idAppointment, string idUser, string env, int pageSize, int pageIndex);
         Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env);
     }
 }

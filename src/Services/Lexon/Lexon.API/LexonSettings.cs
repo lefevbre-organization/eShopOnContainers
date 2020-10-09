@@ -24,7 +24,7 @@ namespace Lexon.API
         public bool AzureStorageEnabled { get; set; }
         public long IdAppNavision { get; set; }
 
-        public EnvironmentModel[] envModels { get; set; }
+        public EnvironmentModel[] EnvModels { get; set; }
         public string[] Environments { get; set; }
         public string DefaultEnvironment { get; set; }
 
@@ -56,7 +56,9 @@ namespace Lexon.API
         public string RemoveAppointment { get; set; }
         public string AddAppointmentAction { get; set; }
         public string GetActuationTypes { get; set; }
+        public string GetActuationCategories { get; set; }
         public string GetActuations { get; set; }
+        public string SearchAppointmentRelations { get; set; }
 
  
     }

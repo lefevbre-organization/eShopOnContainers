@@ -191,8 +191,31 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                     TraceInfo(infos, $"Received {env} from client");
             }
 
-            finalConn = envSettings.envModels.First(x => x.env.Equals(env))?.conn;
-            finalUrl = envSettings.envModels.First(x => x.env.Equals(env))?.url;
+            finalConn = envSettings.EnvModels.First(x => x.env.Equals(env))?.conn;
+            finalUrl = envSettings.EnvModels.First(x => x.env.Equals(env))?.url;
         }
+
+        #region Filters
+        public string GetLongFilter(string name, long? param, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            var paramString = param == null ? "null" : param.ToString();
+            return param != null ? $"{comma}\"{name}\":{paramString}" : string.Empty;
+        }
+
+        public string GetShortFilter(string name, short? param, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            var paramString = param == null ? "null" : param.ToString();
+            return $"{comma}\"{name}\":{paramString}";
+        }
+
+        public string GetTextFilter(string name, string value, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
+        }
+
+        #endregion Filters
     }
 }

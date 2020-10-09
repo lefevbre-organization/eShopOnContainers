@@ -5,6 +5,6 @@
         string ConnectionString { get; set; }
         string DefaultEnvironment { get; set; }
         string[] Environments { get; set; }
-        EnvironmentModel[] envModels { get; set; }
+        EnvironmentModel[] EnvModels { get; set; }
     }
 }

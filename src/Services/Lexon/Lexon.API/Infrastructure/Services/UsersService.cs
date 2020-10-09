@@ -66,8 +66,8 @@ namespace Lexon.Infrastructure.Services
                     TraceInfo(infos, $"Received {env} from client");
             }
 
-            _conn = _settings.Value.envModels.First(x => x.env.Equals(env))?.conn;
-            _urlLexon = _settings.Value.envModels.First(x => x.env.Equals(env))?.url;
+            _conn = _settings.Value.EnvModels.First(x => x.env.Equals(env))?.conn;
+            _urlLexon = _settings.Value.EnvModels.First(x => x.env.Equals(env))?.url;
         }
 
         #region user
@@ -1222,25 +1222,7 @@ namespace Lexon.Infrastructure.Services
                 $"{GetTextFilter("Folder", mail.Folder)}";
         }
 
-        private string GetLongFilter(string name, long? param, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            var paramString = param == null ? "null" : param.ToString();
-            return param != null ? $"{comma}\"{name}\":{paramString}" : string.Empty;
-        }
-
-        private string GetShortFilter(string name, short? param, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            var paramString = param == null ? "null" : param.ToString();
-            return $"{comma}\"{name}\":{paramString}";
-        }
-
-        private string GetTextFilter(string name, string value, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
-        }
+   
 
         #endregion Common
 
