@@ -49,25 +49,33 @@ namespace Lexon.API.Controllers
        
         #region Actuations
 
-        [HttpGet("types")]
+        [HttpGet("{idUser}/{bbdd}/types")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuationType>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuationType>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetActuationTypesAsync(string env = "QA")
+        public async Task<IActionResult> GetActuationTypesAsync(
+            [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromQuery] string env = "QA"
+            )
         {
-            Result<PaginatedItemsViewModel<LexActuationType>> result = await _svc.GetMasterActuationsAsync(env);
+            var result = await _svc.GetActuationTypesAsync(env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("categories")]
+        [HttpGet("{idUser}/{bbdd}/categories")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuationCategory>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuationCategory>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetActuationCategoriesAsync(string env = "QA")
+        public async Task<IActionResult> GetActuationCategoriesAsync(
+            [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromQuery] string env = "QA"
+            )
         {
-            Result<PaginatedItemsViewModel<LexActuationCategory>> result = await _svc.GetActuationCategoriesAsync(env);
+            var result = await _svc.GetActuationCategoriesAsync(env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("{idUser}/{idType}")]
+        [HttpGet("{idUser}/{bbdd}/{idType}")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActuationsAsync(
@@ -88,7 +96,7 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{idUser}/appointments")]
+        [HttpPost("{idUser}/{bbdd}/appointments")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAppointmentAsync(
@@ -106,7 +114,7 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpDelete("{idUser}/appointments")]
+        [HttpDelete("{idUser}/{bbdd}/appointments")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveAppointmentAsync(
@@ -124,11 +132,11 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{idUser}/appointments/actuation")]
+        [HttpPost("{idUser}/{bbdd}/appointments/actuation")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAppointmentActionAsync(
-            [FromBody] LexAppointmentActuation appointment,
+            [FromBody] LexAppointmentRelation appointment,
             [FromRoute] string idUser = "449",
             [FromQuery] string env = "QA"
 )

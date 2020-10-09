@@ -21,7 +21,7 @@
         //'{"BBDD":"lexon_admin_02","Id":401, "IdUser":"1344"}';
     }
 
-    public class LexAppointmentActuation: LexAppointmentSimple
+    public class LexAppointmentRelation: LexAppointmentSimple
     {
         public int IdAppointment { get; set; }
 

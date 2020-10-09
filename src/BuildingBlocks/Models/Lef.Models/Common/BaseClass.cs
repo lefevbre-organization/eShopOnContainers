@@ -216,6 +216,43 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
 
+        public static string GetUserFilter(string bbdd, string idUser, bool withComma = false)
+        {
+            var comma = withComma ? ", " : "";
+            return $"{comma}\"BBDD\":\"{bbdd}\",\"IdUser\":{idUser}";
+        }
         #endregion Filters
+
+        public bool PossibleHasData(List<ErrorInfo> errors, long? count)
+        {
+            return (errors?.Count == 0 && count != null && count > 0);
+        }
+
+        public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
+        {
+            int? ErrorCode = null;
+            string Error = null;
+            int? Count = null;
+            try
+            {
+                if (idError is int)
+                    ErrorCode = (int?)idError;
+
+                if (TextError is int || TextError is string)
+                    Error = TextError.ToString();
+
+                if (!(ErrorCode == null && Error == null))
+                    Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
+
+                if (Total is int)
+                    Count = (int?)Total;
+            }
+            catch (Exception exp)
+            {
+
+                Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message });
+            }
+            return Count;
+        }
     }
 }

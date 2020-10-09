@@ -1,25 +1,18 @@
 ﻿using Lexon.API;
 using Lexon.API.Infrastructure.Repositories;
 using Lexon.API.Model;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lexon.Infrastructure.Services
@@ -53,7 +46,6 @@ namespace Lexon.Infrastructure.Services
             _clientFiles = new HttpClient(handler) { BaseAddress = new Uri(_urlLexon) };
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
-
 
         #region Common
 
@@ -96,24 +88,7 @@ namespace Lexon.Infrastructure.Services
             return idError;
         }
 
- 
-        private string GiveMeRelationFilter(string bbdd, string idUser, MailInfo mailInfo, short? idType, long? idRelated, string[] contactList)
-        {
-            return $"{{ " +
-                GetUserFilter(bbdd, idUser) +
-                GetRelationByIdFilter(idType, idRelated) +
-                GetMailFilter(mailInfo) +
-                GetContactList("ContactList", contactList) +
-                $" }}";
-        }
 
-        private string GetContactList(string name, string[] list, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            return list != null ? $"{comma}\"{name}\":{JsonConvert.SerializeObject(list)}" : string.Empty;
-        }
-
- 
         private string GiveMeAppointmentFilter(string idUser, LexAppointment appointment)
         {
             return $"{{ " +
@@ -130,7 +105,7 @@ namespace Lexon.Infrastructure.Services
                 $" }}";
         }
 
-        private string GiveMeAppointmentActionFilter(string idUser, LexAppointmentActuation appointment)
+        private string GiveMeAppointmentActionFilter(string idUser, LexAppointmentRelation appointment)
         {
             return $"{{ " +
                 GetUserFilter(appointment.Bbdd, idUser) +
@@ -154,40 +129,11 @@ namespace Lexon.Infrastructure.Services
             return $"{GetLongFilter("Id", appointment.Id)}";
         }
 
-        private string GetAppointmentActionFilter(LexAppointmentActuation appointment)
+        private string GetAppointmentActionFilter(LexAppointmentRelation appointment)
         {
             //'{"BBDD":"lexon_admin_02","IdUser":1344, "idAppointment":402, "id":917}
             return $"{GetLongFilter("Id", appointment.Id)}" +
-                $"{GetLongFilter("idAppointment", appointment.IdAppointment)}" ;
-        }
-
-        private static string GetUserFilter(string bbdd, string idUser, bool withComma = false)
-        {
-            var comma = withComma ? ", " : "";
-            return $"{comma}\"BBDD\":\"{bbdd}\",\"IdUser\":{idUser}";
-        }
-
-        private string GetMailFilter(MailInfo mail)
-        {
-            return $"{GetTextFilter("Provider", mail.Provider)}" +
-                $"{GetTextFilter("MailAccount", mail.MailAccount)}" +
-                $"{GetTextFilter("Uid", mail.Uid)}" +
-                $"{GetTextFilter("Subject", mail.Subject)}" +
-                $"{GetTextFilter("Folder", mail.Folder)}" +
-                $"{GetTextFilter("Date", mail.Date)}";
-        }
-
-         private string GetMailListFilter(string name, MailInfo[] mailInfoList, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            return $"{comma}\"{name}\":{JsonConvert.SerializeObject(mailInfoList)}";
-        }
-
-        private string GetRelationByIdFilter(short? idType, long? idRelated)
-        {
-            return idType != null && idRelated != null
-                ? $"{GetShortFilter("IdActionRelationType", idType)}{GetLongFilter("IdRelation", idRelated)}"
-                : string.Empty;
+                $"{GetLongFilter("idAppointment", appointment.IdAppointment)}";
         }
 
 
@@ -201,7 +147,6 @@ namespace Lexon.Infrastructure.Services
         }
 
         #endregion Common
-
 
         #region Actuations
 
@@ -217,15 +162,15 @@ namespace Lexon.Infrastructure.Services
                     var filtro = GiveMeAppointmentFilter(idUser, appointment);
                     conn.Open();
 
-                        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointment, conn))
-                        {
-                            AddCommonParameters(idUser, command, "P_JSON", filtro, true);
-                            await command.ExecuteNonQueryAsync();
-                            TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
-                            result.data =(GetIntOutputParameter(command.Parameters["P_ID"].Value));
-                        }
-                 }
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointment, conn))
+                    {
+                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
+                        await command.ExecuteNonQueryAsync();
+                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
+                    }
+                }
 
                 if (_settings.Value.UseMongo)
                 {
@@ -277,7 +222,7 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<int>> AddAppointmentActionAsync(LexAppointmentActuation appointment, string env, string idUser)
+        public async Task<Result<int>> AddAppointmentActionAsync(LexAppointmentRelation appointment, string env, string idUser)
         {
             var result = new Result<int>(0);
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
@@ -313,87 +258,108 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetMasterActuationsAsync(string env)
+        public async Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetActuationTypesAsync(string env, string idUser, string bbdd)
         {
-            return null;
-            //var pageIndex = 1;
-            //var pageSize = 0;
-            //var resultMySql = new MySqlList<LexEntityTypeList, LexEntityType>(new LexEntityTypeList(), _settings.Value.SP.GetMasterEntities, pageIndex, pageSize);
-            //var result =  new Result<PaginatedItemsViewModel<LexActuationType>>();
-            //ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
+            var pageIndex = 1;
+            var pageSize = 0;
+            var result = new Result<PaginatedItemsViewModel<LexActuationType>>();
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = "{" + GetUserFilter(bbdd, idUser) + "}";
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn))
+                    {
+                        AddCommonParameters("0", command, "P_FILTER", filtro);
+                        AddListSearchParameters(0, 1, "ts", "DESC", command);
+                        var r = command.ExecuteNonQuery();
 
-            //using (MySqlConnection conn = new MySqlConnection(_conn))
-            //{
-            //    try
-            //    {
-            //        var filtro = "{}";
-            //        conn.Open();
-            //        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn))
-            //        {
-            //            AddCommonParameters("0", command, "P_FILTER", filtro);
-            //            AddListSearchParameters(0, 1, "ts", "DESC", command);
-            //            var r = command.ExecuteNonQuery();
+                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (PossibleHasData(result.errors, result.data.Count))
+                            {
+                                while (reader.Read())
+                                {
+                                    var rawJson = reader.GetValue(0).ToString();
+                                    var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson)).ToList();
+                                    result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, result.data.Count, resultado);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
 
-            //            resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
-            //            using (var reader = await command.ExecuteReaderAsync())
-            //            {
-            //                if (resultMySql.PossibleHasData())
-            //                {
-            //                    while (reader.Read())
-            //                    {
-            //                        var rawJson = reader.GetValue(0).ToString();
-            //                        var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson));
-            //                        resultMySql.AddData(resultado, resultado.Entities);
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        TraceMessage(resultMySql.Errors, ex);
-            //    }
-            //}
+            if (_settings.Value.UseMongo)
+            {
+                await GetMasterActuationsMongoAsync(result);
+            }
 
-            //if (_settings.Value.UseMongo)
-            //{
-            //    //await GetMasterEntitiesMongoAsync(resultMySql);
-            //}
-            //result.data = resultMySql.Data;
-            //var paginatedEntities = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, resultMySql.Count, resultMySql.Data);
-            //return resultMySql;
+            return result;
         }
 
-
-        public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
+        private Task GetMasterActuationsMongoAsync(Result<PaginatedItemsViewModel<LexActuationType>> result)
         {
-            int? ErrorCode = null;
-            string Error = null;
-            int? Count = null;
-            try
-            {
-                if (idError is int)
-                    ErrorCode = (int?)idError;
-
-                if (TextError is int || TextError is string)
-                    Error = TextError.ToString();
-
-                if (!(ErrorCode == null && Error == null))
-                    Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
-
-                if (Total is int)
-                    Count = (int?)Total;
-            }
-            catch (Exception exp)
-            {
-
-                Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message  });
-            }
-            return Count;
+            throw new NotImplementedException();
         }
 
-        public Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env)
+        public async Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env, string idUser, string bbdd)
+        {
+            var pageIndex = 1;
+            var pageSize = 0;
+            var result = new Result<PaginatedItemsViewModel<LexActuationCategory>>();
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = "{" + GetUserFilter(bbdd,idUser) + "}";
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationCategories, conn))
+                    {
+                        AddCommonParameters("0", command, "P_FILTER", filtro);
+                        AddListSearchParameters(0, 1, "ts", "DESC", command);
+                        var r = command.ExecuteNonQuery();
+
+                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (PossibleHasData(result.errors, result.data.Count))
+                            {
+                                while (reader.Read())
+                                {
+                                    var rawJson = reader.GetValue(0).ToString();
+                                    var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
+                                    result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, result.data.Count, resultado);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            if (_settings.Value.UseMongo)
+            {
+                await GetActuationCategoriesMongoAsync(result);
+            }
+
+            return result;
+        }
+
+        private Task GetActuationCategoriesMongoAsync(Result<PaginatedItemsViewModel<LexActuationCategory>> result)
         {
             throw new NotImplementedException();
         }
@@ -462,8 +428,6 @@ namespace Lexon.Infrastructure.Services
             return new Result<PaginatedItemsViewModel<LexActuation>>();
             //return result;
         }
-
-
 
         #endregion Actuations
     }
