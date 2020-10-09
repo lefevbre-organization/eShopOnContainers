@@ -161,7 +161,6 @@ class Main extends Component<Props, State> {
 
   // TODO: Check this any type
   async handlePutUserFromCentinelaConnector(event: any) {
-    debugger
     console.log(
       'HandleEvent Client -> Centinela - PutUserFromCentinelaConnector'
     );
@@ -213,7 +212,6 @@ class Main extends Component<Props, State> {
   }
 
   async handlePutAddonFromCentinelaConnector(event: any) {
-    debugger
     this.setState({ isAddon: true });
   }
 

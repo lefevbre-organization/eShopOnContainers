@@ -199,6 +199,7 @@
     "statusInProgress": "En progrés",
     "statusError": "Erreur",
     "statusPending": "En attente",
+    "statusSigning": "Signing",
     "filters": {
       "contains": "Contient",
       "startsWith": "Commence par",
@@ -253,7 +254,7 @@
     "attachButton": "Ajouter document",
     "pagesConfiguration": {
       "single": "Signer le document sur une seule feuille",
-      "all": "Signer le document sur toutes les feuilles" 
+      "all": "Signer le document sur toutes les feuilles (seul pdf)" 
     },
     "messageAlert": "Type de fichier sélectionné non valide."
   },
