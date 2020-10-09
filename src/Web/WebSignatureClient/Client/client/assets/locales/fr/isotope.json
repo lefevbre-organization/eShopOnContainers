@@ -301,7 +301,8 @@
     "downloadEveryDocument": "le destinataire a téléchargé tous les documents",
     "buttons": {
       "downloadTrail": "Télécharger audit"
-    }
+    },
+    "title": "DÉTAILS DE LE MAIL"
   },
   "signatureViewer":{
     "grid": {

@@ -708,9 +708,16 @@ class MessageList extends Component {
         if (event.target.className !== "e-btn-icon lf-icon-kebab-menu" //Actions
             && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // Signers
             ){
-            var signature = this.props.signatures.find(s => s.id === event.data.Id);
-            this.props.setTitle(i18n.t('signatureViewer.title'));
-            this.props.signatureClicked(signature);
+            if (this.props.selectedService === 'signature'){
+                var signature = this.props.signatures.find(s => s.id === event.data.Id);
+                this.props.setTitle(i18n.t('signatureViewer.title'));
+                this.props.signatureClicked(signature);
+            } else if (this.props.selectedService === 'certifiedEmail'){
+                var email = this.props.emails.find(s => s.id === event.data.Id);
+                this.props.setTitle(i18n.t('emailViewer.title'));
+                this.props.emailClicked(email);
+            }
+            
         }
     }
 
@@ -834,28 +841,28 @@ class MessageList extends Component {
     */
 
     componentDidMount() {
-        const { lefebvre } = this.props;
+        const { lefebvre, selectedService } = this.props;
         console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
 
-        if (lefebvre.roles && lefebvre.roles.length == 1){
-            if (lefebvre.roles[0] === 'Email Certificado'){
-                this.props.setSelectedService('certifiedEmail');
-                //this.props.preloadEmails()
-            } else if (lefebvre.roles[0] === "Firma Digital" || lefebvre.roles[0] === "Signaturit"){
-                this.props.setSelectedService('signature');
-                this.props.preloadSignatures(lefebvre.userId);
+        if (selectedService === null || selectedService === ''){
+            if (lefebvre.roles && lefebvre.roles.length == 1){
+                if (lefebvre.roles[0] === 'Email Certificado'){
+                    this.props.setSelectedService('certifiedEmail');
+                    //this.props.preloadEmails()
+                } else if (lefebvre.roles[0] === "Firma Digital" || lefebvre.roles[0] === "Signaturit"){
+                    this.props.setSelectedService('signature');
+                    //this.props.preloadSignatures(lefebvre.userId);
+                } else {
+                    // De momento por defecto signature, después hay que añadir control de qué aplicación llama y para qué llama
+                    this.props.setSelectedService('signature'); 
+                    //this.props.preloadSignatures(lefebvre.userId);
+                }
             } else {
                 // De momento por defecto signature, después hay que añadir control de qué aplicación llama y para qué llama
                 this.props.setSelectedService('signature'); 
-                this.props.preloadSignatures(lefebvre.userId);
+                //this.props.preloadSignatures(lefebvre.userId);
             }
-        } else {
-            // De momento por defecto signature, después hay que añadir control de qué aplicación llama y para qué llama
-            this.props.setSelectedService('signature'); 
-            //this.props.preloadSignatures(lefebvre.userId);
         }
-       
-
         // window.addEventListener('resize', this.onresize.bind(this));
     }
 

@@ -283,7 +283,8 @@
     "downloadEveryDocument": "the recipient has downloaded the every documents",
     "buttons": {
       "downloadTrail": "Download audit"
-    }
+    },
+    "title": "EMAIL PROGRESS"
   },
   "signatureViewer":{
     "grid": {

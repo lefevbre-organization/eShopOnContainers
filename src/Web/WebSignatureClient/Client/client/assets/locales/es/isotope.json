@@ -303,7 +303,8 @@
     "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
     "buttons": {
       "downloadTrail": "Descargar auditoria"
-    }
+    },
+    "title": "PROGRESO DE EMAIL"
   },
   "signatureViewer":{
     "grid": {
