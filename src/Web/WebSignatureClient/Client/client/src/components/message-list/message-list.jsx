@@ -324,7 +324,7 @@ class MessageList extends Component {
     getSignatures(signatures){
         let filteredSignatures = [];
         signatures.map( sig => {
-            if ((sig.status === 'En progreso' || sig.status === 'ready' || sig.status === 'pending') && (this.props.signatureFilter === "En progreso")){
+            if ((sig.status === 'En progreso' || sig.status === 'ready' || sig.status === 'pending' || sig.status === 'signing') && (this.props.signatureFilter === "En progreso")){
                 filteredSignatures.push(sig);
             } else if ((sig.status === 'Completadas' || sig.status === 'completed') && (this.props.signatureFilter === "Completadas")){
                 filteredSignatures.push(sig);
@@ -550,6 +550,7 @@ class MessageList extends Component {
             case 'En progreso':
             case i18n.t('signaturesGrid.statusInProgress'):
             case i18n.t('signaturesGrid.statusPending'):
+            case i18n.t('signaturesGrid.statusSigning'):
                 recipientsClass = 'en-progreso';
                 break;
             case 'Completadas':
@@ -661,6 +662,10 @@ class MessageList extends Component {
             status = i18n.t('signaturesGrid.statusPending');
             status_style = 'en-progreso';
             break;
+        case i18n.t('signaturesGrid.statusSigning'):
+            status = i18n.t('signaturesGrid.statusSigning');
+            status_style = 'en-progreso';
+            break;
         default:
             break;
         }
@@ -684,7 +689,9 @@ class MessageList extends Component {
             return i18n.t('signaturesGrid.statusError');
         } else if(status == "in_queue") {
             return i18n.t('signaturesGrid.statusPending');
-        }
+        } else if(status == 'signing') {
+            return i18n.t('signaturesGrid.statusSigning');
+        } 
     }
 
     /*
@@ -1667,7 +1674,7 @@ class MessageList extends Component {
         let coloredStatus;
         let filteredSignatures = [];
         var signatures = this.props.signatures.map( sig => {
-            if ((sig.status === 'En progreso' || sig.status === 'ready' || sig.status === 'pending') && (this.props.signatureFilter === "En progreso")){
+            if ((sig.status === 'En progreso' || sig.status === 'ready' || sig.status === 'pending' || sig.status === 'signing') && (this.props.signatureFilter === "En progreso")){
                 filteredSignatures.push(sig);
             } else if ((sig.status === 'Completadas' || sig.status === 'completed') && (this.props.signatureFilter === "Completadas")){
                 filteredSignatures.push(sig);
@@ -1697,6 +1704,10 @@ class MessageList extends Component {
             case 'ready':
                 coloredStatus = <font color="#001978">En progreso</font>
                 status = 'En progreso';
+                break;
+            case 'signing':
+                coloredStatus = <font color="#001978">Firmando</font>
+                status = 'Firmando';
                 break;
             case 'Completadas':
             case 'completed':
