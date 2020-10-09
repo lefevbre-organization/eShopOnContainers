@@ -188,6 +188,7 @@
     "statusInProgress": "In progress",
     "statusError": "Error",
     "statusPending": "Pending",
+    "statusSigning": "Signing",
     "filters": {
       "contains": "Contains",
       "startsWith": "Starts with",
@@ -242,7 +243,7 @@
     "attachButton": "ATTACH FILE",
     "pagesConfiguration": {
       "single": "Single page signature",
-      "all": "Sign all pages" 
+      "all": "Sign all pages (only pdf)" 
     },
     "messageAlert": "Invalid selected file type."
   },

@@ -39,7 +39,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var uri = new Uri(_settings.Value.CentinelaUrl);
             var credentialsCache = new CredentialCache { { uri, "NTLM", new NetworkCredential(_settings.Value.CentinelaLogin, _settings.Value.CentinelaPassword) } };
             var handler = new HttpClientHandler { Credentials = credentialsCache };
-            _client = new HttpClient(handler) { BaseAddress = uri, Timeout = new TimeSpan(0, 0, 10) };
+            _client = new HttpClient(handler) { BaseAddress = uri, Timeout = new TimeSpan(0, 0, 60) };
         }
 
         public async Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile)
@@ -85,13 +85,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
                 SerializeToMultiPart(fileMail, name, route, out string url, out MultipartFormDataContent multipartContent);
 
-                _client.Timeout = new TimeSpan(0, 0, 90);
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 Console.WriteLine($"[{DateTime.Now}] Call to: {url}");
                 using var response = await _client.PostAsync(url, multipartContent);
                 Console.WriteLine($"[{DateTime.Now}] Response: {response.ToString()}");
                 //WriteError($"Se recibe contestación {DateTime.Now}");
-                _client.Timeout = new TimeSpan(0, 0, 10);
 
                 var responseText = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)

@@ -750,15 +750,30 @@ class App extends Component {
                     this.props.newMessage(dataMailContacts, dataAdminContacts);
                   }
                   else {
-  
+
                     const length = attachment.data.length;
                     const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                    const fileType = fileName.split('.');
                     const newAttachment = {
                       fileName: fileName,
                       size: length,
                       contentType: getFileType(fileName),
                       content: attachment.data
                     }
+  
+                    if (fileType[fileType.length-1] === 'pdf' || fileType[fileType.length-1] === 'PDF'){
+                      const pdfjsLib = require('pdfjs-dist');
+                      pdfjsLib.GlobalWorkerOptions.workerSrc = '../../assets/scripts/pdf.worker.js'
+  
+                      pdfjsLib.getDocument({data: atob(attachment.data)})
+                      .promise.then(doc => {
+                        var numPages = doc.numPages;
+                        newAttachment.pages = numPages;
+                        console.log('# Document Loaded');
+                        console.log('Number of Pages: ' + numPages);
+                      });
+                    }
+
                     attachmentsList.push(newAttachment);
                     documentsInfo.push({docId: document.docId, docName: fileName});
                   }
