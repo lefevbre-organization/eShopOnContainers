@@ -17,7 +17,6 @@ import * as uuid from 'uuid/v4';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {updateLabelName} from "../../api";
-import { Container, Draggable } from 'react-smooth-dnd';
 
 //const moreId = uuid();
 

@@ -12,9 +12,7 @@ import ListToolbar from './list-toolbar/ListToolbar';
 import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
 import { getMessage } from '../../../api';
-import {TreeViewComponent} from "@syncfusion/ej2-react-navigations";
-import { Container, Draggable } from 'react-smooth-dnd';
-import $ from 'jquery'
+import Draggable from "react-draggable";
 
 const ViewMode = {
   LIST: 1,
@@ -294,15 +292,15 @@ export class MessageList extends Component {
        }
 
        return (
-           <Draggable  key={el.id}>
-             <MessageRow
+         <Draggable defaultClassName={"message-dragging"}>
+           <MessageRow
                  data={el}
                  isSent={this.isSentFolder}
                  key={el.id}
                  onSelectionChange={this.onSelectionChange}
                  //onClick={this.getMessage}
              />
-           </Draggable>
+         </Draggable>
        );
      });
 
@@ -353,14 +351,8 @@ export class MessageList extends Component {
         return this.renderEditView();
 
       default:
-        return (
-        <Container removeOnDropOut={true} onDrop={()=> { alert("Dropped"); return true} } shouldAcceptDrop={()=>{
-          var element = document.elementFromPoint(x, y);
-
-        }}>
-          { this.renderMessages() }
-        </Container>
-      )
+        return this.renderMessages();
+      
     }
   }
 

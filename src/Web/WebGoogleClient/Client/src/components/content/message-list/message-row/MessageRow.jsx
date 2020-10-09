@@ -112,6 +112,7 @@ export class MessageItem extends PureComponent {
               />
               </div>
         <div
+            draggable="true"
           onClick={this.getMessage}
           className={`table-row px-0 py-3${unread}`}>
           <NameSubjectFields fromName={fromName} subject={subject} />
