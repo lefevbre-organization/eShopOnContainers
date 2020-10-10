@@ -157,22 +157,6 @@ export class EmailMessageViewer extends Component {
     return res;
   }
 
-  getDocuments(signature){
-    var lookup = {};
-    var items = signature.documents;
-    var result = [];
-
-    for (var item, i = 0; item = items[i++];) {
-      var name = item.file.name;
-
-      if (!(name in lookup)) {
-        lookup[name] = 1;
-        result.push(name);
-      }
-    }
-    return result;
-  }
-
   getFiles(email) {
     var lookup = {};
     var items = email.certificates;
@@ -322,6 +306,7 @@ export class EmailMessageViewer extends Component {
                  signer={signer}
                  signatureConfig={emailConfig ? emailConfig.value.split('|')[index].split(':') : null}
                  emailId={email.id}
+                 email={email}
                  index={index}
                  key={signer.id}
                  styles={styles}
