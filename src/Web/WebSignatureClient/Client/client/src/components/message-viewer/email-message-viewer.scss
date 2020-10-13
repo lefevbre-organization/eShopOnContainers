@@ -261,19 +261,39 @@
       border-bottom: 2px solid #e6e9f2;
     }
 
-    .seguimiento-firmante-individual {
-      width:20%;
+    .separador-email {
+       border-bottom: 2px solid #e6e9f2;
+       position: relative;
+    }
+
+    .separador-email::after{
+     left: 82%;
+     border: solid #c52f2f00;
+     content: "";
+     position: absolute;
+     pointer-events: none;
+     border-width: 33px;
+     border-right: #e6e9f2 solid 4px;
+     border-bottom: #e6e9f2 solid 4px;
+     transform: rotate(-134deg);
+     background: #f4f4f4;
+     margin-top: 1px;
+    }
+    
+     .seguimiento-certification-individual {
+      width: 30%;
       text-align:center;
       font-size:40px;
       color:#001978;
       float:left;
       margin-top:20px;
+      margin-left: -5%;
       &.no-completado{
         color:#a0a1a4;
         .linea{
           border-bottom: 2px solid #a0a1a4!important;
           &.primer-estado{
-            left: 46%!important;
+            left: 35%!important;
           }
         }
         .check-seguimiento{
@@ -284,6 +304,9 @@
         }
         .estado{color:#777!important}
       }
+      &.no-completado-doc {
+        .estado{color:#E9AE79!important}
+      }
       .cont-check-seguimiento {
         position: relative;
         .check-seguimiento {
@@ -292,20 +315,21 @@
           top: 10px;
           background: #f4f4f4;
           border-radius: 50%;
-          left: 44%;
+          left: 47%;
           font-size: 18px;
           z-index: 2;
         }
 
         .linea {
           border-bottom: 2px solid #001978;
-          width: 90%;
+          width: 80%;
           margin-top: 20px;
           position: absolute;
-          left: -46%;
+          left: -49%;
           z-index: 1;
+          margin-left: 16%;
           &.primer-estado{
-            left: 46%!important;
+            left: 35%!important;
           }
         }
         .info{
@@ -401,7 +425,17 @@
       &.cancelada {
         background: #c90223;
       }
-    }  
+    }
+
+    .bola-firmantes.gray {
+       border-radius: 100px;
+       color: #434246;
+       padding: 3px 8px;
+       cursor: pointer;
+       background-color: #CFCED3;
+       float: right;
+    }
+  
   }
 }
 
@@ -613,3 +647,28 @@ a{
   clear: both;
 }
 
+.document-detail {
+  background-color: #C6C8D0;
+  border-radius: 100px;
+  padding: 4px 7px;
+}
+
+.document-title {
+  color:#001978;
+  font-size: 15px;
+}
+
+.document-opened {
+  display: flex;
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.certificate-document {
+  flex: auto;
+}
+
+.certificate-pending {
+  color: #EAAB6A; 
+}

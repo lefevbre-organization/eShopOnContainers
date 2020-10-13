@@ -5,7 +5,7 @@ import { selectFolder } from '../../actions/application';
 import { clearSelectedMessage, getCredentials } from '../../services/application';
 import { getSelectedFolder } from '../../selectors/folders';
 import mainCss from '../../styles/main.scss';
-import styles from './message-viewer.scss';
+import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
 import { 
