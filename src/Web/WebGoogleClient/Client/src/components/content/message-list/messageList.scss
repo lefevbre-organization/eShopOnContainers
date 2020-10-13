@@ -251,18 +251,12 @@
     }
 }
 
-.msg-list-chk-wrapper {
-  display: flex;
-  position: absolute;
-  left: -1px;
-  top: 18px;
-}
-
-.msg-list-chk-wrapper2 {
-  width: 16px;
-  height: 16px;
-  background-color: red;
-}
+//.msg-list-chk-wrapper {
+//  display: flex;
+//  position: absolute;
+//  left: -1px;
+//  top: 18px;
+//}
 
 .chk-msg-row-sc {
   padding-left: 26px;
@@ -271,6 +265,6 @@
 .chk-msg-row {
 }
 
-.message-dragging {
-  background-color: red !important;
+.message-row-item.dragging {
+  opacity: 0.4;
 }

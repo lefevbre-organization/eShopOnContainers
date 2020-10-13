@@ -17,6 +17,11 @@ import * as uuid from 'uuid/v4';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {updateLabelName} from "../../api";
+import {bindActionCreators} from "redux";
+import {
+    modifyMessages,
+    removeMessageFromList
+} from "../content/message-list/actions/message-list.actions";
 
 //const moreId = uuid();
 
@@ -36,6 +41,12 @@ class FolderContainer extends Component {
         this.onNodeCollapsed = this.onNodeCollapsed.bind(this);
         this.onNodeClicked = this.onNodeClicked.bind(this);
         this.nodeTemplate = this.nodeTemplate.bind(this);
+        this.onDragEnter = this.onDragEnter.bind(this);
+
+        this.onMessageDragEnter = this.onMessageDragEnter.bind(this);
+        this.onMessageDragExit = this.onMessageDragExit.bind(this);
+        this.onMessageDrop = this.onMessageDrop.bind(this);
+        this.onMessageDragOver = this.onMessageDragOver.bind(this);
     }
 
     navigateToList(evt) {
@@ -68,8 +79,60 @@ class FolderContainer extends Component {
                 setTimeout(()=>{
                     this.treeViewRef.current.refresh();
                 });
+
+                setTimeout(()=>{
+                    const me = this;
+                    let items = document.querySelectorAll('.e-treeview li');
+                    items.forEach(function(item) {
+                        item.addEventListener('dragenter', me.onMessageDragEnter, false);
+                        item.addEventListener('dragleave', me.onMessageDragExit, false);
+                        item.addEventListener('dragover', me.onMessageDragOver, false);
+                        item.addEventListener('drop', me.onMessageDrop, false);
+                    });
+                }, 1000);
+
             }
         }
+    }
+
+    onMessageDragEnter(evt) {
+        evt.preventDefault();
+        evt.currentTarget.classList.add("message-dragging");
+    }
+
+    onMessageDragExit(evt) {
+        evt.preventDefault();
+        evt.currentTarget.classList.remove("message-dragging");
+    }
+
+    onMessageDrop(evt) {
+        evt.preventDefault();
+        evt.currentTarget.classList.remove("message-dragging");
+
+        const folderId = evt.currentTarget.getAttribute("data-uid");
+        const data = JSON.parse(evt.dataTransfer.getData("text/plain"));
+
+        this.moveMessages([ data.id ], folderId, this.props.selectedFolder.result.id)
+    }
+
+    onMessageDragOver(evt) {
+        evt.preventDefault();
+    }
+
+    moveMessages(ids, destination, source) {
+        // uncheck messages
+        for(let i = 0; i < ids.length; i++) {
+            // this.onSelectionChange({
+            //     action: 'uncheck',
+            //     data: [{
+            //         id: ids[i]
+            //     }]
+            // });
+            //this.props.removeMessageFromList(ids[i]);
+        }
+
+        this.props.modifyMessages({ ids, addLabelIds: [destination], removeLabelIds: [source] });
+        this.props.modifyMessages({ ids, addLabelIds: [destination], removeLabelIds: [source] });
     }
 
     onNodeExpanded(node) {
@@ -106,7 +169,7 @@ class FolderContainer extends Component {
 
     nodeTemplate(data) {
         return (
-                <div className="tree-folder-item">
+                <div className="tree-folder-item" >
                     <div className="treeviewdiv">
                         <div className="textcontent">
                             <i className={data.icon} style={{fontSize: 20, color: '#001978'}}></i>
@@ -117,6 +180,9 @@ class FolderContainer extends Component {
                 </div>
         )
     };
+
+    onDragEnter(evt) {
+    }
 
     render() {
         const { t } = this.props;
@@ -159,7 +225,6 @@ class FolderContainer extends Component {
                                        nodeCollapsed={this.onNodeCollapsed}
                                        nodeTemplate={this.nodeTemplate}
                                        nodeClicked={this.onNodeClicked}
-
                         >
                     </TreeViewComponent>
                 </PerfectScrollbar>
@@ -244,6 +309,10 @@ class FolderContainer extends Component {
                         color: #929ba1;
                         padding: 12px 0 6px;
                         font-weight: 600;
+                    }
+                    
+                    .message-dragging {
+                      background-color: #f9f9f9;
                     }
                   `}
                 </style>
@@ -470,14 +539,21 @@ class FolderContainer extends Component {
 }
 
 function mapStateToProps(state) {
-    return {};
+    return {
+        selectedFolder: state.messagesResult.label
+    };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {};
-}
+const mapDispatchToProps = (dispatch) =>
+    bindActionCreators(
+        {
+            modifyMessages,
+            removeMessageFromList
+        },
+        dispatch
+    );
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps()
+    mapDispatchToProps
 )( withTranslation()(FolderContainer));
