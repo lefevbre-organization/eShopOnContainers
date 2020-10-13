@@ -90,7 +90,6 @@ class FolderContainer extends Component {
                         item.addEventListener('drop', me.onMessageDrop, false);
                     });
                 }, 1000);
-
             }
         }
     }
@@ -128,10 +127,9 @@ class FolderContainer extends Component {
             //         id: ids[i]
             //     }]
             // });
-            //this.props.removeMessageFromList(ids[i]);
+            this.props.removeMessageFromList(ids[i]);
         }
 
-        this.props.modifyMessages({ ids, addLabelIds: [destination], removeLabelIds: [source] });
         this.props.modifyMessages({ ids, addLabelIds: [destination], removeLabelIds: [source] });
     }
 

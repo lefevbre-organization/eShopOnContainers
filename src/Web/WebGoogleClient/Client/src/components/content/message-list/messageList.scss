@@ -28,23 +28,20 @@
 
  // Main container: initialize the flex, direction is row, no wrapping. width 100%
   .table-row {
-    display: flex;          display: -webkit-flex;
-    flex-direction: row;    -webkit-flex-direction: row;
-    flex-wrap: no-wrap;     -webkit-flex-wrap: no-wrap;
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-wrap: nowrap;
+    -webkit-flex-wrap: nowrap;
     width: 100%;
+    margin-left: 10px;
     //background-color: #f8f9fa;
     //padding: 15px 5px;
     color: #242a30;
-
-
-
-
-    
   }
 }
-  
 
- 
  // Wrappers around cells and other wrappers: flex, row
  .wrapper {
    display: flex;           display: -webkit-flex;
@@ -259,7 +256,7 @@
 //}
 
 .chk-msg-row-sc {
-  padding-left: 26px;
+  padding-left: 10px;
 }
 
 .chk-msg-row {

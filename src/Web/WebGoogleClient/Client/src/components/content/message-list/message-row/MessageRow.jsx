@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import MesssageCheckbox from './MessageCheckbox';
 
 import NameSubjectFields from './NameSubjectFields';
 import AttachmentDateFields from './AttachmentDateFields';
 import { getNameEmail } from '../../../../utils';
-import {DraggableCore} from "react-draggable";
-import Draggable from "react-draggable";
 
 export class MessageItem extends Component {
   constructor(props) {
@@ -21,7 +20,6 @@ export class MessageItem extends Component {
 
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
-
     this.clone = null;
   }
 
@@ -33,7 +31,7 @@ export class MessageItem extends Component {
   }
 
   getMessage(evt) {
-    //this.props.history.push(`/${this.props.data.id}`);
+    this.props.history.push(`/${this.props.data.id}`);
   }
 
   getFromName(from) {
@@ -104,7 +102,7 @@ export class MessageItem extends Component {
   }
 
   render() {
-    const sc = this.props.showCheckbox === false;
+    const sc = true;
     const receivedHeader = this.props.data.payload.headers.find(
       (el) => el.name.toUpperCase() === 'X-RECEIVED'
     );
@@ -148,7 +146,7 @@ export class MessageItem extends Component {
               selected={this.props.data.selected}
               onChange={this.onSelectionChange}
           />
-        <div
+          <div
           onClick={this.getMessage}
           className={`table-row px-0 py-3${unread}`}>
           <NameSubjectFields fromName={fromName} subject={subject} />
@@ -169,4 +167,4 @@ export class MessageItem extends Component {
   }
 }
 
-export default MessageItem;
+export default withRouter(MessageItem);

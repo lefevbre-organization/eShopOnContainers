@@ -3,8 +3,12 @@ import {connect} from 'react-redux';
 import {TreeViewComponent} from '@syncfusion/ej2-react-navigations';
 import { withTranslation } from "react-i18next";
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import {updateLabelName} from "../../api_graph";
+import {moveMessages, updateLabelName} from "../../api_graph";
 import * as _ from 'lodash';
+import {bindActionCreators} from "redux";
+import {
+    removeMessageFromList
+} from "../content/message-list/actions/message-list.actions";
 
 class FolderContainer extends Component {
     constructor(props) {
@@ -22,6 +26,11 @@ class FolderContainer extends Component {
         this.nodeDragging = this.nodeDragging.bind(this);
         this.onDragStop = this.onDragStop.bind(this);
         this.onDragStart= this.onDragStart.bind(this);
+
+        this.onMessageDragEnter = this.onMessageDragEnter.bind(this);
+        this.onMessageDragExit = this.onMessageDragExit.bind(this);
+        this.onMessageDrop = this.onMessageDrop.bind(this);
+        this.onMessageDragOver = this.onMessageDragOver.bind(this);
     }
 
     navigateToList(evt) {
@@ -56,6 +65,16 @@ class FolderContainer extends Component {
                     this.treeViewRef.current.refresh();
                 });
 
+                setTimeout(()=>{
+                    const me = this;
+                    let items = document.querySelectorAll('.e-treeview li');
+                    items.forEach(function(item) {
+                        item.addEventListener('dragenter', me.onMessageDragEnter, false);
+                        item.addEventListener('dragleave', me.onMessageDragExit, false);
+                        item.addEventListener('dragover', me.onMessageDragOver, false);
+                        item.addEventListener('drop', me.onMessageDrop, false);
+                    });
+                }, 1000);
             }
         }
     }
@@ -95,6 +114,33 @@ class FolderContainer extends Component {
 
          }
     }
+
+    onMessageDragEnter(evt) {
+        evt.preventDefault();
+        evt.currentTarget.classList.add("message-dragging");
+    }
+
+    onMessageDragExit(evt) {
+        evt.preventDefault();
+        evt.currentTarget.classList.remove("message-dragging");
+    }
+
+    async onMessageDrop(evt) {
+        evt.preventDefault();
+        evt.currentTarget.classList.remove("message-dragging");
+
+        const folderId = evt.currentTarget.getAttribute("data-uid");
+        const data = JSON.parse(evt.dataTransfer.getData("text/plain"));
+
+        this.props.removeMessageFromList(data.id);
+
+        const res = await moveMessages({ ids: [ data.id ], destination: folderId});
+    }
+
+    onMessageDragOver(evt) {
+        evt.preventDefault();
+    }
+
 
     nodeTemplate(data) {
         let icon = "lf-icon-folder";
@@ -257,6 +303,10 @@ class FolderContainer extends Component {
                         padding: 12px 0 6px;
                         font-weight: 600;
                     }
+                    
+                    .message-dragging {
+                      background-color: #f9f9f9;
+                    }
                   `}
                 </style>
             </div>
@@ -325,15 +375,21 @@ class FolderContainer extends Component {
 
 function mapStateToProps(state) {
     return {
-        specialFolders: state.labelsResult.specialFolders
+        specialFolders: state.labelsResult.specialFolders,
+        //selectedFolder: state.messagesResult.label
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {};
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators(
+        {
+            removeMessageFromList,
+        },
+        dispatch
+    );
 }
 
 export default connect(
     mapStateToProps,
-    mapDispatchToProps()
+    mapDispatchToProps
 )( withTranslation()(FolderContainer));
