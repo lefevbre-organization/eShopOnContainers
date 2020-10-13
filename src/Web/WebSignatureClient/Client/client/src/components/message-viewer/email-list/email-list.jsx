@@ -4,7 +4,8 @@ import i18n from 'i18next';
 import {downloadAttachments2} from "../../../services/api-signaturit";
 
 const EmailList = (props) => {
-  const documentFilter = props.email.certificates.filter(a => a.email === props.signer.email)
+
+   const documentFilter = props.email.certificates.filter(a => a.email === props.signer.email)
     return( 
         <div className={props.styles['cont-info-firmantes']}>
             <div className={`${props.styles.p15} ${props.styles.separador}`}>
@@ -23,7 +24,13 @@ const EmailList = (props) => {
                </div>        
               </div>
             </div>
-              <div className={`${props.styles.p15}  ${(documentFilter.length > 1) ? props.styles['separador-email'] : props.styles['separador']}`}>
+              <div className={`${props.styles.p15}  
+              ${(props.certificationType) 
+              && (props.certificationType.value === 'open_document' 
+              || props.certificationType.value === 'open_every_document'
+              || props.certificationType.value === 'download_document'
+              || props.certificationType.value === 'download_every_document') ? 
+                props.styles['separador-email'] : props.styles['separador']}`}>
                 <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
                 <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'email_processed') === false) ? props.styles['no-completado']: ``)}`}>
                   <span className="lf-icon-send"></span>
@@ -53,8 +60,14 @@ const EmailList = (props) => {
                   </div>
                   <div className={props.styles.clearfix}></div>
                 </div>
+                {(props.certificationType) 
+                && (props.certificationType.value === 'open_email' 
+                || props.certificationType.value === 'open_document' 
+                || props.certificationType.value === 'open_every_document'
+                || props.certificationType.value === 'download_document'
+                || props.certificationType.value === 'download_every_document') ? 
                 <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'email_opened')) || 
-                (props.getEventStatus(props.signer, 'document_opened'))   ? `` :  props.styles['no-completado'])}`}>
+                 (props.getEventStatus(props.signer, 'document_opened'))   ? `` :  props.styles['no-completado'])}`}>
                   <span className="lf-icon-mail-open"></span>
                   <div className={props.styles['cont-check-seguimiento']}>
                       <span className={`${((props.getEventStatus(props.signer, 'email_opened')) || 
@@ -70,7 +83,12 @@ const EmailList = (props) => {
                       <div className={props.styles.clearfix}></div>
                   </div>
                   <div className={props.styles.clearfix}></div>
-                </div>
+                </div> : null}
+                {(props.certificationType) 
+                && (props.certificationType.value === 'open_document' 
+                || props.certificationType.value === 'open_every_document'
+                || props.certificationType.value === 'download_document'
+                || props.certificationType.value === 'download_every_document') ? 
                 <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'document_opened') === false) ?  
                 `${props.styles['no-completado']} ${props.styles['no-completado-doc']}` : ``)}`}>
                   <span className="lf-icon-document"></span>
@@ -79,7 +97,14 @@ const EmailList = (props) => {
                       <div className={props.styles.linea}></div>
                         <div className={props.styles.info}>
                               <div className={props.styles.estado}>{i18n.t('signatureViewer.signerCard.body.docOpened')}</div>
-                              {documentFilter.length == 1 ?  
+                              <div >
+                                <span className={props.styles['document-detail']}>
+                                 <b>
+                                  {props.signer.events.filter(x => x.type === 'document_opened').length}/{documentFilter.length}
+                                 </b>
+                                </span>
+                              </div>
+                              {/* {documentFilter.length == 1 ?  
                               <div>
                                {props.getEventDate(props.signer, 'document_opened').split(' ')[0]}
                                <br/>
@@ -92,21 +117,25 @@ const EmailList = (props) => {
                                  </b>
                                 </span>
                               </div>
-                              } 
+                              }  */}
                         </div>
                       <div className={props.styles.clearfix}></div>
                   </div>
-                </div>
+                </div> : null}
                 <div className={props.styles.clearfix}></div>
               </div>
-              {documentFilter.length > 1 ? 
+              {(props.certificationType) 
+              && (props.certificationType.value === 'open_document' 
+              || props.certificationType.value === 'open_every_document'
+              || props.certificationType.value === 'download_document'
+              || props.certificationType.value === 'download_every_document') ? 
               <div className={props.styles.p15}>
-                <h2 className={props.styles['document-title']}>DOCUMENTOS ADJUNTOS</h2>
+              <h2 className={props.styles['document-title']}>{i18n.t('emailViewer.attaches')}</h2>
               {documentFilter.map(certificate => 
               <div>
               {(props.getEventStatus(certificate, 'document_opened') === true) ?
                <div className={props.styles['document-opened']}>
-                <div className="mr-5 light-blue-text"><b>Documento abierto</b></div>
+                <div className="mr-5 light-blue-text"><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
                 <div className="mr-1 light-blue-text">
                  <span className="lf-icon-document-validate"></span>
                 </div>
@@ -120,7 +149,7 @@ const EmailList = (props) => {
                </div>
                 : 
                 <div className={props.styles['document-opened']}>
-                  <div className={`${props.styles['certificate-pending']} mr-5`}><b>Pendiente de abrir</b></div>
+                  <div className={`${props.styles['certificate-pending']} mr-5`}><b>{i18n.t('emailViewer.pendingDoc')}</b></div>
                   <div className="mr-1"><span className="lf-icon-document"></span></div>
                   <div><span>{certificate.file.name}</span></div>
                 </div>

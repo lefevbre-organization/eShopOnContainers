@@ -281,6 +281,9 @@
     "openEveryDocument": "The recipient has opened the every documents",
     "docDownloaded": "the recipient has downloaded the document",
     "downloadEveryDocument": "the recipient has downloaded the every documents",
+    "attaches": "ATTACHED DOCUMENTS",
+    "attachedDocOpened": "Document opened",
+    "pendingDoc": "Pending to open",
     "buttons": {
       "downloadTrail": "Download audit"
     },
