@@ -158,7 +158,9 @@ class UserLefebvre extends Component {
                                     });
                                 
                                 } else {
-                                    if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                                    if (userInfo && userInfo.data && userInfo.data.brandings 
+                                        && ((userInfo.data.brandings.constructor === Object && Object.entries(userInfo.data.brandings).length === 0) 
+                                            || !userInfo.data.brandings.find(b => b.app === app))){
                                         // El usuario existe pero no tenemos branding configurado para la aplicación desde la que entra.
                                         getBrandingTemplate(app)
                                         .then(template => {
@@ -223,7 +225,7 @@ class UserLefebvre extends Component {
                                          })
                                     });
                                 } else {
-                                    if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                                    if (userInfo && userInfo.data && userInfo.data.brandings && ((userInfo.data.brandings.constructor === Object && Object.entries(userInfo.data.brandings).length === 0) || !userInfo.data.brandings.find(b => b.app === app))){
                                         // Ya existe registro del usuario pero no tiene branding para la aplicación desde la que accede.
                                         getBrandingTemplate(app)
                                         .then(template => {
@@ -345,7 +347,7 @@ const mapDispatchToProps = dispatch => ({
     setGuid: guid => dispatch(ACTIONS.setGUID(guid)),
     setUserName: name => dispatch(ACTIONS.setUserName(name)),
     setAvailableSignatures: num => dispatch(ACTIONS.setAvailableSignatures(num)),
-    setUserBrandings: brandings => dispatch(ACTIONS.setUserBrandings(service, brandings)),
+    setUserBrandings: (service, brandings) => dispatch(ACTIONS.setUserBrandings(service, brandings)),
     setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
     setIdEntityType: id => dispatch(ACTIONS.setIdEntityType(id)),
     setIdEntity: id => dispatch(ACTIONS.setIdEntity(id)),

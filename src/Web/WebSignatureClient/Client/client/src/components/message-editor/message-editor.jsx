@@ -481,6 +481,7 @@ class MessageEditor extends Component {
               onConfirmAttachRemoval={this.showCancelCenModal}
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
+              fatherContainer={'MessageEditor'}
             ></AttachmentsWidget>
             <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>

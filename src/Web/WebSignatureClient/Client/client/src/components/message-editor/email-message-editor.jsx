@@ -45,8 +45,8 @@ class EmailMessageEditor extends Component {
       linkDialogUrl: '',
       dropZoneActive: false,
       editorState: {},
-      selectedCertificationOption: '',
-      certificationType: '',
+      selectedCertificationOption: 1,
+      certificationType: 'delivery',
       hideAlertDialog: false,
       hideConfirmDialog: false,
       bigAttachments: false,
@@ -335,6 +335,7 @@ class EmailMessageEditor extends Component {
               onConfirmAttachRemoval={this.showCancelCenModal}
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
+              fatherContainer={'EmailMessageEditor'}
             ></AttachmentsWidget>
             <CertificatesWidget onChange={this.onChangeCertification}/>
           </div>
@@ -660,19 +661,25 @@ class EmailMessageEditor extends Component {
   buildDocumentsInfo(email) {
     let result;
 
-    result = email.documents.map((e) => {
+    result = (email && email.certificates) ? email.certificates.map((e) => {
       return {
-        externalFileName: e.file.name,
+        email: e.email,
+        name: e.name,
         externalId: e.id,
-        recipient: { name: e.name, email: e.email },
-        internalInfo: this.props.lefebvre.idDocuments.find((d) => {
-          if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
-            return d.docId;
-            
-          }
-        }),
+        document: (e.file) 
+          ? {
+              externalFileName: e.file.name, 
+              internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
+                ? this.props.lefebvre.idDocuments.find((d) => {
+                    if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
+                      return d.docId;
+                    }
+                  }) 
+                : null
+            } 
+          : null
       };
-    });
+    }) : null ;
 
     return result;
   }
@@ -727,11 +734,11 @@ class EmailMessageEditor extends Component {
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-          notifySignature(
-            lefebvre.userId,
-            lefebvre.idUserApp,
-            documentsInfo.length
-          );
+          // notifySignature(
+          //   lefebvre.userId,
+          //   lefebvre.idUserApp,
+          //   documentsInfo.length
+          // );
           this.props.preloadEmails(lefebvre.userId)
         });
       }

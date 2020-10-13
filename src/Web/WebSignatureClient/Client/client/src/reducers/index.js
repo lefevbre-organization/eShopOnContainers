@@ -64,7 +64,7 @@ export const INITIAL_STATE = {
         userName: null,
         userApp: null, 
         availableSignatures: 0,
-        userBrandings: null,
+        userBrandings: {},
         idEntityType: null,
         idEntity: null,
         idUserApp: null,
