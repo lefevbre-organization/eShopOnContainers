@@ -85,6 +85,22 @@ export class EmailMessageViewer extends Component {
     );
     this.setState({filterCertificates: filter});
   }
+
+
+  getDocments(documents, ev) {
+    var result = [];
+    documents.forEach((document, i) => {
+     var event = document.events.find( e => (e.type.toLowerCase() === ev))
+      result.push(
+        {
+          type:  event.type,
+       
+        }
+    )  ;
+   });
+   console.log('getDocments', result.length);
+   return result;
+  }
   
 
   getReceiverEvent(receiver) {
@@ -312,6 +328,7 @@ export class EmailMessageViewer extends Component {
                  styles={styles}
                  getReceiverEvent={this.getReceiverEvent}
                  certificationType={certificationType}
+                 getDocments={this.getDocments}
                  getEventDate={this.getEventDate}
                  getEventStatus={this.getEventStatus}
                  getSingleEventDate={this.getSingleEventDate}

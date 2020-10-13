@@ -6,6 +6,8 @@ import {downloadAttachments2} from "../../../services/api-signaturit";
 const EmailList = (props) => {
 
    const documentFilter = props.email.certificates.filter(a => a.email === props.signer.email)
+   const documentType = props.signer.events.find(x => x.type === 'documents_opened' || x.type === 'document_opened');
+
     return( 
         <div className={props.styles['cont-info-firmantes']}>
             <div className={`${props.styles.p15} ${props.styles.separador}`}>
@@ -67,11 +69,13 @@ const EmailList = (props) => {
                 || props.certificationType.value === 'download_document'
                 || props.certificationType.value === 'download_every_document') ? 
                 <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'email_opened')) || 
-                 (props.getEventStatus(props.signer, 'document_opened'))   ? `` :  props.styles['no-completado'])}`}>
+                 (props.getEventStatus(props.signer, 'documents_opened')
+                 || props.getEventStatus(props.signer, 'document_opened')) ? `` :  props.styles['no-completado'])}`}>
                   <span className="lf-icon-mail-open"></span>
                   <div className={props.styles['cont-check-seguimiento']}>
                       <span className={`${((props.getEventStatus(props.signer, 'email_opened')) || 
-                      (props.getEventStatus(props.signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
+                      (props.getEventStatus(props.signer, 'documents_opened')
+                      || props.getEventStatus(props.signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
                       <div className={props.styles.linea}></div>
                       <div className={props.styles.info}>
                           <div className={props.styles.estado}>
@@ -89,18 +93,19 @@ const EmailList = (props) => {
                 || props.certificationType.value === 'open_every_document'
                 || props.certificationType.value === 'download_document'
                 || props.certificationType.value === 'download_every_document') ? 
-                <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'document_opened') === false) ?  
+                <div className={`${props.styles['seguimiento-certification-individual']} ${(!(props.getEventStatus(props.signer, documentType.type)) ?  
                 `${props.styles['no-completado']} ${props.styles['no-completado-doc']}` : ``)}`}>
                   <span className="lf-icon-document"></span>
                   <div className={props.styles['cont-check-seguimiento']}>
-                      <span className={`${((props.getEventStatus(props.signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
+                      <span className={`${((props.getEventStatus(props.signer, documentType.type)) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
                       <div className={props.styles.linea}></div>
                         <div className={props.styles.info}>
                               <div className={props.styles.estado}>{i18n.t('signatureViewer.signerCard.body.docOpened')}</div>
                               <div >
                                 <span className={props.styles['document-detail']}>
                                  <b>
-                                  {props.signer.events.filter(x => x.type === 'document_opened').length}/{documentFilter.length}
+                                  {/* {props.signer.events.filter(x => x.type === 'documents_opened').length}/{documentFilter.length} */}
+                                  {props.getDocments(documentFilter, documentType.type).length}/{documentFilter.length}
                                  </b>
                                 </span>
                               </div>
@@ -133,7 +138,7 @@ const EmailList = (props) => {
               <h2 className={props.styles['document-title']}>{i18n.t('emailViewer.attaches')}</h2>
               {documentFilter.map(certificate => 
               <div>
-              {(props.getEventStatus(certificate, 'document_opened') === true) ?
+              {(props.getEventStatus(certificate, documentType.type) === true )  ?
                <div className={props.styles['document-opened']}>
                 <div className="mr-5 light-blue-text"><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
                 <div className="mr-1 light-blue-text">
@@ -143,8 +148,8 @@ const EmailList = (props) => {
                  <span>{certificate.file.name}</span>
                 </div>
                <div>
-                <span className="mr-4">{props.getEventDate(certificate, 'document_opened').split(' ')[0]}</span>
-                <span className="mr-4">{props.getEventDate(certificate, 'document_opened').split(' ')[1]}</span>
+                <span className="mr-4">{props.getEventDate(certificate, documentType.type).split(' ')[0]}</span>
+                <span className="mr-4">{props.getEventDate(certificate, documentType.type).split(' ')[1]}</span>
                </div>
                </div>
                 : 
