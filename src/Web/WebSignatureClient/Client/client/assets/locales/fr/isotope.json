@@ -299,6 +299,9 @@
     "openEveryDocument": "Le destinataire a ouvert tous les documents",
     "docDownloaded": "le destinataire a téléchargé les document",
     "downloadEveryDocument": "le destinataire a téléchargé tous les documents",
+    "attaches": "DOCUMENTS ATTACHÉS",
+    "attachedDocOpened": "Document ouvert",
+    "pendingDoc": "En attendant l'ouverture",
     "buttons": {
       "downloadTrail": "Télécharger audit"
     },

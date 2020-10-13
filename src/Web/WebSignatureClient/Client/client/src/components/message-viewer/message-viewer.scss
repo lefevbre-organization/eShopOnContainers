@@ -267,18 +267,17 @@
     }
 
     .separador-email::after{
-      left: 85%;
-      border: solid #c52f2f00;
-      content: "";
-      position: absolute;
-      pointer-events: none;
-      border-width: 33px;
-      margin-left: -32px;
-      border-right: #e6e9f2 solid 5px;
-      border-bottom: #e6e9f2 solid 5px;
-      transform: rotate(-134deg);
-      background: #f4f4f4;
-      margin-top: 1px;
+     left: 82%;
+     border: solid #c52f2f00;
+     content: "";
+     position: absolute;
+     pointer-events: none;
+     border-width: 33px;
+     border-right: #e6e9f2 solid 4px;
+     border-bottom: #e6e9f2 solid 4px;
+     transform: rotate(-134deg);
+     background: #f4f4f4;
+     margin-top: 1px;
     }
     .seguimiento-firmante-individual {
       width:20%;

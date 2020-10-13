@@ -301,6 +301,9 @@
     "openEveryDocument": "El receptor ha abierto todos los documentos",
     "docDownloaded": "El receptor se ha descargado el documento",
     "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
+    "attaches": "DOCUMENTOS ADJUNTOS",
+    "attachedDocOpened": "Documento abierto",
+    "pendingDoc": "Pendiente de abrir",
     "buttons": {
       "downloadTrail": "Descargar auditoria"
     },
