@@ -142,6 +142,7 @@ class UserLefebvre extends Component {
                             getUserSignatures(user)
                             .then( userInfo => {
                                 if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
+                                    // No existe registro del usuario. Se tiene que crear registro de usuario nuevo con branding.
                                     getBrandingTemplate(app)
                                     .then(template => {
                                         var auxTemplate = JSON.stringify(template.data.configuration);
@@ -151,13 +152,14 @@ class UserLefebvre extends Component {
                                         .then( res => {
                                             var userBranding = [{app: app, externalId: res.id}];
                                             createUser(user, userBranding);
-                                            this.props.setUserBrandings(userBranding);
+                                            this.props.setUserBrandings('signature', userBranding);
                                             this.props.setAvailableSignatures(0);
                                          })
                                     });
                                 
                                 } else {
                                     if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                                        // El usuario existe pero no tenemos branding configurado para la aplicación desde la que entra.
                                         getBrandingTemplate(app)
                                         .then(template => {
                                             var auxTemplate = JSON.stringify(template.data.configuration);
@@ -169,7 +171,7 @@ class UserLefebvre extends Component {
                                                 console.log(res);
                                                 var userBranding = [{app: app, externalId: res.id}];
                                                 addOrUpdateBranding(user, userBranding[0]);
-                                                this.props.setUserBrandings(userBranding);
+                                                this.props.setUserBrandings('signature', userBranding);
                                             })
                                             .catch( err => {
                                                 console.log('Se ha producido un error al guardar el branding');
@@ -177,9 +179,11 @@ class UserLefebvre extends Component {
                                             })
                                         });
                                     } else {
-                                        this.props.setUserBrandings(userInfo.data.brandings);
+                                        // Usuario y branding ya existentes
+                                        this.props.setUserBrandings('signature', userInfo.data.brandings);
                                     }
                                     if (idDocuments && idDocuments.length > 0){
+                                        // Vienen documentos preseleccionados
                                         getAvailableSignatures(idUserApp, idDocuments.length)
                                         .then(response => this.props.setAvailableSignatures(response.data))
                                         .catch(err => {
@@ -200,6 +204,7 @@ class UserLefebvre extends Component {
                             getUserEmails(user)
                             .then(userInfo => {
                                 if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
+                                    // No existe registro del usuario. Se tiene que crear registro de usuario nuevo con branding.
                                     getBrandingTemplate(app)
                                     .then(template => {
                                         var auxTemplate = JSON.stringify(template.data.configuration);
@@ -209,7 +214,7 @@ class UserLefebvre extends Component {
                                         .then( res => {
                                             var userBranding = [{app: app, externalId: res.id}];
                                             createUserEmail(user, userBranding);
-                                            this.props.setUserBrandings(userBranding);
+                                            this.props.setUserBrandings('certifiedEmail', userBranding);
                                             //this.props.setAvailableSignatures(0);
                                          })
                                          .catch( err => {
@@ -217,9 +222,9 @@ class UserLefebvre extends Component {
                                              console.log(err);
                                          })
                                     });
-                                
                                 } else {
                                     if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                                        // Ya existe registro del usuario pero no tiene branding para la aplicación desde la que accede.
                                         getBrandingTemplate(app)
                                         .then(template => {
                                             var auxTemplate = JSON.stringify(template.data.configuration);
@@ -231,7 +236,7 @@ class UserLefebvre extends Component {
                                                 console.log(res);
                                                 var userBranding = [{app: app, externalId: res.id}];
                                                 addOrUpdateBranding(user, userBranding[0]);
-                                                this.props.setUserBrandings(userBranding);
+                                                this.props.setUserBrandings('certifiedEmail', userBranding);
                                             })
                                             .catch( err => {
                                                 console.log('Se ha producido un error al guardar el branding');
@@ -239,17 +244,19 @@ class UserLefebvre extends Component {
                                             })
                                         });
                                     } else {
-                                        this.props.setUserBrandings(userInfo.data.brandings);
-                                        if (idDocuments && idDocuments.length > 0){
-                                            getAvailableSignatures(idUserApp, idDocuments.length)
-                                            .then(response => this.props.setAvailableSignatures(response.data))
-                                            .catch(err => {
-                                                console.log(err);
-                                                if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
-                                                    this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
-                                                }
-                                            });  
-                                        }
+                                        // Usuario y branding ya existentes
+                                        this.props.setUserBrandings('certifiedEmail', userInfo.data.brandings);
+                                    }
+
+                                    if (idDocuments && idDocuments.length > 0){
+                                        getAvailableSignatures(idUserApp, idDocuments.length)
+                                        .then(response => this.props.setAvailableSignatures(response.data))
+                                        .catch(err => {
+                                            console.log(err);
+                                            if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
+                                                this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                                            }
+                                        });  
                                     }
                                 } 
                             });
@@ -338,7 +345,7 @@ const mapDispatchToProps = dispatch => ({
     setGuid: guid => dispatch(ACTIONS.setGUID(guid)),
     setUserName: name => dispatch(ACTIONS.setUserName(name)),
     setAvailableSignatures: num => dispatch(ACTIONS.setAvailableSignatures(num)),
-    setUserBrandings: brandings => dispatch(ACTIONS.setUserBrandings(brandings)),
+    setUserBrandings: brandings => dispatch(ACTIONS.setUserBrandings(service, brandings)),
     setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
     setIdEntityType: id => dispatch(ACTIONS.setIdEntityType(id)),
     setIdEntity: id => dispatch(ACTIONS.setIdEntity(id)),

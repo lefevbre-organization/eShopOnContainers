@@ -70,9 +70,9 @@ export const setAvailableSignatures = num => ({
     payload: num
 })
 
-export const setUserBrandings = brandings => ({
+export const setUserBrandings = (service, brandings) => ({
     type: ActionTypes.LEFEBVRE_USER_BRANDINGS,
-    payload: brandings
+    payload: {service, brandings}
 })
 
 export const setUserApp = app => ({

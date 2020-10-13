@@ -140,9 +140,9 @@ class MessageEditor extends Component {
         const content = this.getEditor().getContent();
         const { cc, subject } = this.props;
         const { lefebvre } = this.props;
-        const userBranding = lefebvre.userBrandings.find(
-          (b) => b.app === lefebvre.userApp
-        );
+        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.signature) 
+          ? lefebvre.userBrandings.signature.find((b) => b.app === lefebvre.userApp) 
+          : '';
   
         let reminders = [];
         switch (this.state.selectedReminderOption) {

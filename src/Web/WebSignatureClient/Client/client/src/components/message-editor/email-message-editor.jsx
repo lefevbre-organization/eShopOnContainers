@@ -540,9 +540,9 @@ class EmailMessageEditor extends Component {
         const content = this.getEditor().getContent();
         const { to, cc, subject } = this.props;
         const { lefebvre } = this.props;
-        const userBranding = (lefebvre && lefebvre.userBrandings) ? lefebvre.userBrandings.find(
-          (b) => b.app === lefebvre.userApp
-        ) : '';
+        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.certifiedEmail) 
+          ? lefebvre.userBrandings.certifiedEmail.find((b) => b.app === lefebvre.userApp) 
+          : '';
           
         let guid = lefebvre.guid;
         if (guid === null) {

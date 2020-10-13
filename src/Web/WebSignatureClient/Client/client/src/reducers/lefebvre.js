@@ -97,12 +97,16 @@ const lefebvre = (state = INITIAL_STATE.lefebvre, action = {}) => {
                 availableSignatures: action.payload
             }
 
-        case ActionTypes.LEFEBVRE_USER_BRANDINGS:
-            return{
-                ...state,
-                userBrandings: action.payload
+        case ActionTypes.LEFEBVRE_USER_BRANDINGS:{
+            const newState = {...state};
+            if (action.payload.service === 'signature'){
+                newState.userBrandings.signature = action.payload.branding
+            } else if (action.payload.service === 'certifiedEmail'){
+                newState.userBrandings.certifiedEmail = action.payload.branding
             }
-
+            return newState;
+        }
+            
         case ActionTypes.LEFEBVRE_USER_APP:
             return{
                 ...state,
