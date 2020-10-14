@@ -1,24 +1,13 @@
 import React, {Component, createRef} from 'react';
 import {connect} from 'react-redux';
 import {TreeViewComponent} from '@syncfusion/ej2-react-navigations';
-import {
-    faBookmark,
-    faCommentDots,
-    faEnvelopeSquare,
-    faExclamationTriangle, faEyeSlash,
-    faFile, faFolder,
-    faInbox,
-    faStar,
-    faTrashAlt
-} from "@fortawesome/free-solid-svg-icons";
 import { withTranslation } from "react-i18next";
 import * as _ from 'lodash';
-import * as uuid from 'uuid/v4';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import {updateLabelName} from "../../api";
+import {updateLabelName, getMessage} from "../../api";
 import {bindActionCreators} from "redux";
 import {
+    addMessage, deleteMessage,
     modifyMessages,
     removeMessageFromList
 } from "../content/message-list/actions/message-list.actions";
@@ -42,6 +31,7 @@ class FolderContainer extends Component {
         this.onNodeClicked = this.onNodeClicked.bind(this);
         this.nodeTemplate = this.nodeTemplate.bind(this);
         this.onDragEnter = this.onDragEnter.bind(this);
+        this.onSelectionChange = this.onSelectionChange.bind(this);
 
         this.onMessageDragEnter = this.onMessageDragEnter.bind(this);
         this.onMessageDragExit = this.onMessageDragExit.bind(this);
@@ -121,16 +111,72 @@ class FolderContainer extends Component {
     moveMessages(ids, destination, source) {
         // uncheck messages
         for(let i = 0; i < ids.length; i++) {
-            // this.onSelectionChange({
-            //     action: 'uncheck',
-            //     data: [{
-            //         id: ids[i]
-            //     }]
-            // });
+            this.onSelectionChange({
+                action: 'uncheck',
+                data: [{
+                    id: ids[i]
+                }]
+            });
             this.props.removeMessageFromList(ids[i]);
         }
 
         this.props.modifyMessages({ ids, addLabelIds: [destination], removeLabelIds: [source] });
+    }
+
+    async onSelectionChange(data) {
+        const selected = data.action === 'check';
+        let msg;
+        if(data && data.data && data.data.length >= 1) {
+            const { id } = data.data[0];
+            console.log(this.props.messagesResult.messages);
+            msg = this.props.messagesResult.messages.find( m => m.id === id);
+        }
+
+        if(!msg) return;
+        if(msg.selected !== selected) {
+            //this.props.toggleSelected([msg.id], selected);
+        }
+        const extMessageId = this.getContentByHeader(msg, 'Message-Id');
+        const message = {
+            id: msg.id,
+            extMessageId,
+            subject: this.getContentByHeader(msg, 'Subject'),
+            sentDateTime: this.getContentByHeader(msg, 'Date'),
+            folder: getFolderName(this.props.t, this.props.selectedFolder),
+            provider: 'GOOGLE',
+            account: this.props.lexon.account,
+            chkselected: selected,
+            raw: null,
+        };
+
+        selected
+            ? this.props.addMessage(message)
+            : this.props.deleteMessage(message.extMessageId);
+
+        if (selected === true) {
+            window.dispatchEvent(new CustomEvent('LoadingMessage'));
+            const msgRaw = await getMessage(msg.id, 'raw');
+            message.raw = msgRaw.result;
+            //this.props.addMessage(message);
+        }
+
+        window.dispatchEvent(
+            new CustomEvent('Checkclick', {
+                detail: message,
+            })
+        );
+
+        window.dispatchEvent(new CustomEvent('LoadedMessage'));
+    }
+
+    getContentByHeader(message, header) {
+        for (let i = 0; i < message.payload.headers.length; i++) {
+            if (
+                message.payload.headers[i].name.toUpperCase() === header.toUpperCase()
+            ) {
+                return message.payload.headers[i].value;
+            }
+        }
     }
 
     onNodeExpanded(node) {
@@ -538,7 +584,9 @@ class FolderContainer extends Component {
 
 function mapStateToProps(state) {
     return {
-        selectedFolder: state.messagesResult.label
+        selectedFolder: state.messagesResult.label,
+        messagesResult: state.messagesResult,
+        lexon: state.lexon,
     };
 }
 
@@ -546,6 +594,8 @@ const mapDispatchToProps = (dispatch) =>
     bindActionCreators(
         {
             modifyMessages,
+            addMessage,
+            deleteMessage,
             removeMessageFromList
         },
         dispatch
@@ -555,3 +605,19 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )( withTranslation()(FolderContainer));
+
+
+function getFolderName(t, folder) {
+    switch (folder) {
+        case 'INBOX':
+            return t('sidebar.inbox');
+        case 'SENT':
+            return t('sidebar.sent');
+        case 'TRASH':
+            return t('sidebar.trash');
+        case 'SPAM':
+            return t('sidebar.spam');
+        default:
+            return folder;
+    }
+}

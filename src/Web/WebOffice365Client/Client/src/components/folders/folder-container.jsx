@@ -3,10 +3,11 @@ import {connect} from 'react-redux';
 import {TreeViewComponent} from '@syncfusion/ej2-react-navigations';
 import { withTranslation } from "react-i18next";
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import {moveMessages, updateLabelName} from "../../api_graph";
+import {getMessage, moveMessages, updateLabelName} from "../../api_graph";
 import * as _ from 'lodash';
 import {bindActionCreators} from "redux";
 import {
+    addMessage, deleteMessage,
     removeMessageFromList
 } from "../content/message-list/actions/message-list.actions";
 
@@ -132,9 +133,52 @@ class FolderContainer extends Component {
         const folderId = evt.currentTarget.getAttribute("data-uid");
         const data = JSON.parse(evt.dataTransfer.getData("text/plain"));
 
+        this.onSelectionChange({
+            action: 'uncheck',
+            data: [{
+                id: data.id
+            }]
+        });
         this.props.removeMessageFromList(data.id);
 
         const res = await moveMessages({ ids: [ data.id ], destination: folderId});
+    }
+
+    async onSelectionChange(data) {
+        const selected = data.action === 'check';
+        let msg;
+        if(data && data.data && data.data.length >= 1) {
+            const { id } = data.data[0];
+            console.log(this.props.messagesResult.messages);
+            msg = this.props.messagesResult.messages.find( m => m.id === id);
+        }
+
+        if(!msg) return;
+
+        const extMessageId = msg.internetMessageId;
+        const message = {
+            id: msg.id,
+            extMessageId,
+            subject: msg.subject,
+            sentDateTime: msg.sentDateTime,
+            folder: this.props.selectedFolder,
+            provider: 'OUTLOOK',
+            account: this.props.lexon.account,
+            chkselected: selected,
+            raw: null,
+        };
+
+        selected
+            ? this.props.addMessage(message)
+            : this.props.deleteMessage(message.extMessageId);
+
+        window.dispatchEvent(
+            new CustomEvent('Checkclick', {
+                detail: message,
+            })
+        );
+
+        window.dispatchEvent(new CustomEvent('LoadedMessage'));
     }
 
     onMessageDragOver(evt) {
@@ -376,6 +420,8 @@ class FolderContainer extends Component {
 function mapStateToProps(state) {
     return {
         specialFolders: state.labelsResult.specialFolders,
+        messagesResult: state.messagesResult,
+        lexon: state.lexon
         //selectedFolder: state.messagesResult.label
     };
 }
@@ -384,6 +430,8 @@ const mapDispatchToProps = (dispatch) => {
     return bindActionCreators(
         {
             removeMessageFromList,
+            addMessage,
+            deleteMessage,
         },
         dispatch
     );
