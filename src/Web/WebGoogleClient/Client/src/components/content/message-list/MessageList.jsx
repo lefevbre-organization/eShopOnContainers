@@ -196,20 +196,7 @@ export class MessageList extends Component {
       );
     }
 
-    let filteredMessages;
-    if(this.state.activeFilter === '') {
-      filteredMessages = this.props.messagesResult.messages;
-    } else if(this.state.activeFilter === 'read') {
-      filteredMessages = this.props.messagesResult.messages.filter( (msg)=> {
-        return !(msg.labelIds.indexOf('UNREAD') > -1);
-      });
-    } else if(this.state.activeFilter === 'unread') {
-      filteredMessages = this.props.messagesResult.messages.filter( (msg)=> {
-        return msg.labelIds.indexOf('UNREAD') > -1;
-      });
-    }
-
-     return filteredMessages.map((el) => {
+     return this.props.messagesResult.messages.map((el) => {
        if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
          el.selected = true;
        } else {
@@ -286,7 +273,15 @@ export class MessageList extends Component {
   }
 
   onChangeFilter(filter) {
-    this.setState({activeFilter: filter})
+    // this.setState({activeFilter: filter}, () => {
+    //   if (this.state.activeFilter === 'unread') {
+    //     this.props.searchQuery({labelIds: ["UNREAD"]});
+    //   } else if (this.state.activeFilter === 'read') {
+    //     this.props.searchQuery({labelIds: ["READ"]});
+    //   } else {
+    //     this.props.searchQuery({labelIds: ["INBOX"]});
+    //   }
+    // });
   }
 
   render() {

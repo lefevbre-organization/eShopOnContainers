@@ -616,7 +616,7 @@ export class Main extends Component {
               parentLabel={that.props.labelsResult.labels.find(
                 (el) => el.id === props.match.path.slice(1)
               )}
-              searchQuery={this.props.searchQuery}
+              //searchQuery={this.getLabelMessages}
               loadLabelMessageSingle={this.loadLabelMessageSingle}
             />
           );
