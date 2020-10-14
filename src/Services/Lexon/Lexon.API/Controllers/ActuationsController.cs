@@ -79,9 +79,12 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActuationsAsync(
-            [FromRoute] string idType = "CALL",
+            [FromRoute] string idType = "LLAM",
             [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
             [FromQuery] string env = "QA",
+            [FromQuery] string filter = "hola",
+            [FromQuery] int idCategory = 0,
             [FromQuery] int pageSize = 10,
             [FromQuery] int pageIndex = 1
         )
@@ -92,7 +95,34 @@ namespace Lexon.API.Controllers
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetActuationsAsync(idType, idUser, env, pageSize, pageIndex);
+            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetActuationsAsync(
+                idType: idType,
+                idCategory: idCategory,
+                idUser: idUser,
+                env: env,
+                bbdd: bbdd,
+                filter: filter,
+                pageSize,
+                pageIndex);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{idUser}/{bbdd}/actions")]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddActionsAsync(
+            [FromBody] LexAction action,
+            [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromQuery] string env = "QA"
+)
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(action.IdType) )
+                return BadRequest("values invalid. Must be a valid isuser, bbdd, idType to creat and action ");
+
+
+            var result = await _svc.AddActionAsync(action, env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -102,60 +132,84 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> AddAppointmentAsync(
             [FromBody] LexAppointment appointment,
             [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
             [FromQuery] string env = "QA"
         )
         {
 
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || string.IsNullOrEmpty(appointment.Subject) || string.IsNullOrEmpty(appointment.StartDate))
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(appointment.Subject) || string.IsNullOrEmpty(appointment.StartDate))
                 return BadRequest("values invalid. Must be a valid isuser, bbdd, subject and startdate to insert or update ");
 
  
-            var result = await _svc.AddAppointmentAsync(appointment, env, idUser);
+            var result = await _svc.UpsertAppointmentAsync(appointment, env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpDelete("{idUser}/{bbdd}/appointments")]
+        [HttpDelete("{idUser}/{bbdd}/appointments/remove/{idAppointment}")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveAppointmentAsync(
-            [FromBody] LexAppointmentSimple appointment,
+            [FromRoute] int idAppointment = 529,
             [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
             [FromQuery] string env = "QA"
         )
         {
 
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.Id <= 0)
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idAppointment <= 0)
                 return BadRequest("values invalid. Must be a valid iduser, bbdd and id");
 
 
-            var result = await _svc.RemoveAppointmentAsync(appointment, env, idUser);
+            var result = await _svc.RemoveAppointmentAsync(idAppointment, env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{idUser}/{bbdd}/appointments/actuation")]
+        [HttpPost("{idUser}/{bbdd}/appointments/{idAppointment}/relation/{idAction}")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAppointmentActionAsync(
-            [FromBody] LexAppointmentRelation appointment,
+            [FromRoute] int idAppointment = 529,
+            [FromRoute] int idAction = 1,
             [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
             [FromQuery] string env = "QA"
 )
         {
 
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.IdAppointment <= 0 || appointment.Id <=0)
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idAppointment <= 0 || idAction <=0)
                 return BadRequest("values invalid. Must be a valid isuser, bbdd, id and idActuation to vinculate action to appointment ");
 
 
-            Result<int> result = await _svc.AddAppointmentActionAsync(appointment, env, idUser);
+            Result<int> result = await _svc.AddAppointmentActionAsync(idAppointment, idAction, env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("{idUser}/appointments/{idAppointment}")]
+        [HttpDelete("{idUser}/{bbdd}/appointments/relation/{idRelation}/remove")]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RemoveAppointmentActionAsync(
+            [FromRoute] int idRelation = 1,
+            [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromQuery] string env = "QA"
+        )
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idRelation <= 0)
+                return BadRequest("values invalid. Must be a valid iduser, bbdd and id");
+
+
+            Result<int> result = await _svc.RemoveAppointmentActionAsync(idRelation, env, idUser, bbdd);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("{idUser}/{bbdd}/appointments/{idAppointment}")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetClassificationsAsync(
             [FromRoute] string idAppointment = "12",
             [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_pre_02",
             [FromQuery] string env = "QA",
             [FromQuery] int pageSize = 10,
             [FromQuery] int pageIndex = 1
@@ -168,7 +222,7 @@ namespace Lexon.API.Controllers
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetClassificationsFromAppointmentAsync(idAppointment, idUser, env, pageSize, pageIndex);
+            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetClassificationsFromAppointmentAsync(idAppointment, idUser, env, bbdd, pageSize, pageIndex);
 
             if (result.errors.Count() > 0 && result.data?.Count == 0)
             {

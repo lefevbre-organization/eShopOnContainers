@@ -2,8 +2,8 @@
 {
     public class LexActuationType
     {
-        public string Name { get; set; }
-        public string IdActuation { get; set; }
+        public string Id { get; set; }
+        public string ActionType { get; set; }
 
     }
 

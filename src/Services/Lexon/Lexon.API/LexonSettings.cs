@@ -55,6 +55,8 @@ namespace Lexon.API
         public string AddAppointment { get; set; }
         public string RemoveAppointment { get; set; }
         public string AddAppointmentAction { get; set; }
+        public string RemoveAppointmentAction { get; set; }
+        public string AddAction { get; set; }
         public string GetActuationTypes { get; set; }
         public string GetActuationCategories { get; set; }
         public string GetActuations { get; set; }
