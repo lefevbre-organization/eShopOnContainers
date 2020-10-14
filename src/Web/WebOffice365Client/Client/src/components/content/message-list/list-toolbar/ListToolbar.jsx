@@ -210,6 +210,14 @@ export class MessageToolbar extends PureComponent {
                 getLabelMessages={this.getLabelMessages}
               />
               <Synkbutton getLabelMessagesSynk={this.getLabelMessagesSynk} />
+              <div className="btn-group ml-auto">
+                <div
+                    onClick={()=>{}}
+                    className='filter-button'
+                    title={""}>
+                  <i style={{}} className='lf-icon lf-icon-filter-1'></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -224,6 +232,16 @@ export class MessageToolbar extends PureComponent {
 
           .action-btn:hover > i {
             color: #0056b3;
+          }
+          
+          .filter-button {
+            cursor:pointer;
+            color: #001978;
+            font-size: 20px;
+          }
+          
+          .filter-button:hover {
+            color: #0056b3
           }
         `}</style>
       </>

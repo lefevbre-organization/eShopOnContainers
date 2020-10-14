@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { getMessage } from '../../../../api';
 import i18n from 'i18next';
-import { Confirmation } from '../../../notification/confirmation';
+import {MessagesFilter} from "../filter/filter";
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -261,6 +261,7 @@ export class MessageToolbar extends PureComponent {
                 navigateToNextPage={this.navigateToNextPage}
               />
               <Synkbutton getLabelMessagesSynk={this.getLabelMessagesSynk} />
+              <MessagesFilter onChangeFilter={this.props.onChangeFilter}></MessagesFilter>
             </div>
           </div>
         </div>

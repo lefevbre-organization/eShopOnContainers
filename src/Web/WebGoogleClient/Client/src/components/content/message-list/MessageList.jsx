@@ -54,6 +54,7 @@ export class MessageList extends Component {
     this.getContentByHeader = this.getContentByHeader.bind(this);
     this.onDeletedMessages = this.onDeletedMessages.bind(this);
     this.showMessage = this.showMessage.bind(this);
+    this.onChangeFilter = this.onChangeFilter.bind(this);
     this.isSentFolder = false;
   }
 
@@ -373,12 +374,13 @@ export class MessageList extends Component {
     }
   }
 
+  onChangeFilter(filter) {
+    alert("ML: " + filter);
+  }
+
   render() {
     const { messagesResult } = this.props;
     const messagesTotal = messagesResult.messages.length;
-    // messagesResult.label
-    //   ? messagesResult.label.result.messagesTotal
-    //   : 0;
     const { nextToken, prevToken } = this.getPageTokens();
 
     const collapsed = this.props.sideBarCollapsed;
@@ -396,6 +398,7 @@ export class MessageList extends Component {
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
           onDeletedMessages={this.onDeletedMessages}
+          onChangeFilter={this.onChangeFilter}
         />
         <PerfectScrollbar className='container-fluid no-gutters px-0 message-list-container'>
           {this.renderView()}
