@@ -597,6 +597,14 @@ class MessageList extends Component {
             }).catch((e) => true);
         } else if (this.grid && event.item.id.includes('excel')){
             this.grid.excelExport();
+        } else if (this.grid && event.item.id.includes('print')) {
+            this.grid.print();
+            const cols = this.grid.getColumns();
+          for (const col of cols) {
+            if (col.field === "Estado" || col.field === "Destinatarios") {
+               col.template = null;
+            }
+          }
         }
     }
 
