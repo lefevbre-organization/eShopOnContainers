@@ -42,6 +42,7 @@ export class MessageList extends Component {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
       currentLabel: '',
+      activeFilter: ''
     };
 
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -195,7 +196,20 @@ export class MessageList extends Component {
       );
     }
 
-     return this.props.messagesResult.messages.map((el) => {
+    let filteredMessages;
+    if(this.state.activeFilter === '') {
+      filteredMessages = this.props.messagesResult.messages;
+    } else if(this.state.activeFilter === 'read') {
+      filteredMessages = this.props.messagesResult.messages.filter( (msg)=> {
+        return !(msg.labelIds.indexOf('UNREAD') > -1);
+      });
+    } else if(this.state.activeFilter === 'unread') {
+      filteredMessages = this.props.messagesResult.messages.filter( (msg)=> {
+        return msg.labelIds.indexOf('UNREAD') > -1;
+      });
+    }
+
+     return filteredMessages.map((el) => {
        if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
          el.selected = true;
        } else {
@@ -272,7 +286,7 @@ export class MessageList extends Component {
   }
 
   onChangeFilter(filter) {
-    alert("ML: " + filter);
+    this.setState({activeFilter: filter})
   }
 
   render() {

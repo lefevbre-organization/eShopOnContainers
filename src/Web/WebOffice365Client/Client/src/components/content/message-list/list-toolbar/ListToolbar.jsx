@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { getMessage } from '../../../../api_graph';
 import i18n from 'i18next';
+import {MessagesFilter} from "../filter/filter";
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -210,14 +211,7 @@ export class MessageToolbar extends PureComponent {
                 getLabelMessages={this.getLabelMessages}
               />
               <Synkbutton getLabelMessagesSynk={this.getLabelMessagesSynk} />
-              <div className="btn-group ml-auto">
-                <div
-                    onClick={()=>{}}
-                    className='filter-button'
-                    title={""}>
-                  <i style={{}} className='lf-icon lf-icon-filter-1'></i>
-                </div>
-              </div>
+              <MessagesFilter onChangeFilter={this.props.onChangeFilter}></MessagesFilter>
             </div>
           </div>
         </div>
