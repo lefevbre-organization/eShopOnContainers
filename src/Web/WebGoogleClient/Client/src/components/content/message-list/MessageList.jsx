@@ -12,7 +12,6 @@ import ListToolbar from './list-toolbar/ListToolbar';
 import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
 import { getMessage } from '../../../api';
-import {TreeViewComponent} from "@syncfusion/ej2-react-navigations";
 
 const ViewMode = {
   LIST: 1,
@@ -43,14 +42,11 @@ export class MessageList extends Component {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
       currentLabel: '',
-      showCheckbox: true
     };
 
-    this.treeViewRef = createRef();
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
-    this.renderMessage = this.renderMessage.bind(this);
     this.getContentByHeader = this.getContentByHeader.bind(this);
     this.onDeletedMessages = this.onDeletedMessages.bind(this);
     this.showMessage = this.showMessage.bind(this);
@@ -78,11 +74,9 @@ export class MessageList extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      (prevProps.messagesResult.messages.length > 0 &&
+      prevProps.messagesResult.messages.length > 0 &&
       prevProps.messagesResult.messages.length !==
-        this.props.messagesResult.messages.length) || (prevProps.selectedMessages.length > 0 &&
-        prevProps.selectedMessages.length !==
-        this.props.selectedMessages.length)
+        this.props.messagesResult.messages.length
     ) {
       this.props.refresh();
     }
@@ -167,93 +161,9 @@ export class MessageList extends Component {
     );
   }
 
-  renderMessage(msg) {
-    if (this.props.selectedMessages.find((x) => x.id === msg.id)) {
-          msg.selected = true;
-        } else {
-          msg.selected = false;
-        }
-    return (
-        <MessageRow
-          data={msg}
-          isSent={this.isSentFolder}
-          key={msg.id}
-          onSelectionChange={this.onSelectionChange}
-          onClick={this.getMessage}
-          showCheckbox={this.state.showCheckbox}
-        />
-      );
-  }
-
   showMessage(evt) {
     const { nodeData } = evt;
     this.props.history.push(`/${nodeData.id}`);
-  }
-
-  nodeDragging(evt) {
-    if(this.state.showCheckbox) {
-      this.setState({showCheckbox: false});
-    }
-    evt.draggedNodeData.isMessage = true;
-
-    if(evt.draggedNodeData.isFolder || !evt.droppedNode) {
-      evt.dropIndicator = 'e-no-drop';
-      return;
-    }
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.dropIndicator = 'e-no-drop';
-      return;
-    }
-
-    if(evt.droppedNodeData.text === this.props.t('sidebar.more')) {
-      evt.dropIndicator = 'e-no-drop';
-      return;
-    }
-  }
-
-  onDropNode(evt) {
-    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-        evt.cancel = true;
-    }
-  }
-
-  nodeDragStop(evt) {
-    this.setState({showCheckbox: true});
-
-    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      alert("Folder")
-      evt.cancel = true;
-      return;
-    }
-
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.cancel = true;
-      return;
-    }
-
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
-      setTimeout(()=>{
-        // Set this line to get all checked, instead of dragged
-        // const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
-        const msgs = this.props.messagesResult.messages.filter( msg => evt.draggedNodeData.id === msg.id).map(msg => msg.id);
-        if(msgs && msgs.length > 0) {
-            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
-            if(lbl) {
-              // Check all selected messages
-              this.moveMessages(msgs, evt.droppedNodeData.id, lbl.id)
-            }
-        } else {
-          const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
-          if(msg) {
-            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
-            if(lbl) {
-              this.moveMessages([msg.id], evt.droppedNodeData.id, lbl.id)
-            }
-          }
-        }
-      })
-      evt.cancel = true;
-    }
   }
 
   modifyMessage(id, addLabelIds, removeLabelIds) {
@@ -284,41 +194,27 @@ export class MessageList extends Component {
       );
     }
 
-    return (<div className='message-list-tree'>
-      { this.props.selectedFolder === 'TRASH' && <div className={"trash-notice"}><p>{t('message-list.trash-notice')}</p></div>}
-            <TreeViewComponent
-                ref={this.treeViewRef}
-                fields={fields}
-                delayUpdate={true}
-                showCheckBox={this.state.showCheckbox}
-                fullRowSelected={true}
-                dragArea={"body"}
-                nodeDragging={this.nodeDragging.bind(this)}
-                nodeDragStop={this.nodeDragStop.bind(this)}
-                nodeDropped={this.onDropNode.bind(this)}
-                nodeChecked={this.onSelectionChange}
-                nodeSelected={this.showMessage}
-                nodeTemplate={this.renderMessage}
-                allowMultiSelection={true}
-                allowDragAndDrop={true}
-                cssClass={'message-list'}
-            >
-            </TreeViewComponent>
-            <style jsx>{` 
-              .trash-notice p{
-                font-size: 14px;
-                font-weight: normal;
-                margin: 0;
-                }
-              .trash-notice {
-                padding: 10px;
-                text-align: center;
-                width: 100%;
-                background-color: #e8f0fe;
-                }
-                
-            `}</style>
-          </div>);
+     return this.props.messagesResult.messages.map((el) => {
+       if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
+         el.selected = true;
+       } else {
+         el.selected = false;
+       }
+
+       return (
+               <MessageRow
+                     onStart={this.onStart}
+                     onDrag={this.onDrag}
+                     onStop={this.onStop}
+                     data={el}
+                     isSent={this.isSentFolder}
+                     key={el.id}
+                     onSelectionChange={this.onSelectionChange}
+                     onClick={()=> {
+                       this.getMessage(); } }
+                 />
+             );
+     });
   }
 
   renderView() {
@@ -330,6 +226,7 @@ export class MessageList extends Component {
 
       default:
         return this.renderMessages();
+      
     }
   }
 
@@ -376,9 +273,6 @@ export class MessageList extends Component {
   render() {
     const { messagesResult } = this.props;
     const messagesTotal = messagesResult.messages.length;
-    // messagesResult.label
-    //   ? messagesResult.label.result.messagesTotal
-    //   : 0;
     const { nextToken, prevToken } = this.getPageTokens();
 
     const collapsed = this.props.sideBarCollapsed;
