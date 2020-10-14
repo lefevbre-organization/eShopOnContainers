@@ -913,6 +913,7 @@ class MessageList extends Component {
                         font-weight: bold;
                         color: #001970;
                     }
+                    
                     .signature-poppup ul {
                         min-width: 180px;
                         border: 1px solid #001970 !important;
@@ -1169,6 +1170,10 @@ class MessageList extends Component {
                     }
                     .e-btn.e-icon-btn {
                       background-color: transparent !important;
+                      padding: 6px 30px 4px !important;
+                    }
+                    .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
+                        padding-left: 0px;
                     }
                     .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
                       color: white;
