@@ -85,6 +85,16 @@ export class EmailMessageViewer extends Component {
     this.setState({filterCertificates: filter});
   }
 
+  componentDidUpdate(prevProps){
+    if (JSON.stringify(this.props.selectedEmail) !== JSON.stringify(prevProps.selectedEmail)){
+      const filter = this.props.selectedEmail.certificates.filter((certificate, index, self) => 
+        self.findIndex(x => (x.email === certificate.email)) === index
+      );
+      this.setState({filterCertificates: filter});
+    }
+
+  }
+
 
   getDocments(documents, ev) {
     var result = [];
