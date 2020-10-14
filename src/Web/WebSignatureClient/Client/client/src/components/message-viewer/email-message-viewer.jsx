@@ -91,12 +91,13 @@ export class EmailMessageViewer extends Component {
     var result = [];
     documents.forEach((document, i) => {
      var event = document.events.find( e => (e.type.toLowerCase() === ev))
+     if (event){
       result.push(
         {
           type:  event.type,
-       
         }
-    )  ;
+      );
+     }
    });
    console.log('getDocments', result.length);
    return result;
