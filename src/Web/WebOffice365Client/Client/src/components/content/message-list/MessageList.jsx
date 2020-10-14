@@ -12,7 +12,6 @@ import ListToolbar from './list-toolbar/ListToolbar';
 import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
 import {getMessage, getLabelSentItems, moveMessages} from '../../../api_graph';
-import {TreeViewComponent} from "@syncfusion/ej2-react-navigations";
 
 const ViewMode = {
   LIST: 1,
@@ -29,18 +28,14 @@ export class MessageList extends Component {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
       currentLabel: '',
-      showCheckbox: true
     };
 
-    this.treeViewRef = createRef();
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
     this.onDeletedMessages = this.onDeletedMessages.bind(this);
-
     this.renderMessage = this.renderMessage.bind(this);
     this.showMessage = this.showMessage.bind(this);
-
     this.isSentFolder = false;
   }
 
@@ -68,11 +63,9 @@ export class MessageList extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-        (prevProps.messagesResult.messages.length > 0 &&
-            prevProps.messagesResult.messages.length !==
-            this.props.messagesResult.messages.length) || (prevProps.selectedMessages.length > 0 &&
-        prevProps.selectedMessages.length !==
-        this.props.selectedMessages.length)
+        prevProps.messagesResult.messages.length > 0 &&
+        prevProps.messagesResult.messages.length !==
+        this.props.messagesResult.messages.length
     ) {
       this.props.refresh();
     }
@@ -126,7 +119,7 @@ export class MessageList extends Component {
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       const msgRaw = await getMessage(msg.id, 'raw');
       message.raw = msgRaw;
-      this.props.addMessage(message);
+      //this.props.addMessage(message);
     }
 
     window.dispatchEvent(
@@ -169,62 +162,6 @@ export class MessageList extends Component {
     this.props.history.push(`/${nodeData.id}`);
   }
 
-  nodeDragging(evt) {
-    if(this.state.showCheckbox) {
-      this.setState({showCheckbox: false});
-    }
-
-    if(evt.draggedNodeData.isFolder) {
-      evt.dropIndicator = 'e-no-drop';
-      return;
-    }
-
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.dropIndicator = 'e-no-drop';
-      return;
-    }
-    evt.draggedNodeData.isMessage = true;
-
-  }
-
-  nodeDragStop(evt) {
-    this.setState({showCheckbox: true});
-
-    if(evt.draggedNodeData && evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      alert("Folder")
-      evt.cancel = true;
-      return;
-    }
-
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.cancel = true;
-      return;
-    }
-
-    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
-      setTimeout(()=>{
-        // Set this line to get all checked, instead of dragged
-        //const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
-        const msgs = this.props.messagesResult.messages.filter( msg => evt.draggedNodeData.id === msg.id).map(msg => msg.id);
-        if(msgs && msgs.length > 0) {
-          this.moveMessages(msgs, evt.droppedNodeData.id, this.props.selectedFolder)
-        } else {
-          const msg = this.props.messagesResult.messages.find(msg => msg.id === evt.draggedNodeData.id);
-          if (msg) {
-            this.moveMessages([msg.id], evt.droppedNodeData.id, this.props.selectedFolder)
-          }
-        }
-      })
-      evt.cancel = true;
-    }
-  }
-
-  onDropNode(evt) {
-    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
-      evt.cancel = true;
-    }
-  }
-
   renderMessages() {
     const { t } = this.props;
     const _this = this;
@@ -249,26 +186,27 @@ export class MessageList extends Component {
       );
     }
 
-    return (<div className='message-list-tree'>
-      <TreeViewComponent
-          ref={this.treeViewRef}
-          fields={fields}
-          delayUpdate={true}
-          showCheckBox={this.state.showCheckbox}
-          allowMultiSelection={true}
-          fullRowSelected={true}
-          dragArea={"body"}
-          nodeDragging={this.nodeDragging.bind(this)}
-          nodeChecked={this.onSelectionChange}
-          nodeSelected={this.showMessage}
-          nodeTemplate={this.renderMessage}
-          nodeDragStop={this.nodeDragStop.bind(this)}
-          nodeDropped={this.onDropNode.bind(this)}
-          allowDragAndDrop={true}
-          cssClass={'message-list'}
-      >
-      </TreeViewComponent>
-    </div>);
+    return this.props.messagesResult.messages.map((el) => {
+      if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
+        el.selected = true;
+      } else {
+        el.selected = false;
+      }
+
+      return (
+          <MessageRow
+              onStart={this.onStart}
+              onDrag={this.onDrag}
+              onStop={this.onStop}
+              data={el}
+              isSent={this.isSentFolder}
+              key={el.id}
+              onSelectionChange={this.onSelectionChange}
+              onClick={()=> {
+                this.getMessage(); } }
+          />
+      );
+    });
   }
 
   renderView() {
