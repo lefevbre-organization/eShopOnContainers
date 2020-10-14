@@ -8,9 +8,8 @@ import mainCss from '../../styles/main.scss';
 import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
-import { 
-  downloadTrailDocument, 
-  downloadTrailDocument2,
+import {  
+  downloadCertificationDocument,
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
@@ -212,7 +211,7 @@ export class EmailMessageViewer extends Component {
   }
 
   downloadTrailDocument(emailId, id, name, auth) {
-    downloadTrailDocument2(emailId, id, name, auth);
+    downloadCertificationDocument(emailId, id, name, auth);
   }
 
   onCancelSignature(signatureId, auth){
