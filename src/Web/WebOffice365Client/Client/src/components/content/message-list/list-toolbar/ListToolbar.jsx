@@ -18,6 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { getMessage } from '../../../../api_graph';
 import i18n from 'i18next';
+import {MessagesFilter} from "../filter/filter";
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -210,6 +211,7 @@ export class MessageToolbar extends PureComponent {
                 getLabelMessages={this.getLabelMessages}
               />
               <Synkbutton getLabelMessagesSynk={this.getLabelMessagesSynk} />
+              <MessagesFilter onChangeFilter={this.props.onChangeFilter}></MessagesFilter>
             </div>
           </div>
         </div>
@@ -224,6 +226,16 @@ export class MessageToolbar extends PureComponent {
 
           .action-btn:hover > i {
             color: #0056b3;
+          }
+          
+          .filter-button {
+            cursor:pointer;
+            color: #001978;
+            font-size: 20px;
+          }
+          
+          .filter-button:hover {
+            color: #0056b3
           }
         `}</style>
       </>

@@ -1,6 +1,8 @@
-﻿namespace Lexon.API
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+
+namespace Lexon.API
 {
-    public class LexonSettings
+    public class LexonSettings : IEnvSettings
     {
         public string ConnectionString { get; set; }
         public string Database { get; set; }
@@ -22,7 +24,7 @@
         public bool AzureStorageEnabled { get; set; }
         public long IdAppNavision { get; set; }
 
-        public EnvironmentModel[] LexonUrls { get; set; }
+        public EnvironmentModel[] EnvModels { get; set; }
         public string[] Environments { get; set; }
         public string DefaultEnvironment { get; set; }
 
@@ -53,14 +55,13 @@
         public string AddAppointment { get; set; }
         public string RemoveAppointment { get; set; }
         public string AddAppointmentAction { get; set; }
+        public string RemoveAppointmentAction { get; set; }
+        public string AddAction { get; set; }
+        public string GetActuationTypes { get; set; }
+        public string GetActuationCategories { get; set; }
+        public string GetActuations { get; set; }
+        public string SearchAppointmentRelations { get; set; }
 
  
-    }
-
-    public class EnvironmentModel
-    {
-        public string env { get; set; }
-        public string conn { get; set; }
-        public string url { get; set; }
     }
 }

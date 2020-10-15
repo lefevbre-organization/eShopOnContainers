@@ -172,8 +172,8 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet("entities/masters")]
-        [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetMasterEntitiesAsync()
 
         {

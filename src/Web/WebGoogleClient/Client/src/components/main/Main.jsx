@@ -617,6 +617,7 @@ export class Main extends Component {
                 (el) => el.id === props.match.path.slice(1)
               )}
               searchQuery={this.props.searchQuery}
+              setSearchQuery={this.props.setSearchQuery}
               loadLabelMessageSingle={this.loadLabelMessageSingle}
             />
           );

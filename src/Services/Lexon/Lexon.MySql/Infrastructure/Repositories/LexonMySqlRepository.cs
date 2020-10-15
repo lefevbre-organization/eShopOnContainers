@@ -373,9 +373,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
             }
         }
 
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
+        public async Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync()
         {
-            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
+            var resultMySql = new MySqlList<LexEntityTypeList, LexEntityType>(new LexEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -397,7 +397,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 while (reader.Read())
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
-                                    var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(rawJson));
+                                    var resultado = (JsonConvert.DeserializeObject<LexEntityTypeList>(rawJson));
                                     resultMySql.AddData(resultado, resultado.Entities);
                                 }
                             }

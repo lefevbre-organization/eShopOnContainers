@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import MesssageCheckbox from './MessageCheckbox';
 
@@ -10,12 +11,23 @@ export class MessageItem extends PureComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      dragging: false
+    }
+
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.getMessage = this.getMessage.bind(this);
+
+    this.onDragStart = this.onDragStart.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
+    this.clone = null;
   }
 
   onSelectionChange(evt) {
-    this.props.onSelectionChange(evt.target.checked, this.props.data);
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    this.props.onSelectionChange({ action: evt.target.checked?'check':'uncheck', data: [this.props.data]});
   }
 
   getMessage(evt) {
@@ -67,8 +79,32 @@ export class MessageItem extends PureComponent {
     return formattedDate;
   }
 
+  onDragStart(evt) {
+    this.setState({dragging: true});
+
+    // Clone element:
+    this.clone = evt.currentTarget.cloneNode(true);
+    this.clone.style.backgroundColor = "#f9f9f9";
+    this.clone.style.position = "absolute";
+    this.clone.style.top = "-1000px";
+    this.clone.style.right = "0px";
+    document.body.appendChild(this.clone);
+
+    evt.dataTransfer.setDragImage(this.clone, 0, 0);
+    evt.dataTransfer.dropEffect = 'move';
+    evt.dataTransfer.setData("text/plain", JSON.stringify(this.props.data));
+
+    return true;
+  }
+
+  onDragEnd(evt) {
+    this.setState({dragging: false});
+    document.body.removeChild(this.clone);
+    return true;
+  }
+
   render() {
-    const sc = this.props.showCheckbox === false;
+    const sc = true;
     const date = this.props.data.receivedDateTime;
     let formattedDate = this.getFormattedDate(date, {
       date: this.props.data.internalDate,
@@ -96,7 +132,10 @@ export class MessageItem extends PureComponent {
     }
 
     return (
-        <div className={`message-row-item d-flex table-row-wrapper${selected} chk-msg-row${sc?'-sc':''}`} >
+        <div draggable="true"  className={`message-row-item d-flex table-row-wrapper${selected} chk-msg-row${sc?'-sc':''} ${this.state.dragging?'dragging':''}`}
+             onDragStart={this.onDragStart}
+             onDragEnd={this.onDragEnd}
+        >
           <div className="msg-list-chk-wrapper">
             <MesssageCheckbox
                 selected={this.props.data.selected}
@@ -125,4 +164,4 @@ export class MessageItem extends PureComponent {
   }
 }
 
-export default MessageItem;
+export default withRouter(MessageItem);

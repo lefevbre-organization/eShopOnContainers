@@ -8,7 +8,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
     {
         Task<Result<LexUser>> GetCompaniesListAsync(string idUser);
 
-        Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
+        Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync();
 
         Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch);
 

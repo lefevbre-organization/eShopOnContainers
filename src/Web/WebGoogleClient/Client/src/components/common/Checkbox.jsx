@@ -31,8 +31,9 @@ export class Checkbox extends PureComponent {
   render() {
     return (
       <label className="custom-control fill-checkbox">
-        <input checked={this.state.isChecked} 
-          type="checkbox" 
+        <input checked={this.state.isChecked}
+         key={Math.random()}
+         type="checkbox"
           onChange={this.props.onChange} 
           className="fill-control-input" 
         />
