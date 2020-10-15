@@ -33,6 +33,7 @@ export const MessagesFilter = ({onChangeFilter}) => {
                 cursor:pointer;
                 color: #001978;
                 font-size: 20px;
+                margin-right: 10px;
               }
               
               .filter-button:hover {
@@ -56,7 +57,7 @@ export const MessagesFilter = ({onChangeFilter}) => {
               
               .filter-body.visible {
                 opacity: 1;
-                 height: 162px;
+                 height: 143px;
               }
               
               .filter-body ul {
@@ -68,7 +69,7 @@ export const MessagesFilter = ({onChangeFilter}) => {
               
               .filter-body ul li {
                 height: 47px;
-                margin: 5px 0;
+                margin: 0;
                 display: flex;
                 align-items: center;
                 cursor: pointer;
@@ -76,7 +77,8 @@ export const MessagesFilter = ({onChangeFilter}) => {
               
               .filter-body ul li.active {
                 color: #001978; 
-                font-weight: bold;
+                background-color: #CCD1E4;
+                //font-weight: bold;
               }
               
               .filter-body ul li.active i {
@@ -84,11 +86,11 @@ export const MessagesFilter = ({onChangeFilter}) => {
               }
               
               .filter-body ul li i {
-                margin-right: 27px;
+                margin: 0 10px 0 20px;              
               }
 
               .filter-body ul li:hover {
-                background-color: #CCD1E4;
+                background-color: #f5f5f5;
               }
             `}</style>
         </div>);

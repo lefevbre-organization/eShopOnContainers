@@ -63,8 +63,7 @@ export class MessageList extends Component {
       this.props.addInitialPageToken(token);
     }
 
-    const labelIds =
-      this.props.searchQuery === '' ? [this.props.parentLabel.id] : undefined;
+    const labelIds = this.props.searchQuery === '' ? [this.props.parentLabel.id] : undefined;
 
     this.props.getLabelMessages({
       ...(labelIds && { labelIds }),
@@ -72,6 +71,10 @@ export class MessageList extends Component {
     });
 
     this.isSentFolder = this.props.parentLabel.id === 'SENT';
+  }
+
+  componentWillUnmount() {
+    this.props.setSearchQuery("");
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -273,15 +276,19 @@ export class MessageList extends Component {
   }
 
   onChangeFilter(filter) {
-    // this.setState({activeFilter: filter}, () => {
-    //   if (this.state.activeFilter === 'unread') {
-    //     this.props.searchQuery({labelIds: ["UNREAD"]});
-    //   } else if (this.state.activeFilter === 'read') {
-    //     this.props.searchQuery({labelIds: ["READ"]});
-    //   } else {
-    //     this.props.searchQuery({labelIds: ["INBOX"]});
-    //   }
-    // });
+    this.setState({activeFilter: filter}, ()=>{
+      const { activeFilter } = this.state;
+      if(activeFilter === 'unread') {
+        this.props.setSearchQuery("is:unread");
+        this.props.getLabelMessages({labelIds: [this.props.parentLabel.id], q: "is:unread"});
+      } else if(activeFilter === 'read') {
+        this.props.setSearchQuery("is:read");
+        this.props.getLabelMessages({labelIds: [this.props.parentLabel.id], q: "is:unread"});
+      } else {
+        this.props.setSearchQuery("");
+        this.props.getLabelMessages({labelIds: [this.props.parentLabel.id], q: ''});
+      }
+    })
   }
 
   render() {

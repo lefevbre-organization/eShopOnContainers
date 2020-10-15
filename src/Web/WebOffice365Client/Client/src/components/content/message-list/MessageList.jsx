@@ -63,6 +63,10 @@ export class MessageList extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.props.setSearchQuery("");
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (
         prevProps.messagesResult.messages.length > 0 &&
@@ -282,7 +286,19 @@ export class MessageList extends Component {
   }
 
   onChangeFilter(filter) {
-    this.setState({activeFilter: filter})
+    this.setState({activeFilter: filter}, ()=>{
+      const { activeFilter } = this.state;
+      if(activeFilter === 'unread') {
+        this.props.setSearchQuery("$filter=isRead ne true");
+        this.props.getLabelMessages({labelIds: this.props.parentLabel.id, q: "$filter=isRead ne true"});
+      } else if(activeFilter === 'read') {
+        this.props.setSearchQuery("$filter=isRead ne false");
+        this.props.getLabelMessages({labelIds: this.props.parentLabel.id, q: "$filter=isRead ne false"});
+      } else {
+        this.props.setSearchQuery("");
+        this.props.getLabelMessages({labelIds: this.props.parentLabel.id, q: ''});
+      }
+    })
   }
 
   render() {
