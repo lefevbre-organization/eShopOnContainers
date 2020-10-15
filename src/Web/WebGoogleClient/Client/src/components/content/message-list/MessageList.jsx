@@ -42,6 +42,7 @@ export class MessageList extends Component {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
       currentLabel: '',
+      activeFilter: ''
     };
 
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -50,6 +51,7 @@ export class MessageList extends Component {
     this.getContentByHeader = this.getContentByHeader.bind(this);
     this.onDeletedMessages = this.onDeletedMessages.bind(this);
     this.showMessage = this.showMessage.bind(this);
+    this.onChangeFilter = this.onChangeFilter.bind(this);
     this.isSentFolder = false;
   }
 
@@ -61,8 +63,7 @@ export class MessageList extends Component {
       this.props.addInitialPageToken(token);
     }
 
-    const labelIds =
-      this.props.searchQuery === '' ? [this.props.parentLabel.id] : undefined;
+    const labelIds = this.props.searchQuery === '' ? [this.props.parentLabel.id] : undefined;
 
     this.props.getLabelMessages({
       ...(labelIds && { labelIds }),
@@ -70,6 +71,10 @@ export class MessageList extends Component {
     });
 
     this.isSentFolder = this.props.parentLabel.id === 'SENT';
+  }
+
+  componentWillUnmount() {
+    this.props.setSearchQuery("");
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -270,6 +275,22 @@ export class MessageList extends Component {
     }
   }
 
+  onChangeFilter(filter) {
+    this.setState({activeFilter: filter}, ()=>{
+      const { activeFilter } = this.state;
+      if(activeFilter === 'unread') {
+        this.props.setSearchQuery("is:unread");
+        this.props.getLabelMessages({labelIds: [this.props.parentLabel.id], q: "is:unread"});
+      } else if(activeFilter === 'read') {
+        this.props.setSearchQuery("is:read");
+        this.props.getLabelMessages({labelIds: [this.props.parentLabel.id], q: "is:unread"});
+      } else {
+        this.props.setSearchQuery("");
+        this.props.getLabelMessages({labelIds: [this.props.parentLabel.id], q: ''});
+      }
+    })
+  }
+
   render() {
     const { messagesResult } = this.props;
     const messagesTotal = messagesResult.messages.length;
@@ -290,6 +311,7 @@ export class MessageList extends Component {
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
           onDeletedMessages={this.onDeletedMessages}
+          onChangeFilter={this.onChangeFilter}
         />
         <PerfectScrollbar className='container-fluid no-gutters px-0 message-list-container'>
           {this.renderView()}

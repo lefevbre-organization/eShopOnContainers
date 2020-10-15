@@ -248,19 +248,30 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = '' }) =>
           .catch((err) => {
             reject(err);
           });
-      } else {
+      } else if(q.startsWith("$filter=") === true) {
         client
-          .api(`me/messages?$search=${q}`)
-          .top(`${maxResults}`)
-          .get()
-          .then((response) => {
-            resolve(response);
-          })
-          .catch((err) => {
-            reject(err);
-          });
+            .api(`me/mailFolders/${labelIds}/messages?${q}`)
+            .top(`${maxResults}`)
+            .get()
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((err) => {
+              reject(err);
+            });
+      } else {
+          client
+              .api(`me/messages?$search=${q}`)
+              .top(`${maxResults}`)
+              .get()
+              .then((response) => {
+                resolve(response);
+              })
+              .catch((err) => {
+                reject(err);
+              });
+        }
       }
-    }
   });
 
 export const getMessageHeaders = (response) => {

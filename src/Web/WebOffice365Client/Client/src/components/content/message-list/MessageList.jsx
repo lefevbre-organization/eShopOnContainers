@@ -28,6 +28,7 @@ export class MessageList extends Component {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
       currentLabel: '',
+      activeFilter: ''
     };
 
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -36,6 +37,7 @@ export class MessageList extends Component {
     this.onDeletedMessages = this.onDeletedMessages.bind(this);
     this.renderMessage = this.renderMessage.bind(this);
     this.showMessage = this.showMessage.bind(this);
+    this.onChangeFilter = this.onChangeFilter.bind(this);
     this.isSentFolder = false;
   }
 
@@ -59,6 +61,10 @@ export class MessageList extends Component {
     if (response) {
       this.isSentFolder = response.id === this.props.parentLabel.id;
     }
+  }
+
+  componentWillUnmount() {
+    this.props.setSearchQuery("");
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -186,7 +192,20 @@ export class MessageList extends Component {
       );
     }
 
-    return this.props.messagesResult.messages.map((el) => {
+    let filteredMessages;
+    if(this.state.activeFilter === '') {
+      filteredMessages = this.props.messagesResult.messages;
+    } else if(this.state.activeFilter === 'read') {
+      filteredMessages = this.props.messagesResult.messages.filter( (msg)=> {
+        return msg.isRead;
+      });
+    } else if(this.state.activeFilter === 'unread') {
+      filteredMessages = this.props.messagesResult.messages.filter( (msg)=> {
+        return !msg.isRead;
+      });
+    }
+
+    return filteredMessages.map((el) => {
       if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
         el.selected = true;
       } else {
@@ -266,6 +285,22 @@ export class MessageList extends Component {
     }
   }
 
+  onChangeFilter(filter) {
+    this.setState({activeFilter: filter}, ()=>{
+      const { activeFilter } = this.state;
+      if(activeFilter === 'unread') {
+        this.props.setSearchQuery("$filter=isRead ne true");
+        this.props.getLabelMessages({labelIds: this.props.parentLabel.id, q: "$filter=isRead ne true"});
+      } else if(activeFilter === 'read') {
+        this.props.setSearchQuery("$filter=isRead ne false");
+        this.props.getLabelMessages({labelIds: this.props.parentLabel.id, q: "$filter=isRead ne false"});
+      } else {
+        this.props.setSearchQuery("");
+        this.props.getLabelMessages({labelIds: this.props.parentLabel.id, q: ''});
+      }
+    })
+  }
+
   render() {
     const collapsed = this.props.sideBarCollapsed;
     const { messagesResult } = this.props;
@@ -287,6 +322,7 @@ export class MessageList extends Component {
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
           onDeletedMessages={this.onDeletedMessages}
+          onChangeFilter={this.onChangeFilter}
         />
         <PerfectScrollbar className='container-fluid no-gutters px-0 message-list-container'>
           {this.renderView()}
