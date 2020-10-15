@@ -8,7 +8,7 @@
 
         public int PageSize { get; private set; }
 
-        public long? Count { get; private set; }
+        public long? Count { get; set; }
 
         public IEnumerable<TEntity> Data { get; private set; }
 

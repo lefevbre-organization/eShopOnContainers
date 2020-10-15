@@ -242,8 +242,8 @@ namespace Lexon.API.Controllers
         #region Entities
 
         [HttpGet("entities/types")]
-        [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesTypesAsync(string env = "QA")
         {
             var result = await _usersService.GetMasterEntitiesAsync(env);
@@ -399,59 +399,59 @@ namespace Lexon.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("entities/{idUser}/appointments")]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddAppointmentAsync(
-            [FromBody] LexAppointment appointment,
-            [FromRoute] string idUser = "449",
-            [FromQuery] string env = "QA"
-        )
-        {
+        //[HttpPost("entities/{idUser}/appointments")]
+        //[ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> AddAppointmentAsync(
+        //    [FromBody] LexAppointment appointment,
+        //    [FromRoute] string idUser = "449",
+        //    [FromQuery] string env = "QA"
+        //)
+        //{
 
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || string.IsNullOrEmpty(appointment.Subject) || string.IsNullOrEmpty(appointment.StartDate))
-                return BadRequest("values invalid. Must be a valid isuser, bbdd, subject and startdate to insert or update ");
+        //    if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || string.IsNullOrEmpty(appointment.Subject) || string.IsNullOrEmpty(appointment.StartDate))
+        //        return BadRequest("values invalid. Must be a valid isuser, bbdd, subject and startdate to insert or update ");
 
  
-            var result = await _usersService.AddAppointmentAsync(appointment, env, idUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+        //    var result = await _usersService.AddAppointmentAsync(appointment, env, idUser);
+        //    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        //}
 
-        [HttpDelete("entities/{idUser}/appointments")]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveAppointmentAsync(
-            [FromBody] LexAppointmentSimple appointment,
-            [FromRoute] string idUser = "449",
-            [FromQuery] string env = "QA"
-        )
-        {
+        //[HttpDelete("entities/{idUser}/appointments")]
+        //[ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> RemoveAppointmentAsync(
+        //    [FromBody] LexAppointmentSimple appointment,
+        //    [FromRoute] string idUser = "449",
+        //    [FromQuery] string env = "QA"
+        //)
+        //{
 
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.Id <= 0)
-                return BadRequest("values invalid. Must be a valid iduser, bbdd and id");
-
-
-            var result = await _usersService.RemoveAppointmentAsync(appointment, env, idUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
-        [HttpPost("entities/{idUser}/appointments/actuation")]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddAppointmentActionAsync(
-            [FromBody] LexAppointmentActuation appointment,
-            [FromRoute] string idUser = "449",
-            [FromQuery] string env = "QA"
-)
-        {
-
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.IdAppointment <= 0 || appointment.Id <=0)
-                return BadRequest("values invalid. Must be a valid isuser, bbdd, id and idActuation to vinculate action to appointment ");
+        //    if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.Id <= 0)
+        //        return BadRequest("values invalid. Must be a valid iduser, bbdd and id");
 
 
-            Result<int> result = await _usersService.AddAppointmentActionAsync(appointment, env, idUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+        //    var result = await _usersService.RemoveAppointmentAsync(appointment, env, idUser);
+        //    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        //}
+
+//        [HttpPost("entities/{idUser}/appointments/actuation")]
+//        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+//        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+//        public async Task<IActionResult> AddAppointmentActionAsync(
+//            [FromBody] LexAppointmentActuation appointment,
+//            [FromRoute] string idUser = "449",
+//            [FromQuery] string env = "QA"
+//)
+//        {
+
+//            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.IdAppointment <= 0 || appointment.Id <=0)
+//                return BadRequest("values invalid. Must be a valid isuser, bbdd, id and idActuation to vinculate action to appointment ");
+
+
+//            Result<int> result = await _usersService.AddAppointmentActionAsync(appointment, env, idUser);
+//            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+//        }
 
         #endregion Entities
     }

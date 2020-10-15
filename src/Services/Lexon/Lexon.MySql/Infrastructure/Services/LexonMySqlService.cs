@@ -75,7 +75,7 @@ namespace Lexon.MySql.Infrastructure.Services
         public Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser)
             => _lexonRepository.GetUserIdAsync(idNavisionUser);
 
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
+        public async Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
 
         #endregion Entities
 

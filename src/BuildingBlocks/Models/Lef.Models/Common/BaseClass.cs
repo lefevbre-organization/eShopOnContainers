@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
@@ -174,6 +175,84 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public static UpdateOptions GetUpsertOptions()
         {
             return new UpdateOptions { IsUpsert = true };
+        }
+
+        public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl)
+        {
+            if (env == null || !envSettings.Environments.Contains(env))
+            {
+                if (infos != null)
+                    TraceInfo(infos, $"Received {env} - Get Default Env {envSettings.DefaultEnvironment}");
+                env = envSettings.DefaultEnvironment;
+            }
+            else
+            {
+                if (infos != null)
+                    TraceInfo(infos, $"Received {env} from client");
+            }
+
+            finalConn = envSettings.EnvModels.First(x => x.env.Equals(env))?.conn;
+            finalUrl = envSettings.EnvModels.First(x => x.env.Equals(env))?.url;
+        }
+
+        #region Filters
+        public string GetLongFilter(string name, long? param, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            var paramString = param == null ? "null" : param.ToString();
+            return param != null ? $"{comma}\"{name}\":{paramString}" : string.Empty;
+        }
+
+        public string GetShortFilter(string name, short? param, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            var paramString = param == null ? "null" : param.ToString();
+            return $"{comma}\"{name}\":{paramString}";
+        }
+
+        public string GetTextFilter(string name, string value, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
+        }
+
+        public static string GetUserFilter(string bbdd, string idUser, bool withComma = false)
+        {
+            var comma = withComma ? ", " : "";
+            return $"{comma}\"BBDD\":\"{bbdd}\",\"IdUser\":{idUser}";
+        }
+        #endregion Filters
+
+        public bool PossibleHasData(List<ErrorInfo> errors, long? count)
+        {
+            return (errors?.Count == 0 && count != null && count > 0);
+        }
+
+        public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
+        {
+            int? ErrorCode = null;
+            string Error = null;
+            int? Count = null;
+            try
+            {
+                if (idError is int)
+                    ErrorCode = (int?)idError;
+
+                if (TextError is int || TextError is string)
+                    Error = TextError.ToString();
+
+                if (!(ErrorCode == null && Error == null))
+                    Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
+
+                if (Total is int)
+                    Count = (int?)Total;
+            }
+            catch (Exception exp)
+            {
+
+                Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message });
+            }
+            return Count;
         }
     }
 }
