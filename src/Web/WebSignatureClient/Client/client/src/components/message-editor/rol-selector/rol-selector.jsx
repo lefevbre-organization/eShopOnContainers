@@ -266,12 +266,11 @@ export class RolSelector extends React.Component {
                         { (user.doubleAuth === "photo") ? 
                           <>
                           <td>
-                              <a className="tooltipped" 
-                               data-position="bottom" 
-                               data-delay="50" 
-                               data-tooltip="Número de fotos adjuntas" 
-                               data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.photoNumber')}
-                               <span className="lf-icon-information"></span>
+                              <a className={style.tooltipped} > 
+                               {i18n.t('messageEditor.grid.photoNumber')}
+                               <span className={`${style.tooltipped} lf-icon-information`}></span>
+                               <span className={style.tooltiptext}>{i18n.t('messageEditor.grid.photoInfo')}</span>
+                              
                               </a>
                           </td>
   
@@ -352,12 +351,11 @@ export class RolSelector extends React.Component {
               background: #001970;
             }
             .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
-              width: 80% !important;
               background: #ebedf4;
               border: none;
               height: 2.5rem;
               padding: 5px;
-
+              font-weight: 700;
             }
             #rolDialog_dialog-content > div > div > table > tr > td:nth-child(4) > div > span {
               width: 100% !important;
@@ -378,6 +376,11 @@ export class RolSelector extends React.Component {
               border-color: #fff;
               color: #001970;
             }
+            .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+              content: '\e90b';
+              font-family: 'lf-font' !important;
+            }
+          
           `}
         </style>
       </div>

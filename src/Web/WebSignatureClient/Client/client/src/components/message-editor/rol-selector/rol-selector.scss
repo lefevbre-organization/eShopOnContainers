@@ -1,7 +1,7 @@
 
 .table-scrollbar {
   position: relative;
-  height: 248px;
+  height: 257px;
   overflow-y: auto;
 }
 
@@ -25,12 +25,41 @@
       border-right: 1px solid #FFF;
       font-weight: 500;
       width: 20%;
+      padding-left: 12px;
       &:last-child {
         border: 0
       }
     }
+
+    th:nth-child(1) {
+      width: 16%;
+    }
+
+    th:nth-child(2) {
+      width: 16%;
+    }
+
+   th:nth-child(3) {
+     width: 15%;
+   }
+
+   th:nth-child(4) {
+    width: 14%;
+   }
+
+   th:nth-child(5) {
+    width: 27%;
+   }
+
    td:last-child, th:last-child {
       border-right: 2px solid #001978;
+   }
+
+   tr > td:nth-child(5) > div > span {
+    width: 90% !important;
+  }
+   tr > td:nth-child(6) {
+    width: 150px;
    }
 }
 
@@ -78,5 +107,26 @@
 }
 
 .tooltipped {
-  color: #001978 !important;
+  // color: #001978 !important;
+  position: relative;
+  display: inline-block;
+  padding-left: 2px;
+}
+
+.tooltipped .tooltiptext {
+  visibility: hidden;
+  width: 168px;
+  background-color: #313131;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 10px 0px;
+  position: absolute;
+  z-index: 1;
+  left: -25px;
+  top: 31px;
+}
+
+.tooltipped:hover .tooltiptext {
+  visibility: visible;
 }

@@ -121,11 +121,12 @@
       "validator": "Validador",
       "advancedSignature": "Firma avanzada",
       "userCertificate": "Certificado de usuario", 
-      "none": "No",
+      "none": "NO",
       "sms": "SMS",
       "photo": "Foto",
       "finish": "FINALIZAR",
       "photoNumber": "Número de fotos",
+      "photoInfo": "Número de fotos adjuntas",
       "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA"
@@ -311,7 +312,7 @@
           "title": "Doble autenticación",
           "sms": "SMS",
           "photo": "Fotografía",
-          "none": "No",
+          "none": "NO",
           "photoNumber": "(__) fotos adjuntas",
           "download": "Descargar"
         }

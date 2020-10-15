@@ -102,11 +102,12 @@
       "validator": "Validator",
       "advancedSignature": "Advanced signature",
       "userCertificate": "User certificate",
-      "none": "No",
+      "none": "NO",
       "sms": "SMS",
       "photo": "Photo",
       "finish": "FINALIZE",
       "photoNumber": "Number of photos",
+      "photoInfo": "Number of photos attached",
       "phone": "Number of phone"
     },
     "title": "CREATE NEW SIGNATURE"
@@ -292,7 +293,7 @@
           "title": "Double authentication",
           "sms": "SMS",
           "photo": "Photo",
-          "none": "No",
+          "none": "NO",
           "photoNumber": "(__) photos attached",
           "download": "Download"
         }

@@ -112,7 +112,7 @@ export class Sidebar extends PureComponent {
 
 
         calendarList = calendarList.filter(function (obj) {
-            return obj.accessRole != "owner";
+            return obj.accessRole != "owner" && obj.summary != 'Días festivos de España';
         });
        
         return (            
