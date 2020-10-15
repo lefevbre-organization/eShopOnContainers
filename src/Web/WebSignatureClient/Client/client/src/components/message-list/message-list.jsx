@@ -360,7 +360,7 @@ class MessageList extends Component {
         
             res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
         });
-        return (res.length === 0 ? [{}] : res);
+        return (res.length === 0 ? [] : res);
     }
 
     getEmails(emails) {
@@ -401,7 +401,7 @@ class MessageList extends Component {
             newStatus = this.getNewStatus(status);
             res.push({Id: email.id, Documento: files, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
         });
-        return (res.length === 0 ? [{}] : res);
+        return (res.length === 0 ? [] : res);
     }
 
     gridTemplate(props) {
@@ -1004,9 +1004,9 @@ class MessageList extends Component {
         console.log('selectedService', this.props.selectedService);
         //var firmas = this.props.signatures;
 
-        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
+        var firmas = ( this.props.signatures && this.props.signatures.length > 0 ) ? this.getSignatures(this.props.signatures): [];
         //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
-        var emails = (this.props.emails && this.props.emails.length > 0) ? this.getEmails(this.props.emails) : [];
+        var emails = ( this.props.emails && this.props.emails.length > 0 ) ? this.getEmails(this.props.emails) : [];
         var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
 
         var customAttributes = {class: 'customcss'};
