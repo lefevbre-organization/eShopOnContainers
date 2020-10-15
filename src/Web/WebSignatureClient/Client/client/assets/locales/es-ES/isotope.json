@@ -121,7 +121,7 @@
       "validator": "Validador",
       "advancedSignature": "Firma avanzada",
       "userCertificate": "Certificado de usuario", 
-      "none": "No",
+      "none": "NO",
       "sms": "SMS",
       "photo": "Foto",
       "finish": "FINALIZAR",
@@ -311,7 +311,7 @@
           "title": "Doble autenticación",
           "sms": "SMS",
           "photo": "Fotografía",
-          "none": "No",
+          "none": "NO",
           "photoNumber": "(__) fotos adjuntas",
           "download": "Descargar"
         }
