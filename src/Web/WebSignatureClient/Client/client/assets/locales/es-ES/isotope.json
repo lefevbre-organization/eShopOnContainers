@@ -336,7 +336,8 @@
         "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
         "notConfigured": "No hay fecha de expiración programada.",
         "doesntExpires": "La solicitud no expira",
-        "expires": "Expira en ___ días."
+        "expires": "Expira en ___ días.",
+        "expired": "Plazo expirado."
       },
       "reminders": {
         "title": "RECORDATORIOS PROGRAMADOS",

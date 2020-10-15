@@ -308,8 +308,11 @@ export class MessageViewer extends Component {
     }
     else {
       if (expirationDays.value !== "never"){
-        expirationText = i18n.t('signatureViewer.widgets.expiration.expires')
-        .replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
+        expirationText = 
+        (expirationDays.value - passedTime) < 0 ? 
+        i18n.t('signatureViewer.widgets.expiration.expired')
+        : i18n.t('signatureViewer.widgets.expiration.expires')
+        .replace('___',  expirationDays.value - passedTime);
       }
     }
 

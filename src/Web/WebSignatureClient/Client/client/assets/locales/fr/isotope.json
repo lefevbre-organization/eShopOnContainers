@@ -335,7 +335,8 @@
         "title": "Délais d expiration de signature",
         "notConfigured": "Il n'y a pas de période d'expiration activée",
         "doesntExpires": "N' expire jamais",
-        "expires": "Expire dans ___ jours"
+        "expires": "Expire dans ___ jours",
+        "expired": "Terme expiré."
       },
       "reminders": {
         "title": "Rappels programmés",
