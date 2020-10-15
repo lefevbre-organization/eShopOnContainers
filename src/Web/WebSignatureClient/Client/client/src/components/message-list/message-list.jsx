@@ -331,7 +331,7 @@ class MessageList extends Component {
          
             res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
         });
-        return (res.length === 0 ? [{}] : res);
+        return (res.length === 0 ? [] : res);
     }
 
     getNewStatus = (status) => {
