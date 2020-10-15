@@ -23,7 +23,7 @@ namespace Lexon.Infrastructure.Services
                                                     string idUser,
                                                     string bbdd);
         Task<Result<PaginatedItemsViewModel<LexActuation>>> GetActuationsAsync(string idType,
-                                                                               int idCategory,
+                                                                               int? idCategory,
                                                                                string idUser,
                                                                                string env,
                                                                                string bbdd,

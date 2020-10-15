@@ -54,7 +54,7 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuationType>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActuationTypesAsync(
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
             )
         {
@@ -67,7 +67,7 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuationCategory>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActuationCategoriesAsync(
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
             )
         {
@@ -79,12 +79,12 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetActuationsAsync(
-            [FromRoute] string idType = "LLAM",
+            [FromRoute] string idType = "EMAIL",
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA",
-            [FromQuery] string filter = "hola",
-            [FromQuery] int idCategory = 0,
+            [FromQuery] string filter = null,
+            [FromQuery] int? idCategory = null,
             [FromQuery] int pageSize = 10,
             [FromQuery] int pageIndex = 1
         )
@@ -113,7 +113,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> AddActionsAsync(
             [FromBody] LexAction action,
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
 )
         {
@@ -132,7 +132,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> AddAppointmentAsync(
             [FromBody] LexAppointment appointment,
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
         )
         {
@@ -151,7 +151,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> RemoveAppointmentAsync(
             [FromRoute] int idAppointment = 529,
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
         )
         {
@@ -171,7 +171,7 @@ namespace Lexon.API.Controllers
             [FromRoute] int idAppointment = 529,
             [FromRoute] int idAction = 1,
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
 )
         {
@@ -190,7 +190,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> RemoveAppointmentActionAsync(
             [FromRoute] int idRelation = 1,
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
         )
         {
@@ -203,26 +203,26 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("{idUser}/{bbdd}/appointments/{idAppointment}")]
+        [HttpGet("{idUser}/{bbdd}/appointments/{idEvent}")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetClassificationsAsync(
-            [FromRoute] string idAppointment = "12",
+            [FromRoute] string idEvent = "123456",
             [FromRoute] string idUser = "449",
-            [FromRoute] string bbdd = "lexon_pre_02",
+            [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA",
             [FromQuery] int pageSize = 10,
             [FromQuery] int pageIndex = 1
              )
 
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idAppointment))
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idEvent))
                 return BadRequest("values invalid. Must be a valid idUser and idAppointment ");
 
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetRelationsOfAppointmentAsync(idAppointment, idUser, env, bbdd, pageSize, pageIndex);
+            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetRelationsOfAppointmentAsync(idEvent, idUser, env, bbdd, pageSize, pageIndex);
 
             if (result.errors.Count() > 0 && result.data?.Count == 0)
             {
