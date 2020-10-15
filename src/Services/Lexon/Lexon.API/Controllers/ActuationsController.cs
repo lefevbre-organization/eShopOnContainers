@@ -222,7 +222,7 @@ namespace Lexon.API.Controllers
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetClassificationsFromAppointmentAsync(idAppointment, idUser, env, bbdd, pageSize, pageIndex);
+            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetRelationsOfAppointmentAsync(idAppointment, idUser, env, bbdd, pageSize, pageIndex);
 
             if (result.errors.Count() > 0 && result.data?.Count == 0)
             {
