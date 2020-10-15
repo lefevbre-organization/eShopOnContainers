@@ -360,7 +360,7 @@ export const uploadFile = async (
   conceptId: number,
   doc: any
 ) => {
-  const url = `${API_CENTINELA_GATEWAY}/concepts/files/post?env=${(window as any).currentEnv}`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/files/post`;
   const body = {
     idNavision: navisionUser,
     conceptId,

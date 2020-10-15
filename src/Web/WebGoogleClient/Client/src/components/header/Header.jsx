@@ -4,13 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import debounce from 'lodash/debounce';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle
-} from 'reactstrap';
-import { Nav, NavItem, NavLink } from 'reactstrap';
 import { connect } from 'react-redux';
 import MenuUser from '../menu-user/menu-user';
 import i18n from 'i18next';

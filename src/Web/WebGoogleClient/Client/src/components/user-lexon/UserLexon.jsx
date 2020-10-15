@@ -47,7 +47,6 @@ class UserLexon extends Component {
     if (payload) {
       const aux = { ...payload };
       delete aux.exp;
-
       window.currentUser = aux;
       this.props.setCurrentUser(aux);
     }
@@ -125,7 +124,7 @@ class UserLexon extends Component {
 
     try {
       const result = await getUser(lexon.userId);
-      window.currentUser = result.data.tokenDecoded;
+//      window.currentUser = result.data.tokenDecoded;
       this.props.setCurrentUser(result.data.tokenDecoded);
 
       if (result.errors.length === 0) {

@@ -241,7 +241,7 @@ class Main extends Component {
       idCompany,
       provider = 'DEFAULT',
       account = 'default@default.def',
-      env = 'DEV'
+      env = null
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({

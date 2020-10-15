@@ -31878,7 +31878,7 @@ function finalPropsSelectorFactory(dispatch, _ref2) {
   selectorFactory, which has the signature:
 
     (dispatch, options) => (nextState, nextOwnProps) => nextFinalProps
-  
+
   connect passes its args to connectAdvanced as options, which will in turn pass them to
   selectorFactory each time a Connect component instance is instantiated or hot reloaded.
 
@@ -36189,7 +36189,6 @@ var select_action_header_SelectActionHeader = /** @class */ (function (_super) {
     };
     // TODO: Check msg type
     SelectActionHeader.prototype.onDeleteMessage = function (msg) {
-        debugger;
         var deleteMessage = this.props.deleteMessage;
         deleteMessage(msg);
     };

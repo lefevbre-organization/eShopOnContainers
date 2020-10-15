@@ -847,18 +847,18 @@ export class Main extends Component {
     }
 
     onEventDragStart(args) {
-        //if (args.data.RecurrenceRule != undefined) {
-        //    args.navigation.enable = false;
-        //    //args.cancel = true; //cancels the drop action
+        if (args.data.RecurrenceRule != undefined) {
+            args.navigation.enable = false;
+            args.cancel = true; //cancels the drop action
 
-        //}
-        //else {            
-        //    //enable the drop action
-        //    args.navigation.enable = true;
-        //}
-        ////setTimeout(function () {
-        ////    args.cancel = false;
-        ////}, 500);
+        }
+        else {            
+            //enable the drop action
+            args.navigation.enable = true;
+        }
+        //setTimeout(function () {
+        //    args.cancel = false;
+        //}, 500);
 
     }
 
@@ -929,11 +929,11 @@ export class Main extends Component {
 
     onPopupOpen(args) {
 
-       
+
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
-        
+
         //Not allow to change calendar property on update events
         if (args.data.Id != undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
@@ -945,7 +945,7 @@ export class Main extends Component {
         else {
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.remove('disabledbutton');
-        }         
+        }
 
 
         // default values for EventType coming from event args
@@ -995,7 +995,18 @@ export class Main extends Component {
             this.setState({ reminders: [] })
         }
 
-
+        if (args.type === 'RecurrenceAlert') {
+            args.element.children[2].children[0].hidden = true
+        }
+        else {
+            if (args.element.children[2] != undefined) {
+                if (args.element.children[2].children[0] != undefined) {
+                    args.element.children[2].children[0].hidden = false
+                }
+            } 
+        }
+           
+   
 
         if (args.type === 'QuickInfo') {
 
@@ -1333,11 +1344,10 @@ export class Main extends Component {
                       
                         this.toastObj.show(this.toasts[1]);
                     })
-                    .catch(error => {
-                        if (error.result != undefined) {
-                            if (error.result.error.errors[0] != undefined) {
-                                if (error.result.error.errors[0].reason == "requiredAccessLevel") {  
-                                    this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' },);
+                    .catch(error => {                       
+                            if (error.code != undefined) {
+                                if (error.code == "ErrorInvalidRequest") {  
+                                    this.toastObj.show({ content: error.message, cssClass: 'e-toast-danger', icon: '' },);
                                     console.log('error ->', error); 
                                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                                     this.scheduleObj.refreshEvents();
@@ -1348,11 +1358,7 @@ export class Main extends Component {
                                 this.toastObj.show(this.toasts[2]);
                                 console.log('error ->', error);
                             }
-                        } 
-                         else {
-                                this.toastObj.show(this.toasts[2]);
-                                console.log('error ->', error);
-                            }
+                       
                     })
               
                 break;

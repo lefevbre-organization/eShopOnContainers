@@ -14,7 +14,6 @@ const oauth2 = require('simple-oauth2').create(credentials);
 const jwt = require('jsonwebtoken');
     
 function getAuthUrl() {
-  debugger
   const returnVal = oauth2.authorizationCode.authorizeURL({
     redirect_uri: process.env.REDIRECT_URI,
     scope: process.env.APP_SCOPES
@@ -24,7 +23,6 @@ function getAuthUrl() {
 }
 
 async function getTokenFromCode(auth_code, res) {
-  debugger
   let result = await oauth2.authorizationCode.getToken({
     code: auth_code,
     redirect_uri: process.env.REDIRECT_URI,

@@ -23,10 +23,10 @@ export class Acl extends React.Component {
         this.fieldsList = { text: "text", iconCss: "icon" };
         //this.onAddPermission = this.onAddPermission.bind(this);
         this.getlistAcl = this.getlistAcl.bind(this);
-       
 
         this.state = {
-            calendarid: this.props.calendarId
+            calendarid: this.props.calendarId,
+            hasPermissions: false,
         };
 
         this.toasts = [
@@ -128,9 +128,11 @@ export class Acl extends React.Component {
 
     onDataBinding(items) {
         if (items.length > 0) {
+
+            this.setState({ hasPermissions: true })
+
             for (let i = 0; i < items.length; i++) {
                 let acl = items[i];
-
                 this.dataACLSource.push({
                     text: acl.scope.value,
                     id: acl.id,
@@ -166,7 +168,7 @@ export class Acl extends React.Component {
 
    render() {
        return (<div>
-           <label id="label_name" for="name">{i18n.t("calendar-sidebar.permission")}</label>
+           <label className={`${!this.state.hasPermissions ? "hidden" : ""}`} id="label_name" for="name">{i18n.t("calendar-sidebar.permission")}</label>
             <ListViewComponent
                 id="sample-list"
                 dataSource={this.dataACLSource}

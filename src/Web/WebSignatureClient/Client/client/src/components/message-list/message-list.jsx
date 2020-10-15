@@ -744,6 +744,14 @@ class MessageList extends Component {
             }).catch((e) => true);
         } else if (this.grid && event.item.id.includes('excel')){
             this.grid.excelExport();
+        } else if (this.grid && event.item.id.includes('print')) {
+            this.grid.print();
+            const cols = this.grid.getColumns();
+          for (const col of cols) {
+            if (col.field === "Estado" || col.field === "Destinatarios") {
+               col.template = null;
+            }
+          }
         }
     }
 
@@ -1201,6 +1209,7 @@ class MessageList extends Component {
                         font-weight: bold;
                         color: #001970;
                     }
+                    
                     .signature-poppup ul {
                         min-width: 180px;
                         border: 1px solid #001970 !important;
@@ -1458,7 +1467,11 @@ class MessageList extends Component {
                     background-color: #6C77AF;
                     }
                     .e-btn.e-icon-btn {
-                    background-color: transparent !important;
+                      background-color: transparent !important;
+                      padding: 6px 30px 4px !important;
+                    }
+                    .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
+                        padding-left: 0px;
                     }
                     .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
                     color: white;
