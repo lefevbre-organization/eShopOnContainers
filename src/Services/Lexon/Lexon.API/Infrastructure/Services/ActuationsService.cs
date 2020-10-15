@@ -143,17 +143,14 @@ namespace Lexon.Infrastructure.Services
 
         private string GetUpsertAppointmentFilter(string idUser, string bbdd, LexAppointment appointment)
         {
-            //set @P_JSON = '{"BBDD":"lexon_admin_02","IdUser":1344, "Subject":"test cita", "Location":"Madrid", "EndDate":"2020-03-30 20:31:30", "StartDate":"2020-03-28 20:31:30","IdEvent":{"IdEvent": "123456asdfadf132456789adfasdf", "Provider": "GMail"}}';
-            //call PROC_CONN_APPOINTMENTS_INSERT(@P_JSON,1344,@P_ID,@P_ERROR);
-
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
-                $"{GetTextFilter("Subject", appointment.Subject)}" +
-                $"{GetLongFilter("Id", appointment.Id)}" +
-                $"{GetTextFilter("Location", appointment.Location)}" +
-                $"{GetTextFilter("StartDate", appointment.StartDate)}" +
-                $"{GetTextFilter("EndDate", appointment.EndDate)}" +
-                $"{GetIdEventParameters("IdEvent", appointment.IdEvent, appointment.Provider)}" +
+                GetTextFilter("Subject", appointment.Subject) +
+                GetLongFilter("Id", appointment.Id) +
+                GetTextFilter("Location", appointment.Location) +
+                GetTextFilter("StartDate", appointment.StartDate) +
+                GetTextFilter("EndDate", appointment.EndDate) +
+                GetIdEventParameters("IdEvent", appointment.IdEvent, appointment.Provider) +
                 $" }}";
         }
 
