@@ -125,6 +125,7 @@
       "photo": "Photo",
       "finish": "FINALISER",
       "photoNumber": "Number of photos",
+      "photoInfo": "Number of photos attached",
       "phone": "Number of téléphone"
     },
     "title": "CRÉER UNE SIGNATURE"

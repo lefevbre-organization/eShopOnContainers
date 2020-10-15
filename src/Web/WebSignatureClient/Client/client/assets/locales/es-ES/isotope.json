@@ -126,6 +126,7 @@
       "photo": "Foto",
       "finish": "FINALIZAR",
       "photoNumber": "Número de fotos",
+      "photoInfo": "Número de fotos adjuntas",
       "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA"
