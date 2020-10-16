@@ -292,7 +292,7 @@ namespace Lexon.Infrastructure.Services
         }
 
         public async Task<Result<PaginatedItemsViewModel<LexActuation>>> GetRelationsOfAppointmentAsync(
-            string idAppointment,
+            string idEvent,
             string idUser,
             string env,
             string bbdd,
@@ -307,7 +307,7 @@ namespace Lexon.Infrastructure.Services
             {
                 try
                 {
-                    var filtro = GetRelationsApointmentFilter(bbdd, idUser, idAppointment);
+                    var filtro = GetRelationsApointmentFilter(bbdd, idUser, idEvent);
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchAppointmentRelations, conn))
                     {
@@ -443,15 +443,15 @@ namespace Lexon.Infrastructure.Services
                         result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (PossibleHasData(result.errors, result.data.Count))
-                            {
+                            //if (PossibleHasData(result.errors, result.data.Count))
+                            //{
                                 while (reader.Read())
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
                                     var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
                                     result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, result.data.Count, resultado);
                                 }
-                            }
+                            //}
                         }
                     }
                 }
@@ -503,15 +503,15 @@ namespace Lexon.Infrastructure.Services
                         result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (PossibleHasData(result.errors, result.data.Count))
-                            {
+                            //if (PossibleHasData(result.errors, result.data.Count))
+                            //{
                                 while (reader.Read())
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
                                     var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
                                     result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, result.data.Count, resultado);
                                 }
-                            }
+                            //}
                         }
                     }
                 }
@@ -584,26 +584,26 @@ namespace Lexon.Infrastructure.Services
                 GetTextFilter("idType", action.IdType) +
                 GetTextFilter("idCategory", action.IdCategory) +
                 GetTextFilter("issue", action.Issue) +
-                GetTextFilter("description", action.Description) +
+                //GetTextFilter("description", action.Description) +
                 GetTextFilter("startDateFrom", action.StartDateFrom) +
-                GetTextFilter("startDatetTo", action.StartDatetTo) +
-                GetTextFilter("last", action.Last) +
+                GetTextFilter("startDatetTo", action.StartDateTo) +
+                //GetTextFilter("last", action.Last) +
                 GetTextFilter("billable", action.Billable) +
-                GetTextFilter("idStatus", action.IdStatus) +
-                GetTextFilter("direction", action.Direction) +
-                GetTextFilter("PresentationDate", action.PresentationDate) +
-                GetTextFilter("expirationDate", action.ExpirationDate) +
-                GetTextFilter("economicEstimate", action.EconomicEstimate) +
+                //GetTextFilter("idStatus", action.IdStatus) +
+                //GetTextFilter("direction", action.Direction) +
+                //GetTextFilter("PresentationDate", action.PresentationDate) +
+                //GetTextFilter("expirationDate", action.ExpirationDate) +
+                //GetTextFilter("economicEstimate", action.EconomicEstimate) +
                 GetTextFilter("idAppointment", action.IdAppointment) +
-                GetTextFilter("related", action.Related) +
-                GetTextFilter("contactsRelations", action.ContactsRelations) +
-                GetTextFilter("filesRelation", action.FilesRelation) +
-                GetTextFilter("uid", action.Uid) +
-                GetTextFilter("Public", action.Public) +
-                GetTextFilter("idCompany", action.IdCompany) +
-                GetTextFilter("idRate", action.IdRate) +
-                GetTextFilter("folder_id", action.Folder_id) +
-                GetTextFilter("idLexnet", action.IdLexnet) +
+                //GetTextFilter("related", action.Related) +
+                //GetTextFilter("contactsRelations", action.ContactsRelations) +
+                //GetTextFilter("filesRelation", action.FilesRelation) +
+                //GetTextFilter("uid", action.Uid) +
+                //GetTextFilter("Public", action.Public) +
+                //GetTextFilter("idCompany", action.IdCompany) +
+                //GetTextFilter("idRate", action.IdRate) +
+                //GetTextFilter("folder_id", action.Folder_id) +
+                //GetTextFilter("idLexnet", action.IdLexnet) +
                 $" }}";
         }
         #endregion Actuations
