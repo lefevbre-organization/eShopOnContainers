@@ -1,4 +1,5 @@
 ﻿using Lexon.API;
+using Lexon.API.Infrastructure.Exceptions;
 using Lexon.API.Infrastructure.Repositories;
 using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -18,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace Lexon.Infrastructure.Services
 {
-    public class ActuationsService : BaseClass<ActuationsService>, IActuationsService
+    public class ActuationsService : LexonBaseClass<ActuationsService>, IActuationsService
     {
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
@@ -50,43 +51,54 @@ namespace Lexon.Infrastructure.Services
 
         #region Common
 
-        private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}", bool addParameterId = false)
-        {
-            command.Parameters.Add(new MySqlParameter(nameFilter, MySqlDbType.String) { Value = filterValue });
-            command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
-            command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-            command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
-            if (addParameterId)
-                command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-
-            command.CommandType = CommandType.StoredProcedure;
-
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{command.CommandText} {nameFilter}='{filterValue}', P_UC={idUser}" });
-        }
-
-        private void AddListSearchParameters(int pageSize, int pageIndex, string fieldOrder, string order, MySqlCommand command)
-        {
-            TraceLog(parameters: new string[] { $"P_PAGE_SIZE:{pageSize} - P_PAGE_NUMBER:{pageIndex} - P_ORDER:{fieldOrder} - P_TYPE_ORDER:{order}" });
-
-            command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
-            command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
-            command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-            if (!string.IsNullOrEmpty(fieldOrder))
-                command.Parameters.Add(new MySqlParameter("P_ORDER", MySqlDbType.String) { Value = fieldOrder });
-            if (!string.IsNullOrEmpty(order))
-                command.Parameters.Add(new MySqlParameter("P_TYPE_ORDER", MySqlDbType.String) { Value = order });
-        }
-
-        //private int EvaluateErrorCommand(List<ErrorInfo> errors, MySqlCommand command)
+        //private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}", bool addParameterId = false)
         //{
-        //    int idError = 0;
-        //    if (command.Parameters["P_IDERROR"].Value is int)
+        //    command.Parameters.Add(new MySqlParameter(nameFilter, MySqlDbType.String) { Value = filterValue });
+        //    command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
+        //    command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+        //    command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+        //    if (addParameterId)
+        //        command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+
+        //    command.CommandType = CommandType.StoredProcedure;
+
+        //    TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{command.CommandText} {nameFilter}='{filterValue}', P_UC={idUser}" });
+        //}
+
+        //private void AddListSearchParameters(int pageSize, int pageIndex, string fieldOrder, string order, MySqlCommand command)
+        //{
+        //    TraceLog(parameters: new string[] { $"P_PAGE_SIZE:{pageSize} - P_PAGE_NUMBER:{pageIndex} - P_ORDER:{fieldOrder} - P_TYPE_ORDER:{order}" });
+
+        //    command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
+        //    command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
+        //    command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+        //    if (!string.IsNullOrEmpty(fieldOrder))
+        //        command.Parameters.Add(new MySqlParameter("P_ORDER", MySqlDbType.String) { Value = fieldOrder });
+        //    if (!string.IsNullOrEmpty(order))
+        //        command.Parameters.Add(new MySqlParameter("P_TYPE_ORDER", MySqlDbType.String) { Value = order });
+        //}
+
+        //private void CheckErrorOutParameters(MySqlCommand command, List<ErrorInfo> errors, string idError, string procCaller)
+        //{
+        //    string codeError = null;
+        //    if (command.Parameters.Contains("P_IDERROR") && command.Parameters["P_IDERROR"].Value != null)
         //    {
-        //        int.TryParse(command.Parameters["P_IDERROR"].Value.ToString(), out idError);
-        //        TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, null, idError);
+        //        var idErrorTemp = command.Parameters["P_IDERROR"].Value.ToString();
+        //        if(!string.IsNullOrEmpty(idErrorTemp))
+        //            codeError = idErrorTemp;
+        //    }
+        //    if (command.Parameters.Contains("P_ERROR") && command.Parameters["P_ERROR"].Value != null)
+        //    {
+        //        var errorTemp = command.Parameters["P_ERROR"].Value.ToString();
+        //        if (!string.IsNullOrEmpty(errorTemp))
+        //             codeError += $"-{errorTemp}";
         //    }
 
-        //    return idError;
+        //    if (codeError != null)
+        //    {
+        //        codeError += $" in {procCaller} - SP[{command.CommandText}]";
+        //        TraceError(errors, new LexonDomainException(codeError), idError, "MYSQL");
+        //    }
         //}
 
         public string GetIdEventParameters(string name, string idEvent, string idProvider, bool withComma = true)
@@ -122,8 +134,8 @@ namespace Lexon.Infrastructure.Services
                     {
                         AddCommonParameters(idUser, command, "P_JSON", filtro, true);
                         await command.ExecuteNonQueryAsync();
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        CheckErrorOutParameters(command, result.errors, "LX50", nameof(UpsertAppointmentAsync));
+
                         result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
                     }
                 }
@@ -136,7 +148,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new LexonDomainException($"Error when add appointment to lexon", ex), "LX50", "MYSQLCONN");
             }
 
             return result;
@@ -155,7 +167,6 @@ namespace Lexon.Infrastructure.Services
                 $" }}";
         }
 
-
         public async Task<Result<int>> RemoveAppointmentAsync(int idAppointment, string env, string idUser, string bbdd)
         {
             var result = new Result<int>(0);
@@ -172,20 +183,19 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(idUser, command, "P_JSON", filtro);
                         await command.ExecuteNonQueryAsync();
                         result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        CheckErrorOutParameters(command, result.errors, "LX51", nameof(RemoveAppointmentAsync));
                     }
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), "LX51", "MYSQLCONN");
                 }
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceOutputMessage(result.errors, "Mysql don´t remove the classification", null, "MySql Remove Data");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), "LX51", "MYSQL");
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }
@@ -216,8 +226,7 @@ namespace Lexon.Infrastructure.Services
                     {
                         AddCommonParameters(idUser, command, "P_JSON", filtro, true);
                         await command.ExecuteNonQueryAsync();
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        CheckErrorOutParameters(command, result.errors, "LX52", nameof(AddAppointmentActionAsync));
                         result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
                     }
                 }
@@ -230,7 +239,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new LexonDomainException($"Error when add appointment to action", ex), "LX52", "MYSQLCONN");
             }
 
             return result;
@@ -245,7 +254,6 @@ namespace Lexon.Infrastructure.Services
                 $"{GetLongFilter("idAppointment", idAppointment)}" +
                 $" }}";
         }
-
       
         public async Task<Result<int>> RemoveAppointmentActionAsync(int idRelation, string env, string idUser, string bbdd)
         {
@@ -263,20 +271,20 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(idUser, command, "P_JSON", filtro);
                         await command.ExecuteNonQueryAsync();
                         result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        CheckErrorOutParameters(command, result.errors, "LX51", nameof(RemoveAppointmentAsync));
+
                     }
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), "LX51", "MYSQLCONN");
                 }
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceOutputMessage(result.errors, "Mysql don´t remove the classification", null, "MySql Remove Data");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), "LX51", "MYSQL");
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }
@@ -314,8 +322,10 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(pageSize, pageIndex, null, null, command);
                         var r = command.ExecuteNonQuery();
+                        CheckErrorOutParameters(command, result.errors, "LX53", nameof(GetRelationsOfAppointmentAsync));
+
                         //result.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
-                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        //result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -325,15 +335,16 @@ namespace Lexon.Infrastructure.Services
                                 if (!string.IsNullOrEmpty(rawResult))
                                 {
                                     var resultado = JsonConvert.DeserializeObject<LexAppointmentActuation>(rawResult);
-                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, result.data.Count, resultado.actuaciones);
+                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado.actuaciones);
                                     //result.AddRelationsMail(resultado);
                                 }
                                 else
                                 {
                                     if (result.infos.Count > 1)
-                                        TraceOutputMessage(result.errors, "MySql get and empty string with this search", null, "MySql Recover");
+                                        TraceError(result.errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), "LX54", "MYSQL");
                                     else
-                                        result.infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
+                                        TraceInfo(result.infos, "MySql get and empty string with this search", "LX54");
+
                                 }
                             }
                         }
@@ -341,7 +352,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, new LexonDomainException($"Error when get relations of appointment", ex), "LX54", "MYSQLCONN");
                 }
             }
 
@@ -366,6 +377,7 @@ namespace Lexon.Infrastructure.Services
                     GetTextFilter("idEvent", idAppointment) +
                     $" }}";
         }
+  
         #endregion Appointments
 
         public async Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetActuationTypesAsync(string env, string idUser, string bbdd)
@@ -386,17 +398,19 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(0, 1, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
+                        CheckErrorOutParameters(command, result.errors, "LX60", nameof(GetActuationTypesAsync));
 
-                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        //result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (PossibleHasData(result.errors, result.data.Count))
+                            var contador = GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value);
+                            if (PossibleHasData(result.errors, contador))
                             {
                                 while (reader.Read())
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
                                     var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, result.data.Count, resultado);
+                                    result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, contador, resultado);
                                 }
                             }
                         }
@@ -404,13 +418,13 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, new LexonDomainException($"Error when get thet types of actuations", ex), "LX60", "MYSQLCONN");
                 }
             }
 
             if (_settings.Value.UseMongo)
             {
-                await GetActuationTypesMongoAsync(result);
+                //await GetActuationTypesMongoAsync(result);
             }
 
             return result;
@@ -439,8 +453,9 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(0, 1, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
+                        CheckErrorOutParameters(command, result.errors, "LX61", nameof(GetActuationCategoriesAsync));
 
-                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        //result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             //if (PossibleHasData(result.errors, result.data.Count))
@@ -449,7 +464,7 @@ namespace Lexon.Infrastructure.Services
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
                                     var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, result.data.Count, resultado);
+                                    result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
                                 }
                             //}
                         }
@@ -457,13 +472,13 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, new LexonDomainException($"Error when get thet categories of actuations", ex), "LX61", "MYSQLCONN");
                 }
             }
 
             if (_settings.Value.UseMongo)
             {
-                await GetActuationCategoriesMongoAsync(result);
+                //await GetActuationCategoriesMongoAsync(result);
             }
 
             return result;
@@ -499,8 +514,9 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
+                        CheckErrorOutParameters(command, result.errors, "LX62", nameof(GetActuationsAsync));
 
-                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        //result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             //if (PossibleHasData(result.errors, result.data.Count))
@@ -509,7 +525,7 @@ namespace Lexon.Infrastructure.Services
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
                                     var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, result.data.Count, resultado);
+                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
                                 }
                             //}
                         }
@@ -517,7 +533,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, new LexonDomainException($"Error when get actuations", ex), "LX62", "MYSQLCONN");
                 }
             }
 
@@ -539,6 +555,7 @@ namespace Lexon.Infrastructure.Services
                 GetTextFilter("filter", filter) +
             $" }}";
         }
+ 
         public async Task<Result<int>> AddActionAsync(LexAction action, string env, string idUser, string bbdd)
         {
             var result = new Result<int>(0);
@@ -555,8 +572,10 @@ namespace Lexon.Infrastructure.Services
                     {
                         AddCommonParameters(idUser, command, "P_JSON", filtro, true);
                         await command.ExecuteNonQueryAsync();
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        CheckErrorOutParameters(command, result.errors, "LX63", nameof(AddActionAsync));
+
+                        //TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                        //TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                         result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
                     }
                 }
@@ -569,7 +588,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new LexonDomainException($"Error when add action", ex), "LX63", "MYSQLCONN");
             }
 
             return result;
@@ -606,6 +625,7 @@ namespace Lexon.Infrastructure.Services
                 //GetTextFilter("idLexnet", action.IdLexnet) +
                 $" }}";
         }
+   
         #endregion Actuations
     }
 }

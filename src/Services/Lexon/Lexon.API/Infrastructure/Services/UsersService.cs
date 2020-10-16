@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 
 namespace Lexon.Infrastructure.Services
 {
-    public class UsersService : BaseClass<UsersService>, IUsersService
+    public class UsersService : LexonBaseClass<UsersService>, IUsersService
     {
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
@@ -42,7 +42,8 @@ namespace Lexon.Infrastructure.Services
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            GetUrlsByEnvironment(null, null);
+            ConfigureByEnv(null, null, _settings.Value, out _conn, out _urlLexon);
+            //GetUrlsByEnvironment(null, null);
 
             var handler = new HttpClientHandler()
             {
@@ -53,30 +54,32 @@ namespace Lexon.Infrastructure.Services
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        private void GetUrlsByEnvironment(string env, List<Info> infos)
-        {
-            if (env == null || !_settings.Value.Environments.Contains(env))
-            {
-                if (infos != null)
-                    TraceInfo(infos, $"Received {env} - Get Default Env {_settings.Value.DefaultEnvironment}", "LX01");
-                env = _settings.Value.DefaultEnvironment;
-            }
-            else
-            {
-                if (infos != null)
-                    TraceInfo(infos, $"Received {env} from client", "LX01");
-            }
+        //private void GetUrlsByEnvironment(string env, List<Info> infos)
+        //{
+        //    if (env == null || !_settings.Value.Environments.Contains(env))
+        //    {
+        //        if (infos != null)
+        //            TraceInfo(infos, $"Received {env} - Get Default Env {_settings.Value.DefaultEnvironment}", "LX01");
+        //        env = _settings.Value.DefaultEnvironment;
+        //    }
+        //    else
+        //    {
+        //        if (infos != null)
+        //            TraceInfo(infos, $"Received {env} from client", "LX01");
+        //    }
 
-            _conn = _settings.Value.EnvModels.First(x => x.env.Equals(env))?.conn;
-            _urlLexon = _settings.Value.EnvModels.First(x => x.env.Equals(env))?.url;
-        }
+        //    _conn = _settings.Value.EnvModels.First(x => x.env.Equals(env))?.conn;
+        //    _urlLexon = _settings.Value.EnvModels.First(x => x.env.Equals(env))?.url;
+        //}
 
         #region user
 
         public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser, string env)
         {
             var result = new Result<LexUser>(new LexUser());
-            GetUrlsByEnvironment(env, result.infos);
+            //GetUrlsByEnvironment(env, result.infos);
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
+
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -120,7 +123,7 @@ namespace Lexon.Infrastructure.Services
         {
             var result = new Result<List<LexCompany>>(new List<LexCompany>());
             var resultUser = new Result<LexUser>(new LexUser());
-            GetUrlsByEnvironment(env, result.infos);
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -286,7 +289,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser, string env)
         {
             var result = new Result<LexUserSimple>(new LexUserSimple());
-            GetUrlsByEnvironment(env, result.infos);
+            //GetUrlsByEnvironment(env, result.infos);
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -329,7 +333,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
         {
             var result = new Result<List<int>>(new List<int>());
-            GetUrlsByEnvironment(classificationAdd.env, result.infos);
+            ConfigureByEnv(classificationAdd.env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -390,7 +394,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
             var result = new Result<int>(0);
-            GetUrlsByEnvironment(classification.env, result.infos);
+            ConfigureByEnv(classification.env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -426,7 +430,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
         {
             var result = new Result<long>(0);
-            GetUrlsByEnvironment(classificationRemove.env, result.infos);
+            //GetUrlsByEnvironment(classificationRemove.env, result.infos);
+            ConfigureByEnv(classificationRemove.env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             var mailInfo = new MailInfo(classificationRemove.Provider, classificationRemove.MailAccount, classificationRemove.idMail);
     
@@ -485,7 +490,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classification)
         {
             var result = new MySqlCompany(_settings.Value.SP.SearchRelations, classification.pageIndex, classification.pageSize, classification.bbdd, classification.idType);
-            GetUrlsByEnvironment(classification.env, result.Infos);
+            //GetUrlsByEnvironment(classification.env, result.Infos);
+            ConfigureByEnv(classification.env, result.Infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -545,7 +551,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
             var result = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
-            GetUrlsByEnvironment(entitySearch.env, result.Infos);
+            //GetUrlsByEnvironment(entitySearch.env, result.Infos);
+            ConfigureByEnv(entitySearch.env, result.Infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -606,7 +613,8 @@ namespace Lexon.Infrastructure.Services
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.GetEntity, 1, 1, entitySearch.bbdd, entitySearch.idType);
             var result = new Result<LexEntity>(new LexEntity());
-            GetUrlsByEnvironment(entitySearch.env, result.infos);
+            //GetUrlsByEnvironment(entitySearch.env, result.infos);
+            ConfigureByEnv(entitySearch.env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -657,7 +665,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync(string env)
         {
             var result = new MySqlList<LexEntityTypeList, LexEntityType>(new LexEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
-            GetUrlsByEnvironment(env, result.Infos);
+            //GetUrlsByEnvironment(env, result.Infos);
+            ConfigureByEnv(env, result.Infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -704,7 +713,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, string env, MailInfo mail)
         {
             var result = new Result<LexUserSimpleCheck>(new LexUserSimpleCheck());
-            GetUrlsByEnvironment(env, result.infos);
+            //GetUrlsByEnvironment(env, result.infos);
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -752,7 +762,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
             var result = new Result<LexContact>(new LexContact());
-            GetUrlsByEnvironment(entitySearch.env, result.infos);
+            //GetUrlsByEnvironment(entitySearch.env, result.infos);
+            ConfigureByEnv(entitySearch.env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             try
             {
@@ -798,7 +809,9 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
             var result = new Result<List<LexContact>>(new List<LexContact>());
-            GetUrlsByEnvironment(search.env, result.infos);
+            //GetUrlsByEnvironment(search.env, result.infos);
+            ConfigureByEnv(search.env, result.infos, _settings.Value, out _conn, out _urlLexon);
+
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -1004,7 +1017,9 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity folderToEntity)
         {
             var result = new Result<long>(0);
-            GetUrlsByEnvironment(folderToEntity.env, result.infos);
+            //GetUrlsByEnvironment(folderToEntity.env, result.infos);
+            ConfigureByEnv(folderToEntity.env, result.infos, _settings.Value, out _conn, out _urlLexon);
+
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -1041,12 +1056,14 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
         {
             var result = new Result<string>(null);
-            GetUrlsByEnvironment(fileMail.env, result.infos);
+            //GetUrlsByEnvironment(fileMail.env, result.infos);
+            ConfigureByEnv(fileMail.env, result.infos, _settings.Value, out _conn, out _urlLexon);
+
             var inicio = DateTime.Now;
             
             try
             {
-                var lexonFile = new LexonGetFile
+                var lexonFile = new LexGetFile
                 {
                     idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
                     idUser = fileMail.idUser,
@@ -1091,7 +1108,9 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
         {
             var result = new Result<bool>(false);
-            GetUrlsByEnvironment(fileMail.env, result.infos);
+            //GetUrlsByEnvironment(fileMail.env, result.infos);
+            ConfigureByEnv(fileMail.env, result.infos, _settings.Value, out _conn, out _urlLexon);
+
             var inicio = DateTime.Now;
 
             try
@@ -1149,9 +1168,9 @@ namespace Lexon.Infrastructure.Services
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
-        private async Task<LexonPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        private async Task<LexPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
         {
-            var lexonFile = new LexonPostFile
+            var lexonFile = new LexPostFile
             {
                 idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
                 fileName = fileMail.Name,
@@ -1181,187 +1200,31 @@ namespace Lexon.Infrastructure.Services
 
         #endregion Files
 
-        #region Appointments
-
-        public async Task<Result<int>> AddAppointmentAsync(LexAppointment appointment, string env, string idUser)
-        {
-            var result = new Result<int>(0);
-            GetUrlsByEnvironment(env, result.infos);
-
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(_conn))
-                {
-                    var filtro = GiveMeAppointmentFilter(idUser, appointment);
-                    conn.Open();
-
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointment, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
-                        await command.ExecuteNonQueryAsync();
-                        CheckErrorOutParameters(command, result.errors, "LX50", nameof(AddAppointmentAsync));
-
-                        //TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        //TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
-                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
-                    }
-                }
-
-                if (_settings.Value.UseMongo)
-                {
-                    //if (result.data > 0)
-                    //    await AddClassificationToListMongoAsync(classificationAdd, result);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new LexonDomainException($"Error when add appointment to lexon", ex), "LX50", "MYSQLCONN");
-            }
-
-            return result;
-        }
-
-        public async Task<Result<int>> RemoveAppointmentAsync(LexAppointmentSimple appointment, string env, string idUser)
-        {
-            var result = new Result<int>(0);
-            GetUrlsByEnvironment(env, result.infos);
-
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(_conn))
-                {
-               
-                    var filtro = GiveMeAppointmentRemoveFilter(idUser, appointment);
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointment, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro);
-                        await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        CheckErrorOutParameters(command, result.errors, "LX51", nameof(RemoveAppointmentAsync));
-
-                        //TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        //TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), "LX51", "MYSQLCONN");
-            }
-
-            if (_settings.Value.UseMongo)
-            {
-                if (result.data == 0)
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), "LX51", "MYSQL");
-
-                //else
-                //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
-            }
-            return result;
-        }
-
-        public async Task<Result<int>> AddAppointmentActionAsync(LexAppointmentActuation appointment, string env, string idUser)
-        {
-            var result = new Result<int>(0);
-            GetUrlsByEnvironment(env, result.infos);
-
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(_conn))
-                {
-                    var filtro = GiveMeAppointmentActionFilter(idUser, appointment);
-                    conn.Open();
-
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointmentAction, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
-                        await command.ExecuteNonQueryAsync();
-                        CheckErrorOutParameters(command, result.errors, "LX52", nameof(AddAppointmentActionAsync));
-
-                        //TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        //TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
-                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
-                    }
-                }
-
-                if (_settings.Value.UseMongo)
-                {
-                    //if (result.data > 0)
-                    //    await AddClassificationToListMongoAsync(classificationAdd, result);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new LexonDomainException($"Error when add appointment to action", ex), "LX52", "MYSQLCONN");
-            }
-
-            return result;
-        }
-
-        #endregion
 
         #region Common
 
-        private void CheckErrorOutParameters(MySqlCommand command, List<ErrorInfo> errors, string idError, string procCaller)
-        {
-            string codeError = null;
-            if (command.Parameters.Contains("P_IDERROR") && command.Parameters["P_IDERROR"] != null)
-            {
-                codeError = command.Parameters["P_IDERROR"].ToString();
-            }
-            if (command.Parameters.Contains("P_ERROR") && command.Parameters["P_ERROR"] != null)
-            {
-                codeError += $"-{command.Parameters["P_ERROR"]}";
-            }
+        //private void CheckErrorOutParameters(MySqlCommand command, List<ErrorInfo> errors, string idError, string procCaller)
+        //{
+        //    string codeError = null;
+        //    if (command.Parameters.Contains("P_IDERROR") && command.Parameters["P_IDERROR"] != null)
+        //    {
+        //        codeError = command.Parameters["P_IDERROR"].ToString();
+        //    }
+        //    if (command.Parameters.Contains("P_ERROR") && command.Parameters["P_ERROR"] != null)
+        //    {
+        //        codeError += $"-{command.Parameters["P_ERROR"]}";
+        //    }
 
-            if (codeError != null)
-            {
+        //    if (codeError != null)
+        //    {
 
-                codeError += $" in {procCaller} - SP[{command.CommandText}]";
-                //TraceLog(parameters: new string[] { $"ERROR:{codeError}" });
-                TraceError(errors, new LexonDomainException(codeError), idError, "MYSQL");
-            }
-        }
+        //        codeError += $" in {procCaller} - SP[{command.CommandText}]";
+        //        //TraceLog(parameters: new string[] { $"ERROR:{codeError}" });
+        //        TraceError(errors, new LexonDomainException(codeError), idError, "MYSQL");
+        //    }
+        //}
 
-        private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}", bool addParameterId = false)
-        {
-            command.Parameters.Add(new MySqlParameter(nameFilter, MySqlDbType.String) { Value = filterValue });
-            command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
-            command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-            command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
-            if (addParameterId)
-                command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-
-            command.CommandType = CommandType.StoredProcedure;
-
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{command.CommandText} {nameFilter}='{filterValue}', P_UC={idUser}" });
-        }
-
-        private void AddListSearchParameters(int pageSize, int pageIndex, string fieldOrder, string order, MySqlCommand command)
-        {
-            TraceLog(parameters: new string[] { $"P_PAGE_SIZE:{pageSize} - P_PAGE_NUMBER:{pageIndex} - P_ORDER:{fieldOrder} - P_TYPE_ORDER:{order}" });
-
-            command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
-            command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
-            command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-            if (!string.IsNullOrEmpty(fieldOrder))
-                command.Parameters.Add(new MySqlParameter("P_ORDER", MySqlDbType.String) { Value = fieldOrder });
-            if (!string.IsNullOrEmpty(order))
-                command.Parameters.Add(new MySqlParameter("P_TYPE_ORDER", MySqlDbType.String) { Value = order });
-        }
-
-        private int EvaluateErrorCommand(List<ErrorInfo> errors, MySqlCommand command)
-        {
-            int idError = 0;
-            if (command.Parameters["P_IDERROR"].Value is int)
-            {
-                int.TryParse(command.Parameters["P_IDERROR"].Value.ToString(), out idError);
-                //TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, null, idError);
-            }
-
-            return idError;
-        }
+ 
 
         private string GiveMeBaseFilter(string bbdd, string idUser)
         {
@@ -1391,9 +1254,7 @@ namespace Lexon.Infrastructure.Services
                 GetRelationByIdFilter(idType, idRelated) +
                 GetMailListFilter("ListaMails", listaMails) +
                 $" }}";
-        }
-
-        
+        }     
 
         private string GetMailFilter(MailInfo mail)
         {
