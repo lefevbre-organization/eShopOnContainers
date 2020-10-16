@@ -5,6 +5,7 @@ import { processFolders } from "./folder";
 export const KEY_USER_ID = "KEY_USER_ID";
 export const KEY_HASH = "KEY_HASH";
 export const LEFEBVRE = "LEFEBVRE";
+export const SELECTED_SIGNATURE = "SELECTED_SIGNATURE";
 
 function emptyState() {
   return JSON.parse(JSON.stringify(INITIAL_STATE));
@@ -41,6 +42,11 @@ export async function loadState() {
     state.lefebvre = JSON.parse(lefebvre);
   }
 
+  const selectedSignature = localStorage.getItem(SELECTED_SIGNATURE);
+  if (selectedSignature !== null) {
+    state.application.selectedSignature = JSON.parse(selectedSignature);
+  }
+
   return state;
 }
 
@@ -56,11 +62,11 @@ export async function loadState() {
 export function saveState(dispatch, state) {
   //sessionStorage.setItem(KEY_USER_ID, state.application.user.id);
   //sessionStorage.setItem(KEY_HASH, state.application.user.hash);
-
   localStorage.setItem(KEY_USER_ID, state.application.user.id);
   localStorage.setItem(KEY_HASH, state.application.user.hash);
   localStorage.setItem(LEFEBVRE, JSON.stringify(state.lefebvre));
-
+  localStorage.setItem(SELECTED_SIGNATURE, JSON.stringify(state.application.selectedSignature));
+  
   persistState(dispatch, state);
 }
 
