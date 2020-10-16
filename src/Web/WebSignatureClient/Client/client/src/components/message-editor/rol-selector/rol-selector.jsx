@@ -266,12 +266,11 @@ export class RolSelector extends React.Component {
                         { (user.doubleAuth === "photo") ? 
                           <>
                           <td>
-                              <a className="tooltipped" 
-                               data-position="bottom" 
-                               data-delay="50" 
-                               data-tooltip="Número de fotos adjuntas" 
-                               data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.photoNumber')}
-                               {/* <span className="lf-icon-information"></span> */}
+                              <a className={style.tooltipped} > 
+                               {i18n.t('messageEditor.grid.photoNumber')}
+                               <span className={`${style.tooltipped} lf-icon-information`}></span>
+                               <span className={style.tooltiptext}>{i18n.t('messageEditor.grid.photoInfo')}</span>
+                              
                               </a>
                           </td>
   

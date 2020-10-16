@@ -690,6 +690,9 @@ class MessageEditor extends Component {
             #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
               height: calc(100% - 20px) !important;
             }
+            #toolsRTE_2rte-view {
+              overflow: hidden;
+            }    
           `}
         </style>
         {/* <style jsx global>

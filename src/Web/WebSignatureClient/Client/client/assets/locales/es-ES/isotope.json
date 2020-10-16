@@ -126,6 +126,7 @@
       "photo": "Foto",
       "finish": "FINALIZAR",
       "photoNumber": "Número de fotos",
+      "photoInfo": "Número de fotos adjuntas",
       "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA"
@@ -335,7 +336,8 @@
         "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
         "notConfigured": "No hay fecha de expiración programada.",
         "doesntExpires": "La solicitud no expira",
-        "expires": "Expira en ___ días."
+        "expires": "Expira en ___ días.",
+        "expired": "Plazo expirado."
       },
       "reminders": {
         "title": "RECORDATORIOS PROGRAMADOS",

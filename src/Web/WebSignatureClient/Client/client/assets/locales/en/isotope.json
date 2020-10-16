@@ -107,6 +107,7 @@
       "photo": "Photo",
       "finish": "FINALIZE",
       "photoNumber": "Number of photos",
+      "photoInfo": "Number of photos attached",
       "phone": "Number of phone"
     },
     "title": "CREATE NEW SIGNATURE"
@@ -316,7 +317,8 @@
         "title": "EXPIRATION CONFIGURATION",
         "notConfigured": "There's no expiration term activated",
         "doesntExpires": "Never expires",
-        "expires": "Expires in ___ days"
+        "expires": "Expires in ___ days",
+        "expired": "Term expired."
       },
       "reminders": {
         "title": "REMINDERS CONFIGURATION",

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
+using Polly.Caching;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -91,7 +92,7 @@ namespace Lexon.Infrastructure.Services
         public string GetIdEventParameters(string name, string idEvent, string idProvider, bool withComma = true)
         {
             var comma = withComma ? ", " : "";
-            return  $"{comma}\"{name}\": {{ {GetTextFilter(name,idEvent, false)} {GetTextFilter("Provider", idProvider)} }}";
+            return  $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)} }}";
         }
 
         private string GetIdFilter(string idName, int idValue) {
@@ -145,12 +146,12 @@ namespace Lexon.Infrastructure.Services
         {
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
-                GetTextFilter("Subject", appointment.Subject) +
-                GetLongFilter("Id", appointment.Id) +
-                GetTextFilter("Location", appointment.Location) +
-                GetTextFilter("StartDate", appointment.StartDate) +
-                GetTextFilter("EndDate", appointment.EndDate) +
-                GetIdEventParameters("IdEvent", appointment.IdEvent, appointment.Provider) +
+                GetTextFilter("subject", appointment.Subject) +
+                GetLongFilter("id", appointment.Id) +
+                GetTextFilter("location", appointment.Location) +
+                GetTextFilter("startDate", appointment.StartDate) +
+                GetTextFilter("endDate", appointment.EndDate) +
+                GetIdEventParameters("idEvent", appointment.IdEvent, appointment.Provider) +
                 $" }}";
         }
 
@@ -240,7 +241,7 @@ namespace Lexon.Infrastructure.Services
             //'{"BBDD":"lexon_admin_02","IdUser":1344, "idAppointment":402, "id":917}
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
-                $"{GetLongFilter("Id", idAction)}" +
+                $"{GetLongFilter("id", idAction)}" +
                 $"{GetLongFilter("idAppointment", idAppointment)}" +
                 $" }}";
         }
@@ -286,34 +287,35 @@ namespace Lexon.Infrastructure.Services
         {
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
-                GetIdFilter(nameof(IdRelation), IdRelation) +
+                GetIdFilter("Id", IdRelation) +
                 $" }}";
         }
 
         public async Task<Result<PaginatedItemsViewModel<LexActuation>>> GetRelationsOfAppointmentAsync(
-                    string idAppointment,
+            string idAppointment,
             string idUser,
             string env,
             string bbdd,
             int pageSize,
             int pageIndex)
         {
-            var result = new MySqlCompany(_settings.Value.SP.SearchRelations, pageIndex, pageSize, null, -1);
-
-            ConfigureByEnv(env, result.Infos, _settings.Value, out _conn, out _urlLexon);
+            //var result = new MySqlCompany(_settings.Value.SP.SearchRelations, pageIndex, pageSize, null, -1);
+            var result = new Result<PaginatedItemsViewModel<LexActuation>>(new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, 0, new List<LexActuation>()));
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
-                    var filtro = GetRelationsApointmentFilter(-1, null, idUser, idAppointment);
+                    var filtro = GetRelationsApointmentFilter(bbdd, idUser, idAppointment);
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchAppointmentRelations, conn))
                     {
                         AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(pageSize, pageIndex, null, null, command);
                         var r = command.ExecuteNonQuery();
-                        result.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        //result.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                        result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
@@ -322,15 +324,16 @@ namespace Lexon.Infrastructure.Services
                                 var rawResult = reader.GetValue(0).ToString();
                                 if (!string.IsNullOrEmpty(rawResult))
                                 {
-                                    var resultado = JsonConvert.DeserializeObject<LexMailActuation>(rawResult);
-                                    result.AddRelationsMail(resultado);
+                                    var resultado = JsonConvert.DeserializeObject<LexAppointmentActuation>(rawResult);
+                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, result.data.Count, resultado.actuaciones);
+                                    //result.AddRelationsMail(resultado);
                                 }
                                 else
                                 {
-                                    if (result.Infos.Count > 1)
-                                        TraceOutputMessage(result.Errors, "MySql get and empty string with this search", null, "MySql Recover");
+                                    if (result.infos.Count > 1)
+                                        TraceOutputMessage(result.errors, "MySql get and empty string with this search", null, "MySql Recover");
                                     else
-                                        result.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
+                                        result.infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
                             }
                         }
@@ -338,7 +341,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.Errors, ex);
+                    TraceMessage(result.errors, ex);
                 }
             }
 
@@ -352,16 +355,15 @@ namespace Lexon.Infrastructure.Services
                 //    result.DataActuation = resultMongo.DataActuation;
                 //}
             }
-            return new Result<PaginatedItemsViewModel<LexActuation>>();
-            //return result;
+            //return new Result<PaginatedItemsViewModel<LexActuation>>();
+            return result;
         }
 
-        private string GetRelationsApointmentFilter(short? idType, string bbdd, string idUser, string idMail = "")
+        private string GetRelationsApointmentFilter(string bbdd, string idUser, string idAppointment)
         {
             return $"{{ " +
                     GetUserFilter(bbdd, idUser) +
-                    GetShortFilter("IdActionRelationType", idType) +
-                    GetTextFilter("Uid", idMail) +
+                    GetTextFilter("idEvent", idAppointment) +
                     $" }}";
         }
         #endregion Appointments
@@ -381,7 +383,7 @@ namespace Lexon.Infrastructure.Services
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn))
                     {
-                        AddCommonParameters("0", command, "P_FILTER", filtro);
+                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(0, 1, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
 
@@ -434,7 +436,7 @@ namespace Lexon.Infrastructure.Services
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationCategories, conn))
                     {
-                        AddCommonParameters("0", command, "P_FILTER", filtro);
+                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(0, 1, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
 
@@ -474,7 +476,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<PaginatedItemsViewModel<LexActuation>>> GetActuationsAsync(
             string idType,
-            int idCategory,
+            int? idCategory,
             string idUser,
             string env,
             string bbdd,
@@ -494,8 +496,8 @@ namespace Lexon.Infrastructure.Services
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuations, conn))
                     {
-                        AddCommonParameters("0", command, "P_FILTER", filtro);
-                        AddListSearchParameters(0, 1, "ts", "DESC", command);
+                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
 
                         result.data.Count = AddOutPutParameters(result.errors, command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
@@ -527,8 +529,9 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private string GetActuationSearchFilter(string idUser, string bbdd, string idType, int idCategory, string filter)
+        private string GetActuationSearchFilter(string idUser, string bbdd, string idType, int? idCategory, string filter)
         {
+            //var category = idCategory == 0 ? "" : GetLongFilter("IdCategory", idCategory);
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
                 GetTextFilter("IdType", idType) +

@@ -6,7 +6,7 @@
 
         public LexActuation[] actuaciones { get; set; }
 
-        public LexEntity[] expedientes { get; set; }
+        //public LexEntity[] expedientes { get; set; }
 
     }
 }
