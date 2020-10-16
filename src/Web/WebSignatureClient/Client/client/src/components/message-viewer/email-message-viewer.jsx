@@ -78,38 +78,54 @@ export class EmailMessageViewer extends Component {
   }
 
   componentDidMount() {
+    let filter = [];
     const email = this.props.selectedEmail;
-    const filter = email.certificates.filter((certificate, index, self) => 
-      self.findIndex(x =>(x.email === certificate.email)) === index
-    );
+    email.certificates.forEach(certificate => {
+      let index = filter.findIndex(x => (x.email === certificate.email));
+      if (index === -1){
+        filter.push(certificate);
+      } else if (filter[index].events.length < certificate.events.length){
+        // This is to assure we pick the node that contains all the events because certification_completed is present only in one node
+        filter[index] = certificate;
+      }
+    });
     this.setState({filterCertificates: filter});
   }
 
   componentDidUpdate(prevProps){
     if (JSON.stringify(this.props.selectedEmail) !== JSON.stringify(prevProps.selectedEmail)){
-      const filter = this.props.selectedEmail.certificates.filter((certificate, index, self) => 
-        self.findIndex(x => (x.email === certificate.email)) === index
-      );
+      let filter = [];
+      this.props.selectedEmail.certificates.forEach(certificate => {
+        let index = filter.findIndex(x => (x.email === certificate.email));
+        if (index === -1){
+          filter.push(certificate);
+        } else if (filter[index].events.length < certificate.events.length){
+          // This is to assure we pick the node that contains all the events because certification_completed is present only in one node
+          filter[index] = certificate;
+        }
+      });
       this.setState({filterCertificates: filter});
     }
 
   }
 
-
-  getDocments(documents, ev) {
-    var result = [];
-    documents.forEach((document, i) => {
-     var event = document.events.find( e => (e.type.toLowerCase() === ev))
-     if (event){
-      result.push(
-        {
-          type:  event.type,
-        }
-      );
-     }
-   });
-   console.log('getDocments', result.length);
-   return result;
+  getDocments(selectedEmail, documents) {
+    var counter = [];
+    let findRes;
+    var certificationType = selectedEmail.data.find(d => d.key === 'certification_type');
+    documents.forEach(doc => {
+      if (certificationType.value === 'open_document'){
+        findRes = doc.events.find(d => d.type.toLowerCase() === 'documents_opened');
+      } else if (certificationType.value === 'open_every_document') {
+        findRes = doc.events.find(d => d.type.toLowerCase() === 'document_opened');
+      }
+      
+      (findRes) ? counter.push(findRes) : null;
+    })
+    
+    
+   console.log('getDocments', counter.length);
+   return (counter) ? counter.length : 0;
   }
   
 

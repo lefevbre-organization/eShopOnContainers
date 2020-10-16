@@ -7,6 +7,7 @@ const EmailList = (props) => {
 
   const documentFilter = props.email.certificates.filter(a => a.email === props.signer.email)
   var documentType = props.signer.events.find(x => x.type === 'documents_opened' || x.type === 'document_opened');
+  var certificationCompleted = props.getEventStatus(props.signer, 'certification_completed');
   documentType = (documentType === undefined) ? '' : documentType.type;
    
   return( 
@@ -115,7 +116,7 @@ const EmailList = (props) => {
             || props.certificationType.value === 'download_every_document') 
               ? <div className={`
                   ${props.styles['seguimiento-certification-individual']} 
-                  ${(!(props.getEventStatus(props.signer, documentType)) 
+                  ${(!certificationCompleted 
                     ? `${props.styles['no-completado']} ${props.styles['no-completado-doc']}` 
                     : ``
                     )}`}
@@ -123,7 +124,7 @@ const EmailList = (props) => {
                   <span className="lf-icon-document"></span>
                   <div className={props.styles['cont-check-seguimiento']}>
                     <span className={`
-                      ${((props.getEventStatus(props.signer, documentType)) 
+                      ${(certificationCompleted 
                         ? `lf-icon-check-round-full `
                         : ``)} 
                       ${props.styles['check-seguimiento']}`}>
@@ -135,7 +136,7 @@ const EmailList = (props) => {
                           <span className={props.styles['document-detail']}>
                             <b>
                               {/* {props.signer.events.filter(x => x.type === 'documents_opened').length}/{documentFilter.length} */}
-                              {props.getDocments(documentFilter, documentType).length}/{documentFilter.length}
+                              {props.getDocments(props.email, documentFilter)}/{documentFilter.length}
                             </b>
                           </span>
                         </div>
@@ -171,7 +172,8 @@ const EmailList = (props) => {
                 {documentFilter.map(certificate => 
                   <div>
                     {
-                      (props.getEventStatus(certificate, documentType) === true )  
+                      (props.getEventStatus(certificate, "document_opened") === true)
+                      || (props.getEventStatus(certificate, documentType) && certificationCompleted)  
                         ? <div className={props.styles['document-opened']}>
                             <div className="mr-5 light-blue-text"><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
                             <div className="mr-1 light-blue-text">
@@ -180,10 +182,17 @@ const EmailList = (props) => {
                             <div className={`${props.styles['certificate-document']} light-blue-text`}>
                               <span>{certificate.file.name}</span>
                             </div>
-                            <div>
-                              <span className="mr-4">{props.getEventDate(certificate, documentType).split(' ')[0]}</span>
-                              <span className="mr-4">{props.getEventDate(certificate, documentType).split(' ')[1]}</span>
-                            </div>
+                            {
+                              (props.certificationType.value === 'open_document')
+                                ? <div>
+                                    <span className="mr-4">{props.getEventDate(certificate, documentType).split(' ')[0]}</span>
+                                    <span className="mr-4">{props.getEventDate(certificate, documentType).split(' ')[1]}</span>
+                                  </div>
+                                : <div>
+                                    <span className="mr-4">{props.getEventDate(certificate, "document_opened").split(' ')[0]}</span>
+                                    <span className="mr-4">{props.getEventDate(certificate, "document_opened").split(' ')[1]}</span>
+                                  </div>
+                            }
                           </div>
                         : <div className={props.styles['document-opened']}>
                             <div className={`${props.styles['certificate-pending']} mr-5`}><b>{i18n.t('emailViewer.pendingDoc')}</b></div>
