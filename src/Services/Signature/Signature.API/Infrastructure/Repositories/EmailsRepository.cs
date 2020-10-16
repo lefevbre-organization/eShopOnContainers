@@ -80,7 +80,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún email certificado del usuario {user}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado del usuario {user}"), "1003");
                 }
                 else
                 {
@@ -106,7 +106,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra información"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra información"), "1003");
                 }
                 else
                 {
@@ -161,7 +161,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, ex);
             }
             return result;
         }
@@ -189,7 +189,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, ex);
             }
 
             result.data = true;
@@ -219,7 +219,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, ex);
             }
 
             result.data = true;
@@ -241,7 +241,7 @@
 
                 if (result.data == null)
                 {
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún email certificado para el id {emailId}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {emailId}"), "1003");
                 }
             }
             catch (Exception ex)
@@ -301,7 +301,7 @@
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, ex);
             }
             return result;
         }
@@ -325,7 +325,7 @@
             }
             else
             {
-                TraceMessage(result.errors, new Exception(msgError), "1003");
+                TraceError(result.errors, new Exception(msgError), "1003");
             }
             return null;
         }

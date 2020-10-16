@@ -77,19 +77,19 @@
         public async Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage) 
             => await _accountsRepository.DeleteRaw(rawMessage);
 
-        public async Task<Result<AccountEvents>> GetEventsByAccount(string account) 
-            => await _accountsRepository.GetEventsByAccount(account);
+        public async Task<Result<AccountEventTypes>> GetEventsByAccount(string account) 
+            => await _accountsRepository.GetEventTypesByAccount(account);
 
-        public async Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn) 
-            => await _accountsRepository.UpsertAccountEvents(accountIn);
+        public async Task<Result<AccountEventTypes>> UpsertAccountEvents(AccountEventTypes accountIn) 
+            => await _accountsRepository.UpsertAccountEventTypes(accountIn);
 
         public async Task<Result<bool>> RemoveEvent(string email, string idEvent) 
-            => await _accountsRepository.RemoveEvent(email, idEvent);
+            => await _accountsRepository.RemoveEventType(email, idEvent);
 
         public async Task<Result<EventType>> AddEvent(string email, EventType eventType)
-         => await _accountsRepository.AddEvent(email, eventType);
+         => await _accountsRepository.AddEventType(email, eventType);
 
         public async Task<Result<bool>> RemoveAccountEvent(string email) 
-            => await _accountsRepository.RemoveAccountEvent(email);
+            => await _accountsRepository.RemoveAccountEventType(email);
     }
 }

@@ -385,7 +385,7 @@ namespace Lexon.API.Controllers
                 || entitySearch.idType == null || entitySearch.idEntity == null || entitySearch.idEntity <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
-            var result = await _usersService.GetEntityById(entitySearch);
+            var result = await _usersService.GetEntityByIdAsync(entitySearch);
     
             if (result.errors.Count() > 0 && result.data == null)
             {
