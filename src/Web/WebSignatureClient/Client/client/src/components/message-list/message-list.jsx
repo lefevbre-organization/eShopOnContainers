@@ -763,7 +763,7 @@ class MessageList extends Component {
                     delayUpdate='true'
                 >
                     <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />
+                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='90' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
@@ -1170,11 +1170,15 @@ class MessageList extends Component {
                     }
                     .e-btn.e-icon-btn {
                       background-color: transparent !important;
-                      padding: 6px 30px 4px !important;
+                      width: 100%;
+                      margin: auto;
+                      height: 32px;
+                      position: relative;
+                      
                     }
-                    .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
-                        padding-left: 0px;
-                    }
+                    // .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
+                    //     padding-left: 0px;
+                    // }
                     .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
                       color: white;
                     }
