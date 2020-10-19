@@ -892,10 +892,10 @@ class MessageList extends Component {
         console.log(difSt);
 
         if (difP && difP.updated !== undefined){
-            if (difP.updated.hasOwnProperty('preloadSignatures') 
+            if (difP.updated.hasOwnProperty('preloadSignatures') && difP.updated.hasOwnProperty('emailClicked') 
                 && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
                 && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
-                && Object.keys(difP.updated).length === 5
+                && Object.keys(difP.updated).length === 6
                 && Object.keys(difP.added).length === 0
                 && Object.keys(difP.deleted).length === 0){
                     console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().if: ' + false);

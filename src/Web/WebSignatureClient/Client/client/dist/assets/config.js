@@ -11,9 +11,10 @@ window.URL_MF_LEXON = "http://localhost:3004/static/js/main.js";
 window.URL_MF_LEXON_BASE = "http://localhost:3004/"
 //window.URL_MF_LEXON = "https://lexbox-test-weblexon.lefebvre.es/static/js/main.js";
 //window.URL_MF_LEXON_BASE = "https://lexbox-test-weblexon.lefebvre.es";
-window.API_GATEWAY = "https://lexbox-test-apigwlex.lefebvre.es";
-window.API_ACC_GATEWAY = "https://lexbox-test-apigwacc.lefebvre.es";
-window.API_CHECK_CREDITS = "http://led-serviceclaves/FirmaDigital";
+window.API_GATEWAY_LEX = "https://lexbox-test-apigwlex.lefebvre.es";
+window.API_GATEWAY_ACC = "https://lexbox-test-apigwacc.lefebvre.es";
+window.API_GATEWAY_CEN = "https://lexbox-test-apigwcen.lefebvre.es";
+window.API_CHECK_CREDITS = "https://led-pre-serviceclaves.lefebvre.es/FirmaDigital";
 window.RELEASE = 'RC DEV';
 window.URL_MF_SIGNATURIT = "http://localhost:3020";
 
@@ -31,8 +32,10 @@ window.URL_MF_SIGNATURIT = "http://localhost:3020";
 
 // Bloque para probar contra pre
 window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
+window.API_UTILS_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils";
 
 window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
 window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
 window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';
 window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal';
+window.POLLING_INTERVAL = 10000;
