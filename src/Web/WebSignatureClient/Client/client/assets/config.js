@@ -38,4 +38,4 @@ window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
 window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
 window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';
 window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal';
-window.POLLING_INTERVAL = 45000;
+window.POLLING_INTERVAL = 10000;

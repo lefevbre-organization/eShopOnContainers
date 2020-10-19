@@ -65,6 +65,10 @@ $flag-size: 18px;
     margin-inline-end: 0px;
   }
 
+  span {
+    color: #001978;
+  }
+
   form {
     margin:15px 0;
     label {
@@ -172,3 +176,26 @@ $flag-size: 18px;
   //transform: translateX(159px);
   z-index: 999;
 }
+
+.certificate {
+  span {
+    position: relative;
+    top: -11px;
+  }
+  li {
+    margin-bottom: -15px;
+  }
+  label {
+    margin-left: -8px;
+  }
+  .disable-check {
+
+    border-color: #0019780d;
+    background-color: #00197861;
+
+
+  }
+  
+}
+
+

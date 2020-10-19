@@ -70,9 +70,9 @@ export const setAvailableSignatures = num => ({
     payload: num
 })
 
-export const setUserBrandings = brandings => ({
+export const setUserBrandings = (service, brandings) => ({
     type: ActionTypes.LEFEBVRE_USER_BRANDINGS,
-    payload: brandings
+    payload: {service, brandings}
 })
 
 export const setUserApp = app => ({
@@ -105,6 +105,11 @@ export const setAdminContacts = email => ({
     payload: email
 })
 
+export const setRoles = roles => ({
+    type: ActionTypes.LEFEBVRE_ROLES, 
+    payload: roles
+})
+
 
 export default {
     setUser,
@@ -127,5 +132,6 @@ export default {
     setIdEntity,
     setIdUserApp,
     setIdDocuments,
-    setAdminContacts
+    setAdminContacts,
+    setRoles
 };

@@ -20,28 +20,23 @@ import ComposeMessageEditor from './composeMessageEditor.jsx';
 
 import Spinner from "../spinner/spinner";
 import {
-  createSignature,
-  createSignature2,
-  addOrUpdateSignature,
-  getUserSignatures,
-  createUser,
-  decAvailableSignatures,
+  createEmail,
+  addOrUpdateEmail,
+  getUserEmails,
   notifySignature,
   cancelSignatureCen,
-  preloadSignatures2
+  preloadEmails
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
-//import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
 import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
 import  AttachmentsWidget  from './widgets/attachments-widget2';
-import { ExpirationWidget } from './widgets/expiration-widget';
-import { RemindersWidget } from './widgets/reminders-widget';
+import  CertificatesWidget  from './widgets/certificates-widget';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import RolSelector from './rol-selector/rol-selector';
 
-class MessageEditor extends Component {
+
+class EmailMessageEditor extends Component {
   constructor(props) {
     console.log('Entra en el message-editor');
     super(props);
@@ -49,19 +44,13 @@ class MessageEditor extends Component {
       linkDialogVisible: false,
       linkDialogUrl: '',
       dropZoneActive: false,
-      // Stores state of current selection in the dialog (is title, underlined... H1, H2, ..., italic, underline)
-      // Used in editor buttons to activate/deactivate them
       editorState: {},
-      selectedReminderOption: '',
-      reminderDays: 0,
-      selectedExpirationOption: '',
-      expirationDays: 7,
+      selectedCertificationOption: 1,
+      certificationType: 'delivery',
       hideAlertDialog: false,
       hideConfirmDialog: false,
-      hideRolDialog: false,
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
-      numPagesOption: 1,
       MaximumSigners: 40,
       isCallApis: false,
       isFileType: false,
@@ -87,8 +76,6 @@ class MessageEditor extends Component {
     this.handleEditorChange = this.editorChange.bind(this);
     this.onAttachButton = this.onAttachButton.bind(this);
     this.onAttachSelected = this.onAttachSelected.bind(this);
-    this.handleOnReminderDaysChange = this.onReminderDaysChange.bind(this);
-    this.handleOnExpirationDaysChange = this.onExpirationDaysChange.bind(this);
     this.callApis = this.callApis.bind(this);
     this.combineInfo = this.combineInfo.bind(this);
     this.getDocumentsNamesAndIds = this.getDocumentsNamesAndIds.bind(this);
@@ -96,26 +83,45 @@ class MessageEditor extends Component {
     this.getDocumentsNames = this.getDocumentsNames.bind(this);
     this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
 
-    this.onChangeReminder = this.onChangeReminder.bind(this);
-    this.onChangeExpiration = this.onChangeExpiration.bind(this);
+    this.onChangeCertification = this.onChangeCertification.bind(this);
 
-    this.dialogClose = this.dialogClose.bind(this);
-    this.dialogOpen = this.dialogOpen.bind(this);
+    this.dialogClose = this.dialogClose;
+    this.dialogOpen = this.dialogOpen;
     this.animationSettings = { effect: 'None' };
-    this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
-    this.getRoleInfo = this.getRoleInfo.bind(this);
+   
     this.resetIsFileDrop = this.resetIsFileDrop.bind(this);
   }
+
+  onChangeCertification(certificates) {
+    let selectedOptions = [];
+    let max = 0;
+    certificates.forEach(certificate => {
+      if (certificate.checked){
+        selectedOptions.push({option: certificate.option, certificate: certificate.id});
+        (max <= certificate.option) ? max = certificate.option : null;
+      }
+    });
+    this.setState({
+      selectedCertificationOption: max,
+      certificationType: selectedOptions[max-1].certificate
+    })
+    console.log("***++++++****+++++****++++****++++");
+    console.log('Selected Options:')
+    console.log(selectedOptions);
+    console.log('max:')
+    console.log(max);
+    console.log('Lo que voy a guardar en selectedCertificationOption:' + max);
+    console.log('Lo que voy a guardar en certificationType: ' + selectedOptions[max-1].certificate);
+    console.log(this.state.selectedCertificationOption);
+    console.log(this.state.certificationType);
+  }
+
 
   showCancelCenModal(){
     this.setState({ hideConfirmDialog: true});
   }
 
-  handleNumPagesOption(option){
-    console.log('Se cambia el numpages, option:' + option);
-    this.setState({numPagesOption: option});
-  }
 
   resetIsFileDrop(){
     console.log('Reset isFileDrop');
@@ -131,128 +137,6 @@ class MessageEditor extends Component {
     this.props.setIdDocuments(null);
   }
 
-  getRoleInfo(recipients){
-    console.log('Roleinfo:');
-    console.log(recipients);
-    
-    if (this.headerFormRef.current.reportValidity()) {
-        // Get content directly from editor, state content may not contain latest changes
-        const content = this.getEditor().getContent();
-        const { cc, subject } = this.props;
-        const { lefebvre } = this.props;
-        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.signature) 
-          ? lefebvre.userBrandings.signature.find((b) => b.app === lefebvre.userApp) 
-          : '';
-  
-        let reminders = [];
-        switch (this.state.selectedReminderOption) {
-          case 'option1': // every x days
-            if (this.state.selectedExpirationOption === 'exp_option1') {
-              for (let index = 0; index < this.state.expirationDays; index++) {
-                if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
-                  reminders[index] = this.state.reminderDays * (index + 1);
-                }
-              }
-            } else {
-              for (let index = 0; index < 30; index++) {
-                reminders[index] = this.state.reminderDays * (index + 1);
-              }
-            }
-            break;
-          case 'option2': //daily
-            if (this.state.selectedExpirationOption === 'exp_option1') {
-              for (let index = 0; index < this.state.expirationDays; index++) {
-                reminders[index] = index + 1;
-                //reminders.push(index + 1);
-              }
-            } else {
-              for (let index = 0; index < 30; index++) {
-                reminders[index] = index + 1;
-              }
-            }
-            break;
-          case 'option3': //weekly
-            if (this.state.selectedExpirationOption === 'exp_option1') {
-              for (let index = 0; index < this.state.expirationDays; index++) {
-                if (7 * (index + 1) < this.state.expirationDays) {
-                  reminders[index] = 7 * (index + 1);
-                }
-              }
-            } else {
-              for (let index = 0; index < 30; index++) {
-                reminders[index] = 7 * (index + 1);
-              }
-            }
-            break;
-          default:
-            reminders[0] = -1;
-            break;
-        }
-  
-        let expiration;
-        switch (this.state.selectedExpirationOption) {
-          case 'exp_option1': // expires
-            expiration = this.state.expirationDays;
-            break;
-          case 'exp_option2': // never expires
-            expiration = 0;
-            break;
-          default:
-            expiration = -1;
-            break;
-        }
- 
-        console.log('Recordatorios y exp: ');
-        console.log({ reminders });
-        console.log(expiration);
-  
-        let guid = lefebvre.guid;
-        if (guid === null) {
-          guid = uuid();
-        }
-  
-        // if (document.getElementById('file-input').files[0]){
-        //     var reader = new FileReader();
-        //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
-        //     reader.onloadend = (evt) => {
-        //        console.log(evt.target.result);
-        //        var fileData = evt.target.result.split('base64,')[1];
-        //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-        //     }
-        //     reader.onerror = function (evt) {
-        //         console.log("error reading file");
-        //     }
-        // } else
-        if (this.props.attachments) {
-          let attachmentsList = [];
-          this.props.attachments.forEach((attachment) => {
-            //var attachment = this.props.attachments[0];
-            var file = new File([attachment.content], attachment.fileName, {
-              type: getFileType(attachment.fileName),
-              lastModified: new Date(),
-            });
-            attachmentsList.push({file: file, pages: attachment.pages});
-            debugger;
-          });
-          //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-
-
-          this.callApis(
-            recipients,
-            cc,
-            subject,
-            content.innerHTML,
-            this.props.attachments,
-            reminders,
-            expiration,
-            lefebvre.userId,
-            guid,
-            (userBranding && userBranding.externalId) ? userBranding.externalId : ''
-          );
-        }
-        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
-      }
-  }
 
   dialogClose(){
     if (this.state.centinelaDownloadError === true){
@@ -262,20 +146,13 @@ class MessageEditor extends Component {
         hideAlertDialog: false, 
         bigAttachments: false, 
         centinelaDownloadError: false,
-        hideConfirmDialog: false, 
-        hideRolDialog: false
+        hideConfirmDialog: false
     });
   }
 
-  dialogOpen(instance){
-    switch (instance) {
-        case "alertDialog":
-            (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
-            break;
-        default:
-            break;
-    }
-}
+  dialogOpen(){
+      this.alertDialogInstance.cssClass = 'e-fixed';
+  }
 
   onDiscardSignatureOk(){
     const {close, lefebvre, application} = this.props
@@ -310,21 +187,6 @@ class MessageEditor extends Component {
       this.resetReceivedInfo();
       close(aplication);
     }
-  }
-
-
-  onChangeReminder(reminder) {
-    this.setState({
-      selectedReminderOption: `option${reminder.option}`,
-      reminderDays: reminder.data
-    })
-  }
-
-  onChangeExpiration(expiration) {
-    this.setState({
-      selectedExpirationOption: `exp_option${expiration.option}`,
-      expirationDays: expiration.data
-    })
   }
 
   render() {
@@ -382,7 +244,6 @@ class MessageEditor extends Component {
       }
     ];
 
-
     const {
       t,
       className,
@@ -396,9 +257,6 @@ class MessageEditor extends Component {
       content,
       lefebvre
     } = this.props;
-
-    console.log(this.state.centinelaDownloadError);
-    console.log(this.props.attachmentsDownloadError);
  
     return (
       <div
@@ -473,18 +331,13 @@ class MessageEditor extends Component {
           </div>
           <div className={styles['side-container']}>
             <AttachmentsWidget 
-              // onAttachButton={this.onAttachButton()} 
-              // onAttachSelected={this.onAttachSelected()}
-              // removeAttachment={this.removeAttachment()}
               sendingType={sendingType}
-              onSelectNumPages={this.handleNumPagesOption}
               onConfirmAttachRemoval={this.showCancelCenModal}
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
-              fatherContainer={'MessageEditor'}
+              fatherContainer={'EmailMessageEditor'}
             ></AttachmentsWidget>
-            <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
-            <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
+            <CertificatesWidget onChange={this.onChangeCertification}/>
           </div>
           <div className={styles['action-buttons']}>
             <button
@@ -502,18 +355,6 @@ class MessageEditor extends Component {
           </div>
         </div>
 
-        {/* <InsertLinkDialog
-          visible={this.state.linkDialogVisible}
-          closeDialog={() =>
-            this.setState({
-              linkDialogVisible: false,
-              linkDialogInitialUrl: '',
-            })
-          }
-          onChange={(e) => this.setState({ linkDialogUrl: e.target.value })}
-          url={this.state.linkDialogUrl}
-          insertLink={this.handleEditorInsertLink}
-        /> */}
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
@@ -521,14 +362,10 @@ class MessageEditor extends Component {
           animationSettings={this.animationSettings} 
           width='60%' 
           content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
-          //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          //buttons={this.alertButtons} 
-          open={this.dialogOpen("info2Dialog")} 
-          close={this.dialogClose}
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose.bind(this)}
           showCloseIcon={true}
-          //position={ this.position }
         />
         <DialogComponent 
           id="confirmDialog" 
@@ -539,30 +376,11 @@ class MessageEditor extends Component {
           width='60%' 
           content={confirmDiscard} 
           ref={dialog => this.confirmDialogInstance = dialog} 
-          //target='#target' 
           buttons={confirmButtons} 
-          open={this.dialogOpen("confirmDialog")} 
-          close={this.dialogClose.bind(this)}
+          open={() => this.dialogOpen} 
+          close={() => this.dialogClose}
         />
-        <DialogComponent 
-          id="rolDialog" 
-          header={i18n.t("messageEditor.grid.recipientsRole")} 
-          visible={this.state.hideRolDialog} 
-          showCloseIcon={true} 
-          animationSettings={this.animationSettings} 
-          width='80%'
-          //content={RolSelector} 
-          ref={dialog => this.rolDialog = dialog} 
-          //target='#target' 
-          open={this.dialogOpen("rolDialog")} 
-          close={this.dialogClose}
-        >
-          <RolSelector 
-          recipients={to}
-          onFinishRoles={this.getRoleInfo}
-          dialogClose={this.dialogClose.bind(this)}
-          />
-        </DialogComponent>
+
         <style jsx global>
           {` 
            .message-editor___1BSzC 
@@ -693,18 +511,8 @@ class MessageEditor extends Component {
             #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
               height: calc(100% - 20px) !important;
             }
-            #toolsRTE_2rte-view {
-              overflow: hidden;
-            }    
           `}
         </style>
-        {/* <style jsx global>
-        {`
-          input:not([type]){
-            border-bottom: 1px solid #001970 !important
-          }
-        `}
-        </style> */}
       </div>
     );
   }
@@ -718,128 +526,55 @@ class MessageEditor extends Component {
 
   
   submit() {
-    if (this.props.to.length === 0 || this.props.attachments.length === 0){
+    if (this.props.to.length === 0 ){
       this.setState({ hideAlertDialog: true });
-    } else if (this.bigAttachments()){
-      this.setState({ hideAlertDialog: true, bigAttachments: true});
+    } else if ( this.props.attachments.length === 0 
+      && (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')){
+        this.setState({hideAlertDialog: true})
+    } 
+    else if (this.bigAttachments()){
+      this.setState({ hideAlertDialog: true});
     }
     else {
-      this.setState({hideRolDialog:true});
-      // if (this.headerFormRef.current.reportValidity()) {
-      //   // Get content directly from editor, state content may not contain latest changes
-      //   const content = this.getEditor().getContent();
-      //   const { to, cc, subject } = this.props;
-      //   const { lefebvre } = this.props;
-      //   // const userBranding = lefebvre.userBrandings.find(
-      //   //   (b) => b.app === lefebvre.userApp
-      //   // );
+      if (this.headerFormRef.current.reportValidity()) {
+        // Get content directly from editor, state content may not contain latest changes
+        const content = this.getEditor().getContent();
+        const { to, cc, subject } = this.props;
+        const { lefebvre } = this.props;
+        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.certifiedEmail) 
+          ? lefebvre.userBrandings.certifiedEmail.find((b) => b.app === lefebvre.userApp) 
+          : '';
+          
+        let guid = lefebvre.guid;
+        if (guid === null) {
+          guid = uuid();
+        }
   
-      //   let reminders = [];
-      //   switch (this.state.selectedReminderOption) {
-      //     case 'option1': // every x days
-      //       if (this.state.selectedExpirationOption === 'exp_option1') {
-      //         for (let index = 0; index < this.state.expirationDays; index++) {
-      //           if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
-      //             reminders[index] = this.state.reminderDays * (index + 1);
-      //           }
-      //         }
-      //       } else {
-      //         for (let index = 0; index < 30; index++) {
-      //           reminders[index] = this.state.reminderDays * (index + 1);
-      //         }
-      //       }
-      //       break;
-      //     case 'option2': //daily
-      //       if (this.state.selectedExpirationOption === 'exp_option1') {
-      //         for (let index = 0; index < this.state.expirationDays; index++) {
-      //           reminders[index] = index + 1;
-      //           //reminders.push(index + 1);
-      //         }
-      //       } else {
-      //         for (let index = 0; index < 30; index++) {
-      //           reminders[index] = index + 1;
-      //         }
-      //       }
-      //       break;
-      //     case 'option3': //weekly
-      //       if (this.state.selectedExpirationOption === 'exp_option1') {
-      //         for (let index = 0; index < this.state.expirationDays; index++) {
-      //           if (7 * (index + 1) < this.state.expirationDays) {
-      //             reminders[index] = 7 * (index + 1);
-      //           }
-      //         }
-      //       } else {
-      //         for (let index = 0; index < 30; index++) {
-      //           reminders[index] = 7 * (index + 1);
-      //         }
-      //       }
-      //       break;
-      //     default:
-      //       reminders[0] = -1;
-      //       break;
-      //   }
-  
-      //   let expiration;
-      //   switch (this.state.selectedExpirationOption) {
-      //     case 'exp_option1': // expires
-      //       expiration = this.state.expirationDays;
-      //       break;
-      //     case 'exp_option2': // never expires
-      //       expiration = 0;
-      //       break;
-      //     default:
-      //       expiration = -1;
-      //       break;
-      //   }
-  
-      //   console.log('Recordatorios y exp: ');
-      //   console.log({ reminders });
-      //   console.log(expiration);
-  
-      //   let guid = lefebvre.guid;
-      //   if (guid === null) {
-      //     guid = uuid();
-      //   }
-  
-      //   // if (document.getElementById('file-input').files[0]){
-      //   //     var reader = new FileReader();
-      //   //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
-      //   //     reader.onloadend = (evt) => {
-      //   //        console.log(evt.target.result);
-      //   //        var fileData = evt.target.result.split('base64,')[1];
-      //   //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-      //   //     }
-      //   //     reader.onerror = function (evt) {
-      //   //         console.log("error reading file");
-      //   //     }
-      //   // } else
-      //   if (this.props.attachments) {
-      //     let attachmentsList = [];
-      //     this.props.attachments.forEach((attachment) => {
-      //       //var attachment = this.props.attachments[0];
-      //       var file = new File([attachment.content], attachment.fileName, {
-      //         type: getFileType(attachment.fileName),
-      //         lastModified: new Date(),
-      //       });
-      //       attachmentsList.push({file: file, pages: attachment.pages});
-      //       debugger;
-      //     });
-      //     //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-      //     this.callApis(
-      //       to,
-      //       cc,
-      //       subject,
-      //       content.innerHTML,
-      //       this.props.attachments,
-      //       reminders,
-      //       expiration,
-      //       lefebvre.userId,
-      //       guid,
-      //       ''
-      //     );
-      //   }
-      //   //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
-      // }
+        if (this.props.attachments) {
+          let attachmentsList = [];
+          this.props.attachments.forEach((attachment) => {
+            //var attachment = this.props.attachments[0];
+            var file = new File([attachment.content], attachment.fileName, {
+              type: getFileType(attachment.fileName),
+              lastModified: new Date(),
+            });
+            attachmentsList.push({file: file, pages: attachment.pages});
+            debugger;
+          });
+          this.callApis(
+            to,
+            cc,
+            subject,
+            content.innerHTML,
+            this.props.attachments,
+            lefebvre.userId,
+            guid,
+            this.state.certificationType,
+            userBranding
+          );
+        }
+        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+      }
     }
   }
 
@@ -923,58 +658,55 @@ class MessageEditor extends Component {
     return merged;
   }
 
-  buildDocumentsInfo(signature) {
+  buildDocumentsInfo(email) {
     let result;
 
-    result = signature.documents.map((e) => {
+    result = (email && email.certificates) ? email.certificates.map((e) => {
       return {
-        externalFileName: e.file.name,
+        email: e.email,
+        name: e.name,
         externalId: e.id,
-        signer: { name: e.name, email: e.email },
-        internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) ? this.props.lefebvre.idDocuments.find((d) => {
-          // if (d.docName.replace(/[\])}[{( ]/g, '') === e.file.name) { //replaces () {} [] ' ' with _
-          // Example of how signaturit changes names: blank spaces and parenthesis with under scores
-          // Original Name: Small Business_unlocked_1 2(3)4[5]6{7}8-9,10'11¡12¿13¨14´15ç16+17^18;19.20$21%22&23º24ª.pdf
-          // Signatur Name: Small_Business_unlocked_1_2_3_4[5]6{7}8-9,10'11¡12¿13¨14´15ç16+17^18;19.20$21%22&23º24ª.pdf
-          if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
-            return d.docId;
-            
-          }
-        }) : null,
+        document: (e.file) 
+          ? {
+              externalFileName: e.file.name, 
+              internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
+                ? this.props.lefebvre.idDocuments.find((d) => {
+                    if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
+                      return d.docId;
+                    }
+                  }) 
+                : null
+            } 
+          : null
       };
-    });
+    }) : null ;
 
     return result;
   }
 
-  //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
   callApis(
     recipients,
     cc,
     subject,
     content,
     files,
-    reminders,
-    expiration,
     userId,
     guid,
+    type,
     userBrandingId
   ) {
     const { lefebvre } = this.props;
     this.setState({isCallApis: true});
-    //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
-    createSignature2(
+    createEmail(
       recipients,
       cc,
       subject,
       content,
       files,
-      this.state.numPagesOption,
-      reminders,
-      expiration,
       userId,
       guid,
-      userBrandingId,
+      type,
+      userBrandingId.externalId,
       this.props.credentials.encrypted
     ).then((signatureInfo) => {
       console.log(signatureInfo);
@@ -986,46 +718,38 @@ class MessageEditor extends Component {
           signatureInfo.message
         );
       } else {
-        getUserSignatures(userId).then((userInfo) => {
-          // if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
-          //   var externalIds = getDocumentsNamesAndIds(signatureInfo);
-          //   var combinedInfo = combineInfo(externalIds, lefebvre.idDocuments);
-          //   debugger;
-          //   const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp, signers: to, idDocuments:combinedInfo}
-          //   createUser(userId, signature);
-          // } else {
-          // var externalIds = this.getDocumentsIds(signatureInfo);
-          // var documentsNames = this.getDocumentsNames(signatureInfo);
-          // var combinedInfo = this.combineInfo(externalIds, lefebvre.idDocuments);
+        getUserEmails(userId).then((userInfo) => {
           var documentsInfo = this.buildDocumentsInfo(signatureInfo);
           debugger;
-          console.log('Insertando sólo firma');
-          addOrUpdateSignature(
+          console.log('Insertando sólo email');
+          addOrUpdateEmail(
             userId,
             signatureInfo.id,
             guid,
             lefebvre.userApp,
+            signatureInfo.created_at,
+            type,
             documentsInfo
           );
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-          notifySignature(
-            lefebvre.userId,
-            lefebvre.idUserApp,
-            documentsInfo.length
-          );
-          this.props.setMailContacts(null);
-          this.props.setAdminContacts(null);
-          this.props.setUserApp('lefebvre');
-          this.props.setGuid(null);
-          this.props.setTitle('');
-          this.props.setIdDocuments(null);
-          this.props.close(this.props.application);
-          this.props.preloadSignatures(lefebvre.userId)
+          // notifySignature(
+          //   lefebvre.userId,
+          //   lefebvre.idUserApp,
+          //   documentsInfo.length
+          // );
+          this.props.preloadEmails(lefebvre.userId)
         });
       }
-      this.setState({isCallApis: false, hideRolDialog: false});
+      this.setState({isCallApis: false});
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setUserApp('lefebvre');
+      this.props.setGuid(null);
+      this.props.setTitle('');
+      this.props.setIdDocuments(null);
+      this.props.close(this.props.application);
     });
   }
 
@@ -1101,16 +825,6 @@ class MessageEditor extends Component {
     this.props.editMessage({ ...updatedMessage, subject: target.value });
   }
 
-  onReminderDaysChange(event) {
-    const target = event.target;
-    this.setState = { reminderDays: target.value };
-  }
-
-  onExpirationDaysChange(event) {
-    const target = event.target;
-    this.setState = { expirationDays: target.value };
-  }
-
   onDrop(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -1119,8 +833,8 @@ class MessageEditor extends Component {
     
     const addAttachment = (file, dataUrl) => {
        const fileType = file.name.split('.');
-        if(fileType[fileType.length-1] == 'pdf' || fileType[fileType.length-1] == 'docx' 
-        || fileType[fileType.length-1] == 'doc') {
+        if(fileType[1] == 'pdf' || fileType[1] == 'docx' 
+        || fileType[1] == 'doc') {
 
           const newAttachment = {
             fileName: file.name,
@@ -1132,7 +846,7 @@ class MessageEditor extends Component {
             ),
             };
 
-          if (fileType[fileType.length-1] === 'pdf'){
+          if (fileType[1] === 'pdf'){
             const pdfjsLib = require('pdfjs-dist');
             pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
 
@@ -1257,12 +971,12 @@ class MessageEditor extends Component {
   }
 }
 
-MessageEditor.propTypes = {
+EmailMessageEditor.propTypes = {
   className: PropTypes.string,
   t: PropTypes.func.isRequired,
 };
 
-MessageEditor.defaultProps = {
+EmailMessageEditor.defaultProps = {
   className: '',
 };
 
@@ -1317,10 +1031,10 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
+  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth)
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(translate()(MessageEditor));
+)(translate()(EmailMessageEditor));

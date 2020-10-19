@@ -501,7 +501,14 @@
                 {
                     Console.WriteLine("Response Error");
                     Console.WriteLine(response.Content.ToString());
-                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}");
+                    if (response.ErrorException != null)
+                    {
+                        throw new Exception($"Internal Exception: {response.ErrorException.Message} - Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
+                    else
+                    {
+                        throw new Exception($"Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
                 }
             }
             catch (TimeoutException)

@@ -44,13 +44,15 @@ export class TopBar extends Component {
   }
 
   render() {
+    console.log(this.props.appTitle);
     const props = this.props;
     const {
       sideBarToggle,
       selectedMessages,
       selectedMessagesAllUnread,
       outbox,
-      toggleMessageSeen
+      toggleMessageSeen,
+      appTitle
     } = props;
     const collapsed = props.sideBarCollapsed;
     const isEditing =
@@ -103,7 +105,8 @@ export class TopBar extends Component {
           `${ !collapsed ? 
            styles['pasos-firma'] : 
            styles['firma-without-side-bar']}`} >
-          <span className={styles['producto-procedente']}></span> {i18n.t('topBar.app')} <span className={styles.miga}>{title}</span>
+          <span className={styles['producto-procedente']}></span> { !appTitle ? i18n.t('topBar.app') : appTitle} 
+          <span className={styles.miga}>{title}</span>
         </div>
       // </div>
       // </header>
@@ -127,6 +130,7 @@ export class TopBar extends Component {
 
 TopBar.propTypes = {
   title: PropTypes.string,
+  appTitle: PropTypes.string,
   newMessage: PropTypes.object,
   selectedFolder: PropTypes.object,
   selectedMessagesIds: PropTypes.array,
@@ -154,6 +158,7 @@ const mapStateToProps = state => {
     selectedMessages.filter(m => m.seen === true).length === 0;
   return {
     title: state.application.title,
+    appTitle: state.application.appTitle,
     newMessage: state.application.newMessage,
     outbox: state.application.outbox,
     selectedFolder: getSelectedFolder(state) || null,

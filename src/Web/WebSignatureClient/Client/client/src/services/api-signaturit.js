@@ -1,4 +1,4 @@
-import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/application';
+import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails } from '../actions/application';
 import { resolve } from 'path';
 
 // tenia 94 left y 5 width
@@ -101,265 +101,17 @@ const coordinates = [
 
 
 /*
-  SIGNATURIT API CALLS
-*/
-
-// Gets all the signatures associated with an account
-export const getSignaturesSignaturit = async () => {
-  var request = require('request');
-  var options = {
-      'method': 'GET',
-      'url': 'https://api.sandbox.signaturit.com/v3/signatures.json',
-      'headers': {
-          'Authorization': `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`
-  }
-  };
-  request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      dispatch(preDownloadSignatures(Json.parse(response.body)));
-  });
-}
-
-// Gets info of one specific signature by id
-export const getSignaturesById = async (id) => {
-  var request = require('request');
-  var options = {
-      'method': 'GET',
-      'url': `https://api.sandbox.signaturit.com/v3/signatures${id}.json`,
-      'headers': {
-          'Authorization': `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`
-  }
-  };
-  request(options, function (error, response) {
-      if (error) throw new Error(error);
-      console.log(response.body);
-      let signature = JSON.parse(response.body);
-      signature = calculateStatus(signature);
-      return signature;
-  });
-}
-
-// Preloads all signatures associated with an account
-export function preloadSignatures(dispatch, filters) {
-  return new Promise((resolve, reject) => {
-    //dispatch(backendRequest());
-    var request = require('request');
-    var options = {
-        'method': 'GET',
-        'url': `https://api.sandbox.signaturit.com/v3/signatures.json?lefebvre_id=${filters}`,
-        'headers': {
-            'Authorization': `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`
-    }
-    };
-    request(options, function (error, response) {
-        if (error) {
-          reject(error);
-        }
-        //dispatch(preDownloadSignatures(null));
-
-        console.log(response.body);
-        let signatures = JSON.parse(response.body);
-        console.log('Datos recibidos de signaturit - GetSignatures:');
-        console.log({signatures});
-        signatures = calculateStatus(signatures);
-        console.log({signatures});
-        dispatch(preDownloadSignatures(signatures));
-        resolve(signatures);
-    });
-    //dispatch(backendRequestCompleted());
-  })
-}
-
-// Creates a new signature request
-export const createSignature = async (recipients, subject, body, files, reminders, expiration, lefebvreId, guid, brandingId) => {
-  return new Promise((resolve,reject) => {
-    var myHeaders = new Headers();
-    var i = 0;
-    myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
-
-    var formdata = new FormData();
-    recipients.forEach(element => {
-      formdata.append(`recipients[${i}][name]`, element.split('@')[0]);
-      formdata.append(`recipients[${i}][email]`, element);
-      i += 1;
-    });
-    formdata.append("files[0]", files, files.name);
-    formdata.append("data[lefebvre_id]", lefebvreId);
-    formdata.append("data[lefebvre_guid]", guid);
-    formdata.append("data[subject]", subject);
-    formdata.append("data[body]", body);
-    formdata.append("subject", subject);
-    formdata.append("body", body);
-    formdata.append("reminders", reminders);
-    formdata.append("expire_time", expiration);
-    formdata.append("branding_id", brandingId);
-
-    var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: formdata,
-    redirect: 'follow'
-    };
-
-    fetch("https://api.sandbox.signaturit.com/v3/signatures.json", requestOptions)
-    .then(response => response.json())
-    .then(result => {
-      console.log(result)
-      console.log('Aquí debemos meter la inserción en Mongo');
-      resolve(result);
-    })
-    .catch(error => {
-      console.log('error', error)
-      reject(error);
-    });
-  })
-}
-
-// Downloads a document that's been signed
-export const downloadSignedDocument = (signId, docId, fileName) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
-
-  //var formdata = new FormData();
-
-  var requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    //body: formdata,
-    redirect: 'follow'
-  };
-
-  fetch(`https://api.sandbox.signaturit.com/v3/signatures/${signId}/documents/${docId}/download/signed`, requestOptions)
-    .then(response => response.blob())
-    .then(blob => {
-      console.log(blob);
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-    })
-    .catch(error => console.log('error', error));
-}
-
-// Downloads the trail information of a signed document
-export const downloadTrailDocument = (signId, docId, fileName) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
-
-  console.log(`https://api.sandbox.signaturit.com/v3/signatures/${signId}/documents/${docId}/download/audit_trail`);
-
-  var requestOptions = {
-    method: 'GET',
-    headers: myHeaders,
-    redirect: 'follow'
-  };
-
-  fetch(`https://api.sandbox.signaturit.com/v3/signatures/${signId}/documents/${docId}/download/audit_trail`, requestOptions)
-    .then(response => response.blob())
-    .then(blob => {
-      console.log(blob);
-      const url = window.URL.createObjectURL(new Blob([blob]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'audit-'+fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link);
-    })
-    .catch(error => console.log('error', error));
-}
-
-// Sends a reminder to pending signers
-export const sendReminder = async (signatureId) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
-
-  var requestOptions = {
-  method: 'POST',
-  headers: myHeaders,
-  redirect: 'follow'
-  };
-
-  fetch(`https://api.sandbox.signaturit.com/v3/signatures/${signatureId}/reminder.json`, requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-}
-
-// Cancels a signature
-export const cancelSignature = async (signatureId) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy`);
-
-  var requestOptions = {
-  method: 'PATCH',
-  headers: myHeaders,
-  redirect: 'follow'
-  };
-
-  fetch(`https://api.sandbox.signaturit.com/v3/signatures/${signatureId}/cancel.json`, requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-}
-
-// Creates a new Branding
-export const createBranding = async template => {
-  console.log("Template que se va a enviar a Signaturit");
-  console.log(template);
-  return new Promise((resolve, reject) => {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy");
-
-    var formdata = new FormData();
-    formdata.append("application_texts[sign_button]", template.application_texts.sign_button);
-    formdata.append("application_texts[send_button]", template.application_texts.send_button);
-    formdata.append("application_texts[open_sign_button]", template.application_texts.open_sign_button);
-    formdata.append("application_texts[open_email_button]", template.application_texts.open_email_button);
-    formdata.append("application_texts[terms_and_conditions]", template.application_texts.terms_and_conditions);
-    formdata.append("layout_color", template.layout_color);
-    formdata.append("logo", template.logo);
-    formdata.append("signature_color", template.signature_color);
-    formdata.append("templates[signatures_request]", template.templates.signatures_request);
-    formdata.append("templates[signatures_receipt]", template.templates.signatures_receipt);
-    formdata.append("templates[pending_sign]", template.templates.pending_sign);
-    formdata.append("templates[document_canceled]", template.templates.document_canceled);
-    formdata.append("templates[request_expired]", template.templates.request_expired);
-    formdata.append("text_color", template.text_color);
-    formdata.append("show_survey_page", template.show_survey_page);
-    formdata.append("show_csv", template.show_csv);
-    formdata.append("show_biometric_hash", template.show_biometric_hash);
-    formdata.append("show_welcome_page", template.show_welcome_page);
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    };
-
-    fetch("https://api.sandbox.signaturit.com/v3/brandings.json", requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        resolve(result);
-      })
-      .catch(error => {
-        console.log('error', error);
-        reject(error)
-      });
-  });
-}
-
-// END SIGNATURIT API CALLS
-
-
-/*
   LEFEBVRE SIGNATURE BACKEND API CALLS
+*/
+/*
+   _____ _                   _                    ____             _                  _ 
+  / ____(_)                 | |                  |  _ \           | |                | |
+ | (___  _  __ _ _ __   __ _| |_ _   _ _ __ ___  | |_) | __ _  ___| | _____ _ __   __| |
+  \___ \| |/ _` | '_ \ / _` | __| | | | '__/ _ \ |  _ < / _` |/ __| |/ / _ \ '_ \ / _` |
+  ____) | | (_| | | | | (_| | |_| |_| | | |  __/ | |_) | (_| | (__|   <  __/ | | | (_| |
+ |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  \___| |____/ \__,_|\___|_|\_\___|_| |_|\__,_|
+            __/ |                                                                       
+           |___/                                                                                                                       
 */
 
 export const getUserSignatures = async userId => {
@@ -464,26 +216,6 @@ export const deleteUser = async userId => {
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
 }
-
-// export const getAvailableSignatures = async userId => {
-//   return new Promise((resolve, reject) => {
-//     var requestOptions = {
-//       method: 'GET',
-//       redirect: 'follow'
-//     };
-
-//     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
-//       .then(response => response.json())
-//       .then(result => {
-//         console.log(result);
-//         resolve(result);
-//       })
-//       .catch(error => {
-//         console.log('error', error);
-//         reject(error);
-//       })
-//   })
-// }
 
 export const saveAvailableSignatures = async (userId, num) => {
   return new Promise((resolve, reject) => {
@@ -631,11 +363,162 @@ export const createTemplate = async (templateInfo) => {
       });
 })
 }
+
+/*
+  ______                 _ _   ____             _                  _ 
+ |  ____|               (_) | |  _ \           | |                | |
+ | |__   _ __ ___   __ _ _| | | |_) | __ _  ___| | _____ _ __   __| |
+ |  __| | '_ ` _ \ / _` | | | |  _ < / _` |/ __| |/ / _ \ '_ \ / _` |
+ | |____| | | | | | (_| | | | | |_) | (_| | (__|   <  __/ | | | (_| |
+ |______|_| |_| |_|\__,_|_|_| |____/ \__,_|\___|_|\_\___|_| |_|\__,_|
+                                                                     
+*/
+
+export const getUserEmails = async userId => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedEmails/${userId}`, requestOptions)
+      .then(response => response.json())
+      .then(result => resolve(result))
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+};
+
+// Creates a new user with empty signatures or with a new signature
+export const createUserEmail = async (userId, brandings = [], certifiedEmails = []) => {
+  var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+    myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+  \n  "user\": \"${userId}\",
+  \n  \"brandings\": ${JSON.stringify(brandings)},
+  \n  \"certifiedEmails\": ${JSON.stringify(certifiedEmails)}
+  \n}`;
+
+  console.log("Este es el raw de CreateUser Email");
+  console.log(raw);
+  console.log({raw});
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedEmails/addUser`, requestOptions)
+    .then(response => {
+      console.log(response);
+      response.text()
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+// Adds or updates a signature of a given user
+export const addOrUpdateEmail = async (userId, externalId, guid, app, createdAt, type, certificates) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Accept", "text/plain");
+  myHeaders.append("Content-Type", "application/json-patch+json");
+  myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+    \n  \"guid\": \"${guid}\",
+    \n  \"externalId\": \"${externalId}\",
+    \n  \"app\": \"${app}\",
+    \n  \"created_at\": \"${createdAt}\",
+    \n  \"type\": \"${type}\",
+    \n  \"certificate\": ${JSON.stringify(certificates)}
+    \n}`;
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedEmails/${userId}/email/addorupdate`, requestOptions)
+    .then(response => {
+      console.log(response);
+      response.text()
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+export const addOrUpdateBrandingEmail = async (user, brandingInfo) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+    myHeaders.append("Content-Type", "text/plain");
+
+    var raw = `${JSON.stringify(brandingInfo)}`;
+    // \n	\"app\": \"${brandingInfo[0].app}\",
+    // \n	\"externalId\": "${brandingInfo[0].externalId}"
+    // \n}`;
+
+    console.log("Este es el raw de CreataddOrUpdateBrandingeEmail");
+    console.log(raw);
+    console.log({raw});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedEmails/${user}/branding/addorupdate`, requestOptions)
+      .then(response => {
+        if (response.ok){
+          return response.json()
+        }
+        else {
+          throw new Error("Status:" + response.status + ' ' + " Headers:" + response.headers);
+        }
+      })
+      .then(result => {
+        console.log(result);
+        resolve(result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error)
+      });
+  })
+}
+
 // END OF LEFEBVRE SIGNATURE API CALLS
 
 
 /*
   LEFEBVRE SIGNATURE BACKEND GATEWAY SIGNATURIT API CALLS
+*/
+/*
+   _____ _                   _              _ _               _____ _                   _                       
+  / ____(_)                 | |            (_) |             / ____(_)                 | |                      
+ | (___  _  __ _ _ __   __ _| |_ _   _ _ __ _| |_   ______  | (___  _  __ _ _ __   __ _| |_ _   _ _ __ ___  ___ 
+  \___ \| |/ _` | '_ \ / _` | __| | | | '__| | __| |______|  \___ \| |/ _` | '_ \ / _` | __| | | | '__/ _ \/ __|
+  ____) | | (_| | | | | (_| | |_| |_| | |  | | |_            ____) | | (_| | | | | (_| | |_| |_| | | |  __/\__ \
+ |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  |_|\__|          |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  \___||___/
+            __/ |                                                      __/ |                                    
+           |___/                                                      |___/                                     
+
 */
 
 // Preloads all signatures associated with an account calling internal proxy api
@@ -1047,17 +930,33 @@ export const createBranding2 = async (template, auth) => {
 }
 
 
-export function preloadEmails2(dispatch, filters, auth) {
+/*
+   _____ _                   _              _ _              ______                 _ _     
+  / ____(_)                 | |            (_) |            |  ____|               (_) |    
+ | (___  _  __ _ _ __   __ _| |_ _   _ _ __ _| |_   ______  | |__   _ __ ___   __ _ _| |___ 
+  \___ \| |/ _` | '_ \ / _` | __| | | | '__| | __| |______| |  __| | '_ ` _ \ / _` | | / __|
+  ____) | | (_| | | | | (_| | |_| |_| | |  | | |_           | |____| | | | | | (_| | | \__ \
+ |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  |_|\__|          |______|_| |_| |_|\__,_|_|_|___/
+            __/ |                                                                           
+           |___/                                                                            
+
+*/
+// Retrieves all certified emails from Signaturit
+export function preloadEmails(dispatch, filters, auth) {
   return new Promise((resolve, reject) => {
 
     let offset = 0;
 
     getEmails(filters, auth, offset)
     .then(emails => {
+      console.log('Emails Before:')
+      console.log(emails);
       emails = calculateStatusEmails(emails);
-      console.log({signatures});
-      dispatch(preDownloadEmails(emails));
-      resolve(emails);
+      console.log('Emails After:')
+      console.log({emails});
+      var sortedEmails = emails.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0));
+      dispatch(preDownloadEmails(sortedEmails));
+      resolve(sortedEmails);
     })
     .catch(error => {
       console.log('error', error);
@@ -1101,7 +1000,7 @@ export const getEmails = async (filters, auth, offset, emails = []) => {
 }
 
 // Creates a new email calling internal proxy api
-export const createEmail2 = async (recipients, cc, subject, body, files, lefebvreId, guid, type, brandingId, auth) => {
+export const createEmail = async (recipients, cc, subject, body, files, lefebvreId, guid, type, brandingId, auth) => {
     return new Promise((resolve, reject) => {
       var myHeaders = new Headers();
       myHeaders.append("Accept", "text/plain");
@@ -1114,9 +1013,12 @@ export const createEmail2 = async (recipients, cc, subject, body, files, lefebvr
       var ccData = [];
       var filesData = [];
       var customFieldsData = [];
-  
-      jsonObject.recipients = recipients;
-  
+
+      recipients.forEach(recipient => {
+        recipientsData.push({name: recipient.address.split('@')[0], email: recipient.address})
+      })
+      jsonObject.recipients = recipientsData;
+    
       cc.forEach(recipient => {
         ccData.push({name: recipient.split('@')[0], email: recipient})
       });
@@ -1134,12 +1036,11 @@ export const createEmail2 = async (recipients, cc, subject, body, files, lefebvr
       customFieldsData.push({name: "lefebvre_guid", value: guid});
       customFieldsData.push({name: "subject", value: subject});
       customFieldsData.push({name: "body", value: body});
+      customFieldsData.push({name: "certification_type", value: type})
       jsonObject.customFields = customFieldsData;
   
       jsonObject.subject = subject;
       jsonObject.body = body;
-      (reminders[0] !== -1) ? jsonObject.reminders = reminders : null;
-      (expiration !== -1) ? jsonObject.expiration = expiration : null;
       jsonObject.brandingId = brandingId;
   
   
@@ -1153,7 +1054,7 @@ export const createEmail2 = async (recipients, cc, subject, body, files, lefebvr
         redirect: 'follow'
       };
   
-      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/newSignature`, requestOptions)
+      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/newEmail`, requestOptions)
         .then(response => {
           if (response.ok){
             return response.json();
@@ -1173,7 +1074,7 @@ export const createEmail2 = async (recipients, cc, subject, body, files, lefebvr
 }
   
 // Downloads the trail information of a certified email calling internal proxy api
-export const downloadCertificationDocument2 = (emailId, certificationId, fileName, auth) => {
+export const downloadCertificationDocument = (emailId, certificationId, fileName, auth) => {
   var myHeaders = new Headers();
   myHeaders.append("Authorization", `${auth}`);
 
@@ -1197,6 +1098,7 @@ export const downloadCertificationDocument2 = (emailId, certificationId, fileNam
     })
     .catch(error => console.log('error', error));
 }
+
 
 /*
   HELPER FUNCTIONS
@@ -1278,6 +1180,70 @@ const calculateStatus = (signatures) => {
   console.log({signatures});
   return signatures;
 };
+
+const getRecipientsEmail= (email) => {
+  var lookup = {};
+  var items = email.certificates;
+  var result = [];
+
+  for (var item, i = 0; item = items[i++];) {
+    var name = item.email;
+
+    if (!(name in lookup)) {
+      lookup[name] = 1;
+      result.push(name);
+    }
+  }
+  return result;
+}
+
+const getDocumentsEmail = (email) => {
+  var documents = [];
+  email.certificates.forEach(certificate => {
+    if (!documents.find(document => document == JSON.stringify(certificate.file))){
+      documents.push(JSON.stringify(certificate.file));
+    }
+  });
+  return documents;
+}
+
+const countCertificationEvents = (email) => {
+  var counter = 0;
+  email.certificates.forEach(certificate => {
+    if (certificate.events.find(ev => ev.type == "certification_completed")){
+      counter++;
+    }
+  })
+  return counter;
+}
+
+const countDistinctEmails = (email) => {
+  var distinctEmails = getRecipientsEmail(email)
+  return distinctEmails.length;
+}
+
+const countDistinctDocuments = (email) => {
+  var distinctDocuments = getDocumentsEmail(email)
+  return distinctDocuments.length;
+}
+
+const calculateStatusEmails = (emails) => {
+  // To do
+  emails.forEach(email => {
+    var numNodes = email.certificates.length;
+    var numRecipients = countDistinctEmails(email);
+    var numDocuments = countDistinctDocuments(email);
+    var numCertifiedEvents = countCertificationEvents(email);
+
+    if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
+      email.status = 'completed'
+    } else {
+      email.status = 'ready'
+    }
+
+  })
+  return emails
+}
 
 // END HELPER FUNCTIONS
 

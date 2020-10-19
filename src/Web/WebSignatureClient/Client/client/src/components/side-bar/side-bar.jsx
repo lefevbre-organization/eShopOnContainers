@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
+import i18n from 'i18next';
 import MenuContainer from '../folders/menu-container';
 import { DroppablePayloadTypes } from '../folders/menu-list';
 import IconButton from '../buttons/icon-button';
@@ -13,9 +14,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { getAvailableSignatures } from '../../services/api-signaturit';
 import { setAvailableSignatures, setUserApp } from '../../actions/lefebvre';
-import { setTitle } from '../../actions/application';
+import { setTitle, setAppTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import i18n from '../../services/i18n';
+import SendingTypeSelector from './sending-type-selector/sending-type-selector';
 
 class SideBar extends Component {
   constructor(props) {
@@ -24,12 +25,15 @@ class SideBar extends Component {
     this.state = {
       dragOver: false,
       hideAlertDialog: false,
+      hideSendingTypeDialog: false,
       hideConfirmDialog: false
     };
     this.handleOnDragOver = this.onDragOver.bind(this);
     this.handleOnDragLeave = this.onDragLeave.bind(this);
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
+    this.handleOnNewEmailCertificate = this.onNewEmailCertificate.bind(this);
+    this.handleOnNewSending = this.onNewSending.bind(this);
     this.dialogClose = this.dialogClose.bind(this);
     
     //Sin firmas 
@@ -60,6 +64,12 @@ class SideBar extends Component {
     //this.alertButtonEle.style.display = 'inline-block';
   }
 
+  sendTypeDialogClose() {
+    this.setState({
+      hideSendingTypeDialog: false
+  });
+  }
+
   dialogOpen() {
     //this.alertButtonEle.style.display = 'none';
   }
@@ -74,7 +84,7 @@ class SideBar extends Component {
 
 
   render() {
-    const { t, collapsed } = this.props;
+    const { t, collapsed, lefebvre } = this.props;
     const { dragOver } = this.state;
 
     const contenido = `
@@ -164,7 +174,7 @@ class SideBar extends Component {
               style={{ height: 48 }}
               className={`${mainCss['mdc-button']}
                       ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
-              onClick={this.handleOnNewMessage}>
+              onClick={this.handleOnNewSending}>
               {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
               <img
                 className={styles.plusbuttton}
@@ -181,6 +191,22 @@ class SideBar extends Component {
         <PerfectScrollbar>
           <MenuContainer collapsed={collapsed} />
         </PerfectScrollbar>
+        <DialogComponent 
+          id="sendingTypeDialog" 
+          header={i18n.t('sideBar.typeSending')}
+          visible={this.state.hideSendingTypeDialog} 
+          animationSettings={this.animationSettings} 
+          width='40%' 
+          showCloseIcon={true} 
+          // isModal={true}
+          open={this.dialogOpen.bind(this)} 
+          close={this.sendTypeDialogClose.bind(this)} >
+          <SendingTypeSelector 
+            onNewMessage={this.handleOnNewMessage}
+            onNewEmailCertificate={this.handleOnNewEmailCertificate}
+            lefebvre={lefebvre}
+          />
+        </DialogComponent>
         <DialogComponent 
           id="noSignaturesDialog" 
           header=' ' 
@@ -220,20 +246,69 @@ class SideBar extends Component {
               z-index: 1001;
               //transform: translateY(+200%);
             }
+
+            #sendingTypeDialog{
+              top: 17% !important;
+            }
+
+            #sendingTypeDialog .e-dlg-header{
+              width: 60% !important;
+            }
+
             #noSignaturesDialog_dialog-header, #noSignaturesDialog_title, #noSignaturesDialog_dialog-content, .e-footer-content{
               background: #c5343f;
               color: #fff;
               display:flex;
             }
+
+            #sendingTypeDialog_dialog-header, #sendingTypeDialog_title {
+              background: #001978;
+              color: #fff;
+              font-size: 14px;
+              padding-left: 22px;
+            }
+
+            #sendingTypeDialog_dialog-header {
+              padding: 24px !important;
+            }
+
+            #sendingTypeDialog_dialog-content {
+              padding-top: 15px;
+              padding-bottom: 30px;
+            }
+
+            #confirmDialog_dialog-header > button > span {
+              color: white;
+              font-size: 12px;
+            }
+
+            #sendingTypeDialog_dialog-header > button > span {
+              color: white;
+              font-size: 12px;
+            }
+
             .e-dlg-header {
               width: 1% !important;
             }
+
+            .e-dialog .e-icon-dlg-close::before {
+              content: '\e7fc';
+              position: relative;
+              font-size: 12px
+            }
+
             noSignaturesDialog .e-btn.e-flat.e-primary {
               color: #fff !important;
             }
+
             .material-icons {
               font-size: 18px !important;
               color: #001978 !important;
+            }
+
+            .right-icon {
+              position: absolute;
+              right: 0px;
             }
           `}
         </style>
@@ -241,11 +316,16 @@ class SideBar extends Component {
     );
   }
 
-  // dialogClose(){
-  //   this.setState({
-  //       hideConfirmDialog: false
-  //   });
-  // }
+
+  onNewSending() {
+    this.setState({hideSendingTypeDialog: true});
+  }
+
+  dialogClose(){
+    this.setState({
+        hideConfirmDialog: false
+    });
+  }
 
   onDiscardSignatureOk(){
     const {lefebvre, application} = this.props
@@ -270,7 +350,8 @@ class SideBar extends Component {
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
             this.props.setAvailableSignatures(response.data);
             this.props.setTitle(t('messageEditor.title'));
-            this.props.newMessage(lefebvre.sign);
+            this.props.setAppTitle(i18n.t('topBar.app'));
+            this.props.newMessage('signature', lefebvre.sign);
             this.props.setUserApp('lefebvre');
             this.props.setMailContacts(null);
             this.props.setAdminContacts(null);
@@ -281,7 +362,8 @@ class SideBar extends Component {
         } else {
           this.props.setAvailableSignatures(response.data);
           this.props.setTitle(t('messageEditor.title'));
-          this.props.newMessage(lefebvre.sign);
+          this.props.setAppTitle(i18n.t('topBar.app'));
+          this.props.newMessage('signature', lefebvre.sign);
           this.props.setUserApp('lefebvre');
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
@@ -296,7 +378,8 @@ class SideBar extends Component {
           this.setState({ hideAlertDialog: true });
           // this.props.setAvailableSignatures(1);
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-            this.props.newMessage(lefebvre.sign);
+            this.props.setAppTitle(i18n.t('topBar.app'));
+            this.props.newMessage('signature', lefebvre.sign);
             this.props.setTitle(t('messageEditor.title'));
             this.props.setUserApp('lefebvre');
             this.props.setMailContacts(null);
@@ -307,7 +390,6 @@ class SideBar extends Component {
         }
       })
   }
-
 
   onNewMessage() {
     const { lefebvre, t, application } = this.props;
@@ -327,14 +409,16 @@ class SideBar extends Component {
             if (lefebvre.userId === 'E1654569'){
               this.props.setAvailableSignatures(response.data);
               this.props.setTitle(t('messageEditor.title'));
-              this.props.newMessage(lefebvre.sign);
+              this.props.setAppTitle(i18n.t('topBar.app'));
+              this.props.newMessage('signature', lefebvre.sign);
               this.props.setUserApp('lefebvre');
             }
           }
         } else {
           this.props.setAvailableSignatures(response.data);
           this.props.setTitle(t('messageEditor.title'));
-          this.props.newMessage(lefebvre.sign);
+          this.props.setAppTitle(i18n.t('topBar.app'));
+          this.props.newMessage('signature', lefebvre.sign);
           this.props.setUserApp('lefebvre');
         }
       })
@@ -346,7 +430,8 @@ class SideBar extends Component {
           // this.props.setAvailableSignatures(1);
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
             if (lefebvre.userId === 'E1654569'){
-              this.props.newMessage(lefebvre.sign);
+              this.props.setAppTitle(i18n.t('topBar.app'));
+              this.props.newMessage('signature', lefebvre.sign);
               this.props.setTitle(t('messageEditor.title'));
               this.props.setUserApp('lefebvre');
             }
@@ -354,6 +439,14 @@ class SideBar extends Component {
         }
       })
     }
+    this.sendTypeDialogClose();
+  }
+
+  onNewEmailCertificate() {
+    this.props.newMessage('emailCertificate', null);
+    this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+    this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+    this.sendTypeDialogClose();
   }
 
   onDragOver(event) {
@@ -411,9 +504,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
-  newMessage: sign => editNewMessage(dispatch, [], [], sign),
+  newMessage: (sendingType, sign) => editNewMessage(dispatch, sendingType, [], [], sign),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
   setTitle: title => dispatch(setTitle(title)),
+  setAppTitle: title => dispatch(setAppTitle(title)),
   setUserApp: app => dispatch(setUserApp(app))
 });
 

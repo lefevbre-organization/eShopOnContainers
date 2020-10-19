@@ -34,17 +34,23 @@
     "load": "Loading..."
   },
   "sideBar": {
-    "newRequest": "Nouvelle signature",
+    "newRequest": "Nouvelle requête",
+    "typeSending": "Sélectionnez le type requête:",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
     "filterMenu": "Signatures demandées",
+    "filterMenuEmail": "Email certifié",
     "filterAll": "Montrer toutes",
     "filterInProgress": "En progrés",
     "filterCompleted": "Complétées",
-    "filterCancelled": "Anulées"
+    "filterCancelled": "Anulées",
+    "signature": "Signature avancée",
+    "certifiedEmail": "Email certifié",
+    "sendingTypeSignature": "Signature avec données biométriques",
+    "sendingTypeEmail": "Certifiez vos communications"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -62,7 +68,8 @@
       "delete": "Borrar",
       "cancel": "Cancelar"
     },
-    "app": "SIGNATURE"
+    "app": "SIGNATURE",
+    "filterMenuEmail": "Email certifié"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -282,11 +289,31 @@
     "option2": "Rappels par semaine",
     "option3": "Rappels par jour"
   },
+  "certificatesWidget": {
+    "title": "SOUHAIT CERTIFIER:"
+  },
+  "emailViewer": {
+    "certification": "Certification:",
+    "emailDelivered": "le destinataire a reçu le mail",
+    "emailOpened": "le destinataire a ouvert le mail",
+    "docOpened": "le destinataire a ouvert les document",
+    "openEveryDocument": "Le destinataire a ouvert tous les documents",
+    "docDownloaded": "le destinataire a téléchargé les document",
+    "downloadEveryDocument": "le destinataire a téléchargé tous les documents",
+    "attaches": "DOCUMENTS ATTACHÉS",
+    "attachedDocOpened": "Document ouvert",
+    "pendingDoc": "En attendant l'ouverture",
+    "buttons": {
+      "downloadTrail": "Télécharger audit"
+    },
+    "title": "DÉTAILS DE LE MAIL"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",
       "subject": "Sujet",
       "signers": "Destinataires",
+      "recipients": "Destinataires",
       "date": "Date",
       "status": "État"
     },

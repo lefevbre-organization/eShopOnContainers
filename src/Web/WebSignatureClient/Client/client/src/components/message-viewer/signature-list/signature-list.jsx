@@ -130,7 +130,8 @@ const SignatureList = (props) => {
                 {/* </div> */}
               </div>
               <div className={`${props.styles.p15} ${props.styles.separador}`}>
-                <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
+                <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}
+                </div>
                 <div className={`${props.styles['seguimiento-firmante-individual']} ${((props.getEventStatus(props.signer, 'email_processed') === false) ? props.styles['no-completado']: ``)}`}>
                   <span className="lf-icon-send"></span>
                   <div className={props.styles['cont-check-seguimiento']}>

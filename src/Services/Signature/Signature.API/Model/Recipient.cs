@@ -9,9 +9,9 @@ namespace Signature.API.Model
     {
         public string name { get; set; }
         public string email { get; set; }
-        public string role { get; set; }
-        public string signatureType { get; set; }
-        public string doubleAuthType { get; set; }
-        public string doubleAuthInfo { get; set; }
+        public string role { get; set; } = "";
+        public string signatureType { get; set; } = "";
+        public string doubleAuthType { get; set; } = "";
+        public string doubleAuthInfo { get; set; } = "";
     }
 }
