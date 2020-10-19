@@ -780,6 +780,37 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
+        public async Task<Result<string>> FirmCheckAvailableAsync(string idClient)
+        {
+            var result = new Result<string>("0");
+
+
+            // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClientNav}&NumDocuments={NumDocuments}&idUic=1
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.ClavesUrl}/FirmaDigital/RecuperarFirmasDigitalesDisponibles?IdClientNav={idClient}");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _clientClaves.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultString = await response.Content.ReadAsAsync<string>();
+                        result.data = resultString;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to check available firms -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU31", "CLAVESSVC");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl}", ex), "UU31", "CLAVESSVC");
+            }
+            return result;
+        }
+
         public async Task<Result<bool>> FirmUseAsync(string idClient, string idUser, string numDocs)
         {
             var result = new Result<bool>(false);
@@ -800,13 +831,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                        TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU31", "CLAVESSVC");
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU32", "CLAVESSVC");
                     }
                 }
             }
             catch (Exception ex)
             {
-                 TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm", ex), "UU31", "CLAVESSVC");
+                 TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm", ex), "UU32", "CLAVESSVC");
             }
             return result;
         }

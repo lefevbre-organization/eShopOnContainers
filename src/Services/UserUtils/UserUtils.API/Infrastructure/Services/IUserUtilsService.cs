@@ -32,6 +32,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService);
         Task<Result<bool>> FirmCheckAsync(string idClient, string numDocs);
+        Task<Result<string>> FirmCheckAvailableAsync(string idClient);
         Task<Result<bool>> FirmUseAsync(string idClient, string idUser, string numDocs);
     }
 }
