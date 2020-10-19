@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
+import SignatureNumbers from './signature-numbers';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
 import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
@@ -221,6 +222,24 @@ class MenuUser extends Component {
                                             <span className='company-name text-center'>
                                                 Lefebvre-El Derecho, S.A.
                                             </span>
+                                            {  lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
+                                            <SignatureNumbers 
+                                             title="RESUMEN FIRMAS"
+                                             type="signature"
+                                             available="Disponibles"
+                                             consumed="Consumidas"
+                                             availablenumber="36"
+                                             signatureConsumed="106" /> 
+                                             : null }
+                                            { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
+                                            <SignatureNumbers 
+                                             title="RESUMEN EMAIL"
+                                             type="email"
+                                             available="Disponibles"
+                                             consumed="Consumidas"
+                                             availablenumber="36"
+                                             signatureConsumed="106" />
+                                             : null }
                                             <div className='text-center'>
                                                 <button
                                                     type='button'
@@ -385,6 +404,43 @@ class MenuUser extends Component {
           .e-content.e-lib.e-keyboard {
             text-align: left;
           }
+
+          .signature-summary {
+            margin-bottom: 15px;
+          }
+
+          .container-summary {
+            display: fex;
+            margin-bottom: 10px
+          }
+
+          .signature-available {
+            flex: 0 0 81%;
+            border-bottom: 1px solid;
+          }
+
+          .signature-consumed {
+            flex: 0 0 81%;
+            border-bottom: 1px solid #96979C;
+            color: #96979C
+          }
+
+          .box-number {
+            width: 70px;
+            height: 30px;
+            text-align: center;
+            padding-top: 4px;
+            color: white;
+          }
+
+          .available-number { 
+           background: #001978;
+          }
+          
+          .consumed-number {
+            background: #96979C;
+          }
+
           .btn-primary {
             background-color: #001970; 
           }
@@ -395,6 +451,7 @@ class MenuUser extends Component {
           .btn-primary:focus {
             color: #fff; 
           }
+          
         `}</style>
             </Fragment>
         );
