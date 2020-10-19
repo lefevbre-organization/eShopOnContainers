@@ -1470,13 +1470,12 @@ class MessageList extends Component {
                       background-color: transparent !important;
                       width: 100%;
                       margin: auto;
-                      height: 32px;
+                      height: 47px;
                       position: relative;
-                      
                     }
-                    // .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
-                    //     padding-left: 0px;
-                    // }
+                    .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
+                        padding: 1px;
+                    }
                     .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
                     color: white;
                     }
@@ -1643,6 +1642,11 @@ class MessageList extends Component {
                         left: -1px;
                         border: none;
                         margin-top: 2px;
+                    }
+                    .e-btn .e-btn-icon, .e-css.e-btn .e-btn-icon {
+                        margin-top: 2px;
+                        width: 100%;
+                        height: 18px;
                     }
                 `}
                 </style>
