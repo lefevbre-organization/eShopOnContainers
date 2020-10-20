@@ -49,8 +49,10 @@
     "filterCancelled": "Anulées",
     "signature": "Signature avancée",
     "certifiedEmail": "Email certifié",
+    "certifiedSms": "SMS certifié",
     "sendingTypeSignature": "Signature avec données biométriques",
-    "sendingTypeEmail": "Certifiez vos communications"
+    "sendingTypeEmail": "Certifiez vos communications",
+    "sendingTypeSms": "Certifiez vos SMS"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",

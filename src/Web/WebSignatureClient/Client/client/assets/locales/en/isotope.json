@@ -30,8 +30,10 @@
     "filterCancelled": "Cancelled",
     "signature": "Advanced signature",
     "certifiedEmail": "Certified email",
+    "certifiedSms": "Certified SMS",
     "sendingTypeSignature": "Signature with biometric data",
-    "sendingTypeEmail": "Certify your communications"
+    "sendingTypeEmail": "Certify your communications",
+    "sendingTypeSms": "Certify your SMS"
   },
   "topBar": {
     "showSideBar": "Show sidebar",

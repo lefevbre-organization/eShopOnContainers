@@ -49,8 +49,10 @@
     "filterCancelled": "Canceladas",
     "signature": "Firma avanzada",
     "certifiedEmail": "Email certificado",
+    "certifiedSms": "SMS certificado",
     "sendingTypeSignature": "Firma con datos biométricos",
-    "sendingTypeEmail": "Certifica tus comunicaciones"
+    "sendingTypeEmail": "Certifica tus comunicaciones",
+    "sendingTypeSms": "Certifica tus SMS"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
