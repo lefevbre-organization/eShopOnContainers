@@ -166,7 +166,7 @@ class MenuUser extends Component {
         const { lefebvre } = this.props;
         const fullName = this.props.login.formValues.user;
         const { showSign, sign } = this.state;
-
+        
         let acronym;
         if (fullName) {
             acronym = fullName
@@ -176,6 +176,8 @@ class MenuUser extends Component {
         } else {
             acronym = '?';
         }
+        const nameCut = lefebvre.userName.split(' ');
+        const nameInitial = `${nameCut[0].slice(0, 1)} ${nameCut[1].slice(0, 1)}`
 
         return (
             <Fragment>
@@ -213,9 +215,12 @@ class MenuUser extends Component {
                                     {showSign === false && (
                                         <Fragment>
                                             <div className='user-image text-center'>
-                                                <a href='#/'>
+                                              <div className="user-circle">
+                                                <span className="user-nameInitial">{nameInitial.toUpperCase()}</span>
+                                              </div>
+                                                {/* <a href='#/'>
                                                     <img src='/assets/images/notification-icon.png' alt='icon' />                                                    
-                                                </a>
+                                                </a> */}
                                             </div>
                                             {/* <span className='user-name text-center'>{`Firmas disponibles: ${lefebvre.availableSignatures}`}</span> */}
                                             <span className='user-name text-center'>{`${lefebvre.userName}`}</span>
@@ -224,19 +229,19 @@ class MenuUser extends Component {
                                             </span>
                                             {  lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
                                             <SignatureNumbers 
-                                             title="RESUMEN FIRMAS"
+                                             title={i18n.t('menu-user.signatures-summary')}
                                              type="signature"
-                                             available="Disponibles"
-                                             consumed="Consumidas"
+                                             available={i18n.t('menu-user.available')}
+                                             consumed={i18n.t('menu-user.consumed')}
                                              availablenumber="36"
                                              signatureConsumed="106" /> 
                                              : null }
                                             { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
                                             <SignatureNumbers 
-                                             title="RESUMEN EMAIL"
+                                             title={i18n.t('menu-user.email-summary')}
                                              type="email"
-                                             available="Disponibles"
-                                             consumed="Consumidas"
+                                             available={i18n.t('menu-user.available')}
+                                             consumed={i18n.t('menu-user.consumed')}
                                              availablenumber="36"
                                              signatureConsumed="106" />
                                              : null }
@@ -405,42 +410,6 @@ class MenuUser extends Component {
             text-align: left;
           }
 
-          .signature-summary {
-            margin-bottom: 15px;
-          }
-
-          .container-summary {
-            display: fex;
-            margin-bottom: 10px
-          }
-
-          .signature-available {
-            flex: 0 0 81%;
-            border-bottom: 1px solid;
-          }
-
-          .signature-consumed {
-            flex: 0 0 81%;
-            border-bottom: 1px solid #96979C;
-            color: #96979C
-          }
-
-          .box-number {
-            width: 70px;
-            height: 30px;
-            text-align: center;
-            padding-top: 4px;
-            color: white;
-          }
-
-          .available-number { 
-           background: #001978;
-          }
-          
-          .consumed-number {
-            background: #96979C;
-          }
-
           .btn-primary {
             background-color: #001970; 
           }
@@ -451,7 +420,22 @@ class MenuUser extends Component {
           .btn-primary:focus {
             color: #fff; 
           }
+
+          .user-circle {
+            width: 110px;
+            height: 110px;
+            background: #001978;
+            margin: auto;
+            border-radius: 100px;
+            margin-bottom: 10px;
+          }
           
+          .user-nameInitial {
+            padding-top: 32px;
+            color: #35448F;
+            letter-spacing: -3px;
+            font-size: xx-large;
+          }
         `}</style>
             </Fragment>
         );
