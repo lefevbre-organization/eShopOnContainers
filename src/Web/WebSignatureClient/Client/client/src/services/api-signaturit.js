@@ -1247,6 +1247,7 @@ const calculateStatusEmails = (emails) => {
 
 // END HELPER FUNCTIONS
 
+
 export const getUser = async userId => {
     const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
     const url2 = `${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
@@ -1344,6 +1345,36 @@ export const cancelSignatureCen = async (guid) => {
   })
 }
 
+export const getContactsCentinela = async(user) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/contacts?idNavisionUser=${user}`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        return response.text()
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  });
+}
+
 export const getAvailableSignatures = async (companyId, numDocuments) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
@@ -1359,6 +1390,27 @@ export const getAvailableSignatures = async (companyId, numDocuments) => {
       .then(response => response.json())
       .then(result => resolve(result))
       //.then(result =>  resolve(true)) // Se pone para pruebas
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+export const getNumAvailableSignatures = async (companyId) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_UTILS_GATEWAY}/firm/client/${companyId}/checkAvailable`, requestOptions)
+      .then(response => response.json())
+      .then(result => resolve(result))
       .catch(error => {
         console.log('error', error);
         reject(error);
@@ -1417,36 +1469,6 @@ export const verifyJwtSignature = async(token) => {
       reject(error);
     });
   })
-}
-
-export const getContactsCentinela = async(user) => {
-  return new Promise((resolve, reject) => {
-    var myHeaders = new Headers();
-    myHeaders.append("Accept", "text/plain");
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow'
-    };
-
-    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/contacts?idNavisionUser=${user}`, requestOptions)
-    .then(response => {
-      if (response.ok){
-        return response.json();
-      } else {
-        return response.text()
-      }}
-    )
-    .then(result => {
-      console.log(result);
-      resolve(result);
-    })
-    .catch(error => {
-      console.log('error', error);
-      reject(error);
-    });
-  });
 }
 
 export const getSignedToken = async (user, password) => {
