@@ -246,7 +246,7 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesTypesAsync(string env = "QA")
         {
-            var result = await _usersService.GetMasterEntitiesAsync(env);
+            var result = await _usersService.GetEntityTypesAsync(env);
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
