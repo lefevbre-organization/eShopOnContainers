@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
+import SignatureNumbers from './signature-numbers';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
 import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
@@ -184,7 +185,7 @@ class MenuUser extends Component {
         const { lefebvre } = this.props;
         const fullName = this.props.login.formValues.user;
         const { showSign, sign } = this.state;
-
+        
         let acronym;
         if (fullName) {
             acronym = fullName
@@ -194,6 +195,8 @@ class MenuUser extends Component {
         } else {
             acronym = '?';
         }
+        const nameCut = lefebvre.userName.split(' ');
+        const nameInitial = `${nameCut[0].slice(0, 1)} ${nameCut[1].slice(0, 1)}`
 
         return (
             <Fragment>
@@ -231,15 +234,36 @@ class MenuUser extends Component {
                                     {showSign === false && (
                                         <Fragment>
                                             <div className='user-image text-center'>
-                                                <a href='#/'>
+                                              <div className="user-circle">
+                                                <span className="user-nameInitial">{nameInitial.toUpperCase()}</span>
+                                              </div>
+                                                {/* <a href='#/'>
                                                     <img src='/assets/images/notification-icon.png' alt='icon' />                                                    
-                                                </a>
+                                                </a> */}
                                             </div>
                                             {/* <span className='user-name text-center'>{`Firmas disponibles: ${lefebvre.availableSignatures}`}</span> */}
                                             <span className='user-name text-center'>{`${lefebvre.userName}`}</span>
                                             <span className='company-name text-center'>
                                                 Lefebvre-El Derecho, S.A.
                                             </span>
+                                            {  lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
+                                            <SignatureNumbers 
+                                             title={i18n.t('menu-user.signatures-summary')}
+                                             type="signature"
+                                             available={i18n.t('menu-user.available')}
+                                             consumed={i18n.t('menu-user.consumed')}
+                                             availablenumber="36"
+                                             signatureConsumed="106" /> 
+                                             : null }
+                                            { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
+                                            <SignatureNumbers 
+                                             title={i18n.t('menu-user.email-summary')}
+                                             type="email"
+                                             available={i18n.t('menu-user.available')}
+                                             consumed={i18n.t('menu-user.consumed')}
+                                             availablenumber="36"
+                                             signatureConsumed="106" />
+                                             : null }
                                             <div className='text-center'>
                                                 <button
                                                     type='button'
@@ -404,6 +428,7 @@ class MenuUser extends Component {
           .e-content.e-lib.e-keyboard {
             text-align: left;
           }
+
           .btn-primary {
             background-color: #001970; 
           }
@@ -413,6 +438,22 @@ class MenuUser extends Component {
           }
           .btn-primary:focus {
             color: #fff; 
+          }
+
+          .user-circle {
+            width: 110px;
+            height: 110px;
+            background: #001978;
+            margin: auto;
+            border-radius: 100px;
+            margin-bottom: 10px;
+          }
+          
+          .user-nameInitial {
+            padding-top: 32px;
+            color: #35448F;
+            letter-spacing: -3px;
+            font-size: xx-large;
           }
         `}</style>
             </Fragment>
