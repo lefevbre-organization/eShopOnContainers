@@ -72,7 +72,8 @@
       "cancel": "Cancelar"
     },
     "app": "FIRMA",
-    "certifiedEmail": "EMAIL CERTIFICADO"
+    "certifiedEmail": "EMAIL CERTIFICADO",
+    "certifiedSms": "SMS CERTIFICADO"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -139,7 +140,8 @@
       "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA",
-    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO"
+    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO",
+    "certifiedSmsTitle": "SOLICITUD DE SMS CERTIFICADO"
   },
   "forwardAction": {
     "From": "De",

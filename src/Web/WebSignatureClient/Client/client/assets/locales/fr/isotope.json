@@ -71,7 +71,8 @@
       "cancel": "Cancelar"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "Email certifié"
+    "certifiedEmail": "Email certifié",
+    "certifiedSms": "SMS certifié"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -137,7 +138,9 @@
       "photoInfo": "Number of photos attached",
       "phone": "Number of téléphone"
     },
-    "title": "CRÉER UNE SIGNATURE"
+    "title": "CRÉER UNE SIGNATURE",
+    "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
+    "certifiedSmsTitle": "CERTIFIED SMS REQUEST"
   },
   "forwardAction": {
     "From": "De",
