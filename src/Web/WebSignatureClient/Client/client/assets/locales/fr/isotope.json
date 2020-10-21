@@ -180,6 +180,10 @@
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "FERMER LA SESSION",
+    "signatures-summary": "SIGNATURES SUMMARY",
+    "email-summary": "EMAIL SUMMARY",
+    "available": "Available",
+    "consumed": "Consumed",
     "version": "Versión"
   },
   "msgNotFoundSnackbar": {

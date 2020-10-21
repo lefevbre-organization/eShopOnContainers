@@ -6,7 +6,7 @@ import { clearUserCredentials, setUserCredentials } from "../../actions/applicat
 import history from "../../routes/history";
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts } from "../../services/jwt";
 import Cookies from 'js-cookie';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
@@ -153,8 +153,13 @@ class UserLefebvre extends Component {
                                             var userBranding = [{app: app, externalId: res.id}];
                                             createUser(user, userBranding);
                                             this.props.setUserBrandings('signature', userBranding);
-                                            this.props.setAvailableSignatures(0);
-                                         })
+                                            getNumAvailableSignatures(idUserApp)
+                                            .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                            .catch(err => {
+                                                console.log(err);
+                                                this.props.setNumAvailableSignatures(0);
+                                            });
+                                         });
                                     });
                                 
                                 } else {
@@ -180,9 +185,21 @@ class UserLefebvre extends Component {
                                                 console.log(err);
                                             })
                                         });
+                                        getNumAvailableSignatures(idUserApp)
+                                        .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                        .catch(err => {
+                                            console.log(err);
+                                            this.props.setNumAvailableSignatures(0);
+                                        });
                                     } else {
                                         // Usuario y branding ya existentes
                                         this.props.setUserBrandings('signature', userInfo.data.brandings);
+                                        getNumAvailableSignatures(idUserApp)
+                                        .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                        .catch(err => {
+                                            console.log(err);
+                                            this.props.setNumAvailableSignatures(0);
+                                        });
                                     }
                                     if (idDocuments && idDocuments.length > 0){
                                         // Vienen documentos preseleccionados
@@ -193,7 +210,13 @@ class UserLefebvre extends Component {
                                             if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
                                                 this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
                                             }
-                                        });  
+                                        }); 
+                                        getNumAvailableSignatures(idUserApp)
+                                        .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                        .catch(err => {
+                                            console.log(err);
+                                            this.props.setNumAvailableSignatures(0);
+                                        }); 
                                     }
                                 }                    
             
@@ -258,7 +281,13 @@ class UserLefebvre extends Component {
                                             if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
                                                 this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
                                             }
-                                        });  
+                                        }); 
+                                        getNumAvailableSignatures(idUserApp)
+                                            .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                            .catch(err => {
+                                                console.log(err);
+                                                this.props.setNumAvailableSignatures(0);
+                                            }); 
                                     }
                                 } 
                             });
@@ -347,6 +376,7 @@ const mapDispatchToProps = dispatch => ({
     setGuid: guid => dispatch(ACTIONS.setGUID(guid)),
     setUserName: name => dispatch(ACTIONS.setUserName(name)),
     setAvailableSignatures: num => dispatch(ACTIONS.setAvailableSignatures(num)),
+    setNumAvailableSignatures: num => dispatch(ACTIONS.setNumAvailableEmails(num)),
     setUserBrandings: (service, brandings) => dispatch(ACTIONS.setUserBrandings(service, brandings)),
     setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
     setIdEntityType: id => dispatch(ACTIONS.setIdEntityType(id)),

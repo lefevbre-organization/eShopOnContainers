@@ -70,6 +70,21 @@ export const setAvailableSignatures = num => ({
     payload: num
 })
 
+export const setAvailableEmails = num => ({
+    type: ActionTypes.LEFEBVRE_USER_AVAILABLE_EMAILS,
+    payload: num
+})
+
+export const setNumAvailableSignatures = num => ({
+    type: ActionTypes.LEFEBVRE_USER_NUM_AVAILABLE_SIGNATURES,
+    payload: num
+})
+
+export const setNumAvailableEmails = num => ({
+    type: ActionTypes.LEFEBVRE_USER_NUM_AVAILABLE_EMAILS,
+    payload: num
+})
+
 export const setUserBrandings = (service, brandings) => ({
     type: ActionTypes.LEFEBVRE_USER_BRANDINGS,
     payload: {service, brandings}
@@ -126,6 +141,9 @@ export default {
     setToken,
     setUserName,
     setAvailableSignatures,
+    setAvailableEmails,
+    setNumAvailableSignatures,
+    setNumAvailableEmails,
     setUserBrandings,
     setUserApp,
     setIdEntityType,

@@ -28,7 +28,8 @@ import {
   decAvailableSignatures,
   notifySignature,
   cancelSignatureCen,
-  preloadSignatures2
+  preloadSignatures2,
+  getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
@@ -1023,6 +1024,11 @@ class MessageEditor extends Component {
           this.props.setIdDocuments(null);
           this.props.close(this.props.application);
           this.props.preloadSignatures(lefebvre.userId)
+          getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+            });
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
@@ -1313,6 +1319,8 @@ const mapDispatchToProps = (dispatch) => ({
   setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
+  setNumAvailableSignatures: num =>
+    dispatch(ACTIONS.setNumAvailableEmails(num)),
   setTitle: title => dispatch(setTitle(title)),
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),

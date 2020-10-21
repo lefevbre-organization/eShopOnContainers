@@ -12,8 +12,8 @@ import styles from './side-bar.scss';
 import { editNewMessage } from '../../services/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import { getAvailableSignatures } from '../../services/api-signaturit';
-import { setAvailableSignatures, setUserApp } from '../../actions/lefebvre';
+import { getAvailableSignatures, getNumAvailableSignatures } from '../../services/api-signaturit';
+import { setAvailableSignatures, setNumAvailableSignatures, setUserApp } from '../../actions/lefebvre';
 import { setTitle, setAppTitle } from '../../actions/application';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import SendingTypeSelector from './sending-type-selector/sending-type-selector';
@@ -391,6 +391,13 @@ class SideBar extends Component {
           }
         }
       })
+    
+    getNumAvailableSignatures(lefebvre.idUserApp)
+      .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+      .catch(err => {
+          console.log(err);
+          this.props.setNumAvailableSignatures(0);
+      });
   }
 
   onNewMessage() {
@@ -440,6 +447,13 @@ class SideBar extends Component {
           }
         }
       })
+
+      getNumAvailableSignatures(lefebvre.idUserApp)
+      .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+      .catch(err => {
+          console.log(err);
+          this.props.setNumAvailableSignatures(0);
+      });
     }
     this.sendTypeDialogClose();
   }
@@ -514,6 +528,7 @@ const mapDispatchToProps = dispatch => ({
     moveFolder(dispatch, user, folder, null),
   newMessage: (sendingType, sign) => editNewMessage(dispatch, sendingType, [], [], sign),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
+  setNumAvailableSignatures: num => dispatch(setNumAvailableSignatures(num)),
   setTitle: title => dispatch(setTitle(title)),
   setAppTitle: title => dispatch(setAppTitle(title)),
   setUserApp: app => dispatch(setUserApp(app))
@@ -524,6 +539,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     moveFolderToFirstLevel: folder =>
       dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder),
     setAvailableSignatures: num => dispatchProps.setAvailableSignatures(num),
+    setNumAvailableSignatures: num => dispatchProps.setNumAvailableSignatures(num),
     setTitle: title => dispatchProps.setTitle(title),
     setUserApp: app => dispatchProps.setUserApp(app)
   });

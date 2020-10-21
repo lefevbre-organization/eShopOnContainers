@@ -68,4 +68,55 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: restart-{{ template "webimapserver.fullname" . }}
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: restarter-job
+        spec:
+          serviceAccountName: sa-service-restarter
+          containers:
+          - image: gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+            imagePullPolicy: IfNotPresent
+            name: restarter-job-{{ template "webimapserver.fullname" . }}
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "250m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            command: 
+              - "/bin/sh"
+              - -c 
+              - kubectl patch deployment {{ template "webimapserver.fullname" . }} -p '{"spec":{"template":{"metadata":{"labels":{"restarted-by":"'${POD_NAME}'"}}}}}'
+            env:
+            - name: DEPLOYMENT_NAME
+              value: {{ template "webimapserver.fullname" . }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          dnsPolicy: ClusterFirst
+          restartPolicy: OnFailure
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+      backoffLimit: 4
+  schedule: "00 04 * * *"
+  successfulJobsHistoryLimit: 1
+  suspend: false
 

@@ -182,6 +182,10 @@
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "CERRAR SESIÓN",
+    "signatures-summary": "RESUMEN FIRMAS",
+    "email-summary": "RESUMEN EMAIL",
+    "available": "Disponibles",
+    "consumed": "Consumidas",
     "version": "Versión"
   },
   "msgNotFoundSnackbar": {

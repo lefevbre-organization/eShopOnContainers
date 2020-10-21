@@ -162,6 +162,10 @@
     "reset-pwd": "RESET PASSWORD",
     "add-other-account": "ADD OTHER ACCOUNT",
     "close-session": "CLOSE SESSION",
+    "signatures-summary": "SIGNATURES SUMMARY",
+    "email-summary": "EMAIL SUMMARY",
+    "available": "Available",
+    "consumed": "Consumed",
     "version": "Version"
   },
   "msgNotFoundSnackbar": {
