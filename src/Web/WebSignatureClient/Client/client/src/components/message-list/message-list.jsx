@@ -30,7 +30,8 @@ import {
   Group, 
   Toolbar, 
   PdfExport, 
-  ExcelExport 
+  ExcelExport ,
+  PdfExportProperties
 } from '@syncfusion/ej2-react-grids';
 import materialize from '../../styles/signature/materialize.scss';
 import { CalendarComponent} from '@syncfusion/ej2-react-calendars';
@@ -706,7 +707,10 @@ class MessageList extends Component {
     onRowSelected(event) {
         console.log(event);
         if (event.target.className !== "e-btn-icon lf-icon-kebab-menu" //Actions
-            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // Signers
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active" // Actions menu
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active e-focus" // Actions menu
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-focus" // Signers bubble
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // documents bubble
             ){
             if (this.props.selectedService === 'signature'){
                 var signature = this.props.signatures.find(s => s.id === event.data.Id);
@@ -723,25 +727,31 @@ class MessageList extends Component {
 
     toolbarClick(event){
         if (this.grid && event.item.id.includes('pdfexport') ) {
-            let pdfdata = [];
-            const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
-            for(let i=0; i<query.queries.length; i++ ){
-            if(query.queries[i].fn === 'onPage'){
-                query.queries.splice(i,1);// remove page query to get all records
-                break;
-            }
-            }
-            new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
-            .then((e) => {
-                pdfdata = e.result;   // get all filtered records
-                const exportProperties= {
-                dataSource: pdfdata,
+            let exportProperties = {
+                exportType: 'CurrentPage',
                 pageOrientation: 'Landscape'
-                };
-                if (this.grid) {
-                this.grid.pdfExport(exportProperties);
-                }
-            }).catch((e) => true);
+                
+            };
+            this.grid.pdfExport(exportProperties);
+            // let pdfdata = [];
+            // const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
+            // for(let i=0; i<query.queries.length; i++ ){
+            // if(query.queries[i].fn === 'onPage'){
+            //     query.queries.splice(i,1);// remove page query to get all records
+            //     break;
+            // }
+            // }
+            // new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
+            // .then((e) => {
+            //     pdfdata = e.result;   // get all filtered records
+            //     const exportProperties= {
+            //     dataSource: pdfdata,
+            //     pageOrientation: 'Landscape'
+            //     };
+            //     if (this.grid) {
+            //     this.grid.pdfExport(exportProperties);
+            //     }
+            // }).catch((e) => true);
         } else if (this.grid && event.item.id.includes('excel')){
             this.grid.excelExport();
         } else if (this.grid && event.item.id.includes('print')) {
