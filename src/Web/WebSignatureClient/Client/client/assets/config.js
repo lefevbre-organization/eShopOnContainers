@@ -32,8 +32,8 @@ window.URL_MF_SIGNATURIT = "http://localhost:3020";
 
 // Bloque para probar contra pre
 window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
-//window.API_UTILS_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils";
-window.API_UTILS_GATEWAY = "https://localhost:44307/api/v1/UserUtils"
+window.API_UTILS_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils";
+// window.API_UTILS_GATEWAY = "https://localhost:44307/api/v1/UserUtils"
 
 window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
 window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';

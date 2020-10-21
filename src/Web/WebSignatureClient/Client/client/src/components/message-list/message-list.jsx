@@ -30,7 +30,8 @@ import {
   Group, 
   Toolbar, 
   PdfExport, 
-  ExcelExport 
+  ExcelExport ,
+  PdfExportProperties
 } from '@syncfusion/ej2-react-grids';
 import materialize from '../../styles/signature/materialize.scss';
 import { CalendarComponent} from '@syncfusion/ej2-react-calendars';
@@ -726,25 +727,31 @@ class MessageList extends Component {
 
     toolbarClick(event){
         if (this.grid && event.item.id.includes('pdfexport') ) {
-            let pdfdata = [];
-            const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
-            for(let i=0; i<query.queries.length; i++ ){
-            if(query.queries[i].fn === 'onPage'){
-                query.queries.splice(i,1);// remove page query to get all records
-                break;
-            }
-            }
-            new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
-            .then((e) => {
-                pdfdata = e.result;   // get all filtered records
-                const exportProperties= {
-                dataSource: pdfdata,
+            let exportProperties = {
+                exportType: 'CurrentPage',
                 pageOrientation: 'Landscape'
-                };
-                if (this.grid) {
-                this.grid.pdfExport(exportProperties);
-                }
-            }).catch((e) => true);
+                
+            };
+            this.grid.pdfExport(exportProperties);
+            // let pdfdata = [];
+            // const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
+            // for(let i=0; i<query.queries.length; i++ ){
+            // if(query.queries[i].fn === 'onPage'){
+            //     query.queries.splice(i,1);// remove page query to get all records
+            //     break;
+            // }
+            // }
+            // new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
+            // .then((e) => {
+            //     pdfdata = e.result;   // get all filtered records
+            //     const exportProperties= {
+            //     dataSource: pdfdata,
+            //     pageOrientation: 'Landscape'
+            //     };
+            //     if (this.grid) {
+            //     this.grid.pdfExport(exportProperties);
+            //     }
+            // }).catch((e) => true);
         } else if (this.grid && event.item.id.includes('excel')){
             this.grid.excelExport();
         } else if (this.grid && event.item.id.includes('print')) {

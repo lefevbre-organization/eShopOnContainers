@@ -412,13 +412,13 @@
                 }
                 else
                 {
-                    if (response.ErrorException.Message == "The request timed-out") 
+                    if (response.ErrorException != null && response.ErrorException.Message == "The request timed-out") 
                     {
                         throw new TimeoutException(response.ErrorException.Message);
                     } 
                     else 
                     { 
-                        throw new Exception(response.ErrorException.Message); 
+                        throw new Exception($"Error: {response.Content}"); 
                     }
                 }
             }
