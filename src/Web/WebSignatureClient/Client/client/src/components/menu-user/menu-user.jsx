@@ -7,9 +7,9 @@ import i18n from 'i18next';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
 import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
-import { setSign, setAvailableSignatures } from '../../actions/lefebvre';
+import { setSign, setAvailableSignatures, setNumAvailableSignatures } from '../../actions/lefebvre';
 import Cookies from 'js-cookie';
-import { getAvailableSignatures } from '../../services/api-signaturit';
+import { getAvailableSignatures, getNumAvailableSignatures } from '../../services/api-signaturit';
 
 class MenuUser extends Component {
     constructor(props) {
@@ -44,7 +44,15 @@ class MenuUser extends Component {
                 if (err.message === "Failed to fetch"){
                   //Mostrar aviso no se han podido recuperar firmas
                 }
-              });
+            });
+            getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+                if (err.message === "Failed to fetch"){
+                  //Mostrar aviso no se han podido recuperar firmas
+                }
+            });
         }
 
         document.addEventListener('mousedown', this.handleClickOutside);
@@ -85,10 +93,21 @@ class MenuUser extends Component {
     toggle() {
         const { onToggleDialog } = this.props;
         const { lefebvre } = this.props;
+        
         if (lefebvre.userId) {
             getAvailableSignatures(lefebvre.idUserApp, 1)
             .then( res => this.props.setAvailableSignatures(res.data));
+            
+            getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+                if (err.message === "Failed to fetch"){
+                  //Mostrar aviso no se han podido recuperar firmas
+                }
+            });
         }
+
         this.setState(
             {
                 dropdownOpen: !this.state.dropdownOpen,
@@ -106,15 +125,15 @@ class MenuUser extends Component {
         const { userId, token } = this.props.lefebvre;
         if (userId !== null) {
             resetDefaultAccount(userId)
-                .then(() => {
-                    this.routeLogout();
-                    //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                    const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                    window.open(urlRedirect, '_self');
-                })
-                .catch(error => {
-                    console.log('error =>', error);
-                });
+            .then(() => {
+                this.routeLogout();
+                //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                window.open(urlRedirect, '_self');
+            })
+            .catch(error => {
+                console.log('error =>', error);
+            });
         }
     }
 
@@ -418,7 +437,8 @@ const mapDispatchToProps = dispatch => ({
     setSign: sign => {
         dispatch(setSign(sign));
     },
-    setAvailableSignatures: num => dispatch(setAvailableSignatures(num))
+    setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
+    setNumAvailableSignatures: num => dispatch(setNumAvailableSignatures(num))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuUser);
