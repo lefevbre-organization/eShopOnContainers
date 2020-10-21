@@ -82,11 +82,17 @@ class AttachmentsWidget extends Component{
                     <span className={(this.state.optionSelected === 2 ? 'lf-icon-radio-button-active' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
                     <a href="#" onClick={()=> this.setState({optionSelected: 2})}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a> */}
                     
-                    <span className={(this.state.optionSelected === 1 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')} style={{color: '#001970'}}></span>
-                    <a href="#" onClick={()=> {this.setState({optionSelected: 1}); this.props.onSelectNumPages(1)}}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
+                    
+                    <a href="#" onClick={()=> {this.setState({optionSelected: 1}); this.props.onSelectNumPages(1)}}> 
+                     <span className={(this.state.optionSelected === 1 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')} style={{color: '#001970'}}></span>
+                     <span className="ml-1">{i18n.t('attachmentsWidget.pagesConfiguration.single')}</span>
+                    </a>
                     <br></br>
-                    <span className={(this.state.optionSelected === 2 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
-                    <a href="#" onClick={()=> {this.setState({optionSelected: 2}); this.props.onSelectNumPages(2)}}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a>
+                   
+                    <a href="#" onClick={()=> {this.setState({optionSelected: 2}); this.props.onSelectNumPages(2)}}>  
+                     <span className={(this.state.optionSelected === 2 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
+                     <span className="ml-1">{i18n.t('attachmentsWidget.pagesConfiguration.all')}</span>
+                    </a>
                     
                    </div> 
                 : null}
