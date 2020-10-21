@@ -728,7 +728,7 @@ class MessageList extends Component {
     toolbarClick(event){
         if (this.grid && event.item.id.includes('pdfexport') ) {
             let exportProperties = {
-                exportType: 'CurrentViewData',
+                exportType: 'CurrentPage',
                 pageOrientation: 'Landscape'
                 
             };
