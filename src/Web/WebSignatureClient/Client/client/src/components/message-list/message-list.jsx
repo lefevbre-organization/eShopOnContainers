@@ -706,7 +706,10 @@ class MessageList extends Component {
     onRowSelected(event) {
         console.log(event);
         if (event.target.className !== "e-btn-icon lf-icon-kebab-menu" //Actions
-            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // Signers
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active" // Actions menu
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active e-focus" // Actions menu
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-focus" // Signers bubble
+            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // documents bubble
             ){
             if (this.props.selectedService === 'signature'){
                 var signature = this.props.signatures.find(s => s.id === event.data.Id);

@@ -12,7 +12,7 @@ const SignatureNumbers = props => (
         <span>{props.available}</span>
       </div>
       <div className="available-number box-number">
-        <span>36</span>
+        <span>{props.availablenumber}</span>
       </div>
     </div>
     <div className="container-summary">
@@ -20,7 +20,7 @@ const SignatureNumbers = props => (
         <span>{props.consumed}</span>
       </div>
       <div className="consumed-number box-number">
-        <span>106</span>
+        <span>{props.signatureConsumed}</span>
       </div>
     </div>
     <style jsx>{`

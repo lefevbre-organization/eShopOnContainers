@@ -8,7 +8,7 @@ import SignatureNumbers from './signature-numbers';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
 import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
-import { setSign, setAvailableSignatures, setNumAvailableSignatures } from '../../actions/lefebvre';
+import { setSign, setAvailableSignatures, setNumAvailableSignatures, setNumAvailableEmails } from '../../actions/lefebvre';
 import Cookies from 'js-cookie';
 import { getAvailableSignatures, getNumAvailableSignatures } from '../../services/api-signaturit';
 
@@ -182,7 +182,7 @@ class MenuUser extends Component {
 
     render() {
         const { dropdownOpen, accounts } = this.state;
-        const { lefebvre } = this.props;
+        const { lefebvre, application } = this.props;
         const fullName = this.props.login.formValues.user;
         const { showSign, sign } = this.state;
         
@@ -252,8 +252,8 @@ class MenuUser extends Component {
                                              type="signature"
                                              available={i18n.t('menu-user.available')}
                                              consumed={i18n.t('menu-user.consumed')}
-                                             availablenumber="36"
-                                             signatureConsumed="106" /> 
+                                             availablenumber={lefebvre.numAvailableSignatures}
+                                             signatureConsumed={application.signatures.length} /> 
                                              : null }
                                             { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
                                             <SignatureNumbers 
@@ -261,8 +261,8 @@ class MenuUser extends Component {
                                              type="email"
                                              available={i18n.t('menu-user.available')}
                                              consumed={i18n.t('menu-user.consumed')}
-                                             availablenumber="36"
-                                             signatureConsumed="106" />
+                                             availablenumber={lefebvre.numAvailableEmails}
+                                             signatureConsumed={application.emails.length} />
                                              : null }
                                             <div className='text-center'>
                                                 <button
@@ -467,7 +467,8 @@ MenuUser.propTypes = {
 
 const mapStateToProps = state => ({
     lefebvre: state.lefebvre,
-    login: state.login
+    login: state.login,
+    application: state.application
 });
 
 const mapDispatchToProps = dispatch => ({
