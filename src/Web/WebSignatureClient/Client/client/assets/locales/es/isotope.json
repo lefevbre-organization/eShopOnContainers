@@ -43,6 +43,7 @@
     },
     "filterMenu": "FIRMAS SOLICITADAS",
     "filterMenuEmail": "EMAIL CERTIFICADO",
+    "filterMenuSms": "SMS CERTIFICADO",
     "filterAll": "Mostrar todas",
     "filterInProgress": "En progreso",
     "filterCompleted": "Completadas",

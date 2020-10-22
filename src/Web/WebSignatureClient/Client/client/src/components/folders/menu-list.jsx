@@ -85,7 +85,6 @@ export class MenuListClass extends Component {
            disable={lefebvre.roles
            && lefebvre.roles.includes('Firma Digital') ?
            true : false} /> 
-
           
           <MenuItem 
            title={i18n.t('sideBar.filterMenuEmail')}
@@ -97,6 +96,17 @@ export class MenuListClass extends Component {
            disable={lefebvre.roles
            && lefebvre.roles.includes('Email Certificado') ?
            true : false} />
+
+          <MenuItem 
+           title={i18n.t('sideBar.filterMenuSms')}
+           icon="lf-icon-mail"
+           onClick={this.onSmsClick}
+           getConfirm={this.getConfirm}
+           collapsed={collapsed}
+           optionCancel={false}
+           disable={lefebvre.roles
+           && lefebvre.roles.includes('SMS Certificado') ?
+           true : false} />     
       
           <DialogComponent 
             id="confirmDialog" 
@@ -143,7 +153,6 @@ export class MenuListClass extends Component {
   }
 
   onClick = (event, key) => {
-    console.log(event, key);
     const { close, lefebvre, application } = this.props;
     if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || application.selectedSignature === {})){
       this.setState({hideConfirmDialog: true});
@@ -165,7 +174,6 @@ export class MenuListClass extends Component {
   }
 
   onEmailClick = (event, key) => {
-    console.log(event, key);
     const { close, lefebvre } = this.props;
     if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
       this.setState({hideConfirmDialog: true});
@@ -179,6 +187,22 @@ export class MenuListClass extends Component {
       this.props.setSelectedService('certifiedEmail'); 
       this.props.close(this.props.application);
       //this.setState({hideAlertDialog: true});
+    }
+  }
+
+  onSmsClick = (event, key) => {
+    const { close, lefebvre } = this.props;
+    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+      this.setState({hideConfirmDialog: true});
+    } else {
+      event.stopPropagation();
+      this.props.emailClicked(null);
+      this.props.signatureClicked(null);
+      this.props.setSignaturesFilterKey(key);
+      this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
+      this.props.setSelectedService('certifiedEmail'); 
+      this.props.close(this.props.application);
     }
   }
 

@@ -24,6 +24,7 @@
     },
     "filterMenu": "SIGNATURES",
     "filterMenuEmail": "CERTIFIED EMAIL",
+    "filterMenuSms": "CERTIFIED SMS",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
