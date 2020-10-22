@@ -422,6 +422,8 @@ class ModalConnectingEvents extends Component {
               <div
                   style={{ display: this.state.step === 12 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep1c
+                    user={user.idUser}
+                    bbdd={companySelected.bbdd}
                     show={this.state.step === 12}
                     onChange={(data) => {
                       this.changeStep1cData(data);

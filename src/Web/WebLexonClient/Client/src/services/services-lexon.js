@@ -712,3 +712,23 @@ export const createActuation = async (bbdd, user, st, et, actuation, subject) =>
     throw err;
   }
 };
+
+
+export const getActuationCategories = async (bbdd, user) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/categories?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};

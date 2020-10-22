@@ -1,19 +1,30 @@
 import React, { Fragment } from 'react';
 import i18n from "i18next";
+import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
+import {getActuationCategories} from "../../../services/services-lexon";
 
 export class ConnectingEmailsStep1c extends React.Component {
     constructor() {
         super()
 
         this.state = {
+            categories: []
         }
 
         this.onNextPage = this.onNextPage.bind(this)
         this.onPrevPage = this.onPrevPage.bind(this)
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        try {
+            debugger
+            const categories = await getActuationCategories(this.props.bbdd, this.props.user);
+            debugger
+            this.setState({categories: categories.result.data.data});
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     onNextPage() {
@@ -28,6 +39,7 @@ export class ConnectingEmailsStep1c extends React.Component {
         const { onChange } = this.props;
         onChange && onChange(subject)
     }
+
 
     render() {
         console.log(this.props.messages)
@@ -44,8 +56,20 @@ export class ConnectingEmailsStep1c extends React.Component {
                     this.onChange(event.value)
                 }}/>
 
-                {/*<p className="input-label">{i18n.t(`classification-calendar.step1c.category`)}</p>*/}
-
+                <p className="input-label">{i18n.t(`classification-calendar.step1c.category`)}</p>
+                <DropDownListComponent
+                    id="category"
+                    dataSource={[{name:"Cat1", id:"1"}, {name:"Cat2", id:"2"}]}
+                    ref={(dropdownlist) => { this.listObj = dropdownlist }}
+                    fields={{
+                        text:"name",
+                        value:"id"
+                    }}
+                    change={()=>{}}
+                    placeholder="Select a category"
+                    value={this.value}
+                    popupHeight="220px"
+                />
             </div>
             <style jsx>{`
                 input.e-input::selection {
