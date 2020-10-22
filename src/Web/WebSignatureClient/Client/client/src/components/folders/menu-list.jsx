@@ -3,8 +3,16 @@ import {connect} from 'react-redux';
 import i18n from 'i18next';
 
 import MenuItem from './menu-item';
-import {selectFolder, setTitle, editMessage, setAppTitle, setSelectedService} from '../../actions/application';
-import { setSignaturesFilterKey, selectSignature, selectEmail } from '../../actions/application';
+import {
+  selectFolder, 
+  setTitle, 
+  editMessage, 
+  setAppTitle, 
+  setSelectedService, 
+  setSignaturesFilterKey, 
+  selectSignature, 
+  selectEmail
+} from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
 import {clearSelectedMessage} from '../../services/application';
@@ -201,7 +209,7 @@ export class MenuListClass extends Component {
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
-      this.props.setSelectedService('certifiedEmail'); 
+      this.props.setSelectedService('certifiedSms'); 
       this.props.close(this.props.application);
     }
   }
