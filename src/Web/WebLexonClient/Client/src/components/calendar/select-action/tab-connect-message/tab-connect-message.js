@@ -139,7 +139,6 @@ class TabConnectMessage extends Component {
         />
 
         {this.renderShowSaveDocument()}
-        {this.renderShowClassifications()}
 
         <style jsx>{`
           .empty-text {

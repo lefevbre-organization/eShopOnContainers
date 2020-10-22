@@ -2,16 +2,15 @@ import React, { Component, Fragment } from 'react';
 import i18n from 'i18next';
 import { Button, Modal, Container } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { Base64 } from 'js-base64';
-import parse from 'emailjs-mime-parser';
 import { ConnectingEmailsStep1 } from './step1';
 import { ConnectingEmailsStep2 } from './step2';
 import {ConnectingEmailsStep1b} from "./step1b";
 import {ConnectingEmailsStep1c} from "./step1c";
-import { addClassification, uploadFile } from '../../../services/services-lexon';
+import {addEventToActuation, createActuation, createAppoinment, uploadFile} from '../../../services/services-lexon';
 import ACTIONS from '../../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-const base64js = require('base64-js');
+import {ConnectingEmailsStep3} from "./step3";
+import * as moment from 'moment';
 
 class ModalConnectingEvents extends Component {
   constructor() {
@@ -31,22 +30,13 @@ class ModalConnectingEvents extends Component {
         selected: -1,
       },
       messages: [],
+        subject: "",
     };
 
     this.changeSubject = this.changeSubject.bind(this);
   }
 
   componentDidMount() {
-    this.setState({ messages: this.props.selectedMessages });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      JSON.stringify(prevProps.selectedMessages) !==
-      JSON.stringify(this.props.selectedMessages)
-    ) {
-      this.setState({ messages: this.props.selectedMessages });
-    }
   }
 
   closeDialog() {
@@ -65,7 +55,7 @@ class ModalConnectingEvents extends Component {
       if(step1Data.actuation === 3) {
         this.setState({step: 12});
       } else {
-        this.setState({step: 2});
+        this.setState({step: 3});
       }
     } else if (step === 2) {
       if (
@@ -89,7 +79,7 @@ class ModalConnectingEvents extends Component {
     if (step === 2 || step === 11) {
       this.setState({ step: 1 });
     } else if (step === 3) {
-      this.setState({ step: 2 });
+      this.setState({ step: 11 });
     }else if (step === 12) {
       this.setState({ step: 11 });
     } else if (step === 4) {
@@ -117,27 +107,15 @@ class ModalConnectingEvents extends Component {
       };
     }
 
-    debugger
     this.setState({ step1Data: data, step2Data });
   }
 
   changeStep1bData(data) {
-    let step2Data = this.state.step2Data;
-
     this.setState( prevState => ({ step1Data: { ...prevState.step1Data, entity: data} }));
   }
 
   changeStep1cData(data) {
-    let step2Data = this.state.step2Data;
-    // if (this.state.step1Data.entity !== data.entity) {
-    //   step2Data = {
-    //     id: -1,
-    //     idType: -1,
-    //   };
-    // }
-    //
-
-    //this.setState( prevState => ({ step1Data: { ...prevState.step1Data, entity: data} }));
+    this.setState({subject: data})
   }
 
 
@@ -175,30 +153,12 @@ class ModalConnectingEvents extends Component {
   }
 
   onSave() {
-    if (this.state.step === 2) {
-      this.onSaveStep2();
-    } else if (this.state.step === 4 || this.state.step === 3) {
       this.onSaveStep3();
-    }
-  }
-
-  onSaveStep2() {
-    const { step1Data, step2Data } = this.state;
-    const { toggleNotification } = this.props;
-
-    if (step2Data.id === -1 || step2Data.idType === -1) {
-      toggleNotification(i18n.t('classify-emails.classification-selection-ko'));
-      return;
-    }
-
-    this.saveClassifications();
-    this.closeDialog();
   }
 
   async onSaveStep3() {
-    const { step1Data, step2Data, step3Data } = this.state;
-    const { toggleNotification } = this.props;
-    const { selectedMessages } = this.props;
+    const { step1Data, step3Data, subject } = this.state;
+    const { toggleNotification, user, companySelected, selectedMessages } = this.props;
     let notification = 0;
     let error = false;
 
@@ -206,109 +166,39 @@ class ModalConnectingEvents extends Component {
     let sc = null;
 
     try {
-      if (step1Data.actuation === true) {
-        sc = await this.saveClassifications();
-        notification = 1;
-      }
+      if (step1Data.actuation > 1) {
+          const st = moment(selectedMessages[0].StartTime).format('YYYY-MM-DD HH:mm')
+          const et = moment(selectedMessages[0].EndTime).format('YYYY-MM-DD HH:mm')
+          let idActuation = step3Data.idActuation;
 
-      if (
-        step1Data.copyDocuments === true ||
-        step1Data.saveDocuments === true
-      ) {
-        notification += 2;
-        // Save email as eml format
-        for (let i = 0; i < selectedMessages.length; i++) {
-          const raw = Base64.encode(selectedMessages[i].raw, false);
-
-          const subject = selectedMessages[i].subject;
-
-          if (step1Data.copyDocuments === true) {
-            try {
-              const data = await uploadFile(
-                step1Data.actuation === false ? step3Data.selected : undefined,
-                step1Data.actuation === false ? step2Data.id : undefined,
-                step1Data.actuation === false ? step2Data.idType : 45,
-                step1Data.actuation === true ? sc[i] : undefined,
-                this.props.companySelected.bbdd,
-                this.props.user.idUser,
-                subject + '.eml',
-                raw
-              );
-              if (!data || data.response.status > 201) {
-                error = true;
-              }
-            } catch (err) {
-              console.log(err);
-              error = true;
+          if(step1Data.actuation === 3) {
+            sc = await createActuation(companySelected.bbdd, user, st, et, step1Data.entity, subject);
+            if(sc.result && sc.result.data && sc.result.data > 0) {
+                idActuation = sc.result.data;
             }
           }
+        const event = { ...selectedMessages[0], StartTime: st, EndTime: et }
+        sc = await createAppoinment(companySelected.bbdd, user, event);
+        console.log(sc);
 
-          if (step1Data.saveDocuments === true) {
-            console.log('uploadDocument: 0');
-
-            // Save attachments
-            const mime = parse(selectedMessages[i].raw);
-            const attachments = findAttachments(mime);
-
-            for (let j = 0; j < attachments.length; j++) {
-              let rawAttach = base64js.fromByteArray(attachments[j].content);
-              try {
-                const data = await uploadFile(
-                  step1Data.actuation === false
-                    ? step3Data.selected
-                    : undefined,
-                  step1Data.actuation === false ? step2Data.id : undefined,
-                  step1Data.actuation === false ? step2Data.idType : 45,
-                  step1Data.actuation === true ? sc[i] : undefined,
-                  this.props.companySelected.bbdd,
-                  this.props.user.idUser,
-                  attachments[j].contentType.params.name,
-                  rawAttach
-                );
-                if (!data || data.response.status > 201) {
-                  error = true;
-                }
-              } catch (err) {
-                error = true;
-              }
-            }
-          }
-        }
+        sc = await addEventToActuation(companySelected.bbdd, user.idUser, sc.result.data, idActuation);
       }
 
       if (error) {
         if (notification === 1) {
           toggleNotification(
-            i18n.t('classify-emails.classification-saved-ko'),
-            true
-          );
-        } else if (notification > 1) {
-          toggleNotification(
-            i18n.t('classify-emails.documents-saved-ko'),
+            i18n.t('classification-calendar.events-saved-ko'),
             true
           );
         }
       } else {
-        if (notification === 1) {
-          toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-        } else if (notification === 2) {
-          toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
-        } else if (notification === 3) {
-          toggleNotification(
-            i18n.t('classify-emails.classification-docs-saved-ok')
-          );
-        }
+          toggleNotification(i18n.t('classification-calendar.events-saved-ok'));
       }
     } catch (err) {
-      console.log(err);
-      if (notification === 1) {
         toggleNotification(
-          i18n.t('classify-emails.classification-saved-ko'),
+            i18n.t('classification-calendar.events-saved-ko'),
           true
         );
-      } else if (notification > 1) {
-        toggleNotification(i18n.t('classify-emails.documents-saved-ko'), true);
-      }
     }
   }
 
@@ -380,7 +270,7 @@ class ModalConnectingEvents extends Component {
                     disabled={this.saveDisabled()}
                     bsPrefix='btn btn-primary'
                     onClick={() => {
-                      this.onSaveStep2();
+                      this.onSaveStep3();
                     }}>
                   {i18n.t('classify-emails.save')}
                 </Button>
@@ -434,7 +324,7 @@ class ModalConnectingEvents extends Component {
                     disabled={this.saveDisabled()}
                     bsPrefix='btn btn-primary'
                     onClick={() => {
-                      this.onSaveStep2();
+                      this.onSaveStep3();
                     }}>
                   {i18n.t('classify-emails.save')}
                 </Button>
@@ -458,17 +348,6 @@ class ModalConnectingEvents extends Component {
               }}>
               {i18n.t('classify-emails.back')}
             </Button>
-            {step1Data.actuation === true && (
-              <Button
-                disabled={this.save3Disabled()}
-                bsPrefix='btn btn-primary'
-                onClick={() => {
-                  this.nextStep();
-                }}>
-                {i18n.t('classify-emails.continue')}
-              </Button>
-            )}
-            {step1Data.actuation === false && (
               <Button
                 disabled={this.save3Disabled()}
                 bsPrefix='btn btn-primary'
@@ -477,7 +356,6 @@ class ModalConnectingEvents extends Component {
                 }}>
                 {i18n.t('classify-emails.save')}
               </Button>
-            )}
           </Fragment>
         );
       case 4:
@@ -518,7 +396,7 @@ class ModalConnectingEvents extends Component {
       showModalDocuments,
       toggleNotification,
     } = this.props;
-    const { messages, step1Data, step } = this.state;
+    const { messages, step1Data, step2Data, step } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -535,6 +413,8 @@ class ModalConnectingEvents extends Component {
                 style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep1b
                     show={this.state.step === 11}
+                    user={user.idUser}
+                    bbdd={companySelected.bbdd}
                     onChange={(data) => {
                       this.changeStep1bData(data);
                     }}></ConnectingEmailsStep1b>
@@ -558,6 +438,18 @@ class ModalConnectingEvents extends Component {
                   onSelectedEntity={(data) =>
                     this.changeStep2Data(data)
                   }></ConnectingEmailsStep2>
+              </div>
+              <div
+                  style={{ display: this.state.step === 3 ? 'block' : 'none' }}>
+                <ConnectingEmailsStep3
+                    show={this.state.step === 3}
+                    user={user}
+                    bbdd={companySelected}
+                    entity={step1Data.entity}
+                    toggleNotification={toggleNotification}
+                    onSelectedEntity={(data) =>
+                        this.changeStep3Data(data)
+                    }></ConnectingEmailsStep3>
               </div>
             </Container>
             <Modal.Footer>{this.renderButtons()}</Modal.Footer>

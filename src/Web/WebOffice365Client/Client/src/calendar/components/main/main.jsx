@@ -586,7 +586,7 @@ export class Main extends Component {
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
-                    env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+                    env: window.currentUser?window.currentUser.env || 'QA':'QA'
                 }
             })
         );

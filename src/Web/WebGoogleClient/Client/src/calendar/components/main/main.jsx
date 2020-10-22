@@ -155,6 +155,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.selectedEvent = undefined;
 
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
@@ -580,20 +581,20 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [],
+                    selectedMessages: [this.selectedEvent],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
                     app: 'calendar',
-                    env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
+                    env: window.currentUser?window.currentUser.env || 'QA' : 'QA'
                 }
             })
         );
     }
 
-    handleGetUserFromLexonConnector() {
+    handleGetUserFromLexonConnector(event) {
         // const { userId } = this.props.lexon;
         const userId = 'E1621396'
         if (userId) {
@@ -992,7 +993,7 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
-
+            this.selectedEvent = {...args.data};
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;

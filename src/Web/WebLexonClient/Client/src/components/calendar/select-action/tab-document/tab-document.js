@@ -2,7 +2,6 @@ import React, { Component, Fragment } from "react";
 import "./tab-document.css";
 import PropTypes from "prop-types";
 import SaveDocument from "../save-document/save-document";
-import ListDocuments from "../list-documents/list-documents";
 import i18n from "i18next";
 import { connect } from "react-redux";
 import ModalDocumentsEmails from "../../../modal-documents-emails/modal-documents-emails";
@@ -69,22 +68,10 @@ class TabDocument extends Component {
     }
   }
 
-  renderShowDocuments() {
-    const { user } = this.props;
-    const { classifications, showDocuments } = this.state;
-
-    if (showDocuments) {
-      return <ListDocuments user={user} />;
-    } else {
-      return null;
-    }
-  }
-
   render() {
     return (
       <Fragment>
         <ModalDocumentsEmails />
-        {this.renderShowSaveDocument()}
         {this.renderShowDocuments()}
       </Fragment>
     );

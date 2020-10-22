@@ -70,11 +70,6 @@ class CalendarSelectActionHeader extends Component {
           </a>
         </p>
 
-        <div className="messages-list-container">
-          <PerfectScrollbar>{
-              this.props.selectedMessages.map( (sm) => <SelectedMessage message={sm} onDeleteMessage={this.onDeleteMessage}></SelectedMessage>)
-          }</PerfectScrollbar>
-        </div>
 
         <style jsx>{`
           .messages-list-container {

@@ -92,6 +92,8 @@
     "classification-selection-ko": "Debes seleccionar un Tipo y una Entidad para poder clasificar"
   },
   "classification-calendar" : {
+    "events-saved-ok": "El evento se ha guardado correctamente",
+    "events-saved-ko": "Error al guardar el evento",
     "connect-messages": "Clasificaciones",
     "empty": "No se ha encontrado ninguna clasificación asociada a esta empresa. Asocia un evento a LEX-ON pulsando ",
     "new-classification": "Nueva clasificación",
@@ -103,20 +105,25 @@
     },
     "step1b": {
       "q1": "¿Con qué tipo de actuación quieres clasificar el evento?",
-      "1": "Llamada",
-      "2": "Reunión",
-      "3": "Trámites",
-      "4": "Otras",
-      "5": "Lexnet"
+      "EMAIL": "Correo electrónico",
+      "LEXN": "Lexnet",
+      "LLAM": "Llamada",
+      "OTRA": "Otras",
+      "REUN": "Reunión",
+      "TRAM": "Trámite"
     },
     "step1c": {
       "q1": "Cumplimentar los datos de la nueva actuación",
       "q2": "Si lo deseas, puedes renombrar aquí el asunto",
       "actuation-title": "Asunto",
-      "placeholder": "Título del nuevo evento*"
+      "placeholder": "Título del nuevo evento *",
+      "category": "Categoría"
     },
     "step2": {
       "q3_1" : "¿En qué expediente quieres clasificar el evento?"
+    },
+    "step3": {
+      "q1": "¿En qué actuación quieres clasificar el evento?"
     }
   },
   "classification-type": {

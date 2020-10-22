@@ -551,3 +551,164 @@ export const getUserContacts = async (bbdd, idUser) => {
     throw err;
   }
 };
+
+export const getActuationTypes = async (bbdd, idUser) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/types?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    const result = await response.json();
+
+    return (result && result.data)?result.data: null;
+  } catch (err) {
+    debugger
+    throw err;
+  }
+}
+
+export const getActuations = async (
+    user,
+    bbdd,
+    typeId,
+    search,
+    pageSize,
+    page
+) => {
+  const ps = pageSize || 100;
+  const cp = page || 1;
+  const url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}&env=${window.currentEnv}`;
+
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+
+    console.log(response);
+    if (response.status === 404) {
+      return { results: { data: [], count: 0 } };
+    }
+
+    const result = await response.json();
+    if (response.status === 400) {
+      return { results: {
+          "pageIndex": 1,
+          "pageSize": 10,
+          "count": 2,
+          "data": [
+            {
+              "idActuation": 902,
+              "description": "nada",
+              "name": null,
+              "idRelated": 0,
+              "entityIdType": 45,
+              "entityType": null,
+              "idMail": null,
+              "date": "2020-02-20 00:00:00.000000"
+            },
+            {
+              "idActuation": 903,
+              "description": "nada",
+              "name": null,
+              "idRelated": 0,
+              "entityIdType": 45,
+              "entityType": null,
+              "idMail": null,
+              "date": "2020-02-20 00:00:00.000000"
+            }
+          ]
+        }}
+        //throw result;
+    }
+
+    if (result.errors.length > 0) {
+      throw result;
+    }
+
+    return { results: result.data };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/appointments/${actuationId}/relation/${eventId}?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const createAppoinment = async (bbdd, user, event) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/appointments?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        bbdd,
+        subject: event.Subject,
+        idEvent: event.Guid,
+        startDate: event.StartTime,
+        endDate: event.EndTime,
+      }),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const createActuation = async (bbdd, user, st, et, actuation, subject) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/actions?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idType: actuation,
+        subject,
+        startDateTo: et,
+        startDateFrom: st,
+        billable: "0"
+      }),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};

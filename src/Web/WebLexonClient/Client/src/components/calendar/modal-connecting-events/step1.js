@@ -11,7 +11,7 @@ export class ConnectingEmailsStep1 extends React.Component {
     super();
     this.state = {
       types: [],
-      actuation: 1,
+      actuation: 2,
       entity: 1
     };
   }
@@ -47,8 +47,9 @@ export class ConnectingEmailsStep1 extends React.Component {
             <li>
               <span>{i18n.t('classification-calendar.step1.q1')}<span style={{color: '#D81F2A'}}>*</span></span>
               <ul className='list-checks'>
-                <li>
+               {/* <li>
                   <RadioButtonComponent
+                    disabled={true}
                     checked={this.state.actuation === 1}
                     label={i18n.t('classification-calendar.step1.classify-casefile')}
                     change={event => {
@@ -57,27 +58,25 @@ export class ConnectingEmailsStep1 extends React.Component {
                       });
                     }}
                   />
-                </li>
-                <li>
+                </li>*/}
+                <li onClick={() => {
+                  this.setState({ actuation: 2, entity: -1 }, () => {
+                    this.onChangeData();
+                  });
+                }}>
                   <RadioButtonComponent
                     label={i18n.t('classification-calendar.step1.classify-actuation')}
                     checked={this.state.actuation === 2}
-                    change={event => {
-                      this.setState({ actuation: 2, entity: -1 }, () => {
-                         this.onChangeData();
-                      });
-                    }}
                   />
                 </li>
-                <li>
+                <li onClick={()=>{
+                  this.setState({ actuation: 3, entity: -1 }, () => {
+                    this.onChangeData();
+                  });
+                }}>
                   <RadioButtonComponent
                     label={i18n.t('classification-calendar.step1.classify-new')}
                     checked={this.state.actuation === 3}
-                    change={event => {
-                      this.setState({ actuation: 3, entity: -1 }, () => {
-                         this.onChangeData();
-                      });
-                    }}
                   />
                 </li>
               </ul>

@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import i18n from "i18next";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
-import PerfectScrollbar from "react-perfect-scrollbar";
 
 export class ConnectingEmailsStep1c extends React.Component {
     constructor() {
@@ -25,10 +24,9 @@ export class ConnectingEmailsStep1c extends React.Component {
         alert("onPrevPage")
     }
 
-    onChange(id, subject) {
+    onChange(subject) {
         const { onChange } = this.props;
-
-        onChange && onChange(id, subject)
+        onChange && onChange(subject)
     }
 
     render() {
@@ -41,10 +39,13 @@ export class ConnectingEmailsStep1c extends React.Component {
                     </li>
                 </ol>
                 <p className="step4-subtitle">{i18n.t(`classification-calendar.step1c.q2`)}</p>
-                    <p className="input-label">{i18n.t(`classification-calendar.step1c.actuation-title`)}</p>
-                    <TextBoxComponent type="" placeholder={i18n.t(`classification-calendar.step1c.placeholder`)} cssClass="e-outline" autocomplete="off" value="" change={(event)=>{
-                        //this.onChange(msg.id, event.value)
-                    }}/>
+                <p className="input-label">{i18n.t(`classification-calendar.step1c.actuation-title`)}</p>
+                <TextBoxComponent type="" placeholder={i18n.t(`classification-calendar.step1c.placeholder`)} cssClass="e-outline" autocomplete="off" value="" change={(event)=>{
+                    this.onChange(event.value)
+                }}/>
+
+                {/*<p className="input-label">{i18n.t(`classification-calendar.step1c.category`)}</p>*/}
+
             </div>
             <style jsx>{`
                 input.e-input::selection {

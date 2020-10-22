@@ -4,23 +4,23 @@ import {
   RadioButtonComponent
 } from '@syncfusion/ej2-react-buttons';
 import i18n from 'i18next';
-import { getTypes } from '../../../services/services-lexon';
+import {getActuationTypes, getTypes} from '../../../services/services-lexon';
 
 
 export class ConnectingEmailsStep1b extends React.Component {
   constructor() {
     super();
     this.state = {
+      types: [],
       entity: -1
     };
   }
 
   async componentDidMount() {
     try {
-      const response = await getTypes();
-      console.log(response);
-      if (response && response.types) {
-        this.setState({ types: response.types });
+      const response = await getActuationTypes(this.props.bbdd, this.props.user);
+      if (response && response.data) {
+        this.setState({ types: response.data });
       }
     } catch (err) {
       console.log(err);
@@ -36,6 +36,12 @@ export class ConnectingEmailsStep1b extends React.Component {
   }
 
   render() {
+    const { types } = this.state;
+
+    if(this.props.show === false) {
+      return null;
+    }
+
     return (
       <Fragment>
         <div className='step1b-container'>
@@ -44,17 +50,15 @@ export class ConnectingEmailsStep1b extends React.Component {
               <span>{i18n.t('classification-calendar.step1b.q1')}</span>
               <ul className='two-columns'>
                 {types.map(item => (
-                  <li key={item.idEntity}>
+                  <li key={item.id} onClick={()=>{console.log("SELECTED: " + item.id)
+                    this.setState({ entity: item.id }, () => {
+                      this.onChangeData();
+                    });}}>
                     <RadioButtonComponent
                       cssClass='e-primary'
-                      label={i18n.t('classification-calendar.step1b.' + item.idEntity)}
+                      label={i18n.t('classification-calendar.step1b.' + item.id)}
                       name='entity'
-                      checked={item.idEntity === this.state.entity}
-                      change={() => {
-                        this.setState({ entity: item.idEntity }, () => {
-                          this.onChangeData();
-                        });
-                      }}
+                      checked={item.id === this.state.entity}
                     />
                   </li>
                 ))}
@@ -119,7 +123,3 @@ export class ConnectingEmailsStep1b extends React.Component {
     );
   }
 }
-
-const types = [
-  { idEntity: 1 },   { idEntity: 2 },   { idEntity: 3 },   { idEntity: 4 },   { idEntity: 5 }
-]
