@@ -19,7 +19,7 @@ export class CalendarMenu extends PureComponent {
     super(props);        
       this.roundedPaletteColors = {
           'custom1': ['#0078d4', '#498205', '#da3b01', '#69797e',
-              '#ffff00', '#18a7b5', '#e3008c', '#b5651d',
+               '#18a7b5', '#e3008c', '#b5651d',
               '#c50f1f']
       }; 
      // this.roundedPaletteColors.custom1.push(this.props.color); 
