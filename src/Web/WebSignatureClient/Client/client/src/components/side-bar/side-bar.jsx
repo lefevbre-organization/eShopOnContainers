@@ -466,6 +466,7 @@ class SideBar extends Component {
   }
 
   onNewSmsCertificate() {
+    this.props.newMessage('smsCertificate', null);
     this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
     this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
     this.sendTypeDialogClose();
