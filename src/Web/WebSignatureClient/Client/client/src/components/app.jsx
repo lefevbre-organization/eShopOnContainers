@@ -17,6 +17,7 @@ import SmsMessageEditor from './message-editor/sms-message-editor';
 import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import EmailMessageViewer from './message-viewer/email-message-viewer';
+import SmsMessageViewer from './message-viewer/sms-message-viewer';
 import MessageSnackbar from './message-snackbar/message-snackbar';
 import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
 
@@ -494,7 +495,10 @@ class App extends Component {
       return <MessageViewer className={styles['message-viewer']} />;
     } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {
       return <EmailMessageViewer className={styles['message-viewer']} />;
+    } else if (application.selectedSms && Object.keys(application.selectedSms).length > 0) {
+      return <SmsMessageViewer className={styles['message-viewer']} />;
     } 
+    
     return (
       <Fragment>
         <MessageList className={styles['message-grid']} guidNotFound={this.state.guidNotFound} onShowGuidNotFound={this.resetGuidNotFound}/>
