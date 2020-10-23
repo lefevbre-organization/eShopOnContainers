@@ -734,12 +734,11 @@ class EmailMessageEditor extends Component {
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-          // notifySignature(
-          //   lefebvre.userId,
-          //   lefebvre.idUserApp,
-          //   documentsInfo.length
-          // );
-          this.props.preloadEmails(lefebvre.userId)
+          notifySignature(
+            lefebvre.userId,
+            lefebvre.idUserApp,
+            documentsInfo.length
+          );
         });
       }
       this.setState({isCallApis: false});
@@ -750,6 +749,12 @@ class EmailMessageEditor extends Component {
       this.props.setTitle('');
       this.props.setIdDocuments(null);
       this.props.close(this.props.application);
+      this.props.preloadEmails(lefebvre.userId);
+      getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+            });
     });
   }
 
@@ -1031,7 +1036,8 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth)
+  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
+  setSelectedService: selectService  => dispatch(ACTIONS.setSelectedService(selectService))
 });
 
 export default connect(

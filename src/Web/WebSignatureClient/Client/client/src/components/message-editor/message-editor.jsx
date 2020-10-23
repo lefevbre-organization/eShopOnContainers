@@ -1029,6 +1029,7 @@ class MessageEditor extends Component {
             .catch(err => {
                 console.log(err);
             });
+          this.props.setSelectedService('certifiedEmail');
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
@@ -1325,7 +1326,8 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
+  setSelectedService: selectService  => dispatch(ACTIONS.setSelectedService(selectService))
 });
 
 export default connect(

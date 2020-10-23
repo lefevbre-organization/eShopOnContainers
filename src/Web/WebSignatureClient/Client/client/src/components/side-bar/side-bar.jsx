@@ -457,9 +457,59 @@ class SideBar extends Component {
   }
 
   onNewEmailCertificate() {
-    this.props.newMessage('emailCertificate', null);
-    this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
-    this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+    const { lefebvre, t, application } = this.props;
+
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || application.selectedSignature === {})){
+      this.setState({hideConfirmDialog: true});
+    } 
+    else {
+      getAvailableSignatures(lefebvre.idUserApp, 1)
+      .then(response => {
+        setAvailableSignatures(response.data);
+        if (response.data === false || response.data === "false"){
+          //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
+          this.setState({ hideAlertDialog: true });
+          // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
+          if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            if (lefebvre.userId === 'E1654569'){
+              this.props.setAvailableSignatures(response.data);
+              this.props.newMessage('emailCertificate', null);
+              this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+              this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+              this.props.setUserApp('lefebvre');
+            }
+          }
+        } else {
+          this.props.setAvailableSignatures(response.data);
+          this.props.newMessage('emailCertificate', null);
+          this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+          this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+          this.props.setUserApp('lefebvre');        }
+      })
+      .catch(err => {
+        if (err.message === "Failed to fetch"){
+          //Mostrar aviso no se han podido recuperar firmas
+          //alert('No se ha podido comprobar si tiene firmas disponibles');
+          this.setState({ hideAlertDialog: true });
+          // this.props.setAvailableSignatures(1);
+          if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            if (lefebvre.userId === 'E1654569'){
+              this.props.newMessage('emailCertificate', null);
+              this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+              this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+              this.props.setUserApp('lefebvre');
+            }
+          }
+        }
+      })
+
+      getNumAvailableSignatures(lefebvre.idUserApp)
+      .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+      .catch(err => {
+          console.log(err);
+          this.props.setNumAvailableSignatures(0);
+      });
+    }
     this.sendTypeDialogClose();
   }
 
