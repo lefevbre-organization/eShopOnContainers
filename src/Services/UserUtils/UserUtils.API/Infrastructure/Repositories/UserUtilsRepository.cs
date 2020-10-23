@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -27,23 +28,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             _context = new UserUtilsContext(settings, eventBus);
         }
 
-        //public async Task<Result<UserUtilsModel>> GetLexonUserAsync(string idNavision)
-        //{
-        //    var result = new Result<UserUtilsModel>();
-        //    try
-        //    {
-        //        result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
-
-        //        if (result.data == null)
-        //            TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //    return result;
-        //}
-
         public async Task<Result<List<ByPassModel>>> GetListByPassAsync()
         {
             var result = new Result<List<ByPassModel>>(new List<ByPassModel>());
@@ -53,11 +37,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
                 result.data = await _context.ByPassModels.Find(filter).ToListAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún servicio en bypass"), "ErrorByPassGet");
+                    TraceError(result.errors, new UserUtilsDomainException($"Don´t recover the list of bypass urls"), "UU01", "MONGO");
+
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get list of bypass urls", ex), "UU01", "MONGO");
             }
             return result;
         }
@@ -77,13 +62,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
                 user.id = ManageCreateMessage($"Don´t insert or modify the user {user.idNavision}",
                     $"Se modifica el usuario {user.idNavision}",
                     $"Se inserta el usuario {user.idNavision} con {resultReplace.UpsertedId}",
-                     result.infos, result.errors, resultReplace);
+                     result.infos, result.errors, resultReplace, "UU02");
 
                 result.data = user;
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new UserUtilsDomainException($"Error when post a UserUtilsModel", ex), "UU02", "MONGO");
             }
             return result;
         }
@@ -133,12 +118,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente el usuario {idNavision}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente el usuario {idNavision}", "UU03");
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new UserUtilsDomainException($"Error when remove a UserUtilsModel", ex), "UU03", "MONGO");
             }
             return result;
         }
@@ -148,15 +133,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             return Builders<UserUtilsModel>.Filter.Eq(u => u.idNavision, idNavision.ToUpperInvariant());
         }
 
-        Task<Result<LexUser>> IUserUtilsRepository.GetLexonUserAsync(string idNavision)
-        {
-            throw new NotImplementedException();
-        }
+        //Task<Result<LexUser>> IUserUtilsRepository.GetLexonUserAsync(string idNavision)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
         {
@@ -166,11 +151,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
                 result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
+                    TraceError(result.errors, new UserUtilsDomainException($"Don´t recover the user {idNavision} with the list of bypass urls"), "UU04", "MONGO");
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, new UserUtilsDomainException($"Error when get the user {idNavision} with the list of bypass urls", ex), "UU04", "MONGO");
             }
             return result;
         }

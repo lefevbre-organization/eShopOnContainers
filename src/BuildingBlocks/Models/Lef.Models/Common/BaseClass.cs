@@ -10,7 +10,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
     public class BaseClass<T>
     {
         internal readonly ILogger<T> log;
-
+            
         public BaseClass(
             ILogger<T> logger)
         {
@@ -37,24 +37,26 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return latinText;
         }
 
-        public void TraceMessage(
+        public void TraceError(
             List<ErrorInfo> errors,
             Exception ex,
-            string codeError = "1000",
+            string codeError = "XX00",
+            string areaError = "MONGO",
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            if (codeError == "0") return;
+            if (codeError == "XX00") return;
 
             var errorInfo = new ErrorInfo
             {
+                area = areaError,
                 code = codeError,
                 message = ex.Message,
                 member = memberName,
                 source = sourceFilePath,
                 line = sourceLineNumber,
-                detail = ex.StackTrace
+                detail = $"{ex.InnerException?.Message}"
             };
 
             WriteError(errorInfo);
@@ -93,6 +95,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             WriteLine(builder.ToString());
         }
 
+        //public Exception GetInfoErrorFromParameters(object codeError, object valueError)
+        //{
+        //    if (codeError == null || exMessage == null || !(exMessage is string))
+        //        return;
+        //}
+
         public void TraceOutputMessage(
             List<ErrorInfo> errors,
             object exMessage,
@@ -123,7 +131,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         public int GetIntOutputParameter(object outputData)
         {
-            //    return;
             if (outputData == null || !(outputData is int))
                 return 0;
 
@@ -133,9 +140,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public void TraceInfo(
             List<Info> infos,
             string message,
-            string codeInfo = "1")
+            string codeInfo = "XX00")
         {
-            if (codeInfo == "0") return;
+            if (codeInfo == "XX00") return;
 
             var info = new Info
             {
@@ -152,23 +159,24 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             string msgInsert,
             List<Info> infos,
             List<ErrorInfo> errors,
-            ReplaceOneResult resultReplace)
+            ReplaceOneResult resultReplace,
+            string codeError)
         {
             if (resultReplace.IsAcknowledged)
             {
                 if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
                 {
-                    TraceInfo(infos, msgModify);
+                    TraceInfo(infos, msgModify, codeError);
                 }
                 else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
                 {
-                    TraceInfo(infos, msgInsert);
+                    TraceInfo(infos, msgInsert, codeError);
                     return resultReplace.UpsertedId.ToString();
                 }
             }
             else
             {
-                TraceMessage(errors, new Exception(msgError), "CreateRawError");
+                TraceError(errors, new Exception(msgError), codeError, "MONGO");
             }
             return null;
         }
@@ -177,18 +185,18 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return new UpdateOptions { IsUpsert = true };
         }
 
-        public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl)
+        public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl, string code)
         {
             if (env == null || !envSettings.Environments.Contains(env))
             {
                 if (infos != null)
-                    TraceInfo(infos, $"Received {env} - Get Default Env {envSettings.DefaultEnvironment}");
+                    TraceInfo(infos, $"Received {env} - Get Default Env {envSettings.DefaultEnvironment}", code);
                 env = envSettings.DefaultEnvironment;
             }
             else
             {
                 if (infos != null)
-                    TraceInfo(infos, $"Received {env} from client");
+                    TraceInfo(infos, $"Received {env} from client", code);
             }
 
             finalConn = envSettings.EnvModels.First(x => x.env.Equals(env))?.conn;

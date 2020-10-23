@@ -114,9 +114,10 @@ export async function login(dispatch, credentials) {
   }
 }
 
-export function editNewMessage(dispatch, to = [], cc = [], sign = null, attachments = []) {
+export function editNewMessage(dispatch, sendingType, to = [], cc = [], sign = null, attachments = []) {
   dispatch(
     editMessage({
+      sendingType,
       to: to,
       cc: cc,
       bcc: [],

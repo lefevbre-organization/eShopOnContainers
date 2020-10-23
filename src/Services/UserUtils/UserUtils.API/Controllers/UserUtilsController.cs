@@ -275,6 +275,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet("firm/client/{idClient}/checkAvailable")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FirmCheckAvailableAsync(
+              [FromRoute] string idClient = "51"
+            )
+        {
+            Result<string> result = await _service.FirmCheckAvailableAsync(idClient);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         /// <summary>
         /// Hacemos usuo de la firma para una serie de documentos
         /// </summary>

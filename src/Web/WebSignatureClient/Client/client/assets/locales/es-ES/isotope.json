@@ -34,17 +34,23 @@
     "load": "Cargando..."
   },
   "sideBar": {
-    "newRequest": "Nueva firma",
+    "newRequest": "Nueva Petición",
+    "typeSending": "Selecciona el tipo de petición:",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
     "filterMenu": "FIRMAS SOLICITADAS",
+    "filterMenuEmail": "EMAIL CERTIFICADO",
     "filterAll": "Mostrar todas",
     "filterInProgress": "En progreso",
     "filterCompleted": "Completadas",
-    "filterCancelled": "Canceladas"
+    "filterCancelled": "Canceladas",
+    "signature": "Firma avanzada",
+    "certifiedEmail": "Email certificado",
+    "sendingTypeSignature": "Firma con datos biométricos",
+    "sendingTypeEmail": "Certifica tus comunicaciones"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -63,7 +69,8 @@
       "delete": "Borrar",
       "cancel": "Cancelar"
     },
-    "app": "FIRMA"
+    "app": "FIRMA",
+    "certifiedEmail": "EMAIL CERTIFICADO"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -129,7 +136,8 @@
       "photoInfo": "Número de fotos adjuntas",
       "phone": "Número de teléfono"
     },
-    "title": "SOLICITUD DE FIRMA"
+    "title": "SOLICITUD DE FIRMA",
+    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO"
   },
   "forwardAction": {
     "From": "De",
@@ -172,6 +180,10 @@
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "CERRAR SESIÓN",
+    "signatures-summary": "RESUMEN CERTIFICACIONES",
+    "email-summary": "RESUMEN CERTIFICACIONES",
+    "available": "Disponibles",
+    "consumed": "Consumidas",
     "version": "Versión"
   },
   "msgNotFoundSnackbar": {
@@ -283,11 +295,31 @@
     "option2": "Recordatorios diarios",
     "option3": "Recordatorios semanales"
   },
+  "certificatesWidget": {
+    "title": "DESEO CERTIFICAR QUE:",
+  },
+  "emailViewer": {
+    "certification": "Certificación:",
+    "emailDelivered": "el receptor ha recibido el mail",
+    "emailOpened": "el receptor ha abierto el mail",
+    "docOpened": "El receptor ha visto los documentos",
+    "openEveryDocument": "El receptor ha abierto todos los documentos",
+    "docDownloaded": "El receptor se ha descargado el documento",
+    "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
+    "attaches": "DOCUMENTOS ADJUNTOS",
+    "attachedDocOpened": "Documento abierto",
+    "pendingDoc": "Pendiente de abrir",
+    "buttons": {
+      "downloadTrail": "Descargar auditoria"
+    },
+    "title": "PROGRESO DE EMAIL"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Documento",
       "subject": "Asunto",
       "signers": "Firmantes",
+      "recipients": "Destinatarios",
       "date": "Fecha",
       "status": "Estado"
     },

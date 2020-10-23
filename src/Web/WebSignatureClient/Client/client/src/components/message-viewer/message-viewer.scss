@@ -118,7 +118,6 @@
 
   }
 
-
   .body {
     flex: 1;
     height: 0px;
@@ -213,7 +212,6 @@
   }
 }
 
-
 .cont-progreso-peticion-firma {
   border: 1px solid #001978;
   border-top: 6px solid #001978;
@@ -253,9 +251,16 @@
       color:#001978;
       font-weight:600;
     }
+    .certification-email {
+      color:#001978;
+    }
+    .mt-n10 {
+      margin-top: -10px;
+    }
     .separador{
       border-bottom: 2px solid #e6e9f2;
     }
+
     .seguimiento-firmante-individual {
       width:20%;
       text-align:center;
@@ -396,8 +401,7 @@
       &.cancelada {
         background: #c90223;
       }
-    }
-
+    }  
   }
 }
 
@@ -608,3 +612,4 @@ a{
 .clearfix {
   clear: both;
 }
+

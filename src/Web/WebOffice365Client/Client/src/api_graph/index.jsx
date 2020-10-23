@@ -104,7 +104,7 @@ export const getLabelList = async () => {
       let childs = [];
       for(let i = 0; i < res.length; i++) {
         if (res[i].childFolderCount > 0) {
-          const cres = await client.api(`/me/mailFolders/${res[i].id}/childFolders`).get();
+          const cres = await client.api(`/me/mailFolders/${res[i].id}/childFolders?$top=200`).get();
           if(cres && cres.value && cres.value.length > 0) {
             nodes = nodes.concat(cres.value);
 

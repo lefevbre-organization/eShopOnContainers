@@ -7,9 +7,9 @@
         public string member { get; internal set; }
         public int line { get; internal set; }
 
+        public string area { get; internal set; }
+
     }
-
-
 
 
 }

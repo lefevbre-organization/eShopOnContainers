@@ -40,6 +40,7 @@
     "markRead": "Mark read",
     "search": "Search",
     "returnlexon": "Return Lex-on",
+    "refresh": "Refresh",
     "deleteFromTrashDialog": {
       "title": "Confirm deletion",
       "message": "This will permanently delete messages from Trash. Are you sure you want to continue?",

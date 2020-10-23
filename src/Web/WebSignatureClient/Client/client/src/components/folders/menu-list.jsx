@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import i18n from '../../services/i18n';
+import i18n from 'i18next';
 
 import MenuItem from './menu-item';
-import {selectFolder, setTitle, editMessage} from '../../actions/application';
-import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
+import {selectFolder, setTitle, editMessage, setAppTitle, setSelectedService} from '../../actions/application';
+import { setSignaturesFilterKey, selectSignature, selectEmail } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
 import {clearSelectedMessage} from '../../services/application';
@@ -14,7 +14,7 @@ import styles from './menu-list.scss';
 import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
+import lefebvre, { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
 import { cancelSignatureCen } from "../../services/api-signaturit";
 
 export const DroppablePayloadTypes = {
@@ -26,17 +26,121 @@ export class MenuListClass extends Component {
   constructor(props){
     super(props);
     this.state = {
-      hideConfirmDialog: false
+      hideConfirmDialog: false,
+      hideAlertDialog: false,
+      isDisable: true
     }
+
   }
 
-  render() {
+  componentDidMount() {
+    this.props.setAppTitle(i18n.t('topBar.app'));
+    
+  }
+  
+  signatureContent = () => {
     const { collapsed } = this.props;
-    const selectedFilter = this.props.application.signaturesFilterKey;
     const option1 = 'En progreso';
     const option2 = 'Completadas';
     const option3 = 'Mostrar todas';
     const option4 = 'Canceladas';
+    return (
+      <ul className={`${styles['nav-firmas']}`}>
+        <li className={`${styles.todas}`}>
+          <a href="#" id={option3} onClick={event => this.onClick(event, option3)}>
+            <span className="lf-icon-folder"> 
+            </span> 
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterAll')}</span>
+             } 
+          </a>
+        </li>
+        <li className={`${styles['en-progreso']}`}>
+          <a href="#" id={option1} onClick={event => this.onClick(event, option1)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterInProgress')}</span>
+            } 
+          </a>
+        </li>
+        <li className={`${styles.completadas}`}>
+          <a href="#" id={option2} onClick={event => this.onClick(event, option2)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterCompleted')}</span>
+            } 
+          </a>
+        </li>
+        <li className={`${styles.canceladas}`}>
+          <a href="#" id={option4} onClick={event => this.onClick(event, option4)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterCancelled')}</span>
+            } 
+          </a>
+        </li>
+      </ul>
+ 
+    ); 
+  }
+
+  emailContent = () => {
+    const { collapsed } = this.props;
+    const option1 = 'En progreso';
+    const option2 = 'Completadas';
+    const option3 = 'Mostrar todas';
+
+    return (
+      <ul className={`${styles['nav-firmas']}`}>
+        <li className={`${styles.todas}`}>
+          <a href="#" id={option3} onClick={event => this.onEmailClick(event, option3)}>
+            <span className="lf-icon-folder"> 
+            </span> 
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterAll')}</span>
+             } 
+          </a>
+        </li>
+        <li className={`${styles['en-progreso']}`}>
+          <a href="#" id={option1} onClick={event => this.onEmailClick(event, option1)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterInProgress')}</span>
+            } 
+          </a>
+        </li>
+        <li className={`${styles.completadas}`}>
+          <a href="#" id={option2} onClick={event => this.onEmailClick(event, option2)}>
+            <span className="lf-icon-folder">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('sideBar.filterCompleted')}</span>
+            } 
+          </a>
+        </li>
+      </ul>
+ 
+    ); 
+  }
+
+  getConfirm = () => {
+    this.setState({hideAlertDialog: true});
+  }
+
+  render() {
+    const { collapsed, lefebvre } = this.props;
+    const selectedFilter = this.props.application.signaturesFilterKey;
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center; 
@@ -44,6 +148,12 @@ export class MenuListClass extends Component {
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
+    const contenido = `
+    <img border='0' src='assets/images/icon-warning.png'></img>
+    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      Lo sentimos. No tienes contratado este servicio de certifiación. 
+      Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>
+    </div>`;
     const confirmButtons = [
       {
           click: () => {
@@ -59,89 +169,107 @@ export class MenuListClass extends Component {
           buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
       }
     ];
-
-
     return (
-        // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-        { 
-         collapsed ?  
-         <div className={`${styles['title-nav-firmas']}`}>
-            <span className="lf-icon-signature">
-            </span>
-          </div> :  
-          <div className={`${styles['title-nav-firmas']}`}>
-            <span className="lf-icon-signature">
-            </span>{i18n.t('sideBar.filterMenu')}
-          </div>
+          { 
+            lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
+            <>
+             { 
+              collapsed ?  
+               <div className={`${styles['title-nav-firmas']}`} >
+                <span className="lf-icon-signature">
+                </span>
+               </div> :  
+               <div className={`${styles['title-nav-firmas']}`}>
+                <span className="lf-icon-signature">
+                </span>{i18n.t('sideBar.filterMenu')}
+               </div>
+              }  
+              {this.signatureContent()}
+            </> : collapsed ?  
+             <div className={`${styles['title-nav-firmas']}`} >
+              <span className="lf-icon-signature">
+              </span>
+             </div> :  
+             <div 
+              className={`${styles['title-nav-firmas']} ${styles['title-nav-disble']}`}
+              onClick={this.getConfirm}>
+              <span className="lf-icon-signature">
+              </span>{i18n.t('sideBar.filterMenu')}
+             </div>  
           }
-          <ul className={`${styles['nav-firmas']}`}>
-                <li className={`${styles.todas}`}>
-                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}>
-                      <span className="lf-icon-folder"> 
-                      </span> 
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterAll')}</span>
-                       } 
-                    </a>
-                </li>
-                <li className={`${styles['en-progreso']}`}>
-                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}>
-                      <span className="lf-icon-folder">
-                      </span>
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterInProgress')}</span>
-                      } 
-                    </a>
-                </li>
-                <li className={`${styles.completadas}`}>
-                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}>
-                      <span className="lf-icon-folder">
-                      </span>
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterCompleted')}</span>
-                      } 
-                    </a>
-                </li>
-                <li className={`${styles.canceladas}`}>
-                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}>
-                      <span className="lf-icon-folder">
-                      </span>
-                      { 
-                       collapsed ?  ''  : 
-                       <span>{i18n.t('sideBar.filterCancelled')}</span>
-                      } 
-                    </a>
-                </li>
-            </ul>
-            <DialogComponent 
-              id="confirmDialog" 
-              header=' ' 
-              visible={this.state.hideConfirmDialog} 
-              showCloseIcon={true} 
-              animationSettings={this.animationSettings} 
-              width='60%' 
-              content={confirmDiscard} 
-              ref={dialog => this.confirmDialogInstance = dialog} 
-              //target='#target' 
-              buttons={confirmButtons} 
-              open={() => this.dialogOpen} 
-              close={this.dialogClose.bind(this)}
-            />
-          {/* <MenuItem
-            label={'Firmas'} 
-            graphic={'input'}
-            className={styles.item}
-            selected={true}
-            />
-            <nav className={`${mainCss['mdc-list']} ${styles.childList}`}>
-              <MenuItem label={option1} graphic={'stop'} selected = {option1 === selectedFilter} onClick={event => this.onClick(event, option1)}/>
-              <MenuItem label={option2} graphic={'stop'} selected = {option2 === selectedFilter} onClick={event => this.onClick(event, option2)}/>
-              <MenuItem label={option3} graphic={'stop'} selected = {option3 === selectedFilter} onClick={event => this.onClick(event, option3)}/>
-            </nav>    */}
+
+          { 
+            lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
+            <>
+               { 
+              collapsed ?  
+                <div className={`${styles['title-nav-emails']}`}>
+                 <span className="lf-icon-mail">
+                 </span>
+                </div> :  
+                <div className={`${styles['title-nav-emails']}`}>
+                 <span className="lf-icon-mail">
+                 </span>{i18n.t('sideBar.filterMenuEmail')}
+                </div>
+               }  
+                {this.emailContent()}
+            </> : 
+              collapsed ?  
+               <div 
+                className={`${styles['title-nav-emails']} ${styles['title-nav-disble']}`}
+                onClick={this.getConfirm} >
+                <span className="lf-icon-mail">
+                </span>
+               </div> :  
+               <div 
+                className={`${styles['title-nav-emails']} ${styles['title-nav-disble']}`}
+                onClick={this.getConfirm} >
+                <span className="lf-icon-mail">
+                </span>{i18n.t('sideBar.filterMenuEmail')}
+               </div> 
+          }
+      
+          <DialogComponent 
+            id="confirmDialog" 
+            header=' ' 
+            visible={this.state.hideConfirmDialog} 
+            showCloseIcon={true} 
+            animationSettings={this.animationSettings} 
+            width='60%' 
+            content={confirmDiscard} 
+            ref={dialog => this.confirmDialogInstance = dialog} 
+            buttons={confirmButtons} 
+            open={() => this.dialogOpen} 
+            close={this.dialogClose.bind(this)}
+          />
+          
+          <DialogComponent 
+           id="noServiceDialog" 
+           visible={this.state.hideAlertDialog} 
+           animationSettings={this.animationSettings} 
+           width='50%' 
+           showCloseIcon={true} 
+           content={contenido}
+           ref={alertdialog => this.alertDialogInstance = alertdialog} 
+           open={() => this.dialogOpen} 
+           close={this.dialogClose.bind(this)}
+          />
+
+          <style jsx global>
+            {` 
+              #noServiceDialog_dialog-header, #noServiceDialog_title, #noServiceDialog_dialog-content, .e-footer-content{
+                background: #c5343f;
+                color: #fff;
+                display:flex;
+              }
+              .event-disable {
+                pointer-events: none;
+                opacity: 0.5;
+                background: #CCC;
+              }
+            `}
+          </style>
         </div>
     );
   }
@@ -153,6 +281,7 @@ export class MenuListClass extends Component {
     } else {
       event.stopPropagation();
       this.props.signatureClicked(null);
+      this.props.emailClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setUserApp('lefebvre');
@@ -160,13 +289,36 @@ export class MenuListClass extends Component {
       this.props.setAdminContacts(null);
       this.props.setGuid(null);
       this.props.setIdDocuments(null);
+      this.props.setAppTitle(i18n.t('topBar.app'));
+      this.props.setSelectedService('signature');
       this.props.close(this.props.application);
+    }
+  }
+
+  onEmailClick(event, key) {
+    const { close, lefebvre } = this.props;
+    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+      this.setState({hideConfirmDialog: true});
+    } else {
+      event.stopPropagation();
+      this.props.emailClicked(null);
+      this.props.signatureClicked(null);
+      this.props.setSignaturesFilterKey(key);
+      this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
+      this.props.setSelectedService('certifiedEmail'); 
+      this.props.close(this.props.application);
+      //this.setState({hideAlertDialog: true});
     }
   }
 
   dialogClose(){
     this.setState({
-        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false, hideConfirmDialog: false
+        hideAlertDialog: false, 
+        bigAttachments: false,
+        entinelaDownloadError: false,
+        hideConfirmDialog: false,
+        hideAlertDialog: false
     });
   }
 
@@ -204,7 +356,7 @@ const mapStateToProps = state => ({
   selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
   messages: state.messages,
-  lefebvre: state.lefebvre,
+  lefebvre: state.lefebvre
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -216,7 +368,10 @@ const mapDispatchToProps = dispatch => ({
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
   signatureClicked: signature => dispatch(selectSignature(signature)),
+  emailClicked: email => { dispatch(selectEmail(email));},
   setTitle: title => dispatch(setTitle(title)),
+  setAppTitle: title => dispatch(setAppTitle(title)),
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
   close: (application) => {
     dispatch(editMessage(null));
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
@@ -235,6 +390,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, s
     dispatchProps.selectFolder(folder, stateProps.application.user),
   setSignaturesFilterKey: key => dispatchProps.setSignaturesFilterKey(key),
   signatureClicked: signature => dispatchProps.signatureClicked(signature),
+  emailClicked: email => dispatchProps.emailClicked(email),
   setTitle: title => dispatchProps.setTitle(title),
   setMailContacts: contacts => dispatchProps.setMailContacts(contacts),
   setAdminContacts: contacts => dispatchProps.setAdminContacts(contacts),

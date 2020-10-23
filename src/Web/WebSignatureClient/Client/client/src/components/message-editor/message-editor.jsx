@@ -28,7 +28,8 @@ import {
   decAvailableSignatures,
   notifySignature,
   cancelSignatureCen,
-  preloadSignatures2
+  preloadSignatures2,
+  getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
@@ -140,9 +141,9 @@ class MessageEditor extends Component {
         const content = this.getEditor().getContent();
         const { cc, subject } = this.props;
         const { lefebvre } = this.props;
-        const userBranding = lefebvre.userBrandings.find(
-          (b) => b.app === lefebvre.userApp
-        );
+        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.signature) 
+          ? lefebvre.userBrandings.signature.find((b) => b.app === lefebvre.userApp) 
+          : '';
   
         let reminders = [];
         switch (this.state.selectedReminderOption) {
@@ -387,6 +388,7 @@ class MessageEditor extends Component {
       t,
       className,
       application,
+      sendingType,
       to,
       cc,
       bcc,
@@ -475,10 +477,12 @@ class MessageEditor extends Component {
               // onAttachButton={this.onAttachButton()} 
               // onAttachSelected={this.onAttachSelected()}
               // removeAttachment={this.removeAttachment()}
+              sendingType={sendingType}
               onSelectNumPages={this.handleNumPagesOption}
               onConfirmAttachRemoval={this.showCancelCenModal}
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
+              fatherContainer={'MessageEditor'}
             ></AttachmentsWidget>
             <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
@@ -1020,6 +1024,12 @@ class MessageEditor extends Component {
           this.props.setIdDocuments(null);
           this.props.close(this.props.application);
           this.props.preloadSignatures(lefebvre.userId)
+          getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+            });
+          this.props.setSelectedService('certifiedEmail');
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
@@ -1267,6 +1277,7 @@ const mapStateToProps = (state) => ({
   application: state.application,
   credentials: getCredentials(state),
   editedMessage: state.application.newMessage,
+  sendingType: state.application.newMessage.sendingType,
   to: state.application.newMessage.to,
   cc: state.application.newMessage.cc,
   bcc: state.application.newMessage.bcc,
@@ -1309,11 +1320,14 @@ const mapDispatchToProps = (dispatch) => ({
   setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
+  setNumAvailableSignatures: num =>
+    dispatch(ACTIONS.setNumAvailableEmails(num)),
   setTitle: title => dispatch(setTitle(title)),
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
+  setSelectedService: selectService  => dispatch(ACTIONS.setSelectedService(selectService))
 });
 
 export default connect(

@@ -5,12 +5,13 @@ import ButtonCollapse from './button-collapse';
 import TopBarButton from './top-bar-button';
 import ButtonFilter from './button-filter';
 import mainCss from '../../styles/main.scss';
+import ButtonRefresh from "./button-refresh";
 
 export const TopBarMessageList = (
   {
     t, collapsed, sideBarToggle, title,
     selectedMessages, onDeleteClick,
-    selectedMessagesAllUnread, onMarkReadClick, onMarkUnreadClick
+    selectedMessagesAllUnread, onMarkReadClick, onMarkUnreadClick, onRefreshClick
   }) => (
   <div className={mainCss['mdc-top-app-bar__row']}>
     <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-start']}`}>
@@ -33,6 +34,7 @@ export const TopBarMessageList = (
           }
         </Fragment>
       }
+      <ButtonRefresh onRefresh={onRefreshClick}/>
       <ButtonFilter/>
     </section>
   </div>
@@ -46,7 +48,8 @@ TopBarMessageList.propTypes = {
   onDeleteClick: PropTypes.func.isRequired,
   selectedMessagesAllUnread: PropTypes.bool.isRequired,
   onMarkReadClick: PropTypes.func.isRequired,
-  onMarkUnreadClick: PropTypes.func.isRequired
+  onMarkUnreadClick: PropTypes.func.isRequired,
+  onRefreshClick: PropTypes.func.isRequired
 };
 
 export default translate()(TopBarMessageList);

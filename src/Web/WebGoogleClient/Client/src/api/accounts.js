@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 
 export const getUser = async (userId) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
-  let url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
+  let url2 = `${window.API_GATEWAY}/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true`;
   if(window.currentUser && window.currentUser.env) {
       url += `?env=${window.currentUser.env}`;
       url2 += `&env=${window.currentUser.env}`
@@ -12,7 +12,14 @@ export const getUser = async (userId) => {
   try {
     const res = await fetch(url, { method: 'GET' });
     const user = await res.json();
-    const res2 = await fetch(url2, { method: 'GET' });
+    const res2 = await fetch(url2, { method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            idClienteNavision: userId
+        })
+    });
     const navUser = await res2.json();
     user.data.lexonUserId = navUser.data.idUser;
     const userData = jwt_decode(navUser.data.token, {complete: true});

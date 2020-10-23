@@ -4,22 +4,12 @@ import { connect } from "react-redux";
 import ACTIONS from "../../actions/lefebvre";
 import { clearUserCredentials, setUserCredentials } from "../../actions/application";
 import history from "../../routes/history";
-import { PROVIDER } from "../../constants";
-import { getUser } from '../../services/accounts';
-import { removeState } from "../../services/state";
-import * as base64 from 'base-64';
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts } from "../../services/jwt";
-import jwt from "njwt";
 import Cookies from 'js-cookie';
-import * as uuid from 'uuid/v4';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature } from "../../services/api-signaturit";
-import { ActionTypes } from "../../actions/action-types";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
-// import lefebvreDefaultTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
-// import lexonDefaultTemplate from "../../../assets/templates/LexonBaseTemplate.json";
-// import centinelaDefaultTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
 
 class UserLefebvre extends Component {
     constructor(props) {
@@ -102,18 +92,21 @@ class UserLefebvre extends Component {
         if (Date.now() >= payload.exp * 1000) {
             this.setState({type: 'expired'});
         } else {
-            var roleOk = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
-            console.log('Resultado - validToken:' + roleOk);
-
-            // if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
-            //     validToken = true;
-            // }
+            var signatureRole = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
+            var emailRole = signatureRole//payload.roles.some( e => e === 'Email Certificado');
+            var roleOk = signatureRole || emailRole;
 
             if ( !roleOk && user === 'E1621396' ){
                 roleOk = true;
             }
 
             if (roleOk){    
+
+                var rolesList = [];
+                (signatureRole) ? rolesList.push('Firma Digital') : null;
+                (emailRole) ? rolesList.push('Email Certificado') : null;
+
+                this.props.setRoles(rolesList);
 
                 getBrandingTemplate(app)
                 .then(res => {
@@ -145,25 +138,11 @@ class UserLefebvre extends Component {
         
                         this.props.setToken(this.props.match.params.token);
                     
-                        getUserSignatures(user)
-                        .then( userInfo => {
-                            if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
-                                getBrandingTemplate(app)
-                                .then(template => {
-                                    var auxTemplate = JSON.stringify(template.data.configuration);
-                                    auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
-                                    var newTemplate = JSON.parse(auxTemplate);
-                                    createBranding2(newTemplate, token)
-                                    .then( res => {
-                                        var userBranding = [{app: app, externalId: res.id}];
-                                        createUser(user, userBranding);
-                                        this.props.setUserBrandings(userBranding);
-                                        this.props.setAvailableSignatures(0);
-                                     })
-                                });
-                            
-                            } else {
-                                if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                        if (signatureRole){
+                            getUserSignatures(user)
+                            .then( userInfo => {
+                                if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
+                                    // No existe registro del usuario. Se tiene que crear registro de usuario nuevo con branding.
                                     getBrandingTemplate(app)
                                     .then(template => {
                                         var auxTemplate = JSON.stringify(template.data.configuration);
@@ -171,35 +150,148 @@ class UserLefebvre extends Component {
                                         var newTemplate = JSON.parse(auxTemplate);
                                         createBranding2(newTemplate, token)
                                         .then( res => {
-                                            console.log('Resultado de creación de Branding');
-                                            console.log(res);
                                             var userBranding = [{app: app, externalId: res.id}];
-                                            addOrUpdateBranding(user, userBranding[0]);
-                                            this.props.setUserBrandings(userBranding);
-                                        })
-                                        .catch( err => {
-                                            console.log('Se ha producido un error al guardar el branding');
+                                            createUser(user, userBranding);
+                                            this.props.setUserBrandings('signature', userBranding);
+                                            getNumAvailableSignatures(idUserApp)
+                                            .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                            .catch(err => {
+                                                console.log(err);
+                                                this.props.setNumAvailableSignatures(0);
+                                            });
+                                         });
+                                    });
+                                
+                                } else {
+                                    if (userInfo && userInfo.data && userInfo.data.brandings 
+                                        && ((userInfo.data.brandings.constructor === Object && Object.entries(userInfo.data.brandings).length === 0) 
+                                            || !userInfo.data.brandings.find(b => b.app === app))){
+                                        // El usuario existe pero no tenemos branding configurado para la aplicación desde la que entra.
+                                        getBrandingTemplate(app)
+                                        .then(template => {
+                                            var auxTemplate = JSON.stringify(template.data.configuration);
+                                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                            var newTemplate = JSON.parse(auxTemplate);
+                                            createBranding2(newTemplate, token)
+                                            .then( res => {
+                                                console.log('Resultado de creación de Branding');
+                                                console.log(res);
+                                                var userBranding = [{app: app, externalId: res.id}];
+                                                addOrUpdateBranding(user, userBranding[0]);
+                                                this.props.setUserBrandings('signature', userBranding);
+                                            })
+                                            .catch( err => {
+                                                console.log('Se ha producido un error al guardar el branding');
+                                                console.log(err);
+                                            })
+                                        });
+                                        getNumAvailableSignatures(idUserApp)
+                                        .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                        .catch(err => {
                                             console.log(err);
-                                        })
+                                            this.props.setNumAvailableSignatures(0);
+                                        });
+                                    } else {
+                                        // Usuario y branding ya existentes
+                                        this.props.setUserBrandings('signature', userInfo.data.brandings);
+                                        getNumAvailableSignatures(idUserApp)
+                                        .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                        .catch(err => {
+                                            console.log(err);
+                                            this.props.setNumAvailableSignatures(0);
+                                        });
+                                    }
+                                    if (idDocuments && idDocuments.length > 0){
+                                        // Vienen documentos preseleccionados
+                                        getAvailableSignatures(idUserApp, idDocuments.length)
+                                        .then(response => this.props.setAvailableSignatures(response.data))
+                                        .catch(err => {
+                                            console.log(err);
+                                            if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
+                                                this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                                            }
+                                        }); 
+                                        getNumAvailableSignatures(idUserApp)
+                                        .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                        .catch(err => {
+                                            console.log(err);
+                                            this.props.setNumAvailableSignatures(0);
+                                        }); 
+                                    }
+                                }                    
+            
+                                console.log("UserLefebvre.ComponentDidMount - userInfo:");
+                                console.log(userInfo);
+                            })
+                        }
+
+                        if (emailRole){
+                            getUserEmails(user)
+                            .then(userInfo => {
+                                if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
+                                    // No existe registro del usuario. Se tiene que crear registro de usuario nuevo con branding.
+                                    getBrandingTemplate(app)
+                                    .then(template => {
+                                        var auxTemplate = JSON.stringify(template.data.configuration);
+                                        auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                        var newTemplate = JSON.parse(auxTemplate);
+                                        createBranding2(newTemplate, token)
+                                        .then( res => {
+                                            var userBranding = [{app: app, externalId: res.id}];
+                                            createUserEmail(user, userBranding);
+                                            this.props.setUserBrandings('certifiedEmail', userBranding);
+                                            //this.props.setAvailableSignatures(0);
+                                         })
+                                         .catch( err => {
+                                             console.log("Se ha producido un error al crear el branding");
+                                             console.log(err);
+                                         })
                                     });
                                 } else {
-                                    this.props.setUserBrandings(userInfo.data.brandings);
-                                }
-                                if (idDocuments && idDocuments.length > 0){
-                                    getAvailableSignatures(idUserApp, idDocuments.length)
-                                    .then(response => this.props.setAvailableSignatures(response.data))
-                                    .catch(err => {
-                                        console.log(err);
-                                        if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
-                                            this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
-                                        }
-                                    });  
-                                }
-                            }                    
-        
-                            console.log("UserLefebvre.ComponentDidMount - userInfo:");
-                            console.log(userInfo);
-                        })
+                                    if (userInfo && userInfo.data && userInfo.data.brandings && ((userInfo.data.brandings.constructor === Object && Object.entries(userInfo.data.brandings).length === 0) || !userInfo.data.brandings.find(b => b.app === app))){
+                                        // Ya existe registro del usuario pero no tiene branding para la aplicación desde la que accede.
+                                        getBrandingTemplate(app)
+                                        .then(template => {
+                                            var auxTemplate = JSON.stringify(template.data.configuration);
+                                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                            var newTemplate = JSON.parse(auxTemplate);
+                                            createBranding2(newTemplate, token)
+                                            .then( res => {
+                                                console.log('Resultado de creación de Branding');
+                                                console.log(res);
+                                                var userBranding = [{app: app, externalId: res.id}];
+                                                addOrUpdateBranding(user, userBranding[0]);
+                                                this.props.setUserBrandings('certifiedEmail', userBranding);
+                                            })
+                                            .catch( err => {
+                                                console.log('Se ha producido un error al guardar el branding');
+                                                console.log(err);
+                                            })
+                                        });
+                                    } else {
+                                        // Usuario y branding ya existentes
+                                        this.props.setUserBrandings('certifiedEmail', userInfo.data.brandings);
+                                    }
+
+                                    if (idDocuments && idDocuments.length > 0){
+                                        getAvailableSignatures(idUserApp, idDocuments.length)
+                                        .then(response => this.props.setAvailableSignatures(response.data))
+                                        .catch(err => {
+                                            console.log(err);
+                                            if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
+                                                this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                                            }
+                                        }); 
+                                        getNumAvailableSignatures(idUserApp)
+                                            .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+                                            .catch(err => {
+                                                console.log(err);
+                                                this.props.setNumAvailableSignatures(0);
+                                            }); 
+                                    }
+                                } 
+                            });
+                        }
                         this.setState({readyToRedirect: true})
                     }
                     else {
@@ -284,13 +376,15 @@ const mapDispatchToProps = dispatch => ({
     setGuid: guid => dispatch(ACTIONS.setGUID(guid)),
     setUserName: name => dispatch(ACTIONS.setUserName(name)),
     setAvailableSignatures: num => dispatch(ACTIONS.setAvailableSignatures(num)),
-    setUserBrandings: brandings => dispatch(ACTIONS.setUserBrandings(brandings)),
+    setNumAvailableSignatures: num => dispatch(ACTIONS.setNumAvailableEmails(num)),
+    setUserBrandings: (service, brandings) => dispatch(ACTIONS.setUserBrandings(service, brandings)),
     setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
     setIdEntityType: id => dispatch(ACTIONS.setIdEntityType(id)),
     setIdEntity: id => dispatch(ACTIONS.setIdEntity(id)),
     setIdUserApp: id => dispatch(ACTIONS.setIdUserApp(id)),
     setIdDocuments: ids => dispatch(ACTIONS.setIdDocuments(ids)),
-    setAdminContacts: adminContacts => dispatch(ACTIONS.setAdminContacts(adminContacts))
+    setAdminContacts: adminContacts => dispatch(ACTIONS.setAdminContacts(adminContacts)),
+    setRoles: roles => dispatch(ACTIONS.setRoles(roles))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLefebvre);

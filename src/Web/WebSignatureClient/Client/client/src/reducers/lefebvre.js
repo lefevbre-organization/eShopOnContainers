@@ -97,12 +97,34 @@ const lefebvre = (state = INITIAL_STATE.lefebvre, action = {}) => {
                 availableSignatures: action.payload
             }
 
-        case ActionTypes.LEFEBVRE_USER_BRANDINGS:
+        case ActionTypes.LEFEBVRE_USER_AVAILABLE_EMAILS:
             return{
                 ...state,
-                userBrandings: action.payload
+                availableEmails: action.payload
             }
 
+        case ActionTypes.LEFEBVRE_USER_NUM_AVAILABLE_SIGNATURES:
+            return{
+                ...state,
+                numAvailableSignatures: action.payload
+            }
+
+        case ActionTypes.LEFEBVRE_USER_NUM_AVAILABLE_EMAILS:
+            return{
+                ...state,
+                numAvailableEmails: action.payload
+            }
+
+        case ActionTypes.LEFEBVRE_USER_BRANDINGS:{
+            const newState = {...state};
+            if (action.payload.service === 'signature'){
+                newState.userBrandings.signature = action.payload.brandings
+            } else if (action.payload.service === 'certifiedEmail'){
+                newState.userBrandings.certifiedEmail = action.payload.brandings
+            }
+            return newState;
+        }
+            
         case ActionTypes.LEFEBVRE_USER_APP:
             return{
                 ...state,
@@ -138,7 +160,13 @@ const lefebvre = (state = INITIAL_STATE.lefebvre, action = {}) => {
                 ...state,
                 adminContacts: action.payload
             }
-            
+
+        case ActionTypes.LEFEBVRE_ROLES:
+            return {
+                ...state,
+                roles: action.payload
+            }
+                  
         default:
             return state;
     }

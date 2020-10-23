@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -57,20 +58,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                     var stringFile = Convert.ToBase64String(arrayFile);
                     var fileName = response.Content.Headers.ContentDisposition.FileName;
                     result.data = stringFile;
-                    TraceInfo(result.infos, $"Se recupera el fichero:  {fileName}", idFile);
+                    TraceInfo(result.infos, $"Se recupera el fichero:  {fileName}- id:{idFile}", "CE01");
                 }
                 else
                 {
                     var responseText = await response.Content.ReadAsStringAsync();
-                    TraceOutputMessage(result.errors, $"Response not ok when fileget with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok when fileget with code-> { (int)response.StatusCode } - { response.ReasonPhrase}"), "CE01", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al obtener el archivo {idFile}, -> {ex.Message}", ex.InnerException?.Message, "Centinela_GetFile_Error");
+                TraceError(result.errors, new CentinelaDomainException($"Error when fileget {idFile}", ex), "CE01", "CENTINELASVC");
             }
 
-            //WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
             return result;
         }
 
@@ -79,7 +79,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var result = new Result<bool>(false);
             try
             {
-                Console.WriteLine($"[{DateTime.Now}] START FilePostAsync");
+                //Console.WriteLine($"[{DateTime.Now}] START FilePostAsync");
 
                 CleanNameFile(fileMail, out string name);
 
@@ -95,25 +95,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 if (response.IsSuccessStatusCode)
                 {
                     result.data = true;
-                    TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText} - {response.ReasonPhrase}");
+                    TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText} - {response.ReasonPhrase}", "CE02");
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok : {responseText} when FilePost with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) when filePost with code-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE02", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[{DateTime.Now}] Error: {ex.ToString()}");
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
+                TraceError(result.errors, new CentinelaDomainException($"Error when filePost {fileMail.Name}", ex), "CE02", "CENTINELASVC");
             }
 
-            Console.WriteLine($"[{DateTime.Now}] END FilePostAsync");
+            //Console.WriteLine($"[{DateTime.Now}] END FilePostAsync");
 
             return result;
         }
 
-       
         private void CleanNameFile(ConceptFile fileMail, out string cleanName)
         {
             fileMail.Name = RemoveProblematicChars(fileMail.Name);
@@ -213,12 +212,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get evaluations-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE03", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error GetEvaluations, -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_GetEvaluations");
+                TraceError(result.errors, new CentinelaDomainException($"Error when Get evaluations {_settings.Value.CentinelaUrl}", ex), "CE03", "CENTINELASVC");
             }
 
             return result;
@@ -244,12 +243,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get contacts-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE04", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error GetContacts, -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_GetContacts");
+                TraceError(result.errors, new CentinelaDomainException($"Error when get contacts {_settings.Value.CentinelaUrl}", ex), "CE04", "CENTINELASVC");
             }
 
             return result;
@@ -275,12 +274,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get documents-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE05", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_GetDocuments");
+                TraceError(result.errors, new CentinelaDomainException($"Error when get documents {_settings.Value.CentinelaUrl}", ex), "CE05", "CENTINELASVC");
             }
 
             return result;
@@ -306,12 +305,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get evaluations tree-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE06", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_GetEvaluationTree");
+                TraceError(result.errors, new CentinelaDomainException($"Error when get evaluations tree {_settings.Value.CentinelaUrl}", ex), "CE06", "CENTINELASVC");
             }
 
             return result;
@@ -336,12 +335,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get concepts-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE07", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_GetConceptsByType");
+                TraceError(result.errors, new CentinelaDomainException($"Error when get concepts {_settings.Value.CentinelaUrl}", ex), "CE07", "CENTINELASVC");
             }
 
             return result;
@@ -366,12 +365,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get documents by instance-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE08", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_GetDocumentsByInstance");
+                TraceError(result.errors, new CentinelaDomainException($"Error when get documents by instance {_settings.Value.CentinelaUrl}", ex), "CE08", "CENTINELASVC");
             }
 
             return result;
@@ -398,17 +397,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 if (response.IsSuccessStatusCode)
                 {
                     result.data = true;
-                    TraceInfo(result.infos, $"Se cancela la firma {guid} - {responseText}");
+                    TraceInfo(result.infos, $"Se cancela la firma {guid} - {responseText}", "CE09");
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok : {responseText} when CancelSignature with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when CancelSignature-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE09", "CENTINELASVC");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[{DateTime.Now}] Error: {ex.ToString()}");
-                TraceOutputMessage(result.errors, $"Error al cancelar la firma {guid}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
+                TraceError(result.errors, new CentinelaDomainException($"Error when CncelSignature {_settings.Value.CentinelaUrl}", ex), "CE09", "CENTINELASVC");
             }
 
             Console.WriteLine($"[{DateTime.Now}]  END CancelSignatureAsync");

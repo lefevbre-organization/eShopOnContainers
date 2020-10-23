@@ -30,7 +30,7 @@ namespace Lexon.Infrastructure.Services
                                                                                string filter,
                                                                                int pageSize,
                                                                                int pageIndex);
-        Task<Result<PaginatedItemsViewModel<LexActuation>>> GetRelationsOfAppointmentAsync(string idAppointment,
+        Task<Result<PaginatedItemsViewModel<LexActuation>>> GetRelationsOfAppointmentAsync(string idEvent,
                                                                                                    string idUser,
                                                                                                    string env,
                                                                                                    string bbdd,

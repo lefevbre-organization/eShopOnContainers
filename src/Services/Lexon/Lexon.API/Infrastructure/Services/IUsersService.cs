@@ -12,11 +12,11 @@ namespace Lexon.Infrastructure.Services
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
-        Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch);
+        Task<Result<LexEntity>> GetEntityByIdAsync(EntitySearchById entitySearch);
 
         Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch);
 
-        Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync(string env);
+        Task<MySqlList<LexEntityTypeList, LexEntityType>> GetEntityTypesAsync(string env);
 
         Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classification);
 

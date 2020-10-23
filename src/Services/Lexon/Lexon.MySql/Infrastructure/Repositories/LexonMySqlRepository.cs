@@ -40,7 +40,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
             return result;
@@ -76,7 +76,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
             return result;
@@ -116,7 +116,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -165,7 +165,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceError(resultMySql.Errors, ex);
                 }
             }
 
@@ -212,7 +212,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceError(resultMySql.Errors, ex);
                 }
             }
 
@@ -259,7 +259,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -303,7 +303,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -348,7 +348,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -406,7 +406,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceError(resultMySql.Errors, ex);
                 }
             }
 
@@ -434,7 +434,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -485,7 +485,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(resultMySql.Errors, ex);
+                    TraceError(resultMySql.Errors, ex);
                 }
             }
 
@@ -528,7 +528,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -561,7 +561,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceError(result.errors, ex);
             }
 
             return result;
@@ -589,7 +589,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 
@@ -618,7 +618,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceError(result.errors, ex);
                 }
             }
 

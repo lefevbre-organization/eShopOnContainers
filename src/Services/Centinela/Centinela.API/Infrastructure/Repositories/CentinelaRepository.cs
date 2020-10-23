@@ -57,7 +57,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener las compañias de {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener las compañias de {idUser}: {ex.Message}", "CE00");
             }
 
             return result;
@@ -89,7 +89,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {idUser}: {ex.Message}", "CE00");
             }
             return result;
         }
@@ -118,7 +118,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceInfo(result.Infos, $"fallo al  obtener entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
+                TraceInfo(result.Infos, $"fallo al  obtener entidades de {((EntitySearchView)search).idUser}: {ex.Message}", "CE00");
             }
             return result;
         }
@@ -184,7 +184,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceInfo(result.Infos, $"fallo al  obtener actuaciones de {search.idUser}: {ex.Message}");
+                TraceInfo(result.Infos, $"fallo al  obtener actuaciones de {search.idUser}: {ex.Message}", "CE00");
             }
             return result;
         }
@@ -208,13 +208,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {((EntitySearchView)search).idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {((EntitySearchView)search).idType}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {((EntitySearchView)search).idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {((EntitySearchView)search).idType}", "CE00");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar entidades de {((EntitySearchView)search).idUser}: {ex.Message}", "CE00");
             }
 
             return result;
@@ -239,13 +239,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo o actualizando las relaciones del mail {search.idMail}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo o actualizando las relaciones del mail {search.idMail}", "CE00");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {search.idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {search.idUser}: {ex.Message}", "CE00");
             }
 
             return result;
@@ -300,7 +300,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
                 }
                 catch (Exception ex)
                 {
-                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
+                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}", "CE00");
                     session.AbortTransaction();
                 }
             }
@@ -328,7 +328,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación");
+                    TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación", "CE00");
                     result.data += 1;
 
                     //var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
@@ -354,7 +354,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
                 }
                 catch (Exception ex)
                 {
-                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
+                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}", "CE00");
                     session.AbortTransaction();
                 }
             }
@@ -380,7 +380,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
 
             if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
             {
-                TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación");
+                TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación", "CE00");
                 result.data = resultUpdate.ModifiedCount;
 
                 //var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
@@ -504,7 +504,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {idUser}: {ex.Message}", "CE00");
             }
             return result;
         }
@@ -529,18 +529,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {user.data.idNavision}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {user.data.idNavision}", "CE00");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.UpsertedId != null)
                 {
-                    TraceInfo(result.infos, $"Se crea un usuario {user.data.idNavision}");
+                    TraceInfo(result.infos, $"Se crea un usuario {user.data.idNavision}", "CE00");
                     result.data = resultUpdate.UpsertedId != null;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar usuario de {user.data.idNavision}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar usuario de {user.data.idNavision}: {ex.Message}", "CE00");
             }
 
             return result;
@@ -573,13 +573,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idNavision} añadiendo {companiesToInsert.Count} empresas");
+                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idNavision} añadiendo {companiesToInsert.Count} empresas", "CE00");
                     result.data = true;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idNavision}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idNavision}: {ex.Message}", "CE00");
             }
 
             return result;

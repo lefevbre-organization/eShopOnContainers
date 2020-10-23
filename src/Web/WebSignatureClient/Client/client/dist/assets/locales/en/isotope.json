@@ -11,20 +11,27 @@
     "user-error": "User or password not valid.",
     "user": "User",
     "password": "Password",
-    "login": "LOG IN"
+    "login": "LOG IN",
+    "load": "Loading..."
   },
   "sideBar": {
-    "newRequest": "New signature",
+    "newRequest": "New request",
+    "typeSending": "Select the type of request:",
     "hide": "Hide sidebar",
     "errors": {
       "noSSL": "Connection to server is not secure",
       "diskQuotaExceeded": "Disk quota exceeded (IndexedDB)"
     },
     "filterMenu": "SIGNATURES",
+    "filterMenuEmail": "CERTIFIED EMAIL",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
-    "filterCancelled": "Cancelled"
+    "filterCancelled": "Cancelled",
+    "signature": "Advanced signature",
+    "certifiedEmail": "Certified email",
+    "sendingTypeSignature": "Signature with biometric data",
+    "sendingTypeEmail": "Certify your communications"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -43,7 +50,8 @@
       "delete": "Delete",
       "cancel": "Cancel"
     },
-    "app": "SIGNATURE"
+    "app": "SIGNATURE",
+    "filterMenuEmail": "CERTIFIED EMAIL"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -89,6 +97,25 @@
       "title": "Insert Link",
       "cancel": "Cancel",
       "ok": "Ok"
+    },
+    "grid": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "signatureType": "Signature type",
+      "doubleAuthentication": "Double authentication",
+      "recipientsRole": "RECIPIENTS ROLE",
+      "signer": "Signer",
+      "validator": "Validator",
+      "advancedSignature": "Advanced signature",
+      "userCertificate": "User certificate",
+      "none": "NO",
+      "sms": "SMS",
+      "photo": "Photo",
+      "finish": "FINALIZE",
+      "photoNumber": "Number of photos",
+      "photoInfo": "Number of photos attached",
+      "phone": "Number of phone"
     },
     "title": "CREATE NEW SIGNATURE"
   },
@@ -159,7 +186,19 @@
     "statusCompleted": "Completed",
     "statusExpired": "Expired",
     "statusDeclined": "Declined",
-    "statusInProgress": "In progress"
+    "statusInProgress": "In progress",
+    "statusError": "Error",
+    "statusPending": "Pending",
+    "statusSigning": "Signing",
+    "filters": {
+      "contains": "Contains",
+      "startsWith": "Starts with",
+      "equal": "Equal",
+      "greaterthan": "Greater than",
+      "greaterthanorequal": "Greater than or equal to",
+      "lessthan": "Less than",
+      "lessthanorequal": "Less than or equal to"
+    }
   },
   "confirmationModal": {
     "yes": "Yes",
@@ -172,13 +211,42 @@
     "text": "The selected signature request will be cancelled. Are you sure?",
     "text2": "Please confirm you want to cancel this signature request."
   },
+  "cancelCentinelaConfirmation":{
+    "text": "Please confirm you want to cancel this Centinela Documents signature request"
+  },
   "reminderSentModal": {
-    "text": "A reminder has been sent"
+    "text": "A reminder has been sent signer"
+  },
+  "noSignersModal": {
+    "text": "At least one signer must be specified in order to send the request."
+  },
+  "noAttachmentsModal": {
+    "text": "A document must be attached in order to send the request."
+  },
+  "bigFileModal": {
+    "text": "Max size of attached files must be lower than 15MB."
+  },
+  "attachNotFoundCentinela":{
+    "text": "Document's couldn't be retrieved from Centinela."
+  },
+  "downloadindCentinelaModal":{
+    "text": "Downloading documents from Centinela."
+  },
+  "signatureNotFoundCentinela": {
+    "text": "Signature request not found. Please return to centinela and send it again."
+  },
+  "noCreditsModal":{
+    "text": "We apologize, you've already used all your available signatures.",
+    "text2": "If you wish, you can contact our Customer Support Service calling 912108000 or by clicking <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>here</u></a>"
   },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
-    "pagesConfiguration": "Single page signature"
+    "pagesConfiguration": {
+      "single": "Single page signature",
+      "all": "Sign all pages (only pdf)" 
+    },
+    "messageAlert": "Invalid selected file type."
   },
   "expirationWidget":{
     "title": "EXPIRATION CONFIGURATION",
@@ -203,11 +271,31 @@
     "option2": "Daily reminders",
     "option3": "Weekly reminders"
   },
+  "certificatesWidget": {
+    "title": "WISH TO CERTIFY THAT:"
+  },
+  "emailViewer": {
+    "certification": "Certification:",
+    "emailDelivered": "the recipient has received the mail",
+    "emailOpened": "the recipient has opened the mail",
+    "docOpened": "the recipient has opened the document",
+    "openEveryDocument": "The recipient has opened the every documents",
+    "docDownloaded": "the recipient has downloaded the document",
+    "downloadEveryDocument": "the recipient has downloaded the every documents",
+    "attaches": "ATTACHED DOCUMENTS",
+    "attachedDocOpened": "Document opened",
+    "pendingDoc": "Pending to open",
+    "buttons": {
+      "downloadTrail": "Download audit"
+    },
+    "title": "EMAIL PROGRESS"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",
       "subject": "Subject",
       "signers": "Signers",
+      "recipients": "Recipients",
       "date": "Date",
       "status": "Status"
     },
@@ -219,8 +307,23 @@
     },
     "signerCard": {
       "title": {
-        "signers": "SIGNERS",
-        "signer": "Signer"
+        "signers": "SIGNER",
+        "signer": "Recipient",
+        "validators": "VALIDATOR",
+        "validator": "Recipient",
+        "type": {
+          "title": "Type of signature",
+          "advanced": "Advanced signature",
+          "certificate": "Sign with certificate"
+        },
+        "DoubleAuthentication": {
+          "title": "Double authentication",
+          "sms": "SMS",
+          "photo": "Photo",
+          "none": "NO",
+          "photoNumber": "(__) photos attached",
+          "download": "Download"
+        }
       },
       "body": {
         "title": "SIGNATURE PROGRESS",
@@ -228,10 +331,12 @@
         "emailDelivered": "Email delivered",
         "emailOpened": "Email opened",
         "docOpened": "Document opened",
-        "docSigned": "Document signed"
+        "docSigned": "Document signed",
+	"docValidated": "Document validated"
       },
       "footer": {
-        "title": "SENT REMINDERS"
+        "title": "SENT REMINDERS",
+        "subtitle": "No reminders have been sent to this signer."
       }
     },
     "widgets": {
@@ -239,20 +344,22 @@
         "title": "EXPIRATION CONFIGURATION",
         "notConfigured": "There's no expiration term activated",
         "doesntExpires": "Never expires",
-        "expires": "Expires in ___ days"
+        "expires": "Expires in ___ days",
+        "expired": "Term expired."
       },
       "reminders": {
         "title": "REMINDERS CONFIGURATION",
         "notConfigured": "There aren't any reminders configured.",
         "daily": "Daily reminders",
-        "weekly": "Weekly reminders"
+        "weekly": "Weekly reminders",
+        "everyXdays": "Reminder every ___ days"
       }
     },
     "title": "SIGNATURE DETAILS"
   },
   "completedPage":{
-    "title": "Document has been signed successfully.",
-    "subtitle": "A copy has been sent to your email account.",
+    "title": "Document has been processed successfully.",
+    "subtitle": "A copy will be sent to your email account when the signing process ends.",
     "footer": "Need help?"
   },
   "expiredPage":{
@@ -264,5 +371,15 @@
     "title": "Access error.",
     "subtitle": "You don't have permission to use this application.",
     "footer": "Need help?"
-  }  
+  },
+  "contacts": {
+    "lexon": "Contact Lex-ON",
+    "centinela": "Contact Centinela",
+    "search": "Search contact",
+    "selected": "selected"
+  },
+  "menu-minihub": {
+    "products": "Lefebvre Products",
+    "footer": "Use this menu to directly launch another Lefebvre products."
+  }
 }

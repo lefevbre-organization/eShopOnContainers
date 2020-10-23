@@ -20,7 +20,7 @@ import {
    cancelSignature2 
 } from "../../services/api-signaturit";
 import SignatureList from './signature-list/signature-list';
-import SignatureDetails from './signature-details/signature-details';
+import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
@@ -352,12 +352,13 @@ export class MessageViewer extends Component {
     return (
       <div className={`col l9 ${styles['contenido-central']}`}>
       <div className={styles['cont-progreso-peticion-firma']}>
-        <SignatureDetails 
+        <Details 
          styles={styles}
          status_style={status_style}
          status={status}
-         signature={signature}
+         detail={signature}
          getSigners={this.getSigners}
+         service={'signature'}
         />
         <button 
           className={`${styles['btn-gen-border']} left modal-trigger`} 

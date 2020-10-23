@@ -30,20 +30,27 @@
     "user-error": "Usuario o Contraseña inválidos",
     "user": "Usuario",
     "password": "Contraseña",
-    "login": "INICIAR SESIÓN"
+    "login": "INICIAR SESIÓN",
+    "load": "Cargando..."
   },
   "sideBar": {
-    "newRequest": "Nueva firma",
+    "newRequest": "Nueva Petición",
+    "typeSending": "Selecciona el tipo de petición:",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
     "filterMenu": "FIRMAS SOLICITADAS",
+    "filterMenuEmail": "EMAIL CERTIFICADO",
     "filterAll": "Mostrar todas",
     "filterInProgress": "En progreso",
     "filterCompleted": "Completadas",
-    "filterCancelled": "Canceladas"
+    "filterCancelled": "Canceladas",
+    "signature": "Firma avanzada",
+    "certifiedEmail": "Email certificado",
+    "sendingTypeSignature": "Firma con datos biométricos",
+    "sendingTypeEmail": "Certifica tus comunicaciones"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -62,7 +69,8 @@
       "delete": "Borrar",
       "cancel": "Cancelar"
     },
-    "app": "FIRMA"
+    "app": "FIRMA",
+    "certifiedEmail": "EMAIL CERTIFICADO"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -109,7 +117,27 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
-    "title": "CREAR NUEVA FIRMA"
+    "grid": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "signatureType": "Tipo de firma",
+      "doubleAuthentication": "Doble autenticación",
+      "recipientsRole": "ROL DE LOS DESTINATARIOS",
+      "signer": "Firmante",
+      "validator": "Validador",
+      "advancedSignature": "Firma avanzada",
+      "userCertificate": "Certificado de usuario", 
+      "none": "NO",
+      "sms": "SMS",
+      "photo": "Foto",
+      "finish": "FINALIZAR",
+      "photoNumber": "Número de fotos",
+      "photoInfo": "Número de fotos adjuntas",
+      "phone": "Número de teléfono"
+    },
+    "title": "SOLICITUD DE FIRMA",
+    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO"
   },
   "forwardAction": {
     "From": "De",
@@ -178,7 +206,19 @@
     "statusCompleted": "Completado",
     "statusExpired": "Expirado",
     "statusDeclined": "Declinado",
-    "statusInProgress": "En progreso"
+    "statusInProgress": "En progreso",
+    "statusError": "Error",
+    "statusPending": "Pendiente",
+    "statusSigning": "Firmando",
+    "filters": {
+      "contains": "Contiene",
+      "startsWith": "Empieza por",
+      "equal": "Igual a",
+      "greaterthan": "Mayor que",
+      "greaterthanorequal": "Igual o mayor que",
+      "lessthan": "Menor que",
+      "lessthanorequal": "Igual o menor que"
+    }
   },
   "confirmationModal": {
     "yes": "Si",
@@ -191,13 +231,42 @@
     "text": "¿Está seguro de que quiere cancelar la firma seleccionada?",
     "text2": "¿Está seguro de que quiere cancelar el proceso de firma actual?"
   },
+  "cancelCentinelaConfirmation":{
+    "text": "¿Está seguro de que quiere cancelar el proceso de firma de documentos de Centinela?"
+  },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio"
+    "text": "Se acaba de enviar un recordatorio al Firmante"
+  },
+  "noSignersModal": {
+    "text": "Debe especificar al menos un firmante para poder enviar la solicitud."
+  },
+  "noAttachmentsModal": {
+    "text": "Debe adjuntar un documento para poder enviar la solicitud."
+  },
+  "bigFileModal": {
+    "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
+  },
+  "attachNotFoundCentinela":{
+    "text": "No se han podido descargar los documentos desde Centinela."
+  },
+  "downloadindCentinelaModal":{
+    "text": "Descargando documentos de centinela"
+  },
+  "signatureNotFoundCentinela": {
+    "text": "La solicitud de firma que quiere visualizar no existe. Por favor vuelva a Centinela y realice una nueva solicitud."
+  },
+  "noCreditsModal":{
+    "text": "Lo sentimos has agotado el número máximo de firmas contratadas.",
+    "text2": "Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>"
   },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
-    "pagesConfiguration": "Firmar documento en una sola hoja"
+    "pagesConfiguration": {
+      "single": "Firmar documento en una sola hoja",
+      "all": "Firmar documento en todas las hojas (solo pdf)" 
+    },
+    "messageAlert": "Tipo de archivo seleccionado no válido."
   },
   "expirationWidget":{
     "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
@@ -222,11 +291,31 @@
     "option2": "Recordatorios diarios",
     "option3": "Recordatorios semanales"
   },
+  "certificatesWidget": {
+    "title": "DESEO CERTIFICAR QUE:"
+  },
+  "emailViewer": {
+    "certification": "Certificación:",
+    "emailDelivered": "el receptor ha recibido el mail",
+    "emailOpened": "el receptor ha abierto el mail",
+    "docOpened": "El receptor ha visto los documentos",
+    "openEveryDocument": "El receptor ha abierto todos los documentos",
+    "docDownloaded": "El receptor se ha descargado el documento",
+    "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
+    "attaches": "DOCUMENTOS ADJUNTOS",
+    "attachedDocOpened": "Documento abierto",
+    "pendingDoc": "Pendiente de abrir",
+    "buttons": {
+      "downloadTrail": "Descargar auditoria"
+    },
+    "title": "PROGRESO DE EMAIL"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Documento",
       "subject": "Asunto",
       "signers": "Firmantes",
+      "recipients": "Destinatarios",
       "date": "Fecha",
       "status": "Estado"
     },
@@ -238,8 +327,23 @@
     },
     "signerCard": {
       "title": {
-        "signers": "FIRMANTES",
-        "signer": "Firmante"
+        "signers": "FIRMANTE",
+        "signer": "Destinatario",
+        "validators": "VALIDADOR",
+        "validator": "Destinatario",
+        "type": {
+          "title": "Tipo de firma",
+          "advanced": "Firma avanzada",
+          "certificate": "Firma con certificado"
+        },
+        "DoubleAuthentication": {
+          "title": "Doble autenticación",
+          "sms": "SMS",
+          "photo": "Fotografía",
+          "none": "NO",
+          "photoNumber": "(__) fotos adjuntas",
+          "download": "Descargar"
+        }
       },
       "body": {
         "title": "PROGRESO PETICIÓN",
@@ -247,10 +351,12 @@
         "emailDelivered": "Email entregado",
         "emailOpened": "Email abierto",
         "docOpened": "Documento abierto",
-        "docSigned": "Documento firmado"
+        "docSigned": "Documento firmado",
+        "docValidated": "Documento validado"
       },
       "footer": {
-        "title": "RECORDATORIOS ENVIADOS"
+        "title": "RECORDATORIOS ENVIADOS",
+        "subtitle": "A este firmante no se le ha enviado ningún recordatorio."
       }
     },
     "widgets": {
@@ -258,20 +364,22 @@
         "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
         "notConfigured": "No hay fecha de expiración programada.",
         "doesntExpires": "La solicitud no expira",
-        "expires": "Expira en ___ días."
+        "expires": "Expira en ___ días.",
+        "expired": "Plazo expirado."
       },
       "reminders": {
         "title": "RECORDATORIOS PROGRAMADOS",
         "notConfigured": "No hay recordatorios programados.",
         "daily": "Recordatorios diarios",
-        "weekly": "Recordatorios semanales"
+        "weekly": "Recordatorios semanales",
+        "everyXdays": "Recordatorios cada ___ días."
       }
     },
     "title": "DETALLES DE LA FIRMA"
   },
   "completedPage":{
-    "title": "El documento se ha firmado correctamente.",
-    "subtitle": "Te hemos enviado una copia a tu dirección de email.",
+    "title": "El documento se ha procesado correctamente.",
+    "subtitle": "Cuando finalice el proceso de firma recibirás una copia en tu correo electrónico.",
     "footer": "¿Necesitas ayuda?"
   },
   "expiredPage":{
@@ -283,5 +391,15 @@
     "title": "Error de acceso.",
     "subtitle": "No tiene permiso para usar esta aplicación.",
     "footer": "¿Necesitas ayuda?"
+  },
+  "contacts": {
+    "lexon": "Contactos Lex-ON",
+    "centinela": "Contactos Centinela",
+    "search": "Buscar un contacto",
+    "selected": "seleccionados"
+  },
+  "menu-minihub": {
+    "products": "Productos Lefebvre",
+    "footer": "Utiliza este menú para iniciar directamente otro producto de Lefebvre."
   }
 }

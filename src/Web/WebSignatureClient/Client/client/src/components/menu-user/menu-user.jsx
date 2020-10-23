@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
+import SignatureNumbers from './signature-numbers';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
 import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
-import { setSign, setAvailableSignatures } from '../../actions/lefebvre';
+import { setSign, setAvailableSignatures, setNumAvailableSignatures, setNumAvailableEmails } from '../../actions/lefebvre';
 import Cookies from 'js-cookie';
-import { getAvailableSignatures } from '../../services/api-signaturit';
+import { getAvailableSignatures, getNumAvailableSignatures } from '../../services/api-signaturit';
 
 class MenuUser extends Component {
     constructor(props) {
@@ -44,7 +45,15 @@ class MenuUser extends Component {
                 if (err.message === "Failed to fetch"){
                   //Mostrar aviso no se han podido recuperar firmas
                 }
-              });
+            });
+            getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+                if (err.message === "Failed to fetch"){
+                  //Mostrar aviso no se han podido recuperar firmas
+                }
+            });
         }
 
         document.addEventListener('mousedown', this.handleClickOutside);
@@ -85,10 +94,21 @@ class MenuUser extends Component {
     toggle() {
         const { onToggleDialog } = this.props;
         const { lefebvre } = this.props;
+        
         if (lefebvre.userId) {
             getAvailableSignatures(lefebvre.idUserApp, 1)
             .then( res => this.props.setAvailableSignatures(res.data));
+            
+            getNumAvailableSignatures(lefebvre.idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+                if (err.message === "Failed to fetch"){
+                  //Mostrar aviso no se han podido recuperar firmas
+                }
+            });
         }
+
         this.setState(
             {
                 dropdownOpen: !this.state.dropdownOpen,
@@ -106,15 +126,15 @@ class MenuUser extends Component {
         const { userId, token } = this.props.lefebvre;
         if (userId !== null) {
             resetDefaultAccount(userId)
-                .then(() => {
-                    this.routeLogout();
-                    //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                    const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                    window.open(urlRedirect, '_self');
-                })
-                .catch(error => {
-                    console.log('error =>', error);
-                });
+            .then(() => {
+                this.routeLogout();
+                //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                window.open(urlRedirect, '_self');
+            })
+            .catch(error => {
+                console.log('error =>', error);
+            });
         }
     }
 
@@ -162,10 +182,10 @@ class MenuUser extends Component {
 
     render() {
         const { dropdownOpen, accounts } = this.state;
-        const { lefebvre } = this.props;
+        const { lefebvre, application } = this.props;
         const fullName = this.props.login.formValues.user;
         const { showSign, sign } = this.state;
-
+        
         let acronym;
         if (fullName) {
             acronym = fullName
@@ -175,6 +195,8 @@ class MenuUser extends Component {
         } else {
             acronym = '?';
         }
+        const nameCut = lefebvre.userName.split(' ');
+        const nameInitial = `${nameCut[0].slice(0, 1)} ${nameCut[1].slice(0, 1)}`
 
         return (
             <Fragment>
@@ -212,15 +234,36 @@ class MenuUser extends Component {
                                     {showSign === false && (
                                         <Fragment>
                                             <div className='user-image text-center'>
-                                                <a href='#/'>
+                                              <div className="user-circle">
+                                                <span className="user-nameInitial">{nameInitial.toUpperCase()}</span>
+                                              </div>
+                                                {/* <a href='#/'>
                                                     <img src='/assets/images/notification-icon.png' alt='icon' />                                                    
-                                                </a>
+                                                </a> */}
                                             </div>
                                             {/* <span className='user-name text-center'>{`Firmas disponibles: ${lefebvre.availableSignatures}`}</span> */}
                                             <span className='user-name text-center'>{`${lefebvre.userName}`}</span>
                                             <span className='company-name text-center'>
                                                 Lefebvre-El Derecho, S.A.
                                             </span>
+                                            {  lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
+                                            <SignatureNumbers 
+                                             title={i18n.t('menu-user.signatures-summary')}
+                                             type="signature"
+                                             available={i18n.t('menu-user.available')}
+                                             consumed={i18n.t('menu-user.consumed')}
+                                             availablenumber={lefebvre.numAvailableSignatures}
+                                             signatureConsumed={application.signatures.length + application.emails.length} /> 
+                                             : null }
+                                            {/* { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
+                                            <SignatureNumbers 
+                                             title={i18n.t('menu-user.email-summary')}
+                                             type="email"
+                                             available={i18n.t('menu-user.available')}
+                                             consumed={i18n.t('menu-user.consumed')}
+                                             availablenumber={lefebvre.numAvailableEmails}
+                                             signatureConsumed={application.emails.length} />
+                                             : null } */}
                                             <div className='text-center'>
                                                 <button
                                                     type='button'
@@ -385,6 +428,7 @@ class MenuUser extends Component {
           .e-content.e-lib.e-keyboard {
             text-align: left;
           }
+
           .btn-primary {
             background-color: #001970; 
           }
@@ -394,6 +438,22 @@ class MenuUser extends Component {
           }
           .btn-primary:focus {
             color: #fff; 
+          }
+
+          .user-circle {
+            width: 110px;
+            height: 110px;
+            background: #001978;
+            margin: auto;
+            border-radius: 100px;
+            margin-bottom: 10px;
+          }
+          
+          .user-nameInitial {
+            padding-top: 32px;
+            color: #35448F;
+            letter-spacing: -3px;
+            font-size: xx-large;
           }
         `}</style>
             </Fragment>
@@ -407,7 +467,8 @@ MenuUser.propTypes = {
 
 const mapStateToProps = state => ({
     lefebvre: state.lefebvre,
-    login: state.login
+    login: state.login,
+    application: state.application
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -418,7 +479,8 @@ const mapDispatchToProps = dispatch => ({
     setSign: sign => {
         dispatch(setSign(sign));
     },
-    setAvailableSignatures: num => dispatch(setAvailableSignatures(num))
+    setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
+    setNumAvailableSignatures: num => dispatch(setNumAvailableSignatures(num))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuUser);

@@ -15,17 +15,23 @@
     "load": "Loading..."
   },
   "sideBar": {
-    "newRequest": "New signature",
+    "newRequest": "New request",
+    "typeSending": "Select the type of request:",
     "hide": "Hide sidebar",
     "errors": {
       "noSSL": "Connection to server is not secure",
       "diskQuotaExceeded": "Disk quota exceeded (IndexedDB)"
     },
     "filterMenu": "SIGNATURES",
+    "filterMenuEmail": "CERTIFIED EMAIL",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
-    "filterCancelled": "Cancelled"
+    "filterCancelled": "Cancelled",
+    "signature": "Advanced signature",
+    "certifiedEmail": "Certified email",
+    "sendingTypeSignature": "Signature with biometric data",
+    "sendingTypeEmail": "Certify your communications"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -44,7 +50,8 @@
       "delete": "Delete",
       "cancel": "Cancel"
     },
-    "app": "SIGNATURE"
+    "app": "SIGNATURE",
+    "filterMenuEmail": "CERTIFIED EMAIL"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -153,6 +160,10 @@
     "reset-pwd": "RESET PASSWORD",
     "add-other-account": "ADD OTHER ACCOUNT",
     "close-session": "CLOSE SESSION",
+    "signatures-summary": "CERTIFICATION SUMMARY",
+    "email-summary": "CERTITICATION SUMMARY",
+    "available": "Available",
+    "consumed": "Consumed",
     "version": "Version"
   },
   "msgNotFoundSnackbar": {
@@ -264,11 +275,31 @@
     "option2": "Daily reminders",
     "option3": "Weekly reminders"
   },
+  "certificatesWidget": {
+    "title": "WISH TO CERTIFY THAT:"
+  },
+  "emailViewer": {
+    "certification": "Certification:",
+    "emailDelivered": "the recipient has received the mail",
+    "emailOpened": "the recipient has opened the mail",
+    "docOpened": "the recipient has opened the document",
+    "openEveryDocument": "The recipient has opened the every documents",
+    "docDownloaded": "the recipient has downloaded the document",
+    "downloadEveryDocument": "the recipient has downloaded the every documents",
+    "attaches": "ATTACHED DOCUMENTS",
+    "attachedDocOpened": "Document opened",
+    "pendingDoc": "Pending to open",
+    "buttons": {
+      "downloadTrail": "Download audit"
+    },
+    "title": "EMAIL PROGRESS"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Document",
       "subject": "Subject",
       "signers": "Signers",
+      "recipients": "Recipients",
       "date": "Date",
       "status": "Status"
     },
