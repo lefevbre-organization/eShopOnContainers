@@ -16,7 +16,7 @@ export const getUserApplication = () => {
       auth: {
         clientId: config.appId,
         redirectUri: redirectUri,
-        postLogoutRedirectUri: 'https://lexbox-test-webgraph.lefebvre.es',
+        postLogoutRedirectUri: window.URL_REDIRECT,
       },
       cache: {
         cacheLocation: 'localStorage',
