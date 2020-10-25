@@ -40,6 +40,7 @@
     "markRead": "Marcar como leído",
     "search": "Buscar",
     "returnlexon": "Volver a Lex-on",
+    "refresh": "Refrescar",
     "deleteFromTrashDialog": {
       "title": "Confirmar borrado",
       "message": "Esta acción eliminará permenentemente los mensajes de la basura. ¿Seguro que quieres continuar?",

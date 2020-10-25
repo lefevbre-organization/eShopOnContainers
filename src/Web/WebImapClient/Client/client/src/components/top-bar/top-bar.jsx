@@ -81,6 +81,7 @@ export class TopBar extends Component {
             selectedMessagesAllUnread={selectedMessagesAllUnread}
             onMarkReadClick={() => props.setMessagesSeen(true)}
             onMarkUnreadClick={() => props.setMessagesSeen(false)}
+            onRefreshClick={()=> props.onRefreshClick()}
           />
         )}
         {!isEditing && isMessageViewer && (
@@ -149,6 +150,7 @@ TopBar.propTypes = {
   clearSelectedMessage: PropTypes.func,
   sideBarToggle: PropTypes.func.isRequired,
   sideBarCollapsed: PropTypes.bool.isRequired,
+  onRefreshClick: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => {

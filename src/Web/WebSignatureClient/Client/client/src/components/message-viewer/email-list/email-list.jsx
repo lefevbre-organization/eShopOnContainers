@@ -23,7 +23,7 @@ const EmailList = (props) => {
           <div className="text-right"> 
             {
               props.getEventStatus(props.signer, 'certification_completed') === true 
-              ? <a href="#" onClick={() => props.downloadTrailDocument(props.emailId, props.signer.id, props.signer.file.name, props.auth)}> 
+              ? <a href="#" onClick={() => props.downloadTrailDocument(props.emailId, props.signer.id, (props.signer.file ? props.signer.file.name : `${props.signer.name}.pdf`), props.auth)}> 
                   <span className="lf-icon-download mr-2"></span> 
                   {i18n.t('emailViewer.buttons.downloadTrail')}
                 </a>
