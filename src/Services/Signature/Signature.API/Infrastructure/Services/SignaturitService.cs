@@ -262,6 +262,10 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("templates[pending_sign]", brandingInfo.templates.pending_sign);
             request.AddParameter("templates[document_canceled]", brandingInfo.templates.document_canceled);
             request.AddParameter("templates[request_expired]", brandingInfo.templates.request_expired);
+            if (brandingInfo.templates.emails_request != null && brandingInfo.templates.emails_request != "")
+            {
+                request.AddParameter("templates[emails_request]", brandingInfo.templates.emails_request);
+            }
             request.AddParameter("text_color", brandingInfo.text_color);
             request.AddParameter("show_survey_page", brandingInfo.show_survey_page);
             request.AddParameter("show_csv", brandingInfo.show_csv);

@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, setTitle } from '../../actions/application';
+import { editMessage, setTitle, setSelectedService } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -25,7 +25,8 @@ import {
   getUserEmails,
   notifySignature,
   cancelSignatureCen,
-  preloadEmails
+  preloadEmails,
+  getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
@@ -746,15 +747,19 @@ class EmailMessageEditor extends Component {
       this.props.setAdminContacts(null);
       this.props.setUserApp('lefebvre');
       this.props.setGuid(null);
-      this.props.setTitle('');
+      //this.props.setTitle('');
       this.props.setIdDocuments(null);
       this.props.close(this.props.application);
       this.props.preloadEmails(lefebvre.userId);
+      this.props.setTitle(i18n.t('topBar.certifiedEmail'));
+      this.props.setSelectedService('certifiedEmail'); 
+      this.props.setSignaturesFilterKey('Mostrar Todas');
+      
       getNumAvailableSignatures(lefebvre.idUserApp)
-            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
-            .catch(err => {
-                console.log(err);
-            });
+        .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+        .catch(err => {
+            congetNumsole.log(err);
+        });
     });
   }
 
@@ -1037,7 +1042,8 @@ const mapDispatchToProps = (dispatch) => ({
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
-  setSelectedService: selectService  => dispatch(ACTIONS.setSelectedService(selectService))
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
+  setSignaturesFilterKey: key => dispatch(ACTIONS.setSignaturesFilterKey(key))
 });
 
 export default connect(
