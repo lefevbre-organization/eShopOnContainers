@@ -14,17 +14,11 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
         "conference-api", "lexon-api", "lexonmysql-api", "account-api", "centinela-api", "userutils-api", "signature-api", "database-api", 
+        "apigwlex", "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
         "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "webimapserver", 
         "webstatus"
-        ),
-    [parameter(Mandatory=$false)][string[]]$gateways=(
-        "apigwlex",
-        "apigwacc",
-        "apigwcen",
-        "apigwsig",
-        "apigwdat" 
         ),
     [parameter(Mandatory=$false)][string]$aksName="",
     [parameter(Mandatory=$false)][bool]$useLocalImages=$false,
@@ -35,6 +29,7 @@ Param(
     [parameter(Mandatory=$false)][string][ValidateSet('Always','IfNotPresent','Never', IgnoreCase=$false)]$imagePullPolicy="Always",
     [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$sslSupport = "none",
     [parameter(Mandatory=$false)][string]$tlsSecretName = "elef-tls-custom",
+    [parameter(Mandatory=$false)][string]$chartsToDeploy="*",
     [parameter(Mandatory=$false)][string]$ingressMeshAnnotationsFile="ingress_values_linkerd.yaml"
     )
 
@@ -158,10 +153,11 @@ if (-not [string]::IsNullOrEmpty($registry)) {
 Write-Host "Begin eLefebvreOnContainers installation using Helm" -ForegroundColor Green
 
 if ($deployInfrastructure) {
+    Write-Host "eLefebvreOnContainers infrastructure with app-lef.yaml and inf-lef.yaml" -ForegroundColor Yellow
     foreach ($infra in $infras) {
-        Write-Host "Installing infrastructure:  $appName-$infra with app-lef.yalm, inf-lef.yalm, app.name=$appName, inf.k8s.dns=$dns, $ingressValuesFile" -ForegroundColor Green
-        # helm install --name="$appName-$infra" --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" $infra
-        helm install "$appName-$infra" --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" $infra     
+        Write-Host "Installing infrastructure: $infra" -ForegroundColor Green
+        Write-Host "Installing infrastructure: $infra Inject app.name=$appName, inf.k8s.dns=$dns, ingress.hosts - final-name= $appName-$infra" -ForegroundColor Green
+        helm install --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --name="$appName-$infra" $infra     
     }
 }
 else {
@@ -169,6 +165,7 @@ else {
 }
 
 if ($deployCharts) {
+    Write-Host "eLefebvreOnContainers charts with app-lef.yaml and inf-lef.yaml" -ForegroundColor Yellow
     foreach ($chart in $charts) {
         Write-Host "Installing: $chart" -ForegroundColor Green
         if ($useCustomRegistry) {
