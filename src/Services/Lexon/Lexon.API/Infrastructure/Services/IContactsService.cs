@@ -1,4 +1,5 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,10 +17,11 @@ namespace Lexon.Infrastructure.Services
                                                  string bbdd,
                                                  short idType,
                                                  long idContact);
-        Task<Result<List<LexContact>>> GetAllContactsAsync(string env,
-                                                           string idUser,
-                                                           string bbdd,
-                                                           int pageIndex,
-                                                           int pageSize);
+        Task<Result<PaginatedItemsViewModel<LexContact>>> GetAllContactsAsync(string env,
+                                                                               string idUser,
+                                                                               string bbdd,
+                                                                               string email,
+                                                                               int pageIndex,
+                                                                               int pageSize);
     }
 }

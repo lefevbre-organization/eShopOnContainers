@@ -46,6 +46,7 @@ namespace Lexon.API.Extensions
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IActuationsService, ActuationsService>();
             services.AddTransient<IAdvisorsService, AdvisorsService>();
+            services.AddTransient<IContactsService, ContactsService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
             return services;
         }

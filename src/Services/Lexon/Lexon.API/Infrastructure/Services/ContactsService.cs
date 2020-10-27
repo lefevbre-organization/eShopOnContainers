@@ -3,6 +3,7 @@ using Lexon.API.Infrastructure.Exceptions;
 using Lexon.API.Infrastructure.Repositories;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
@@ -49,11 +50,11 @@ namespace Lexon.Infrastructure.Services
 
 
 
-        private void CompleteContacts(string idUser, string bbdd, Result<List<LexContact>> result)
+        private void CompleteContacts(string idUser, string bbdd, Result<PaginatedItemsViewModel<LexContact>> result)
         {
             try
             {
-                foreach (var contact in result.data)
+                foreach (var contact in result.data.Data)
                 {
                     if (contact.IdType == null) continue;
 
@@ -146,16 +147,17 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<List<LexContact>>> GetAllContactsAsync(string env, string idUser, string bbdd, int pageIndex, int pageSize)
+        public async Task<Result<PaginatedItemsViewModel<LexContact>>> GetAllContactsAsync(string env, string idUser, string bbdd, string email, int pageIndex, int pageSize)
         {
-            var result = new Result<List<LexContact>>(new List<LexContact>());
+
+            var result = new Result<PaginatedItemsViewModel<LexContact>>(new PaginatedItemsViewModel<LexContact>(pageIndex, pageSize, 0, new List<LexContact>()));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.Lexon.GetAllContacts);
 
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(_conn))
                 {
-                    var filtro = GetMailFilter(idUser, bbdd, null);
+                    var filtro = GetMailFilter(idUser, bbdd, email);
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAllContacts, conn))
                     {
@@ -171,8 +173,10 @@ namespace Lexon.Infrastructure.Services
                                     var rawResult = reader.GetValue(0).ToString();
                                     if (!string.IsNullOrEmpty(rawResult))
                                     {
-                                        result.data = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        var resultado = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        result.data = new PaginatedItemsViewModel<LexContact>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
                                         CompleteContacts(idUser, bbdd, result);
+
                                     }
                                     else
                                     {
@@ -185,7 +189,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get all contacts", ex), Codes.Lexon.GetAllContacts, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get contacts", ex), Codes.Lexon.GetAllContacts, "MYSQLCONN");
             }
             return result;
         }

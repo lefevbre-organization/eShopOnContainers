@@ -91,8 +91,8 @@ namespace Lexon.API.Controllers
         }
 
         [HttpGet("{idUser}/{bbdd}/all")]
-        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexContact>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexContact>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetContactsAsync(
             [FromRoute] string idUser = "449",
@@ -103,7 +103,7 @@ namespace Lexon.API.Controllers
             )
         {
 
-            Result<List<LexContact>> result = await _svc.GetAllContactsAsync(env, idUser, bbdd, pageIndex, pageSize);
+            Result<PaginatedItemsViewModel<LexContact>> result = await _svc.GetAllContactsAsync(env, idUser, bbdd, null, pageIndex, pageSize);
             return Ok(result);
         }
 

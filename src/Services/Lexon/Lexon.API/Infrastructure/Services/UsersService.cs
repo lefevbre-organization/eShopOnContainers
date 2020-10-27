@@ -587,7 +587,8 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
-            return await _svcContacts.GetAllContactsAsync(search.env, search.idUser, search.bbdd, 0, 0);
+            var resultadoPaginado = await _svcContacts.GetAllContactsAsync(search.env, search.idUser, search.bbdd, null, 0, 0);
+            return new Result<List<LexContact>>() { data = (List<LexContact>)resultadoPaginado.data.Data, errors=resultadoPaginado.errors, infos = resultadoPaginado.infos};
            
         }
 
