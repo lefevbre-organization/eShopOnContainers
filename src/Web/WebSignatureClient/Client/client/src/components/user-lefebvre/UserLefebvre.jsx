@@ -6,7 +6,7 @@ import { clearUserCredentials, setUserCredentials } from "../../actions/applicat
 import history from "../../routes/history";
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts } from "../../services/jwt";
 import Cookies from 'js-cookie';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
@@ -260,7 +260,7 @@ class UserLefebvre extends Component {
                                                 console.log('Resultado de creación de Branding');
                                                 console.log(res);
                                                 var userBranding = [{app: app, externalId: res.id}];
-                                                addOrUpdateBranding(user, userBranding[0]);
+                                                addOrUpdateBrandingEmail(user, userBranding[0]);
                                                 this.props.setUserBrandings('certifiedEmail', userBranding);
                                             })
                                             .catch( err => {
