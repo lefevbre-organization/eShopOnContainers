@@ -80,7 +80,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado del usuario {user}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado del usuario {user}"), "SG10");
                 }
                 else
                 {
@@ -91,7 +91,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}", "SG10");
             }
             return result;
         }
@@ -106,7 +106,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra información"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra información"), "SG11");
                 }
                 else
                 {
@@ -115,7 +115,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos: {ex.Message}"); ;
+                TraceInfo(result.infos, $"Error al obtener datos: {ex.Message}", "SG11"); ;
             }
 
             return result;
@@ -130,17 +130,18 @@
             {
                 var resultReplace = await _context.Emails.ReplaceOneAsync(filter, userEmail, GetUpsertOptions());
 
-                var id = ManageCreateSignature($"User don't inserted {userEmail.User}",
+                var id = ManageCreateMessage(
+                    $"User don't inserted {userEmail.User}",
                     $"User already existed and it's been modified {userEmail.User}",
                     $"User inserted {userEmail.User}",
-                    result, resultReplace);
+                    result.infos, result.errors, resultReplace, "SG03");
 
                 result.data = userEmail;
 
             }
             catch (Exception)
             {
-                TraceInfo(result.infos, $"Error al guardar la firma {userEmail.User}");
+                TraceInfo(result.infos, $"Error al guardar la firma {userEmail.User}", "SG03");
                 throw;
             }
             return result;
@@ -156,12 +157,12 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}", "SG12");
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG12");
             }
             return result;
         }
@@ -179,7 +180,7 @@
                 if (userDb == null)
                 {
                     userDb = userEmail;
-                    TraceInfo(result.infos, $"Se inserta el usuario {userEmail.User}");
+                    TraceInfo(result.infos, $"Se inserta el usuario {userEmail.User}", "SG13");
                 }
                 else
                 {
@@ -189,7 +190,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG13");
             }
 
             result.data = true;
@@ -209,7 +210,7 @@
                 if (userDb == null)
                 {
                     userDb = userSignature;
-                    TraceInfo(result.infos, $"Se inserta el branding {brandingIn.app} con id {brandingIn.externalId} para el usuario {user}");
+                    TraceInfo(result.infos, $"Se inserta el branding {brandingIn.app} con id {brandingIn.externalId} para el usuario {user}", "SG14");
                 }
                 else
                 {
@@ -219,7 +220,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG14");
             }
 
             result.data = true;
@@ -241,12 +242,12 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {emailId}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {emailId}"), "SG15");
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {emailId}: {ex.Message} - {ex.StackTrace}");
+                TraceInfo(result.infos, $"Error al obtener datos de {emailId}: {ex.Message} - {ex.StackTrace}", "SG15");
             }
             return result;
         }
@@ -301,7 +302,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG16");
             }
             return result;
         }
@@ -309,26 +310,6 @@
         #endregion
 
          #region Helpers
-        private string ManageCreateSignature(string msgError, string msgModify, string msgInsert, Result<UserEmails> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, msgModify);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert);
-                    return resultReplace.UpsertedId.ToString();
-                }
-            }
-            else
-            {
-                TraceError(result.errors, new Exception(msgError), "1003");
-            }
-            return null;
-        }
 
         private UserEmails GetNewUserEmail(string user, CertifiedEmail emailIn)
         {
@@ -371,12 +352,12 @@
             if (emailDb == null)
             {
                 userDb.CertifiedEmails.Add(emailIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un email certificado idExterno: {emailIn.ExternalId} Guid: {emailIn.Guid} App: {emailIn.App}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un email certificado idExterno: {emailIn.ExternalId} Guid: {emailIn.Guid} App: {emailIn.App}", "SG22");
             }
             else
             {
                 UpdateEmailWithOther(emailIn, emailDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el email certificado {emailIn.ExternalId}-{emailDb.ExternalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el email certificado {emailIn.ExternalId}-{emailDb.ExternalId}", "SG22");
             }
         }
 
@@ -390,12 +371,12 @@
             if (brandingDb == null)
             {
                 userDb.Brandings.Add(brandingIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}", "SG17");
             }
             else
             {
                 UpdateBrandingWithOther(brandingIn, brandingDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el branding para {brandingIn.app}-{brandingIn.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el branding para {brandingIn.app}-{brandingIn.externalId}", "SG17");
             }
         }
 

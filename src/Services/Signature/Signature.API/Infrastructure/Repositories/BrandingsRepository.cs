@@ -96,7 +96,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "SG04");
                 }
                 else
                 {
@@ -107,7 +107,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}", "SG04");
             }
             return result;
         }
@@ -122,7 +122,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "SG05");
                 }
                 else
                 {
@@ -133,7 +133,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}", "SG05");
             }
             return result;
         }
@@ -148,7 +148,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún branding con los datos facilitados"), "SG06");
                 }
                 else
                 {
@@ -159,7 +159,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}", "SG06");
             }
             return result;
         }
@@ -173,17 +173,18 @@
             {
                 var resultReplace = await _context.Brandings.ReplaceOneAsync(filter, brandingIn, GetUpsertOptions());
 
-                brandingIn.Id = ManageCreateBranding($"Branding don't inserted {brandingIn.app}, type {brandingIn.type}",
+                brandingIn.Id = ManageCreateMessage(
+                    $"Branding don't inserted {brandingIn.app}, type {brandingIn.type}",
                     $"Branding already existed and it's been modified {brandingIn.app}, type {brandingIn.type}",
                     $"Branding inserted {brandingIn.app} type {brandingIn.type}",
-                    result, resultReplace);
+                    result.infos, result.errors, resultReplace, "SG01");
 
                 result.data = brandingIn;
 
             }
             catch (Exception)
             {
-                TraceInfo(result.infos, $"Error al guardar el branding {brandingIn.app}, type {brandingIn.type}");
+                TraceInfo(result.infos, $"Error al guardar el branding {brandingIn.app}, type {brandingIn.type}", "SG01");
                 throw;
             }
             return result;
@@ -198,17 +199,18 @@
             {
                 var resultReplace = await _context.TestBrandings.ReplaceOneAsync(filter, brandingIn, GetUpsertOptions());
 
-                brandingIn.Id = ManageCreateBranding($"Branding don't inserted {brandingIn.app}, type {brandingIn.type}",
+                brandingIn.Id = ManageCreateMessage(
+                    $"Branding don't inserted {brandingIn.app}, type {brandingIn.type}",
                     $"Branding already existed and it's been modified {brandingIn.app}, type {brandingIn.type}",
                     $"Branding inserted {brandingIn.app} type {brandingIn.type}",
-                    result, resultReplace);
+                    result.infos, result.errors, resultReplace, "SG02");
 
                 result.data = brandingIn;
 
             }
             catch (Exception)
             {
-                TraceInfo(result.infos, $"Error al guardar el branding {brandingIn.app}, type {brandingIn.type}");
+                TraceInfo(result.infos, $"Error al guardar el branding {brandingIn.app}, type {brandingIn.type}", "SG02");
                 throw;
             }
             return result;
@@ -224,7 +226,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "SG09");
                 }
                 else
                 {
@@ -235,7 +237,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}", "SG09");
             }
             return result;
         }
@@ -246,27 +248,6 @@
         private static UpdateOptions GetUpsertOptions()
         {
             return new UpdateOptions { IsUpsert = true };
-        }
-
-        private string ManageCreateBranding(string msgError, string msgModify, string msgInsert, Result<BaseBrandings> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, msgModify);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert);
-                    return resultReplace.UpsertedId.ToString();
-                }
-            }
-            else
-            {
-                TraceError(result.errors, new Exception(msgError), "1003");
-            }
-            return null;
         }
         #endregion
 
