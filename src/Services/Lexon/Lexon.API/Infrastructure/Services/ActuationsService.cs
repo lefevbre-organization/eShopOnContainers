@@ -566,7 +566,9 @@ namespace Lexon.Infrastructure.Services
                 //GetTextFilter("idLexnet", action.IdLexnet) +
                 $" }}";
         }
-   
+
+
         #endregion Actuations
+
     }
 }

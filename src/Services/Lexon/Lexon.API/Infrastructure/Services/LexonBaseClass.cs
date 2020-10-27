@@ -2,6 +2,7 @@
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Data;
 
@@ -72,6 +73,65 @@ namespace Lexon.Infrastructure.Services
             }
 
             return idError;
+        }
+
+        public string GiveMeEntityFilter(EntitySearchById search)
+        {
+            return $"{{ " +
+                    GetUserFilter(search.bbdd, search.idUser) +
+                    GetShortFilter("IdEntityType", search.idType) +
+                    GetLongFilter("IdRelation", search.idEntity) +
+                    $" }}";
+        }
+
+        public string GiveMeEntityFilter(string idUser, string bbdd, short idType, long idEntity)
+        {
+            return $"{{ " +
+                    GetUserFilter(bbdd, idUser) +
+                    GetShortFilter("IdEntityType", idType) +
+                    GetLongFilter("IdRelation", idEntity) +
+                    $" }}";
+        }
+
+        public string GetMailFilter(string idUser, string bbdd, string email)
+        {
+            return $"{{ " +
+                GetUserFilter(bbdd, idUser) +
+                GetTextFilter("email", email) +
+                $" }}";
+        }
+
+        private string GetMailInfoFilter(MailInfo mail)
+        {
+            return $"{GetTextFilter("Provider", mail.Provider)}" +
+                $"{GetTextFilter("MailAccount", mail.MailAccount)}" +
+                $"{GetTextFilter("Uid", mail.Uid)}" +
+                $"{GetTextFilter("Subject", mail.Subject)}" +
+                $"{GetTextFilter("Folder", mail.Folder)}" +
+                $"{GetTextFilter("Date", mail.Date)}";
+        }
+
+        private string GetContactList(string name, string[] list, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return list != null ? $"{comma}\"{name}\":{JsonConvert.SerializeObject(list)}" : string.Empty;
+        }
+
+        public string GetRelationByIdFilter(short? idType, long? idRelated)
+        {
+            return idType != null && idRelated != null
+                ? $"{GetShortFilter("IdActionRelationType", idType)}{GetLongFilter("IdRelation", idRelated)}"
+                : string.Empty;
+        }
+
+        public string GiveMeRelationFilter(string bbdd, string idUser, MailInfo mailInfo, short? idType, long? idRelated, string[] contactList)
+        {
+            return $"{{ " +
+                GetUserFilter(bbdd, idUser) +
+                GetRelationByIdFilter(idType, idRelated) +
+                GetMailInfoFilter(mailInfo) +
+                GetContactList("ContactList", contactList) +
+                $" }}";
         }
     }
 }

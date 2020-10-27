@@ -15,6 +15,12 @@
             public static readonly string GetActuations = "LX62";
             public static readonly string AddAction = "LX63";
         }
+        public static class LexonAdvisors
+        {
+            public static readonly string GetAdvisorFiles = "LX70";
+            public static readonly string GetAdvisorContacts = "LX71";
+
+        }
 
         public static class Lexon
         {
