@@ -282,6 +282,7 @@ namespace Lexon.Infrastructure.Services
                                 if (!string.IsNullOrEmpty(rawResult))
                                 {
                                     var resultado = JsonConvert.DeserializeObject<LexAppointmentActuation>(rawResult);
+                                    CompleteDataRelations(resultado);
                                     result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado.actuaciones);
                         
                                 }
@@ -315,6 +316,19 @@ namespace Lexon.Infrastructure.Services
             }
        
             return result;
+        }
+
+        private void CompleteDataRelations(LexAppointmentActuation appointmentActuation)
+        {
+            
+            var DataActuation = appointmentActuation.actuaciones.ToList();
+
+            foreach (var act in DataActuation)
+            {
+                act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.entityIdType);
+               // act.idMail = appointmentActuation.uid;
+
+            }
         }
 
         private string GetRelationsApointmentFilter(string bbdd, string idUser, string idAppointment)
