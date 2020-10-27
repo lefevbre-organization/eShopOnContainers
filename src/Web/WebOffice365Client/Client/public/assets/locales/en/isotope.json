@@ -101,7 +101,8 @@
     "toast-process-complete": "Process complete",
     "toast-process-error-exist": "An event type with the same name already exists",
     "toast-process-error": "Error",
-    "validator-required": "Field is required"
+    "validator-required": "Field is required",
+    "toast-repeat": "The calendar's name already exists"
   },
   "calendar": {
     "title": "Calendar Configuration",

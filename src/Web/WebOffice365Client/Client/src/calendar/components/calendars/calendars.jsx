@@ -22,7 +22,8 @@ export class Calendars extends React.Component {
         this.toasts = [
             { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
             { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
-            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
+            { content: i18n.t("schedule.toast-repeat"), cssClass: 'e-toast-danger', icon: '' },
         ] 
     }
 
@@ -31,8 +32,27 @@ export class Calendars extends React.Component {
         show: {  duration: '200' }
     };
 
+    CheckIfCalendarPrimaryExist() {
+        if (this.nameObj.value.toLowerCase() == "calendario" || this.nameObj.value.toLowerCase() == "calendar") {
+            return true;
+        }
+
+        else {
+            return false
+        }
+    }
+    
+
     onAddClick(args) {
         this.setState({ buttonDisabled: true })
+
+        if (this.CheckIfCalendarPrimaryExist())
+        {
+            this.toastObj.show(this.toasts[3]);
+            this.setState({ buttonDisabled: false })
+            return ;
+        }
+
 
         let calendar = {
             "summary": this.nameObj.value,
@@ -58,13 +78,19 @@ export class Calendars extends React.Component {
                 this.toastObj.showProgressBar = false
                 this.toastObj.hide('All');
                 this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[2]);
+                this.toastObj.show({ content: error.message, cssClass: 'e-toast-danger', icon: '' });
                 this.addBtn.properties.disabled = false
                 this.setState({ buttonDisabled: false })
             });
     }
 
     onModifyClick(args) {
+
+        if (this.CheckIfCalendarPrimaryExist()) {
+            this.toastObj.show(this.toasts[3]);
+            this.setState({ buttonDisabled: false })
+            return;
+        }
 
         let calendarData = {
             "summary": this.nameObj.value,
@@ -87,7 +113,7 @@ export class Calendars extends React.Component {
                 console.log('error ->', error);
                 this.toastObj.showProgressBar = false
                 this.toastObj.hide('All');
-                this.toastObj.show(this.toasts[2]);
+                this.toastObj.show({ content: error.message, cssClass: 'e-toast-danger', icon: '' });
                 this.addBtn.properties.disabled = false
                 this.setState({ buttonDisabled: false })
             });
@@ -114,12 +140,13 @@ export class Calendars extends React.Component {
     render() {
         var ObjClick;
         var ObjText;
+
         if (this.props.calendarId != '') {
-            ObjClick = this.onModifyClick
+           ObjClick = this.onModifyClick
             ObjText = i18n.t("calendar.modify")            
         }
         else {
-            ObjClick = this.onAddClick
+           ObjClick = this.onAddClick
             ObjText = i18n.t("calendar.add")
         }
 
@@ -205,7 +232,7 @@ export class Calendars extends React.Component {
                                 position={this.position}
                                 target={this.target}
                                 animation={this.toastCusAnimation}
-                                timeOut={1000}
+                                timeOut={3000}
                             >
                             </ToastComponent>
                         </div>
