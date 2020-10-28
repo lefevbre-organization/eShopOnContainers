@@ -1,5 +1,12 @@
 import React, { PureComponent } from 'react';
-import { sendMessage, getMessageHeader } from '../../api';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'redux';
+import { 
+  sendMessage, 
+  getMessageHeader, 
+  createDraft,
+  getDraftListWithRFC
+} from '../../api';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -12,6 +19,7 @@ import {
 import '../../../node_modules/react-quill/dist/quill.snow.css';
 import './composeMessage.scss';
 import ACTIONS from '../../actions/lexon';
+import { getEmailHeaderMessage, getEmailMessage } from '../content/message-list/actions/message-list.actions';
 import { connect } from 'react-redux';
 import { prettySize } from '../../utils/prettify';
 import { Notification, Confirmation } from '../notification/';
@@ -128,6 +136,8 @@ export class ComposeMessage extends PureComponent {
       errorNotification: false,
       messageNotification: '',
       showEmptySubjectWarning: false,
+      draftTime: '',
+      draftId: ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -224,9 +234,8 @@ export class ComposeMessage extends PureComponent {
     this.state.defaultContent = this.state.content;
   }
 
-  componentDidMount() {
+  componentDidMount(prevProps) {
     const { lexon } = this.props;
-
     if (lexon.sign && lexon.sign !== '') {
       const { content } = this.state;
       const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
@@ -242,6 +251,36 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    const messageId = this.props.match.params.id;
+    if(messageId){
+      this.props.getEmailHeaderMessage(messageId);
+      this.props.getEmailMessage(messageId);
+    }
+  }
+
+  getById() {
+    if(this.props.emailMessageResult.body != ''){
+      const messageId = this.props.emailMessageResult.result.messageHeaders.find(x => 
+        x.name == "Message-ID" || x.name == "Message-Id");
+        getDraftListWithRFC(
+          messageId.value
+          ).then((data) => {
+            const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
+            const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
+      
+            const toEmails = to.value.split(',');
+            toEmails.forEach(toEmail => {
+              this.addAddress('to', toEmail);
+            });
+            
+            this.setState({
+              subject: subject.value, 
+              defaultContent: this.props.emailMessageResult.result.snippet,
+              content: this.props.emailMessageResult.result.snippet,
+              draftId: data.result.drafts[0].id
+            });
+        });
+    }
   }
 
   handleGetUserFromLexonConnector() {
@@ -376,6 +415,21 @@ export class ComposeMessage extends PureComponent {
     // this.uppyOne.upload();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.to !== this.state.to 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) {
+      this.saveDraft();
+    }
+
+    if(
+      prevProps.emailMessageResult !== this.props.emailMessageResult
+      ) {
+      this.getById();
+    }
+  }
+
   componentWillUnmount() {
     window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
@@ -384,7 +438,9 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-
+    
+    this.props.setMailContacts(null);
+    
     this.uppy.close();
   }
 
@@ -424,6 +480,48 @@ export class ComposeMessage extends PureComponent {
         return String.fromCharCode(parseInt(p1, 16));
       })
     );
+  }
+
+  getTimeDraft() {
+    const date = new Date();
+    const time = date.toLocaleString(
+      navigator.language, 
+      {
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: "2-digit"
+      });
+    return time >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
+  }
+  
+  saveDraft() {
+    const validTo = getValidEmails(this.state.to);
+    const headers = {
+      To: validTo.join(', '),
+      Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
+      attachments: this.state.uppyPreviews,
+      From: this.props.googleUser.getBasicProfile(),
+    };
+
+    const Fileattached = this.state.uppyPreviews;
+
+    const fullTime = this.getTimeDraft();
+    if(this.state.to != '' || this.state.subject != '' || this.state.content != ''){
+      setTimeout(() => {
+        createDraft({
+          headers,
+          body: this.state.content,
+          attachments: Fileattached,
+          draftId: this.state.draftId
+        }).then((draft) => {
+          this.setState({draftTime: fullTime, draftId: draft.id});
+        })
+        .catch((err) => {
+          console.log('Error sending email:' + err);
+        });
+      }, 100);
+    }
+    
   }
 
   _sendEmail() {
@@ -760,6 +858,7 @@ export class ComposeMessage extends PureComponent {
       messageNotification,
       showEmptySubjectWarning,
       errorNotification,
+      draftTime
     } = this.state;
     const { to2, cc2, bcc2 } = this.state;
 
@@ -936,6 +1035,7 @@ export class ComposeMessage extends PureComponent {
                 <FontAwesomeIcon icon={faPaperclip} size='1x' />
                 <span>{i18n.t('compose-message.attach')}</span>
               </Button>
+              { draftTime != '' ? <span className="draft-time">Borrador guardado {draftTime}</span> : null}
               <div id='inputfileWrapper'></div>
             </div>
           </div>
@@ -963,6 +1063,15 @@ export class ComposeMessage extends PureComponent {
             font-size: 20px;
             margin-right: 5px;
           }
+
+          .draft-time {
+            color: #001978;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            top: 2px;
+          }
+
         `}</style>
       </React.Fragment>
     );
@@ -973,6 +1082,8 @@ const mapStateToProps = (state) => {
   return {
     lexon: state.lexon,
     messagesResult: state.messagesResult,
+    emailMessageResult: state.emailMessageResult,
+    emailHeaderMessageResult: state.emailHeaderMessageResult,
   };
 };
 
@@ -980,9 +1091,15 @@ const mapDispatchToProps = (dispatch) => ({
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
+  getEmailMessage: (messageId) => 
+    dispatch(getEmailMessage(messageId)),
+  getEmailHeaderMessage: (messageId) => 
+    dispatch(getEmailHeaderMessage(messageId))
+    
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
+export default compose(
+  withRouter, connect(mapStateToProps, mapDispatchToProps))(ComposeMessage);
 
 function fileNameAndExt(str) {
   var file = str.split('/').pop();
