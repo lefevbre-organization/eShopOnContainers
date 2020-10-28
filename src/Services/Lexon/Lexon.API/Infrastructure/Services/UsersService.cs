@@ -21,22 +21,27 @@ namespace Lexon.Infrastructure.Services
     public class UsersService : LexonBaseClass<UsersService>, IUsersService
     {
         public readonly IUsersRepository _usersRepository;
+        private readonly IContactsService _svcContacts;
         private readonly IEventBus _eventBus;
         private readonly HttpClient _clientFiles;
         private readonly IOptions<LexonSettings> _settings;
         private string _conn;
         private string _urlLexon;
 
+
         public UsersService(
                 IOptions<LexonSettings> settings
                 , IUsersRepository usersRepository
                 , IEventBus eventBus
                 , ILogger<UsersService> logger
+                , IContactsService svcContacts
+
             ) : base(logger)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _svcContacts = svcContacts ?? throw new ArgumentNullException(nameof(svcContacts));
             ConfigureByEnv(null, null, _settings.Value, out _conn, out _urlLexon, Codes.Lexon.Generic);
 
             var handler = new HttpClientHandler()
@@ -256,40 +261,6 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}", Codes.Lexon.AddClassificationToList);
             }
-        }
-
-        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
-        {
-            var result = new Result<int>(0);
-            ConfigureByEnv(classification.env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.Lexon.AddContactsToMail);
-
-            try
-            {
-                classification.mail.Subject = RemoveProblematicChars(classification.mail.Subject);
-
-                using (MySqlConnection conn = new MySqlConnection(_conn))
-                {
-                    string filtro = GiveMeRelationFilter(classification.bbdd, classification.idUser, classification.mail, null, null, classification.ContactList);
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddContactRelations, conn))
-                    {
-                        AddCommonParameters(classification.idUser, command, "P_JSON", filtro);
-                        await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        CheckErrorOutParameters(command, result.errors, Codes.Lexon.AddContactsToMail, nameof(AddRelationContactsMailAsync));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), Codes.Lexon.AddContactsToMail, "MYSQLCONN");
-            }
-
-            if (_settings.Value.UseMongo)
-            {
-                //TODO: Add relation contact to mongo
-            }
-            return result;
         }
 
         public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
@@ -606,116 +577,29 @@ namespace Lexon.Infrastructure.Services
 
         #endregion Classifications
 
-        #region "Contacts"
+        #region Contacts
 
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
-            var result = new Result<LexContact>(new LexContact());
-            ConfigureByEnv(entitySearch.env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.Lexon.GetContact);
+            return await _svcContacts.GetContactAsync(entitySearch.env, entitySearch.idUser, entitySearch.bbdd, (short)entitySearch.idType, (long)entitySearch.idEntity);
 
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(_conn))
-                {
-                    var filtro = GiveMeEntityFilter(entitySearch);
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
-                    {
-                        AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(1, 1, "ts", "desc", command);
-
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            CheckErrorOutParameters(command, result.errors, Codes.Lexon.GetContact, nameof(GetContactAsync));
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    var rawResult = reader.GetValue(0).ToString();
-                                    if (!string.IsNullOrEmpty(rawResult))
-                                    {
-                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-                                        result.data = lista?.FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, "MYSQL");
-                                    }
-                                }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new LexonDomainException($"Error when get contact", ex), Codes.Lexon.GetContact, "MYSQLCONN");
-            }
-
-            return result;
         }
 
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
-            var result = new Result<List<LexContact>>(new List<LexContact>());
-            ConfigureByEnv(search.env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.Lexon.GetAllContacts);
-
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(_conn))
-                {
-                    var filtro = GiveMeBaseFilter(search.bbdd, search.idUser);
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAllContacts, conn))
-                    {
-                        AddCommonParameters(search.idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(1, 1, "ts", "desc", command);
-
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            CheckErrorOutParameters(command, result.errors, Codes.Lexon.GetAllContacts, nameof(GetAllContactsAsync));
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    var rawResult = reader.GetValue(0).ToString();
-                                    if (!string.IsNullOrEmpty(rawResult))
-                                    {
-                                        result.data = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-                                        CompleteContacts(search, result);
-                                    }
-                                    else
-                                    {
-                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, "MYSQL");
-                                    }
-                                }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new LexonDomainException($"Error when get all contacts", ex), Codes.Lexon.GetAllContacts, "MYSQLCONN");
-            }
-            return result;
+            var resultadoPaginado = await _svcContacts.GetAllContactsAsync(search.env, search.idUser, search.bbdd, null, 0, 0);
+            return new Result<List<LexContact>>() { data = (List<LexContact>)resultadoPaginado.data.Data, errors=resultadoPaginado.errors, infos = resultadoPaginado.infos};
+           
         }
 
-        private void CompleteContacts(BaseView search, Result<List<LexContact>> result)
+        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
-            try
-            {
-                foreach (var contact in result.data)
-                {
-                    if (contact.IdType == null) continue;
+            var contact = new ContactsView { ContactList = classification.ContactList, mail = classification.mail };
 
-                    contact.EntityType = contact.IdType != null ? Enum.GetName(typeof(LexonAdjunctionType), contact.IdType) : null;
-                    contact.Tags = new string[] { search.bbdd, search.idUser, contact.EntityType };
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error no controlado al completar datos del contacto + {ex.Message}", Codes.Lexon.GetAllContacts);
-            }
+            return await _svcContacts.AddRelationContactsMailAsync(classification.env, classification.idUser, classification.bbdd, contact);
         }
 
-        #endregion "Contacts"
+        #endregion Contacts
 
         #region Folders
 
@@ -1041,21 +925,7 @@ namespace Lexon.Infrastructure.Services
             return $"{{ {GetUserFilter(bbdd, idUser)} }}";
         }
 
-        private string GiveMeRelationFilter(string bbdd, string idUser, MailInfo mailInfo, short? idType, long? idRelated, string[] contactList)
-        {
-            return $"{{ " +
-                GetUserFilter(bbdd, idUser) +
-                GetRelationByIdFilter(idType, idRelated) +
-                GetMailFilter(mailInfo) +
-                GetContactList("ContactList", contactList) +
-                $" }}";
-        }
 
-        private string GetContactList(string name, string[] list, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            return list != null ? $"{comma}\"{name}\":{JsonConvert.SerializeObject(list)}" : string.Empty;
-        }
 
         private string GiveMeRelationMultipleFilter(string bbdd, string idUser, MailInfo[] listaMails, short? idType, long? idRelated)
         {
@@ -1064,16 +934,6 @@ namespace Lexon.Infrastructure.Services
                 GetRelationByIdFilter(idType, idRelated) +
                 GetMailListFilter("ListaMails", listaMails) +
                 $" }}";
-        }
-
-        private string GetMailFilter(MailInfo mail)
-        {
-            return $"{GetTextFilter("Provider", mail.Provider)}" +
-                $"{GetTextFilter("MailAccount", mail.MailAccount)}" +
-                $"{GetTextFilter("Uid", mail.Uid)}" +
-                $"{GetTextFilter("Subject", mail.Subject)}" +
-                $"{GetTextFilter("Folder", mail.Folder)}" +
-                $"{GetTextFilter("Date", mail.Date)}";
         }
 
         private string GeFolderCreateFilter(FolderToEntity folderToEntity)
@@ -1093,13 +953,6 @@ namespace Lexon.Infrastructure.Services
             return $"{comma}\"{name}\":{JsonConvert.SerializeObject(mailInfoList)}";
         }
 
-        private string GetRelationByIdFilter(short? idType, long? idRelated)
-        {
-            return idType != null && idRelated != null
-                ? $"{GetShortFilter("IdActionRelationType", idType)}{GetLongFilter("IdRelation", idRelated)}"
-                : string.Empty;
-        }
-
         private string GiveMeSearchRelationsFilter(short? idType, string bbdd, string idUser, string idMail = "")
         {
             return $"{{ " +
@@ -1116,15 +969,6 @@ namespace Lexon.Infrastructure.Services
                     GetShortFilter("IdEntityType", ((EntitySearchView)search).idType) +
                     GetTextFilter("Description", search.search) +
                     GetFolderDocumentFilter(search) +
-                    $" }}";
-        }
-
-        private string GiveMeEntityFilter(EntitySearchById search)
-        {
-            return $"{{ " +
-                    GetUserFilter(search.bbdd, search.idUser) +
-                    GetShortFilter("IdEntityType", search.idType) +
-                    GetLongFilter("IdRelation", search.idEntity) +
                     $" }}";
         }
 
