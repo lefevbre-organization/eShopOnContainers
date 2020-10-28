@@ -4,25 +4,24 @@ import PropTypes from 'prop-types';
 import SaveDocument from '../save-document/save-document';
 import i18n from 'i18next';
 import { connect } from 'react-redux';
-import { getClassifications } from '../../../../services/services-lexon';
-import ModalConnectingEmails from '../../../modal-connecting-emails/modal-connecting-emails';
-import ListClassifications from '../list-classifications/list-classifications';
+import { getEventClassifications } from '../../../../services/services-lexon';
+import ListEventClassifications from '../list-classifications/list-classifications';
 import ConfirmRemoveClassification from '../../../confirm-remove-classification/confirm-remove-classification';
 import Spinner from '../../../../components/spinner/spinner';
-import ModalConnectingEvents from "../../modal-connecting-events/modal-connecting-events";
 
 class TabConnectMessage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      classifications: [],
       showClassifications: true,
       showConfirmRemoveClassification: false,
     };
     this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(
       this
     );
-    this.getClassifications = this.getClassifications.bind(this);
+    this.getEventClassifications = this.getEventClassifications.bind(this);
   }
 
   componentDidMount() {
@@ -35,7 +34,7 @@ class TabConnectMessage extends Component {
     }
 
     if (selectedMessages.length === 1) {
-      this.getClassifications(this.props.selectedMessages[0].id);
+      this.getEventClassifications(selectedMessages[0].Guid);
     } else {
       this.setState({ classifications: [], showClassifications: false });
     }
@@ -66,18 +65,17 @@ class TabConnectMessage extends Component {
     }));
   }
 
-  getClassifications(mailId) {
+  getEventClassifications(eventId) {
     const { user, companySelected } = this.props;
 
-    getClassifications(
-      user,
-      companySelected.idCompany,
-      companySelected.bbdd,
-      mailId
+    getEventClassifications(
+        companySelected.bbdd,
+        user.idUser,
+        eventId
     )
       .then((result) => {
         this.setState({
-          classifications: result.classifications,
+          classifications: result.data.data,
           showClassifications: true,
         });
       })
@@ -87,29 +85,23 @@ class TabConnectMessage extends Component {
   }
 
   renderShowClassifications() {
-    const { user } = this.props;
-    const { classifications, showClassifications } = this.state;
+    const { bbdd, user } = this.props;
+    const { classifications } = this.state;
 
-    if (showClassifications) {
+    if(this.state.classifications && this.state.classifications.length > 0) {
       return (
-        <ListClassifications
-          user={user}
-          updateClassifications={getClassifications}
-          classifications={classifications}
-          toggleConfirmRemoveClassification={
-            this.toggleConfirmRemoveClassification
-          }
-        />
+          <ListEventClassifications
+              user={user.idUser}
+              updateClassifications={()=> { console.log("REFRESH...") }}
+              classifications={classifications}
+              toggleConfirmRemoveClassification={
+                this.toggleConfirmRemoveClassification
+              }
+          />
       );
     } else {
       return null;
     }
-  }
-
-  renderShowSaveDocument() {
-    const { user } = this.props;
-
-      return <SaveDocument user={user} />;
   }
 
   render() {
@@ -124,21 +116,22 @@ class TabConnectMessage extends Component {
     }
 
 
+    debugger
     return (
       <Fragment>
         <p className={"empty-text"}>{i18n.t('classification-calendar.empty')} <span>{i18n.t('classification-calendar.new-classification')}</span></p>
         <ConfirmRemoveClassification
-          user={user}
+          user={user.idUser}
           initialModalState={showConfirmRemoveClassification}
           toggleConfirmRemoveClassification={
             this.toggleConfirmRemoveClassification
           }
           classification={classificationToRemove}
-          updateClassifications={this.getClassifications}
+          updateClassifications={this.getEventClassifications}
           toggleNotification={toggleNotification}
         />
 
-        {this.renderShowSaveDocument()}
+        { this.renderShowClassifications() }
 
         <style jsx>{`
           .empty-text {

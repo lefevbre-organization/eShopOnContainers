@@ -3,7 +3,7 @@ import "./confirm-remove-classification.css";
 import PropTypes from "prop-types";
 import i18n from "i18next";
 import { Button, Modal } from "react-bootstrap";
-import { removeClassification } from "../../services/services-lexon";
+import { removeEventClassifications } from "../../services/services-lexon";
 import { connect } from "react-redux";
 
 class ConfirmRemoveClassification extends Component {
@@ -22,25 +22,23 @@ class ConfirmRemoveClassification extends Component {
 
     toggleConfirmRemoveClassification();
     if (remove) {
-      this.removeClassification(classification);
+      this.removeEventClassification(classification);
     }
   }
 
-  removeClassification(classification) {
+  removeEventClassification(classification) {
     const {
       user,
       companySelected,
       updateClassifications,
       toggleNotification
     } = this.props;
-    const { idMail, entityIdType, idRelated } = classification;
-    removeClassification(
-      idMail,
-      entityIdType,
+
+    debugger
+    removeEventClassifications(
       companySelected.bbdd,
       user,
-      idRelated,
-      companySelected.idCompany,
+      classification,
     )
       .then(data => {
         if (data.results >= 1) {
@@ -119,7 +117,7 @@ ConfirmRemoveClassification.propTypes = {
   user: PropTypes.string.isRequired,
   initialModalState: PropTypes.bool.isRequired,
   toggleConfirmRemoveClassification: PropTypes.func.isRequired,
-  classification: PropTypes.object,
+  classification: PropTypes.string,
   updateClassifications: PropTypes.func.isRequired,
   toggleNotification: PropTypes.func.isRequired
 };

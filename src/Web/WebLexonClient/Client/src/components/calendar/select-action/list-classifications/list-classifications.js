@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import Classification from '../classification/classification';
+import EventClassification from '../classification/classification';
 import i18n from 'i18next';
 
-class ListClassifications extends Component {
+class ListEventClassifications extends Component {
   constructor(props) {
     super(props);
 
@@ -55,23 +55,18 @@ class ListClassifications extends Component {
 
     return (
       <Fragment>
-        <h2 className='lexon-title-list'>
-          {i18n.t('list-classifications.classifications')}
-        </h2>
-
-        {this.renderNoClassifications()}
 
         <div id='scrl-container'>
           <PerfectScrollbar options={{ suppressScrollX: true }}>
             <ul className='row lexon-document-list'>
               {classificationsFiltered &&
                 classificationsFiltered.map((classification) => {
+                  debugger
                   return (
-                    <Classification
+                    <EventClassification
                       classification={classification}
                       key={uuidv1()}
                       user={user}
-                      mail={mail}
                       updateClassifications={updateClassifications}
                       toggleConfirmRemoveClassification={
                         toggleConfirmRemoveClassification
@@ -84,8 +79,8 @@ class ListClassifications extends Component {
         </div>
         <style jsx>{`
           #scrl-container .scrollbar-container {
-            position: absolute !important;
-            top: 350px !important;
+            //position: absolute !important;
+            //top: 350px !important;
             bottom: 0 !important;
             height: unset !important;
           }
@@ -95,7 +90,7 @@ class ListClassifications extends Component {
   }
 }
 
-ListClassifications.propTypes = {
+ListEventClassifications.propTypes = {
   user: PropTypes.string.isRequired,
   toggleConfirmRemoveClassification: PropTypes.func.isRequired,
 };
@@ -107,4 +102,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(ListClassifications);
+export default connect(mapStateToProps)(ListEventClassifications);

@@ -567,7 +567,6 @@ export const getActuationTypes = async (bbdd, idUser) => {
 
     return (result && result.data)?result.data: null;
   } catch (err) {
-    debugger
     throw err;
   }
 }
@@ -729,6 +728,48 @@ export const getActuationCategories = async (bbdd, user) => {
 
     return { result };
   } catch (err) {
+    throw err;
+  }
+};
+
+export const getEventClassifications = async (bbdd, user, eventId) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/${eventId}?env=${window.currentEnv}&pageSize=100&pageIndex=1`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const removeEventClassifications = async (bbdd, user, idActuation) => {
+  debugger
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/relation/${idActuation}/remove?env=${window.currentEnv}`;
+
+  try {
+    debugger
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({})
+    });
+    const result = await response.json();
+
+    debugger
+    return result;
+  } catch (err) {
+    debugger
     throw err;
   }
 };
