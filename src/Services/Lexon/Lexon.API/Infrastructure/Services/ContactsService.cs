@@ -48,8 +48,6 @@ namespace Lexon.Infrastructure.Services
 
         #region Contacts
 
-
-
         private void CompleteContacts(string idUser, string bbdd, Result<PaginatedItemsViewModel<LexContact>> result)
         {
             try
@@ -121,20 +119,19 @@ namespace Lexon.Infrastructure.Services
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             CheckErrorOutParameters(command, result.errors, Codes.Lexon.GetContact, nameof(GetContactAsync));
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
+                            while (reader.Read())
+                            {
+                                var rawResult = reader.GetValue(0).ToString();
+                                if (!string.IsNullOrEmpty(rawResult))
                                 {
-                                    var rawResult = reader.GetValue(0).ToString();
-                                    if (!string.IsNullOrEmpty(rawResult))
-                                    {
-                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-                                        result.data = lista?.FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, "MYSQL");
-                                    }
+                                    var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                    result.data = lista?.FirstOrDefault();
                                 }
+                                else
+                                {
+                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, "MYSQL");
+                                }
+                            }
                         }
                     }
                 }
@@ -149,8 +146,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<PaginatedItemsViewModel<LexContact>>> GetAllContactsAsync(string env, string idUser, string bbdd, string email, int pageIndex, int pageSize)
         {
-
-            var result = new Result<PaginatedItemsViewModel<LexContact>>(new PaginatedItemsViewModel<LexContact>(pageIndex, pageSize, 0, new List<LexContact>()));
+            var result = new Result<PaginatedItemsViewModel<LexContact>>(new PaginatedItemsViewModel<LexContact>(pageIndex, pageSize));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.Lexon.GetAllContacts);
 
             try
@@ -167,22 +163,20 @@ namespace Lexon.Infrastructure.Services
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             CheckErrorOutParameters(command, result.errors, Codes.Lexon.GetAllContacts, nameof(GetAllContactsAsync));
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
+                            while (reader.Read())
+                            {
+                                var rawResult = reader.GetValue(0).ToString();
+                                if (!string.IsNullOrEmpty(rawResult))
                                 {
-                                    var rawResult = reader.GetValue(0).ToString();
-                                    if (!string.IsNullOrEmpty(rawResult))
-                                    {
-                                        var resultado = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-                                        result.data = new PaginatedItemsViewModel<LexContact>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
-                                        CompleteContacts(idUser, bbdd, result);
-
-                                    }
-                                    else
-                                    {
-                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, "MYSQL");
-                                    }
+                                    var resultado = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                    result.data = new PaginatedItemsViewModel<LexContact>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                                    CompleteContacts(idUser, bbdd, result);
                                 }
+                                else
+                                {
+                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, "MYSQL");
+                                }
+                            }
                         }
                     }
                 }

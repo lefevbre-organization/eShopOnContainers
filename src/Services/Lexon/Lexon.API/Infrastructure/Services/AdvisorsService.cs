@@ -55,7 +55,7 @@ namespace Lexon.Infrastructure.Services
  
         public async Task<Result<PaginatedItemsViewModel<LexAdvisorFile>>> GetAdvisorsFilesAsync(string env, string idUser, string bbdd, string email, int pageIndex, int pageSize)
         {
-            var result = new Result<PaginatedItemsViewModel<LexAdvisorFile>>(new PaginatedItemsViewModel<LexAdvisorFile>(pageIndex, pageSize, 0, new List<LexAdvisorFile>()));
+            var result = new Result<PaginatedItemsViewModel<LexAdvisorFile>>(new PaginatedItemsViewModel<LexAdvisorFile>(pageIndex, pageSize));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonAdvisors.GetAdvisorFiles);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -100,7 +100,9 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<PaginatedItemsViewModel<LexContact>>> GetAdvisorsContact(string env, string idUser, string bbdd, string email, int pageIndex, int pageSize)
         {
-            return await _svcContacts.GetAllContactsAsync(env, idUser, bbdd, email, pageIndex, pageSize);
+            var resultado =  await _svcContacts.GetAllContactsAsync(env, idUser, bbdd, email, pageIndex, pageSize);
+            TraceInfo(resultado.infos, $"The call to contacts is from {nameof(GetAdvisorsContact)}", Codes.LexonAdvisors.GetAdvisorContacts);
+            return resultado;
         }
 
 

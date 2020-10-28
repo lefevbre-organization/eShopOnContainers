@@ -9,10 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
-using Polly.Caching;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -51,16 +49,15 @@ namespace Lexon.Infrastructure.Services
 
         #region Common
 
-        
         public string GetIdEventParameters(string name, string idEvent, string idProvider, bool withComma = true)
         {
             var comma = withComma ? ", " : "";
-            return  $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)} }}";
+            return $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)} }}";
         }
 
-        private string GetIdFilter(string idName, int idValue) {
+        private string GetIdFilter(string idName, int idValue)
+        {
             return $"{GetLongFilter(idName, idValue)}";
-
         }
 
         #endregion Common
@@ -205,7 +202,7 @@ namespace Lexon.Infrastructure.Services
                 $"{GetLongFilter("idAppointment", idAppointment)}" +
                 $" }}";
         }
-      
+
         public async Task<Result<int>> RemoveAppointmentActionAsync(int idRelation, string env, string idUser, string bbdd)
         {
             var result = new Result<int>(0);
@@ -223,7 +220,6 @@ namespace Lexon.Infrastructure.Services
                         await command.ExecuteNonQueryAsync();
                         result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
                         CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.RemoveAppointmentAction, nameof(RemoveAppointmentAsync));
-
                     }
                 }
                 catch (Exception ex)
@@ -258,7 +254,7 @@ namespace Lexon.Infrastructure.Services
             int pageSize,
             int pageIndex)
         {
-            var result = new Result<PaginatedItemsViewModel<LexActuation>>(new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, 0, new List<LexActuation>()));
+            var result = new Result<PaginatedItemsViewModel<LexActuation>>(new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonActuations.GetRelationsOfAppointment);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -284,7 +280,6 @@ namespace Lexon.Infrastructure.Services
                                     var resultado = JsonConvert.DeserializeObject<LexAppointmentActuation>(rawResult);
                                     CompleteDataRelations(resultado);
                                     result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado.actuaciones);
-                        
                                 }
                                 else
                                 {
@@ -292,7 +287,6 @@ namespace Lexon.Infrastructure.Services
                                         TraceError(result.errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.LexonActuations.GetRelationsOfAppointment, "MYSQL");
                                     else
                                         TraceInfo(result.infos, "MySql get and empty string with this search", Codes.LexonActuations.GetRelationsOfAppointment);
-
                                 }
                             }
                         }
@@ -314,20 +308,18 @@ namespace Lexon.Infrastructure.Services
                 //    result.DataActuation = resultMongo.DataActuation;
                 //}
             }
-       
+
             return result;
         }
 
         private void CompleteDataRelations(LexAppointmentActuation appointmentActuation)
         {
-            
             var DataActuation = appointmentActuation.actuaciones.ToList();
 
             foreach (var act in DataActuation)
             {
                 act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.entityIdType);
-               // act.idMail = appointmentActuation.uid;
-
+                // act.idMail = appointmentActuation.uid;
             }
         }
 
@@ -338,14 +330,14 @@ namespace Lexon.Infrastructure.Services
                     GetTextFilter("idEvent", idAppointment) +
                     $" }}";
         }
-  
+
         #endregion Appointments
 
         public async Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetActuationTypesAsync(string env, string idUser, string bbdd)
         {
             var pageIndex = 1;
             var pageSize = 0;
-            var result = new Result<PaginatedItemsViewModel<LexActuationType>>(new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, 0, new List<LexActuationType>()));
+            var result = new Result<PaginatedItemsViewModel<LexActuationType>>(new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonActuations.GetActuationTypes);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -357,7 +349,7 @@ namespace Lexon.Infrastructure.Services
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn))
                     {
                         AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(0, 1, "ts", "DESC", command);
+                        AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
                         CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuationTypes, nameof(GetActuationTypesAsync));
 
@@ -399,14 +391,14 @@ namespace Lexon.Infrastructure.Services
         {
             var pageIndex = 1;
             var pageSize = 0;
-            var result = new Result<PaginatedItemsViewModel<LexActuationCategory>>(new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, 0, new List<LexActuationCategory>()));
+            var result = new Result<PaginatedItemsViewModel<LexActuationCategory>>(new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonActuations.GetActuationCategories);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
-                    var filtro = $"{{ {GetUserFilter(bbdd,idUser)} }}";
+                    var filtro = $"{{ {GetUserFilter(bbdd, idUser)} }}";
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationCategories, conn))
                     {
@@ -414,18 +406,15 @@ namespace Lexon.Infrastructure.Services
                         AddListSearchParameters(0, 1, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
                         CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuationCategories, nameof(GetActuationCategoriesAsync));
-                    
+
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            //if (PossibleHasData(result.errors, result.data.Count))
-                            //{
-                                while (reader.Read())
-                                {
-                                    var rawJson = reader.GetValue(0).ToString();
-                                    var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
-                                }
-                            //}
+                            while (reader.Read())
+                            {
+                                var rawJson = reader.GetValue(0).ToString();
+                                var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
+                                result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                            }
                         }
                     }
                 }
@@ -458,8 +447,7 @@ namespace Lexon.Infrastructure.Services
             int pageSize,
             int pageIndex)
         {
- 
-            var result = new Result<PaginatedItemsViewModel<LexActuation>>(new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, 0, new List<LexActuation>()));
+            var result = new Result<PaginatedItemsViewModel<LexActuation>>(new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize));
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonActuations.GetActuations);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -474,18 +462,17 @@ namespace Lexon.Infrastructure.Services
                         AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
                         CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuations, nameof(GetActuationsAsync));
-                                          
+
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            //if (PossibleHasData(result.errors, result.data.Count))
-                            //{
-                                while (reader.Read())
-                                {
-                                    var rawJson = reader.GetValue(0).ToString();
-                                    var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
-                                }
-                            //}
+
+                            while (reader.Read())
+                            {
+                                var rawJson = reader.GetValue(0).ToString();
+                                var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
+                                result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                            }
+
                         }
                     }
                 }
@@ -505,7 +492,6 @@ namespace Lexon.Infrastructure.Services
 
         private string GetActuationSearchFilter(string idUser, string bbdd, string idType, int? idCategory, string filter)
         {
-            //var category = idCategory == 0 ? "" : GetLongFilter("IdCategory", idCategory);
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
                 GetTextFilter("IdType", idType) +
@@ -513,7 +499,7 @@ namespace Lexon.Infrastructure.Services
                 GetTextFilter("filter", filter) +
             $" }}";
         }
- 
+
         public async Task<Result<int>> AddActionAsync(LexAction action, string env, string idUser, string bbdd)
         {
             var result = new Result<int>(0);
@@ -551,8 +537,7 @@ namespace Lexon.Infrastructure.Services
 
         private string GetAddActionFilter(string idUser, string bbdd, LexAction action)
         {
-            //"relations":[{ "idEntityRelation":8,"idEntityTypeRelation":2},{ "idEntityRelation":7,"idEntityTypeRelation":2}]}';
-
+  
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
                 GetTextFilter("idType", action.IdType) +
@@ -581,8 +566,6 @@ namespace Lexon.Infrastructure.Services
                 $" }}";
         }
 
-
         #endregion Actuations
-
     }
 }
