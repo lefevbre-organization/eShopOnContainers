@@ -64,12 +64,12 @@ $sslIssuer=""
 
 if ($sslSupport -eq "staging") {
     $sslEnabled=$true
-    $tlsSecretName="eshop-letsencrypt-staging"
+    $tlsSecretName="efef-letsencrypt-staging"
     $sslIssuer="letsencrypt-staging"
 }
 elseif ($sslSupport -eq "prod") {
     $sslEnabled=$true
-    $tlsSecretName="eshop-letsencrypt-prod"
+    $tlsSecretName="elef-letsencrypt-prod"
     $sslIssuer="letsencrypt-prod"
 }
 elseif ($sslSupport -eq "custom") {
@@ -159,7 +159,7 @@ Write-Host "Begin eLefebvreOnContainers installation using Helm" -ForegroundColo
 
 if ($deployInfrastructure) {
     foreach ($infra in $infras) {
-        Write-Host "Installing infrastructure:  $appName-$infra with app-lef.yalm, inf-lef.yalm, app.name=$appName, inf.k8s.dns=$dns, $ingressValuesFile" -ForegroundColor Green
+        Write-Host "Installing infrastructure:  $appName-$infra with app-lef.yalm, inf-lef.yalm, $ingressValuesFile, app.name=$appName, inf.k8s.dns=$dns" -ForegroundColor Green
         # helm install --name="$appName-$infra" --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" $infra
         helm install "$appName-$infra" --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" $infra     
     }
@@ -169,19 +169,20 @@ else {
 }
 
 if ($deployCharts) {
+    Write-Host "Installing charts and gateways with common data -> app-lef.yalm, inf-lef.yalm, $ingressValuesFile, app.name=$appName, inf.k8s.dns=$dns, ingress.hosts={$dns}, image.tag=$imageTag, image.pullPolicy=$pullPolicy, inf.tls.enabled=$sslEnabled, inf.mesh.enabled=$useMesh " -ForegroundColor Green
+
     foreach ($chart in $charts) {
-        Write-Host "Installing: $chart" -ForegroundColor Green
-        if ($useCustomRegistry) {
-            Write-Host "useCustomRegistry -> Inject inf.registry.server=$registry, inf.registry.login=$dockerUser, inf.registry.pwd, inf.registry.secretName, app.name=$appName, inf.k8s.dns=$dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=$pullPolicy - final-name=$appName-$chart" -ForegroundColor Green
-            helm install --set inf.registry.server=$registry --set inf.registry.login=$dockerUser --set inf.registry.pwd=$dockerPassword --set inf.registry.secretName=elef-docker-secret --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
-        }
-        else {
-            if ($chart -ne "eshop-common")  {       # eshop-common is ignored when no secret must be deployed
-                Write-Host "Inject app.name=$appName, inf.k8s.dns=$dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=$pullPolicy, name=$appName-$chart" -ForegroundColor Green
-                helm install --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns  --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
-            }
-        }
+        Write-Host "Installing: $chart with $ingressMeshAnnotationsFile, app.name=$appName, inf.k8s.dns=$dns, image.tag=$imageTag, inf.k8s.local=$useLocalk8s" -ForegroundColor Green
+        # helm install --set inf.registry.server=$registry --set inf.registry.login=$dockerUser --set inf.registry.pwd=$dockerPassword --set inf.registry.secretName=elef-docker-secret --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
+        Install-Chart $chart "-f app-lef.yaml --values inf-lef.yaml -f $ingressValuesFile -f $ingressMeshAnnotationsFile --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.tls.enabled=$sslEnabled --set inf.mesh.enabled=$useMesh --set inf.k8s.local=$useLocalk8s --set image.tag=$imageTag " $useCustomRegistry
     }
+
+    foreach ($chart in $gateways) {
+        Write-Host "Installing Api Gateway Chart: $chart" -ForegroundColor Green
+        Install-Chart $chart "-f app-lef.yaml -f inf-lef.yaml -f $ingressValuesFile  --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.mesh.enabled=$useMesh  --set inf.tls.enabled=$sslEnabled" $false
+        
+    }
+
 }
 else {
     Write-Host "eLefebvreOnContainers non-infrastructure charts aren't installed (-deployCharts is false)" -ForegroundColor Yellow
