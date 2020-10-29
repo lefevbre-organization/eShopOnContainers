@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, setTitle, setSelectedService } from '../../actions/application';
+import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -1043,7 +1043,7 @@ const mapDispatchToProps = (dispatch) => ({
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
   setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
-  setSignaturesFilterKey: key => dispatch(ACTIONS.setSignaturesFilterKey(key))
+  setSignaturesFilterKey: key => dispatch(setSignaturesFilterKey(key))
 });
 
 export default connect(
