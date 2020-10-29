@@ -1035,7 +1035,7 @@ export class ComposeMessage extends PureComponent {
                 <FontAwesomeIcon icon={faPaperclip} size='1x' />
                 <span>{i18n.t('compose-message.attach')}</span>
               </Button>
-              { draftTime != '' ? <span className="draft-time">Borrador guardado {draftTime}</span> : null}
+              { draftTime != '' ? <span className="draft-time">{i18n.t('compose-message.draft-save')} {draftTime}</span> : null}
               <div id='inputfileWrapper'></div>
             </div>
           </div>
