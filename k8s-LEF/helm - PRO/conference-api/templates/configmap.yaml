@@ -1,4 +1,4 @@
-{{- $name := include "centinela-api.fullname" . -}}
+{{- $name := include "conference-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $mongo := include "mongo-name" . -}}
@@ -8,8 +8,8 @@ kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "centinela-api.name" . }}
-    chart: {{ template "centinela-api.chart" .}}
+    app: {{ template "conference-api.name" . }}
+    chart: {{ template "conference-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
@@ -19,5 +19,5 @@ data:
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   all__version: "RC {{ .Values.inf.version.major }}.{{ .Values.inf.version.minor }}"
-  centinela__ConnectionString: mongodb://{{ $mongo }}
-  centinela__Database: {{ .Values.inf.mongo.centinela.database }}
+  conference__ConnectionString: mongodb://{{ $mongo }}
+  conference__Database: {{ .Values.inf.mongo.conference.database }}

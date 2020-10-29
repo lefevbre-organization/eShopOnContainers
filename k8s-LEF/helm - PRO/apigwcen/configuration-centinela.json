@@ -15,7 +15,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [  "POST", "PUT", "GET" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET"],
       "DownstreamHostAndPorts": [
         {
           "Host": "userutils-api",
@@ -23,6 +23,19 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "PATCH" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "conference-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/con/{everything}",
       "DownstreamPathTemplate": "/api/{version}/{everything}"
     }
    

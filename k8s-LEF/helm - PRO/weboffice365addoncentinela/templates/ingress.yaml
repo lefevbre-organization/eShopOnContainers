@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
+{{- $fullName := include "weboffice365addoncentinela.fullname" . -}}
 {{- $ingressPath := include "pathBase" . -}}
-{{- $serviceName := .Values.app.svc.signatureapi }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "database-api.fullname" . }}
+  name: {{ template "weboffice365addoncentinela.fullname" . }}
   labels:
-    app: {{ template "database-api.name" . }}
-    chart: {{ template "database-api.chart" . }}
+    app: {{ template "weboffice365addoncentinela.name" . }}
+    chart: {{ template "weboffice365addoncentinela.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}
@@ -24,13 +24,11 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ . }}
+    - host: {{ .Values.inf.k8s.dns }}
       http:
         paths:
           - path: {{ $ingressPath }}
             backend:
-              serviceName: {{ $serviceName }}
+              serviceName: {{ .Values.app.svc.office365addoncentinela }}
               servicePort: http
-  {{- end }}
 {{- end }}

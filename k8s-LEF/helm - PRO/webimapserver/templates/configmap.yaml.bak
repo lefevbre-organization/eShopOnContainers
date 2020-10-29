@@ -1,22 +1,21 @@
-{{- $name := include "database-api.fullname" . -}}
+{{- $name := include "webimapserver.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
-{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $mongo := include "mongo-name" . -}}
+{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "database-api.name" . }}
-    chart: {{ template "database-api.chart" .}}
+    app: {{ template "webimapserver.name" . }}
+    chart: {{ template "webimapserver.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
   all__EventBusConnection: {{ .Values.inf.eventbus.constr }}
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
-  database__ConnectionString: mongodb://{{ $mongo }}
-  database__Database: {{ .Values.inf.mongo.database.database }}
+  all__EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}" 
+  config.js: {{ toYaml .Values.configValues | indent 4 }}
