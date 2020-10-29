@@ -6,20 +6,10 @@ Param(
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
-    [parameter(Mandatory=$false)][string[]]$infras=(
-        "nosql-data"
-        # "sql-data"
-        # "rabbitmq"
-        ),
+    [parameter(Mandatory=$false)][string[]]$infras=("nosql-data"),
+    # [parameter(Mandatory=$false)][string[]]$infras=("sql-data", "nosql-data", "rabbitmq"),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
-    [parameter(Mandatory=$false)][string[]]$charts=(
-        "conference-api","lexon-api", "lexonmysql-api", "account-api","centinela-api", "userutils-api", "signature-api", "database-api",    
-        "apigwlex",  "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
-        "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "websignature",  
-        "webaddonlauncher", "weboffice365addonlexon",
-        "webimapserver", 
-        "webstatus"
-        ),
+    [parameter(Mandatory=$false)][string[]]$charts=("conference-api", "apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api", "apigwcen", "centinela-api", "userutils-api", "apigwsig", "signature-api", "database-api", "apigwdat", "webcentinela", "webgoogle", "webgraph", "weblexon", "webaddonlauncher", "weboffice365addonlexon", "webportal", "webimap", "webimapserver", "websignature", "webstatus", "webdatabase"),
     [parameter(Mandatory=$false)][string]$aksName="",
     [parameter(Mandatory=$false)][string]$aksRg="",
     [parameter(Mandatory=$false)][string]$imageTag="latest",

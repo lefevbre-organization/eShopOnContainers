@@ -1,0 +1,18 @@
+{{- $name := include "weblexon.fullname" . -}}
+{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "weblexon.name" . }}
+    chart: {{ template "weblexon.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
+  all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
+  all_EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}"
+  internalurls__lexonapi__hc: http://{{ .Values.app.svc.lexonapi }}/hc
+  config.js: {{ toYaml .Values.configValues | indent 4 }}

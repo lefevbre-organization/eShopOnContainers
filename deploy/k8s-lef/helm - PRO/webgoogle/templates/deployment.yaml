@@ -1,0 +1,67 @@
+{{- $name := include "webgoogle.fullname" . -}}
+{{- $cfgname := printf "%s-%s" "cfg" $name -}}
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "webgoogle.fullname" . }}
+  labels:
+    ufo: {{ $cfgname}}
+    app: {{ template "webgoogle.name" . }}
+    chart: {{ template "webgoogle.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "webgoogle.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "webgoogle.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      {{ if .Values.inf.registry -}}
+      imagePullSecrets:
+      - name: {{ .Values.inf.registry.secretName }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - name:  webgoogle-config-volume
+              mountPath: /app/wwwroot/config.js
+              subPath: config.js
+              readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name:  webgoogle-config-volume
+          configMap:
+            name: cfg-elefebvre-webgoogle
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

@@ -3,7 +3,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE"  ],
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon-api",
@@ -16,7 +16,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE"  ],
       "DownstreamHostAndPorts": [
         {
           "Host": "lexonmysql-api",
@@ -30,7 +30,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE"  ],
       "DownstreamHostAndPorts": [
         {
           "Host": "userutils-api",
@@ -44,7 +44,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE"  ],
       "DownstreamHostAndPorts": [
         {
           "Host": "userutils-api",
