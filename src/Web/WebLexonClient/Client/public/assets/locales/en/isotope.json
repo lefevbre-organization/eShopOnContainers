@@ -26,6 +26,7 @@
   },
   "connecting": {
     "q1": "What do you want to do with the selected messages?",
+    "q1b": "Check which attachments you want to save",
     "q2": "What type of entity do you want to classify with?",
     "create": "Create performance",
     "copy": "Save copy of the messages in documentation",
