@@ -276,7 +276,7 @@ export class MenuListClass extends Component {
 
   onClick(event, key) {
     const { close, lefebvre, application } = this.props;
-    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || application.selectedSignature === {})){
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || Object.keys(application.selectedSignature).length === 0 && application.selectedSignature.constructor === Object)){
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
@@ -296,8 +296,8 @@ export class MenuListClass extends Component {
   }
 
   onEmailClick(event, key) {
-    const { close, lefebvre } = this.props;
-    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+    const { close, lefebvre, application } = this.props;
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedEmail === null || Object.keys(application.selectedEmail).length === 0 && application.selectedEmail.constructor === Object)){
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
@@ -305,6 +305,11 @@ export class MenuListClass extends Component {
       this.props.signatureClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setUserApp('lefebvre');
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setGuid(null);
+      this.props.setIdDocuments(null);
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
       this.props.setSelectedService('certifiedEmail'); 
       this.props.close(this.props.application);

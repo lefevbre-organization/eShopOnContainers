@@ -661,6 +661,12 @@ class App extends Component {
     return false;
   }
 
+  openEmail(email){
+    this.props.emailClicked(email);
+    this.props.setGUID(null);
+    return false;
+  }
+
   async componentDidMount() {
     document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
@@ -691,135 +697,231 @@ class App extends Component {
     console.log('******************************');
     console.log('');
 
-    this.props.preloadSignatures(lefebvre.userId)
-    .then( () => {
-      if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
-        const { signatures } = this.props.application;
-        let newSignature = true;
-        if (signatures && signatures.length > 0){
-          (signatures.some(s => 
-            (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
-              ? newSignature = this.openSignature(s) 
-              : null)
-          )
-        } 
-        if (newSignature) {
-          if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
-            this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
-            .then((attachment) => {
-                if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
-                  this.props.newMessage(dataMailContacts, dataAdminContacts);
-                }
-                else {
-                  const length = attachment.data.length;
-                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
-                  const newAttachment = [{
-                    fileName: fileName,
-                    size: length,
-                    contentType: getFileType(fileName),
-                    content: attachment.data
-                  }]
-                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
-                }
-            })
-            .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
-          } 
-          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
-            if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
-              let documentsInfo = []; 
-              let attachmentsList = [];
-              let i = 0;
-  
-              if (lefebvre.idDocuments.length > 0){
-                this.props.backendRequest();
-                this.setState({hideAlertDialog: true});
-              }
-  
-              lefebvre.idDocuments.forEach(document => {
-                this.props.getAttachmentCen(lefebvre.userId, document.docId)
-                .then((attachment) => {
-                  if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
-                    cancelSignatureCen(document.docId)
-                    .then(res => {
-                      console.log(res);
+    if (lefebvre.targetService === 'signature'){
+      this.props.preloadSignatures(lefebvre.userId)
+        .then( () => {
+          if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
+            const { signatures } = this.props.application;
+            let newSignature = true;
+            if (signatures && signatures.length > 0){
+              (signatures.some(s => 
+                (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
+                  ? newSignature = this.openSignature(s) 
+                  : null)
+              )
+            } 
+            if (newSignature) {
+              if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+                this.getFilesFromLexon()
+                  .then(files => {
+                    if (files === null) {
+                      this.props.newMessage('signature', dataMailContacts, dataAdminContacts);
+                    } else {
+                      this.props.newMessage('signature', dataMailContacts, dataAdminContacts, null, files);
+                    }
+                  })
+                  .catch(() => this.props.newMessage('signature', dataMailContacts, dataAdminContacts))
+              } 
+              else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
+                if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+                  this.getFilesFromCentinela()
+                    .then(files => {
+                      if (files === null){
+                        this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
+                        this.props.setUserApp('lefebvre');
+                        this.props.newMessage('signature', dataMailContacts, dataAdminContacts);
+                      }
+                      else {
+                        this.setState({hideAlertDialog: false});
+                        this.props.backendRequestCompleted();
+                        this.props.setIdDocuments(files.documentsInfo);
+                        this.props.newMessage('signature', dataMailContacts, dataAdminContacts, null, files.attachmentsList);
+                      }
                     })
                     .catch(err => {
-                      console.log(err);
+                      this.setState({hideAlertDialog: false});
+                      this.props.backendRequestCompleted();
+                      this.props.newMessage('signature', dataMailContacts, dataAdminContacts);
                     })
-                    this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
-                    this.props.setUserApp('lefebvre');
-                    this.props.newMessage(dataMailContacts, dataAdminContacts);
-                  }
-                  else {
-
-                    const length = attachment.data.length;
-                    const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
-                    const fileType = fileName.split('.');
-                    const newAttachment = {
-                      fileName: fileName,
-                      size: length,
-                      contentType: getFileType(fileName),
-                      content: attachment.data
-                    }
-  
-                    if (fileType[fileType.length-1] === 'pdf' || fileType[fileType.length-1] === 'PDF'){
-                      const pdfjsLib = require('pdfjs-dist');
-                      pdfjsLib.GlobalWorkerOptions.workerSrc = '../../assets/scripts/pdf.worker.js'
-  
-                      pdfjsLib.getDocument({data: atob(attachment.data)})
-                      .promise.then(doc => {
-                        var numPages = doc.numPages;
-                        newAttachment.pages = numPages;
-                        console.log('# Document Loaded');
-                        console.log('Number of Pages: ' + numPages);
-                      });
-                    }
-
-                    attachmentsList.push(newAttachment);
-                    documentsInfo.push({docId: document.docId, docName: fileName});
-                  }
-                  i += 1;
-  
-                  if (i > 0 && i === attachmentsList.length){
-                    this.setState({hideAlertDialog: false});
-                    this.props.backendRequestCompleted();
-                    this.props.setIdDocuments(documentsInfo);
-                    this.props.newMessage(dataMailContacts, dataAdminContacts, null, attachmentsList);
-                    // Aquí hay que cerrar el modal de descarga
-                    
-                  }
-                })
-                .catch(() => {
-                  this.setState({hideAlertDialog: false});
-                  this.props.backendRequestCompleted();
-                  this.props.newMessage(dataMailContacts, dataAdminContacts);
-                  // Aquí hay que cerrar el modal de descarga
-                });        
-              });
-            }
-            else {
-              // Received guid is of a document that is in signing process in centinela's backend but we don´t have it
-              // Show modal
-              // Send Centinela a Cancelation Request for that guid.
-              console.log('NO SE ENCUENTRA EL GUID, SE DEBE DE MOSTRAR AVISO');
-              console.log('guidNotFound se pasa a true');
-              this.setState({guidNotFound: true})
-            }
+                }
+                else {
+                  // Received guid is of a document that is in signing process in centinela's backend but we don´t have it
+                  // Show modal
+                  // Send Centinela a Cancelation Request for that guid.
+                  console.log('NO SE ENCUENTRA EL GUID, SE DEBE DE MOSTRAR AVISO');
+                  console.log('guidNotFound se pasa a true');
+                  this.setState({guidNotFound: true})
+                }
+              }
+            }  
           }
-        }  
-      }
-    })
-    .catch(err => { throw new Error(err);} );
-
-    if (lefebvre && lefebvre.roles && lefebvre.roles.includes('Email Certificado')){
+        })
+        .catch(err => { throw new Error(err);} );
+    } else if (targetService === "certifiedEmail") {
       this.props.preloadEmails(lefebvre.userId)
-      .then(// to do
-        )
-      .catch(// to do
-        )
+        .then( () => {
+          if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
+            const { emails } = this.props.application;
+            let newEmail = true;
+            if (emails && emails.length > 0){
+              (emails.some(e => 
+                (e.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
+                  ? newEmail = this.openEmail(e) 
+                  : null)
+              )
+            } 
+            if (newEmail) {
+              if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+                this.getFilesFromLexon()
+                  .then(files => {
+                    if (files === null) {
+                      this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts);
+                    } else {
+                      this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts, null, files);
+                    }
+                  })
+                  .catch(() => this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts))
+              } 
+              else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
+                if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+                  this.getFilesFromCentinela()
+                    .then(files => {
+                      if (files === null){
+                        
+                        this.props.setUserApp('lefebvre');
+                        this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts);
+                      }
+                      else {
+                        this.setState({hideAlertDialog: false});
+                        this.props.backendRequestCompleted();
+                        this.props.setIdDocuments(files.documentsInfo);
+                        this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts, null, files.attachmentsList);
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({hideAlertDialog: false});
+                      this.props.backendRequestCompleted();
+                      this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts);
+                    })
+                }
+                else {
+                  // Received guid is of a document that is in signing process in centinela's backend but we don´t have it
+                  // Show modal
+                  // Send Centinela a Cancelation Request for that guid.
+                  console.log('NO SE ENCUENTRA EL GUID, SE DEBE DE MOSTRAR AVISO');
+                  console.log('guidNotFound se pasa a true');
+                  this.setState({guidNotFound: true})
+                }
+              }
+            }  
+          }
+        })
+        .catch(err => { throw new Error(err);} );      
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
+  }
+
+  async getFilesFromLexon(){
+    return new Promise((resolve, reject) => {
+      const {lefebvre} = this.props;
+
+      this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
+      .then((attachment) => {
+          if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
+            resolve(null);
+          }
+          else {
+            const length = attachment.data.length;
+            const fileName = (attachment.infos[0].message.includes("- id:")) ? attachment.infos[0].message.split("fichero:")[1].split("- id:")[0].replace(/"/g,'').trim() : attachment.infos[0].message.split("fichero:")[1].replace(/"/g,'').trim();
+            const newAttachment = [{
+              fileName: fileName,
+              size: length,
+              contentType: getFileType(fileName),
+              content: attachment.data
+            }]
+            resolve(newAttachment);
+          }
+      })
+      .catch(err => {
+        console.log("Error in getFilesFromLexon:");
+        console.log(err)
+        reject(err);
+      });
+    })
+    
+  }
+
+  getFilesFromCentinela(){
+    return new Promise((resolve, reject) => {
+      const {lefebvre} = this.props;
+      
+      let documentsInfo = []; 
+      let attachmentsList = [];
+      let i = 0;
+      let error = 0;
+
+      if (lefebvre.idDocuments.length > 0){
+        this.props.backendRequest();
+        this.setState({hideAlertDialog: true});
+      }
+
+      lefebvre.idDocuments.forEach(document => {
+        this.props.getAttachmentCen(lefebvre.userId, document.docId)
+        .then((attachment) => {
+          if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
+            error += 1;
+            cancelSignatureCen(document.docId)
+            .then(res => {
+              console.log(res);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+          }
+          else {
+            const length = attachment.data.length;
+            const fileName = (attachment.infos[0].message.includes("- id:")) ? attachment.infos[0].message.split("fichero:")[1].split("- id:")[0].replace(/"/g,'').trim() : attachment.infos[0].message.split("fichero:")[1].replace(/"/g,'').trim();
+            const fileType = fileName.split('.');
+            const newAttachment = {
+              fileName: fileName,
+              size: length,
+              contentType: getFileType(fileName),
+              content: attachment.data
+            }
+
+            if (fileType[fileType.length-1] === 'pdf' || fileType[fileType.length-1] === 'PDF'){
+              const pdfjsLib = require('pdfjs-dist');
+              pdfjsLib.GlobalWorkerOptions.workerSrc = '../../assets/scripts/pdf.worker.js'
+
+              pdfjsLib.getDocument({data: atob(attachment.data)})
+              .promise.then(doc => {
+                var numPages = doc.numPages;
+                newAttachment.pages = numPages;
+                console.log('# Document Loaded');
+                console.log('Number of Pages: ' + numPages);
+              });
+            } 
+
+            attachmentsList.push(newAttachment);
+            documentsInfo.push({docId: document.docId, docName: fileName});
+          }
+          i += 1;
+
+          if ( i > 0 && (lefebvre.idDocuments.length === attachmentsList.length + error) ){
+            if (error > 0){
+              this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
+            }
+            resolve({attachmentsList, documentsInfo});
+          }
+        })
+        .catch(err => {
+          console.log("Error in getFilesFromCentinela:");
+          console.log(err);
+          reject(err);
+        });        
+      });
+    });
   }
 
   renderNotFoundModal() {
@@ -908,7 +1010,7 @@ const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) =>
     resetFolderMessagesCache(dispatch, user, folder),
-  newMessage: (to, cc, sign, attachments) => editNewMessage(dispatch, to, cc, sign, attachments),
+  newMessage: (sendingType, to, cc, sign, attachments) => editNewMessage(dispatch, sendingType, to, cc, sign, attachments),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);

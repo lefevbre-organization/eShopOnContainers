@@ -1021,7 +1021,7 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
       jsonObject.recipients = recipientsData;
     
       cc.forEach(recipient => {
-        ccData.push({name: recipient.split('@')[0], email: recipient})
+        ccData.push({name: recipient.address.split('@')[0], email: recipient.address})
       });
       jsonObject.cc = ccData;
 

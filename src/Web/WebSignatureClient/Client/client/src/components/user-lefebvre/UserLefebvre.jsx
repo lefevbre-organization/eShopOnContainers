@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import ACTIONS from "../../actions/lefebvre";
 import { clearUserCredentials, setUserCredentials } from "../../actions/application";
 import history from "../../routes/history";
-import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts } from "../../services/jwt";
+import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts, getService } from "../../services/jwt";
 import Cookies from 'js-cookie';
 import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
@@ -64,6 +64,7 @@ class UserLefebvre extends Component {
         var idDocuments = (this.props.match.params.token ? getIdDocuments(payload) : null);
         var mailContacts = (this.props.match.params.token ? getMailContacts(payload) : null);
         var adminContacts = (this.props.match.params.token ? getAdminContacts(payload) : null);
+        var service = (this.props.match.params.token ? getService(payload) : null);
         
         // var configureBaseTemplates = (this.props.match.params.token ? getConfigureBaseTemplates(payload) : false);
         // var configureDefaultTemplates = (this.props.match.params.token ? getConfigureDefaultTemplates(payload) : false);
@@ -79,6 +80,7 @@ class UserLefebvre extends Component {
         (bbdd ? this.props.setDataBase(bbdd) : null);
         (mailContacts ? this.props.setMailContacts(mailContacts) : null);
         (adminContacts ? this.props.setAdminContacts(adminContacts) : null);
+        (service ? this.props.setTargetService(service) : null);
 
         if (idDocuments && idDocuments.length > 0){
             idDocuments.forEach(id => {
@@ -384,7 +386,8 @@ const mapDispatchToProps = dispatch => ({
     setIdUserApp: id => dispatch(ACTIONS.setIdUserApp(id)),
     setIdDocuments: ids => dispatch(ACTIONS.setIdDocuments(ids)),
     setAdminContacts: adminContacts => dispatch(ACTIONS.setAdminContacts(adminContacts)),
-    setRoles: roles => dispatch(ACTIONS.setRoles(roles))
+    setRoles: roles => dispatch(ACTIONS.setRoles(roles)),
+    setTargetService: service => dispatch(ACTIONS.setTargetService(service))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLefebvre);
