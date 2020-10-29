@@ -5,10 +5,10 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "database-api.fullname" . }}
+  name: {{ template "conference-api.fullname" . }}
   labels:
-    app: {{ template "database-api.name" . }}
-    chart: {{ template "database-api.chart" . }}
+    app: {{ template "conference-api.name" . }}
+    chart: {{ template "conference-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}

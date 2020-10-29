@@ -33,6 +33,7 @@ app:                                                  # app global settings
       conferenceapi: conference-api                   # ingress entry for conference api     
       addonlauncher: webaddonlauncher                 # ingress entry for addon launcher client
       office365addonlexon: weboffice365addonlexon
+      office365addoncentinela: weboffice365addoncentinela
       database: webdatabase
       
   svc:
@@ -63,4 +64,5 @@ app:                                                  # app global settings
       conferenceapi: conference-api                   # svc entry for conference api
       addonlauncher: webaddonlauncher                 # svc entry for addon launcher client
       office365addonlexon: weboffice365addonlexon
+      office365addoncentinela: weboffice365addoncentinela
       database: webdatabase
