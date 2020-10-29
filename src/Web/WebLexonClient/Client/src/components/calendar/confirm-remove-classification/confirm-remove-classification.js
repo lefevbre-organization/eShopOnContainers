@@ -3,7 +3,7 @@ import "./confirm-remove-classification.css";
 import PropTypes from "prop-types";
 import i18n from "i18next";
 import { Button, Modal } from "react-bootstrap";
-import { removeEventClassifications } from "../../services/services-lexon";
+import { removeEventClassifications } from "../../../services/services-lexon";
 import { connect } from "react-redux";
 
 class ConfirmRemoveClassification extends Component {

@@ -25,7 +25,7 @@ class NewClassification extends Component {
         <p className="add-more-container">
           <a href="#/" className="add-more" onClick={this._handleOnClick}>
             <span className="lf-icon-add-round"></span>
-            <strong>ljknlkn{i18n.t("new-classification.new-classification")}</strong>
+            <strong>{i18n.t("new-classification.new-classification")}</strong>
           </a>
         </p>
         <style jsx>{`

@@ -114,9 +114,10 @@ class TabConnectMessage extends Component {
       return <Spinner />;
     }
 
+    debugger
     return (
       <Fragment>
-        <p className={"empty-text"}>{i18n.t('classification-calendar.empty')} <span>{i18n.t('classification-calendar.new-classification')}</span></p>
+        <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p>
         <ConfirmRemoveClassification
           user={user.idUser}
           initialModalState={showConfirmRemoveClassification}
