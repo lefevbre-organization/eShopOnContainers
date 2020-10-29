@@ -1,12 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import './tab-connect-message.css';
 import PropTypes from 'prop-types';
-import SaveDocument from '../save-document/save-document';
 import i18n from 'i18next';
 import { connect } from 'react-redux';
 import { getEventClassifications } from '../../../../services/services-lexon';
 import ListEventClassifications from '../list-classifications/list-classifications';
-import ConfirmRemoveClassification from '../../../confirm-remove-classification/confirm-remove-classification';
+import ConfirmRemoveClassification from '../../confirm-remove-classification/confirm-remove-classification';
 import Spinner from '../../../../components/spinner/spinner';
 
 class TabConnectMessage extends Component {
@@ -115,8 +114,6 @@ class TabConnectMessage extends Component {
       return <Spinner />;
     }
 
-
-    debugger
     return (
       <Fragment>
         <p className={"empty-text"}>{i18n.t('classification-calendar.empty')} <span>{i18n.t('classification-calendar.new-classification')}</span></p>

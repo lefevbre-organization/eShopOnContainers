@@ -19,7 +19,7 @@ class NewClassification extends Component {
 
   render() {
     const { selectedMessages } = this.props;
-
+    debugger
     return (
       <React.Fragment>
         <p className="add-more-container">
