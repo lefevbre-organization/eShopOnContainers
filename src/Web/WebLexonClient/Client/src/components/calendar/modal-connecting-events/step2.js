@@ -72,7 +72,6 @@ export class ConnectingEmailsStep2 extends React.Component {
     ) {
       try {
         this.setState({ showSpinner: true });
-        debugger
         const response = await getResults(
           user,
           bbdd,

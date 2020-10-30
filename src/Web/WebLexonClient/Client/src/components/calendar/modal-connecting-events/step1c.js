@@ -18,9 +18,7 @@ export class ConnectingEmailsStep1c extends React.Component {
 
     async componentDidMount() {
         try {
-            debugger
             const categories = await getActuationCategories(this.props.bbdd, this.props.user);
-            debugger
             this.setState({categories: categories.result.data.data});
         } catch(err) {
             console.log(err);

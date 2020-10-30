@@ -34,7 +34,6 @@ class ConfirmRemoveClassification extends Component {
       toggleNotification
     } = this.props;
 
-    debugger
     removeEventClassifications(
       companySelected.bbdd,
       user,

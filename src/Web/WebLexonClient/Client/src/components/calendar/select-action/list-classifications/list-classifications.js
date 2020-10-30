@@ -61,7 +61,6 @@ class ListEventClassifications extends Component {
             <ul className='row lexon-document-list'>
               {classificationsFiltered &&
                 classificationsFiltered.map((classification) => {
-                  debugger
                   return (
                     <EventClassification
                       classification={classification}

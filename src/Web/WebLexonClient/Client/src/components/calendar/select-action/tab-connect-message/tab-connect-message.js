@@ -7,6 +7,7 @@ import { getEventClassifications } from '../../../../services/services-lexon';
 import ListEventClassifications from '../list-classifications/list-classifications';
 import ConfirmRemoveClassification from '../../confirm-remove-classification/confirm-remove-classification';
 import Spinner from '../../../../components/spinner/spinner';
+import SaveDocument from "../save-document/save-document";
 
 class TabConnectMessage extends Component {
   constructor(props) {
@@ -83,6 +84,12 @@ class TabConnectMessage extends Component {
       });
   }
 
+  renderShowSaveDocument() {
+    const { user } = this.props;
+
+    return <SaveDocument user={user} />;
+  }
+
   renderShowClassifications() {
     const { bbdd, user } = this.props;
     const { classifications } = this.state;
@@ -114,7 +121,6 @@ class TabConnectMessage extends Component {
       return <Spinner />;
     }
 
-    debugger
     return (
       <Fragment>
         <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p>
@@ -129,6 +135,7 @@ class TabConnectMessage extends Component {
           toggleNotification={toggleNotification}
         />
 
+        {this.renderShowSaveDocument() }
         { this.renderShowClassifications() }
 
         <style jsx>{`
