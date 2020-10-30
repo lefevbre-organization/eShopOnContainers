@@ -773,6 +773,21 @@ export class Main extends Component {
                     />
                   )}
                 />
+                 <Route
+                  exact
+                  path='/compose/:id([a-zA-Z0-9]+)'
+                  component={() => (
+                    <ComposeMessage
+                      history={this.props.history}
+                      sideBarCollapsed={leftSideBar.collapsed}
+                      sideBarToggle={this.toggleSideBar}
+                      casefile={lexon.idCaseFile}
+                      mailContacts={lexon.mailContacts}
+                      googleUser={this.props.googleUser}
+                    />
+                  )}
+                />
+                
               </Switch>
             </article>
 
