@@ -1726,7 +1726,11 @@ export class Main extends Component {
                             </div>
                         ) : (
                                 <div>
-
+                                    <style jsx>{`
+                                     .e-content-wrap {
+                                         height:100% !important;
+                                        }                            
+                                    `}</style>
                                 </div>
                             )}
 

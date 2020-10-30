@@ -164,6 +164,18 @@ export class Main extends Component {
             this.layoutIframe = false;
         }
 
+        
+
+        //var a = new URLSearchParams(this.props.location.search).get("cellheight")
+
+        //if (this.props.location.search == "cellheight=400px") {
+        //    this.layoutIframe = true;
+        //}
+        //else {
+        //    this.layoutIframe = false;
+        //}
+
+
         // to change when api would be ready
         this.eventTypeDataSource =
             [
@@ -1687,6 +1699,11 @@ export class Main extends Component {
                             </div>
                         ) : (
                                 <div>
+                                    <style jsx>{`
+                                         .e-content-wrap {
+                                             height:100% !important;
+                                            }                            
+                                    `}</style>
 
                                 </div>
                             )}
@@ -1780,6 +1797,7 @@ export class Main extends Component {
                                                 popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
+                                                //allowVirtualScrolling = "true"
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
@@ -1857,6 +1875,8 @@ export class Main extends Component {
                                 </DialogComponent>
                             </article>
                         </section>
+
+                        
                     </Fragment>
                 </SidebarCnn>
             </div>
