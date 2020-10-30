@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import {
   CheckBoxComponent,
-  RadioButtonComponent
 } from '@syncfusion/ej2-react-buttons';
 import i18n from 'i18next';
 import { getTypes } from '../../services/services-lexon';
@@ -16,6 +15,8 @@ export class ConnectingEmailsStep1 extends React.Component {
       saveDocuments: false,
       entity: 1
     };
+
+    this.changeSelectedMessages = this.changeSelectedMessages.bind(this);
   }
 
   async componentDidMount() {
@@ -55,7 +56,15 @@ export class ConnectingEmailsStep1 extends React.Component {
     });
   }
 
+  changeSelectedMessages(event, at) {
+    at.checked = event.checked
+    console.log(at)
+  }
+
   render() {
+    const { saveDocuments } = this.state;
+    const { selected, attachments } = this.props;
+
     return (
       <Fragment>
         <div className='step1-container'>
@@ -94,26 +103,25 @@ export class ConnectingEmailsStep1 extends React.Component {
                 </li>
               </ul>
             </li>
-            <li>
-              <span>{i18n.t('connecting.q2')}</span>
-              <ul className='two-columns'>
-                {this.state.types.map(item => (
-                  <li key={item.idEntity}>
-                    <RadioButtonComponent
-                      cssClass='e-primary'
-                      label={i18n.t('classification.' + item.idEntity)}
-                      name='entity'
-                      checked={item.idEntity === 1}
-                      change={() => {
-                        this.setState({ entity: item.idEntity }, () => {
-                          this.onChangeData();
-                        });
-                      }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </li>
+            {attachments && attachments.length > 0 && saveDocuments && (
+                <li style={{ marginBottom: 20 }}>
+              <span>
+                {i18n.t('connecting.q1b')}
+                <span style={{ color: 'red' }}>*</span>
+              </span>
+                  <div className="file-list-wrapper">
+                    <div >
+                      {attachments.map((sm, index) => (
+                          <MessageWithAttachments
+                              key={'index' + index}
+                              msg={sm}
+                              onChange={this.changeSelectedMessages}
+                          />
+                      ))}
+                    </div>
+                  </div>
+                </li>
+            )}
           </ol>
         </div>
         <style jsx>
@@ -170,3 +178,69 @@ export class ConnectingEmailsStep1 extends React.Component {
     );
   }
 }
+
+const getAttachmentName = (attach) => {
+  return attach.headers['content-type'][0].params.name;
+};
+
+const MessageWithAttachments = ({msg, onChange}) => {
+  if (msg.attachments && msg.attachments.length > 0) {
+    return (
+        <div>
+          <div className="subject">
+            <i className="lf-icon-mail"></i>
+            {msg.subject}
+          </div>
+          <ul className="attachments">
+            {msg.attachments && msg.attachments.map((at, index) => {
+              const an = getAttachmentName(at);
+              return an ? (
+                  <li key={'index' + index}>
+                    <CheckBoxComponent
+                        cssClass="e-small"
+                        checked={at.checked}
+                        change={(event) => {
+                          onChange && onChange(event, at);
+                        }}
+                    ></CheckBoxComponent>
+                    <span>{an}</span>
+                  </li>
+              ) : null;
+            })}
+          </ul>
+
+          <style jsx>{`
+          .subject {
+            font-family: MTTMilano, Lato, Arial, sans-serif;
+            font-size: 16px !important;
+            align-items: center;
+            display: flex;
+          }
+          .subject > i {
+            font-size: 22px;
+            margin: 5px;
+          }
+
+          .attachments {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            font-family: MTTMilano, Lato, Arial, sans-serif;
+            font-size: 16px !important;
+          }
+
+          .attachments span {
+            margin: 2px;
+          }
+          .e-small.e-checkbox-wrapper .e-frame {
+            height: 18px;
+            width: 18px;
+            line-height: 10px;
+          }
+        `}</style>
+        </div>
+    );
+  }
+
+  return null;
+};

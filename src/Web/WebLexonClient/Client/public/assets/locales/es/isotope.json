@@ -23,6 +23,7 @@
   },
   "connecting": {
     "q1": "¿Qué quieres hacer con los mensajes seleccionados?",
+    "q1b": "Verifica qué adjuntos quieres guardar",
     "q2": "¿Con qué tipo de entidad quieres clasificarlos?",
     "create": "Crear actuación",
     "copy": "Guardar copia de los mensajes en documentación",
