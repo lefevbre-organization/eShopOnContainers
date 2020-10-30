@@ -77,7 +77,7 @@ export class ConnectingEmailsStep1b extends React.Component {
               margin-top: 10px;
             }
             .step1b-container ol > li::before {
-              content: '3';
+              content: '2';
               color: #001978;
               display: inline-block;
               width: 1em;

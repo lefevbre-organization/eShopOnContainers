@@ -104,7 +104,7 @@ export class ConnectingEmailsStep1 extends React.Component {
               </ul>
             </li>
             {attachments && attachments.length > 0 && saveDocuments && (
-                <li style={{ marginBottom: 20 }}>
+                <li className="connect-list-2" style={{ marginBottom: 20 }}>
               <span>
                 {i18n.t('connecting.q1b')}
                 <span style={{ color: 'red' }}>*</span>
@@ -151,6 +151,10 @@ export class ConnectingEmailsStep1 extends React.Component {
               font-size: 16px;
               font-weight: bold;
             }
+            .connect-list-2::before {
+                content: none !important;
+            }
+
             ol > li {
               counter-increment: li;
               color: #001978;
