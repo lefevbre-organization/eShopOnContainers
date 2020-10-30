@@ -790,6 +790,22 @@ export class Main extends Component {
                     />
                   )}
                 />
+                <Route
+                  exact
+                  path='/compose/:id([a-zA-Z0-9!@#$%^&+=_-]+)'
+                  component={() => (
+                    <ComposeMessage
+                    history={this.props.history}
+                    sideBarCollapsed={leftSideBar.collapsed}
+                    sideBarToggle={this.toggleSideBar}
+                    casefile={lexon.idCaseFile}
+                    bbdd={lexon.bbdd}
+                    mailContacts={lexon.mailContacts}
+                    loadLabelMessages={this.loadLabelMessages}
+                    labelsResult={this.props.labelsResult}
+                  />
+                  )}
+                />
               </Switch>
             </article>
 

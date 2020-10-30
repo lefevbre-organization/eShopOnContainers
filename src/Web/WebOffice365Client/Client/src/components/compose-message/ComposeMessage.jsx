@@ -1,10 +1,13 @@
 import React, { PureComponent } from 'react';
 import * as uuid from 'uuid/v4';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'redux';
 import { 
   sendMessage, 
   createDraft, 
   getLabelInbox 
 } from '../../api_graph';
+import { getEmailMessage } from '../content/message-list/actions/message-list.actions';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -264,6 +267,31 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    const messageId = this.props.match.params.id;
+    if(messageId){
+      this.props.getEmailMessage(messageId);
+    }
+  }
+
+  getById() {
+    if(this.props.emailMessageResult.body != ''){
+        const id = this.props.emailMessageResult.result.id
+        const toRecipients = this.props.emailMessageResult.result.toRecipients;
+   
+        toRecipients.forEach(toRecipient => {
+          setTimeout(() => {
+            this.addAddress('to', toRecipient.emailAddress.address);
+          }, 100);
+        });
+        const subject = this.props.emailMessageResult.result.subject;
+        const body = this.props.emailMessageResult.result.bodyPreview
+        this.setState({
+          draftId: id,
+          subject: subject, 
+          defaultContent: body,
+          content: body
+        });
+    }
   }
 
   handleGetUserFromLexonConnector() {
@@ -433,11 +461,11 @@ export class ComposeMessage extends PureComponent {
       this.saveDraft();
     }
 
-    // if(
-    //   prevProps.emailMessageResult !== this.props.emailMessageResult
-    //   ) {
-    //   this.getById();
-    // }
+    if(
+      prevProps.emailMessageResult !== this.props.emailMessageResult
+      ) {
+      this.getById();
+    }
   }
 
   componentWillUnmount() {
@@ -448,7 +476,6 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-
     this.uppy.close();
   }
 
@@ -501,7 +528,6 @@ export class ComposeMessage extends PureComponent {
       Subject: this.state.subject,
       attachments: this.state.uppyPreviews,
     };
-
     const Fileattached = this.state.uppyPreviews;
 
 
@@ -524,7 +550,7 @@ export class ComposeMessage extends PureComponent {
         .catch((err) => {
           console.log('Error sending email:' + err);
         });
-      }, 100);
+      }, 1500);
     }
     
   }
@@ -1109,15 +1135,19 @@ export class ComposeMessage extends PureComponent {
 const mapStateToProps = (state) => ({
   lexon: state.lexon,
   messagesResult: state.messagesResult,
+  emailMessageResult: state.emailMessageResult
 });
 
 const mapDispatchToProps = (dispatch) => ({
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
+  getEmailMessage: (messageId) => 
+    dispatch(getEmailMessage(messageId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
+export default compose(
+  withRouter, connect(mapStateToProps, mapDispatchToProps))(ComposeMessage);
 
 function fileNameAndExt(str) {
   var file = str.split('/').pop();
