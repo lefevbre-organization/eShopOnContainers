@@ -1,6 +1,13 @@
 import React, { PureComponent } from 'react';
 import * as uuid from 'uuid/v4';
-import { sendMessage, getLabelInbox } from '../../api_graph';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'redux';
+import { 
+  sendMessage, 
+  createDraft, 
+  getLabelInbox 
+} from '../../api_graph';
+import { getEmailMessage } from '../content/message-list/actions/message-list.actions';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -131,6 +138,8 @@ export class ComposeMessage extends PureComponent {
       showEmptySubjectWarning: false,
       isPriority: false,
       readConfirmation: false,
+      draftTime: '',
+      draftId: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
@@ -258,6 +267,31 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    const messageId = this.props.match.params.id;
+    if(messageId){
+      this.props.getEmailMessage(messageId);
+    }
+  }
+
+  getById() {
+    if(this.props.emailMessageResult.body != ''){
+        const id = this.props.emailMessageResult.result.id
+        const toRecipients = this.props.emailMessageResult.result.toRecipients;
+   
+        toRecipients.forEach(toRecipient => {
+          setTimeout(() => {
+            this.addAddress('to', toRecipient.emailAddress.address);
+          }, 100);
+        });
+        const subject = this.props.emailMessageResult.result.subject;
+        const body = this.props.emailMessageResult.result.bodyPreview
+        this.setState({
+          draftId: id,
+          subject: subject, 
+          defaultContent: body,
+          content: body
+        });
+    }
   }
 
   handleGetUserFromLexonConnector() {
@@ -419,6 +453,21 @@ export class ComposeMessage extends PureComponent {
     console.log(this.state.uppyPreviews);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.to !== this.state.to 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) {
+      this.saveDraft();
+    }
+
+    if(
+      prevProps.emailMessageResult !== this.props.emailMessageResult
+      ) {
+      this.getById();
+    }
+  }
+
   componentWillUnmount() {
     //window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     window.dispatchEvent(new CustomEvent('CloseComposer'));
@@ -427,7 +476,6 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-
     this.uppy.close();
   }
 
@@ -459,6 +507,52 @@ export class ComposeMessage extends PureComponent {
     }
 
     this._sendEmail();
+  }
+
+  getTimeDraft() {
+    const date = new Date();
+    const time = date.toLocaleString(
+      navigator.language, 
+      {
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: "2-digit"
+      });
+    return time >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
+  }
+  
+  saveDraft() {
+    const validTo = getValidEmails(this.state.to);
+    const headers = {
+      To: validTo.join(', '),
+      Subject: this.state.subject,
+      attachments: this.state.uppyPreviews,
+    };
+    const Fileattached = this.state.uppyPreviews;
+
+
+    const email = Object.assign({}, this.state, {
+      subject: this.state.subject,
+      internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
+    });
+
+    const fullTime = this.getTimeDraft();
+    
+    if(this.state.to != '' || this.state.subject != '' || this.state.content != '') {
+      setTimeout(() => {
+        createDraft({
+          data: email,
+          attachments: Fileattached,
+          draftId: this.state.draftId
+        }).then((draft) => {
+          this.setState({draftTime: fullTime, draftId: draft.id});
+        })
+        .catch((err) => {
+          console.log('Error sending email:' + err);
+        });
+      }, 1500);
+    }
+    
   }
 
   _sendEmail() {
@@ -781,6 +875,7 @@ export class ComposeMessage extends PureComponent {
       errorNotification,
       isPriority,
       readConfirmation,
+      draftTime
     } = this.state;
 
     const { to, cc, bcc } = this.props;
@@ -985,6 +1080,7 @@ export class ComposeMessage extends PureComponent {
                 <FontAwesomeIcon icon={faPaperclip} size='1x' />
                 <span>{i18n.t('compose-message.attach')}</span>
               </Button>
+              { draftTime != '' ? <span className="draft-time">{i18n.t('compose-message.draft-save')} {draftTime}</span> : null}
               <div id='inputfileWrapper'></div>
             </div>
           </div>
@@ -1021,6 +1117,15 @@ export class ComposeMessage extends PureComponent {
             font-size: 20px;
             color: #c43741;
           }
+
+          .draft-time {
+            color: #001978;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            top: 2px;
+          }
+
         `}</style>
       </React.Fragment>
     );
@@ -1030,15 +1135,19 @@ export class ComposeMessage extends PureComponent {
 const mapStateToProps = (state) => ({
   lexon: state.lexon,
   messagesResult: state.messagesResult,
+  emailMessageResult: state.emailMessageResult
 });
 
 const mapDispatchToProps = (dispatch) => ({
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
+  getEmailMessage: (messageId) => 
+    dispatch(getEmailMessage(messageId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
+export default compose(
+  withRouter, connect(mapStateToProps, mapDispatchToProps))(ComposeMessage);
 
 function fileNameAndExt(str) {
   var file = str.split('/').pop();
