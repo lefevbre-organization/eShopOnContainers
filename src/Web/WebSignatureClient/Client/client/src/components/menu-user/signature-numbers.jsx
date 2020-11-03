@@ -34,7 +34,7 @@ const SignatureNumbers = props => (
             }
   
             .container-summary {
-              display: fex;
+              display: flex !important;
               margin-bottom: 10px
             }
   
