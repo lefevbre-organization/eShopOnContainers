@@ -41,7 +41,7 @@
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
-    "filterMenu": "FIRMAS SOLICITADAS",
+    "filterMenu": "FIRMAS",
     "filterMenuEmail": "EMAIL CERTIFICADO",
     "filterMenuSms": "SMS CERTIFICADO",
     "filterAll": "Mostrar todas",

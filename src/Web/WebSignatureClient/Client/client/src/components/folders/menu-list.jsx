@@ -84,37 +84,37 @@ export class MenuListClass extends Component {
     return (
         <div>
           <MenuItem 
+           id={'signature'}
            title={i18n.t('sideBar.filterMenu')}
-           icon="lf-icon-signature"
+           icon="lf-icon-signature-certificate"
            onClick={this.onClick}
            getConfirm={this.getConfirm}
            collapsed={collapsed}
-           optionCancel={true}
            disable={lefebvre.roles
            && lefebvre.roles.includes('Firma Digital') ?
            true : false} /> 
           
           <MenuItem 
+           id={'email'}
            title={i18n.t('sideBar.filterMenuEmail')}
-           icon="lf-icon-mail"
+           icon="lf-icon-certified-mail"
            onClick={this.onEmailClick}
            getConfirm={this.getConfirm}
            collapsed={collapsed}
-           optionCancel={false}
            disable={lefebvre.roles
            && lefebvre.roles.includes('Email Certificado') ?
            true : false} />
 
           <MenuItem 
+           id={'sms'}
            title={i18n.t('sideBar.filterMenuSms')}
-           icon="lf-icon-mail"
+           icon="lf-icon-certified-sms"
            onClick={this.onSmsClick}
            getConfirm={this.getConfirm}
            collapsed={collapsed}
-           optionCancel={false}
            disable={lefebvre.roles
            && lefebvre.roles.includes('SMS Certificado') ?
-           true : false} />     
+           false : true} />     
       
           <DialogComponent 
             id="confirmDialog" 

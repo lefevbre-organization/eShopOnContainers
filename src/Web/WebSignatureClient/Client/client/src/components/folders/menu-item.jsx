@@ -10,12 +10,11 @@ import styles from './menu-list.scss';
 const MenuItem = props => {
 
  const content = () => {
-    const { collapsed, onClick, optionCancel } = props;
+    const { collapsed, onClick, id } = props;
     const option1 = 'En progreso';
     const option2 = 'Completadas';
     const option3 = 'Mostrar todas';
     const option4 = 'Canceladas';
-
     return (
       <ul className={`${styles['nav-firmas']}`}>
         <li className={`${styles.todas}`}>
@@ -48,7 +47,7 @@ const MenuItem = props => {
             } 
           </a>
         </li>
-        {optionCancel ? 
+        {id == 'signature' ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-folder">
@@ -56,6 +55,17 @@ const MenuItem = props => {
             { 
              collapsed ?  ''  : 
              <span>{i18n.t('sideBar.filterCancelled')}</span>
+            } 
+          </a>
+        </li> : null}
+        {id == 'sms' ? 
+        <li className={`${styles.canceladas}`}>
+          <a href="#" id={option4} onClick={event => onClick(event, option4)}>
+            <span className="lf-icon-unsolved">
+            </span>
+            { 
+             collapsed ?  ''  : 
+             <span>{i18n.t('signaturesGrid.statusError')}</span>
             } 
           </a>
         </li> : null}
@@ -85,7 +95,7 @@ const MenuItem = props => {
           props.collapsed ?  
            <div 
             className={`${styles['title-nav-firmas']} ${styles['title-nav-disble']}`}
-            onClick={this.getConfirm} >
+            onClick={props.getConfirm} >
             <span className={props.icon}>
             </span>
            </div> :  

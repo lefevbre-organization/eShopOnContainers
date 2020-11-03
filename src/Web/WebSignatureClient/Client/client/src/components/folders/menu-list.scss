@@ -26,16 +26,17 @@
   padding: 0;
 }
 
-
 .title-nav-firmas{
   background:#001978;
   color:#FFF;
   text-transform: uppercase;
   //padding:15px;
-  padding: 15px 8px 15px 10px;
+  padding: 8px 8px 15px 10px;
   span{
-    font-size:18px;
-    margin:0 10px;
+    font-size: 28px;
+    margin: 0 6px;
+    position: relative;
+    top: 8px;
   }
 }
 
@@ -70,17 +71,17 @@
           color: #001978;
         }
         &:hover{
-          background: #001978;
-          color:#FFF;
+         background: #D2D2D4;
+         color: #001978;
           span:before {
-            color:#FFF ;
+            color: #001978;
           }
         }
         &:active{
-          background: #001978;
-          color:#FFF;
+         background: #D2D2D4;
+         color: #001978;
           span:before {
-            color:#FFF ;
+           color: #001978;
           }         
         }
       }

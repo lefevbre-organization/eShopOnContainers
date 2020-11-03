@@ -41,7 +41,7 @@
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
-    "filterMenu": "Signatures demandées",
+    "filterMenu": "Signatures",
     "filterMenuEmail": "Email certifié",
     "filterMenuSms": "SMS certifié",
     "filterAll": "Montrer toutes",
