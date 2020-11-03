@@ -155,6 +155,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.selectedEvent = undefined;
 
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
@@ -163,6 +164,18 @@ export class Main extends Component {
         else {
             this.layoutIframe = false;
         }
+
+        
+
+        //var a = new URLSearchParams(this.props.location.search).get("cellheight")
+
+        //if (this.props.location.search == "cellheight=400px") {
+        //    this.layoutIframe = true;
+        //}
+        //else {
+        //    this.layoutIframe = false;
+        //}
+
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -580,19 +593,20 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [],
+                    selectedMessages: [this.selectedEvent],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
-                    env: window.currentUser?window.currentUser.env:null
+                    app: 'calendar',
+                    env: window.currentUser?window.currentUser.env : null
                 }
             })
         );
     }
 
-    handleGetUserFromLexonConnector() {
+    handleGetUserFromLexonConnector(event) {
         // const { userId } = this.props.lexon;
         const userId = 'E1621396'
         if (userId) {
@@ -898,10 +912,6 @@ export class Main extends Component {
     }
 
     onPopupOpen(args) {
-
-
-
-
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
         
@@ -995,7 +1005,7 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
-
+            this.selectedEvent = {...args.data};
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;
@@ -1018,8 +1028,8 @@ export class Main extends Component {
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
-            args.element.style.width = "700px";
-            args.element.style.height = "95%";
+            args.element.style.width = "900px";
+            args.element.style.height = "800px";
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
@@ -1139,9 +1149,10 @@ export class Main extends Component {
                 let userContentEle = createElement('div', {
                     className: 'e-profile-wrapper'
                 });
+                debugger
                 scheduleElement.parentElement.appendChild(userContentEle);
                 let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                let output = this.buttonEventTypeObj.element;
+                let output = this.buttonEventTypeObj;
                 this.profilePopup = new Popup(userContentEle, {
                     content: output,
                     relateTo: userIconEle,
@@ -1686,6 +1697,11 @@ export class Main extends Component {
                             </div>
                         ) : (
                                 <div>
+                                    <style jsx>{`
+                                         .e-content-wrap {
+                                             height:100% !important;
+                                            }                            
+                                    `}</style>
 
                                 </div>
                             )}
@@ -1750,11 +1766,16 @@ export class Main extends Component {
                                 </div>
 
                                 <div className="hidden">
+                                    <div className='buttons-wrapper'  ref={but => this.buttonEventTypeObj = but}>
                                     <ButtonComponent
                                         cssClass='e-flat e-primary'
                                         onClick={this.onEventTypeClick.bind(this)}
-                                        ref={but => this.buttonEventTypeObj = but}
                                     >Tipos de eventos</ButtonComponent>
+                                    <ButtonComponent
+                                        cssClass='e-flat e-primary'
+                                        onClick={this.onEventTypeClick.bind(this)}
+                                    >Otros tipos de eventos</ButtonComponent>
+                                    </div>
                                 </div>
 
                                 <div className='schedule-control-section'>
@@ -1774,6 +1795,7 @@ export class Main extends Component {
                                                 popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
+                                                //allowVirtualScrolling = "true"
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
@@ -1851,6 +1873,8 @@ export class Main extends Component {
                                 </DialogComponent>
                             </article>
                         </section>
+
+                        
                     </Fragment>
                 </SidebarCnn>
             </div>

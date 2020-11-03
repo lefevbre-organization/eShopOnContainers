@@ -7,8 +7,12 @@ namespace Lexon.Infrastructure.Services
 {
     public interface IActuationsService
     {
-        Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetActuationTypesAsync(string env, string idUser, string bbdd);
-        Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env, string idUser, string bbdd);
+        Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetActuationTypesAsync(string env,
+                                                                                       string idUser,
+                                                                                       string bbdd);
+        Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env,
+                                                                                                string idUser,
+                                                                                                string bbdd);
         Task<Result<int>> UpsertAppointmentAsync(LexAppointment appointment,
                                               string env,
                                               string idUser,
@@ -46,5 +50,6 @@ namespace Lexon.Infrastructure.Services
                                                        string env,
                                                        string idUser,
                                                        string bbdd);
+
     }
 }

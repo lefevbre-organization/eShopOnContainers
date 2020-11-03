@@ -595,13 +595,14 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [],
+                    selectedMessages: [this.selectedEvent],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
-                    env: window.currentUser?window.currentUser.env:null
+                    env: window.currentUser?window.currentUser.env :null,
+                    app: 'calendar',
                 }
             })
         );
@@ -1726,7 +1727,11 @@ export class Main extends Component {
                             </div>
                         ) : (
                                 <div>
-
+                                    <style jsx>{`
+                                     .e-content-wrap {
+                                         height:100% !important;
+                                        }                            
+                                    `}</style>
                                 </div>
                             )}
 

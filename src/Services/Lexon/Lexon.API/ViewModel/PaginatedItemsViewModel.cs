@@ -19,5 +19,11 @@
             this.Count = count;
             this.Data = data;
         }
+
+        public PaginatedItemsViewModel(int pageIndex, int pageSize):this(pageIndex, pageSize, 0, new List<TEntity>() )
+        { }
+
+        public PaginatedItemsViewModel() : this(0, 0, 0, new List<TEntity>())
+        { }
     }
 }

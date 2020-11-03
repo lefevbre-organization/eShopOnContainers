@@ -22,6 +22,12 @@ const selections = (state = INITIAL_STATE.selections, action) => {
         user: action.payload
       }
     }
+    case ACTIONS.Types.SET_APP: {
+      return {
+        ...state,
+        app: action.payload
+      }
+    }
     case ACTIONS.Types.SET_INITIAL_BBDD: {
       return {
         ...state,

@@ -17,7 +17,6 @@ data:
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   all__EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}"
-  all__version: "RC {{ .Values.inf.version.major }}.{{ .Values.inf.version.minor }}"
   name__webportal__hc: Web Portal Client HTTP Check
   internalurls__webportal__hc: https://{{ .Values.app.svc.portal }}/hc
   name__webgoogle__hc: Web Google Client HTTP Check

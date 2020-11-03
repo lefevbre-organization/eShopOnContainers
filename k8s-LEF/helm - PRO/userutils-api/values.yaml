@@ -76,7 +76,7 @@ env:
     - name: OnlinePasssword
       value: '22lcqsp11lsw'
     - name: TokenCaducity
-      value: 150
+      value: 1500
     - name: TokenKey
       value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
 
