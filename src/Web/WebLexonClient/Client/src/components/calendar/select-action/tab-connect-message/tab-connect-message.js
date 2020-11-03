@@ -12,6 +12,7 @@ import SaveDocument from "../save-document/save-document";
 class TabConnectMessage extends Component {
   constructor(props) {
     super(props);
+    this.itv = null;
 
     this.state = {
       classifications: [],
@@ -35,9 +36,10 @@ class TabConnectMessage extends Component {
 
     if (selectedMessages.length === 1) {
       this.getEventClassifications();
-      setTimeout(()=>{
+      this.itv = setInterval(()=>{
         this.getEventClassifications();
-      }, 1000)
+      }, 5000);
+
     } else {
       this.setState({ classifications: [], showClassifications: false });
     }
@@ -52,6 +54,10 @@ class TabConnectMessage extends Component {
   }
 
   componentWillUnmount() {
+    if(this.itv) {
+      clearInterval(this.itv);
+      this.itv = null;
+    }
   }
 
   componentDidUpdate(prevProps) {

@@ -42,7 +42,6 @@ class EventClassification extends Component {
   render() {
     const { description, idActuation, entityType } = this.props.classification;
 
-    debugger
     return (
         <li className='col-xl-12 lexon-item'>
           <p>

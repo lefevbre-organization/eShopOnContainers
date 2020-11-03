@@ -667,7 +667,7 @@ export const createActuation = async (bbdd, user, st, et, actuation, subject) =>
       },
       body: JSON.stringify({
         idType: actuation,
-        subject,
+        issue: subject,
         startDateTo: et,
         startDateFrom: st,
         billable: "0"
