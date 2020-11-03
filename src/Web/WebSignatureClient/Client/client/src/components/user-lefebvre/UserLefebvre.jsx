@@ -64,7 +64,7 @@ class UserLefebvre extends Component {
         var idDocuments = (this.props.match.params.token ? getIdDocuments(payload) : null);
         var mailContacts = (this.props.match.params.token ? getMailContacts(payload) : null);
         var adminContacts = (this.props.match.params.token ? getAdminContacts(payload) : null);
-        var service = (this.props.match.params.token ? getService(payload) : null);
+        var service = (this.props.match.params.token ? (getService(payload)) ? getService(payload) : 'signature' : 'signature');
         
         // var configureBaseTemplates = (this.props.match.params.token ? getConfigureBaseTemplates(payload) : false);
         // var configureDefaultTemplates = (this.props.match.params.token ? getConfigureDefaultTemplates(payload) : false);
@@ -145,48 +145,109 @@ class UserLefebvre extends Component {
                             .then( userInfo => {
                                 if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
                                     // No existe registro del usuario. Se tiene que crear registro de usuario nuevo con branding.
+                                    // Primero se verifica el branding de la aplicación por la que entra
                                     getBrandingTemplate(app)
-                                    .then(template => {
-                                        var auxTemplate = JSON.stringify(template.data.configuration);
-                                        auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
-                                        var newTemplate = JSON.parse(auxTemplate);
-                                        createBranding2(newTemplate, token)
-                                        .then( res => {
-                                            var userBranding = [{app: app, externalId: res.id}];
-                                            createUser(user, userBranding);
-                                            this.props.setUserBrandings('signature', userBranding);
-                                            getNumAvailableSignatures(idUserApp)
-                                            .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
-                                            .catch(err => {
-                                                console.log(err);
-                                                this.props.setNumAvailableSignatures(0);
-                                            });
-                                         });
-                                    });
-                                
+                                        .then(template => {
+                                            var auxTemplate = JSON.stringify(template.data.configuration);
+                                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                            var newTemplate = JSON.parse(auxTemplate);
+                                            // Se crea el branding en Signaturit
+                                            createBranding2(newTemplate, token)
+                                                .then( branding => {
+                                                    var userBranding = [{app: app, externalId: branding.id}];
+                                                    // Se guarda el registro del usuario con los datos del branding recién creado.
+                                                    createUser(user, userBranding);
+                                                    this.props.setUserBrandings('signature', userBranding);
+                                                    getNumAvailableSignatures(idUserApp)
+                                                        .then( num => this.props.setNumAvailableSignatures(parseInt(num.data)))
+                                                        .catch(err => {
+                                                            console.log(err);
+                                                            this.props.setNumAvailableSignatures(0);
+                                                        });
+                                                    
+                                                    // Si ha entrado por primera vez de una app de terceros como centinela, le tenemos que crear también el branding de lefebvre.
+                                                    if (app !== 'lefebvre'){
+                                                        // Se recupera la plantilla del branding de lefebvre
+                                                        getBrandingTemplate('lefebvre')
+                                                            .then(lefTemplate => {
+                                                                var lefAuxTemplate = JSON.stringify(lefTemplate.data.configuration);
+                                                                lefAuxTemplate = lefAuxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                                var lefNewTemplate = JSON.parse(lefAuxTemplate);
+                                                                // Se crea el branding en signaturit
+                                                                createBranding2(lefNewTemplate, token)
+                                                                    .then(lefBranding => {
+                                                                        // Se guarda la información del branding en el registro del usuario
+                                                                        var lefUserBranding = {app: 'lefebvre', externalId: lefBranding.id};
+                                                                        addOrUpdateBranding(user, lefUserBranding);
+                                                                        userBranding.push(lefUserBranding);
+                                                                        this.props.setUserBrandings('signature', userBranding);
+                                                                    })
+                                                            })
+                                                            .catch(err => {
+                                                                console.log('Error in getBrandingTemplate lefebvre:');
+                                                                console.log(err);
+                                                            })
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log('Error in createBranding');
+                                                    console.log(err);
+                                                })
+                                        })
+                                        .catch(err => {
+                                            console.log('Error in getBrandingTemplate:');
+                                            console.log(err);
+                                        })
                                 } else {
                                     if (userInfo && userInfo.data && userInfo.data.brandings 
                                         && ((userInfo.data.brandings.constructor === Object && Object.entries(userInfo.data.brandings).length === 0) 
                                             || !userInfo.data.brandings.find(b => b.app === app))){
                                         // El usuario existe pero no tenemos branding configurado para la aplicación desde la que entra.
                                         getBrandingTemplate(app)
-                                        .then(template => {
-                                            var auxTemplate = JSON.stringify(template.data.configuration);
-                                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
-                                            var newTemplate = JSON.parse(auxTemplate);
-                                            createBranding2(newTemplate, token)
-                                            .then( res => {
-                                                console.log('Resultado de creación de Branding');
-                                                console.log(res);
-                                                var userBranding = [{app: app, externalId: res.id}];
-                                                addOrUpdateBranding(user, userBranding[0]);
-                                                this.props.setUserBrandings('signature', userBranding);
+                                            .then(template => {
+                                                var auxTemplate = JSON.stringify(template.data.configuration);
+                                                auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                var newTemplate = JSON.parse(auxTemplate);
+                                                // Se crea el branding en signaturit
+                                                createBranding2(newTemplate, token)
+                                                    .then( res => {
+                                                        console.log('Resultado de creación de Branding');
+                                                        console.log(res);
+                                                        var userBranding = [{app: app, externalId: res.id}];
+                                                        // Se añade la información del branding al registro del usuario.
+                                                        addOrUpdateBranding(user, userBranding[0]);
+                                                        this.props.setUserBrandings('signature', userBranding);
+                                                        
+                                                        // Si el usuario todavía no tiene branding creado para lefebvre, se crea:
+                                                        if (app !== 'lefebvre' && !userInfo.data.brandings.find(b => b.app === 'lefebvre')){
+                                                            getBrandingTemplate('lefebvre')
+                                                                .then(lefTemplate => {
+                                                                    var lefAuxTemplate = JSON.stringify(lefTemplate.data.configuration);
+                                                                    lefAuxTemplate = lefAuxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                                    var lefNewTemplate = JSON.parse(lefAuxTemplate);
+                                                                    createBranding2(lefNewTemplate, token)
+                                                                        .then(lefBranding => {
+                                                                            var lefUserBranding = {app: 'lefebvre', externalId: lefBranding.id};
+                                                                            addOrUpdateBranding(user, lefUserBranding);
+                                                                            userBranding.push(lefUserBranding);
+                                                                            this.props.setUserBrandings('signature', userBranding);
+                                                                        })
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log('Error in getBrandingTemplate lefebvre:');
+                                                                    console.log(err);
+                                                                })
+                                                        }
+                                                    })
+                                                    .catch( err => {
+                                                        console.log('Se ha producido un error al guardar el branding');
+                                                        console.log(err);
+                                                    })
                                             })
-                                            .catch( err => {
-                                                console.log('Se ha producido un error al guardar el branding');
+                                            .catch(err => {
+                                                console.log('Error in getBrandingTemplate');
                                                 console.log(err);
                                             })
-                                        });
                                         getNumAvailableSignatures(idUserApp)
                                         .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
                                         .catch(err => {
@@ -196,6 +257,25 @@ class UserLefebvre extends Component {
                                     } else {
                                         // Usuario y branding ya existentes
                                         this.props.setUserBrandings('signature', userInfo.data.brandings);
+                                        // Se verifica si el usuario no tiene branding de lefebvre y se le crea:
+                                        if (app !== 'lefebvre' && !userInfo.data.brandings.find(b => b.app === 'lefebvre')){
+                                            getBrandingTemplate('lefebvre')
+                                                .then(lefTemplate => {
+                                                    var lefAuxTemplate = JSON.stringify(lefTemplate.data.configuration);
+                                                    lefAuxTemplate = lefAuxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                    var lefNewTemplate = JSON.parse(lefAuxTemplate);
+                                                    createBranding2(lefNewTemplate, token)
+                                                        .then(lefBranding => {
+                                                            var lefUserBranding = {app: 'lefebvre', externalId: lefBranding.id};
+                                                            addOrUpdateBranding(user, lefUserBranding);
+                                                            this.props.setUserBrandings('signature', userInfo.data.brandings.push(lefUserBranding));
+                                                        })
+                                                })
+                                                .catch(err => {
+                                                    console.log('Error in getBrandingTemplate lefebvre:');
+                                                    console.log(err);
+                                                })
+                                        }
                                         getNumAvailableSignatures(idUserApp)
                                         .then(res => this.props.setNumAvailableSignatures(parseInt(res.data)))
                                         .catch(err => {
@@ -233,22 +313,49 @@ class UserLefebvre extends Component {
                                 if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
                                     // No existe registro del usuario. Se tiene que crear registro de usuario nuevo con branding.
                                     getBrandingTemplate(app)
-                                    .then(template => {
-                                        var auxTemplate = JSON.stringify(template.data.configuration);
-                                        auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
-                                        var newTemplate = JSON.parse(auxTemplate);
-                                        createBranding2(newTemplate, token)
-                                        .then( res => {
-                                            var userBranding = [{app: app, externalId: res.id}];
-                                            createUserEmail(user, userBranding);
-                                            this.props.setUserBrandings('certifiedEmail', userBranding);
-                                            //this.props.setAvailableSignatures(0);
-                                         })
-                                         .catch( err => {
-                                             console.log("Se ha producido un error al crear el branding");
-                                             console.log(err);
-                                         })
-                                    });
+                                        .then(template => {
+                                            var auxTemplate = JSON.stringify(template.data.configuration);
+                                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                            var newTemplate = JSON.parse(auxTemplate);
+                                            createBranding2(newTemplate, token)
+                                                .then( branding => {
+                                                    var userBranding = [{app: app, externalId: branding.id}];
+                                                    createUserEmail(user, userBranding);
+                                                    this.props.setUserBrandings('certifiedEmail', userBranding);
+                                                    // This piece of code prevents errors if first access to the app is made from a third application like centinela
+                                                    if (app !== 'lefebvre'){
+                                                        getBrandingTemplate('lefebvre')
+                                                            .then(lefTemplate => {
+                                                                var lefAuxTemplate = JSON.stringify(lefTemplate.data.configuration);
+                                                                lefAuxTemplate = lefAuxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                                var lefNewTemplate = JSON.parse(lefAuxTemplate);
+                                                                createBranding2(lefNewTemplate, token)
+                                                                    .then(lefBranding => {
+                                                                        var lefUserBranding = {app: 'lefebvre', externalId: lefBranding.id};
+                                                                        addOrUpdateBrandingEmail(user, lefUserBranding);
+                                                                        userBranding.push(lefUserBranding);
+                                                                        this.props.setUserBrandings('certifiedEmail', userBranding);
+                                                                    })
+                                                                    .catch(err => {
+                                                                        console.log('Error in CreateBranding2');
+                                                                        console.log(err);
+                                                                    })
+                                                            })
+                                                            .catch(err => {
+                                                                console.log('Error in getBrandingTemplate lefebvre:');
+                                                                console.log(err);
+                                                            })
+                                                    }
+                                                })
+                                                .catch( err => {
+                                                    console.log("Se ha producido un error al crear el branding");
+                                                    console.log(err);
+                                                })
+                                        })
+                                        .catch(err => {
+                                            console.log('Error in createBranding');
+                                            console.log(err);
+                                        })
                                 } else {
                                     if (userInfo && userInfo.data && userInfo.data.brandings && ((userInfo.data.brandings.constructor === Object && Object.entries(userInfo.data.brandings).length === 0) || !userInfo.data.brandings.find(b => b.app === app))){
                                         // Ya existe registro del usuario pero no tiene branding para la aplicación desde la que accede.
@@ -264,15 +371,66 @@ class UserLefebvre extends Component {
                                                 var userBranding = [{app: app, externalId: res.id}];
                                                 addOrUpdateBrandingEmail(user, userBranding[0]);
                                                 this.props.setUserBrandings('certifiedEmail', userBranding);
+						                        if (app !== 'lefebvre' && !userInfo.data.brandings.find(b => b.app === 'lefebvre')){
+                                                    getBrandingTemplate('lefebvre')
+                                                        .then(lefTemplate => {
+                                                            var lefAuxTemplate = JSON.stringify(lefTemplate.data.configuration);
+                                                            lefAuxTemplate = lefAuxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                            var lefNewTemplate = JSON.parse(lefAuxTemplate);
+                                                            createBranding2(lefNewTemplate, token)
+                                                                .then(lefBranding => {
+                                                                    var lefUserBranding = {app: 'lefebvre', externalId: lefBranding.id};
+                                                                    addOrUpdateBrandingEmail(user, lefUserBranding);
+                                                                    userBranding.push(lefUserBranding);
+                                                                    this.props.setUserBrandings('certifiedEmail', userBranding);
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log('Error in createBranding2');
+                                                                    console.log(err);
+                                                                })
+                                                        })
+                                                        .catch(err => {
+                                                            console.log('Error in getBrandingTemplate lefebvre:');
+                                                            console.log(err);
+                                                        })
+                                                }
                                             })
                                             .catch( err => {
                                                 console.log('Se ha producido un error al guardar el branding');
                                                 console.log(err);
                                             })
-                                        });
+                                        })
+                                        .catch( err => {
+                                            console.log('Se ha producido un error al guardar el branding');
+                                            console.log(err);
+                                        })
                                     } else {
                                         // Usuario y branding ya existentes
                                         this.props.setUserBrandings('certifiedEmail', userInfo.data.brandings);
+                                        // This piece of code prevents errors if first access to the app is made from a third application like centinela
+                                        if (app !== 'lefebvre' && !userInfo.data.brandings.find(b => b.app === 'lefebvre')){
+                                            getBrandingTemplate('lefebvre')
+                                                .then(lefTemplate => {
+                                                    var lefAuxTemplate = JSON.stringify(lefTemplate.data.configuration);
+                                                    lefAuxTemplate = lefAuxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                                    var lefNewTemplate = JSON.parse(lefAuxTemplate);
+                                                    createBranding2(lefNewTemplate, token)
+                                                        .then(lefBranding => {
+                                                            var lefUserBranding = {app: 'lefebvre', externalId: lefBranding.id};
+                                                            addOrUpdateBrandingEmail(user, lefUserBranding);
+                                                            userBranding.push(lefUserBranding);
+                                                            this.props.setUserBrandings('certifiedEmail', userBranding);
+                                                        })
+                                                        .catch(err => {
+                                                            console.log('Error in createBranding2');
+                                                            console.log(err);
+                                                        })
+                                                })
+                                                .catch(err => {
+                                                    console.log('Error in getBrandingTemplate lefebvre:');
+                                                    console.log(err);
+                                                })
+                                        }
                                     }
 
                                     if (idDocuments && idDocuments.length > 0){

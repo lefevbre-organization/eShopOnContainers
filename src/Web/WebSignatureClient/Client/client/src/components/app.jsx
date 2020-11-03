@@ -27,7 +27,10 @@ import {
   editMessage,
   setError,
   selectSignature,
-  selectEmail
+  selectEmail,
+  setTitle,
+  setAppTitle, 
+  setSelectedService
 } from '../actions/application';
 import { clearSelected, setSelected } from '../actions/messages';
 import {
@@ -698,6 +701,8 @@ class App extends Component {
     console.log('');
 
     if (lefebvre.targetService === 'signature'){
+      this.props.setSelectedService('signature');
+      this.props.setAppTitle(i18n.t('topBar.app'));
       this.props.preloadSignatures(lefebvre.userId)
         .then( () => {
           if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
@@ -712,6 +717,7 @@ class App extends Component {
             } 
             if (newSignature) {
               if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+                this.props.setTitle(i18n.t('messageEditor.title'));
                 this.getFilesFromLexon()
                   .then(files => {
                     if (files === null) {
@@ -724,6 +730,7 @@ class App extends Component {
               } 
               else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
                 if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+                  this.props.setTitle(i18n.t('messageEditor.title'));
                   this.getFilesFromCentinela()
                     .then(files => {
                       if (files === null){
@@ -753,11 +760,19 @@ class App extends Component {
                   this.setState({guidNotFound: true})
                 }
               }
+            }
+            else {
+              this.props.setUserApp('lefebvre');
+              this.props.setTitle(i18n.t('signatureViewer.title'));
             }  
           }
         })
         .catch(err => { throw new Error(err);} );
-    } else if (targetService === "certifiedEmail") {
+        this.props.preloadEmails(lefebvre.userId);
+    } else if (lefebvre.targetService === "certifiedEmail") {
+      this.props.setSelectedService('certifiedEmail');
+      this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
+      this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
       this.props.preloadEmails(lefebvre.userId)
         .then( () => {
           if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
@@ -787,7 +802,6 @@ class App extends Component {
                   this.getFilesFromCentinela()
                     .then(files => {
                       if (files === null){
-                        
                         this.props.setUserApp('lefebvre');
                         this.props.newMessage('emailCertificate', dataMailContacts, dataAdminContacts);
                       }
@@ -813,10 +827,13 @@ class App extends Component {
                   this.setState({guidNotFound: true})
                 }
               }
+            } else {
+              this.props.setUserApp('lefebvre');
             }  
           }
         })
-        .catch(err => { throw new Error(err);} );      
+        .catch(err => { throw new Error(err);} );
+        this.props.preloadSignatures(lefebvre.userId);      
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
@@ -1048,6 +1065,9 @@ const mapDispatchToProps = dispatch => ({
   setIdDocuments: ids => dispatch(setIdDocuments(ids)),
   backendRequest: () => dispatch(backendRequest()),
   backendRequestCompleted: () => dispatch(backendRequestCompleted()),
+  setSelectedService: service => dispatch(setSelectedService(service)),
+  setAppTitle: title => dispatch(setAppTitle(title)),
+  setTitle: title => dispatch(setTitle(title))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -1079,7 +1099,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     setIdDocuments: ids => dispatchProps.setIdDocuments(ids),
     backendRequest: () => dispatchProps.backendRequest(),
     backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
-    preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted)
+    preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted),
+    setSelectedService: service => dispatchProps.setSelectedService(service),
+    setAppTitle: title => dispatchProps.setAppTitle(title),
+    setTitle: title => dispatchProps.setTitle(title)
   });
 
 

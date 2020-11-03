@@ -1202,7 +1202,9 @@ const getDocumentsEmail = (email) => {
   var documents = [];
   email.certificates.forEach(certificate => {
     if (!documents.find(document => document == JSON.stringify(certificate.file))){
-      documents.push(JSON.stringify(certificate.file));
+      if (certificate.file !== undefined){
+        documents.push(JSON.stringify(certificate.file));
+      }
     }
   });
   return documents;
@@ -1235,6 +1237,8 @@ const calculateStatusEmails = (emails) => {
     var numRecipients = countDistinctEmails(email);
     var numDocuments = countDistinctDocuments(email);
     var numCertifiedEvents = countCertificationEvents(email);
+    
+    numDocuments = (numDocuments === 0) ? 1 : numDocuments;
 
     if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
       email.status = 'completed'
