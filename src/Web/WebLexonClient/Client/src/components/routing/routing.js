@@ -15,6 +15,7 @@ import Configuration from '../configuration/configuration';
 import MessageClassifications from '../addon-conecting-emails/addon-conecting-emails';
 import AddonAttachDocument from '../addon-attach-documents/addon-attach-documents';
 import { connect } from 'react-redux';
+import CalendarSelectAction from "../calendar/select-action/select-action";
 
 class Routing extends Component {
   constructor(props) {
@@ -54,7 +55,7 @@ class Routing extends Component {
       company,
       composerOpen
     } = this.props;
-    
+
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return (
@@ -119,7 +120,92 @@ class Routing extends Component {
     }
   }
 
+
+  renderCalendarPage() {
+    const { actualPage } = this.state;
+    const {
+      addonData,
+      user,
+      companies,
+      toggleNotification,
+      casefile,
+      bbdd,
+      company,
+      composerOpen
+    } = this.props;
+
+    switch (actualPage) {
+      case PAGE_SELECT_COMPANY:
+        return (
+            <SelectCompany
+                user={user}
+                companies={companies}
+                changePage={this.changePage}
+            />
+        );
+      case PAGE_CASEFILE:
+        return (
+            <CaseFile
+                user={user}
+                changePage={this.changePage}
+                idCaseFile={casefile}
+                bbdd={bbdd}
+                idCompany={company}
+            />
+        );
+      case PAGE_SELECT_ACTION:
+        return (
+            <CalendarSelectAction
+                composerOpen={composerOpen}
+                user={user}
+                companies={companies}
+                changePage={this.changePage}
+                toggleNotification={toggleNotification}
+            />
+        );
+      case PAGE_CONFIGURATION:
+        return (
+            <Configuration
+                user={user}
+                companies={companies}
+                changePage={this.changePage}
+                toggleNotification={toggleNotification}
+            />
+        );
+
+      case PAGE_MESSAGE_CLASSIFICATIONS:
+        return (
+            <MessageClassifications
+                user={user}
+                bbddAddon={bbdd}
+                addonData={addonData}
+                toggleNotification={toggleNotification}
+            />
+        );
+
+      case PAGE_DOCUMENT_ATTACHED:
+        return (
+            <AddonAttachDocument
+                user={user}
+                bbddAddon={bbdd}
+                addonData={addonData}
+                toggleNotification={toggleNotification}
+            />
+        );
+
+      default:
+        return <SelectCompany changePage={this.changePage} />;
+    }
+  }
+
+
   render() {
+    if(this.props.app === 'calendar') {
+      return <React.Fragment>
+        {this.renderCalendarPage()}
+      </React.Fragment>
+    }
+
     return (
       <React.Fragment>
         {this.state.actualPage === PAGE_SELECT_ACTION && (
@@ -150,6 +236,7 @@ Routing.propTypes = {
 
 const mapStateToProps = state => {
   return {
+    app: state.selections.app,
     errors: state.applicationReducer.errors,
     composerOpen: state.applicationReducer.isComposerOpen
   };

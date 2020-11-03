@@ -118,30 +118,39 @@ class SelectCompany extends Component {
     const _this = this;
 
     return (
-      <div className='container'>
-        <div className='row'>
-          <form className='col-12 form-selection-business'>
-            <p>{i18n.t('select-company.select-company')}</p>
-            {/* <PerfectScrollbar style={{ height: "50vh" }}> */}
-            <ul className='list-unstyled'>
-              {this.props.companies &&
-                this.props.companies.map((company) => {
-                  return _this.renderCompany(company);
-                })}
-            </ul>
-            {/* </PerfectScrollbar> */}
-            {this.renderShowMessageSelectCompany()}
-            <div className='d-flex justify-content-center mt-5'>
-              <button
-                type='button'
-                className='btn btn-primary text-center'
-                onClick={this._handleOnClick}>
-                Entrar
-              </button>
-            </div>
-          </form>
+      <section>
+        <div className='container'>
+          <div className='row'>
+            <form className='col-12 form-selection-business'>
+              <p style={{fontSize: 16, color: '#333333'}}>{i18n.t('select-company.select-company')}</p>
+              {/* <PerfectScrollbar style={{ height: "50vh" }}> */}
+              <ul className='list-unstyled'>
+                {this.props.companies &&
+                  this.props.companies.map((company) => {
+                    return _this.renderCompany(company);
+                  })}
+              </ul>
+              {/* </PerfectScrollbar> */}
+              {this.renderShowMessageSelectCompany()}
+              <div className='d-flex justify-content-center mt-5'>
+                <button
+                  type='button'
+                  className='btn btn-primary text-center'
+                  onClick={this._handleOnClick}>
+                  Entrar
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </div>
+        <style jsx>{`
+          .row {
+            max-width: 420px;
+            text-align: left;
+            margin: 0 auto;
+          }
+        `}></style>
+      </section>
     );
   }
 }

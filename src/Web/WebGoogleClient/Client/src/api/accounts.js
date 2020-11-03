@@ -24,11 +24,10 @@ export const getUser = async (userId) => {
     user.data.lexonUserId = navUser.data.idUser;
     const userData = jwt_decode(navUser.data.token, {complete: true});
     user.data.tokenDecoded = userData;
-
-    return user;
-  } catch (err) {
-    throw err;
-  }
+        return user;
+    } catch (err) {
+        throw err;
+    }
 };
 
 export const getEventTypes = async (account) => {

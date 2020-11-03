@@ -155,6 +155,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.selectedEvent = undefined;
 
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
@@ -592,19 +593,20 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [],
+                    selectedMessages: [this.selectedEvent],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
-                    env: window.currentUser?window.currentUser.env:null
+                    app: 'calendar',
+                    env: window.currentUser?window.currentUser.env : null
                 }
             })
         );
     }
 
-    handleGetUserFromLexonConnector() {
+    handleGetUserFromLexonConnector(event) {
         // const { userId } = this.props.lexon;
         const userId = 'E1621396'
         if (userId) {
@@ -910,10 +912,6 @@ export class Main extends Component {
     }
 
     onPopupOpen(args) {
-
-
-
-
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
         
@@ -1007,7 +1005,7 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
-
+            this.selectedEvent = {...args.data};
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;
@@ -1030,8 +1028,8 @@ export class Main extends Component {
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
-            args.element.style.width = "700px";
-            args.element.style.height = "95%";
+            args.element.style.width = "900px";
+            args.element.style.height = "800px";
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
