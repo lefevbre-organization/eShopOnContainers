@@ -48,5 +48,17 @@
             public static readonly string GetFile = "LX40";
             public static readonly string PostFile = "LX41";
         }
+
+        public static class Conferences
+        {
+            public static readonly string Create = "CN01";
+            public static readonly string Get = "CN02";
+            public static readonly string GetConferences = "CN03";
+            public static readonly string Modify = "CN04";
+            public static readonly string Remove = "CN05";
+
+            public static readonly string GetStats = "CN10";
+
+        }
     }
 }
