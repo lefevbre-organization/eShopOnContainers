@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, createRef} from 'react';
 import './select-action-tab.css';
 import PropTypes from 'prop-types';
 import { Tabs, Tab } from 'react-bootstrap';
@@ -8,7 +8,11 @@ import TabConnectMessage from '../tab-connect-message/tab-connect-message';
 import TabAttachDocument from '../tab-attach-document/tab-attach-document';
 
 class SelectActionTab extends Component {
-  render() {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
     const { user, toggleNotification, composerOpen = false } = this.props;
 
     return (

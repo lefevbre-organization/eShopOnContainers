@@ -34,15 +34,31 @@ class TabConnectMessage extends Component {
     }
 
     if (selectedMessages.length === 1) {
-      this.getEventClassifications(selectedMessages[0].Guid);
+      this.getEventClassifications();
+      setTimeout(()=>{
+        this.getEventClassifications();
+      }, 1000)
     } else {
       this.setState({ classifications: [], showClassifications: false });
     }
   }
 
-  componentWillUnmount() {}
+  updateClassifications() {
+    const { selectedMessages } = this.props;
+
+    if (selectedMessages.length === 1) {
+      this.getEventClassifications();
+    }
+  }
+
+  componentWillUnmount() {
+  }
 
   componentDidUpdate(prevProps) {
+    if (this.props.showModalDocuments === false && prevProps.showModalDocuments === true) {
+      console.log("MODAL CLOSED!!")
+    }
+
     if (this.props.selectedMessages !== prevProps.selectedMessages) {
       if (this.props.selectedMessages.length > 0) {
         this.setState({ showSaveDocument: true });
@@ -51,7 +67,7 @@ class TabConnectMessage extends Component {
       }
 
       if (this.props.selectedMessages.length === 1) {
-        this.getClassifications(this.props.selectedMessages[0].id);
+        this.getEventClassifications(this.props.selectedMessages[0].id);
       } else {
         this.setState({ classifications: [], showClassifications: false });
       }
@@ -65,8 +81,10 @@ class TabConnectMessage extends Component {
     }));
   }
 
-  getEventClassifications(eventId) {
+  getEventClassifications() {
     const { user, companySelected } = this.props;
+    const { selectedMessages } = this.props;
+    const eventId = selectedMessages[0].Guid;
 
     getEventClassifications(
         companySelected.bbdd,
@@ -91,7 +109,7 @@ class TabConnectMessage extends Component {
   }
 
   renderShowClassifications() {
-    const { bbdd, user } = this.props;
+    const { user } = this.props;
     const { classifications } = this.state;
 
     if(this.state.classifications && this.state.classifications.length > 0) {
@@ -115,6 +133,7 @@ class TabConnectMessage extends Component {
     const {
       showConfirmRemoveClassification,
       classificationToRemove,
+      classifications
     } = this.state;
 
     if (showSpinner === true) {
@@ -123,7 +142,7 @@ class TabConnectMessage extends Component {
 
     return (
       <Fragment>
-        <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p>
+        { classifications.length === 0 && <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p> }
         <ConfirmRemoveClassification
           user={user.idUser}
           initialModalState={showConfirmRemoveClassification}
@@ -135,7 +154,7 @@ class TabConnectMessage extends Component {
           toggleNotification={toggleNotification}
         />
 
-        {this.renderShowSaveDocument() }
+        { classifications.length === 0 && this.renderShowSaveDocument() }
         { this.renderShowClassifications() }
 
         <style jsx>{`

@@ -182,6 +182,7 @@ class ModalConnectingEvents extends Component {
         console.log(sc);
 
         sc = await addEventToActuation(companySelected.bbdd, user.idUser, sc.result.data, idActuation);
+        this.props.updateClassifications && this.props.updateClassifications()
       }
 
       if (error) {
@@ -425,6 +426,7 @@ class ModalConnectingEvents extends Component {
                     user={user.idUser}
                     bbdd={companySelected.bbdd}
                     show={this.state.step === 12}
+                    actuationType={step1Data.entity}
                     onChange={(data) => {
                       this.changeStep1cData(data);
                     }}></ConnectingEmailsStep1c>

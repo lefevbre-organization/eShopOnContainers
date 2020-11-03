@@ -40,15 +40,16 @@ class EventClassification extends Component {
   }
 
   render() {
-    const { description, idActuation } = this.props.classification;
+    const { description, idActuation, entityType } = this.props.classification;
 
+    debugger
     return (
         <li className='col-xl-12 lexon-item'>
           <p>
-            <strong>Tipo: </strong>
-            <span>""</span>
+            <strong>{i18n.t('classification.type')} </strong>
+            <span>{i18n.t(`classification.entity.${entityType}`)}</span>
           </p>
-          <p><strong>Asignado a:</strong>2018/000006 - Reclamación a seguros OCASO por accidente múltiple {description}</p>
+          <p><strong>{i18n.t('classification.assigned')}: </strong>{description}</p>
           <p className='text-right tools-bar event-toolbar'>
             <a
                 href='#/'

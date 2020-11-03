@@ -583,7 +583,6 @@ export const getActuations = async (
   const cp = page || 1;
   const url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}&env=${window.currentEnv}`;
 
-
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -599,36 +598,6 @@ export const getActuations = async (
     }
 
     const result = await response.json();
-    if (response.status === 400) {
-      return { results: {
-          "pageIndex": 1,
-          "pageSize": 10,
-          "count": 2,
-          "data": [
-            {
-              "idActuation": 902,
-              "description": "nada",
-              "name": null,
-              "idRelated": 0,
-              "entityIdType": 45,
-              "entityType": null,
-              "idMail": null,
-              "date": "2020-02-20 00:00:00.000000"
-            },
-            {
-              "idActuation": 903,
-              "description": "nada",
-              "name": null,
-              "idRelated": 0,
-              "entityIdType": 45,
-              "entityType": null,
-              "idMail": null,
-              "date": "2020-02-20 00:00:00.000000"
-            }
-          ]
-        }}
-        //throw result;
-    }
 
     if (result.errors.length > 0) {
       throw result;
@@ -641,7 +610,7 @@ export const getActuations = async (
 };
 
 export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/appointments/${actuationId}/relation/${eventId}?env=${window.currentEnv}`;
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/appointments/${eventId}/relation/${actuationId}?env=${window.currentEnv}`;
 
   try {
     const response = await fetch(url, {
@@ -734,7 +703,6 @@ export const getActuationCategories = async (bbdd, user) => {
 
 export const getEventClassifications = async (bbdd, user, eventId) => {
   const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/${eventId}?env=${window.currentEnv}&pageSize=100&pageIndex=1`;
-
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -751,11 +719,9 @@ export const getEventClassifications = async (bbdd, user, eventId) => {
 };
 
 export const removeEventClassifications = async (bbdd, user, idActuation) => {
-  debugger
   const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/relation/${idActuation}/remove?env=${window.currentEnv}`;
 
   try {
-    debugger
     const response = await fetch(url, {
       method: 'DELETE',
       headers: {
@@ -765,11 +731,8 @@ export const removeEventClassifications = async (bbdd, user, idActuation) => {
       body: JSON.stringify({})
     });
     const result = await response.json();
-
-    debugger
     return result;
   } catch (err) {
-    debugger
     throw err;
   }
 };

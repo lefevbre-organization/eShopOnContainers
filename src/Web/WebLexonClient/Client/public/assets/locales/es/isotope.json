@@ -55,6 +55,13 @@
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
     "remove-document": "Eliminar documento de la clasificación",
+    "entity": {
+      "EMAIL": "Correo electrónico",
+      "LEXN": "Lexnet",
+      "LLAM": "Llamada",
+      "OTRA": "Otras",
+      "REUN": "Reunión",
+      "TRAM": "Trámite"    },
     "1": "Expediente",
     "2": "Clientes",
     "3": "Contrarios",
@@ -117,7 +124,8 @@
       "q2": "Si lo deseas, puedes renombrar aquí el asunto",
       "actuation-title": "Asunto",
       "placeholder": "Título del nuevo evento *",
-      "category": "Categoría"
+      "category": "Categoría",
+      "select-category": "Seleccion una categoría"
     },
     "step2": {
       "q3_1" : "¿En qué expediente quieres clasificar el evento?"

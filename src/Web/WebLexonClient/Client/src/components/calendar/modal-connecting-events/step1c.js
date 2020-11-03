@@ -40,7 +40,8 @@ export class ConnectingEmailsStep1c extends React.Component {
 
 
     render() {
-        console.log(this.props.messages)
+        const { categories = [] } = this.state;
+
         return <Fragment>
             <div className="step4-container">
                 <ol style={{ textAlign: "center" }}>
@@ -54,20 +55,28 @@ export class ConnectingEmailsStep1c extends React.Component {
                     this.onChange(event.value)
                 }}/>
 
-                <p className="input-label">{i18n.t(`classification-calendar.step1c.category`)}</p>
-                <DropDownListComponent
+
+                {this.props.actuationType === 'OTRA' &&
+                (
+                    <Fragment><p className="input-label">{i18n.t(`classification-calendar.step1c.category`)}</p>
+                    <DropDownListComponent
                     id="category"
-                    dataSource={[{name:"Cat1", id:"1"}, {name:"Cat2", id:"2"}]}
-                    ref={(dropdownlist) => { this.listObj = dropdownlist }}
+                    dataSource={categories}
+                    ref={(dropdownlist) => {
+                    this.listObj = dropdownlist
+                }}
                     fields={{
-                        text:"name",
-                        value:"id"
-                    }}
-                    change={()=>{}}
-                    placeholder="Select a category"
+                    text: "otherCategory",
+                    value: "id"
+                }}
+                    change={() => {
+                }}
+                    placeholder={i18n.t(`classification-calendar.step1c.select-category`)}
                     value={this.value}
                     popupHeight="220px"
-                />
+                    />
+                    </Fragment>)
+                }
             </div>
             <style jsx>{`
                 input.e-input::selection {

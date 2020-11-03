@@ -40,9 +40,9 @@ class ConfirmRemoveClassification extends Component {
       classification,
     )
       .then(data => {
-        if (data.results >= 1) {
+        if (data.data == 1) {
           toggleNotification(i18n.t("classify-emails.classification-removed-ok"));
-//          updateClassifications(idMail);
+          updateClassifications();
         }
       })
       .catch(error => {

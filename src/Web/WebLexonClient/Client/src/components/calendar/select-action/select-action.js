@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, createRef} from 'react';
 import './select-action.css';
 import PropTypes from 'prop-types';
 
@@ -27,6 +27,7 @@ class CalendarSelectAction extends Component {
     this.setState({ showDocuments: show });
   }
 
+
   render() {
     const {
       user,
@@ -39,7 +40,7 @@ class CalendarSelectAction extends Component {
     if(this.props.showModalDocuments === true) {
       return <ModalConnectingEvents
           user={user}
-          updateClassifications={this.geEventClassification}
+          updateClassifications={this.updateClassification}
           toggleNotification={toggleNotification}
       />
     }
@@ -50,13 +51,11 @@ class CalendarSelectAction extends Component {
           companies={companies}
           changePage={this.props.changePage}
         />
-        {/*{showDocuments === true && (*/}
           <SelectActionTab
             composerOpen={composerOpen}
             user={user}
             toggleNotification={toggleNotification}
           />
-        {/*)}*/}
       </div>
     );
   }

@@ -12,7 +12,7 @@ class SaveDocument extends Component {
     this._handleOnClick = this._handleOnClick.bind(this);
   }
 
-  _handleOnClick() {    
+  _handleOnClick() {
     this.props.toggleModalDocuments();
   }
 
