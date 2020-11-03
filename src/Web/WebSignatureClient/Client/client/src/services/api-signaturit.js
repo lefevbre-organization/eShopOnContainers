@@ -1216,7 +1216,17 @@ const countCertificationEvents = (email) => {
     if (certificate.events.find(ev => ev.type == "certification_completed")){
       counter++;
     }
-  })
+  });
+  return counter;
+}
+
+const countErrorEvents = (email) => {
+  var counter = 0;
+  email.certificates.forEach(certificate => {
+    if (certificate.status === 'error'){
+      counter++;
+    }
+  });
   return counter;
 }
 
@@ -1237,10 +1247,13 @@ const calculateStatusEmails = (emails) => {
     var numRecipients = countDistinctEmails(email);
     var numDocuments = countDistinctDocuments(email);
     var numCertifiedEvents = countCertificationEvents(email);
-    
+    var numErrorEvents = countErrorEvents(email);
+
     numDocuments = (numDocuments === 0) ? 1 : numDocuments;
 
-    if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
+    if (numErrorEvents > 0){
+      email.status = 'error'
+    } else if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
       email.status = 'completed'
     } else {
       email.status = 'ready'
