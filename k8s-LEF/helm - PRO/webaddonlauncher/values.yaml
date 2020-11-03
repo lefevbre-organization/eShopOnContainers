@@ -32,12 +32,12 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest
-    - name: LexonApiGatewayUrlHC
-      key: internalurls__lexonapigw__hc
-    - name: AccountApiGatewayUrlHC
-      key: internalurls__accountapigw__hc
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+      key: all__EnableLoadTest
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
@@ -47,7 +47,7 @@ env:
       value: 'True'
 configValues: |
  window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.GOOGLE_SCRIPT = "https://script.google.com/macros/d/17OVCKEejIyIITkMSVlF3KJelJFI1ouLFeoS2Wj4sO7U4hlS1URiK_Ntk/usercallback"
+ window.GOOGLE_SCRIPT='https://script.google.com/macros/d/17OVCKEejIyIITkMSVlF3KJelJFI1ouLFeoS2Wj4sO7U4hlS1URiK_Ntk/usercallback'
  window.GOOGLE_SCRIPT_CENTINELA = "https://script.google.com/macros/d/18bbI8rJ8sutRyRBVtWKZlbWis0YWyDlU8c_x_DzYK1lvL0BuHy3LzjGC/usercallback"
  window.API_GATEWAY='https://lexbox-apigwlex.lefebvre.es'
  window.URL_MF_LEXON='https://lexbox-weblexon.lefebvre.es/static/js/main.js'
@@ -59,4 +59,4 @@ configValues: |
  window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';
- window.RELEASE = 'RC 0.33'
+ window.RELEASE = 'RC 0.34'

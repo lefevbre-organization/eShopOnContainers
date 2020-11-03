@@ -32,8 +32,10 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+      key: all__EnableLoadTest
+    - name: CentinelaApiUrlHC
+      key: internalurls__centinelaapi__hc
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
@@ -44,4 +46,4 @@ env:
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRODUCTION'
   window.API_CENTINELA_GATEWAY = 'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
-  window.RELEASE = 'RC 0.33'
+  window.RELEASE = 'RC 0.34'

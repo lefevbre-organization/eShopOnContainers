@@ -185,8 +185,8 @@
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "CERRAR SESIÓN",
-    "signatures-summary": "RESUMEN FIRMAS",
-    "email-summary": "RESUMEN EMAIL",
+    "signatures-summary": "RESUMEN CERTIFICACIONES",
+    "email-summary": "RESUMEN CERTIFICACIONES",
     "available": "Disponibles",
     "consumed": "Consumidas",
     "version": "Versión"

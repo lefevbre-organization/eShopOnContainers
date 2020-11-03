@@ -54,12 +54,12 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 var companies = user?.companies?.ToList();
                 result.data = companies ?? new List<LexCompany>();
-                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo");
+                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo", Codes.Lexon.GetUser);
 
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener las compañias de {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener las compañias de {idUser}: {ex.Message}", Codes.Lexon.GetUser);
             }
 
             return result;
@@ -91,12 +91,12 @@ namespace Lexon.API.Infrastructure.Repositories
             try
             {
                 result.data = await _context.LexUsers.Find(filter).SingleAsync();
-                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo");
+                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo", Codes.Lexon.GetUser);
 
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {idUser}: {ex.Message}", Codes.Lexon.GetUser);
             }
             return result;
         }
@@ -108,7 +108,7 @@ namespace Lexon.API.Infrastructure.Repositories
             try
             {
                 var filterUser = GetFilterLexUser(((EntitySearchView)search).idUser);
-                TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
+                TraceLog(parameters: new string[] { $"filter:{filterUser}" });
 
                 var user = await _context.LexUsers
                     .Find(filterUser)
@@ -123,11 +123,11 @@ namespace Lexon.API.Infrastructure.Repositories
                 company.entities = entidades;
                 result.AddData(company);
 
-                TraceInfo(result.Infos, $"Atención, Datos obtenidos desde Mongo");
+                TraceInfo(result.Infos, $"Atención, Datos obtenidos desde Mongo", Codes.Lexon.GetEntities);
             }
             catch (Exception ex)
             {
-                TraceInfo(result.Infos, $"fallo al  obtener entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
+                TraceInfo(result.Infos, $"fallo al  obtener entidades de {((EntitySearchView)search).idUser}: {ex.Message}", Codes.Lexon.GetEntities);
             }
             return result;
         }
@@ -190,12 +190,12 @@ namespace Lexon.API.Infrastructure.Repositories
                     actuaciones = relations
                 };
                 result.AddRelationsMail(lexMailActuacion);
-                TraceInfo(result.Infos, $"Atención, Datos obtenidos desde Mongo");
+                TraceInfo(result.Infos, $"Atención, Datos obtenidos desde Mongo", Codes.Lexon.GetClassificationFromList);
 
             }
             catch (Exception ex)
             {
-                TraceInfo(result.Infos, $"fallo al  obtener actuaciones de {search.idUser}: {ex.Message}");
+                TraceInfo(result.Infos, $"fallo al  obtener actuaciones de {search.idUser}: {ex.Message}", Codes.Lexon.GetClassificationFromList);
             }
             return result;
         }
@@ -219,13 +219,13 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {((EntitySearchView)search).idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {((EntitySearchView)search).idType}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {((EntitySearchView)search).idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {((EntitySearchView)search).idType}", Codes.Lexon.AddClassificationToList);
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar entidades de {((EntitySearchView)search).idUser}: {ex.Message}", Codes.Lexon.AddClassificationToList);
             }
 
             return result;
@@ -234,7 +234,6 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<Result<bool>> UpsertRelationsAsync(ClassificationSearchView search, MySqlCompany resultMySql)
         {
             var result = new Result<bool>();
-
             var filterUser = GetFilterLexUser(search.idUser);
 
             try
@@ -250,13 +249,13 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo o actualizando las relaciones del mail {search.idMail}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo o actualizando las relaciones del mail {search.idMail}", Codes.Lexon.AddClassificationToList);
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {search.idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {search.idUser}: {ex.Message}", Codes.Lexon.AddClassificationToList);
             }
 
             return result;
@@ -306,12 +305,12 @@ namespace Lexon.API.Infrastructure.Repositories
                     .FirstOrDefaultAsync();
 
                 result.data = master?.list?.ToList();
-                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo");
+                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo", Codes.Lexon.GetEntityTypes);
 
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  obtener lista de tipos de entidad: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  obtener lista de tipos de entidad: {ex.Message}", Codes.Lexon.GetEntityTypes);
             }
             return result;
         }
@@ -333,7 +332,7 @@ namespace Lexon.API.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
+                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}", Codes.Lexon.AddClassificationToList);
                     session.AbortTransaction();
                 }
             }
@@ -361,7 +360,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación");
+                    TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación", Codes.Lexon.AddClassificationToList);
                     result.data += 1;
 
                     var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
@@ -387,7 +386,7 @@ namespace Lexon.API.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
+                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}", Codes.Lexon.RemoveClassificationFromList);
                     session.AbortTransaction();
                 }
             }
@@ -413,7 +412,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
             if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
             {
-                TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación");
+                TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación", Codes.Lexon.RemoveClassificationFromList);
                 result.data = resultUpdate.ModifiedCount;
 
                 var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
@@ -537,7 +536,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {idUser}: {ex.Message}", Codes.Lexon.GetClassificationFromList);
             }
             return result;
         }
@@ -563,18 +562,18 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser}", Codes.Lexon.GetUser);
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.UpsertedId != null)
                 {
-                    TraceInfo(result.infos, $"Se crea un usuario {lexUser.data.idUser}");
+                    TraceInfo(result.infos, $"Se crea un usuario {lexUser.data.idUser}", Codes.Lexon.GetUser);
                     result.data = resultUpdate.UpsertedId != null;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar usuario de {lexUser.data.idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar usuario de {lexUser.data.idUser}: {ex.Message}",Codes.Lexon.GetUser);
             }
 
             return result;
@@ -607,13 +606,13 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {idUser} añadiendo {companiesToInsert.data?.Count} empresas");
+                    TraceInfo(result.infos, $"Se modifica el usuario {idUser} añadiendo {companiesToInsert.data?.Count} empresas", Codes.Lexon.GetCompaniesUser);
                     result.data = true;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {idUser}: {ex.Message}", Codes.Lexon.GetCompaniesUser);
             }
 
             return result;

@@ -893,7 +893,8 @@ export const createBranding2 = async (template, auth) => {
       signatures_receipt:  template.templates.signatures_receipt,
       pending_sign:  template.templates.pending_sign,
       document_canceled:  template.templates.document_canceled,
-      request_expired:  template.templates.request_expired
+      request_expired:  template.templates.request_expired,
+      emails_request : (template.templates.emails_request) ? template.templates.emails_request : ""
     }
     jsonObject.text_color = template.text_color
     jsonObject.show_survey_page = template.show_survey_page

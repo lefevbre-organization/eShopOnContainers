@@ -164,6 +164,18 @@ export class Main extends Component {
             this.layoutIframe = false;
         }
 
+        
+
+        //var a = new URLSearchParams(this.props.location.search).get("cellheight")
+
+        //if (this.props.location.search == "cellheight=400px") {
+        //    this.layoutIframe = true;
+        //}
+        //else {
+        //    this.layoutIframe = false;
+        //}
+
+
         // to change when api would be ready
         this.eventTypeDataSource =
             [
@@ -1139,9 +1151,10 @@ export class Main extends Component {
                 let userContentEle = createElement('div', {
                     className: 'e-profile-wrapper'
                 });
+                debugger
                 scheduleElement.parentElement.appendChild(userContentEle);
                 let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                let output = this.buttonEventTypeObj.element;
+                let output = this.buttonEventTypeObj;
                 this.profilePopup = new Popup(userContentEle, {
                     content: output,
                     relateTo: userIconEle,
@@ -1686,6 +1699,11 @@ export class Main extends Component {
                             </div>
                         ) : (
                                 <div>
+                                    <style jsx>{`
+                                         .e-content-wrap {
+                                             height:100% !important;
+                                            }                            
+                                    `}</style>
 
                                 </div>
                             )}
@@ -1750,11 +1768,16 @@ export class Main extends Component {
                                 </div>
 
                                 <div className="hidden">
+                                    <div className='buttons-wrapper'  ref={but => this.buttonEventTypeObj = but}>
                                     <ButtonComponent
                                         cssClass='e-flat e-primary'
                                         onClick={this.onEventTypeClick.bind(this)}
-                                        ref={but => this.buttonEventTypeObj = but}
                                     >Tipos de eventos</ButtonComponent>
+                                    <ButtonComponent
+                                        cssClass='e-flat e-primary'
+                                        onClick={this.onEventTypeClick.bind(this)}
+                                    >Otros tipos de eventos</ButtonComponent>
+                                    </div>
                                 </div>
 
                                 <div className='schedule-control-section'>
@@ -1774,6 +1797,7 @@ export class Main extends Component {
                                                 popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
+                                                //allowVirtualScrolling = "true"
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
@@ -1851,6 +1875,8 @@ export class Main extends Component {
                                 </DialogComponent>
                             </article>
                         </section>
+
+                        
                     </Fragment>
                 </SidebarCnn>
             </div>

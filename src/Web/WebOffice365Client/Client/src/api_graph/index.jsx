@@ -16,7 +16,7 @@ export const getUserApplication = () => {
       auth: {
         clientId: config.appId,
         redirectUri: redirectUri,
-        postLogoutRedirectUri: 'https://lexbox-test-webgraph.lefebvre.es',
+        postLogoutRedirectUri: window.URL_REDIRECT,
       },
       cache: {
         cacheLocation: 'localStorage',
@@ -104,7 +104,7 @@ export const getLabelList = async () => {
       let childs = [];
       for(let i = 0; i < res.length; i++) {
         if (res[i].childFolderCount > 0) {
-          const cres = await client.api(`/me/mailFolders/${res[i].id}/childFolders`).get();
+          const cres = await client.api(`/me/mailFolders/${res[i].id}/childFolders?$top=200`).get();
           if(cres && cres.value && cres.value.length > 0) {
             nodes = nodes.concat(cres.value);
 
@@ -542,6 +542,42 @@ export const emailAttachments = (data) => {
   }
   email += `],\r\n`;
   return email;
+};
+
+export const createDraft = async ({ data, attachments, draftId }) => {
+
+  let email = '';
+  email = emailBody(data);
+  email += emailToRecipients(data);
+  email += emailToCcRecipients(data);
+  email += emailToBccRecipients(data);
+  if (data.isPriority) {
+    email += emailPriority(1);
+  }
+  if (data.isReadReceiptRequested) {
+    email += emailReadConfirmation();
+  }
+  email += emailEnd();
+
+  try {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+    let response = null;
+    
+    if(draftId != '') {
+      response =  await client.api(`/me/messages/${draftId}`).update(email);
+    } else {
+      response =  await client.api('/me/messages').post(email);
+    }
+
+    await uploadFiles(response.id, data.uppyPreviews);
+
+    return response;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+
 };
 
 export const sendMessage = async ({ data, attachments }) => {

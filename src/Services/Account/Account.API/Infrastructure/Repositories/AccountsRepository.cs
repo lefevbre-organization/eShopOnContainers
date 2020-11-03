@@ -115,7 +115,7 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}", "AC03");
                     var eventAssoc = new RemoveUserMailIntegrationEvent(user);
                     _eventBus.Publish(eventAssoc);
                 }

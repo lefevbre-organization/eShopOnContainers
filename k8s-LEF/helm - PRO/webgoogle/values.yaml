@@ -33,8 +33,8 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: AccountApiGatewayUrlHC
-      key: internalurls__accountapigw__hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
@@ -63,4 +63,4 @@ configValues: |
   window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
   window.URL_MF_DATABASE_BASE='http://localhost:3006'
   window.SHOW_EXPERIMENTAL='0'
-  window.RELEASE = 'RC 0.33'
+  window.RELEASE = 'RC 0.34'

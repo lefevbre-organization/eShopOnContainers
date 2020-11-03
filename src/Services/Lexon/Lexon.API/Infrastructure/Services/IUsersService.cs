@@ -16,7 +16,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch);
 
-        Task<MySqlList<LexEntityTypeList, LexEntityType>> GetMasterEntitiesAsync(string env);
+        Task<MySqlList<LexEntityTypeList, LexEntityType>> GetEntityTypesAsync(string env);
 
         Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classification);
 

@@ -24,6 +24,7 @@
     "compose-message": "Componer Mensaje",
     "to": "Para:",
     "subject": "Asunto:",
+     "draft-save": "Borrador guardado",
     "comma-separated": "lista de emails separados por coma",
     "send-message": "Enviar mensaje",
     "send": "Enviar",
@@ -101,7 +102,8 @@
     "toast-process-complete": "Proceso completado",
     "toast-process-error": "Error",
     "toast-process-error-exist": "Ya existe un tipo de evento con el mismo nombre",
-    "validator-required": "Campo obligatorio"
+    "validator-required": "Campo obligatorio",
+    "toast-repeat": "Ya existe un calendario con el mismo nombre"
   },
   "calendar": {
     "title": "Configuración",

@@ -54,37 +54,37 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: DefaultEnvironment
-      value: QA
+      value: 'QA'
     - name: UseMongo
       value: false
-    - name: LexonUrls__0__env
-      value: DEVS
-    - name: LexonUrls__0__conn
-      value: database=lexondevconecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
-    - name: LexonUrls__0__url
-      value: https://led-dev-lexon.eu.els.local
-    - name: LexonUrls__1__env
-      value: DEV
-    - name: LexonUrls__1__conn
-      value: database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
-    - name: LexonUrls__1__url
-      value: https://led-dev-lexon.eu.els.local
-    - name: LexonUrls__2__env
-      value: QA
-    - name: LexonUrls__2__conn
-      value: database=lexon_qa_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
-    - name: LexonUrls__2__url
-      value: https://www-led-pre.lex-on.es/index.php
-    - name: LexonUrls__3__env
-      value: PRE
-    - name: LexonUrls__3__conn
-      value: database=lexon_pre_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
-    - name: LexonUrls__3__url
-      value: https://www-led-qa-lexon.lefebvre.es
-    - name: LexonUrls__4__env
-      value: PRO
-    - name: LexonUrls__4__conn
-      value: database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
-    - name: LexonUrls__4__url
-      value: https://www.lex-on.es/index.php
+    - name: EnvModels__0__env
+      value: 'DEVS'
+    - name: EnvModels__0__conn
+      value: 'database=lexondevconecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    - name: EnvModels__0__url
+      value: 'https://led-dev-lexon.eu.els.local'
+    - name: EnvModels__1__env
+      value: 'DEV'
+    - name: EnvModels__1__conn
+      value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    - name: EnvModels__1__url
+      value: 'https://led-dev-lexon.eu.els.local'
+    - name: EnvModels__2__env
+      value: 'QA'
+    - name: EnvModels__2__conn
+      value: 'database=lexon_qa_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    - name: EnvModels__2__url
+      value: 'https://www-led-pre.lex-on.es/index.php'
+    - name: EnvModels__3__env
+      value: 'PRE'
+    - name: EnvModels__3__conn
+      value: 'database=lexon_pre_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    - name: EnvModels__3__url
+      value: 'https://www-led-qa-lexon.lefebvre.es'
+    - name: EnvModels__4__env
+      value: 'PRO'
+    - name: EnvModels__4__conn
+      value: 'database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100'
+    - name: EnvModels__4__url
+      value: 'https://www.lex-on.es/index.php'
 

@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, setTitle } from '../../actions/application';
+import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -1020,10 +1020,14 @@ class MessageEditor extends Component {
           this.props.setAdminContacts(null);
           this.props.setUserApp('lefebvre');
           this.props.setGuid(null);
-          this.props.setTitle('');
+          //this.props.setTitle('');
+          this.props.setTitle(i18n.t('topBar.app'));
           this.props.setIdDocuments(null);
+          this.props.setSelectedService('signature');
+          this.props.setSignaturesFilterKey('Mostrar Todas');
+          this.props.preloadSignatures(lefebvre.userId);
           this.props.close(this.props.application);
-          this.props.preloadSignatures(lefebvre.userId)
+      
           getNumAvailableSignatures(lefebvre.idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
             .catch(err => {
@@ -1325,7 +1329,9 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
+  setSignaturesFilterKey: key => dispatch(setSignaturesFilterKey(key))
 });
 
 export default connect(

@@ -56,7 +56,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                 member = memberName,
                 source = sourceFilePath,
                 line = sourceLineNumber,
-                detail = ex.StackTrace
+                detail = $"{ex.InnerException?.Message}"
             };
 
             WriteError(errorInfo);
@@ -185,18 +185,18 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return new UpdateOptions { IsUpsert = true };
         }
 
-        public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl)
+        public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl, string code)
         {
             if (env == null || !envSettings.Environments.Contains(env))
             {
                 if (infos != null)
-                    TraceInfo(infos, $"Received {env} - Get Default Env {envSettings.DefaultEnvironment}");
+                    TraceInfo(infos, $"Received {env} - Get Default Env {envSettings.DefaultEnvironment}", code);
                 env = envSettings.DefaultEnvironment;
             }
             else
             {
                 if (infos != null)
-                    TraceInfo(infos, $"Received {env} from client");
+                    TraceInfo(infos, $"Received {env} from client", code);
             }
 
             finalConn = envSettings.EnvModels.First(x => x.env.Equals(env))?.conn;

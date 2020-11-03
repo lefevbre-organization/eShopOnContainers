@@ -397,7 +397,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 if (response.IsSuccessStatusCode)
                 {
                     result.data = true;
-                    TraceInfo(result.infos, $"Se cancela la firma {guid} - {responseText}");
+                    TraceInfo(result.infos, $"Se cancela la firma {guid} - {responseText}", "CE09");
                 }
                 else
                 {

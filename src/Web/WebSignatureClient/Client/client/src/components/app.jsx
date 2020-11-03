@@ -675,6 +675,12 @@ class App extends Component {
     return false;
   }
 
+  openEmail(email){
+    this.props.emailClicked(email);
+    this.props.setGUID(null);
+    return false;
+  }
+
   async componentDidMount() {
     document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
@@ -722,21 +728,21 @@ class App extends Component {
             this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
             .then((attachment) => {
                 if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
-                  this.props.newMessage(dataMailContacts, dataAdminContacts);
+                  this.props.newMessage('signature', dataMailContacts, dataAdminContacts);
                 }
                 else {
                   const length = attachment.data.length;
-                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                  const fileName = (attachment.infos[0].message.includes("- id:")) ? attachment.infos[0].message.split("fichero:")[1].split("- id:")[0].replace(/"/g,'').trim() : attachment.infos[0].message.split("fichero:")[1].replace(/"/g,'').trim();
                   const newAttachment = [{
                     fileName: fileName,
                     size: length,
                     contentType: getFileType(fileName),
                     content: attachment.data
                   }]
-                  this.props.newMessage(dataMailContacts, dataAdminContacts, null, newAttachment);
+                  this.props.newMessage('signature', dataMailContacts, dataAdminContacts, null, newAttachment);
                 }
             })
-            .catch(() => this.props.newMessage(dataMailContacts, dataAdminContacts));
+            .catch(() => this.props.newMessage('signature', dataMailContacts, dataAdminContacts));
           } 
           else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
             if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
@@ -762,12 +768,12 @@ class App extends Component {
                     })
                     this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
                     this.props.setUserApp('lefebvre');
-                    this.props.newMessage(dataMailContacts, dataAdminContacts);
+                    this.props.newMessage('signature', dataMailContacts, dataAdminContacts);
                   }
                   else {
 
                     const length = attachment.data.length;
-                    const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                    const fileName = (attachment.infos[0].message.includes("- id:")) ? attachment.infos[0].message.split("fichero:")[1].split("- id:")[0].replace(/"/g,'').trim() : attachment.infos[0].message.split("fichero:")[1].replace(/"/g,'').trim();
                     const fileType = fileName.split('.');
                     const newAttachment = {
                       fileName: fileName,
@@ -798,7 +804,7 @@ class App extends Component {
                     this.setState({hideAlertDialog: false});
                     this.props.backendRequestCompleted();
                     this.props.setIdDocuments(documentsInfo);
-                    this.props.newMessage(dataMailContacts, dataAdminContacts, null, attachmentsList);
+                    this.props.newMessage('signature', dataMailContacts, dataAdminContacts, null, attachmentsList);
                     // Aquí hay que cerrar el modal de descarga
                     
                   }
@@ -806,7 +812,7 @@ class App extends Component {
                 .catch(() => {
                   this.setState({hideAlertDialog: false});
                   this.props.backendRequestCompleted();
-                  this.props.newMessage(dataMailContacts, dataAdminContacts);
+                  this.props.newMessage('signature', dataMailContacts, dataAdminContacts);
                   // Aquí hay que cerrar el modal de descarga
                 });        
               });
@@ -922,7 +928,7 @@ const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) =>
     resetFolderMessagesCache(dispatch, user, folder),
-  newMessage: (to, cc, sign, attachments) => editNewMessage(dispatch, to, cc, sign, attachments),
+  newMessage: (sendingType, to, cc, sign, attachments) => editNewMessage(dispatch, sendingType, to, cc, sign, attachments),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);

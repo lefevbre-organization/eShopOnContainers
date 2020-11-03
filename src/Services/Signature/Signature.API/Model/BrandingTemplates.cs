@@ -12,5 +12,6 @@ namespace Signature.API.Model
         public string pending_sign { get; set; }
         public string document_canceled { get; set; }
         public string request_expired { get; set; }
+        public string emails_request { get; set; }
     }
 }
