@@ -3,9 +3,8 @@ import React from 'react';
 const SignatureNumbers = props => (
   <div className="container">
     <div className="signature-summary">
-      <span className={props.type === "signature"
-        ? "lf-icon-signature"
-        : "lf-icon-mail"}> {props.title}</span>
+      <span className={props.icon}></span> 
+      <span className="ml-2">{props.title}</span>
     </div>
     <div className="container-summary">
       <div className="signature-available">
@@ -30,6 +29,8 @@ const SignatureNumbers = props => (
 
             .signature-summary {
               margin-bottom: 15px;
+              font-family: 'MTTMilano-Bold';
+              display: flex;
             }
   
             .container-summary {

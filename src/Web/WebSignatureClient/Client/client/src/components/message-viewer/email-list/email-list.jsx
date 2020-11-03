@@ -176,9 +176,6 @@ const EmailList = (props) => {
                       || (props.getEventStatus(certificate, documentType) && certificationCompleted)  
                         ? <div className={props.styles['document-opened']}>
                             <div className={`${props.styles['certificate-document-title']} light-blue-text`}><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
-                            {/* <div className="mr-1 light-blue-text">
-                              <span className="lf-icon-document-validate"></span>
-                            </div> */}
                             <div className={`${props.styles['certificate-document']} light-blue-text`}>
                               <span className="lf-icon-document-validate">{certificate.file.name}</span>
                             </div>
@@ -199,7 +196,6 @@ const EmailList = (props) => {
                             <div>
                               <span className="lf-icon-document">{certificate.file.name}</span>
                             </div>
-                            {/* <div><span>{certificate.file.name}</span></div> */}
                           </div>
                     }
                   </div>    
