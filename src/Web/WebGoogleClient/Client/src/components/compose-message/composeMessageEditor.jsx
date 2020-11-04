@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, {Fragment, useEffect} from 'react';
 import {
   RichTextEditorComponent,
   Toolbar,
@@ -189,6 +189,24 @@ const toolbarSettings = {
 
 const ComposeMessageEditor = (props) => {
   const { onChange, defaultValue = '' } = props;
+  useEffect(()=>{
+
+    console.log("SpellChecker initializing...")
+    const instance1 = window.WEBSPELLCHECKER.init({
+      container: document.getElementById("toolsRTE_2"),
+      lang: 'es_ES',
+      detectLocalizationLanguage: true,
+      serviceId: 'skm1qNZE0pQw7xw',
+      enableGrammar: true,
+      enableBadgeButton: true
+    });
+    console.log("SpellChecker initialized")
+
+    return ()=>{
+      console.log("Destroying spell checker")
+      instance1.destroy();
+    }
+  }, [])
 
   return (
     <Fragment>

@@ -1484,3 +1484,4 @@ input[type='radio']:checked + label:after {
   top: -5px !important;
   transform: translate3d(-332px, 45px, 0px) !important;
 }
+
