@@ -24,11 +24,11 @@
 
         Task<Result<bool>> ResetUserBrandings(string user);
         #region Events
-        //Task<Result<bool>> SaveEvent(SignEventInfo info);
+        Task<Result<bool>> SaveEvent(EmailEventInfo info);
 
-        //Task<Result<List<SignEventInfo>>> GetEvents(string signatureId);
+        Task<Result<List<EmailEventInfo>>> GetEvents(string certificateId);
 
-        //Task<Result<bool>> ProcessEvent(string signatureId, string documentId, string eventType);
+        Task<Result<bool>> ProcessEvent(string certificateId, string eventType);
 
         #endregion
     }

@@ -420,28 +420,16 @@
         public async Task<Result<List<SignEventInfo>>> GetEvents(string signatureId)
         {
             var result = new Result<List<SignEventInfo>>();
-            var result2 = new Result<SignEventInfo>();
             var filter = GetFilterEvents(signatureId);
             try
             {
                 if (signatureId == "all")
-                {
-                    
-                    //result.data = BsonSerializer.Deserialize<SignEventInfo>(await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync());
+                {                    
                     result.data = await _context.SignatureEvents.Find(f=> true).ToListAsync();
                 }
                 else
                 {
-                    //filter = new BsonDocument();
-                    //result2.data = await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync();
-                    //result.data = new List<SignEventInfo>();
-                    //result.data.Add(result2.data);
-
-                    //result.data = new List<SignEventInfo>();
                     result.data = await _context.SignatureEvents.Find(filter).ToListAsync();
-                    
-
-
                 }
                 
 

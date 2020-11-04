@@ -338,7 +338,10 @@ class EmailMessageEditor extends Component {
               resetIsFileDrop={this.resetIsFileDrop}
               fatherContainer={'EmailMessageEditor'}
             ></AttachmentsWidget>
-            <CertificatesWidget onChange={this.onChangeCertification}/>
+            <CertificatesWidget 
+              userApp={lefebvre.userApp}
+              onChange={this.onChangeCertification}
+            />
           </div>
           <div className={styles['action-buttons']}>
             <button
@@ -661,26 +664,31 @@ class EmailMessageEditor extends Component {
 
   buildDocumentsInfo(email) {
     let result;
-
-    result = (email && email.certificates) ? email.certificates.map((e) => {
-      return {
-        email: e.email,
-        name: e.name,
-        externalId: e.id,
-        document: (e.file) 
-          ? {
-              externalFileName: e.file.name, 
-              internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
-                ? this.props.lefebvre.idDocuments.find((d) => {
-                    if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
-                      return d.docId;
+    debugger;
+    result = (email && email.certificates) 
+      ? email.certificates.map((c) => {
+          return {
+            email: c.email,
+            name: c.name,
+            externalId: c.id,
+            document: (c.file)
+              ? {
+                externalFileName: c.file.name,
+                internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
+                  ? this.props.lefebvre.idDocuments.find((d) =>{
+                    if (d.docName.replace(/[)( ]/g, '_') === c.file.name) {
+                      return {
+                        docId: d.docId,
+                        docName: d.docName 
+                      }
                     }
-                  }) 
-                : null
-            } 
-          : null
-      };
-    }) : null ;
+                  })
+                  : null
+              }
+              : null
+          }
+        })
+      : null
 
     return result;
   }
@@ -709,57 +717,56 @@ class EmailMessageEditor extends Component {
       type,
       userBrandingId.externalId,
       this.props.credentials.encrypted
-    ).then((signatureInfo) => {
-      console.log(signatureInfo);
-      if (signatureInfo.status_code) {
-        console.log(
-          'Se ha producido un error: ' +
-          signatureInfo.status_code +
-          '-' +
-          signatureInfo.message
-        );
+    ).then((emailInfo) => {
+      console.log(emailInfo);
+      if (emailInfo.status_code) {
+        console.log('Se ha producido un error: ' + emailInfo.status_code + '-' + emailInfo.message);
       } else {
         getUserEmails(userId).then((userInfo) => {
-          var documentsInfo = this.buildDocumentsInfo(signatureInfo);
+          var documentsInfo = this.buildDocumentsInfo(emailInfo);
           debugger;
           console.log('Insertando sólo email');
           addOrUpdateEmail(
             userId,
-            signatureInfo.id,
+            emailInfo.id,
             guid,
             lefebvre.userApp,
-            signatureInfo.created_at,
+            emailInfo.created_at,
             type,
             documentsInfo
           );
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
+
+          let idUserApp = lefebvre.idUserApp;
+          let numDocs = documentsInfo.length;
+          
+          this.props.setMailContacts(null);
+          this.props.setAdminContacts(null);
+          this.props.setUserApp('lefebvre');
+          this.props.setGuid(null);
+          //this.props.setTitle('');
+          this.props.setIdDocuments(null);
+          this.props.close(this.props.application);
+          this.props.preloadEmails(lefebvre.userId);
+          this.props.setTitle(i18n.t('topBar.certifiedEmail'));
+          this.props.setSelectedService('certifiedEmail'); 
+          this.props.setSignaturesFilterKey('Mostrar todas');
+          
           notifySignature(
             lefebvre.userId,
-            lefebvre.idUserApp,
-            documentsInfo.length
+            idUserApp,
+            numDocs
           );
+          getNumAvailableSignatures(idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+            });
         });
       }
       this.setState({isCallApis: false});
-      this.props.setMailContacts(null);
-      this.props.setAdminContacts(null);
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
-      //this.props.setTitle('');
-      this.props.setIdDocuments(null);
-      this.props.close(this.props.application);
-      this.props.preloadEmails(lefebvre.userId);
-      this.props.setTitle(i18n.t('topBar.certifiedEmail'));
-      this.props.setSelectedService('certifiedEmail'); 
-      this.props.setSignaturesFilterKey('Mostrar Todas');
-      
-      getNumAvailableSignatures(lefebvre.idUserApp)
-        .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
-        .catch(err => {
-            congetNumsole.log(err);
-        });
     });
   }
 

@@ -11,6 +11,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         public string logoUrl { get; set; }
 
+        public string service { get; set; }
+
 
     }
 

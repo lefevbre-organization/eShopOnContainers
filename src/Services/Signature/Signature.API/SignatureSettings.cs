@@ -10,6 +10,7 @@
         public string CollectionEvents { get; set; }
         public string CollectionTest { get; set; }
         public string CollectionEmails { get; set; }
+        public string CollectionEmailEvents { get; set; }
 
         //public string CollectionMasters { get; set; }
 
@@ -22,6 +23,8 @@
 
         public string SignaturitApiUrl { get; set; }
         public string CallBackUrl { get; set; }
+        public string SignatureNotificationUrl { get; set; }
+        public string CertifiedEmailNotificationUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

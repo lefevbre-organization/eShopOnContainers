@@ -299,7 +299,7 @@
     "title": "DESEO CERTIFICAR QUE:"
   },
   "emailViewer": {
-    "certification": "Certificación:",
+    "certification": "Tipo de certificación seleccionada:",
     "emailDelivered": "el receptor ha recibido el mail",
     "emailOpened": "el receptor ha abierto el mail",
     "docOpened": "El receptor ha visto los documentos",
