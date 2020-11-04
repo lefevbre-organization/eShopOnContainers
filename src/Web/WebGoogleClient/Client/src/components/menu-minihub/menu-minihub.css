@@ -48,17 +48,13 @@
 }
 
 .menu-header__block-product {
-    width: 50%;
-    position: relative;
-    float: left;
-    text-align: center;
+    width: 85%;
     margin-bottom: 31px;
     text-transform: uppercase;
     color: #001978;
     font-family: MTTMilano;
     font-size: 12px;
-    font-weight: bold;
-    
+    font-weight: 700;
 }
 
 .menu-header__body-generic {
@@ -107,10 +103,12 @@ product:visited {
 }
 
 .menu-header__blocks {
-    text-align: center;   
-    padding-left: 5px;
+    text-align: center;
+    padding-left: 0px;
+    grid-template-columns: auto auto;
+    display: grid;
     padding-right: 5px;
-    font-size: 11px;
+    margin-left: 6px;
 }
 
 .menu-header__text-products {
