@@ -1180,7 +1180,7 @@ export class Main extends Component {
                 let userContentEle = createElement('div', {
                     className: 'e-profile-wrapper'
                 });
-                debugger
+               
                 scheduleElement.parentElement.appendChild(userContentEle);
                 let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
                 let output = this.buttonEventTypeObj;
