@@ -225,13 +225,13 @@ export class ConnectingEmailsStep3 extends React.Component {
                     <ColumnDirective
                       field='date'
                       headerText='Alta'
-                      width='150'
+                      width='100'
                       template={this.renderDate}
                     ></ColumnDirective>
                   <ColumnDirective
-                      field='idRelated'
+                      field='name'
                       headerText='Expediente asociado'
-                      width='150'
+                      width='300'
                   ></ColumnDirective>
                   </ColumnsDirective>
               </GridComponent>
