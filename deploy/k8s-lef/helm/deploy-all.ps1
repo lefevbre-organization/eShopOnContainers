@@ -7,7 +7,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=(
-        # "rabbitmq",
+        "rabbitmq",
         "nosql-data",
         "sql-data"
         ),
