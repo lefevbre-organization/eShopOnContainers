@@ -48,6 +48,7 @@ import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../eventtypes/eventtype';
+import { ContactsImport } from '../contacts-import/contacts'
 import { getEventTypes } from "../../../api/accounts";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 import AttendeeAddress from './attendee/attendee-address';
@@ -103,6 +104,7 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             hidePromptEventTypeDialog: false,
+            hidePromptImportContactsDialog: false,
             calendarToEdit: undefined,
             //tagAttendess: [],
             reminders: [],
@@ -342,17 +344,32 @@ export class Main extends Component {
     // Event Type View Dialog
     dialogEventTypeClose(args) {
         if (args == undefined) {
-            //this.LoadCalendarList(true)
-            //this.sidebarCalendarList();
-
             this.toastObj.show(this.toasts[1]);
         }
         this.setState({
             hidePromptEventTypeDialog: false
         });
-
-        //this.promptButtonEle.style.display = 'inline-block';
     }
+
+
+    // Import Concatcs View Dialog
+    openImportConcatcsView(args) {
+        this.setState(
+            {
+                hidePromptImportContactsDialog: true
+            });
+    }
+
+    // Import Concatcs View Dialog
+    dialogImportConcatcsClose(args) {
+        //if (args == undefined) {
+        //    this.toastObj.show(this.toasts[1]);
+        //}
+        this.setState({
+            hidePromptImportContactsDialog: false
+        });
+    }
+
 
     toastCusAnimation = {
         hide: { duration: '1' },
@@ -910,6 +927,16 @@ export class Main extends Component {
     }
 
     onPopupOpen(args) {
+
+        var DateMessage = args.data.startTime
+
+        window.top.postMessage(
+            JSON.stringify({
+               // error: false,
+                message: DateMessage
+            }),
+            'http://localhost:8080'
+        );
 
 
 
@@ -1593,6 +1620,11 @@ export class Main extends Component {
         this.openEventTypeView();
     }
 
+    onImportContactsTypeClick() {
+        this.profilePopup.hide();
+        this.openImportConcatcsView();
+    }
+
     /**
    * Adds an address to the list matching the id.
    *
@@ -1775,8 +1807,8 @@ export class Main extends Component {
                                     >Tipos de eventos</ButtonComponent>
                                     <ButtonComponent
                                         cssClass='e-flat e-primary'
-                                        onClick={this.onEventTypeClick.bind(this)}
-                                    >Otros tipos de eventos</ButtonComponent>
+                                        onClick={this.onImportContactsTypeClick.bind(this)}
+                                    >Importar eventos</ButtonComponent>
                                     </div>
                                 </div>
 
@@ -1858,7 +1890,7 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='eventTypes'
                                     isModal={true}
-                                    header={i18n.t("eventtype.title")}
+                                    header={i18n.t("contactimport.title")}
                                     visible={this.state.hidePromptEventTypeDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
@@ -1873,6 +1905,26 @@ export class Main extends Component {
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
                                 </DialogComponent>
+
+                                <DialogComponent
+                                    id='contactImports'
+                                    isModal={true}
+                                    header={i18n.t("contactimport.title")}
+                                    visible={this.state.hidePromptImportContactsDialog}
+                                    showCloseIcon={true}
+                                    animationSettings={this.animationSettings}
+                                    width='575px'
+                                    ref={dialog => this.promptDialogEventTypeInstance = dialog}
+                                    target='#target'
+                                    open={this.dialogOpen.bind(this)}
+                                    close={this.dialogEventTypeClose.bind(this)}>
+                                    <div>{(this.state.hidePromptImportContactsDialog) ? <ContactsImport
+                                        getlistEventTypes={this.getlistEventTypes.bind(this)}
+                                        googleUser={this.props.googleUser}
+                                        close={this.dialogClose.bind(this)}
+                                    /> : ''}</div>
+                                </DialogComponent>
+
                             </article>
                         </section>
 

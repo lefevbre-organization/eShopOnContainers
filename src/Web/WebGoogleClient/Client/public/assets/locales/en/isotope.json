@@ -146,6 +146,10 @@
     "cancel": "Cancel",
     "newevent": "Add typology"
   },
+  "contactimport": {
+    "title": "Contacts Import"    
+  },
+
   "tooltips": {
     "lexon": "Lex-on",
     "calendar": "Calendar",
