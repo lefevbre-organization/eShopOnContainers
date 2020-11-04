@@ -50,11 +50,11 @@ env:
 
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRE'
-  window.API_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es'
-  window.URL_INBOX_GOOGLE= 'https://lexbox-test-webgoogle.lefebvre.es'
-  window.URL_INBOX_OUTLOOK= 'https://lexbox-test-webgraph.lefebvre.es'
-  window.URL_INBOX_IMAP= 'https://lexbox-test-webimap.lefebvre.es'
-  window.URL_GET_USER =  'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.API_ACCOUNTS='https://lexbox-dev-apigwacc.lefebvre.es'
+  window.URL_INBOX_GOOGLE= 'https://lexbox-dev-webgoogle.lefebvre.es'
+  window.URL_INBOX_OUTLOOK= 'https://lexbox-dev-webgraph.lefebvre.es'
+  window.URL_INBOX_IMAP= 'https://lexbox-dev-webimap.lefebvre.es'
+  window.URL_GET_USER =  'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
   window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
   window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
