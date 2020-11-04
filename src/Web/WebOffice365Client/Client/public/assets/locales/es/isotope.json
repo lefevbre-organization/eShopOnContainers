@@ -24,6 +24,7 @@
     "compose-message": "Componer Mensaje",
     "to": "Para:",
     "subject": "Asunto:",
+     "draft-save": "Borrador guardado",
     "comma-separated": "lista de emails separados por coma",
     "send-message": "Enviar mensaje",
     "send": "Enviar",

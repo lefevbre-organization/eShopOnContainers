@@ -20,7 +20,8 @@ export const INITIAL_STATE = {
     typeSelected: null,
     initialBBDD: null,
     provider: null,
-    user: null
+    user: null,
+    app: null
   },
   documents: {
     showModalDocuments: false,

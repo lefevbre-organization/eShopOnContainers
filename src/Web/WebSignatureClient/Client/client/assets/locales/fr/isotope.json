@@ -297,7 +297,7 @@
     "title": "SOUHAIT CERTIFIER:"
   },
   "emailViewer": {
-    "certification": "Certification:",
+    "certification": "Type de certification sélectionné:",
     "emailDelivered": "le destinataire a reçu le mail",
     "emailOpened": "le destinataire a ouvert le mail",
     "docOpened": "le destinataire a ouvert les document",

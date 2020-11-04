@@ -451,6 +451,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
                 AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
                 AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
+                AddClaimToPayload(payload, tokenRequestCentinela.service, nameof(tokenRequestCentinela.service));
             }
 
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
@@ -621,6 +622,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             if (tokenRequest is TokenRequestCentinelaNewFirm firm)
             {
                 firm.guid = firm.guid ?? Guid.NewGuid().ToString();
+                firm.service = firm.service ?? "signature";
             }
 
             var tokenString = await Task.Run(() =>

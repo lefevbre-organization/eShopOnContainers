@@ -3,12 +3,12 @@ import styles from './widgets.scss';
 import i18n from 'i18next';
 import Checkbox from "../../form/checkbox/checkbox";
 
-const CertificatesWidget = ({onChange}) => {
+const CertificatesWidget = (props) => {
 
     const [certificates, setCertificates] = useState([
         {name: 'El receptor ha recibido el mail', checked: true, disable: true, option: 1, id: 'delivery'},
-        {name: 'El receptor ha abierto el mail', checked: false, disable: false, option: 2, id: 'open_email'},
-        {name: 'El receptor ha visto los documentos', checked: false, disable: false, option: 3, id: 'open_document'},
+        {name: 'El receptor ha abierto el mail', checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 2, id: 'open_email'},
+        {name: 'El receptor ha visto los documentos', checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 3, id: 'open_document'},
         {name: 'El receptor ha abierto todos los documentos', checked: false, disable: false, option: 4, id: 'open_every_document'}
         //,
         // {name: 'El receptor se ha descargado el documento', checked: false, disable: false, option: 5, id: "download_document"},
@@ -25,12 +25,16 @@ const CertificatesWidget = ({onChange}) => {
             certificates[i].checked = true;
           }
         } else {
-          if (index-1 > 0) { //La primera opción siempre debe de estar seleccionada por defecto.
+          if (props.userApp === 'centinela'){ // Si viene de centinela es obligatorio seleccionar mínimo opción 3.
+            if (index-1 > 2){
+              certificates[index-1].disable = false;
+            }
+          } else if (index-1 > 0) { //La primera opción siempre debe de estar seleccionada por defecto.
             certificates[index-1].disable = false;
           }
         }
         setCertificates([...certificates]);
-        onChange(certificates);
+        props.onChange(certificates);
     }
 
     return (

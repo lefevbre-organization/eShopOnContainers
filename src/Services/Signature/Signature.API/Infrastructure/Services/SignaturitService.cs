@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using RestSharp;
 using Signature.API.Model;
 using System;
@@ -141,6 +142,8 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("body", signatureInfo.body);
             Console.WriteLine($"Adding branding_id");
             request.AddParameter("branding_id", signatureInfo.brandingId);
+            Console.WriteLine($"Adding notification url: {_settings.Value.SignatureNotificationUrl}");
+            request.AddParameter("events_url", _settings.Value.SignatureNotificationUrl);
 
             if (signatureInfo.reminders != null)
             {
@@ -241,7 +244,9 @@ namespace Signature.API.Infrastructure.Services
 
             return response;
         }
+        #endregion
 
+        #region Brandings
         public async Task<IRestResponse> CreateBranding(BrandingConfiguration brandingInfo)
         {
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/brandings.json");
@@ -277,7 +282,9 @@ namespace Signature.API.Infrastructure.Services
 
             return response;
         }
+        #endregion
 
+        #region CertifiedEmails
         public async Task<IRestResponse> GetEmails(string user)
         {
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails.json?lefebvre_id={user}");
@@ -343,6 +350,8 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("body", emailInfo.body);
             Console.WriteLine($"Adding branding_id");
             request.AddParameter("branding_id", emailInfo.brandingId);
+            Console.WriteLine($"Adding notification url: {_settings.Value.CertifiedEmailNotificationUrl}");
+            request.AddParameter("events_url", _settings.Value.CertifiedEmailNotificationUrl);
 
             Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
 
@@ -366,6 +375,24 @@ namespace Signature.API.Infrastructure.Services
             //Console.WriteLine(response.Content);
 
             return response;
+        }
+
+        public BsonDocument DownloadCertificationFile(string emailId, string certificationId)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails/{emailId}/certificates/{certificationId}/download/audit_trail");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = client.Execute(request);
+
+            var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+            string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+            Console.WriteLine($"END GetFile");
+
+            return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
+
         }
 
         #endregion

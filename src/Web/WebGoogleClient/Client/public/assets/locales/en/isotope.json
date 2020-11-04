@@ -39,6 +39,7 @@
     "compose-message": "Compose Message",
     "to": "To:",
     "subject": "Subject:",
+    "draft-save": "Draft saved at",
     "comma-separated": "comma-separated email list",
     "send-message": "Send message",
     "send": "Send",
