@@ -934,7 +934,8 @@ export class Main extends Component {
 
         window.top.postMessage(
             JSON.stringify({
-               // error: false,
+                id: 2,
+                error: false,
                 message: DateMessage
             }),
             'http://localhost:8080'
@@ -1919,7 +1920,7 @@ export class Main extends Component {
                                     ref={dialog => this.promptDialogEventTypeInstance = dialog}
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
-                                    close={this.dialogEventTypeClose.bind(this)}>
+                                    close={this.dialogImportConcatcsClose.bind(this)}>
                                     <div>{(this.state.hidePromptImportContactsDialog) ? <ContactsImport
                                         getlistEventTypes={this.getlistEventTypes.bind(this)}
                                         googleUser={this.props.googleUser}
