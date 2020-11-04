@@ -14,7 +14,7 @@ const EmailList = (props) => {
     <div className={props.styles['cont-info-firmantes']}>
       <div className={`${props.styles.p15} ${props.styles.separador}`}>
         <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}</span>
-        <span className={`${props.styles['certification-email']} ml-4`}>{props.signer.name}: {props.signer.email}</span>
+        <span className={`${props.styles['certification-email']} ml-4`}>{props.signer.email}</span>
         <div className={`${props.styles['certification-email']} right ${props.styles['mt-n10']}`}>
           <span>
             <b className="mr-1">{i18n.t('emailViewer.certification')}</b> 
