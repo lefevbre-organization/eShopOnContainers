@@ -27,9 +27,10 @@ class App extends Component {
           component={PageGoToLegacy}
         />
         <Route path='/access/:token' component={PageGoTo} />
-            <Route path='/user/:userId?' component={PageGoTo} />           
-            <Route path='/login' component={Login} />
-            <Route exact path="/" render={() => { window.location.href = "home/index.html" }} />
+        <Route path='/calendar/access/:token' component={PageGoTo} />
+        <Route path='/user/:userId?' component={PageGoTo} />           
+        <Route path='/login' component={Login} />
+        <Route exact path="/" render={() => { window.location.href = "home/index.html" }} />
       </Switch>
     );
   }
