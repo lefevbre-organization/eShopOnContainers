@@ -264,7 +264,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ByPassUrlSignaureAsync(
-              [FromQuery] string idUser = "E1621396"
+              [FromQuery] string idUser = "eHZqcHllZQ%3D%3D"
             )
         {
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToSignatureAsync(idUser);
