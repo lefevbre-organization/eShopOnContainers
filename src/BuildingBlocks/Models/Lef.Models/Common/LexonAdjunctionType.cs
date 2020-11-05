@@ -21,8 +21,6 @@
         TRAM = 32,
         OTRA = 33,
         EMAIL = 45
-
-
     }
 
 

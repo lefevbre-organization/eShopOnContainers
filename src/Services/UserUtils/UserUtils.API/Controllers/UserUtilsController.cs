@@ -256,6 +256,22 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return Redirect(resultUserUtils.data);
         }
 
+        /// <summary>
+        /// Devueve una redirección hacia una url de signature
+         /// </summary>
+        /// <returns></returns>
+        [HttpGet("user/apps/redirect/signature")]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPassUrlSignaureAsync(
+              [FromQuery] string idUser = "E1621396"
+            )
+        {
+            Result<string> resultUserUtils = await _service.GetUserUtilsActualToSignatureAsync(idUser);
+
+            return Redirect(resultUserUtils.data);
+        }
+
         #region Firma
 
         /// <summary>

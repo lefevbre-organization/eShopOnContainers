@@ -304,7 +304,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 TraceError(result.errors, new UserUtilsDomainException($"Error when get areas of user {idNavisionUser} in {_settings.Value.LoginUrl}", ex), "UU14", "SVCCOMSVC");
             }
 
-
             return result;
         }
 
@@ -335,6 +334,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
+        public async Task<Result<string>> GetUserUtilsActualToSignatureAsync(string idUser)
+        {
+            var result = new Result<string>(null);
+
+            var listByPass = _settings.Value.ByPassUrls?.ToList();
+            if (listByPass?.Count == 0)
+                return result;
+
+            var tokenRequest = new TokenRequest { idApp = (int?)AppCode.Signaturit, idClienteNavision = idUser };
+            var userSignature = await GetGenericTokenAsync(tokenRequest, true);
+
+            var encontrado = listByPass.Find(x => x.NameService.Equals("Signature-Direct"));
+            if (encontrado?.NameService == null)
+                return result;
+
+            var urlReplace = encontrado.UrlByPass
+                .Replace("{tokenSignature}", userSignature.data.token);
+
+            result.data = urlReplace;
+
+            return result;
+        }
+
         private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
         {
             var result = new Result<string>(null);
@@ -354,7 +376,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     }
                     else
                     {
-                         TraceError(result.errors, new UserUtilsDomainException($"Error when get bypass url ({newUrl}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU15", "HUBSVC");
+                        TraceError(result.errors, new UserUtilsDomainException($"Error when get bypass url ({newUrl}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU15", "HUBSVC");
                     }
                 }
             }
@@ -376,7 +398,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             return new TokenValidationParameters()
             {
-                ValidateLifetime = validateCaducity, 
+                ValidateLifetime = validateCaducity,
                 ValidateAudience = false, // Because there is no audiance in the generated token
                 ValidateIssuer = false,   // Because there is no issuer in the generated token
                 ValidIssuer = "Lexon",
@@ -527,18 +549,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 return new TokenRequestDataBase()
                 {
                     idApp = idApp,
-                    env =token.env,
+                    env = token.env,
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd
                 };
             }
             else if (token.login != null && token.password != null)
             {
-                return new TokenRequestLogin() { idApp = idApp, env= token.env, login = token.login, password = token.password };
+                return new TokenRequestLogin() { idApp = idApp, env = token.env, login = token.login, password = token.password };
             }
             else if (token.idClienteNavision != null)
             {
-                return new TokenRequest() { idApp = idApp, env =token.env, idClienteNavision = token.idClienteNavision };
+                return new TokenRequest() { idApp = idApp, env = token.env, idClienteNavision = token.idClienteNavision };
             }
 
             return null;
@@ -753,7 +775,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<bool>(false);
 
-        
             // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClientNav}&NumDocuments={NumDocuments}&idUic=1
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.ClavesUrl}/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClient}&NumDocuments={numDocs}&idUic=1");
             TraceLog(parameters: new string[] { $"request:{request}" });
@@ -765,17 +786,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     if (response.IsSuccessStatusCode)
                     {
                         var resultString = await response.Content.ReadAsAsync<string>();
-                        result.data = resultString.Equals("true") ? true: false;
+                        result.data = resultString.Equals("true") ? true : false;
                     }
-                    else                         
+                    else
                     {
                         TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to check firm -> {(int)response.StatusCode} - {response.ReasonPhrase}"), "UU30", "CLAVESSVC");
-                    }                                                     
+                    }
                 }
             }
             catch (Exception ex)
             {
-                  TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl}", ex), "UU30", "CLAVESSVC");
+                TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl}", ex), "UU30", "CLAVESSVC");
             }
             return result;
         }
@@ -783,7 +804,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         public async Task<Result<string>> FirmCheckAvailableAsync(string idClient)
         {
             var result = new Result<string>("0");
-
 
             // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClientNav}&NumDocuments={NumDocuments}&idUic=1
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.ClavesUrl}/FirmaDigital/RecuperarFirmasDigitalesDisponibles?IdClientNav={idClient}");
@@ -837,7 +857,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                 TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm", ex), "UU32", "CLAVESSVC");
+                TraceError(result.errors, new UserUtilsDomainException($"Error when call service of {_settings.Value.ClavesUrl} to use firm", ex), "UU32", "CLAVESSVC");
             }
             return result;
         }
