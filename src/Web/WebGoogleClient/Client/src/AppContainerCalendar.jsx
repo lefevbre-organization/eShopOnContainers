@@ -106,7 +106,9 @@ class AppContainer extends Component {
   }
 
   renderView() {
-    const { signInStatus, openEmail } = this.state;
+      const { signInStatus, openEmail } = this.state;
+
+      
 
     if (signInStatus === AUTH_SUCCESS) {
       return <Main googleUser={this.state.googleUser} idEmail={openEmail} />;

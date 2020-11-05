@@ -188,8 +188,14 @@ class UserCalendar extends Component {
         this.props.lexon.idMail === undefined ||
         this.props.lexon.idMail === null
       ) {
-        return <Redirect to='/' />;
+          if (this.props.match.path === '/calendar/access/:token') {
+              return <Redirect to='/calendar' />;
+          }
+          else {
+              return <Redirect to='/' />;
+          }        
       } else {
+          
         return <Redirect to={`/message/${this.props.lexon.idMail}`} />;
       }
     }
