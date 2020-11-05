@@ -1,7 +1,7 @@
 Param(
     [parameter(Mandatory=$false)][string]$registry,
-    [parameter(Mandatory=$false)][string]$dockerUser,
-    [parameter(Mandatory=$false)][string]$dockerPassword,
+    [parameter(Mandatory=$false)][string]$dockerUser="freyeslefebvre",
+    [parameter(Mandatory=$false)][string]$dockerPassword="NetEb9221",
     [parameter(Mandatory=$false)][string]$externalDns,
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
