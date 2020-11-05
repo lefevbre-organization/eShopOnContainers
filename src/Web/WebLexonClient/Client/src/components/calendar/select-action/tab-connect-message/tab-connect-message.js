@@ -3,11 +3,11 @@ import './tab-connect-message.css';
 import PropTypes from 'prop-types';
 import i18n from 'i18next';
 import { connect } from 'react-redux';
-import { getEventClassifications } from '../../../../services/services-lexon';
 import ListEventClassifications from '../list-classifications/list-classifications';
 import ConfirmRemoveClassification from '../../confirm-remove-classification/confirm-remove-classification';
 import Spinner from '../../../../components/spinner/spinner';
 import SaveDocument from "../save-document/save-document";
+import EVENT_ACTIONS from "../../../../actions/eventsAction";
 
 class TabConnectMessage extends Component {
   constructor(props) {
@@ -15,7 +15,6 @@ class TabConnectMessage extends Component {
     this.itv = null;
 
     this.state = {
-      classifications: [],
       showClassifications: true,
       showConfirmRemoveClassification: false,
     };
@@ -36,12 +35,8 @@ class TabConnectMessage extends Component {
 
     if (selectedMessages.length === 1) {
       this.getEventClassifications();
-      this.itv = setInterval(()=>{
-        this.getEventClassifications();
-      }, 5000);
-
     } else {
-      this.setState({ classifications: [], showClassifications: false });
+      this.setState({  showClassifications: false });
     }
   }
 
@@ -75,7 +70,7 @@ class TabConnectMessage extends Component {
       if (this.props.selectedMessages.length === 1) {
         this.getEventClassifications(this.props.selectedMessages[0].id);
       } else {
-        this.setState({ classifications: [], showClassifications: false });
+        this.setState({ showClassifications: false });
       }
     }
   }
@@ -92,20 +87,7 @@ class TabConnectMessage extends Component {
     const { selectedMessages } = this.props;
     const eventId = selectedMessages[0].Guid;
 
-    getEventClassifications(
-        companySelected.bbdd,
-        user.idUser,
-        eventId
-    )
-      .then((result) => {
-        this.setState({
-          classifications: result.data.data,
-          showClassifications: true,
-        });
-      })
-      .catch((error) => {
-        console.log('error ->', error);
-      });
+    this.props.getEventClassifications({bbdd: companySelected.bbdd, user: user.idUser, eventId})
   }
 
   renderShowSaveDocument() {
@@ -115,15 +97,14 @@ class TabConnectMessage extends Component {
   }
 
   renderShowClassifications() {
-    const { user } = this.props;
-    const { classifications } = this.state;
+    const { user, eventClassifications } = this.props;
 
-    if(this.state.classifications && this.state.classifications.length > 0) {
+    if(eventClassifications && eventClassifications.length > 0) {
       return (
           <ListEventClassifications
               user={user.idUser}
               updateClassifications={()=> { console.log("REFRESH...") }}
-              classifications={classifications}
+              classifications={eventClassifications}
               toggleConfirmRemoveClassification={
                 this.toggleConfirmRemoveClassification
               }
@@ -135,11 +116,10 @@ class TabConnectMessage extends Component {
   }
 
   render() {
-    const { user, toggleNotification, showSpinner } = this.props;
+    const { user, toggleNotification, showSpinner, eventClassifications } = this.props;
     const {
       showConfirmRemoveClassification,
       classificationToRemove,
-      classifications
     } = this.state;
 
     if (showSpinner === true) {
@@ -148,7 +128,7 @@ class TabConnectMessage extends Component {
 
     return (
       <Fragment>
-        { classifications.length === 0 && <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p> }
+        { eventClassifications.length === 0 && <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p> }
         <ConfirmRemoveClassification
           user={user.idUser}
           initialModalState={showConfirmRemoveClassification}
@@ -160,7 +140,7 @@ class TabConnectMessage extends Component {
           toggleNotification={toggleNotification}
         />
 
-        { classifications.length === 0 && this.renderShowSaveDocument() }
+        { eventClassifications.length === 0 && this.renderShowSaveDocument() }
         { this.renderShowClassifications() }
 
         <style jsx>{`
@@ -186,13 +166,18 @@ TabConnectMessage.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  getEventClassifications: (payload) => dispatch(EVENT_ACTIONS.getEventClassifications(payload)),
+});
+
 const mapStateToProps = (state) => {
   return {
     showModalDocuments: state.documentsReducer.showModalDocuments,
     selectedMessages: state.email.selectedMessages,
     companySelected: state.selections.companySelected,
     showSpinner: state.applicationReducer.showSpinner,
+    eventClassifications: state.events.eventClassifications
   };
 };
 
-export default connect(mapStateToProps)(TabConnectMessage);
+export default connect(mapStateToProps, mapDispatchToProps)(TabConnectMessage);
