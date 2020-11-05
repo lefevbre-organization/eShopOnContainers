@@ -13,7 +13,7 @@ class GoTo extends Component {
         if (!accounts.some(account => account.provider === provider)) {
             return (
                 <li>
-                    <ProviderInbox userId={userId} provider={provider} token={token} service={this.props.service} />
+                    <ProviderInbox userId={userId} provider={provider} token={token} service={this.props.service} embeded={this.props.embeded} />
                 </li>
             );
         } else {
@@ -56,6 +56,7 @@ class GoTo extends Component {
                                                 }
                                                 token={this.props.token}
                                                 service={this.props.service}
+                                                embeded={this.props.embeded}
                                             />
                                         </ul>
                                     </PerfectScrollbar>
@@ -72,10 +73,10 @@ class GoTo extends Component {
 
                                     <ul>
                                         <li>
-                                            <ProviderInbox userId={userId} provider={INBOX_GOOGLE} token={this.props.token} service={this.props.service}/>
+                                            <ProviderInbox userId={userId} provider={INBOX_GOOGLE} token={this.props.token} service={this.props.service} embeded={this.props.embeded}/>
                                         </li>
                                         <li>
-                                            <ProviderInbox userId={userId} provider={INBOX_OUTLOOK} token={this.props.token} service={this.props.service}/>
+                                            <ProviderInbox userId={userId} provider={INBOX_OUTLOOK} token={this.props.token} service={this.props.service} embeded={this.props.embeded}/>
                                         </li>
                                         <li>
                                             <ProviderInbox userId={userId} provider={INBOX_IMAP} token={this.props.token} />
