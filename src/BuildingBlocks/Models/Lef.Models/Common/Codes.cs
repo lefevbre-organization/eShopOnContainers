@@ -48,5 +48,34 @@
             public static readonly string GetFile = "LX40";
             public static readonly string PostFile = "LX41";
         }
+
+        public static class UserUtils
+        {
+            public static readonly string UserEncode = "UU10";
+            public static readonly string UserDecode = "UU11";
+            public static readonly string GetHub = "UU12";
+            public static readonly string GetUserLef = "UU13";
+            public static readonly string GetAreas = "UU14";
+            public static readonly string ByPass = "UU15";
+            public static readonly string ByPassSignature = "UU16";
+            
+            public static readonly string GetToken = "UU20";
+            public static readonly string GetLexonUser = "UU21";
+            public static readonly string GetLexonContact = "UU22";
+            
+            public static readonly string FirmCheck = "UU30";
+            public static readonly string FirmCheckAvaliable = "UU31";
+            public static readonly string FirmUse = "UU32";
+        }
+
+        public static class Areas
+        {
+            public static readonly string Api = "API";
+            public static readonly string Hub = "HUBSVC";
+            public static readonly string Com = "SVCCOMSVC";
+            public static readonly string Claves = "CLAVESSVC";
+            public static readonly string InternalApi = "APISVC";
+            public static readonly string Online = "ONLINESVC";
+        }
     }
 }
