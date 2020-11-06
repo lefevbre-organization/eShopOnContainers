@@ -276,7 +276,11 @@
     "option3": "Weekly reminders"
   },
   "certificatesWidget": {
-    "title": "WISH TO CERTIFY THAT:"
+    "title": "TYPE DE CERTIFICATION:",
+    "delivery": "The receiver has received the email",
+    "open_email": "The receiver has opened the email",
+    "open_document": "The receiver has seen the documents (only pdf)",
+    "open_every_document": "The receiver has opened all the documents (only pdf)"
   },
   "emailViewer": {
     "certification": "Type of certification selected:",

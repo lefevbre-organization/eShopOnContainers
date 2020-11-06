@@ -296,7 +296,11 @@
     "option3": "Recordatorios semanales"
   },
   "certificatesWidget": {
-    "title": "DESEO CERTIFICAR QUE:"
+    "title": "DESEO CERTIFICAR QUE:",
+    "delivery": "El receptor ha recibido el email",
+    "open_email": "El receptor ha abierto el email",
+    "open_document": "El receptor ha visto los documentos (sólo pdf)",
+    "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)"
   },
   "emailViewer": {
     "certification": "Tipo de certificación seleccionada:",
