@@ -912,13 +912,13 @@ class EmailMessageEditor extends Component {
        
     };
     if (this.props.editedMessage.attachments.length === 0){
-      let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
-      //Array.from(event.dataTransfer.files).forEach((file) => {
+      // let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
+      Array.from(event.dataTransfer.files).forEach((file) => {
         const fileReader = new FileReader();
         fileReader.onload = addAttachment.bind(this, file);
         fileReader.readAsDataURL(file);
         this.setState({isFileType: false});
-      //});
+      });
     }
     
     return true;
