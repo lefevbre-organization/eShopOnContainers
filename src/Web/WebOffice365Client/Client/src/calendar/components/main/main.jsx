@@ -1045,9 +1045,14 @@ export class Main extends Component {
         }
         if (args.type === 'Editor') {
 
-         
             this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
 
+            let end = document.querySelector(".e-end-on-element").ej2_instances[0];
+            end.index = 1;
+            end.dataBind();
+            if (this.scheduleObj.eventWindow.recurrenceEditor.endType.listData.length === 3) {
+                this.scheduleObj.eventWindow.recurrenceEditor.endType.liCollections[2].style.display = "none"
+            }
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;
