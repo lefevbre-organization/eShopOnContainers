@@ -928,9 +928,18 @@ export class Main extends Component {
         }    
     }
 
+    doubleOpen(args) {
+        if (this.layoutIframe) {
+            args.cancel = true;
+            window.open("calendar", "_blank");
+        }
+    }
+
     onPopupOpen(args) {
 
-
+        if (this.layoutIframe) {
+            args.cancel = true;
+        }
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -1819,6 +1828,7 @@ export class Main extends Component {
                                                 actionComplete={this.onEventRendered.bind(this)}
                                                 popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
+                                                cellDoubleClick={this.doubleOpen.bind(this)} 
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 eventSettings={
                                                     {

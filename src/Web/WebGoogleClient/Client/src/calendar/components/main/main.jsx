@@ -928,7 +928,18 @@ export class Main extends Component {
         }    
     }
 
-    onPopupOpen(args) {
+    doubleOpen(args) {
+        if (this.layoutIframe) {
+            args.cancel = true;
+            window.open("calendar", "_blank");
+        }
+    }
+
+    onPopupOpen(args) {   
+
+        if (this.layoutIframe) {
+            args.cancel = true;
+        }
 
         var DateMessage = args.data.startTime
 
@@ -940,9 +951,6 @@ export class Main extends Component {
             }),
             'http://localhost:8080'
         );
-
-
-
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -958,8 +966,7 @@ export class Main extends Component {
         else {
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.remove('disabledbutton');
-        }         
-
+        } 
 
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
@@ -1833,6 +1840,7 @@ export class Main extends Component {
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 //allowVirtualScrolling = "true"
+                                                cellDoubleClick={this.doubleOpen.bind(this)} 
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
