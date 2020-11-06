@@ -5,7 +5,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager } from '@syncfusion/ej2-data';
-import { getEventList } from '../../../api_graph/calendar-api';
+import { getMeEventList } from '../../../api_graph/calendar-api';
 import moment from 'moment';
 
 
@@ -17,7 +17,7 @@ export class Card extends Component {
         this.dataManger = new DataManager(); 
         this.resourceCalendarData = [];  
 
-        getEventList('primary')
+        getMeEventList()
             .then(result => {
                 this.dataManger = result.result;
                 this.onDataBinding(this.dataManger);               
@@ -29,7 +29,7 @@ export class Card extends Component {
     }
 
     onDataBinding(e) {
-        let calendarId = "primary"
+        let calendarId = "me"
         let items = this.dataManger.items;
         let scheduleData = [];
         if (items.length > 0) {

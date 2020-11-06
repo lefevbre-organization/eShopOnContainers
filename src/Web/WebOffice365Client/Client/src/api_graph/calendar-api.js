@@ -194,6 +194,21 @@ export const deleteCalendar = (idCalendar) => {
 
 // Events Api
 
+export const getMeEventList = () => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/events/`)
+            .get()
+            .then((response) =>
+                resolve(listEventsParser(response.value)))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
 
 export const getEventList = (idCalendar, selectedDate) => {    
     return new Promise(async (resolve, reject) => {
