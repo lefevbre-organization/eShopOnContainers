@@ -629,6 +629,8 @@ function EventParser(event) {
         },      
 
         IsAllDay: event.isAllDay,
+        
+        sensitivity: event.sensitivity
         //isReminderOn: true,
         //reminderMinutesBeforeStart: 1,
 

@@ -24,6 +24,7 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
+import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -783,9 +784,7 @@ export class Main extends Component {
             },
 
             'isAllDay': values.IsAllDay,
-
-            
-
+            'sensitivity': values.Sensitivity ? 'private' : 'normal'
         }
 
         //event Type    
@@ -1110,6 +1109,23 @@ export class Main extends Component {
                 });
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
+
+                // Adding sensitivity element
+                let containerSensitivity = createElement('div', { className: 'custom-field-container' });
+                row.appendChild(containerSensitivity);
+                let inputSensitivity = createElement('input', {
+                    className: 'e-field', attrs: { name: 'Sensitivity' }
+                });
+                containerSensitivity.appendChild(inputSensitivity);
+
+                this.drowDownListSensitivity = new CheckBoxComponent({
+                    value: this.state.isSensitivity,
+                    label: i18n.t("schedule.sensitivity"),
+                    checked: this.state.isSensitivity
+                });
+
+                this.drowDownListSensitivity.appendTo(inputSensitivity);
+                inputSensitivity.setAttribute('name', 'Sensitivity');
 
                 // Adding attendees2 tag element
                 let containerTab2 = createElement('div', { className: 'custom-field-container' });
