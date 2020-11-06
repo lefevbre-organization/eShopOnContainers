@@ -683,8 +683,6 @@ function EventParser(event) {
 
                     case 'BYDAY':
 
-                        alert('procesamos fecha')
-
                         let arr = []
                         let valueBYDAY = recObj[key].split("=")[1]
                        
