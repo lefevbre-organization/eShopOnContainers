@@ -175,7 +175,7 @@ class EmailMessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
+    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === 'Centinela')});
     //createSignature();
   }
 
@@ -296,7 +296,7 @@ class EmailMessageEditor extends Component {
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
             />
-            <HeaderAddress
+            {/* <HeaderAddress
               id={'cc'}
               addresses={cc}
               onAddressAdd={this.handleAddAddress}
@@ -309,7 +309,7 @@ class EmailMessageEditor extends Component {
               getAddresses={this.props.getAddresses}
               label={t('messageEditor.cc')}
               lefebvre={lefebvre}
-            />
+            /> */}
             <div className={styles.subject}>
               <input
                 type={'text'}
