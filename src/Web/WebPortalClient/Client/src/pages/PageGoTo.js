@@ -36,7 +36,7 @@ export class PageGoTo extends Component {
       providedRemoved: null,
       token: props.match.params.token,
       service: (props.match.path === "/calendar/access/:token") ? 'calendar' : '',
-      embeded: (props.location.search.search("layout=iframe") === 1) ? true : false,
+      embeded: (props.location.search.search("layout=iframe") > 0) ? true : false,
       payload: payload,
     };
     this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(
