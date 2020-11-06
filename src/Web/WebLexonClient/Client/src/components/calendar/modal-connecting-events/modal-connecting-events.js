@@ -8,6 +8,7 @@ import {ConnectingEmailsStep1b} from "./step1b";
 import {ConnectingEmailsStep1c} from "./step1c";
 import {addEventToActuation, createActuation, createAppoinment, uploadFile} from '../../../services/services-lexon';
 import ACTIONS from '../../../actions/documentsAction';
+import EVENT_ACTIONS from '../../../actions/eventsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import {ConnectingEmailsStep3} from "./step3";
 import * as moment from 'moment';
@@ -159,6 +160,8 @@ class ModalConnectingEvents extends Component {
   async onSaveStep3() {
     const { step1Data, step3Data, subject } = this.state;
     const { toggleNotification, user, companySelected, selectedMessages } = this.props;
+    const message = { ...selectedMessages[0]}
+    const eventId = message.Guid;
     let notification = 0;
     let error = false;
 
@@ -167,24 +170,27 @@ class ModalConnectingEvents extends Component {
 
     try {
       if (step1Data.actuation > 1) {
-          const st = moment(selectedMessages[0].StartTime).format('YYYY-MM-DD HH:mm')
-          const et = moment(selectedMessages[0].EndTime).format('YYYY-MM-DD HH:mm')
+          const st = moment(message.StartTime).format('YYYY-MM-DD HH:mm')
+          const et = moment(message.EndTime).format('YYYY-MM-DD HH:mm')
           let idActuation = step3Data.idActuation;
 
-          if(step1Data.actuation === 3) {
-            sc = await createActuation(companySelected.bbdd, user, st, et, step1Data.entity, subject);
-            if(sc.result && sc.result.data && sc.result.data > 0) {
-                idActuation = sc.result.data;
-            }
+          if (step1Data.actuation === 3) {
+              sc = await createActuation(companySelected.bbdd, user, st, et, step1Data.entity, subject);
+              if (sc.result && sc.result.data && sc.result.data > 0) {
+                  idActuation = sc.result.data;
+              }
           }
-        const event = { ...selectedMessages[0], StartTime: st, EndTime: et }
-        sc = await createAppoinment(companySelected.bbdd, user, event);
-        console.log(sc);
+          const event = {...message, StartTime: st, EndTime: et}
+          sc = await createAppoinment(companySelected.bbdd, user, event);
+          console.log(sc);
 
-        sc = await addEventToActuation(companySelected.bbdd, user.idUser, sc.result.data, idActuation);
-        this.props.updateClassifications && this.props.updateClassifications()
+          sc = await addEventToActuation(companySelected.bbdd, user.idUser, sc.result.data, idActuation);
+          this.props.getEventClassifications({bbdd: companySelected.bbdd, user: user.idUser, eventId})
+
+          if(sc && sc.result && sc.result.data > 0) {
+              window.dispatchEvent(new CustomEvent("EventClassified", { detail: message }));
+          }
       }
-
       if (error) {
         if (notification === 1) {
           toggleNotification(
@@ -994,7 +1000,8 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments()),
+    getEventClassifications: (payload) => dispatch(EVENT_ACTIONS.getEventClassifications(payload)),
+    toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments()),
 });
 
 export default connect(
