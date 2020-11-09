@@ -455,7 +455,8 @@ function listACLParser(list) {
     return listParse;
 }
 
-function listEventsParser(list) {   
+function listEventsParser(list) { 
+    
     let listParse = [];
 
     if (list.length > 0) {
@@ -569,6 +570,7 @@ function listEventsParser(list) {
                 //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].isAllDay,
+                Sensitivity: list[i].sensitivity,
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
