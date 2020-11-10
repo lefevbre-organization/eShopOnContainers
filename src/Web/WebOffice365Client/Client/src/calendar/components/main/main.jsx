@@ -27,7 +27,19 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, updateCalendar, listCalendarList, updateCalendarList } from '../../../api_graph/calendar-api';
+import {
+    deleteCalendar,
+    getEventList,
+    addCalendarEvent,
+    deleteCalendarEvent,
+    updateCalendarEvent,
+    requestRecurringEvent,
+    updateCalendar,
+    listCalendarList,
+    updateCalendarList,
+    addEventClassification,
+    removeEventClassification
+} from '../../../api_graph/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -78,6 +90,9 @@ export class Main extends Component {
         this.handleAddAddress = this.addAddress.bind(this);
         this.handleRemoveAddress = this.removeAddress.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
+
+        this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
+        this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
 
         this.cancel = false;
 
@@ -414,7 +429,7 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
+                        { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -494,7 +509,6 @@ export class Main extends Component {
                     continue;
                 }               
 
-                //managing all day from googe calendar issues
                 if (event.end.date) {
                     let date1 = new Date(event.start.date);
                     let date2 = new Date(event.end.date);
@@ -539,6 +553,7 @@ export class Main extends Component {
 
                 // EventType  
                 let eventType = [];
+                let lexonClassification = null;
                 if (event.extendedProperties != undefined) {
                     eventType.name = event.extendedProperties.private.eventTypeName;
                     eventType.id = event.extendedProperties.private.eventTypeId;
@@ -548,7 +563,7 @@ export class Main extends Component {
                     else {
                         eventType.color = event.extendedProperties.private.eventTypeColor;
                     }
-                    
+                    lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
@@ -573,6 +588,7 @@ export class Main extends Component {
                     Attendees: attendees,
                     EventType: eventType,
                     Reminders: reminders,
+                    LexonClassification: lexonClassification
                 });
             }
         }
@@ -589,8 +605,7 @@ export class Main extends Component {
     }
 
     sendMessagePutUser(user) {
-        const { selectedMessages, googleUser } = this.props;
-
+        const { selectedMessages, User } = this.props;
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
@@ -600,7 +615,7 @@ export class Main extends Component {
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.getBasicProfile().getEmail(),
+                    account: User.email,
                     env: window.currentUser?window.currentUser.env :null,
                     app: 'calendar',
                 }
@@ -642,7 +657,25 @@ export class Main extends Component {
         this.setState({ sidebarDocked: open });
     }
 
+    async handleClassificatedEvent(event) {
+        let resp = await addEventClassification(event.detail.Id, event.detail.LexonClassification);
+    }
+
+    async handleClassificatedEventRemoved(event) {
+        let resp = await removeEventClassification(event.detail.CalendarId,  event.detail.Id);
+    }
+
     componentDidMount() {
+        window.addEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.addEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
+
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -755,8 +788,6 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-
-
         let timezoneEnd = 'Europe/Madrid'
         if (values.EndTimezone != undefined) {
             timezoneEnd = values.EndTimezone
@@ -806,6 +837,17 @@ export class Main extends Component {
             }
         }
 
+        if(values.LexonClassification != undefined && values.EventType != null) {
+            const properties = {
+                ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
+                'lexonClassification': values.LexonClassification
+            }
+
+            event.extendedProperties = {
+                ...event.extendedProperties,
+                private: properties
+            }
+        }
 
         //"extendedProperties": {
         //    "private": {
@@ -1036,7 +1078,7 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
-
+            this.selectedEvent = { ...args.data,  ...(this.scheduleData.find( item => item.Id === args.data.Id ) || undefined)};
          
             this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
 
@@ -1302,7 +1344,6 @@ export class Main extends Component {
                 break;
 
             case 'eventCreated':
-               
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view

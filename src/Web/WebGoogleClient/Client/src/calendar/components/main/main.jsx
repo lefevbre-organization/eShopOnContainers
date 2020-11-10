@@ -79,6 +79,9 @@ export class Main extends Component {
         this.handleRemoveAddress = this.removeAddress.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
+        this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
+        this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
+
         this.cancel = false;
 
         this.dataManager = new DataManager();
@@ -212,8 +215,18 @@ export class Main extends Component {
                 iconCss: 'e-ddb-icons e-logout'
             }
         ];
+    }
 
-       
+    async handleClassificatedEvent(event) {
+        const googleEvent = this.buildEventoGoogle(event.detail);
+        let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+    }
+
+    async handleClassificatedEventRemoved(event) {
+        debugger
+        event.detail.LexonClassification = undefined;
+        const googleEvent = this.buildEventoGoogle(event.detail);
+        let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
     }
 
     async setGlobalization() {
@@ -443,7 +456,9 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
+
+                        { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
+                        {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -480,7 +495,7 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon truncate'>
-                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />  
+                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
                         ) : (
@@ -560,12 +575,14 @@ export class Main extends Component {
                     attendees = undefined;
                 }
 
-                // EventType  
+                // EventType
                 let eventType = [];
+                let lexonClassification = null;
                 if (event.extendedProperties != undefined) {
                     eventType.name = event.extendedProperties.private.eventTypeName;
                     eventType.id = event.extendedProperties.private.eventTypeId;
                     eventType.color = event.extendedProperties.private.eventTypeColor;
+                    lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
@@ -588,6 +605,7 @@ export class Main extends Component {
                     Attendees: attendees,
                     EventType: eventType,
                     Reminders: reminders,
+                    LexonClassification: lexonClassification
                 });
             }
         }
@@ -658,6 +676,15 @@ export class Main extends Component {
     }
 
     componentDidMount() {
+        window.addEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.addEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -758,6 +785,16 @@ export class Main extends Component {
 
     componentWillUnmount() {
         window.removeEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.removeEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
+
+        window.removeEventListener(
             'GetUserFromLexonConnector',
             this.handleGetUserFromLexonConnector
         );
@@ -770,7 +807,6 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-
         //Event basic data
         var event = {
             'summary': values.Subject,
@@ -803,6 +839,18 @@ export class Main extends Component {
                     'eventTypeId': item.id,
                     'eventTypeColor': item.backgroundColor,
                 },
+            }
+        }
+
+        if(values.LexonClassification != undefined && values.EventType != null) {
+            const properties = {
+                ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
+                'lexonClassification': values.LexonClassification
+            }
+
+            event.extendedProperties = {
+                ...event.extendedProperties,
+                private: properties
             }
         }
 
@@ -1255,15 +1303,13 @@ export class Main extends Component {
                             desc.EventType = eventType;
                         }
                     }
-
-                   
-
                 }
 
                 //Update the schedule datasource
                 this.scheduleObj.dataModule.dataManager.update()
 
                 //update the Event to call the api
+                debugger
                 event = this.buildEventoGoogle(args.data);
 
                 let itemToModify = args.data.Id
@@ -1296,6 +1342,7 @@ export class Main extends Component {
                 }
 
                 //call function to update event
+                debugger
                 this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);
 
                 break;
@@ -1433,6 +1480,7 @@ export class Main extends Component {
     }
 
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
+        debugger
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
                 if (!hiddeMessage) {
