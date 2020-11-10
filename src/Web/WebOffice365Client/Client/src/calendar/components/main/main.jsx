@@ -160,6 +160,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.drowDownListSensitivity = undefined;
 
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
@@ -494,7 +495,6 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
-
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -586,7 +586,7 @@ export class Main extends Component {
                     //StartTimezone: 'Europe/Paris',
                     //EndTimezone: 'Europe/Paris',
                     IsAllDay: event.IsAllDay,
-                    Sensitivity: event.Sensitivity,
+                    IsSensitivity: event.isSensitivity,
                     RecurrenceRule: recurrenceRule,
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
@@ -961,7 +961,6 @@ export class Main extends Component {
     }
 
     onPopupOpen(args) {
-
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
@@ -1020,10 +1019,12 @@ export class Main extends Component {
         }
 
          // default values for Sensitivity coming from event args
-        if(args.data.Sensitivity != undefined) {
-            const isSensitivity = args.data.Sensitivity == 'private' ? true : false;
-            this.setState({ isSensitivity: isSensitivity });
-        }
+        if(args.data.IsSensitivity != undefined) {
+            this.setState({ isSensitivity: args.data.IsSensitivity });
+            if (this.drowDownListSensitivity != undefined) {
+                this.drowDownListSensitivity.checked = args.data.IsSensitivity
+            }
+        } 
 
         // default values for Reminders coming from event args
 
@@ -1755,6 +1756,7 @@ export class Main extends Component {
 
 
     render() {
+
         const { t } = this.props;
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
