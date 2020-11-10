@@ -194,6 +194,21 @@ export const deleteCalendar = (idCalendar) => {
 
 // Events Api
 
+export const getMeEventList = () => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/events/`)
+            .get()
+            .then((response) =>
+                resolve(listEventsParser(response.value)))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
 
 export const getEventList = (idCalendar, selectedDate) => {    
     return new Promise(async (resolve, reject) => {
@@ -440,7 +455,8 @@ function listACLParser(list) {
     return listParse;
 }
 
-function listEventsParser(list) {   
+function listEventsParser(list) { 
+    
     let listParse = [];
 
     if (list.length > 0) {
@@ -554,6 +570,7 @@ function listEventsParser(list) {
                 //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].isAllDay,
+                Sensitivity: list[i].sensitivity,
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
@@ -629,6 +646,8 @@ function EventParser(event) {
         },      
 
         IsAllDay: event.isAllDay,
+        
+        sensitivity: event.sensitivity
         //isReminderOn: true,
         //reminderMinutesBeforeStart: 1,
 
