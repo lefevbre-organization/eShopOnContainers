@@ -9,8 +9,7 @@ export default class SelectedMessage extends React.PureComponent {
 
     onClick() {
         const { onDeleteMessage, message } = this.props;
-        // onDeleteMessage && onDeleteMessage(this.props.message.id);
-        window.dispatchEvent(new CustomEvent("RemoveSelectedDocument", { detail: message }));
+        window.dispatchEvent(new CustomEvent("RemoveSelectedEvent", { detail: message }));
     }
     render() {
         const { message } = this.props;

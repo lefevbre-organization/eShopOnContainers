@@ -80,19 +80,22 @@ export class Main extends Component {
         this.handleRemoveAddress = this.removeAddress.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
+        this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
+        this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
+
         this.cancel = false;
 
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;
         this.scheduleData = [];
         //this.CalendarList = [];
-        this.position = { X: 'Center', Y: 'Bottom' };
+        this.position = {X: 'Center', Y: 'Bottom'};
         this.resourceCalendarData = [];
         //this.ownerData = [];  
         this.toasts = [
-            { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
-            { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
-            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            {content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: ''},
+            {content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: ''},
+            {content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons'}
         ]
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
@@ -113,7 +116,7 @@ export class Main extends Component {
             reminders: [],
             eventType: undefined,
             isVisibility: false,
-            to2:[]
+            to2: []
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
@@ -123,38 +126,38 @@ export class Main extends Component {
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
             click: () => {
-                this.setState({ hideAlertDialog: false });
+                this.setState({hideAlertDialog: false});
             },
-            buttonModel: { content: 'Dismiss', isPrimary: true }
+            buttonModel: {content: 'Dismiss', isPrimary: true}
         }];
         // Calednar View Dialog
         this.confirmButton = [{
             click: () => {
-                this.setState({ hideConfirmDialog: false });
+                this.setState({hideConfirmDialog: false});
             },
-            buttonModel: { content: 'Yes', isPrimary: true }
+            buttonModel: {content: 'Yes', isPrimary: true}
         },
-        {
-            click: () => {
-                this.setState({ hideConfirmDialog: false });
-            },
-            buttonModel: { content: 'No' }
-        }];
+            {
+                click: () => {
+                    this.setState({hideConfirmDialog: false});
+                },
+                buttonModel: {content: 'No'}
+            }];
         // Calednar View Dialog
         this.promptButtons = [{
             click: () => {
-                this.setState({ hidePromptDialog: false });
+                this.setState({hidePromptDialog: false});
             },
-            buttonModel: { content: 'Accept', isPrimary: true }
+            buttonModel: {content: 'Accept', isPrimary: true}
         },
-        {
-            click: () => {
-                this.setState({ hidePromptDialog: false });
-            },
-            buttonModel: { content: 'Cancel' }
-        }];
+            {
+                click: () => {
+                    this.setState({hidePromptDialog: false});
+                },
+                buttonModel: {content: 'Cancel'}
+            }];
         // Calednar View Dialog
-        this.animationSettings = { effect: 'None' };
+        this.animationSettings = {effect: 'None'};
 
         // Syncfusion omponent translation
         this.setGlobalization();
@@ -163,7 +166,6 @@ export class Main extends Component {
         this.drowDownListEventType = undefined;
         this.selectedEvent = undefined;
 
-        
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -199,10 +201,21 @@ export class Main extends Component {
             }
         ];
 
+    this.checkForParams();
+}
 
-        this.checkForParams()
+    async handleClassificatedEvent(event) {
+        const googleEvent = this.buildEventoGoogle(event.detail);
+        let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+        this.loadCalendarEvents(event.detail.CalendarId);
+    }
 
-       
+    async handleClassificatedEventRemoved(event) {
+        debugger
+        event.detail.LexonClassification = undefined;
+        const googleEvent = this.buildEventoGoogle(event.detail);
+        let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+        this.loadCalendarEvents(event.detail.CalendarId);
     }
 
     async setGlobalization() {
@@ -445,7 +458,9 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
+
+                        { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
+                        {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -482,7 +497,7 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon truncate'>
-                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />  
+                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
                         ) : (
@@ -562,12 +577,14 @@ export class Main extends Component {
                     attendees = undefined;
                 }
 
-                // EventType  
+                // EventType
                 let eventType = [];
+                let lexonClassification = null;
                 if (event.extendedProperties != undefined) {
                     eventType.name = event.extendedProperties.private.eventTypeName;
                     eventType.id = event.extendedProperties.private.eventTypeId;
                     eventType.color = event.extendedProperties.private.eventTypeColor;
+                    lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
@@ -591,6 +608,7 @@ export class Main extends Component {
                     Attendees: attendees,
                     EventType: eventType,
                     Reminders: reminders,
+                    LexonClassification: lexonClassification
                 });
             }
         }
@@ -660,7 +678,16 @@ export class Main extends Component {
         this.setState({ sidebarDocked: open });
     }
 
-    componentDidMount() { 
+    componentDidMount() {
+        window.addEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.addEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -773,6 +800,16 @@ export class Main extends Component {
 
     componentWillUnmount() {
         window.removeEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.removeEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
+
+        window.removeEventListener(
             'GetUserFromLexonConnector',
             this.handleGetUserFromLexonConnector
         );
@@ -785,7 +822,6 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-
         //Event basic data
         var event = {
             'summary': values.Subject,
@@ -818,6 +854,18 @@ export class Main extends Component {
                     'eventTypeId': item.id,
                     'eventTypeColor': item.backgroundColor,
                 },
+            }
+        }
+
+        if(values.LexonClassification != undefined && values.EventType != null) {
+            const properties = {
+                ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
+                'lexonClassification': '' + values.LexonClassification
+            }
+
+            event.extendedProperties = {
+                ...event.extendedProperties,
+                private: properties
             }
         }
 
@@ -1121,8 +1169,6 @@ export class Main extends Component {
                 validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
             }
 
-
-
             // Create required custom elements in initial time
             if (!args.element.querySelector('.custom-field-row')) {
                 let row = createElement('div', { className: 'custom-field-row' });
@@ -1331,15 +1377,13 @@ export class Main extends Component {
                             desc.EventType = eventType;
                         }
                     }
-
-                   
-
                 }
 
                 //Update the schedule datasource
                 this.scheduleObj.dataModule.dataManager.update()
 
                 //update the Event to call the api
+                debugger
                 event = this.buildEventoGoogle(args.data);
 
                 let itemToModify = args.data.Id
@@ -1511,6 +1555,7 @@ export class Main extends Component {
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
+                this.loadCalendarEvents(calendarId, true);
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }
@@ -1523,8 +1568,7 @@ export class Main extends Component {
 
     loadCalendarEvents(calendar, checked) {
         this.scheduleObj.showSpinner();   
-        
-        
+
         let predicate;
 
         getEventList(calendar, this.scheduleObj.selectedDate)
