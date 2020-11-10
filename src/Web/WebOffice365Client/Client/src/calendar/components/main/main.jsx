@@ -493,6 +493,7 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
+
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -584,6 +585,7 @@ export class Main extends Component {
                     //StartTimezone: 'Europe/Paris',
                     //EndTimezone: 'Europe/Paris',
                     IsAllDay: event.IsAllDay,
+                    Sensitivity: event.Sensitivity,
                     RecurrenceRule: recurrenceRule,
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
@@ -1014,6 +1016,11 @@ export class Main extends Component {
         }
         else {
             this.setState({ to2: [] })
+        }
+
+        if(args.data.Sensitivity != undefined) {
+            const isSensitivity = args.data.Sensitivity == 'private' ? true : false;
+            this.setState({ isSensitivity: isSensitivity });
         }
 
         // default values for Reminders coming from event args

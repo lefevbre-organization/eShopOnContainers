@@ -263,6 +263,10 @@
     "text": "Lo sentimos has agotado el número máximo de firmas contratadas.",
     "text2": "Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>"
   },
+  "noServiceModal":{
+    "text": "Lo sentimos. No tienes contratado este servicio de certificación. ",
+    "text2": "Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>"
+  },
   "onlyPdfModal": {
     "text": "La opción seleccionada sólo admite archivos en formato pdf."
   },
