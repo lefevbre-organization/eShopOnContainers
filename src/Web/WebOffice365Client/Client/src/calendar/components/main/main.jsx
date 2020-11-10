@@ -111,6 +111,7 @@ export class Main extends Component {
             //tagAttendess: [],
             reminders: [],
             eventType: undefined,
+            isSensitivity: false,
             to2:[]
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
@@ -1018,6 +1019,7 @@ export class Main extends Component {
             this.setState({ to2: [] })
         }
 
+         // default values for Sensitivity coming from event args
         if(args.data.Sensitivity != undefined) {
             const isSensitivity = args.data.Sensitivity == 'private' ? true : false;
             this.setState({ isSensitivity: isSensitivity });
