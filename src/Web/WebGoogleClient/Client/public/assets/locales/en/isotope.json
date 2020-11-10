@@ -110,6 +110,7 @@
   },
   "schedule": {
     "eventtype": "Event Type",
+    "visibility": "Private",
     "profesional-event": "Profesional Event",
     "personal-event": "Personal Event",
     "attendees": "Invite attendees and press enter",
