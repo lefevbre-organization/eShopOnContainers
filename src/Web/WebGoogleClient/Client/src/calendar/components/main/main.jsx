@@ -164,6 +164,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
 
 
@@ -606,7 +607,7 @@ export class Main extends Component {
                     StartTime: new Date(start),
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
-                    Visibility: event.Visibility,
+                    Visibility: event.visibility,
                     RecurrenceRule: recurrenceRule,
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
@@ -1059,8 +1060,11 @@ export class Main extends Component {
 
         // default values for Visibility coming from event args
         if(args.data.Visibility != undefined) {
-            const isVisibility= args.data.Visibility == 'private' ? true : false;
+            const isVisibility = args.data.Visibility == 'private' ? true : false;
             this.setState({ isVisibility: isVisibility });
+            if (this.drowDownListVisibility != undefined) {
+                this.drowDownListVisibility.checked = isVisibility;
+            }
         }
 
         // default values for Reminders coming from event args
