@@ -206,7 +206,7 @@ export class Main extends Component {
 }
 
     onCloseDialog() {
-        this.scheduleObj.refresh();
+        this.LoadCalendarList(false)
     }
 
     async handleClassificatedEvent(event) {
