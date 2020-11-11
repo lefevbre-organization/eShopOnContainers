@@ -36,6 +36,8 @@ import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
+import  AttachmentsWidget  from './widgets/attachments-widget2';
+import  CertificatesWidget  from './widgets/certificates-widget';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import RolSelector from './rol-selector/rol-selector';
 
@@ -66,7 +68,7 @@ class SmsMessageEditor extends Component {
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
     // Subject events
- 
+    this.handleOnSubjectChange = this.onSubjectChange.bind(this);
     // Editor events
     this.handleEditorChange = this.editorChange.bind(this);
     this.callApis = this.callApis.bind(this);
@@ -75,12 +77,18 @@ class SmsMessageEditor extends Component {
     this.getDocumentsIds = this.getDocumentsIds.bind(this);
     this.getDocumentsNames = this.getDocumentsNames.bind(this);
 
+    this.onChangeCertification = this.onChangeCertification.bind(this);
     this.dialogClose = this.dialogClose.bind(this);
     this.dialogOpen = this.dialogOpen.bind(this);
     this.animationSettings = { effect: 'None' };
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
     this.getRoleInfo = this.getRoleInfo.bind(this);
+  }
+
+
+  onChangeCertification(certificates) {
+   console.log(certificates)
   }
 
   showCancelCenModal(){
@@ -225,6 +233,7 @@ class SmsMessageEditor extends Component {
       application,
       sendingType,
       to,
+      subject,
       content,
       lefebvre
     } = this.props;
@@ -265,7 +274,14 @@ class SmsMessageEditor extends Component {
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
             />
-            
+             <div className={styles.subject}>
+              <input
+                type={'text'}
+                placeholder={t('messageEditor.subject')}
+                value={subject}
+                onChange={this.handleOnSubjectChange}
+              />
+            </div>
           </form>
         </div>
         <div
@@ -279,9 +295,21 @@ class SmsMessageEditor extends Component {
             />
           </div>
           <div className={styles['side-container']}>
-            
+
+            <AttachmentsWidget 
+              sendingType={sendingType}
+              onConfirmAttachRemoval={this.showCancelCenModal}
+              isFileTypeDrop={this.state.isFileType}
+              resetIsFileDrop={this.resetIsFileDrop}
+              fatherContainer={'EmailMessageEditor'}
+            ></AttachmentsWidget>
+            <CertificatesWidget 
+              sendingType={sendingType}
+              userApp={lefebvre.userApp}
+              onChange={this.onChangeCertification}
+            />
           </div>
-          <div className={styles['action-buttons']}>
+          <div className={styles['action-buttons-sms']}>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.cancel}`}
               onClick={() => this.removeMessageEditor(application)}>
@@ -468,12 +496,15 @@ class SmsMessageEditor extends Component {
               background: #e5e8f1 !important;
               color: #001978 !important;
             }
+            #toolsRTE_2_toolbar {
+              display: none;
+            }
             #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
               height: calc(100% - 20px) !important;
             }
             #toolsRTE_2rte-view {
               overflow: hidden;
-            }    
+            }   
           `}
         </style>
       </div>
@@ -733,6 +764,13 @@ class SmsMessageEditor extends Component {
     this.props.editMessage(updatedMessage);
   }
 
+
+  onSubjectChange(event) {
+    const target = event.target;
+    const updatedMessage = { ...this.props.editedMessage };
+    this.props.editMessage({ ...updatedMessage, subject: target.value });
+  }
+
   getEditor() {
     if (this.editorRef && this.editorRef.refEditor) {
       return this.editorRef.refEditor;
@@ -772,6 +810,7 @@ const mapStateToProps = (state) => ({
   editedMessage: state.application.newMessage,
   sendingType: state.application.newMessage.sendingType,
   to: state.application.newMessage.to,
+  subject: state.application.newMessage.subject,
   name: state.application.newMessage.name,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,

@@ -354,6 +354,7 @@ class EmailMessageEditor extends Component {
             <CertificatesWidget 
               userApp={lefebvre.userApp}
               onChange={this.onChangeCertification}
+              sendingType={sendingType}
             />
           </div>
           <div className={styles['action-buttons']}>

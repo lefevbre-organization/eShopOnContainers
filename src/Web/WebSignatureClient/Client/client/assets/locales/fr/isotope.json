@@ -73,7 +73,7 @@
     },
     "app": "SIGNATURE",
     "certifiedEmail": "Email certifié",
-    "certifiedSms": "SMS certifié"
+    "certifiedSms": "SERVICES DE CERTIFICATION"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -141,7 +141,7 @@
     },
     "title": "CRÉER UNE SIGNATURE",
     "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
-    "certifiedSmsTitle": "CERTIFIED SMS REQUEST"
+    "certifiedSmsTitle": "CERTIFIED SMS"
   },
   "forwardAction": {
     "From": "De",

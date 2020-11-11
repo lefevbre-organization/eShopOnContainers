@@ -115,7 +115,7 @@ export class MenuListClass extends Component {
            collapsed={collapsed}
            disable={lefebvre.roles
            && lefebvre.roles.includes('SMS Certificado') ?
-           false : true} />     
+           true : false} />     
       
           <DialogComponent 
             id="confirmDialog" 

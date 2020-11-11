@@ -55,7 +55,7 @@
     },
     "app": "SIGNATURE",
     "certifiedEmail": "CERTIFIED EMAIL",
-    "certifiedSms": "CERTIFIED SMS"
+    "certifiedSms": "CERTIFICATION SERVICES"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -123,7 +123,7 @@
     },
     "title": "CREATE NEW SIGNATURE",
     "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
-    "certifiedSmsTitle": "CERTIFIED SMS REQUEST"
+    "certifiedSmsTitle": "CERTIFIED SMS"
   },
   "forwardAction": {
     "From": "From",
