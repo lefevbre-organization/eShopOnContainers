@@ -55,9 +55,7 @@ import { getEventTypes } from "../../../api/accounts";
 import AttendeeAddress from './attendee/attendee-address';
 
 
-
 export class Main extends Component {
-
     constructor(props) {
         super(props);
         this.sidebarCalendarList = this.sidebarCalendarList.bind(this);
@@ -78,12 +76,14 @@ export class Main extends Component {
         this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
         this.handleAddAddress = this.addAddress.bind(this);
         this.handleRemoveAddress = this.removeAddress.bind(this);
+        this.onCloseDialog = this.onCloseDialog.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
         this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
 
         this.cancel = false;
+        this.currentClassification = null;
 
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;
@@ -204,18 +204,21 @@ export class Main extends Component {
     this.checkForParams();
 }
 
+    onCloseDialog() {
+        this.scheduleObj.refresh();
+    }
+
     async handleClassificatedEvent(event) {
         const googleEvent = this.buildEventoGoogle(event.detail);
         let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
-        this.loadCalendarEvents(event.detail.CalendarId);
+        this.currentClassification = event.detail.LexonClassification;
     }
 
     async handleClassificatedEventRemoved(event) {
-        debugger
         event.detail.LexonClassification = undefined;
         const googleEvent = this.buildEventoGoogle(event.detail);
         let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
-        this.loadCalendarEvents(event.detail.CalendarId);
+        this.currentClassification = undefined;
     }
 
     async setGlobalization() {
@@ -523,6 +526,7 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
+        this.scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -745,7 +749,6 @@ export class Main extends Component {
             //        obj.handleScheduleOpenEditor()
             //    }, 1000);  
             //}
-       
     }
 
     onDataBindingEventTypeList(items) {
@@ -836,7 +839,7 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
-            'visibility': values.Visibility ? 'private' : 'normal'
+            // 'visibility': values.Visibility ? 'private' : 'normal'
         }
 
         //event Type    
@@ -857,7 +860,7 @@ export class Main extends Component {
             }
         }
 
-        if(values.LexonClassification != undefined && values.EventType != null) {
+        if(values.LexonClassification != undefined) {
             const properties = {
                 ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
                 'lexonClassification': '' + values.LexonClassification
@@ -998,14 +1001,10 @@ export class Main extends Component {
         }
     }
 
-    onPopupOpen(args) {   
-
+    onPopupOpen(args) {
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
-
-      
-
         var DateMessage = args.data.startTime
         window.top.postMessage(
             JSON.stringify({
@@ -1109,9 +1108,6 @@ export class Main extends Component {
             let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
             if (calendarRole != "owner" &&
                 calendarRole != "writer") {
-                //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
-                //var editButton = document.querySelector(buttonElementEdit);
-                //editButton.disabled = true;
 
                 var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
                 var removeButton = document.querySelector(buttonElementRemove);
@@ -1130,6 +1126,21 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+            this.currentClassification = args.data.LexonClassification;
+
+            setTimeout(()=>{
+                const dlg = document.getElementById("schedule_dialog_wrapper")
+                let btn = dlg.getElementsByClassName('e-dlg-closeicon-btn');
+                if(btn && btn.length > 0) {
+                    btn[0].onclick = this.onCloseDialog;
+                }
+
+                btn = dlg.getElementsByClassName('e-event-cancel');
+                if(btn && btn.length > 0) {
+                    btn[0].onclick = this.onCloseDialog;
+                }
+
+            }, 1000);
 
             if (this.layoutIframe & this.layoutIframeEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
@@ -1279,7 +1290,6 @@ export class Main extends Component {
     }
 
     onEventRendered(args) {
-
         let event;
 
         switch (args.requestType) {
@@ -1322,7 +1332,6 @@ export class Main extends Component {
                 break;
 
             case 'eventChanged':
-
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -1377,13 +1386,15 @@ export class Main extends Component {
                             desc.EventType = eventType;
                         }
                     }
+
+                    desc.LexonClassification = this.currentClassification;
                 }
 
                 //Update the schedule datasource
-                this.scheduleObj.dataModule.dataManager.update()
+                this.scheduleObj.dataModule.dataManager.update();
+                args.data.LexonClassification = this.currentClassification;
 
                 //update the Event to call the api
-                debugger
                 event = this.buildEventoGoogle(args.data);
 
                 let itemToModify = args.data.Id
@@ -1410,8 +1421,8 @@ export class Main extends Component {
 
                 }
                 if (args.changedRecords[0] != undefined) {
-                    itemToModify = args.changedRecords[0].Id;
                     calendarToModify = args.changedRecords[0].CalendarId
+                    args.changedRecords[0].LexonClassification = this.currentClassification;
                     event = this.buildEventoGoogle(args.changedRecords[0]);
                 }
 
@@ -1953,7 +1964,7 @@ export class Main extends Component {
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 //allowVirtualScrolling = "true"
-                                                cellDoubleClick={this.doubleOpen.bind(this)} 
+                                                cellDoubleClick={this.doubleOpen.bind(this)}
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
