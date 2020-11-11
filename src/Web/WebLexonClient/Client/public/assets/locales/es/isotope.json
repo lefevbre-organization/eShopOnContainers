@@ -56,6 +56,13 @@
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
     "remove-document": "Eliminar documento de la clasificación",
+    "entity": {
+      "EMAIL": "Correo electrónico",
+      "LEXN": "Lexnet",
+      "LLAM": "Llamada",
+      "OTRA": "Otras",
+      "REUN": "Reunión",
+      "TRAM": "Trámite"    },
     "1": "Expediente",
     "2": "Clientes",
     "3": "Contrarios",
@@ -91,6 +98,42 @@
     "classification-removed-ok": "La clasificación se ha borrado correctamente",
     "classification-removed-ko": "Ha habido un error borrando la clasificación",
     "classification-selection-ko": "Debes seleccionar un Tipo y una Entidad para poder clasificar"
+  },
+  "classification-calendar" : {
+    "events-saved-ok": "El evento se ha guardado correctamente",
+    "events-saved-ko": "Error al guardar el evento",
+    "connect-messages": "Clasificaciones",
+    "empty": "No se ha encontrado ninguna clasificación asociada a esta empresa. Asocia un evento a LEX-ON pulsando ",
+    "new-classification": "Nueva clasificación",
+    "step1": {
+      "q1": "¿Qué acción quieres realizar con el nuevo evento?",
+      "classify-casefile": "Clasificar evento en un expediente",
+      "classify-actuation": "Clasificar evento dentro de una actuación",
+      "classify-new": "Crear una nueva actuación y asociar el evento"
+    },
+    "step1b": {
+      "q1": "¿Con qué tipo de actuación quieres clasificar el evento?",
+      "EMAIL": "Correo electrónico",
+      "LEXN": "Lexnet",
+      "LLAM": "Llamada",
+      "OTRA": "Otras",
+      "REUN": "Reunión",
+      "TRAM": "Trámite"
+    },
+    "step1c": {
+      "q1": "Cumplimentar los datos de la nueva actuación",
+      "q2": "Si lo deseas, puedes renombrar aquí el asunto",
+      "actuation-title": "Asunto",
+      "placeholder": "Título del nuevo evento *",
+      "category": "Categoría",
+      "select-category": "Seleccion una categoría"
+    },
+    "step2": {
+      "q3_1" : "¿En qué expediente quieres clasificar el evento?"
+    },
+    "step3": {
+      "q1": "¿En qué actuación quieres clasificar el evento?"
+    }
   },
   "classification-type": {
     "type": "Tipo",

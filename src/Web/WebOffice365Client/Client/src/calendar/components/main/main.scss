@@ -341,3 +341,10 @@
     background-color: #000;
 }
 
+.e-dlg-container .e-dlg-center-center {
+    z-index: 1004 !important;
+}
+
+#target > div:nth-child(2) {
+     z-index: 1004 !important;
+}

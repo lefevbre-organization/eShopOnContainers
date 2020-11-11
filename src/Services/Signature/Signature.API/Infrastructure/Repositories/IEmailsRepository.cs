@@ -25,5 +25,9 @@
         Task<Result<UserEmails>> GetEmail(string emailId);
 
         Task<Result<bool>> ResetUserBrandings(string user);
+
+        Task<Result<bool>> SaveEvent(EmailEventInfo eventInfo);
+
+        Task<Result<List<EmailEventInfo>>> GetEvents(string certificateId);
     }
 }

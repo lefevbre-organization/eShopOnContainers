@@ -35,6 +35,8 @@ export class PageGoTo extends Component {
       emailRemoved: null,
       providedRemoved: null,
       token: props.match.params.token,
+      service: (props.match.path === "/calendar/access/:token") ? 'calendar' : '',
+      embeded: (props.location.search.search("layout=iframe") > 0) ? true : false,
       payload: payload,
     };
     this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(
@@ -123,8 +125,10 @@ export class PageGoTo extends Component {
                   if (this.state.token) {
                     url = `${buildClientUrlToken(
                       account.provider,
-                      this.state.token
+                      this.state.token,
+                      this.state.service
                     )}?prov=${account.provider.substring(0, 2)}0`;
+                    url = this.state.embeded ? `${url}&layout=iframe` : url;
                     url = imapAutoLog ? `${url}&account=${imapAutoLog}` : url;
                   } else {
                     url = buildClientUrl(
@@ -140,8 +144,10 @@ export class PageGoTo extends Component {
                   if (this.state.token) {
                     url = `${buildClientUrlToken(
                       payload.provider.toUpperCase(),
-                      this.state.token
+                      this.state.token, 
+                      this.state.service
                     )}?prov=${payload.provider.substring(0, 2)}0`;
+                    url = this.state.embeded ? `${url}&layout=iframe` : url;
                     url = imapAutoLog ? `${url}&account=${imapAutoLog}` : url;
                   } else {
                     url = buildClientUrl(
@@ -163,13 +169,15 @@ export class PageGoTo extends Component {
                   url = this.state.token
                     ? `${buildClientUrlToken(
                         account.provider,
-                        this.state.token
+                        this.state.token,
+                        this.state.service
                       )}?prov=${account.provider.substring(0, 2)}0`
                     : buildClientUrl(
                         account.provider,
                         `${account.provider.substring(0, 2)}0${userId}`,
                         this.state.payload
                       );
+                  url = this.state.embeded ? `${url}&layout=iframe` : url;
                   console.log('TOKEN 3*****************: ' + this.state.token);
                 }
               }
@@ -264,16 +272,18 @@ export class PageGoTo extends Component {
   }
 
   renderGoTo() {
-    const { loading, userId, accounts, token } = this.state;
+    const { loading, userId, accounts, token, service, embeded } = this.state;
 
     if (!loading) {
       return (
         <GoTo
           userId={userId}
           accounts={accounts}
+          service={service}
           removeAccount={this.removeAccount}
           toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}
           token={token}
+          embeded={embeded}
         />
       );
     }

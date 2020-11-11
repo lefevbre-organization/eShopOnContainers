@@ -298,7 +298,7 @@ class MessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
+    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === "Centinela")});
     //createSignature();
   }
 
@@ -1024,7 +1024,7 @@ class MessageEditor extends Component {
           this.props.setTitle(i18n.t('topBar.app'));
           this.props.setIdDocuments(null);
           this.props.setSelectedService('signature');
-          this.props.setSignaturesFilterKey('Mostrar Todas');
+          this.props.setSignaturesFilterKey('Mostrar todas');
           this.props.preloadSignatures(lefebvre.userId);
           this.props.close(this.props.application);
       

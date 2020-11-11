@@ -63,15 +63,15 @@ class ProviderInbox extends Component {
     }
 
     render() {
-        const { provider, email, token } = this.props;
+        const { provider, email, token, service, embeded } = this.props;
         const user = this.getUser();
         const payload = (token) ? parseJwt(token) : "";
 
         let title;
         let linkHref;
 
-        linkHref = (token) ? buildClientUrlToken(provider, token) : buildClientUrl(provider, user, payload);
-
+        linkHref = (token) ? buildClientUrlToken(provider, token, service) : buildClientUrl(provider, user, payload);
+        
         switch (provider) {
             case INBOX_GOOGLE:
                 email != null && email !== undefined
@@ -81,6 +81,7 @@ class ProviderInbox extends Component {
                 if (token) {
                     linkHref += `?prov=${user.slice(0, 3)}`
                 }
+                linkHref = embeded ? `${linkHref}&layout=iframe` : linkHref;
 
                 return (
                     <React.Fragment>
@@ -101,6 +102,8 @@ class ProviderInbox extends Component {
                 if (token) {
                     linkHref += `?prov=${user.slice(0, 3)}`
                 }
+                linkHref = embeded ? `${linkHref}&layout=iframe` : linkHref;
+
                 return (
                     <React.Fragment>
                         <a href={linkHref} className="d-flex align-items-center">
@@ -120,10 +123,12 @@ class ProviderInbox extends Component {
                 if (email) {
                     const account64 = base64.encode(email);
                     (token) ? linkHref += `?account=${account64}&prov=${user.slice(0, 3)}` : linkHref += `?account=${account64}`;
+                    linkHref = embeded ? `${linkHref}&layout=iframe` : linkHref;
                 } else {
                     if (token) {
                         linkHref += `?prov=${user.slice(0, 3)}`;
                     }
+                    linkHref = embeded ? `${linkHref}&layout=iframe` : linkHref;
                 }
 
                 return (

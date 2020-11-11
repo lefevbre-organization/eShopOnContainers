@@ -15,6 +15,10 @@ export const getIdUserApp = payload => {
   return(payload.hasOwnProperty('idUserApp') ? payload.idUserApp :  null)
 }
 
+export const getService = payload => {
+  return(payload.hasOwnProperty('service') ? payload.service : null)
+}
+
 export const getUserId = payload =>{
   return(payload.hasOwnProperty('idClienteNavision') ? payload.idClienteNavision : (payload.hasOwnProperty('idLexonUser')) ? payload.idLexonUser : (payload.hasOwnProperty('nameUser')) ? payload.nameUser : (payload.hasOwnProperty('userId')) ? payload.userId : null);
 }

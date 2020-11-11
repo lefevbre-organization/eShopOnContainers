@@ -194,6 +194,21 @@ export const deleteCalendar = (idCalendar) => {
 
 // Events Api
 
+export const getMeEventList = () => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/events/`)
+            .get()
+            .then((response) =>
+                resolve(listEventsParser(response.value)))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
 
 export const getEventList = (idCalendar, selectedDate) => {    
     return new Promise(async (resolve, reject) => {
@@ -440,7 +455,8 @@ function listACLParser(list) {
     return listParse;
 }
 
-function listEventsParser(list) {   
+function listEventsParser(list) { 
+    
     let listParse = [];
 
     if (list.length > 0) {
@@ -545,8 +561,8 @@ function listEventsParser(list) {
             listParse.push({                   
                 id: list[i].id,
                 summary: list[i].subject,
-                Location: list[i].location.displayName,
-                Description: list[i].bodyPreview,
+                location: list[i].location.displayName,
+                description: list[i].bodyPreview,
                 //start: { dateTime: StartDate, timeZone: list[i].start.timeZone },
                 //end: { dateTime: EndDate, timeZone: list[i].end.timeZone },
                 start: { dateTime: convertUTCDateToLocalDate(new Date(list[i].start.dateTime), list[i].isAllDay), timeZone: list[i].start.timeZone },
@@ -554,6 +570,7 @@ function listEventsParser(list) {
                 //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].isAllDay,
+                isSensitivity: list[i].sensitivity === 'normal' ? false : true,
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
@@ -629,6 +646,8 @@ function EventParser(event) {
         },      
 
         IsAllDay: event.isAllDay,
+        
+        sensitivity: event.sensitivity
         //isReminderOn: true,
         //reminderMinutesBeforeStart: 1,
 
@@ -682,8 +701,6 @@ function EventParser(event) {
                         break;
 
                     case 'BYDAY':
-
-                        alert('procesamos fecha')
 
                         let arr = []
                         let valueBYDAY = recObj[key].split("=")[1]

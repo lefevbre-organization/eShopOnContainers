@@ -77,6 +77,7 @@ namespace Signature.API.Infrastructure
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserSignatures))) { BsonClassMap.RegisterClassMap<UserSignatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseBrandings))) { BsonClassMap.RegisterClassMap<BaseBrandings>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(SignEventInfo))) { BsonClassMap.RegisterClassMap<SignEventInfo>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(EmailEventInfo))) { BsonClassMap.RegisterClassMap<EmailEventInfo>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserEmails))) { BsonClassMap.RegisterClassMap<UserEmails>(); }
             //if (!BsonClassMap.IsClassMapRegistered(typeof(Signature.API.Model.EventInfo))) { BsonClassMap.RegisterClassMap<Signature.API.Model.EventInfo>(); }
         }
@@ -121,6 +122,10 @@ namespace Signature.API.Infrastructure
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<SignEventInfo>(_settings.Value.CollectionSignatureEvents);
         }
+
+        public IMongoCollection<EmailEventInfo> EmailEvents => Database.GetCollection<EmailEventInfo>(_settings.Value.CollectionEmailEvents);
+
+        public IMongoCollection<EmailEventInfo> EmailEventsTransaction => Database.GetCollection<EmailEventInfo>(_settings.Value.CollectionEmailEvents);
 
         public IMongoCollection<BaseBrandings> TestBrandings => Database.GetCollection<BaseBrandings>(_settings.Value.CollectionTest);
 
@@ -199,7 +204,6 @@ namespace Signature.API.Infrastructure
                 .Sort(sort)
                 .ToListAsync();
         }
-
 
         public Task MarkEventAsInProgressAsync(Guid eventId, IClientSessionHandle transaction)
         {

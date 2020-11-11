@@ -332,6 +332,8 @@ services:
       - TokenKey=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
       - ByPassUrls__0__NameService=Lex-On
       - ByPassUrls__0__UrlByPass=https://weblexonapigw/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
+      - ByPassUrls__1__NameService=Signature
+      - ByPassUrls__1__UrlByPass=https://lexbox-test-websignature.lefebvre.es/access/{tokenSignature}
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
@@ -368,6 +370,8 @@ services:
       - LexonApiGwUrl=https://lexbox-test-apigwlex.lefebvre.es/api/v1
       - CentinelaApiGwUrl=https://lexbox-test-apigwcen.lefebvre.es/api/v1
       - ModulosComunes=https://led-pre-serviceclaves.lefebvre.es
+      - SignatureNotificationUrl=https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json
+      - CertifiedEmailNotificationUrl=https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        

@@ -68,6 +68,7 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -119,4 +120,5 @@ spec:
   schedule: "00 04 * * *"
   successfulJobsHistoryLimit: 1
   suspend: false
+
 

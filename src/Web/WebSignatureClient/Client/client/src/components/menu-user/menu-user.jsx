@@ -249,7 +249,7 @@ class MenuUser extends Component {
                                             {  lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
                                             <SignatureNumbers 
                                              title={i18n.t('menu-user.signatures-summary')}
-                                             type="signature"
+                                             icon="lf-icon-signature"
                                              available={i18n.t('menu-user.available')}
                                              consumed={i18n.t('menu-user.consumed')}
                                              availablenumber={lefebvre.numAvailableSignatures}

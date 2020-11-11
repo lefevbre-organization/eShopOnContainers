@@ -95,6 +95,7 @@
   },
   "schedule": {
     "eventtype": "Event Type",
+    "sensitivity": "Private",
     "profesional-event": "Profesional Event",
     "personal-event": "Personal Event",
     "attendees": "Invite attendees and press enter",

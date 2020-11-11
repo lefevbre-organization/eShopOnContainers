@@ -61,11 +61,12 @@ export class MenuListClass extends Component {
       </div>
     `;
     const contenido = `
-    <img border='0' src='assets/images/icon-warning.png'></img>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      Lo sentimos. No tienes contratado este servicio de certifiación. 
-      Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>
-    </div>`;
+      <img border='0' src='assets/images/icon-warning.png'></img>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      ${i18n.t("noServiceModal.text")}<br/>
+      ${i18n.t("noServiceModal.text2")}
+      </div>
+    `;
     const confirmButtons = [
       {
           click: () => {
@@ -162,7 +163,7 @@ export class MenuListClass extends Component {
 
   onClick = (event, key) => {
     const { close, lefebvre, application } = this.props;
-    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || application.selectedSignature === {})){
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedSignature === null || Object.keys(application.selectedSignature).length === 0 && application.selectedSignature.constructor === Object)){
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
@@ -181,9 +182,9 @@ export class MenuListClass extends Component {
     }
   }
 
-  onEmailClick = (event, key) => {
-    const { close, lefebvre } = this.props;
-    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+  onEmailClick(event, key) {
+    const { close, lefebvre, application } = this.props;
+    if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedEmail === null || Object.keys(application.selectedEmail).length === 0 && application.selectedEmail.constructor === Object)){
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
@@ -191,13 +192,18 @@ export class MenuListClass extends Component {
       this.props.signatureClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setUserApp('lefebvre');
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setGuid(null);
+      this.props.setIdDocuments(null);
       this.props.setAppTitle(i18n.t('topBar.certifiedEmail'));
       this.props.setSelectedService('certifiedEmail'); 
       this.props.close(this.props.application);
       //this.setState({hideAlertDialog: true});
     }
   }
-
+  
   onSmsClick = (event, key) => {
     const { close, lefebvre } = this.props;
     if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){

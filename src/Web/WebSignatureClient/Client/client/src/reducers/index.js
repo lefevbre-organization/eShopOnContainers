@@ -79,7 +79,8 @@ export const INITIAL_STATE = {
         idDocuments: [],
         mailContacts: [],
         adminContacts: [],
-        roles: []
+        roles: [],
+        targetService: null
     }
 };
 

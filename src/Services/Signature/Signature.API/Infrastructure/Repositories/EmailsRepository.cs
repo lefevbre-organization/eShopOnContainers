@@ -53,19 +53,31 @@
             return x => x.app.Equals(app.ToLowerInvariant());
         }
 
-        private static FilterDefinition<UserEmails> GetFilterEmail(string externalId)
+        private static FilterDefinition<CertifiedEmail> GetFilterCertificate(string certificateId)
         {
-            return Builders<UserEmails>.Filter.ElemMatch(u => u.CertifiedEmails, email => email.ExternalId == externalId);
+            return Builders<CertifiedEmail>.Filter.ElemMatch(c => c.Certificates, cert => cert.ExternalId == certificateId);
         }
-        
-        private static ProjectionDefinition<UserEmails> GetProjectEmail(string externalId)
+
+        private static FilterDefinition<UserEmails> GetFilterEmail(string certificateId)
         {
-            return Builders<UserEmails>.Projection.Include(u => u.User).ElemMatch(u => u.CertifiedEmails, email => email.ExternalId == externalId);//.Exclude(u => u.Id);
+            return Builders<UserEmails>.Filter.ElemMatch(u => u.CertifiedEmails, GetFilterCertificate(certificateId));
         }
-        
+
+        private static FilterDefinition<EmailEventInfo> GetFilterEvents(string certificateId)
+        {
+            return Builders<EmailEventInfo>.Filter.Eq(u => u.Certificate.CertificateId, certificateId);
+        }
+
         private static Predicate<CertifiedEmail> GetFilterUserEmailGuid(string guid)
         {
             return x => x.Guid.Equals(guid.ToUpperInvariant());
+        }
+        #endregion
+
+        #region Projects
+        private static ProjectionDefinition<UserEmails> GetProjectEmail(string certificateId)
+        {
+            return Builders<UserEmails>.Projection.Include(u => u.User).ElemMatch(u => u.CertifiedEmails, GetFilterCertificate(certificateId)).Exclude(u => u.Id);
         }
         #endregion
 
@@ -227,27 +239,24 @@
             return result;
         }
 
-        public async Task<Result<UserEmails>> GetEmail(string emailId)
+        public async Task<Result<UserEmails>> GetEmail(string certificateId)
         {
             var result = new Result<UserEmails>();
-            var filter = GetFilterEmail(emailId);
-            var project = GetProjectEmail(emailId);
+            var filter = GetFilterEmail(certificateId);
+            var project = GetProjectEmail(certificateId);
 
             try
             {
-                //result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
-                //result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
                 result.data = BsonSerializer.Deserialize<UserEmails>(await _context.Emails.Find(filter).Project(project).FirstOrDefaultAsync());
-                //result.data = await _context.Signatures.Find(filter).FirstOrDefaultAsync();
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {emailId}"), "SG15");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {certificateId}"), "SG15");
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {emailId}: {ex.Message} - {ex.StackTrace}", "SG15");
+                TraceInfo(result.infos, $"Error al obtener datos de {certificateId}: {ex.Message} - {ex.StackTrace}", "SG15");
             }
             return result;
         }
@@ -309,7 +318,72 @@
 
         #endregion
 
-         #region Helpers
+        #region Events
+        public async Task<Result<bool>> SaveEvent(EmailEventInfo eventInfo)
+        {
+            var result = new Result<bool>();
+
+            try
+            {
+                await _context.EmailEvents.InsertOneAsync(eventInfo);
+                if (eventInfo.mongoId != null)
+                {
+                    result.data = true;
+                    TraceInfo(result.infos, $"Evento recibido - {eventInfo.mongoId}", "SG32");
+                }
+                else
+                {
+                    result.data = false;
+                    TraceInfo(result.infos, $"Evento no se ha podido almacenar - {eventInfo.mongoId}", "SG32");
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "SG32");
+            }
+            return result;
+        }
+
+        public async Task<Result<List<EmailEventInfo>>> GetEvents(string certificateId)
+        {
+            var result = new Result<List<EmailEventInfo>>();
+            var result2 = new Result<EmailEventInfo>();
+            var filter = GetFilterEvents(certificateId);
+
+            try
+            {
+                if (certificateId == "all")
+                {
+
+                    //result.data = BsonSerializer.Deserialize<SignEventInfo>(await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync());
+                    result.data = await _context.EmailEvents.Find(f => true).ToListAsync();
+                }
+                else
+                {
+                    result.data = await _context.EmailEvents.Find(filter).ToListAsync();
+                }
+
+
+                if (result.data == null || result.data.Count == 0)
+                {
+                    TraceError(result.errors, new Exception($"No se encuentra ningún evento para el email certificado {certificateId}"), "SG32");
+                }
+                else
+                {
+                    var events = result.data?.ToList();
+
+                    result.data = events;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al obtener datos de {certificateId}: {ex.Message}", "SG32");
+            }
+            return result;
+        }
+        #endregion
+
+        #region Helpers
 
         private UserEmails GetNewUserEmail(string user, CertifiedEmail emailIn)
         {

@@ -533,7 +533,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    document.title = this.props.application.title;
+    document.title = 'Lefebvre Mail';
     //Starting poll to update the inbox automatically
     //this.startPoll();
     //adding connector App to right slide panel

@@ -146,9 +146,16 @@ export const buildClientUrl = (provider, user, payload) => {
 
 
 
-export const buildClientUrlToken = (provider, token, account, userId) => {
-    var url = `/access/${token}/`;
-
+export const buildClientUrlToken = (provider, token, service) => {
+    let url;
+    switch (service) {
+        case 'calendar':
+            url = `/calendar/access/${token}/`
+            break;
+        default:
+            url =  `/access/${token}/`
+            break;
+    }
     switch (provider) {
         case INBOX_GOOGLE:
         case IN_GOOGLE:

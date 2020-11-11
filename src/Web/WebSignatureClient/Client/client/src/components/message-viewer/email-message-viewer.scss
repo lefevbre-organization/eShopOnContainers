@@ -267,7 +267,7 @@
     }
 
     .separador-email::after{
-     left: 82%;
+     right: calc(14% - -4px);
      border: solid #c52f2f00;
      content: "";
      position: absolute;
@@ -665,10 +665,17 @@ a{
   margin-bottom: 10px;
 }
 
+.certificate-document-title {
+  flex: 0 0 auto;
+  margin-right: 36px;
+}
+
 .certificate-document {
   flex: auto;
 }
 
 .certificate-pending {
   color: #EAAB6A; 
+  flex: 0 0 auto;
+  margin-right: 40px;
 }

@@ -249,6 +249,13 @@
     "text": "We apologize, you've already used all your available signatures.",
     "text2": "If you wish, you can contact our Customer Support Service calling 912108000 or by clicking <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>here</u></a>"
   },
+  "noServiceModal":{
+    "text": "We apologize. You don't have this certification service acquired.",
+    "text2": "You can contact our Customer Support Service calling 912108000 or by clicking <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>here</u></a>"
+  },
+  "onlyPdfModal": {
+    "text": "Selected option only admits pdf files."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
@@ -282,10 +289,14 @@
     "option3": "Weekly reminders"
   },
   "certificatesWidget": {
-    "title": "WISH TO CERTIFY THAT:"
+    "title": "TYPE DE CERTIFICATION:",
+    "delivery": "The receiver has received the email",
+    "open_email": "The receiver has opened the email",
+    "open_document": "The receiver has seen the documents (only pdf)",
+    "open_every_document": "The receiver has opened all the documents (only pdf)"
   },
   "emailViewer": {
-    "certification": "Certification:",
+    "certification": "Type of certification selected:",
     "emailDelivered": "the recipient has received the mail",
     "emailOpened": "the recipient has opened the mail",
     "docOpened": "the recipient has opened the document",
