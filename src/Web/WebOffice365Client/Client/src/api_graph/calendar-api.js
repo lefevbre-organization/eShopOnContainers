@@ -225,7 +225,6 @@ export const getEventList = (idCalendar, selectedDate) => {
 
 export const addEventClassification = (eventId, classificationId) => {
     return new Promise(async (resolve, reject) => {
-        debugger
         const accessToken = await getAccessTokenSilent();
         const client = getAuthenticatedClient(accessToken);
         client
@@ -570,7 +569,6 @@ function listEventsParser(list) {
                 recurrenceRule = null;
             }
 
-
             //EventType
             let category;
             if (list[i].categories != undefined && list[i].categories.length > 0 ) {
@@ -579,12 +577,32 @@ function listEventsParser(list) {
                         {
                             eventTypeColor: undefined,
                             eventTypeId: undefined,
-                            eventTypeName: list[i].categories[0]
+                            eventTypeName: list[i].categories[0],
                         }
                 };
             }
             else {
                 category = undefined
+            }
+
+            // Search Lexon Classification if exists
+            let lexonClassification;
+            if(list[i].extensions) {
+                for(let e = 0; e < list[i].extensions.length; e++) {
+                    if(list[i].extensions[e].extensionName === 'Es.Lefebvre.LexonClassification') {
+                        lexonClassification = list[i].extensions[e].LexonClassification;
+                        if(!category) {
+                            category = { private: {
+                                    eventTypeColor: undefined,
+                                    eventTypeId: undefined,
+                                }
+                            }
+                        }
+
+                        category.private = { ...category.private, lexonClassification: lexonClassification}
+                        break;
+                    }
+                }
             }
 
 
