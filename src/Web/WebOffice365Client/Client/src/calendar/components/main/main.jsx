@@ -573,26 +573,26 @@ export class Main extends Component {
                 if (event.reminders != undefined) {
                     reminders = event.reminders.overrides;
                 }
-
-
-                this.scheduleData.push({
-                    Id: event.id,
-                    CalendarId: calendarId,
-                    Subject: event.summary,
-                    Location: event.location,
-                    Description: event.description,
-                    StartTime: new Date(start),
-                    EndTime: new Date(end),
-                    //StartTimezone: 'Europe/Paris',
-                    //EndTimezone: 'Europe/Paris',
-                    IsAllDay: event.IsAllDay,
-                    IsSensitivity: event.isSensitivity,
-                    RecurrenceRule: recurrenceRule,
-                    ImageName: "icon-lefebvre-bl",
-                    Attendees: attendees,
-                    EventType: eventType,
-                    Reminders: reminders,
-                });
+                if(!this.scheduleData.find(x => x.Id === event.id)){
+                    this.scheduleData.push({
+                        Id: event.id,
+                        CalendarId: calendarId,
+                        Subject: event.summary,
+                        Location: event.location,
+                        Description: event.description,
+                        StartTime: new Date(start),
+                        EndTime: new Date(end),
+                        //StartTimezone: 'Europe/Paris',
+                        //EndTimezone: 'Europe/Paris',
+                        IsAllDay: event.IsAllDay,
+                        IsSensitivity: event.isSensitivity,
+                        RecurrenceRule: recurrenceRule,
+                        ImageName: "icon-lefebvre-bl",
+                        Attendees: attendees,
+                        EventType: eventType,
+                        Reminders: reminders,
+                    });
+                }
             }
         }
         e.result = this.scheduleData;
