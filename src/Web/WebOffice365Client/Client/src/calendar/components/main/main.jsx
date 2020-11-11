@@ -727,7 +727,7 @@ export class Main extends Component {
                         subject: event.detail.subject,
                         sentDateTime: event.detail.sentDateTime,
                         folder: event.detail.folder,
-                        provider: 'GOOGLE',
+                        provider: 'OUTLOOK',
                         account: this.props.lexon.account,
                         chkselected: false,
                     },

@@ -636,7 +636,7 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [this.selectedEvent],
+                    selectedMessages: [ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
