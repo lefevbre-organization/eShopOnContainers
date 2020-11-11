@@ -327,7 +327,7 @@ namespace Lexon.Infrastructure.Services
         {
             return $"{{ " +
                     GetUserFilter(bbdd, idUser) +
-                    GetTextFilter("idEvent", idAppointment) +
+                    GetTextFilter("IdEvent", idAppointment) +
                     $" }}";
         }
 
