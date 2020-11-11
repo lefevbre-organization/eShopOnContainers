@@ -175,7 +175,7 @@ class EmailMessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
+    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === 'Centinela')});
     //createSignature();
   }
 
@@ -191,6 +191,7 @@ class EmailMessageEditor extends Component {
   }
 
   render() {
+
     const noSignersModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -228,6 +229,18 @@ class EmailMessageEditor extends Component {
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
+
+    const onlyPdfModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('onlyPdfModal.text')}
+      </div>
+    `;
+    const onlyPdf = ( 
+      (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
+    )
 
     const confirmButtons = [
       {
@@ -296,7 +309,7 @@ class EmailMessageEditor extends Component {
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
             />
-            <HeaderAddress
+            {/* <HeaderAddress
               id={'cc'}
               addresses={cc}
               onAddressAdd={this.handleAddAddress}
@@ -309,7 +322,7 @@ class EmailMessageEditor extends Component {
               getAddresses={this.props.getAddresses}
               label={t('messageEditor.cc')}
               lefebvre={lefebvre}
-            />
+            /> */}
             <div className={styles.subject}>
               <input
                 type={'text'}
@@ -365,7 +378,7 @@ class EmailMessageEditor extends Component {
           visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
+          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : noSignersModal)))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
@@ -536,6 +549,10 @@ class EmailMessageEditor extends Component {
       && (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')){
         this.setState({hideAlertDialog: true})
     } 
+    else if ( (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')){
+      this.setState({hideAlertDialog:true})
+    }
     else if (this.bigAttachments()){
       this.setState({ hideAlertDialog: true});
     }
@@ -895,13 +912,13 @@ class EmailMessageEditor extends Component {
        
     };
     if (this.props.editedMessage.attachments.length === 0){
-      let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
-      //Array.from(event.dataTransfer.files).forEach((file) => {
+      // let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
+      Array.from(event.dataTransfer.files).forEach((file) => {
         const fileReader = new FileReader();
         fileReader.onload = addAttachment.bind(this, file);
         fileReader.readAsDataURL(file);
         this.setState({isFileType: false});
-      //});
+      });
     }
     
     return true;

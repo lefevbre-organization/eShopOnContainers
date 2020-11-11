@@ -263,6 +263,13 @@
     "text": "Lo sentimos has agotado el número máximo de firmas contratadas.",
     "text2": "Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>"
   },
+  "noServiceModal":{
+    "text": "Lo sentimos. No tienes contratado este servicio de certificación. ",
+    "text2": "Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>"
+  },
+  "onlyPdfModal": {
+    "text": "La opción seleccionada sólo admite archivos en formato pdf."
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
@@ -296,7 +303,11 @@
     "option3": "Recordatorios semanales"
   },
   "certificatesWidget": {
-    "title": "DESEO CERTIFICAR QUE:"
+    "title": "DESEO CERTIFICAR QUE:",
+    "delivery": "El receptor ha recibido el email",
+    "open_email": "El receptor ha abierto el email",
+    "open_document": "El receptor ha visto los documentos (sólo pdf)",
+    "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)"
   },
   "emailViewer": {
     "certification": "Tipo de certificación seleccionada:",

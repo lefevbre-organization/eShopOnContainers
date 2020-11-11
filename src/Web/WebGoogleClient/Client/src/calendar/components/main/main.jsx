@@ -24,6 +24,7 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
+import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -95,6 +96,8 @@ export class Main extends Component {
         ]
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
+        this.layoutIframe = false;
+        this.layoutIframeEventView = false;
         this.state = {
             isVisible: true,
             sidebarOpen: false,
@@ -109,6 +112,7 @@ export class Main extends Component {
             //tagAttendess: [],
             reminders: [],
             eventType: undefined,
+            isVisibility: false,
             to2:[]
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
@@ -157,27 +161,10 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
 
-        //params for iframe enbebed functions
-        if (this.props.location.search == "?layout=iframe") {
-            this.layoutIframe = true;
-        }
-        else {
-            this.layoutIframe = false;
-        }
-
         
-
-        //var a = new URLSearchParams(this.props.location.search).get("cellheight")
-
-        //if (this.props.location.search == "cellheight=400px") {
-        //    this.layoutIframe = true;
-        //}
-        //else {
-        //    this.layoutIframe = false;
-        //}
-
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -213,6 +200,9 @@ export class Main extends Component {
             }
         ];
 
+
+        this.checkForParams()
+
        
     }
 
@@ -226,6 +216,19 @@ export class Main extends Component {
             const data = await import('../../syncfusion-resources/calendar-es.json')
             setCulture('es');
             L10n.load(data);
+        }
+    }
+
+    checkForParams() {
+       
+        let params = (new URL(document.location)).searchParams;
+
+        if (params.get('layout') != undefined) {
+            this.layoutIframe = true;
+        }       
+
+        if (params.get('newEvent') != undefined) {
+            this.layoutIframeEventView = true;
         }
     }
 
@@ -583,6 +586,7 @@ export class Main extends Component {
                     StartTime: new Date(start),
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
+                    Visibility: event.visibility,
                     RecurrenceRule: recurrenceRule,
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
@@ -657,7 +661,7 @@ export class Main extends Component {
         this.setState({ sidebarDocked: open });
     }
 
-    componentDidMount() {
+    componentDidMount() { 
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -701,8 +705,20 @@ export class Main extends Component {
         setTimeout(function () {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
-        }, value);      
-       
+           
+            // New event is called by params
+            if (obj.layoutIframeEventView) {
+                setTimeout(function () {
+                    obj.handleScheduleOpenEditor()
+                }, 1000); 
+            }  
+        }, value);  
+
+         //if (this.layoutIframe) {
+            //    setTimeout(function () {
+            //        obj.handleScheduleOpenEditor()
+            //    }, 1000);  
+            //}
        
     }
 
@@ -770,7 +786,7 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-
+        console.log(values);
         //Event basic data
         var event = {
             'summary': values.Subject,
@@ -785,7 +801,7 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
-
+            'visibility': values.Visibility ? 'private' : 'public',
         }
 
         //event Type    
@@ -928,10 +944,22 @@ export class Main extends Component {
         }    
     }
 
-    onPopupOpen(args) {
+    doubleOpen(args) {
+        if (this.layoutIframe) {
+            args.cancel = true;
+            window.open("calendar", "_blank");
+        }
+    }
+
+    onPopupOpen(args) {   
+
+        //if (this.layoutIframe) {
+        //    args.cancel = true;
+        //}
+
+      
 
         var DateMessage = args.data.startTime
-
         window.top.postMessage(
             JSON.stringify({
                 id: 2,
@@ -940,9 +968,6 @@ export class Main extends Component {
             }),
             'http://localhost:8080'
         );
-
-
-
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -958,8 +983,7 @@ export class Main extends Component {
         else {
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.remove('disabledbutton');
-        }         
-
+        } 
 
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
@@ -987,6 +1011,15 @@ export class Main extends Component {
             this.setState({ to2: [] })
         }
 
+        // default values for Visibility coming from event args
+        if(args.data.Visibility != undefined) {
+            const isVisibility = args.data.Visibility == 'private' ? true : false;
+            this.setState({ isVisibility: isVisibility });
+            if (this.drowDownListVisibility != undefined) {
+                this.drowDownListVisibility.checked = isVisibility;
+            }
+        }
+
         // default values for Reminders coming from event args
 
         if (args.data.Reminders != undefined) {
@@ -1011,6 +1044,22 @@ export class Main extends Component {
 
 
         if (args.type === 'QuickInfo') {
+
+            if (this.layoutIframe) {
+                var buttonElementEdit = ".e-event-popup .e-edit";
+                var removeButton = document.querySelector(buttonElementEdit);
+                if (removeButton != undefined) {
+                    removeButton.disabled = true;
+                }
+
+                if (args.data.Id === undefined) {
+                    args.cancel = true
+                }
+                else {
+                    var content = document.getElementsByClassName("e-popup-content");
+                    content[0].classList.add('hidden');
+                }
+            }
 
             //Not allow to update events of not owner or writer calendar permissions
             let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
@@ -1037,6 +1086,13 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+
+            if (this.layoutIframe & this.layoutIframeEventView) {
+                var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
+                head.classList.add('hidden');
+            }
+
+
             this.selectedEvent = {...args.data};
 
             var editButton = document.querySelector('.e-event-delete');
@@ -1100,6 +1156,26 @@ export class Main extends Component {
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
 
+
+                 // Adding visibility element
+                 let containerVisibility = createElement('div', { className: 'custom-field-container' });
+                 row.appendChild(containerVisibility);
+                 let inputVisibility = createElement('input', {
+                     className: 'e-field', attrs: { name: 'Visibility' }
+                 });
+                 containerVisibility.appendChild(inputVisibility);
+ 
+                 this.drowDownListVisibility = new CheckBoxComponent({
+                     value: this.state.isVisibility,
+                     label: i18n.t("schedule.visibility"),
+                     checked: this.state.isVisibility
+                 });
+ 
+                 this.drowDownListVisibility.appendTo(inputVisibility);
+                 inputVisibility.setAttribute('name', 'Visibility');
+ 
+
+
                 // Adding attendees2 tag element
                 let containerTab2 = createElement('div', { className: 'custom-field-container' });
                 rowAttendes.appendChild(containerTab2);
@@ -1120,36 +1196,40 @@ export class Main extends Component {
 
             }
 
-            let TabContainer = args.element.querySelector('.custom-tab-row');
-            if (TabContainer == null) {
-                if (args.element.querySelector('.e-dlg-content')) {
-                    let formContainer = args.element.querySelector('.e-schedule-form');
-                    let Element = args.element.querySelector('.e-dlg-content');
-                    let row = createElement('div', { className: 'custom-tab-row' });
-                    Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
-                    this.tabObj = new TabComponent({
-                        items: [
-                            { header: { text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
-                            { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
-                        ],
-                        selectedItem: 0,
-                        selecting: this.selectingTab.bind(this)
+            // if from iframe is requested a new event
+            if (!this.layoutIframeEventView) {
 
-                        //headerPlacement: 'Left',
-                    });
-                    //tabObj.select(1);
-                    this.tabObj.animation.previous = { duration: 100 };
-                    this.tabObj.animation.next = { duration: 100 };
-                    this.tabObj.animation.previous = { effect: 'FadeIn' };
-                    this.tabObj.animation.next = { effect: 'FadeIn' };
-                    this.tabObj.appendTo(row);
+                let TabContainer = args.element.querySelector('.custom-tab-row');
+                if (TabContainer == null) {
+                    if (args.element.querySelector('.e-dlg-content')) {
+                        let formContainer = args.element.querySelector('.e-schedule-form');
+                        let Element = args.element.querySelector('.e-dlg-content');
+                        let row = createElement('div', { className: 'custom-tab-row' });
+                        Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
+                        this.tabObj = new TabComponent({
+                            items: [
+                                { header: { text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
+                                { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
+                            ],
+                            selectedItem: 0,
+                            selecting: this.selectingTab.bind(this)
+
+                            //headerPlacement: 'Left',
+                        });
+                        //tabObj.select(1);
+                        this.tabObj.animation.previous = { duration: 100 };
+                        this.tabObj.animation.next = { duration: 100 };
+                        this.tabObj.animation.previous = { effect: 'FadeIn' };
+                        this.tabObj.animation.next = { effect: 'FadeIn' };
+                        this.tabObj.appendTo(row);
+                    }
                 }
-            }
-            else {
-                console.log(this.tabInstance);
-                this.tabObj.selectedItem = 0;
-                this.tabObj.refresh();
-                //} 
+                else {
+                    console.log(this.tabInstance);
+                    this.tabObj.selectedItem = 0;
+                    this.tabObj.refresh();
+                    //} 
+                    }
             }
 
         }
@@ -1308,7 +1388,7 @@ export class Main extends Component {
                 if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {                   
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
-              
+     
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
 
@@ -1829,10 +1909,11 @@ export class Main extends Component {
                                                 height='650px'
                                                 views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}
-                                                popupOpen={this.onPopupOpen.bind(this)}
+                                                popupOpen={this.onPopupOpen.bind(this)}                                               
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 //allowVirtualScrolling = "true"
+                                                cellDoubleClick={this.doubleOpen.bind(this)} 
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
@@ -1929,10 +2010,29 @@ export class Main extends Component {
                                 </DialogComponent>
 
                             </article>
-                        </section>
-
-                        
+                        </section>                        
                     </Fragment>
+
+
+                    {this.layoutIframeEventView ? (
+                        <style jsx>{`
+                        .e-dlg-overlay {
+                            background-color: #FFFFFF !important;
+                            opacity: 1 !important;
+                            box-shadow: none !important
+                        }
+
+                        .e-dialog {
+                            background-color: #fff;
+                            box-shadow: none !important
+                        }
+
+                    `}</style>
+
+                    ) : (
+                            <style jsx>{``}</style>                          
+                        )}
+
                 </SidebarCnn>
             </div>
         );

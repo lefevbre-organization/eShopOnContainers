@@ -298,7 +298,7 @@ class MessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
+    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === "Centinela")});
     //createSignature();
   }
 

@@ -150,7 +150,7 @@ export const buildClientUrlToken = (provider, token, service) => {
     let url;
     switch (service) {
         case 'calendar':
-            url = `/calendar/access/${token}`
+            url = `/calendar/access/${token}/`
             break;
         default:
             url =  `/access/${token}/`
