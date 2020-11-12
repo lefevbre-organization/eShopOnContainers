@@ -11,6 +11,8 @@
         public string CollectionTest { get; set; }
         public string CollectionEmails { get; set; }
         public string CollectionEmailEvents { get; set; }
+        public string CollectionSms { get; set; }
+        public string CollectionSmsEvents { get; set; }
 
         //public string CollectionMasters { get; set; }
 

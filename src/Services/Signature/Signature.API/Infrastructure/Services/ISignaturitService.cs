@@ -32,5 +32,11 @@
 
         Task<RestSharp.IRestResponse> DownloadCertification(string emailId, string certificationId);
 
+        Task<RestSharp.IRestResponse> GetSms(string user);
+
+        Task<RestSharp.IRestResponse> CreateSms(CreateSms smsInfo);
+
+        Task<RestSharp.IRestResponse> DownloadSmsCertification(string smsId, string certificationId);
+
     }
 }

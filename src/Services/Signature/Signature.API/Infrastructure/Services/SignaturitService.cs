@@ -396,5 +396,106 @@ namespace Signature.API.Infrastructure.Services
         }
 
         #endregion
+
+        #region CertifiedSms
+        public async Task<IRestResponse> GetSms(string user)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms.json?lefebvre_id={user}");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+            //Console.WriteLine(response.Content);
+
+            return response;
+        }
+
+        public async Task<IRestResponse> CreateSms(CreateSms emailSms)
+        {
+            Console.WriteLine("START CreateEmail");
+            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/sms.json");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms.json");
+            var i = 0;
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Adding parameters");
+
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            foreach (SmsRecipient recipient in emailSms.recipients)
+            {
+                Console.WriteLine($"Adding recipient_{i}");
+
+                request.AddParameter($"recipients[{i}][name]", recipient.name);
+                request.AddParameter($"recipients[{i}][phone]", recipient.phone);
+                i += 1;
+            }
+            i = 0;
+            foreach (UserFile file in emailSms.files)
+            {
+                Console.WriteLine($"Adding attachment_{i}");
+                request.AddFileBytes($"attachments[{i}]", file.file, file.fileName);
+                i += 1;
+            }
+            i = 0;
+            foreach (CustomField field in emailSms.customFields)
+            {
+                Console.WriteLine($"Adding CustomField: {field.name} -  {field.value} ");
+                request.AddParameter($"data[{field.name}]", field.value);
+            }
+
+            Console.WriteLine($"Adding type: {emailSms.certificationType}");
+            request.AddParameter($"type", emailSms.certificationType);
+
+            Console.WriteLine($"Adding body");
+            request.AddParameter("body", emailSms.body);
+            //Console.WriteLine($"Adding notification url: {_settings.Value.CertifiedEmailNotificationUrl}");
+            //request.AddParameter("events_url", _settings.Value.CertifiedEmailNotificationUrl);
+
+            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            Console.WriteLine($"Response: {response.Content.ToString()}");
+
+            Console.WriteLine("END CreateSignature");
+
+            return response;
+        }
+
+        public async Task<IRestResponse> DownloadSmsCertification(string emailId, string certificationId)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms/{emailId}/certificates/{certificationId}/download/audit_trail");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = await client.ExecuteAsync(request);
+            //Console.WriteLine(response.Content);
+
+            return response;
+        }
+
+        public BsonDocument DownloadSmsCertificationFile(string emailId, string certificationId)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms/{emailId}/certificates/{certificationId}/download/audit_trail");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = client.Execute(request);
+
+            var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+            string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+            Console.WriteLine($"END GetFile");
+
+            return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
+
+        }
+
+        #endregion
     }
 }
