@@ -308,6 +308,7 @@ class EmailMessageEditor extends Component {
               label={i18n.t('messageEditor.to')}
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
+              sendingType={sendingType}
             />
             {/* <HeaderAddress
               id={'cc'}

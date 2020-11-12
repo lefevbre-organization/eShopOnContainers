@@ -49,8 +49,12 @@ class SmsMessageEditor extends Component {
       linkDialogUrl: '',
       dropZoneActive: false,
       editorState: {},
+      selectedCertificationOption: 1,
+      certificationType: 'delivery',
       hideAlertDialog: false,
       hideConfirmDialog: false,
+      bigAttachments: false,
+      centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
       hideRolDialog: false,
       numPagesOption: 1,
       MaximumSigners: 40,
@@ -84,11 +88,23 @@ class SmsMessageEditor extends Component {
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
     this.getRoleInfo = this.getRoleInfo.bind(this);
+    this.resetIsFileDrop = this.resetIsFileDrop.bind(this);
   }
 
 
   onChangeCertification(certificates) {
-   console.log(certificates)
+    let selectedOptions = [];
+    let max = 0;
+    certificates.forEach(certificate => {
+      if (certificate.checked){
+        selectedOptions.push({option: certificate.option, certificate: certificate.id});
+        (max <= certificate.option) ? max = certificate.option : null;
+      }
+    });
+    this.setState({
+      selectedCertificationOption: max,
+      certificationType: selectedOptions[max-1].certificate
+    })
   }
 
   showCancelCenModal(){
@@ -100,6 +116,10 @@ class SmsMessageEditor extends Component {
     this.setState({numPagesOption: option});
   }
 
+  resetIsFileDrop(){
+    console.log('Reset isFileDrop');
+    this.setState({isFileType: false});
+  }
 
   resetReceivedInfo(){
     this.props.setMailContacts(null);
@@ -145,6 +165,7 @@ class SmsMessageEditor extends Component {
     this.setState({
         hideAlertDialog: false, 
         hideConfirmDialog: false, 
+        bigAttachments: false, 
         hideRolDialog: false
     });
   }
@@ -202,6 +223,14 @@ class SmsMessageEditor extends Component {
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
+
+    const noAttachModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('noAttachmentsModal.text')}
+      </div>`;
+
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center; 
@@ -209,6 +238,18 @@ class SmsMessageEditor extends Component {
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
+
+    const onlyPdfModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('onlyPdfModal.text')}
+      </div>
+    `;
+    const onlyPdf = ( 
+      (this.state.certificationType === 'open_document_sms' || this.state.certificationType === 'open_every_document_sms')
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
+    )
 
     const confirmButtons = [
       {
@@ -226,7 +267,6 @@ class SmsMessageEditor extends Component {
       }
     ];
 
-
     const {
       t,
       className,
@@ -234,6 +274,7 @@ class SmsMessageEditor extends Component {
       sendingType,
       to,
       subject,
+      attachments,
       content,
       lefebvre
     } = this.props;
@@ -273,6 +314,7 @@ class SmsMessageEditor extends Component {
               label={i18n.t('messageEditor.to')}
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
+              sendingType={sendingType}
             />
              <div className={styles.subject}>
               <input
@@ -330,7 +372,13 @@ class SmsMessageEditor extends Component {
           visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={noSignersModal}
+          content={(
+            this.state.centinelaDownloadError === true ? 
+            attachNotFound : (this.props.attachments.length === 0 ? 
+            noAttachModal : (this.state.bigAttachments ?
+            bigFileModal : (onlyPdf) ? 
+            onlyPdfModal : noSignersModal))
+          )}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           open={this.dialogOpen("info2Dialog")} 
           close={this.dialogClose}
@@ -511,59 +559,64 @@ class SmsMessageEditor extends Component {
     );
   }
 
+
+  bigAttachments(){
+    let maxSize = 15000000;
+    let totalSize = 0
+    this.props.attachments.map(attachment => totalSize = totalSize + attachment.size);
+    return (totalSize >= maxSize);
+  }
+
   submit() {
-    if (this.props.to.length === 0){
+    if (this.props.to.length === 0 ){
       this.setState({ hideAlertDialog: true });
-    } else if (this.bigAttachments()){
-      this.setState({ hideAlertDialog: true, bigAttachments: true});
+    } else if ( this.props.attachments.length === 0 
+      && (this.state.certificationType === 'open_every_document_sms' )){
+        this.setState({hideAlertDialog: true})
+    } 
+    else if ( (this.state.certificationType === 'open_every_document_sms' )
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')){
+      this.setState({hideAlertDialog:true})
+    }
+    else if (this.bigAttachments()){
+      this.setState({ hideAlertDialog: true});
     }
     else {
-      this.setState({hideRolDialog:true});
       if (this.headerFormRef.current.reportValidity()) {
         // Get content directly from editor, state content may not contain latest changes
         const content = this.getEditor().getContent();
-        const { to } = this.props;
+        const { to, subject } = this.props;
         const { lefebvre } = this.props;
-        // const userBranding = lefebvre.userBrandings.find(
-        //   (b) => b.app === lefebvre.userApp
-        // );
-  
-        
-  
+        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.certifiedEmail) 
+          ? lefebvre.userBrandings.certifiedEmail.find((b) => b.app === lefebvre.userApp) 
+          : '';
+          
         let guid = lefebvre.guid;
         if (guid === null) {
           guid = uuid();
         }
   
-        // if (document.getElementById('file-input').files[0]){
-        //     var reader = new FileReader();
-        //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
-        //     reader.onloadend = (evt) => {
-        //        console.log(evt.target.result);
-        //        var fileData = evt.target.result.split('base64,')[1];
-        //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-        //     }
-        //     reader.onerror = function (evt) {
-        //         console.log("error reading file");
-        //     }
-        // } else
-    
-         
-         
-            
-          //this.callApis(to, subject, content.innerHTML, file, lefebvre.userId, guid, userBranding.externalId);
+        if (this.props.attachments) {
+          let attachmentsList = [];
+          this.props.attachments.forEach((attachment) => {
+            var file = new File([attachment.content], attachment.fileName, {
+              type: getFileType(attachment.fileName),
+              lastModified: new Date(),
+            });
+            attachmentsList.push({file: file, pages: attachment.pages});
+            debugger;
+          });
           this.callApis(
             to,
-            cc,
             subject,
             content.innerHTML,
-            reminders,
-            expiration,
+            this.props.attachments,
             lefebvre.userId,
             guid,
-            ''
+            this.state.certificationType,
+            userBranding
           );
-    
+        }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
       }
     }
@@ -718,13 +771,8 @@ class SmsMessageEditor extends Component {
 
   validateAddress(updatedMessage, id, address, name) {
     const addressData = {address: address, name: name}
-    if(updatedMessage.to.length == this.state.MaximumSigners
-       && id != 'cc') {
+    if(updatedMessage.to.length == this.state.MaximumSigners) {
          console.log('Maximum Signers');
-    } else if(updatedMessage.to.length == this.state.MaximumSigners 
-      && id == 'cc') {
-      updatedMessage[id] = [...updatedMessage[id], addressData];
-      this.props.editMessage(updatedMessage);
     } else {
       updatedMessage[id] = [...updatedMessage[id], addressData];
       this.props.editMessage(updatedMessage);
@@ -771,6 +819,130 @@ class SmsMessageEditor extends Component {
     this.props.editMessage({ ...updatedMessage, subject: target.value });
   }
 
+
+  onDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.setState({ dropZoneActive: false })
+    
+    const addAttachment = (file, dataUrl) => {
+       const fileType = file.name.split('.');
+        if(fileType[1] == 'pdf' || fileType[1] == 'docx' 
+        || fileType[1] == 'doc') {
+
+          const newAttachment = {
+            fileName: file.name,
+            size: file.size,
+            contentType: file.type,
+            content: dataUrl.currentTarget.result.replace(
+                /^data:[^;]*;base64,/,
+                ''
+            ),
+            };
+
+          if (fileType[1] === 'pdf'){
+            const pdfjsLib = require('pdfjs-dist');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
+
+            pdfjsLib.getDocument({data: atob(newAttachment.content)})
+            .promise.then(doc => {
+              var numPages = doc.numPages;
+              newAttachment.pages = numPages;
+              console.log('# Document Loaded');
+              console.log('Number of Pages: ' + numPages);
+
+              const updatedMessage = { ...this.props.editedMessage };
+              updatedMessage.attachments = updatedMessage.attachments
+                  ? [...updatedMessage.attachments, newAttachment]
+                  : [newAttachment];
+              this.props.editMessage(updatedMessage);
+            });
+          } else {
+            const updatedMessage = { ...this.props.editedMessage };
+
+            updatedMessage.attachments = updatedMessage.attachments
+                ? [...updatedMessage.attachments, newAttachment]
+                : [newAttachment];
+            this.props.editMessage(updatedMessage);
+          }
+        } else {
+            this.setState({isFileType: true});
+            console.log('tipo de archivo invalido!');
+        }
+       
+    };
+    if (this.props.editedMessage.attachments.length === 0){
+      // let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
+      Array.from(event.dataTransfer.files).forEach((file) => {
+        const fileReader = new FileReader();
+        fileReader.onload = addAttachment.bind(this, file);
+        fileReader.readAsDataURL(file);
+        this.setState({isFileType: false});
+      });
+    }
+    
+    return true;
+  }
+
+  onDragOver(event) {
+    event.preventDefault();
+    if (
+      event.dataTransfer.types &&
+      Array.from(event.dataTransfer.types).includes('Files')
+    ) {
+      this.setState({ dropZoneActive: true });
+    }
+  }
+
+  onDragLeave(event) {
+    event.preventDefault();
+    this.setState({ dropZoneActive: false });
+  }
+
+  removeAttachment(attachment) {
+    const updatedMessage = { ...this.props.editedMessage };
+    if (updatedMessage.attachments && updatedMessage.attachments.length) {
+      updatedMessage.attachments = updatedMessage.attachments.filter(
+        (a) => a !== attachment
+      );
+      this.props.editMessage(updatedMessage);
+    }
+  }
+
+  onAttachButton() {
+    return this.fileInput && this.fileInput.click();
+  }
+
+  onAttachSelected(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.setState({ dropZoneActive: false });
+    const addAttachment = (file, dataUrl) => {
+      const newAttachment = {
+        fileName: file.name,
+        size: file.size,
+        contentType: file.type,
+        content: dataUrl.currentTarget.result.replace(
+          /^data:[^;]*;base64,/,
+          ''
+        ),
+      };
+      const updatedMessage = { ...this.props.editedMessage };
+      updatedMessage.attachments = updatedMessage.attachments
+        ? [...updatedMessage.attachments, newAttachment]
+        : [newAttachment];
+      this.props.editMessage(updatedMessage);
+    };
+    Array.from(event.target.files).forEach((file) => {
+      const fileReader = new FileReader();
+      fileReader.onload = addAttachment.bind(this, file);
+      fileReader.readAsDataURL(file);
+    });
+    return true;
+  }
+
+
   getEditor() {
     if (this.editorRef && this.editorRef.refEditor) {
       return this.editorRef.refEditor;
@@ -811,6 +983,7 @@ const mapStateToProps = (state) => ({
   sendingType: state.application.newMessage.sendingType,
   to: state.application.newMessage.to,
   subject: state.application.newMessage.subject,
+  attachments: state.application.newMessage.attachments,
   name: state.application.newMessage.name,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,

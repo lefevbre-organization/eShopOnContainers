@@ -311,7 +311,10 @@
     "delivery": "Le destinataire a reçu l'e-mail",
     "open_email": "Le destinataire a ouvert l'e-mail",
     "open_document": "Le destinataire a consulté les documents (pdf uniquement)",
-    "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)"
+    "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)",
+    "delivery_sms": "Le destinataire a reçu le sms",
+    "open_sms": "Le destinataire a consulté les documents",
+    "open_every_document_sms": "Le destinataire a ouvert tous les documents"
   },
   "emailViewer": {
     "certification": "Type de certification sélectionné:",

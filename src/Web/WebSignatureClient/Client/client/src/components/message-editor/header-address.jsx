@@ -178,7 +178,7 @@ export class HeaderAddress extends Component {
   validateEmail(event) {
     const target = event.target;
     const error = validateEmail(target.value);
-    if (error) {
+    if (error && this.props.sendingType != 'smsCertificate') {
       event.preventDefault();
       target.setCustomValidity(error);
       setTimeout(() => target.reportValidity());
