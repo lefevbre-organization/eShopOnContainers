@@ -503,6 +503,102 @@ export const addOrUpdateBrandingEmail = async (user, brandingInfo) => {
   })
 }
 
+
+/*
+   _____                 ____             _                  _ 
+  / ____|               |  _ \           | |                | |
+ | (___  _ __ ___  ___  | |_) | __ _  ___| | _____ _ __   __| |
+  \___ \| '_ ` _ \/ __| |  _ < / _` |/ __| |/ / _ \ '_ \ / _` |
+  ____) | | | | | \__ \ | |_) | (_| | (__|   <  __/ | | | (_| |
+ |_____/|_| |_| |_|___/ |____/ \__,_|\___|_|\_\___|_| |_|\__,_|
+                                                                                                                           
+*/
+
+export const getUserSms = async userId => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedSms/${userId}`, requestOptions)
+      .then(response => response.json())
+      .then(result => resolve(result))
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+};
+
+// Creates a new user with empty signatures or with a new signature
+export const createUserSms = async (userId, certifiedSms = []) => {
+  var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+    myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+  \n  "user\": \"${userId}\",
+  \n  \"certifiedSms\": ${JSON.stringify(certifiedSms)}
+  \n}`;
+
+  console.log("Este es el raw de CreateUserSms");
+  console.log(raw);
+  console.log({raw});
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedSms/addUser`, requestOptions)
+    .then(response => {
+      console.log(response);
+      response.text()
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+// Adds or updates a sms of a given user
+export const addOrUpdateSms = async (userId, externalId, guid, app, createdAt, type, certificates) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Accept", "text/plain");
+  myHeaders.append("Content-Type", "application/json-patch+json");
+  myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+    \n  \"guid\": \"${guid}\",
+    \n  \"externalId\": \"${externalId}\",
+    \n  \"app\": \"${app}\",
+    \n  \"created_at\": \"${createdAt}\",
+    \n  \"type\": \"${type}\",
+    \n  \"certificate\": ${JSON.stringify(certificates)}
+    \n}`;
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedSms/${userId}/sms/addorupdate`, requestOptions)
+    .then(response => {
+      console.log(response);
+      response.text()
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
 // END OF LEFEBVRE SIGNATURE API CALLS
 
 
@@ -1086,6 +1182,166 @@ export const downloadCertificationDocument = (emailId, certificationId, fileName
   };
 
   fetch(`${window.API_SIGN_GATEWAY}/Signaturit/emails/download/${emailId}/certificate/${certificationId}`, requestOptions)
+    .then(response => response.blob())
+    .then(blob => {
+      console.log(blob);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'audit-'+fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+    .catch(error => console.log('error', error));
+}
+
+/*
+
+   _____ _                   _              _ _               _____               
+  / ____(_)                 | |            (_) |             / ____|              
+ | (___  _  __ _ _ __   __ _| |_ _   _ _ __ _| |_   ______  | (___  _ __ ___  ___ 
+  \___ \| |/ _` | '_ \ / _` | __| | | | '__| | __| |______|  \___ \| '_ ` _ \/ __|
+  ____) | | (_| | | | | (_| | |_| |_| | |  | | |_            ____) | | | | | \__ \
+ |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  |_|\__|          |_____/|_| |_| |_|___/
+            __/ |                                                                 
+           |___/                                                                  
+
+*/
+
+export function preloadSms(dispatch, filters, auth) {
+  return new Promise((resolve, reject) => {
+
+    let offset = 0;
+
+    getSms(filters, auth, offset)
+    .then(sms => {
+      console.log('Sms Before:')
+      console.log(sms);
+      sms = calculateStatusEmails(sms);
+      console.log('sms After:')
+      console.log({sms});
+      var sortedSms = sms.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0));
+      dispatch(preDownloadSms(sortedSms));
+      resolve(sortedSms);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getSms = async (filters, auth, offset, sms = []) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${auth}`);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/getSms/${filters}&offset=${offset}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        sms = sms.concat(result);
+        if (result.length === 100){
+          resolve(getSms(filters, auth, offset + result.length, emails));
+        } else {
+          // console.log('Datos recibidos de signaturit - GetSignatures:');
+          // console.log({signatures});
+          // signatures = calculateStatus(signatures);
+          // console.log({signatures});
+          // dispatch(preDownloadSignatures(signatures));
+          resolve(sms);
+        }
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+// Creates a new sms calling internal proxy api
+export const createSms = async (recipients, body, files, lefebvreId, guid, type, auth) => {
+    return new Promise((resolve, reject) => {
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "text/plain");
+      myHeaders.append("Content-Type", "application/json-patch+json");
+      myHeaders.append("Content-Type", "text/plain");
+      myHeaders.append("Authorization", `${auth}`);
+  
+      var jsonObject = {};
+      var recipientsData = [];
+      var filesData = [];
+      var customFieldsData = [];
+
+      recipients.forEach(recipient => {
+        recipientsData.push({name: ' ', phone: recipient.address})
+      })
+      jsonObject.recipients = recipientsData;
+    
+      files.forEach(file => {
+        filesData.push({file: file.content, fileName: file.fileName})
+      })
+      jsonObject.files = filesData;
+
+      jsonObject.certificationType = type;
+  
+  
+      customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
+      customFieldsData.push({name: "lefebvre_guid", value: guid});
+      customFieldsData.push({name: "body", value: body});
+      customFieldsData.push({name: "certification_type", value: type})
+      jsonObject.customFields = customFieldsData;
+  
+      jsonObject.body = body;  
+  
+      var raw = JSON.stringify(jsonObject);
+      console.log('Raw::');
+      console.log(raw);
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/newSms`, requestOptions)
+        .then(response => {
+          if (response.ok){
+            return response.json();
+          } else {
+            return response.text();
+          }
+        })
+        .then(result => {
+          console.log(result)
+          resolve(result)
+        })
+        .catch(error => {
+          reject(error);
+          console.log('error', error)
+        });
+    })
+}
+  
+// Downloads the trail information of a certified sms calling internal proxy api
+export const downloadSmsCertificationDocument = (smsId, certificationId, fileName, auth) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `${auth}`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/download/${emailId}/certificate/${certificationId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);
