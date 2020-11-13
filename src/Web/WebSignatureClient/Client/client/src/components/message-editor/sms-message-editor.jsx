@@ -28,7 +28,7 @@ import {
   decAvailableSignatures,
   notifySignature,
   cancelSignatureCen,
-  preloadSignatures2,
+  preloadSms,
   getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
@@ -757,7 +757,7 @@ class SmsMessageEditor extends Component {
           this.props.setTitle('');
           this.props.setIdDocuments(null);
           this.props.close(this.props.application);
-          this.props.preloadSignatures(lefebvre.userId)
+          this.props.preloadSms(lefebvre.userId,  this.props.application.user.credentials.encrypted)
           getNumAvailableSignatures(lefebvre.idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
             .catch(err => {
@@ -1027,7 +1027,7 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
+  preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth)
 });
 
 export default connect(

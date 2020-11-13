@@ -1,4 +1,4 @@
-import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails } from '../actions/application';
+import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList } from '../actions/application';
 import { resolve } from 'path';
 
 // tenia 94 left y 5 width
@@ -1222,7 +1222,7 @@ export function preloadSms(dispatch, filters, auth) {
       console.log('sms After:')
       console.log({sms});
       var sortedSms = sms.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0));
-      dispatch(preDownloadSms(sortedSms));
+      dispatch(preDownloadSmsList(sortedSms));
       resolve(sortedSms);
     })
     .catch(error => {

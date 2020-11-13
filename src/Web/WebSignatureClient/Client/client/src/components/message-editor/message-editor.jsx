@@ -1027,7 +1027,7 @@ class MessageEditor extends Component {
           this.props.setIdDocuments(null);
           this.props.setSelectedService('signature');
           this.props.setSignaturesFilterKey('Mostrar todas');
-          this.props.preloadSignatures(lefebvre.userId);
+          this.props.preloadSignatures(lefebvre.userId, this.props.application.user.credentials.encrypted);
           this.props.close(this.props.application);
       
           getNumAvailableSignatures(lefebvre.idUserApp)

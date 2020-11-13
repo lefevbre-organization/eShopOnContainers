@@ -6,7 +6,7 @@ import { clearUserCredentials, setUserCredentials } from "../../actions/applicat
 import history from "../../routes/history";
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts, getService } from "../../services/jwt";
 import Cookies from 'js-cookie';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures, getUserSms } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
@@ -110,7 +110,7 @@ class UserLefebvre extends Component {
                 var rolesList = [];
                 (signatureRole) ? rolesList.push('Firma Digital') : null;
                 (emailRole) ? rolesList.push('Email Certificado') : null;
-                (smsRole) ? rolesList.push('Sms Certificado') : null;
+                (smsRole) ? rolesList.push('SMS Certificado') : null;
                 (centinelaRole) ? rolesList.push('Centinela') : null;
 
                 this.props.setRoles(rolesList);

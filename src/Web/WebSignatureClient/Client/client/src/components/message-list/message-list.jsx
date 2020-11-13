@@ -9,7 +9,7 @@ import { getCredentials } from "../../selectors/application";
 import { getSelectedFolder } from "../../selectors/folders";
 import { getSelectedFolderMessageList } from "../../selectors/messages";
 import { prettyDate } from "../../services/prettify";
-import { selectSignature, selectEmail, setTitle, setSelectedService } from "../../actions/application";
+import { selectSignature, selectEmail, selectSms, setTitle, setSelectedService } from "../../actions/application";
 import { readMessageRaw } from "../../services/message-read";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -271,10 +271,16 @@ class MessageList extends Component {
                     result.push({name: d.name, email: d.email});
                 }
             });
-        } else {
+        } else if (this.props.selectedService == 'certifiedEmail') {
             element.certificates.map(d => {
                 if (result.filter(e => e.name === d.name && e.email === d.email).length === 0) {
                     result.push({name: d.name, email: d.email});
+                }
+            });
+        } else if (this.props.selectedService == 'certifiedSms'){
+            element.certificates.map(d => {
+                if (result.filter(e => e.name === d.name && e.phone === d.phone).length === 0) {
+                    result.push({name: d.name, phone: d.phone});
                 }
             });
         }
@@ -405,6 +411,48 @@ class MessageList extends Component {
         return (res.length === 0 ? [] : res);
     }
 
+    getSmsList(smsList) {
+        let filteredSms = [];
+        smsList.map( sms => {
+            if ((sms.status === 'En progreso' || sms.status === 'ready' || sms.status === 'pending') && (this.props.signatureFilter === "En progreso")){
+                filteredSms.push(sms);
+            } else if ((sms.status === 'Completadas' || sms.status === 'completed') && (this.props.signatureFilter === "Completadas")){
+                filteredSms.push(sms);
+            } else if ((sms.status === 'Canceladas' || sms.status === 'canceled' || sms.status === 'expired' || sms.status ==='declined' || sms.status === 'error') && (this.props.signatureFilter === 'Canceladas')) {
+                filteredSms.push(sms);    
+            } else if (this.props.signatureFilter === "Mostrar todas") {
+                filteredSms.push(sms);
+            }
+        });
+        
+
+        let res = [];
+
+        filteredSms.map(sms => {
+            let documentName = '';
+            let subject = '';
+            let recipients = '';
+            let files = '';
+            let date = '';
+            let status = '';
+            let newStatus = '';
+            subject = (sms.data.find(x => x.key === "body")) ? sms.data.find(x => x.key === "body").value : 'N/A';
+            
+            sms.certificates.map(s => recipients = `${recipients}${s.phone}; `);
+            sms.certificates.map(s => 
+                files = (sms.certificates[0].file && sms.certificates[0].file.name) 
+                ? `${files}${s.file.name}; ` 
+                : '');
+ 
+            date = new Date(sms.created_at);
+            status = sms.status;
+           
+            newStatus = this.getNewStatus(status);
+            res.push({Id: sms.id, Documento: files, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
+        });
+        return (res.length === 0 ? [] : res);
+    }
+
     gridTemplate(props) {
         debugger;
         // //var src = 'src/grid/images/' + props.EmployeeID + '.png';
@@ -430,11 +478,9 @@ class MessageList extends Component {
                 </td>
             </tr>
         );
-
     }
 
     menuGridTemplate(props){
-
         let items = [];
 
         if (props.Estado === i18n.t('signaturesGrid.statusInProgress') 
@@ -475,7 +521,6 @@ class MessageList extends Component {
                     </div>
                 </div>
             </div>);
-       
     }
 
     filesGridTemplate(props) {
@@ -539,7 +584,7 @@ class MessageList extends Component {
         let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
-        let signersInfo;
+        let recipientsInfo;
 
         switch (props.Estado) {
             case i18n.t('signaturesGrid.statusCancelled'):
@@ -566,38 +611,67 @@ class MessageList extends Component {
 
         let data;
         if (this.props.selectedService == 'signature'){
-            data = this.props.signatures.find(s => s.id === props.Id)
-        } else {
-            data = this.props.emails.find(e => e.id === props.Id)
+            data = this.props.signatures.find(s => s.id === props.Id);
+        } else if (this.props.selectedService == 'certifiedEmail'){
+            data = this.props.emails.find(e => e.id === props.Id);
+        } else if (this.props.selectedService == 'certifiedSms'){
+            data = this.props.smsList.find(s => s.id === props.Id);
         }
 
         if (data){
-            signersInfo = this.getRecipientsInfo(data);
-            signersInfo.forEach((signer, i) => {
+            recipientsInfo = this.getRecipientsInfo(data);
+            recipientsInfo.forEach((signer, i) => {
                 //console.log(signer);
-                if (i === signersInfo.length -1 ){
-                    recipientsList.push(
-                        {
-                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
-                            cssClass: 'test'
-                        },
-                        {
-                            text: signer.email
-                        }
-                    )  
+                if (i === recipientsInfo.length -1 ){
+                    (this.props.selectedService === 'certifiedSms')
+                        ? 
+                            recipientsList.push(
+                                {
+                                    text: signer.name,
+                                    cssClass: 'test'
+                                },
+                                {
+                                    text: signer.phone
+                                }
+                            )
+                        : 
+                            recipientsList.push(
+                                {
+                                    text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
+                                    cssClass: 'test'
+                                },
+                                {
+                                    text: signer.email
+                                }
+                            )
                 } else {
-                    recipientsList.push(
-                        {
-                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
-                            cssClass: 'test'
-                        },
-                        {
-                            text: signer.email
-                        },
-                        {   
-                            separator: true
-                        }
-                    )
+                    (this.props.selectedService === 'certifiedSms')
+                        ? 
+                            recipientsList.push(
+                                {
+                                    text: signer.name,
+                                    cssClass: 'test'
+                                },
+                                {
+                                    text: signer.phone
+                                },
+                                {   
+                                    separator: true
+                                }
+                            )
+                        :
+                            recipientsList.push(
+                                {
+                                    text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
+                                    cssClass: 'test'
+                                },
+                                {
+                                    text: signer.email
+                                },
+                                {   
+                                    separator: true
+                                }
+                            )
                 }
             });
         }
@@ -612,7 +686,7 @@ class MessageList extends Component {
                 </div>     
                 {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
                 <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>
-                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{(signersInfo && signersInfo.length) ? signersInfo.length : ''}</DropDownButtonComponent>
+                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{(recipientsInfo && recipientsInfo.length) ? recipientsInfo.length : ''}</DropDownButtonComponent>
                 </div>
             </div>
         )
@@ -720,6 +794,10 @@ class MessageList extends Component {
                 var email = this.props.emails.find(s => s.id === event.data.Id);
                 this.props.setTitle(i18n.t('emailViewer.title'));
                 this.props.emailClicked(email);
+            } else if (this.props.selectedService === 'certifiedSms'){
+                var sms = this.props.smsList.find(s => s.id === event.data.Id);
+                this.props.setTitle(i18n.t('smsViewer.title'));
+                this.props.smsClicked(sms);
             }
             
         }
@@ -767,18 +845,24 @@ class MessageList extends Component {
 
     dropDownOptionSelected (args){
         console.log(args);
-        if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
-        this.props.selectedService == 'signature') {
+        if (args.item.text === i18n.t('signaturesGrid.menuEdit') 
+            && this.props.selectedService == 'signature') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const signature = this.props.signatures.find(s => s.id === id);
             this.props.setTitle('PROGRESO DE FIRMA');
             this.props.signatureClicked(signature);
-        } else if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
-        this.props.selectedService == 'certifiedEmail') {
+        } else if (args.item.text === i18n.t('signaturesGrid.menuEdit') 
+            && this.props.selectedService == 'certifiedEmail') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const email = this.props.emails.find(s => s.id === id);
             this.props.setTitle('PROGRESO DE EMAIL CERTIFICADO');
             this.props.emailClicked(email);
+        } else if (args.item.text === i18n.t('signaturesGrid.menuEdit') 
+            && this.props.selectedService == 'certifiedSms') {
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const sms = this.props.smsList.find(s => s.id === id);
+            this.props.setTitle('PROGRESO DE SMS CERTIFICADO');
+            this.props.smsClicked(sms);
         } else if (args.item.text === i18n.t('signaturesGrid.menuCancel')){
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
@@ -870,7 +954,9 @@ class MessageList extends Component {
                 } else if (lefebvre.roles[0] === "Firma Digital" || lefebvre.roles[0] === "Signaturit"){
                     this.props.setSelectedService('signature');
                     //this.props.preloadSignatures(lefebvre.userId);
-                } else {
+                } else if (lefebvre.roles[0] === 'SMS Certificado' ) {
+                    this.props.setSelectedService('certifiedSms');
+                }else {
                     // De momento por defecto signature, después hay que añadir control de qué aplicación llama y para qué llama
                     this.props.setSelectedService('signature'); 
                     //this.props.preloadSignatures(lefebvre.userId);
@@ -905,7 +991,8 @@ class MessageList extends Component {
             if (difP.updated.hasOwnProperty('preloadSignatures') && difP.updated.hasOwnProperty('emailClicked') 
                 && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
                 && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
-                && Object.keys(difP.updated).length === 6
+                && difP.updated.hasOwnProperty('smsClicked')
+                && Object.keys(difP.updated).length === 7
                 && Object.keys(difP.added).length === 0
                 && Object.keys(difP.deleted).length === 0){
                     console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().if: ' + false);
@@ -1023,9 +1110,19 @@ class MessageList extends Component {
         //var firmas = this.props.signatures;
 
         var firmas = ( this.props.signatures && this.props.signatures.length > 0 ) ? this.getSignatures(this.props.signatures): [];
-        //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
         var emails = ( this.props.emails && this.props.emails.length > 0 ) ? this.getEmails(this.props.emails) : [];
-        var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
+        var smsList = ( this.props.smsList && this.props.smsList.length > 0 ) ? this.getSmsList(this.props.smsList) : [];
+        
+        var selectedServices = 
+            (this.props.selectedService && this.props.selectedService == 'signature') 
+                ? 
+                    firmas 
+                : 
+                    (this.props.selectedService && this.props.selectedService == 'certifiedEmail') 
+                        ? 
+                            emails
+                        :   
+                            smsList
 
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
@@ -1814,6 +1911,7 @@ const mapStateToProps = state => ({
     downloadedMessages: state.application.downloadedMessages,
     signatures: state.application.signatures,
     emails: state.application.emails,
+    smsList: state.application.smsList,
     selectedService: state.application.selectedService,
     signatureFilter: state.application.signaturesFilterKey,
     lefebvre: state.lefebvre,
@@ -1829,6 +1927,7 @@ const mapDispatchToProps = dispatch => ({
     emailClicked: email => {
         dispatch(selectEmail(email));
     },
+    smsClicked: sms => dispatch(selectSms(sms)),
     backendRequest: () => dispatch(backendRequest()),
     backendRequestCompleted: () => dispatch(backendRequestCompleted()),
     setTitle: (title) => dispatch(setTitle(title)),
@@ -1840,6 +1939,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         preloadSignatures: filter => dispatchProps.preloadSignatures(filter, stateProps.credentials.encrypted),
         signatureClicked: signature => dispatchProps.signatureClicked(signature),
         emailClicked: email => dispatchProps.emailClicked(email),
+        smsClicked: sms => dispatchProps.smsClicked(sms),
         backendRequest: () => dispatchProps.backendRequest(),
         backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
         setTitle: title => dispatchProps.setTitle(title)

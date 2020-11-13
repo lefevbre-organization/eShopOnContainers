@@ -11,7 +11,8 @@ import {
   setSelectedService, 
   setSignaturesFilterKey, 
   selectSignature, 
-  selectEmail
+  selectEmail,
+  selectSms
 } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
@@ -169,6 +170,7 @@ export class MenuListClass extends Component {
       event.stopPropagation();
       this.props.signatureClicked(null);
       this.props.emailClicked(null);
+      this.props.smsClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setUserApp('lefebvre');
@@ -182,14 +184,15 @@ export class MenuListClass extends Component {
     }
   }
 
-  onEmailClick(event, key) {
+  onEmailClick = (event, key) => {
     const { close, lefebvre, application } = this.props;
     if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && (application.selectedEmail === null || Object.keys(application.selectedEmail).length === 0 && application.selectedEmail.constructor === Object)){
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
-      this.props.emailClicked(null);
       this.props.signatureClicked(null);
+      this.props.emailClicked(null);
+      this.props.smsClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
       this.props.setUserApp('lefebvre');
@@ -210,10 +213,16 @@ export class MenuListClass extends Component {
       this.setState({hideConfirmDialog: true});
     } else {
       event.stopPropagation();
-      this.props.emailClicked(null);
       this.props.signatureClicked(null);
+      this.props.emailClicked(null);
+      this.props.smsClicked(null);
       this.props.setSignaturesFilterKey(key);
       this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setUserApp('lefebvre');
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setGuid(null);
+      this.props.setIdDocuments(null);
       this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
       this.props.setSelectedService('certifiedSms'); 
       this.props.close(this.props.application);
@@ -276,7 +285,8 @@ const mapDispatchToProps = dispatch => ({
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
   signatureClicked: signature => dispatch(selectSignature(signature)),
-  emailClicked: email => { dispatch(selectEmail(email));},
+  emailClicked: email => { dispatch(selectEmail(email))},
+  smsClicked: sms => { dispatch(selectSms(sms))},
   setTitle: title => dispatch(setTitle(title)),
   setAppTitle: title => dispatch(setAppTitle(title)),
   setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
@@ -299,6 +309,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, s
   setSignaturesFilterKey: key => dispatchProps.setSignaturesFilterKey(key),
   signatureClicked: signature => dispatchProps.signatureClicked(signature),
   emailClicked: email => dispatchProps.emailClicked(email),
+  smsClicked: sms => dispatchProps.smsClicked(sms),
   setTitle: title => dispatchProps.setTitle(title),
   setMailContacts: contacts => dispatchProps.setMailContacts(contacts),
   setAdminContacts: contacts => dispatchProps.setAdminContacts(contacts),
