@@ -28,6 +28,7 @@ import {
   setError,
   selectSignature,
   selectEmail,
+  selectSms,
   setTitle,
   setAppTitle, 
   setSelectedService
@@ -74,7 +75,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadEmails, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
+import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -670,6 +671,12 @@ class App extends Component {
     return false;
   }
 
+  openSms(sms){
+    this.props.smsClicked(sms);
+    this.props.setGUID(null);
+    return false;
+  }
+
   async componentDidMount() {
     document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
@@ -834,6 +841,71 @@ class App extends Component {
         })
         .catch(err => { throw new Error(err);} );
         this.props.preloadSignatures(lefebvre.userId);      
+    } else if (lefebvre.targetService === "certifiedSms") {
+      this.props.setSelectedService('certifiedSms');
+      this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
+      this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
+      this.props.preloadSms(lefebvre.userId)
+        .then( () => {
+          if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
+            const { smsList } = this.props.application;
+            let newSms = true;
+            if (smsList && smsList.length > 0){
+              (smsList.some(e => 
+                (e.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
+                  ? newSms = this.openSms(e) 
+                  : null)
+              )
+            } 
+            if (newSms) {
+              if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+                this.getFilesFromLexon()
+                  .then(files => {
+                    if (files === null) {
+                      this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts);
+                    } else {
+                      this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts, null, files);
+                    }
+                  })
+                  .catch(() => this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts))
+              } 
+              else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2")){
+                if (lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+                  this.getFilesFromCentinela()
+                    .then(files => {
+                      if (files === null){
+                        this.props.setUserApp('lefebvre');
+                        this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts);
+                      }
+                      else {
+                        this.setState({hideAlertDialog: false});
+                        this.props.backendRequestCompleted();
+                        this.props.setIdDocuments(files.documentsInfo);
+                        this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts, null, files.attachmentsList);
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({hideAlertDialog: false});
+                      this.props.backendRequestCompleted();
+                      this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts);
+                    })
+                }
+                else {
+                  // Received guid is of a document that is in signing process in centinela's backend but we don´t have it
+                  // Show modal
+                  // Send Centinela a Cancelation Request for that guid.
+                  console.log('NO SE ENCUENTRA EL GUID, SE DEBE DE MOSTRAR AVISO');
+                  console.log('guidNotFound se pasa a true');
+                  this.setState({guidNotFound: true})
+                }
+              }
+            } else {
+              this.props.setUserApp('lefebvre');
+            }  
+          }
+        })
+        .catch(err => { throw new Error(err);} );
+        this.props.preloadSignatures(lefebvre.userId);      
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
@@ -966,14 +1038,19 @@ class App extends Component {
   startPoll() {
       const {lefebvre, application} = this.props;
       if ((application.selectedSignature === null || (application.selectedSignature.constructor === Object && Object.entries(application.selectedSignature).length === 0))
-        && (application.selectedEmail === null || (application.selectedEmail.constructor === Object && Object.entries(application.selectedEmail).length === 0))){  
+        && (application.selectedEmail === null || (application.selectedEmail.constructor === Object && Object.entries(application.selectedEmail).length === 0))
+        && (application.selectedSms === null || (application.selectedSms.constructor === Object && Object.entries(application.selectedSms).length === 0))){  
+        
         if (application.selectedService === 'signature'){
           this.props.preloadSignatures(lefebvre.userId);
         } else if (application.selectedService === 'certifiedEmail'){
-          this.props.preloadEmails(lefebvre.userId)
+          this.props.preloadEmails(lefebvre.userId);
+        } else if (application.selectedService === 'certifiedSms') {
+          this.props.preloadSms(lefebvre.userId);
         } else {
             this.props.preloadSignatures(lefebvre.userId);
             this.props.preloadEmails(lefebvre.userId);
+            this.props.preloadSms(lefebvre.userId);
         }
         //this.props.backendRequestCompleted();
       } else {
@@ -981,11 +1058,15 @@ class App extends Component {
           this.props.preloadSignatures(lefebvre.userId);
           let signature = application.signatures.find(s => s.id === application.selectedSignature.id)
           this.props.signatureClicked(signature);
-        } else {
+        } else if (application.selectedService === 'certifiedEmail') {
           this.props.preloadEmails(lefebvre.userId);
           let email = application.emails.find(s => s.id === application.selectedEmail.id)
           this.props.emailClicked(email);
-        }        
+        } else if (application.selectedService === 'certifiedSms') {
+          this.props.preloadSms(lefebvre.userId);
+          let sms = application.smsList.find(s => s.id === application.selectedSms.id);
+          this.props.smsClicked(sms);
+        }     
       }  
   }
 
@@ -1058,8 +1139,10 @@ const mapDispatchToProps = dispatch => ({
   setUserApp: app => dispatch(setUserApp(app)),
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
+  preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   emailClicked: email => dispatch(selectEmail(email)),
+  smsClicked: sms => dispatch(selectSms(sms)),
   getAttachmentLex: (bbdd, id, user) => getAttachmentLex(bbdd, id, user),
   getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
   setIdDocuments: ids => dispatch(setIdDocuments(ids)),
@@ -1092,14 +1175,16 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     // resetIdEmail: () => dispatchProps.resetIdEmail(),
     // setCaseFile: casefile => dispatchProps.setCaseFile(casefile),
     preloadSignatures: (userId) => dispatchProps.preloadSignatures(userId, stateProps.application.user.credentials.encrypted),
+    preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted),
+    preloadSms: (userId) => dispatchProps.preloadSms(userId, stateProps.application.user.credentials.encrypted),
     signatureClicked: signature => dispatchProps.signatureClicked(signature),
     emailClicked: email => dispatchProps.emailClicked(email),
+    smsClicked: sms => dispatchProps.smsClicked(sms),
     getAttachmentLex: (bbdd, id, user) => dispatchProps.getAttachmentLex(bbdd, id, user),
     getAttachmentCen: (userId, documentId) => dispatchProps.getAttachmentCen(userId, documentId),
     setIdDocuments: ids => dispatchProps.setIdDocuments(ids),
     backendRequest: () => dispatchProps.backendRequest(),
     backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
-    preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted),
     setSelectedService: service => dispatchProps.setSelectedService(service),
     setAppTitle: title => dispatchProps.setAppTitle(title),
     setTitle: title => dispatchProps.setTitle(title)
