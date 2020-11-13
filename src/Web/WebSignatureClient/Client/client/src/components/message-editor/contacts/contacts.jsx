@@ -157,6 +157,32 @@ const Contacts = (props) => {
                 padding: 0px !important;
                 overflow: hidden;
               } 
+              .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
+             .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
+              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
+              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
+              {
+                background: #001970;
+              }
+              .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
+                background: #ebedf4;
+                border: none;
+                height: 39px;
+                padding: 5px;
+                font-weight: 700;
+              }
+              .e-control.e-dropdownlist.e-lib.e-input {
+                color: #001978 !important;
+              }
+              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+                color: #001978;
+              }
+              .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
+              .e-list-item.e-active.e-hover {
+                background-color: #eee;
+                border-color: #fff;
+                color: #001970;
+              }
               .position-icon {
                 top: -31px;
                 position: relative;
@@ -169,6 +195,10 @@ const Contacts = (props) => {
                 font-size: 12px;
                 color: #001978;
                 margin-top: 15px;
+              }
+              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+                content: '\e90b';
+                font-family: 'lf-font' !important;
               }
            `}
          </style>
