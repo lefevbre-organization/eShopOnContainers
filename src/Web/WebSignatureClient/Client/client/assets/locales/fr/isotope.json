@@ -41,16 +41,19 @@
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
-    "filterMenu": "Signatures demandées",
+    "filterMenu": "Signatures",
     "filterMenuEmail": "Email certifié",
+    "filterMenuSms": "SMS certifié",
     "filterAll": "Montrer toutes",
     "filterInProgress": "En progrés",
     "filterCompleted": "Complétées",
     "filterCancelled": "Anulées",
     "signature": "Signature avancée",
     "certifiedEmail": "Email certifié",
+    "certifiedSms": "SMS certifié",
     "sendingTypeSignature": "Signature avec données biométriques",
-    "sendingTypeEmail": "Certifiez vos communications"
+    "sendingTypeEmail": "Certifiez vos communications",
+    "sendingTypeSms": "Certifiez vos SMS"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -69,7 +72,8 @@
       "cancel": "Cancelar"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "Email certifié"
+    "certifiedEmail": "Email certifié",
+    "certifiedSms": "SERVICES DE CERTIFICATION"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -135,7 +139,9 @@
       "photoInfo": "Number of photos attached",
       "phone": "Number of téléphone"
     },
-    "title": "CRÉER UNE SIGNATURE"
+    "title": "CRÉER UNE SIGNATURE",
+    "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
+    "certifiedSmsTitle": "CERTIFIED SMS"
   },
   "forwardAction": {
     "From": "De",
@@ -305,7 +311,10 @@
     "delivery": "Le destinataire a reçu l'e-mail",
     "open_email": "Le destinataire a ouvert l'e-mail",
     "open_document": "Le destinataire a consulté les documents (pdf uniquement)",
-    "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)"
+    "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)",
+    "delivery_sms": "Le destinataire a reçu le sms",
+    "open_sms": "Le destinataire a consulté les documents",
+    "open_every_document_sms": "Le destinataire a ouvert tous les documents"
   },
   "emailViewer": {
     "certification": "Type de certification sélectionné:",

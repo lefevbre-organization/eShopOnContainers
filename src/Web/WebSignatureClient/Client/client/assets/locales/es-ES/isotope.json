@@ -41,16 +41,19 @@
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
-    "filterMenu": "FIRMAS SOLICITADAS",
+    "filterMenu": "FIRMAS",
     "filterMenuEmail": "EMAIL CERTIFICADO",
+    "filterMenuSms": "SMS CERTIFICADO",
     "filterAll": "Mostrar todas",
     "filterInProgress": "En progreso",
     "filterCompleted": "Completadas",
     "filterCancelled": "Canceladas",
     "signature": "Firma avanzada",
     "certifiedEmail": "Email certificado",
+    "certifiedSms": "SMS certificado",
     "sendingTypeSignature": "Firma con datos biométricos",
-    "sendingTypeEmail": "Certifica tus comunicaciones"
+    "sendingTypeEmail": "Certifica tus comunicaciones",
+    "sendingTypeSms": "Certifica tus SMS"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -70,7 +73,8 @@
       "cancel": "Cancelar"
     },
     "app": "FIRMA",
-    "certifiedEmail": "EMAIL CERTIFICADO"
+    "certifiedEmail": "EMAIL CERTIFICADO",
+    "certifiedSms": "SERVICIOS DE CERTIFICACIÓN"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -137,7 +141,8 @@
       "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA",
-    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO"
+    "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO",
+    "certifiedSmsTitle": "SMS CERTIFICADO"
   },
   "forwardAction": {
     "From": "De",
@@ -307,7 +312,10 @@
     "delivery": "El receptor ha recibido el email",
     "open_email": "El receptor ha abierto el email",
     "open_document": "El receptor ha visto los documentos (sólo pdf)",
-    "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)"
+    "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)",
+     "delivery_sms": "El destinatario ha recibido el sms",
+    "open_sms": "El destinatario ha visto los documentos",
+    "open_every_document_sms": "El destinatario ha abirto todos los documentos"
   },
   "emailViewer": {
     "certification": "Tipo de certificación seleccionada:",

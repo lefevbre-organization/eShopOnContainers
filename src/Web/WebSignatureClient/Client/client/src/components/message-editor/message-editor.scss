@@ -191,9 +191,13 @@ $flag-size: 18px;
   .side-container {
     grid-area: side-container;
   }
-
+ 
   .action-buttons {
     grid-area: action-buttons;
+  }
+
+  .action-buttons-sms {
+    margin-top: 0 !important;
   }
 
   .editor-wrapsper {
@@ -327,7 +331,7 @@ $flag-size: 18px;
     }
   }
 
-  .action-buttons {
+  .action-buttons, .action-buttons-sms {
     display: flex;
     align-items: center;
     justify-content: flex-start;

@@ -18,6 +18,7 @@ export const INITIAL_STATE = {
         selectedMessage: null,
         selectedSignature: null,
         selectedEmail: null,
+        selectedSms: null,
         selectedService: null,
         downloadedMessages: {},
         outbox: null,
@@ -30,6 +31,7 @@ export const INITIAL_STATE = {
         activeRequests: 0,
         signatures: {},
         emails: {},
+        smsList: {},
         signaturesFilterKey: 'Mostrar todas'
     },
     folders: {
@@ -67,6 +69,8 @@ export const INITIAL_STATE = {
         numAvailableSignatures: 0,
         availableEmails: false,
         numAvailableEmails: 0,
+        availableSmsList: false,
+        numAvailableSmsList: 0,
         userBrandings: {},
         idEntityType: null,
         idEntity: null,

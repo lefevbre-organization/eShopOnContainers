@@ -24,6 +24,7 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
+import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -111,6 +112,7 @@ export class Main extends Component {
             //tagAttendess: [],
             reminders: [],
             eventType: undefined,
+            isVisibility: false,
             to2:[]
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
@@ -159,6 +161,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
 
         
@@ -583,6 +586,7 @@ export class Main extends Component {
                     StartTime: new Date(start),
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
+                    Visibility: event.visibility,
                     RecurrenceRule: recurrenceRule,
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
@@ -782,7 +786,7 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-
+        console.log(values);
         //Event basic data
         var event = {
             'summary': values.Subject,
@@ -797,7 +801,7 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
-
+            'visibility': values.Visibility ? 'private' : 'public',
         }
 
         //event Type    
@@ -1007,6 +1011,15 @@ export class Main extends Component {
             this.setState({ to2: [] })
         }
 
+        // default values for Visibility coming from event args
+        if(args.data.Visibility != undefined) {
+            const isVisibility = args.data.Visibility == 'private' ? true : false;
+            this.setState({ isVisibility: isVisibility });
+            if (this.drowDownListVisibility != undefined) {
+                this.drowDownListVisibility.checked = isVisibility;
+            }
+        }
+
         // default values for Reminders coming from event args
 
         if (args.data.Reminders != undefined) {
@@ -1142,6 +1155,26 @@ export class Main extends Component {
                 });
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
+
+
+                 // Adding visibility element
+                 let containerVisibility = createElement('div', { className: 'custom-field-container' });
+                 row.appendChild(containerVisibility);
+                 let inputVisibility = createElement('input', {
+                     className: 'e-field', attrs: { name: 'Visibility' }
+                 });
+                 containerVisibility.appendChild(inputVisibility);
+ 
+                 this.drowDownListVisibility = new CheckBoxComponent({
+                     value: this.state.isVisibility,
+                     label: i18n.t("schedule.visibility"),
+                     checked: this.state.isVisibility
+                 });
+ 
+                 this.drowDownListVisibility.appendTo(inputVisibility);
+                 inputVisibility.setAttribute('name', 'Visibility');
+ 
+
 
                 // Adding attendees2 tag element
                 let containerTab2 = createElement('div', { className: 'custom-field-container' });
@@ -1355,7 +1388,7 @@ export class Main extends Component {
                 if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {                   
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
-              
+     
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
 

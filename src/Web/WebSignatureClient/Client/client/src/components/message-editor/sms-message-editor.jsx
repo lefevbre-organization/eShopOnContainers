@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
+import { editMessage, setTitle } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -20,26 +20,29 @@ import ComposeMessageEditor from './composeMessageEditor.jsx';
 
 import Spinner from "../spinner/spinner";
 import {
-  createEmail,
-  addOrUpdateEmail,
-  getUserEmails,
+  createSignature,
+  createSignature2,
+  addOrUpdateSignature,
+  getUserSignatures,
+  createUser,
+  decAvailableSignatures,
   notifySignature,
   cancelSignatureCen,
-  preloadEmails,
+  preloadSignatures2,
   getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
+//import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
 import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
 import  AttachmentsWidget  from './widgets/attachments-widget2';
 import  CertificatesWidget  from './widgets/certificates-widget';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import RolSelector from './rol-selector/rol-selector';
 
-
-class EmailMessageEditor extends Component {
+class SmsMessageEditor extends Component {
   constructor(props) {
-    console.log('Entra en el message-editor');
     super(props);
     this.state = {
       linkDialogVisible: false,
@@ -52,6 +55,8 @@ class EmailMessageEditor extends Component {
       hideConfirmDialog: false,
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
+      hideRolDialog: false,
+      numPagesOption: 1,
       MaximumSigners: 40,
       isCallApis: false,
       isFileType: false,
@@ -63,36 +68,29 @@ class EmailMessageEditor extends Component {
     this.headerFormRef = React.createRef();
     this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
-    // Global events
-    this.handleOnDrop = this.onDrop.bind(this);
-    this.handleOnDragOver = this.onDragOver.bind(this);
-    this.handleOnDragLeave = this.onDragLeave.bind(this);
     // Header Address Events
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
-    this.handleMoveAddress = this.moveAddress.bind(this);
     // Subject events
     this.handleOnSubjectChange = this.onSubjectChange.bind(this);
     // Editor events
     this.handleEditorChange = this.editorChange.bind(this);
-    this.onAttachButton = this.onAttachButton.bind(this);
-    this.onAttachSelected = this.onAttachSelected.bind(this);
     this.callApis = this.callApis.bind(this);
     this.combineInfo = this.combineInfo.bind(this);
     this.getDocumentsNamesAndIds = this.getDocumentsNamesAndIds.bind(this);
     this.getDocumentsIds = this.getDocumentsIds.bind(this);
     this.getDocumentsNames = this.getDocumentsNames.bind(this);
-    this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
 
     this.onChangeCertification = this.onChangeCertification.bind(this);
-
-    this.dialogClose = this.dialogClose;
-    this.dialogOpen = this.dialogOpen;
+    this.dialogClose = this.dialogClose.bind(this);
+    this.dialogOpen = this.dialogOpen.bind(this);
     this.animationSettings = { effect: 'None' };
+    this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
-   
+    this.getRoleInfo = this.getRoleInfo.bind(this);
     this.resetIsFileDrop = this.resetIsFileDrop.bind(this);
   }
+
 
   onChangeCertification(certificates) {
     let selectedOptions = [];
@@ -107,22 +105,16 @@ class EmailMessageEditor extends Component {
       selectedCertificationOption: max,
       certificationType: selectedOptions[max-1].certificate
     })
-    console.log("***++++++****+++++****++++****++++");
-    console.log('Selected Options:')
-    console.log(selectedOptions);
-    console.log('max:')
-    console.log(max);
-    console.log('Lo que voy a guardar en selectedCertificationOption:' + max);
-    console.log('Lo que voy a guardar en certificationType: ' + selectedOptions[max-1].certificate);
-    console.log(this.state.selectedCertificationOption);
-    console.log(this.state.certificationType);
   }
-
 
   showCancelCenModal(){
     this.setState({ hideConfirmDialog: true});
   }
 
+  handleNumPagesOption(option){
+    console.log('Se cambia el numpages, option:' + option);
+    this.setState({numPagesOption: option});
+  }
 
   resetIsFileDrop(){
     console.log('Reset isFileDrop');
@@ -138,22 +130,55 @@ class EmailMessageEditor extends Component {
     this.props.setIdDocuments(null);
   }
 
+  getRoleInfo(recipients){
+    console.log('Roleinfo:');
+    console.log(recipients);
+    
+    if (this.headerFormRef.current.reportValidity()) {
+        // Get content directly from editor, state content may not contain latest changes
+        const content = this.getEditor().getContent();
+        const { lefebvre } = this.props;
+        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.signature) 
+          ? lefebvre.userBrandings.signature.find((b) => b.app === lefebvre.userApp) 
+          : '';
+  
+        let guid = lefebvre.guid;
+        if (guid === null) {
+          guid = uuid();
+        }
+  
+  
+
+          this.callApis(
+            recipients,
+            content.innerHTML,
+            lefebvre.userId,
+            guid,
+            (userBranding && userBranding.externalId) ? userBranding.externalId : ''
+          );
+        }
+        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+    }
+  
 
   dialogClose(){
-    if (this.state.centinelaDownloadError === true){
-      this.props.onShowError();
-    }
     this.setState({
         hideAlertDialog: false, 
+        hideConfirmDialog: false, 
         bigAttachments: false, 
-        centinelaDownloadError: false,
-        hideConfirmDialog: false
+        hideRolDialog: false
     });
   }
 
-  dialogOpen(){
-      this.alertDialogInstance.cssClass = 'e-fixed';
-  }
+  dialogOpen(instance){
+    switch (instance) {
+        case "alertDialog":
+            (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
+            break;
+        default:
+            break;
+    }
+}
 
   onDiscardSignatureOk(){
     const {close, lefebvre, application} = this.props
@@ -175,7 +200,7 @@ class EmailMessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === 'Centinela')});
+    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
     //createSignature();
   }
 
@@ -191,7 +216,6 @@ class EmailMessageEditor extends Component {
   }
 
   render() {
-
     const noSignersModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -199,28 +223,13 @@ class EmailMessageEditor extends Component {
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
+
     const noAttachModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;
         padding-left: 20px; font-size: 17.5px !important'>
         ${i18n.t('noAttachmentsModal.text')}
       </div>`;
-
-    const bigFileModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
-        ${i18n.t('bigFileModal.text')}
-      </div>
-    `;
-
-    const attachNotFound = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
-        ${i18n.t('attachNotFoundCentinela.text')}
-      </div>
-    `;
 
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
@@ -238,7 +247,7 @@ class EmailMessageEditor extends Component {
       </div>
     `;
     const onlyPdf = ( 
-      (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
+      (this.state.certificationType === 'open_document_sms' || this.state.certificationType === 'open_every_document_sms')
       && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
     )
 
@@ -264,14 +273,12 @@ class EmailMessageEditor extends Component {
       application,
       sendingType,
       to,
-      cc,
-      bcc,
-      attachments,
       subject,
+      attachments,
       content,
       lefebvre
     } = this.props;
- 
+
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -299,7 +306,6 @@ class EmailMessageEditor extends Component {
               addresses={to}
               onAddressAdd={this.handleAddAddress}
               onAddressRemove={this.handleRemoveAddress}
-              onAddressMove={this.handleMoveAddress}
               className={styles.address}
               chipClassName={styles.chip}
               autoSuggestClassName={styles.autoSuggest}
@@ -310,21 +316,7 @@ class EmailMessageEditor extends Component {
               isContacts={this.state.isContacts}
               sendingType={sendingType}
             />
-            {/* <HeaderAddress
-              id={'cc'}
-              addresses={cc}
-              onAddressAdd={this.handleAddAddress}
-              onAddressRemove={this.handleRemoveAddress}
-              onAddressMove={this.handleMoveAddress}
-              className={styles.address}
-              chipClassName={styles.chip}
-              autoSuggestClassName={styles.autoSuggest}
-              autoSuggestMenuClassName={styles.autoSuggestMenu}
-              getAddresses={this.props.getAddresses}
-              label={t('messageEditor.cc')}
-              lefebvre={lefebvre}
-            /> */}
-            <div className={styles.subject}>
+             <div className={styles.subject}>
               <input
                 type={'text'}
                 placeholder={t('messageEditor.subject')}
@@ -345,6 +337,7 @@ class EmailMessageEditor extends Component {
             />
           </div>
           <div className={styles['side-container']}>
+
             <AttachmentsWidget 
               sendingType={sendingType}
               onConfirmAttachRemoval={this.showCancelCenModal}
@@ -353,12 +346,12 @@ class EmailMessageEditor extends Component {
               fatherContainer={'EmailMessageEditor'}
             ></AttachmentsWidget>
             <CertificatesWidget 
+              sendingType={sendingType}
               userApp={lefebvre.userApp}
               onChange={this.onChangeCertification}
-              sendingType={sendingType}
             />
           </div>
-          <div className={styles['action-buttons']}>
+          <div className={styles['action-buttons-sms']}>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.cancel}`}
               onClick={() => this.removeMessageEditor(application)}>
@@ -366,7 +359,6 @@ class EmailMessageEditor extends Component {
             </button>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.send}`}
-              //disabled={this.props.attachments.length === 0}
               onClick={this.handleSubmit}>
               {t('messageEditor.send')}
             </button>
@@ -377,13 +369,19 @@ class EmailMessageEditor extends Component {
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
-          visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
+          visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : noSignersModal)))}
+          content={(
+            this.state.centinelaDownloadError === true ? 
+            attachNotFound : (this.props.attachments.length === 0 ? 
+            noAttachModal : (this.state.bigAttachments ?
+            bigFileModal : (onlyPdf) ? 
+            onlyPdfModal : noSignersModal))
+          )}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          open={this.dialogOpen.bind(this)} 
-          close={this.dialogClose.bind(this)}
+          open={this.dialogOpen("info2Dialog")} 
+          close={this.dialogClose}
           showCloseIcon={true}
         />
         <DialogComponent 
@@ -395,11 +393,30 @@ class EmailMessageEditor extends Component {
           width='60%' 
           content={confirmDiscard} 
           ref={dialog => this.confirmDialogInstance = dialog} 
+          //target='#target' 
           buttons={confirmButtons} 
-          open={() => this.dialogOpen} 
-          close={() => this.dialogClose}
+          open={this.dialogOpen("confirmDialog")} 
+          close={this.dialogClose.bind(this)}
         />
-
+        <DialogComponent 
+          id="rolDialog" 
+          header={i18n.t("messageEditor.grid.recipientsRole")} 
+          visible={this.state.hideRolDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='80%'
+          //content={RolSelector} 
+          ref={dialog => this.rolDialog = dialog} 
+          //target='#target' 
+          open={this.dialogOpen("rolDialog")} 
+          close={this.dialogClose}
+        >
+          <RolSelector 
+          recipients={to}
+          onFinishRoles={this.getRoleInfo}
+          dialogClose={this.dialogClose.bind(this)}
+          />
+        </DialogComponent>
         <style jsx global>
           {` 
            .message-editor___1BSzC 
@@ -527,14 +544,21 @@ class EmailMessageEditor extends Component {
               background: #e5e8f1 !important;
               color: #001978 !important;
             }
+            #toolsRTE_2_toolbar {
+              display: none;
+            }
             #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
               height: calc(100% - 20px) !important;
             }
+            #toolsRTE_2rte-view {
+              overflow: hidden;
+            }   
           `}
         </style>
       </div>
     );
   }
+
 
   bigAttachments(){
     let maxSize = 15000000;
@@ -543,15 +567,14 @@ class EmailMessageEditor extends Component {
     return (totalSize >= maxSize);
   }
 
-  
   submit() {
     if (this.props.to.length === 0 ){
       this.setState({ hideAlertDialog: true });
     } else if ( this.props.attachments.length === 0 
-      && (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')){
+      && (this.state.certificationType === 'open_every_document_sms' )){
         this.setState({hideAlertDialog: true})
     } 
-    else if ( (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
+    else if ( (this.state.certificationType === 'open_every_document_sms' )
       && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')){
       this.setState({hideAlertDialog:true})
     }
@@ -562,7 +585,7 @@ class EmailMessageEditor extends Component {
       if (this.headerFormRef.current.reportValidity()) {
         // Get content directly from editor, state content may not contain latest changes
         const content = this.getEditor().getContent();
-        const { to, cc, subject } = this.props;
+        const { to, subject } = this.props;
         const { lefebvre } = this.props;
         const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.certifiedEmail) 
           ? lefebvre.userBrandings.certifiedEmail.find((b) => b.app === lefebvre.userApp) 
@@ -576,7 +599,6 @@ class EmailMessageEditor extends Component {
         if (this.props.attachments) {
           let attachmentsList = [];
           this.props.attachments.forEach((attachment) => {
-            //var attachment = this.props.attachments[0];
             var file = new File([attachment.content], attachment.fileName, {
               type: getFileType(attachment.fileName),
               lastModified: new Date(),
@@ -586,7 +608,6 @@ class EmailMessageEditor extends Component {
           });
           this.callApis(
             to,
-            cc,
             subject,
             content.innerHTML,
             this.props.attachments,
@@ -597,21 +618,6 @@ class EmailMessageEditor extends Component {
           );
         }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
-      }
-    }
-  }
-
-  example() {
-    var lookup = {};
-    var items = json.DATA;
-    var result = [];
-
-    for (var item, i = 0; (item = items[i++]);) {
-      var name = item.name;
-
-      if (!(name in lookup)) {
-        lookup[name] = 1;
-        result.push(name);
       }
     }
   }
@@ -681,123 +687,92 @@ class EmailMessageEditor extends Component {
     return merged;
   }
 
-  buildDocumentsInfo(email) {
-    let result;
-    debugger;
-    result = (email && email.certificates) 
-      ? email.certificates.map((c) => {
-          return {
-            email: c.email,
-            name: c.name,
-            externalId: c.id,
-            document: (c.file)
-              ? {
-                externalFileName: c.file.name,
-                internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
-                  ? this.props.lefebvre.idDocuments.find((d) =>{
-                    if (d.docName.replace(/[)( ]/g, '_') === c.file.name) {
-                      return {
-                        docId: d.docId,
-                        docName: d.docName 
-                      }
-                    }
-                  })
-                  : null
-              }
-              : null
-          }
-        })
-      : null
-
-    return result;
-  }
-
+  //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
   callApis(
     recipients,
     cc,
     subject,
     content,
     files,
+    reminders,
+    expiration,
     userId,
     guid,
-    type,
     userBrandingId
   ) {
     const { lefebvre } = this.props;
     this.setState({isCallApis: true});
-    createEmail(
+    //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
+    createSignature2(
       recipients,
-      cc,
-      subject,
       content,
       files,
+      this.state.numPagesOption,
       userId,
       guid,
-      type,
-      userBrandingId.externalId,
+      userBrandingId,
       this.props.credentials.encrypted
-    ).then((emailInfo) => {
-      console.log(emailInfo);
-      if (emailInfo.status_code) {
-        console.log('Se ha producido un error: ' + emailInfo.status_code + '-' + emailInfo.message);
+    ).then((signatureInfo) => {
+      console.log(signatureInfo);
+      if (signatureInfo.status_code) {
+        console.log(
+          'Se ha producido un error: ' +
+          signatureInfo.status_code +
+          '-' +
+          signatureInfo.message
+        );
       } else {
-        getUserEmails(userId).then((userInfo) => {
-          var documentsInfo = this.buildDocumentsInfo(emailInfo);
+        getUserSignatures(userId).then((userInfo) => {
+          // if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
+          //   var externalIds = getDocumentsNamesAndIds(signatureInfo);
+          //   var combinedInfo = combineInfo(externalIds, lefebvre.idDocuments);
+          //   debugger;
+          //   const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp, signers: to, idDocuments:combinedInfo}
+          //   createUser(userId, signature);
+          // } else {
+          // var externalIds = this.getDocumentsIds(signatureInfo);
+          // var documentsNames = this.getDocumentsNames(signatureInfo);
+          // var combinedInfo = this.combineInfo(externalIds, lefebvre.idDocuments);
           debugger;
-          console.log('Insertando sólo email');
-          addOrUpdateEmail(
+          console.log('Insertando sólo firma');
+          addOrUpdateSignature(
             userId,
-            emailInfo.id,
+            signatureInfo.id,
             guid,
             lefebvre.userApp,
-            emailInfo.created_at,
-            type,
             documentsInfo
           );
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-
-          let idUserApp = lefebvre.idUserApp;
-          let numDocs = documentsInfo.length;
-          
+          notifySignature(
+            lefebvre.userId,
+            lefebvre.idUserApp,
+            documentsInfo.length
+          );
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
           this.props.setUserApp('lefebvre');
           this.props.setGuid(null);
-          //this.props.setTitle('');
+          this.props.setTitle('');
           this.props.setIdDocuments(null);
           this.props.close(this.props.application);
-          this.props.preloadEmails(lefebvre.userId);
-          this.props.setTitle(i18n.t('topBar.certifiedEmail'));
-          this.props.setSelectedService('certifiedEmail'); 
-          this.props.setSignaturesFilterKey('Mostrar todas');
-          
-          notifySignature(
-            lefebvre.userId,
-            idUserApp,
-            numDocs
-          );
-          getNumAvailableSignatures(idUserApp)
+          this.props.preloadSignatures(lefebvre.userId)
+          getNumAvailableSignatures(lefebvre.idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
             .catch(err => {
                 console.log(err);
             });
         });
       }
-      this.setState({isCallApis: false});
+      this.setState({isCallApis: false, hideRolDialog: false});
     });
   }
 
   validateAddress(updatedMessage, id, address, name) {
     const addressData = {address: address, name: name}
-    if(updatedMessage.to.length == this.state.MaximumSigners
-       && id != 'cc') {
+    if(updatedMessage.to.length == this.state.MaximumSigners) {
          console.log('Maximum Signers');
-    } else if(updatedMessage.to.length == this.state.MaximumSigners 
-      && id == 'cc') {
-      updatedMessage[id] = [...updatedMessage[id], addressData];
-      this.props.editMessage(updatedMessage);
     } else {
       updatedMessage[id] = [...updatedMessage[id], addressData];
       this.props.editMessage(updatedMessage);
@@ -837,29 +812,13 @@ class EmailMessageEditor extends Component {
     this.props.editMessage(updatedMessage);
   }
 
-  /**
-   * Moves an address from the address list under the field matching the fromId to the address field
-   * matching the toId.
-   *
-   * @param fromId
-   * @param toId
-   * @param address
-   */
-  moveAddress(fromId, toId, address, name) {
-    const updatedMessage = { ...this.props.editedMessage };
-    const addressData = {address: address, name: name}
-    // Remove
-    updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
-    // Add
-    updatedMessage[toId] = [...updatedMessage[toId], addressData];
-    this.props.editMessage(updatedMessage);
-  }
 
   onSubjectChange(event) {
     const target = event.target;
     const updatedMessage = { ...this.props.editedMessage };
     this.props.editMessage({ ...updatedMessage, subject: target.value });
   }
+
 
   onDrop(event) {
     event.preventDefault();
@@ -983,6 +942,7 @@ class EmailMessageEditor extends Component {
     return true;
   }
 
+
   getEditor() {
     if (this.editorRef && this.editorRef.refEditor) {
       return this.editorRef.refEditor;
@@ -1007,12 +967,12 @@ class EmailMessageEditor extends Component {
   }
 }
 
-EmailMessageEditor.propTypes = {
+SmsMessageEditor.propTypes = {
   className: PropTypes.string,
   t: PropTypes.func.isRequired,
 };
 
-EmailMessageEditor.defaultProps = {
+SmsMessageEditor.defaultProps = {
   className: '',
 };
 
@@ -1022,10 +982,8 @@ const mapStateToProps = (state) => ({
   editedMessage: state.application.newMessage,
   sendingType: state.application.newMessage.sendingType,
   to: state.application.newMessage.to,
-  cc: state.application.newMessage.cc,
-  bcc: state.application.newMessage.bcc,
-  attachments: state.application.newMessage.attachments,
   subject: state.application.newMessage.subject,
+  attachments: state.application.newMessage.attachments,
   name: state.application.newMessage.name,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,
@@ -1063,16 +1021,16 @@ const mapDispatchToProps = (dispatch) => ({
   setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
+  setNumAvailableSignatures: num =>
+    dispatch(ACTIONS.setNumAvailableEmails(num)),
   setTitle: title => dispatch(setTitle(title)),
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
-  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
-  setSignaturesFilterKey: key => dispatch(setSignaturesFilterKey(key))
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(translate()(EmailMessageEditor));
+)(translate()(SmsMessageEditor));

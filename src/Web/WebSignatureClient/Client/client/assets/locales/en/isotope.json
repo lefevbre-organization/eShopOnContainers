@@ -24,14 +24,17 @@
     },
     "filterMenu": "SIGNATURES",
     "filterMenuEmail": "CERTIFIED EMAIL",
+    "filterMenuSms": "CERTIFIED SMS",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
     "filterCancelled": "Cancelled",
     "signature": "Advanced signature",
     "certifiedEmail": "Certified email",
+    "certifiedSms": "Certified SMS",
     "sendingTypeSignature": "Signature with biometric data",
-    "sendingTypeEmail": "Certify your communications"
+    "sendingTypeEmail": "Certify your communications",
+    "sendingTypeSms": "Certify your SMS"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -51,7 +54,8 @@
       "cancel": "Cancel"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "CERTIFIED EMAIL"
+    "certifiedEmail": "CERTIFIED EMAIL",
+    "certifiedSms": "CERTIFICATION SERVICES"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -117,7 +121,9 @@
       "photoInfo": "Number of photos attached",
       "phone": "Number of phone"
     },
-    "title": "CREATE NEW SIGNATURE"
+    "title": "CREATE NEW SIGNATURE",
+    "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
+    "certifiedSmsTitle": "CERTIFIED SMS"
   },
   "forwardAction": {
     "From": "From",
@@ -287,7 +293,10 @@
     "delivery": "The receiver has received the email",
     "open_email": "The receiver has opened the email",
     "open_document": "The receiver has seen the documents (only pdf)",
-    "open_every_document": "The receiver has opened all the documents (only pdf)"
+    "open_every_document": "The receiver has opened all the documents (only pdf)",
+    "delivery_sms": "The receiver has received the sms",
+    "open_sms": "The recipient has viewed the documents",
+    "open_every_document_sms": "The receiver has opened all the documents"
   },
   "emailViewer": {
     "certification": "Type of certification selected:",

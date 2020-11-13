@@ -111,6 +111,7 @@ export class Main extends Component {
             //tagAttendess: [],
             reminders: [],
             eventType: undefined,
+            isSensitivity: false,
             to2:[]
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
@@ -159,6 +160,7 @@ export class Main extends Component {
 
         this.tabObj = undefined;
         this.drowDownListEventType = undefined;
+        this.drowDownListSensitivity = undefined;
 
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
@@ -493,7 +495,6 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
-
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -572,26 +573,26 @@ export class Main extends Component {
                 if (event.reminders != undefined) {
                     reminders = event.reminders.overrides;
                 }
-
-
-                this.scheduleData.push({
-                    Id: event.id,
-                    CalendarId: calendarId,
-                    Subject: event.summary,
-                    Location: event.location,
-                    Description: event.description,
-                    StartTime: new Date(start),
-                    EndTime: new Date(end),
-                    //StartTimezone: 'Europe/Paris',
-                    //EndTimezone: 'Europe/Paris',
-                    IsAllDay: event.IsAllDay,
-                    Sensitivity: event.Sensitivity,
-                    RecurrenceRule: recurrenceRule,
-                    ImageName: "icon-lefebvre-bl",
-                    Attendees: attendees,
-                    EventType: eventType,
-                    Reminders: reminders,
-                });
+                if(!this.scheduleData.find(x => x.Id === event.id)){
+                    this.scheduleData.push({
+                        Id: event.id,
+                        CalendarId: calendarId,
+                        Subject: event.summary,
+                        Location: event.location,
+                        Description: event.description,
+                        StartTime: new Date(start),
+                        EndTime: new Date(end),
+                        //StartTimezone: 'Europe/Paris',
+                        //EndTimezone: 'Europe/Paris',
+                        IsAllDay: event.IsAllDay,
+                        IsSensitivity: event.isSensitivity,
+                        RecurrenceRule: recurrenceRule,
+                        ImageName: "icon-lefebvre-bl",
+                        Attendees: attendees,
+                        EventType: eventType,
+                        Reminders: reminders,
+                    });
+                }
             }
         }
         e.result = this.scheduleData;
@@ -960,7 +961,6 @@ export class Main extends Component {
     }
 
     onPopupOpen(args) {
-
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
@@ -1018,10 +1018,13 @@ export class Main extends Component {
             this.setState({ to2: [] })
         }
 
-        if(args.data.Sensitivity != undefined) {
-            const isSensitivity = args.data.Sensitivity == 'private' ? true : false;
-            this.setState({ isSensitivity: isSensitivity });
-        }
+         // default values for Sensitivity coming from event args
+        if(args.data.IsSensitivity != undefined) {
+            this.setState({ isSensitivity: args.data.IsSensitivity });
+            if (this.drowDownListSensitivity != undefined) {
+                this.drowDownListSensitivity.checked = args.data.IsSensitivity
+            }
+        } 
 
         // default values for Reminders coming from event args
 
@@ -1753,6 +1756,7 @@ export class Main extends Component {
 
 
     render() {
+
         const { t } = this.props;
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
