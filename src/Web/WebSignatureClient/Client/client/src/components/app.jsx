@@ -494,7 +494,7 @@ class App extends Component {
       Object.keys(application.newMessage).length > 0
       && application.newMessage.sendingType == 'smsCertificate'
     ) {
-      return <SmsMessageEditor className={styles['message-viewer']}  />;
+      return <SmsMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
     } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {

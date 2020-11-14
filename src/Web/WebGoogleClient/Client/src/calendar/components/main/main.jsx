@@ -55,9 +55,7 @@ import { getEventTypes } from "../../../api/accounts";
 import AttendeeAddress from './attendee/attendee-address';
 
 
-
 export class Main extends Component {
-
     constructor(props) {
         super(props);
         this.sidebarCalendarList = this.sidebarCalendarList.bind(this);
@@ -78,21 +76,26 @@ export class Main extends Component {
         this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
         this.handleAddAddress = this.addAddress.bind(this);
         this.handleRemoveAddress = this.removeAddress.bind(this);
+        this.onCloseDialog = this.onCloseDialog.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
+        this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
+        this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
+
         this.cancel = false;
+        this.currentClassification = null;
 
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;
         this.scheduleData = [];
         //this.CalendarList = [];
-        this.position = { X: 'Center', Y: 'Bottom' };
+        this.position = {X: 'Center', Y: 'Bottom'};
         this.resourceCalendarData = [];
         //this.ownerData = [];  
         this.toasts = [
-            { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
-            { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
-            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            {content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: ''},
+            {content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: ''},
+            {content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons'}
         ]
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
@@ -113,7 +116,7 @@ export class Main extends Component {
             reminders: [],
             eventType: undefined,
             isVisibility: false,
-            to2:[]
+            to2: []
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
@@ -123,38 +126,38 @@ export class Main extends Component {
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
             click: () => {
-                this.setState({ hideAlertDialog: false });
+                this.setState({hideAlertDialog: false});
             },
-            buttonModel: { content: 'Dismiss', isPrimary: true }
+            buttonModel: {content: 'Dismiss', isPrimary: true}
         }];
         // Calednar View Dialog
         this.confirmButton = [{
             click: () => {
-                this.setState({ hideConfirmDialog: false });
+                this.setState({hideConfirmDialog: false});
             },
-            buttonModel: { content: 'Yes', isPrimary: true }
+            buttonModel: {content: 'Yes', isPrimary: true}
         },
-        {
-            click: () => {
-                this.setState({ hideConfirmDialog: false });
-            },
-            buttonModel: { content: 'No' }
-        }];
+            {
+                click: () => {
+                    this.setState({hideConfirmDialog: false});
+                },
+                buttonModel: {content: 'No'}
+            }];
         // Calednar View Dialog
         this.promptButtons = [{
             click: () => {
-                this.setState({ hidePromptDialog: false });
+                this.setState({hidePromptDialog: false});
             },
-            buttonModel: { content: 'Accept', isPrimary: true }
+            buttonModel: {content: 'Accept', isPrimary: true}
         },
-        {
-            click: () => {
-                this.setState({ hidePromptDialog: false });
-            },
-            buttonModel: { content: 'Cancel' }
-        }];
+            {
+                click: () => {
+                    this.setState({hidePromptDialog: false});
+                },
+                buttonModel: {content: 'Cancel'}
+            }];
         // Calednar View Dialog
-        this.animationSettings = { effect: 'None' };
+        this.animationSettings = {effect: 'None'};
 
         // Syncfusion omponent translation
         this.setGlobalization();
@@ -164,7 +167,6 @@ export class Main extends Component {
         this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
 
-        
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -200,10 +202,24 @@ export class Main extends Component {
             }
         ];
 
+    this.checkForParams();
+}
 
-        this.checkForParams()
+    onCloseDialog() {
+        this.LoadCalendarList(false)
+    }
 
-       
+    async handleClassificatedEvent(event) {
+        const googleEvent = this.buildEventoGoogle(event.detail);
+        let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+        this.currentClassification = event.detail.LexonClassification;
+    }
+
+    async handleClassificatedEventRemoved(event) {
+        event.detail.LexonClassification = undefined;
+        const googleEvent = this.buildEventoGoogle(event.detail);
+        let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+        this.currentClassification = undefined;
     }
 
     async setGlobalization() {
@@ -446,7 +462,9 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
+
+                        { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
+                        {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -483,7 +501,7 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon truncate'>
-                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />  
+                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
                         ) : (
@@ -509,6 +527,7 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
+        this.scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -563,12 +582,14 @@ export class Main extends Component {
                     attendees = undefined;
                 }
 
-                // EventType  
+                // EventType
                 let eventType = [];
+                let lexonClassification = null;
                 if (event.extendedProperties != undefined) {
                     eventType.name = event.extendedProperties.private.eventTypeName;
                     eventType.id = event.extendedProperties.private.eventTypeId;
                     eventType.color = event.extendedProperties.private.eventTypeColor;
+                    lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
@@ -592,6 +613,7 @@ export class Main extends Component {
                     Attendees: attendees,
                     EventType: eventType,
                     Reminders: reminders,
+                    LexonClassification: lexonClassification
                 });
             }
         }
@@ -614,7 +636,7 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [this.selectedEvent],
+                    selectedMessages: [ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
@@ -661,7 +683,16 @@ export class Main extends Component {
         this.setState({ sidebarDocked: open });
     }
 
-    componentDidMount() { 
+    componentDidMount() {
+        window.addEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.addEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -719,7 +750,6 @@ export class Main extends Component {
             //        obj.handleScheduleOpenEditor()
             //    }, 1000);  
             //}
-       
     }
 
     onDataBindingEventTypeList(items) {
@@ -774,6 +804,16 @@ export class Main extends Component {
 
     componentWillUnmount() {
         window.removeEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.removeEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
+
+        window.removeEventListener(
             'GetUserFromLexonConnector',
             this.handleGetUserFromLexonConnector
         );
@@ -786,7 +826,6 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-        console.log(values);
         //Event basic data
         var event = {
             'summary': values.Subject,
@@ -801,7 +840,7 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
-            'visibility': values.Visibility ? 'private' : 'public',
+            // 'visibility': values.Visibility ? 'private' : 'normal'
         }
 
         //event Type    
@@ -819,6 +858,18 @@ export class Main extends Component {
                     'eventTypeId': item.id,
                     'eventTypeColor': item.backgroundColor,
                 },
+            }
+        }
+
+        if(values.LexonClassification != undefined) {
+            const properties = {
+                ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
+                'lexonClassification': '' + values.LexonClassification
+            }
+
+            event.extendedProperties = {
+                ...event.extendedProperties,
+                private: properties
             }
         }
 
@@ -951,14 +1002,10 @@ export class Main extends Component {
         }
     }
 
-    onPopupOpen(args) {   
-
+    onPopupOpen(args) {
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
-
-      
-
         var DateMessage = args.data.startTime
         window.top.postMessage(
             JSON.stringify({
@@ -1065,9 +1112,6 @@ export class Main extends Component {
             let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
             if (calendarRole != "owner" &&
                 calendarRole != "writer") {
-                //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
-                //var editButton = document.querySelector(buttonElementEdit);
-                //editButton.disabled = true;
 
                 var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
                 var removeButton = document.querySelector(buttonElementRemove);
@@ -1086,6 +1130,21 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+            this.currentClassification = args.data.LexonClassification;
+
+            setTimeout(()=>{
+                const dlg = document.getElementById("schedule_dialog_wrapper")
+                let btn = dlg.getElementsByClassName('e-dlg-closeicon-btn');
+                if(btn && btn.length > 0) {
+                    btn[0].onclick = this.onCloseDialog;
+                }
+
+                btn = dlg.getElementsByClassName('e-event-cancel');
+                if(btn && btn.length > 0) {
+                    btn[0].onclick = this.onCloseDialog;
+                }
+
+            }, 1000);
 
             if (this.layoutIframe & this.layoutIframeEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
@@ -1124,8 +1183,6 @@ export class Main extends Component {
                 var validator = (formElement).ej2_instances[0];
                 validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
             }
-
-
 
             // Create required custom elements in initial time
             if (!args.element.querySelector('.custom-field-row')) {
@@ -1237,7 +1294,6 @@ export class Main extends Component {
     }
 
     onEventRendered(args) {
-
         let event;
 
         switch (args.requestType) {
@@ -1280,7 +1336,6 @@ export class Main extends Component {
                 break;
 
             case 'eventChanged':
-
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -1336,12 +1391,12 @@ export class Main extends Component {
                         }
                     }
 
-                   
-
+                    desc.LexonClassification = this.currentClassification;
                 }
 
                 //Update the schedule datasource
-                this.scheduleObj.dataModule.dataManager.update()
+                this.scheduleObj.dataModule.dataManager.update();
+                args.data.LexonClassification = this.currentClassification;
 
                 //update the Event to call the api
                 event = this.buildEventoGoogle(args.data);
@@ -1370,8 +1425,8 @@ export class Main extends Component {
 
                 }
                 if (args.changedRecords[0] != undefined) {
-                    itemToModify = args.changedRecords[0].Id;
                     calendarToModify = args.changedRecords[0].CalendarId
+                    args.changedRecords[0].LexonClassification = this.currentClassification;
                     event = this.buildEventoGoogle(args.changedRecords[0]);
                 }
 
@@ -1515,6 +1570,7 @@ export class Main extends Component {
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
+                this.loadCalendarEvents(calendarId, true);
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }
@@ -1527,8 +1583,7 @@ export class Main extends Component {
 
     loadCalendarEvents(calendar, checked) {
         this.scheduleObj.showSpinner();   
-        
-        
+
         let predicate;
 
         getEventList(calendar, this.scheduleObj.selectedDate)
@@ -1913,7 +1968,7 @@ export class Main extends Component {
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 //allowVirtualScrolling = "true"
-                                                cellDoubleClick={this.doubleOpen.bind(this)} 
+                                                cellDoubleClick={this.doubleOpen.bind(this)}
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,

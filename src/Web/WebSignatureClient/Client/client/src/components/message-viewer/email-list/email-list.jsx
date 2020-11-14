@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import i18n from 'i18next';
+import HeaderList from './header-list';
+import FooterList from './footer-list';
 import {downloadAttachments2} from "../../../services/api-signaturit";
 
 const EmailList = (props) => {
@@ -12,26 +14,7 @@ const EmailList = (props) => {
    
   return( 
     <div className={props.styles['cont-info-firmantes']}>
-      <div className={`${props.styles.p15} ${props.styles.separador}`}>
-        <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}</span>
-        <span className={`${props.styles['certification-email']} ml-4`}>{props.signer.email}</span>
-        <div className={`${props.styles['certification-email']} right ${props.styles['mt-n10']}`}>
-          <span>
-            <b className="mr-1">{i18n.t('emailViewer.certification')}</b> 
-            {props.getReceiverEvent(props.certificationType ? props.certificationType.value : '')} 
-          </span>
-          <div className="text-right"> 
-            {
-              props.getEventStatus(props.signer, 'certification_completed') === true 
-              ? <a href="#" onClick={() => props.downloadTrailDocument(props.emailId, props.signer.id, (props.signer.file ? props.signer.file.name : `${props.signer.name}.pdf`), props.auth)}> 
-                  <span className="lf-icon-download mr-2"></span> 
-                  {i18n.t('emailViewer.buttons.downloadTrail')}
-                </a>
-              : ''
-            }
-          </div>        
-        </div>
-      </div>
+      <HeaderList {...props} />
       <div className={`${props.styles.p15}  
         ${(props.certificationType) 
         && (props.certificationType.value === 'open_document' 
@@ -170,35 +153,7 @@ const EmailList = (props) => {
             ? <div className={props.styles.p15}>
                 <h2 className={props.styles['document-title']}>{i18n.t('emailViewer.attaches')}</h2>
                 {documentFilter.map(certificate => 
-                  <div>
-                    {
-                      (props.getEventStatus(certificate, "document_opened") === true)
-                      || (props.getEventStatus(certificate, documentType) && certificationCompleted)  
-                        ? <div className={props.styles['document-opened']}>
-                            <div className={`${props.styles['certificate-document-title']} light-blue-text`}><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
-                            <div className={`${props.styles['certificate-document']} light-blue-text`}>
-                              <span className="lf-icon-document-validate">{certificate.file.name}</span>
-                            </div>
-                            {
-                              (props.certificationType.value === 'open_document')
-                                ? <div>
-                                    <span className="mr-4">{props.getEventDate(certificate, documentType).split(' ')[0]}</span>
-                                    <span className="mr-4">{props.getEventDate(certificate, documentType).split(' ')[1]}</span>
-                                  </div>
-                                : <div>
-                                    <span className="mr-4">{props.getEventDate(certificate, "document_opened").split(' ')[0]}</span>
-                                    <span className="mr-4">{props.getEventDate(certificate, "document_opened").split(' ')[1]}</span>
-                                  </div>
-                            }
-                          </div>
-                        : <div className={props.styles['document-opened']}>
-                            <div className={`${props.styles['certificate-pending']}`}><b>{i18n.t('emailViewer.pendingDoc')}</b></div>
-                            <div>
-                              <span className="lf-icon-document">{certificate.file.name}</span>
-                            </div>
-                          </div>
-                    }
-                  </div>    
+                  <FooterList {...{...props, certificate, documentType}} />   
                 )}
               </div> 
             : null

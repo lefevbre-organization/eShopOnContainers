@@ -163,24 +163,22 @@ export const addCalendarEvent = (calendar, event) =>
 
     });
 
-export const updateCalendarEvent = (calendar, eventId, event) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.events
-            .update({
-                calendarId: calendar,
-                eventId: eventId,
-                resource: event,
-                sendUpdates: 'all'
-            })
+export const updateCalendarEvent = (calendar, eventId, event) => new Promise((resolve, reject) => {
+    window.gapi.client.calendar.events
+        .update({
+            calendarId: calendar,
+            eventId: eventId,
+            resource: event,
+            sendUpdates: 'all'
+        })
 
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
-                reject(err);
-            });
-
-    });
+        .then(response => {
+            resolve(response.result);
+        })
+        .catch(err => {
+            reject(err);
+        });
+});
 
 export const deleteCalendarEvent = (calendar, eventId) =>
     new Promise((resolve, reject) => {
@@ -267,3 +265,4 @@ export const deleteAcl = (calendar, ruleId) =>
             });
 
     });
+

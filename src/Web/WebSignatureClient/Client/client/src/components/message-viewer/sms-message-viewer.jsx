@@ -5,19 +5,19 @@ import { selectFolder } from '../../actions/application';
 import { clearSelectedMessage, getCredentials } from '../../services/application';
 import { getSelectedFolder } from '../../selectors/folders';
 import mainCss from '../../styles/main.scss';
-import styles from './message-viewer.scss';
+import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
-import { 
-   cancelSignature,
-   cancelSignature2 
+import {  
+  downloadCertificationDocument,
+  cancelSignature,
+  cancelSignature2 
 } from "../../services/api-signaturit";
-import SignatureList from './signature-list/signature-list';
+import EmailList from './email-list/email-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
-
 
 export class SmsMessageViewer extends Component {
   constructor(props) {
@@ -29,15 +29,13 @@ export class SmsMessageViewer extends Component {
       signatureId: '',
       auth: '',
       signer: 0,
+      filterCertificates: []
     };
-    this.dialogClose = this.dialogClose.bind(this);
-    this.dialogOpen = this.dialogOpen.bind(this);
+    this.dialogClose = this.dialogClose;
+    this.dialogOpen = this.dialogOpen;
 
     //Sin firmas 
     this.animationSettings = { effect: 'None' };
-    // this.alertButtonRef = element => {
-    //   this.alertButtonEle = element;
-    // };
     this.alertButtons = [{
       // Click the footer buttons to hide the Dialog
       click: () => {
@@ -46,9 +44,6 @@ export class SmsMessageViewer extends Component {
       buttonModel: { content: 'Aceptar', isPrimary: true }
     }];
 
-    // this.confirmButtonRef = element => {
-    //   this.confirmButtonEle = element;
-    // };
     this.confirmButtons = [{
         click: () => {
             this.setState({ hideConfirmDialog: false });
@@ -62,6 +57,84 @@ export class SmsMessageViewer extends Component {
         },
         buttonModel: { content: 'Si', isPrimary: true }
       }];
+  }
+
+  componentDidMount() {
+    let filter = [];
+    const email = this.props.selectedEmail;
+    email.certificates.forEach(certificate => {
+      let index = filter.findIndex(x => (x.email === certificate.email));
+      if (index === -1){
+        filter.push(certificate);
+      } else if (filter[index].events.length < certificate.events.length){
+        // This is to assure we pick the node that contains all the events because certification_completed is present only in one node
+        filter[index] = certificate;
+      }
+    });
+    this.setState({filterCertificates: filter});
+  }
+
+  componentDidUpdate(prevProps){
+    if (JSON.stringify(this.props.selectedEmail) !== JSON.stringify(prevProps.selectedEmail)){
+      let filter = [];
+      this.props.selectedEmail.certificates.forEach(certificate => {
+        let index = filter.findIndex(x => (x.email === certificate.email));
+        if (index === -1){
+          filter.push(certificate);
+        } else if (filter[index].events.length < certificate.events.length){
+          // This is to assure we pick the node that contains all the events because certification_completed is present only in one node
+          filter[index] = certificate;
+        }
+      });
+      this.setState({filterCertificates: filter});
+    }
+
+  }
+
+  getDocments(selectedEmail, documents) {
+    var counter = [];
+    let findRes;
+    var certificationType = selectedEmail.data.find(d => d.key === 'certification_type');
+    documents.forEach(doc => {
+      if (certificationType.value === 'open_document'){
+        findRes = doc.events.find(d => d.type.toLowerCase() === 'documents_opened');
+      } else if (certificationType.value === 'open_every_document') {
+        findRes = doc.events.find(d => d.type.toLowerCase() === 'document_opened');
+      }
+      
+      (findRes) ? counter.push(findRes) : null;
+    })
+    
+    
+   console.log('getDocments', counter.length);
+   return (counter) ? counter.length : 0;
+  }
+  
+
+  getReceiverEvent(receiver) {
+    console.log('getReceiverEvent', receiver);
+    switch (receiver) {
+      case 'delivery':
+        return (i18n.t('emailViewer.emailDelivered'));
+
+      case 'open_email': 
+        return (i18n.t('emailViewer.emailOpened'));
+
+      case 'open_document': 
+      return (i18n.t('emailViewer.docOpened'));
+
+      case 'open_every_document': 
+      return (i18n.t('emailViewer.openEveryDocument'));
+
+      case 'download_document': 
+      return (i18n.t('emailViewer.docDownloaded'));
+
+      case 'download_every_document': 
+      return (i18n.t('emailViewer.downloadEveryDocument'));
+      
+      default:
+        return (i18n.t('emailViewer.emailDelivered'));
+    }
   }
 
   getEventStatus(signer, ev){
@@ -108,9 +181,9 @@ export class SmsMessageViewer extends Component {
     return res;
   }
 
-  getDocuments(signature){
+  getFiles(email) {
     var lookup = {};
-    var items = signature.documents;
+    var items = email.certificates;
     var result = [];
 
     for (var item, i = 0; item = items[i++];) {
@@ -118,15 +191,20 @@ export class SmsMessageViewer extends Component {
 
       if (!(name in lookup)) {
         lookup[name] = 1;
-        result.push(name);
+        result.push(
+          {
+              text:  name,
+         
+          }
+      )  ;
       }
     }
     return result;
   }
 
-  getSigners(signature){
+  getRecipients(email){
     var lookup = {};
-    var items = signature.documents;
+    var items = email.certificates;
     var result = [];
 
     for (var item, i = 0; item = items[i++];) {
@@ -140,9 +218,12 @@ export class SmsMessageViewer extends Component {
     return result;
   }
 
+  downloadTrailDocument(emailId, id, name, auth) {
+    downloadCertificationDocument(emailId, id, name, auth);
+  }
+
   onCancelSignature(signatureId, auth){
     this.setState({ hideConfirmDialog: true, signatureId: signatureId, auth: auth });
-    //cancelSignature2(signatureId, auth);
   }
 
   onCancelSignatureOk(){
@@ -152,8 +233,6 @@ export class SmsMessageViewer extends Component {
     cancelSignature2(signatureId, auth)
     .then(() => {
       this.setState({ hideAlertDialog2: true, signatureId: '', auth: '' });
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
     })
     .catch(() => {
       this.setState({ hideAlertDialog2: true, signatureId: '', auth: '' });
@@ -168,59 +247,36 @@ export class SmsMessageViewer extends Component {
   });
   }
 
-  dialogOpen(instance){
-    switch (instance) {
-      case "alertDialog":
-        (this.alertDialogInstance) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;   
-        break;
-      case "confirmDialog":
-        (this.confirmDialogInstance) ? this.confirmDialogInstance.cssClass = 'e-fixed' : null;
-        break;
-      default:
-        break;
-    }
+  dialogOpen(){
+    this.alertDialogInstance.cssClass = 'e-fixed';
   }
 
-  getDaysBetweenDates(date1, date2) {
-   
-    // To calculate the time difference of two dates 
-    var Difference_In_Time = date2.getTime() - date1.getTime(); 
-    
-    // To calculate the no. of days between two dates 
-    var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24); 
-  
-    return Math.round(Difference_In_Days);
-  }
-
-
+ 
   render() {
-    const signature = this.props.selectedSignature;
+    const email = this.props.selectedEmail;
+
     let status;
     let status_style;
+   
     const contenido = `
-    <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
-      ${i18n.t('reminderSentModal.text') + ' ' 
-      + this.state.signer + '.'}
-    </div>`;
-
-    const contenido2 = `
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
       ${i18n.t('cancelledSignatureModal.text')}
     </div>`;
 
-    const contenido3 = `
+    const contenido1 = `
     <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
       ${i18n.t('cancelConfirmationModal.text2')}
     </div>`;
 
-    
-    switch (signature.status) {
+   
+    let emailConfig = email.data.find(x => x.key === "roles");
+    let certificationType = email.data.find(x => x.key === "certification_type" || x.key === "type");
+
+    switch (email.status) {
       case 'declined':
         status = i18n.t('signaturesGrid.statusDeclined');
         status_style = 'cancelada';
@@ -256,26 +312,33 @@ export class SmsMessageViewer extends Component {
          styles={styles}
          status_style={status_style}
          status={status}
-         detail={signature}
-         getSigners={this.getSigners}
-         service={'signature'}
+         detail={email}
+         getSigners={this.getRecipients}
+         getFiles={this.getFiles}
+         service={'sms'}
         />
         <div className={styles.clearfix}></div>
-        <div className={`${materialize.row} ${styles['mT20']}`}>    
-            <div className={`${materialize.col} ${materialize['l8']} left`}>
-              {signature.documents.map((signer, index) => {
+        <div className={`${materialize.row} ${styles['mT20']}`}>
+            <div className={`${materialize.col} ${materialize['l12']} left`}>
+              {this.state.filterCertificates.map((signer, index) => {
               return (
-                <SignatureList 
+                <EmailList 
                  signer={signer}
-                 signatureId={signature.id}
+                 signatureConfig={emailConfig ? emailConfig.value.split('|')[index].split(':') : null}
+                 emailId={email.id}
+                 email={email}
                  index={index}
                  key={signer.id}
                  styles={styles}
+                 getReceiverEvent={this.getReceiverEvent}
+                 certificationType={certificationType}
+                 getDocments={this.getDocments}
                  getEventDate={this.getEventDate}
                  getEventStatus={this.getEventStatus}
                  getSingleEventDate={this.getSingleEventDate}
+                 downloadTrailDocument={this.downloadTrailDocument}
                  auth={this.props.auth}
-                ></SignatureList>            
+                ></EmailList>            
                 )
               })}
             </div>
@@ -288,14 +351,11 @@ export class SmsMessageViewer extends Component {
           visible={this.state.hideAlertDialog || this.state.hideAlertDialog2} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.hideAlertDialog) ? contenido : contenido2}//'Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí' 
+          content={contenido}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          //buttons={this.alertButtons} 
-          open={this.dialogOpen("infoDialog")} 
-          close={this.dialogClose}
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose.bind(this)}
           showCloseIcon={true}
-          //position={ this.position }
         ></DialogComponent>
         <DialogComponent 
           id="confirmDialog" 
@@ -304,12 +364,11 @@ export class SmsMessageViewer extends Component {
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
           width='60%'
-          content={contenido3} 
+          content={contenido1} 
           ref={dialog => this.confirmDialogInstance = dialog} 
-          //target='#target' 
           buttons={this.confirmButtons} 
-          open={this.dialogOpen("confirmDialog")} 
-          close={this.dialogClose}
+          open={() => this.dialogOpen} 
+          close={() => this.dialogClose}
         ></DialogComponent>
         <style global jsx>
           {`
@@ -424,6 +483,10 @@ export class SmsMessageViewer extends Component {
             #infoDialog, .e-dialog .e-dlg-content {
               font-size: 17.5px !important;
             }
+
+            .e-btn .e-btn-icon.e-icon-right, .e-css.e-btn .e-btn-icon.e-icon-right {
+              display: none;
+           }
           
           `}
         </style>
@@ -455,7 +518,7 @@ const mapStateToProps = state => {
     lefebvre: state.lefebvre,
     login: state.login,
     credentials: state.application.user.credentials,
-    selectedSignature: state.application.selectedSignature,
+    selectedEmail: state.application.selectedEmail,
     auth: state.application.user.credentials.encrypted
   }
 };
@@ -465,10 +528,7 @@ const mapDispatchToProps = dispatch => ({
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
   },
-  // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
-  setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
-  setGuid: guid => dispatch(ACTIONS.setGUID(guid))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SmsMessageViewer);
