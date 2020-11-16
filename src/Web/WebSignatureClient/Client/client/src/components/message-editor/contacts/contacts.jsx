@@ -9,9 +9,34 @@ const Contacts = (props) => {
   
   const [contacts, setContacts] = useState([]);
 
+  const [isData, setIsdata] = useState(true);
+
   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
   const [filter, setFilter] = useState('');
+
+  const validData = (contactsCentinela) => {
+    if(contactsCentinela.data.length === 0) {
+      setIsdata(false);
+    }
+  }
+
+  const getDataCentinela = async () => {
+    if(contacts.length == 0 && isData) {
+      const user = props.lefebvre.userId;
+      const contactsCentinela = await getContactsCentinela(user);
+      validData(contactsCentinela);
+      const newContactsCentinela = [];
+       contactsCentinela.data.forEach(contact => {
+        const emailExists = props.addresses.some(address => {
+           return (address.address === contact.email)
+         });
+        contact.checked = emailExists;
+        newContactsCentinela.push(contact);
+      });
+      setContacts([...newContactsCentinela]);        
+    }
+  }
 
   useEffect(() => {
     const numberCheckeds = contacts.filter(contact => contact.checked == true);
@@ -32,21 +57,6 @@ const Contacts = (props) => {
    console.log(e.value);
   }
 
-  const getDataCentinela = async () => {
-    if(contacts.length == 0) {
-      const user = props.lefebvre.userId;
-      const contactsCentinela = await getContactsCentinela(user);
-      const newContactsCentinela = [];
-       contactsCentinela.data.forEach(contact => {
-        const emailExists = props.addresses.some(address => {
-           return (address.address === contact.email)
-         });
-        contact.checked = emailExists;
-        newContactsCentinela.push(contact);
-      });
-      setContacts([...newContactsCentinela]);        
-    }
-  }
   
   const filterContact = (e) => {
     setFilter(e.target.value);
