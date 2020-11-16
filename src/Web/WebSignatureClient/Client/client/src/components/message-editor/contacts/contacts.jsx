@@ -17,7 +17,7 @@ const Contacts = (props) => {
     const numberCheckeds = contacts.filter(contact => contact.checked == true);
     setNumberCheckeds(numberCheckeds.length);
     getDataCentinela();
-  });
+  }, [numberCheckeds, setNumberCheckeds, getDataCentinela]);
 
   const selectContact = [
     // { 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon') }, 
@@ -33,7 +33,7 @@ const Contacts = (props) => {
   }
 
   const getDataCentinela = async () => {
-    if(contacts.length == 0 ) {
+    if(contacts.length == 0) {
       const user = props.lefebvre.userId;
       const contactsCentinela = await getContactsCentinela(user);
       const newContactsCentinela = [];
@@ -184,9 +184,9 @@ const Contacts = (props) => {
                 color: #001970;
               }
               .position-icon {
-                top: -31px;
-                position: relative;
-                left: 8px;
+                position: absolute;
+                left: 18px;
+                top: 17px;
               }
               .right {
                 text-align: right;  
