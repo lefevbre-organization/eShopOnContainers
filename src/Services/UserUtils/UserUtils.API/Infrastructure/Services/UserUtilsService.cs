@@ -550,6 +550,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 AddClaimToPayload(payload, tokenRequestLogin.login, nameof(tokenRequestLogin.login));
                 AddClaimToPayload(payload, tokenRequestLogin.password, nameof(tokenRequestLogin.password));
             }
+
+            if (tokenRequest is TokenRequestEventNew tokenRequestEventNew)
+            {
+                AddClaimToPayload(payload, tokenRequestEventNew.idActuation, nameof(tokenRequestEventNew.idActuation));
+                AddClaimToPayload(payload, tokenRequestEventNew.title, nameof(tokenRequestEventNew.title));
+               
+
+                if (tokenRequest is TokenRequestEventOpen tokenRequestEventOpen)
+                {
+                    AddClaimToPayload(payload, tokenRequestEventOpen.idEvent, nameof(tokenRequestEventOpen.idEvent));
+                }
+            }
+
         }
 
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
