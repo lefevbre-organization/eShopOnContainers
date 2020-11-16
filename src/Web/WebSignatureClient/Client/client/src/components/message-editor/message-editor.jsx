@@ -1014,7 +1014,7 @@ class MessageEditor extends Component {
           notifySignature(
             lefebvre.userId,
             lefebvre.idUserApp,
-            documentsInfo.length
+            1//documentsInfo.length
           );
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
