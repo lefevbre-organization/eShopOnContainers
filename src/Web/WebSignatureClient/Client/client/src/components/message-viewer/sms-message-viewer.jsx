@@ -202,13 +202,13 @@ export class SmsMessageViewer extends Component {
     return result;
   }
 
-  getRecipients(email){
+  getRecipients(sms){
     var lookup = {};
-    var items = email.certificates;
+    var items = sms.certificates;
     var result = [];
 
     for (var item, i = 0; item = items[i++];) {
-      var name = item.email;
+      var name = item.phone;
 
       if (!(name in lookup)) {
         lookup[name] = 1;
@@ -251,10 +251,9 @@ export class SmsMessageViewer extends Component {
     this.alertDialogInstance.cssClass = 'e-fixed';
   }
 
- 
   render() {
     const sms = this.props.selectedSms;
-    console.log('this.props.selectedSms', this.props)
+
     let status;
     let status_style;
    
