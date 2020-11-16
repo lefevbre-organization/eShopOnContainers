@@ -13,7 +13,7 @@ import {
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
-import EmailList from './email-list/email-list';
+import EmailList from './certificate-list/email-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';

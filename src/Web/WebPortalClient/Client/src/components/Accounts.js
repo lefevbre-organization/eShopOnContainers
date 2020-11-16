@@ -3,7 +3,7 @@ import ProviderInbox from "./ProviderInbox";
 
 class Accounts extends Component {
   render() {
-    const { userId, accounts, token, service, embeded } = this.props;
+    const { userId, accounts, token, service } = this.props;
 
     if (!Array.isArray(accounts) || accounts.length === 0) {
       return null;
@@ -24,7 +24,6 @@ class Accounts extends Component {
                 }
                 token={token}
                 service={service}
-                embeded={embeded}
               />
             </li>
           );

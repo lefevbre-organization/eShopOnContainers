@@ -776,7 +776,7 @@ class EmailMessageEditor extends Component {
           notifySignature(
             lefebvre.userId,
             idUserApp,
-            numDocs
+            1//numDocs
           );
           getNumAvailableSignatures(idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))

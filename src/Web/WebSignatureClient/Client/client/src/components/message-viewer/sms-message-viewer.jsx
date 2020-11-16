@@ -13,7 +13,7 @@ import {
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
-import EmailList from './email-list/email-list';
+import EmailList from './certificate-list/email-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -61,9 +61,9 @@ export class SmsMessageViewer extends Component {
 
   componentDidMount() {
     let filter = [];
-    const email = this.props.selectedEmail;
-    email.certificates.forEach(certificate => {
-      let index = filter.findIndex(x => (x.email === certificate.email));
+    const sms = this.props.selectedSms;
+    sms.certificates.forEach(certificate => {
+      let index = filter.findIndex(x => (x.phone === certificate.phone));
       if (index === -1){
         filter.push(certificate);
       } else if (filter[index].events.length < certificate.events.length){
@@ -75,10 +75,10 @@ export class SmsMessageViewer extends Component {
   }
 
   componentDidUpdate(prevProps){
-    if (JSON.stringify(this.props.selectedEmail) !== JSON.stringify(prevProps.selectedEmail)){
+    if (JSON.stringify(this.props.selectedSms) !== JSON.stringify(prevProps.selectedSms)){
       let filter = [];
-      this.props.selectedEmail.certificates.forEach(certificate => {
-        let index = filter.findIndex(x => (x.email === certificate.email));
+      this.props.selectedSms.certificates.forEach(certificate => {
+        let index = filter.findIndex(x => (x.phone === certificate.phone));
         if (index === -1){
           filter.push(certificate);
         } else if (filter[index].events.length < certificate.events.length){
@@ -253,8 +253,8 @@ export class SmsMessageViewer extends Component {
 
  
   render() {
-    const email = this.props.selectedEmail;
-
+    const sms = this.props.selectedSms;
+    console.log('this.props.selectedSms', this.props)
     let status;
     let status_style;
    
@@ -273,18 +273,10 @@ export class SmsMessageViewer extends Component {
     </div>`;
 
    
-    let emailConfig = email.data.find(x => x.key === "roles");
-    let certificationType = email.data.find(x => x.key === "certification_type" || x.key === "type");
+    let smsConfig = sms.data.find(x => x.key === "roles");
+    let certificationType = sms.data.find(x => x.key === "certification_type" || x.key === "type");
 
-    switch (email.status) {
-      case 'declined':
-        status = i18n.t('signaturesGrid.statusDeclined');
-        status_style = 'cancelada';
-        break;
-      case 'expired':
-        status = i18n.t('signaturesGrid.statusExpired');
-        status_style = 'cancelada';
-        break;      
+    switch (sms.status) {
       case 'completed':
         status = i18n.t('signaturesGrid.statusCompleted');
         status_style = 'completada'
@@ -312,7 +304,7 @@ export class SmsMessageViewer extends Component {
          styles={styles}
          status_style={status_style}
          status={status}
-         detail={email}
+         detail={sms}
          getSigners={this.getRecipients}
          getFiles={this.getFiles}
          service={'sms'}
@@ -320,11 +312,11 @@ export class SmsMessageViewer extends Component {
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
             <div className={`${materialize.col} ${materialize['l12']} left`}>
-              {this.state.filterCertificates.map((signer, index) => {
+              {/* {this.state.filterCertificates.map((signer, index) => {
               return (
                 <EmailList 
                  signer={signer}
-                 signatureConfig={emailConfig ? emailConfig.value.split('|')[index].split(':') : null}
+                 signatureConfig={smsConfig ? smsConfig.value.split('|')[index].split(':') : null}
                  emailId={email.id}
                  email={email}
                  index={index}
@@ -340,7 +332,7 @@ export class SmsMessageViewer extends Component {
                  auth={this.props.auth}
                 ></EmailList>            
                 )
-              })}
+              })} */}
             </div>
             <div className={styles.clearfix}></div>
         </div>
@@ -518,7 +510,7 @@ const mapStateToProps = state => {
     lefebvre: state.lefebvre,
     login: state.login,
     credentials: state.application.user.credentials,
-    selectedEmail: state.application.selectedEmail,
+    selectedSms: state.application.selectedSms,
     auth: state.application.user.credentials.encrypted
   }
 };
@@ -527,8 +519,7 @@ const mapDispatchToProps = dispatch => ({
   showFolder: folder => {
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
-  },
-  resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SmsMessageViewer);

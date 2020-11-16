@@ -59,6 +59,18 @@ export const getMailContacts = payload => {
   return(payload.hasOwnProperty('mailContacts') ? payload.mailContacts.toString() : null)
 }
 
+export const getIdActuation = payload => {
+  return (payload.hasOwnProperty('idActuation') ? payload.idActuation : null)
+}
+
+export const getIdEvent = payload => {
+  return (payload.hasOwnProperty('idEvent') ? payload.idEvent : null)
+}
+
+export const getTitle = payload => {
+  return (payload.hasOwnProperty('title') ? payload.title : null)
+}
+
 export const getUrlType = payload =>{
   if (payload.hasOwnProperty('idMail') && getIdCasefile(payload) == null){
     return "mailOnly";
