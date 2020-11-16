@@ -36,7 +36,6 @@ export class PageGoTo extends Component {
       providedRemoved: null,
       token: props.match.params.token,
       service: (props.match.path === "/calendar/access/:token") ? 'calendar' : '',
-      embeded: (props.location.search.search("layout=iframe") > 0) ? true : false,
       payload: payload,
     };
     this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(
@@ -128,7 +127,6 @@ export class PageGoTo extends Component {
                       this.state.token,
                       this.state.service
                     )}?prov=${account.provider.substring(0, 2)}0`;
-                    url = this.state.embeded ? `${url}&layout=iframe` : url;
                     url = imapAutoLog ? `${url}&account=${imapAutoLog}` : url;
                   } else {
                     url = buildClientUrl(
@@ -147,7 +145,6 @@ export class PageGoTo extends Component {
                       this.state.token, 
                       this.state.service
                     )}?prov=${payload.provider.substring(0, 2)}0`;
-                    url = this.state.embeded ? `${url}&layout=iframe` : url;
                     url = imapAutoLog ? `${url}&account=${imapAutoLog}` : url;
                   } else {
                     url = buildClientUrl(
@@ -177,7 +174,6 @@ export class PageGoTo extends Component {
                         `${account.provider.substring(0, 2)}0${userId}`,
                         this.state.payload
                       );
-                  url = this.state.embeded ? `${url}&layout=iframe` : url;
                   console.log('TOKEN 3*****************: ' + this.state.token);
                 }
               }
@@ -272,7 +268,7 @@ export class PageGoTo extends Component {
   }
 
   renderGoTo() {
-    const { loading, userId, accounts, token, service, embeded } = this.state;
+    const { loading, userId, accounts, token, service } = this.state;
 
     if (!loading) {
       return (
@@ -283,7 +279,6 @@ export class PageGoTo extends Component {
           removeAccount={this.removeAccount}
           toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}
           token={token}
-          embeded={embeded}
         />
       );
     }

@@ -14,6 +14,9 @@ const defaultLexon = {
   mailContacts: null,
   idMail: null,
   token: null,
+  idActuation: null,
+  idEvent: null,
+  title: null
 };
 
 export const lexon = (state = defaultLexon, action = {}) => {
@@ -77,6 +80,24 @@ export const lexon = (state = defaultLexon, action = {}) => {
         ...state,
         token: action.payload,
       };
+    
+    case ActionTypes.LEXON_IDACTUATION:
+      return {
+        ...state,
+        idActuation: action.payload,
+      };
+
+    case ActionTypes.LEXON_IDEVENT:
+      return {
+        ...state,
+        idEvent: action.payload,
+      }
+
+    case ActionTypes.LEXON_TITLE:
+      return{
+        ...state,
+        title: action.payload,
+      }
     default:
       return state;
   }

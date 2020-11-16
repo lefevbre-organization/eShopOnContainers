@@ -28,7 +28,19 @@ import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, updateCalendar, listCalendarList, updateCalendarList } from '../../../api_graph/calendar-api';
+import {
+    deleteCalendar,
+    getEventList,
+    addCalendarEvent,
+    deleteCalendarEvent,
+    updateCalendarEvent,
+    requestRecurringEvent,
+    updateCalendar,
+    listCalendarList,
+    updateCalendarList,
+    addEventClassification,
+    removeEventClassification
+} from '../../../api_graph/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -78,7 +90,11 @@ export class Main extends Component {
         this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
         this.handleAddAddress = this.addAddress.bind(this);
         this.handleRemoveAddress = this.removeAddress.bind(this);
+        this.onCloseDialog = this.onCloseDialog.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
+
+        this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
+        this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
 
         this.cancel = false;
 
@@ -432,7 +448,8 @@ export class Main extends Component {
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
+                        { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
+                        {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -495,6 +512,7 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
+        this.scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -512,7 +530,6 @@ export class Main extends Component {
                     continue;
                 }               
 
-                //managing all day from googe calendar issues
                 if (event.end.date) {
                     let date1 = new Date(event.start.date);
                     let date2 = new Date(event.end.date);
@@ -555,24 +572,27 @@ export class Main extends Component {
                     attendees = undefined;
                 }
 
-                // EventType  
+                // EventType
                 let eventType = [];
+                let lexonClassification = null;
                 if (event.extendedProperties != undefined) {
-                    eventType.name = event.extendedProperties.private.eventTypeName;
-                    eventType.id = event.extendedProperties.private.eventTypeId;
-                    if (eventType.color === undefined) {
-                        eventType.color = this.eventTypeDataSource.find(x => x.text == event.extendedProperties.private.eventTypeName).backgroundColor;
+                    if(event.extendedProperties.private.eventTypeName) {
+                        eventType.name = event.extendedProperties.private.eventTypeName;
+                        eventType.id = event.extendedProperties.private.eventTypeId;
+                        if (eventType.color === undefined) {
+                            eventType.color = this.eventTypeDataSource.find(x => x.text == event.extendedProperties.private.eventTypeName).backgroundColor;
+                        } else {
+                            eventType.color = event.extendedProperties.private.eventTypeColor;
+                        }
                     }
-                    else {
-                        eventType.color = event.extendedProperties.private.eventTypeColor;
-                    }
-                    
+                    lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
                 if (event.reminders != undefined) {
                     reminders = event.reminders.overrides;
                 }
+
                 if(!this.scheduleData.find(x => x.Id === event.id)){
                     this.scheduleData.push({
                         Id: event.id,
@@ -591,6 +611,7 @@ export class Main extends Component {
                         Attendees: attendees,
                         EventType: eventType,
                         Reminders: reminders,
+                        LexonClassification: lexonClassification
                     });
                 }
             }
@@ -608,18 +629,17 @@ export class Main extends Component {
     }
 
     sendMessagePutUser(user) {
-        const { selectedMessages, googleUser } = this.props;
-
+        const { selectedMessages, User } = this.props;
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [this.selectedEvent],
+                    selectedMessages: [ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.getBasicProfile().getEmail(),
+                    account: User.email,
                     env: window.currentUser?window.currentUser.env :null,
                     app: 'calendar',
                 }
@@ -661,7 +681,31 @@ export class Main extends Component {
         this.setState({ sidebarDocked: open });
     }
 
+    onCloseDialog() {
+        this.LoadCalendarList(false)
+    }
+
+    async handleClassificatedEvent(event) {
+        let resp = await addEventClassification(event.detail.Id, event.detail.LexonClassification);
+        this.currentClassification = event.detail.LexonClassification;
+    }
+
+    async handleClassificatedEventRemoved(event) {
+        let resp = await removeEventClassification(event.detail.CalendarId,  event.detail.Id);
+        this.currentClassification = undefined;
+    }
+
     componentDidMount() {
+        window.addEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.addEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
+        );
+
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -683,7 +727,7 @@ export class Main extends Component {
                         subject: event.detail.subject,
                         sentDateTime: event.detail.sentDateTime,
                         folder: event.detail.folder,
-                        provider: 'GOOGLE',
+                        provider: 'OUTLOOK',
                         account: this.props.lexon.account,
                         chkselected: false,
                     },
@@ -782,8 +826,6 @@ export class Main extends Component {
 
 
     buildEventoGoogle(values) {
-
-
         let timezoneEnd = 'Europe/Madrid'
         if (values.EndTimezone != undefined) {
             timezoneEnd = values.EndTimezone
@@ -831,6 +873,17 @@ export class Main extends Component {
             }
         }
 
+        if(values.LexonClassification != undefined && values.EventType != null) {
+            const properties = {
+                ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
+                'lexonClassification': values.LexonClassification
+            }
+
+            event.extendedProperties = {
+                ...event.extendedProperties,
+                private: properties
+            }
+        }
 
         //"extendedProperties": {
         //    "private": {
@@ -1103,12 +1156,27 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+            this.currentClassification = args.data.LexonClassification;
+            setTimeout(()=>{
+                const dlg = document.getElementById("schedule_dialog_wrapper")
+                let btn = dlg.getElementsByClassName('e-dlg-closeicon-btn');
+                if(btn && btn.length > 0) {
+                    btn[0].onclick = this.onCloseDialog;
+                }
+
+                btn = dlg.getElementsByClassName('e-event-cancel');
+                if(btn && btn.length > 0) {
+                    btn[0].onclick = this.onCloseDialog;
+                }
+
+            }, 1000);
 
             if (this.layoutIframe & this.layoutIframeEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
                 head.classList.add('hidden');
             }
-         
+            this.selectedEvent = { ...args.data,  ...(this.scheduleData.find( item => item.Id === args.data.Id ) || undefined)};
+
             this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
 
             let end = document.querySelector(".e-end-on-element").ej2_instances[0];
@@ -1139,8 +1207,8 @@ export class Main extends Component {
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
-            args.element.style.width = "700px";
-            args.element.style.height = "95%";
+            args.element.style.width = "900px";
+            args.element.style.height = "800px";
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
@@ -1354,13 +1422,12 @@ export class Main extends Component {
                             desc.EventType = eventType;
                         }
                     }
-
-                   
-
+                    desc.LexonClassification = this.currentClassification;
                 }
 
                 //Update the schedule datasource
                 this.scheduleObj.dataModule.dataManager.update()
+                args.data.LexonClassification = this.currentClassification;
 
                 //update the Event to call the api
                 event = this.buildEventoGoogle(args.data);
@@ -1390,7 +1457,7 @@ export class Main extends Component {
                 }
                 if (args.changedRecords[0] != undefined) {
                     itemToModify = args.changedRecords[0].Id;
-                    calendarToModify = args.changedRecords[0].CalendarId
+                    args.changedRecords[0].LexonClassification = this.currentClassification;
                     event = this.buildEventoGoogle(args.changedRecords[0]);
                 }
 
@@ -1400,7 +1467,6 @@ export class Main extends Component {
                 break;
 
             case 'eventCreated':
-               
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
@@ -1549,7 +1615,7 @@ export class Main extends Component {
 
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
-                this.defaultCalendar = calendar;               
+                this.defaultCalendar = calendar;
 
                 //Set checkedCalendarResourceData calendar items as cheked
                 this.resourceCalendarData.find(x => x.id == calendar).checked = checked

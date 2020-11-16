@@ -11,4 +11,5 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public List<string> mailContacts { get; set; }
 
     }
+
 }

@@ -8,6 +8,9 @@ export const ActionTypes = {
   LEXON_ACCOUNT_SIGN: 'LEXON_ACCOUNT_SIGN',
   LEXON_IDMAIL: 'LEXON_IDMAIL',
   LEXON_TOKEN: 'LEXON_TOKEN',
+  LEXON_IDACTUATION: 'LEXON_IDACTUATION',
+  LEXON_IDEVENT: 'LEXON_IDEVENT',
+  LEXON_TITLE: 'LEXON_TITLE'
 };
 
 export const setUser = (user) => ({
@@ -55,6 +58,22 @@ export const setToken = (token) => ({
   payload: token,
 });
 
+export const setIdActuation = (idActuation) => ({
+  type: ActionTypes.LEXON_IDACTUATION,
+  payload: idActuation,
+})
+
+export const setIdEvent = (idEvent) => ({
+  type: ActionTypes.LEXON_IDEVENT,
+  payload: idEvent,
+})
+
+export const setTitle = (title) => ({
+  type: ActionTypes.LEXON_TITLE,
+  payload: title,
+})
+
+
 export default {
   setUser,
   setCaseFile,
@@ -65,4 +84,7 @@ export default {
   setIdMail,
   setToken,
   setBBDD,
+  setIdActuation,
+  setIdEvent,
+  setTitle
 };

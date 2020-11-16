@@ -188,7 +188,8 @@ class ModalConnectingEvents extends Component {
           this.props.getEventClassifications({bbdd: companySelected.bbdd, user: user.idUser, eventId})
 
           if(sc && sc.result && sc.result.data > 0) {
-              window.dispatchEvent(new CustomEvent("EventClassified", { detail: message }));
+              const detail = { ...message, LexonClassification: idActuation };
+              window.dispatchEvent(new CustomEvent("EventClassified", { detail }));
           }
       }
       if (error) {

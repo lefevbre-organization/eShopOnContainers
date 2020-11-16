@@ -41,7 +41,10 @@ class ConfirmRemoveClassification extends Component {
     )
       .then(data => {
         if (data.data == 1) {
+          const sm = this.props.selectedMessages[0];
           toggleNotification(i18n.t("classify-emails.classification-removed-ok"));
+          window.dispatchEvent(new CustomEvent('RemoveSelectedEvent', {
+            detail: { ...sm  }}));
           updateClassifications();
         }
       })
@@ -118,12 +121,13 @@ ConfirmRemoveClassification.propTypes = {
   toggleConfirmRemoveClassification: PropTypes.func.isRequired,
   classification: PropTypes.string,
   updateClassifications: PropTypes.func.isRequired,
-  toggleNotification: PropTypes.func.isRequired
+  toggleNotification: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => {
   return {
-    companySelected: state.selections.companySelected
+    companySelected: state.selections.companySelected,
+    selectedMessages: state.email.selectedMessages,
   };
 };
 
