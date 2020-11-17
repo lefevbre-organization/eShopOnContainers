@@ -1417,12 +1417,13 @@ export class Main extends Component {
                 //if not iframe view
                 if (!this.layoutIframe) {
                     this.addConfigurationButton(args);
+                   
                 }
                 else {
                     this.addLogOutButton(args);
-                    this.addCalendarsButton(args);
+                   
                 }
-
+                this.addCalendarsButton(args);
                 break;
 
             case 'eventChanged':
@@ -1838,6 +1839,11 @@ export class Main extends Component {
        
             if (args.requestType === 'toolbarItemRendering') {
                 if (args.requestType === 'toolbarItemRendering') {
+                    let CalendarsIconItem = {
+                        align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
+                    };
+                    args.items.push(CalendarsIconItem);
+
                     if (!this.layoutIframe) {
                         let userIconItem = {
                             align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
@@ -1847,10 +1853,7 @@ export class Main extends Component {
                     }
                     else {                       
 
-                        let CalendarsIconItem = {
-                            align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
-                        };
-                        args.items.push(CalendarsIconItem);
+                       
                         let LogOutIconItem = {
                             align: 'Right', prefixIcon: 'logout-icon', text: '', cssClass: 'e-schedule-logout-icon'
                         };
