@@ -29,8 +29,8 @@ export class Sidebar extends PureComponent {
 
         this.state = {
             selectedLabel: props.pathname,
-            leftSideBarOpen: true,   
-            sidebarCollapsed: this.props.sideBarCollapsed
+            leftSideBarOpen: true 
+          
         };
 
         this.navigateToList = this.navigateToList.bind(this);
@@ -59,8 +59,8 @@ export class Sidebar extends PureComponent {
     }
 
     sidebarAction() {
-        //this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
-        this.setState({ sideBarCollapsed:true })
+        this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
+      //  this.setState({ sideBarCollapsed:true })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -175,7 +175,7 @@ export class Sidebar extends PureComponent {
         if (calendarsOthers != undefined) {
 
             const { t } = this.props;
-          
+           
 
             return (
                 <React.Fragment>
@@ -221,14 +221,14 @@ export class Sidebar extends PureComponent {
     render() {
         const { t } = this.props;
 
-       // const collapsed = this.props.sideBarCollapsed;        
+        const collapsed = this.props.sideBarCollapsed;        
 
         return (
             //${ collapsed ? '' : styles['with-side-bar'] }
             <nav
                 id="left-sidebar"
                 className={
-                    this.state.sidebarCollapsed
+                    collapsed
                         ? "d-flex flex-column text-truncate left-panel sidebar-close"
                         : "d-flex flex-column text-truncate left-panel sidebar-open"
                 }

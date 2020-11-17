@@ -79,6 +79,8 @@ export class Main extends Component {
         this.onCloseDialog = this.onCloseDialog.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
+     
+
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
         this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
 
@@ -117,7 +119,7 @@ export class Main extends Component {
             eventType: undefined,
             isVisibility: false,
             to2: [],
-            sidebarCollapsed:false
+           // sidebarCollapsed:false
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
@@ -167,7 +169,7 @@ export class Main extends Component {
         this.drowDownListEventType = undefined;
         this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
-
+       
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -206,14 +208,7 @@ export class Main extends Component {
     this.checkForParams();
     }
 
-    toggleSideBar() {
-        const toggleCollapsed = !this.state.leftSideBar.collapsed;
-        this.setState({
-            leftSideBar: {
-                collapsed: toggleCollapsed,
-            },
-        });
-    }
+   
 
     onCloseDialog() {
         this.LoadCalendarList(false)
@@ -251,6 +246,7 @@ export class Main extends Component {
 
         if (params.get('layout') != undefined) {
             this.layoutIframe = true;
+           
            // this.setState({ sidebarCollapsed: true });
         }       
 
@@ -536,6 +532,16 @@ export class Main extends Component {
             </div>);
     }
 
+
+    toggleSideBar() {
+        const toggleCollapsed = !this.state.leftSideBar.collapsed;
+        this.setState({
+            leftSideBar: {
+                collapsed: toggleCollapsed,
+            },
+        });
+    }
+
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
         this.scheduleData = [];
@@ -631,14 +637,7 @@ export class Main extends Component {
         e.result = this.scheduleData;
     }
 
-    toggleSideBar() {
-        const toggleCollapsed = !this.state.leftSideBar.collapsed;
-        this.setState({
-            leftSideBar: {
-                collapsed: toggleCollapsed
-            }
-        });
-    }
+  
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -697,7 +696,7 @@ export class Main extends Component {
     componentDidMount() {
 
         if (this.layoutIframe) {           
-            this.setState({ sidebarCollapsed: true });
+            this.setState({ leftSideBar: { collapsed: true } })
         }  
 
         window.addEventListener(
@@ -1336,8 +1335,7 @@ export class Main extends Component {
         if (args.requestType === 'toolBarItemRendered') {
             let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
             calendarIconEle.onclick = () => {
-                this.setState({ sidebarCollapsed: false });
-                
+                this.toggleSideBar()                
                 //this.profilePopupCalendar.relateTo = calendarIconEle;
                 //this.profilePopupCalendar.dataBind();
                 //if (this.profilePopupCalendar.element.classList.contains('e-popup-close')) {
@@ -1992,7 +1990,7 @@ export class Main extends Component {
                         <section className='main hbox space-between'>
                            
                                 <Sidebar
-                                    sideBarCollapsed={this.state.sidebarCollapsed}
+                                    sideBarCollapsed={this.state.leftSideBar.collapsed}
                                     sideBarToggle={this.toggleSideBar}
                                     getCalendarList={this.sidebarCalendarList}
                                     pathname={this.props.location.pathname}
