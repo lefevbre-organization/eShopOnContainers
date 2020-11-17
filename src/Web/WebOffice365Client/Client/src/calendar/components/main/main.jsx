@@ -512,7 +512,7 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
-        this.scheduleData = [];
+        this.scheduleData = this.scheduleData.filter( i => i.CalendarId !== calendarId);
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
