@@ -1293,50 +1293,93 @@ export class Main extends Component {
 
     }
 
+    addLogOutButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let logoutIconEle = scheduleElement.querySelector('.e-schedule-logout-icon');
+            logoutIconEle.onclick = () => {
+                alert('logout');
+            };
+        }
+        let userContentEle = createElement('div', {
+            className: 'e-profile-wrapper'
+        });
+
+        scheduleElement.parentElement.appendChild(userContentEle);
+        let userIconEle = scheduleElement.querySelector('.e-schedule-logout-icon');
+        let output = this.buttonEventTypeObj;       
+
+    }
+
+    addCalendarsButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+            calendarIconEle.onclick = () => {
+                alert('calendars');
+            };
+        }
+        let userContentEle = createElement('div', {
+            className: 'e-profile-wrapper'
+        });
+
+        scheduleElement.parentElement.appendChild(userContentEle);
+        let userIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+        let output = this.buttonEventTypeObj;
+
+    }
+
+    addConfigurationButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+            userIconEle.onclick = () => {
+                this.profilePopup.relateTo = userIconEle;
+                this.profilePopup.dataBind();
+                if (this.profilePopup.element.classList.contains('e-popup-close')) {
+                    this.profilePopup.show();
+                }
+                else {
+                    this.profilePopup.hide();
+                }
+            };
+        }
+        let userContentEle = createElement('div', {
+            className: 'e-profile-wrapper'
+        });
+
+        scheduleElement.parentElement.appendChild(userContentEle);
+        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+        let output = this.buttonEventTypeObj;
+        this.profilePopup = new Popup(userContentEle, {
+            content: output,
+            relateTo: userIconEle,
+            position: { X: 'left', Y: 'bottom' },
+            collision: { X: 'flip', Y: 'flip' },
+            targetType: 'relative',
+            viewPortElement: scheduleElement,
+            width: 150,
+            height: 60
+        });
+        this.profilePopup.hide();
+
+}
+
     onEventRendered(args) {
         let event;
 
         switch (args.requestType) {
 
-            case 'toolBarItemRendered':
+            case 'toolBarItemRendered':  
 
-                //ask for iframe
+                //if not iframe view
                 if (!this.layoutIframe) {
-                    let scheduleElement = document.getElementById('schedule');
-                    if (args.requestType === 'toolBarItemRendered') {
-                        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                        userIconEle.onclick = () => {
-                            this.profilePopup.relateTo = userIconEle;
-                            this.profilePopup.dataBind();
-                            if (this.profilePopup.element.classList.contains('e-popup-close')) {
-                                this.profilePopup.show();
-                            }
-                            else {
-                                this.profilePopup.hide();
-                            }
-                        };
-                    }
-                    let userContentEle = createElement('div', {
-                        className: 'e-profile-wrapper'
-                    });
-
-                    scheduleElement.parentElement.appendChild(userContentEle);
-                    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                    let output = this.buttonEventTypeObj;
-                    this.profilePopup = new Popup(userContentEle, {
-                        content: output,
-                        relateTo: userIconEle,
-                        position: { X: 'left', Y: 'bottom' },
-                        collision: { X: 'flip', Y: 'flip' },
-                        targetType: 'relative',
-                        viewPortElement: scheduleElement,
-                        width: 150,
-                        height: 60
-                    });
-                    this.profilePopup.hide();
-
+                    this.addConfigurationButton(args);
                 }
-               
+                else {
+                    this.addLogOutButton(args);
+                    this.addCalendarsButton(args);
+                }
 
                 break;
 
@@ -1750,17 +1793,31 @@ export class Main extends Component {
     onActionBegin(args) {
 
         //ask for iframe
-        if (!this.layoutIframe) {
+       
             if (args.requestType === 'toolbarItemRendering') {
                 if (args.requestType === 'toolbarItemRendering') {
-                    let userIconItem = {
-                        align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
-                    };
-               
-                    args.items.push(userIconItem);
+                    if (!this.layoutIframe) {
+                        let userIconItem = {
+                            align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                        };
+
+                        args.items.push(userIconItem);
+                    }
+                    else {                       
+
+                        let CalendarsIconItem = {
+                            align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
+                        };
+                        args.items.push(CalendarsIconItem);
+                        let LogOutIconItem = {
+                            align: 'Right', prefixIcon: 'logout-icon', text: '', cssClass: 'e-schedule-logout-icon'
+                        };
+                        args.items.push(LogOutIconItem);
+                    }                 
+                   
                 }
             }
-        }
+        
     }
 
     onEventTypeClick() {
