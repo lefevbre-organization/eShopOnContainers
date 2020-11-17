@@ -1218,7 +1218,7 @@ export function preloadSms(dispatch, filters, auth) {
     .then(sms => {
       console.log('Sms Before:')
       console.log(sms);
-      sms = calculateStatusEmails(sms);
+      sms = calculateStatusSms(sms);
       console.log('sms After:')
       console.log({sms});
       var sortedSms = sms.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0));
@@ -1459,9 +1459,25 @@ const getRecipientsEmail= (email) => {
   return result;
 }
 
-const getDocumentsEmail = (email) => {
+const getRecipientsSms= (sms) => {
+  var lookup = {};
+  var items = sms.certificates;
+  var result = [];
+
+  for (var item, i = 0; item = items[i++];) {
+    var phone = item.phone;
+
+    if (!(phone in lookup)) {
+      lookup[phone] = 1;
+      result.push(phone);
+    }
+  }
+  return result;
+}
+
+const getDocumentsCertification = (emailOrSms) => {
   var documents = [];
-  email.certificates.forEach(certificate => {
+  emailOrSms.certificates.forEach(certificate => {
     if (!documents.find(document => document == JSON.stringify(certificate.file))){
       if (certificate.file !== undefined){
         documents.push(JSON.stringify(certificate.file));
@@ -1471,9 +1487,9 @@ const getDocumentsEmail = (email) => {
   return documents;
 }
 
-const countCertificationEvents = (email) => {
+const countCertificationEvents = (emailOrSms) => {
   var counter = 0;
-  email.certificates.forEach(certificate => {
+  emailOrSms.certificates.forEach(certificate => {
     if (certificate.events.find(ev => ev.type == "certification_completed")){
       counter++;
     }
@@ -1481,9 +1497,9 @@ const countCertificationEvents = (email) => {
   return counter;
 }
 
-const countErrorEvents = (email) => {
+const countErrorEvents = (emailOrSms) => {
   var counter = 0;
-  email.certificates.forEach(certificate => {
+  emailOrSms.certificates.forEach(certificate => {
     if (certificate.status === 'error'){
       counter++;
     }
@@ -1496,8 +1512,13 @@ const countDistinctEmails = (email) => {
   return distinctEmails.length;
 }
 
-const countDistinctDocuments = (email) => {
-  var distinctDocuments = getDocumentsEmail(email)
+const countDistinctSms = (sms) => {
+  var distinctPhones = getRecipientsSms(sms)
+  return distinctPhones.length;
+}
+
+const countDistinctDocuments = (emailOrSms) => {
+  var distinctDocuments = getDocumentsCertification(emailOrSms)
   return distinctDocuments.length;
 }
 
@@ -1522,6 +1543,28 @@ const calculateStatusEmails = (emails) => {
 
   })
   return emails
+}
+
+const calculateStatusSms = (smsList) => {
+  smsList.forEach(sms => {
+    var numNodes = sms.certificates.length;
+    var numRecipients = countDistinctSms(sms);
+    var numDocuments = countDistinctDocuments(sms);
+    var numCertifiedEvents = countCertificationEvents(sms);
+    var numErrorEvents = countErrorEvents(sms);
+  
+    numDocuments = (numDocuments === 0) ? 1 : numDocuments;
+
+    if (numErrorEvents > 0){
+      sms.status = 'error'
+    } else if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
+      sms.status = 'completed'
+    } else {
+      sms.status = 'ready'
+    }
+
+  })
+  return smsList
 }
 
 // END HELPER FUNCTIONS
