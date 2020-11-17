@@ -211,7 +211,7 @@ class ComposeMessageEditor extends React.Component {
       container: document.getElementById("toolsRTE_2"),
       lang: 'es_ES',
       detectLocalizationLanguage: true,
-      serviceId: 'skm1qNZE0pQw7xw',
+      serviceId: window.WEBSPELLCHECKER_CODE,
       enableGrammar: true,
       enableBadgeButton: true
     });

@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {
   RichTextEditorComponent,
   Toolbar,
@@ -189,21 +189,7 @@ const toolbarSettings = {
 
 const ComposeMessageEditor = (props) => {
   const { onChange, defaultValue = '' } = props;
-  useEffect(()=>{
-
-    const instance1 = window.WEBSPELLCHECKER.init({
-      container: document.getElementById("toolsRTE_2"),
-      lang: 'es_ES',
-      detectLocalizationLanguage: true,
-      serviceId: 'skm1qNZE0pQw7xw',
-      enableGrammar: true,
-      enableBadgeButton: true
-    });
-
-    return ()=>{
-      instance1.destroy();
-    }
-  }, []);
+  const [editorInstance, setEditorInstance ] = useState(null);
 
   return (
     <Fragment>
@@ -219,6 +205,23 @@ const ComposeMessageEditor = (props) => {
         inline={true}
         blur={(content) => {
           // onChange && onChange(content.value);
+        }}
+        created={ () => {
+          console.log(document.getElementById("toolsRTE_2"))
+          const editorInstance = window.WEBSPELLCHECKER.init({
+            container: document.getElementById("toolsRTE_2"),
+            lang: 'es_ES',
+            detectLocalizationLanguage: true,
+            serviceId: window.WEBSPELLCHECKER_CODE,
+            enableGrammar: true,
+            enableBadgeButton: true
+          });
+          setEditorInstance(editorInstance);
+        }}
+        destroyed={ () => {
+          if(editorInstance) {
+            editorInstance.destroy();
+          }
         }}
         change={(content) => {
           onChange && onChange(content.value);
