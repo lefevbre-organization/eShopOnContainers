@@ -39,5 +39,9 @@ window.API_CENTINELA_GATEWAY =
 window.URL_MF_DATABASE = 'http://localhost:3006/static/js/main.js';
 window.URL_MF_DATABASE_BASE = 'http://localhost:3006';
 
+window.WEBSPELLCHECKER_CODE = '';
+
 window.RELEASE = 'RC DEV';
 window.SHOW_EXPERIMENTAL = '1';
+
+
