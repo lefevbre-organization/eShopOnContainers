@@ -1300,38 +1300,43 @@ export class Main extends Component {
 
             case 'toolBarItemRendered':
 
-                let scheduleElement = document.getElementById('schedule');
-                if (args.requestType === 'toolBarItemRendered') {
+                //ask for iframe
+                if (!this.layoutIframe) {
+                    let scheduleElement = document.getElementById('schedule');
+                    if (args.requestType === 'toolBarItemRendered') {
+                        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+                        userIconEle.onclick = () => {
+                            this.profilePopup.relateTo = userIconEle;
+                            this.profilePopup.dataBind();
+                            if (this.profilePopup.element.classList.contains('e-popup-close')) {
+                                this.profilePopup.show();
+                            }
+                            else {
+                                this.profilePopup.hide();
+                            }
+                        };
+                    }
+                    let userContentEle = createElement('div', {
+                        className: 'e-profile-wrapper'
+                    });
+
+                    scheduleElement.parentElement.appendChild(userContentEle);
                     let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                    userIconEle.onclick = () => {
-                        this.profilePopup.relateTo = userIconEle;
-                        this.profilePopup.dataBind();
-                        if (this.profilePopup.element.classList.contains('e-popup-close')) {
-                            this.profilePopup.show();
-                        }
-                        else {
-                            this.profilePopup.hide();
-                        }
-                    };
+                    let output = this.buttonEventTypeObj;
+                    this.profilePopup = new Popup(userContentEle, {
+                        content: output,
+                        relateTo: userIconEle,
+                        position: { X: 'left', Y: 'bottom' },
+                        collision: { X: 'flip', Y: 'flip' },
+                        targetType: 'relative',
+                        viewPortElement: scheduleElement,
+                        width: 150,
+                        height: 60
+                    });
+                    this.profilePopup.hide();
+
                 }
-                let userContentEle = createElement('div', {
-                    className: 'e-profile-wrapper'
-                });
                
-                scheduleElement.parentElement.appendChild(userContentEle);
-                let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-                let output = this.buttonEventTypeObj;
-                this.profilePopup = new Popup(userContentEle, {
-                    content: output,
-                    relateTo: userIconEle,
-                    position: { X: 'left', Y: 'bottom' },
-                    collision: { X: 'flip', Y: 'flip' },
-                    targetType: 'relative',
-                    viewPortElement: scheduleElement,
-                    width: 150,
-                    height: 60
-                });
-                this.profilePopup.hide();
 
                 break;
 
@@ -1743,12 +1748,17 @@ export class Main extends Component {
     }
 
     onActionBegin(args) {
-        if (args.requestType === 'toolbarItemRendering') {
+
+        //ask for iframe
+        if (!this.layoutIframe) {
             if (args.requestType === 'toolbarItemRendering') {
-                let userIconItem = {
-                    align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
-                };
-                args.items.push(userIconItem);
+                if (args.requestType === 'toolbarItemRendering') {
+                    let userIconItem = {
+                        align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                    };
+               
+                    args.items.push(userIconItem);
+                }
             }
         }
     }

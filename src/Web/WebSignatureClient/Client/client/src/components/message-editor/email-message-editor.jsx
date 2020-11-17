@@ -766,7 +766,7 @@ class EmailMessageEditor extends Component {
           //this.props.setTitle('');
           this.props.setIdDocuments(null);
           this.props.close(this.props.application);
-          this.props.preloadEmails(lefebvre.userId);
+          this.props.preloadEmails(lefebvre.userId, this.props.application.user.credentials.encrypted);
           this.props.setTitle(i18n.t('topBar.certifiedEmail'));
           this.props.setSelectedService('certifiedEmail'); 
           this.props.setSignaturesFilterKey('Mostrar todas');
@@ -774,7 +774,7 @@ class EmailMessageEditor extends Component {
           notifySignature(
             lefebvre.userId,
             idUserApp,
-            numDocs
+            1//numDocs
           );
           getNumAvailableSignatures(idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))

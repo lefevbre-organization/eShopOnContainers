@@ -1014,7 +1014,7 @@ class MessageEditor extends Component {
           notifySignature(
             lefebvre.userId,
             lefebvre.idUserApp,
-            documentsInfo.length
+            1//documentsInfo.length
           );
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
@@ -1025,7 +1025,7 @@ class MessageEditor extends Component {
           this.props.setIdDocuments(null);
           this.props.setSelectedService('signature');
           this.props.setSignaturesFilterKey('Mostrar todas');
-          this.props.preloadSignatures(lefebvre.userId);
+          this.props.preloadSignatures(lefebvre.userId, this.props.application.user.credentials.encrypted);
           this.props.close(this.props.application);
       
           getNumAvailableSignatures(lefebvre.idUserApp)

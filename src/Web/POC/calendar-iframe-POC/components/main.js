@@ -92,7 +92,7 @@ dialogClose(args) {
          >
              {/* <div className="modalview"> <img src="img.png" alt=""  /> </div>*/}
              <div className="modalview">
-                 <Iframe url="http://localhost:3002/calendar?newEvent=true&layout=true"
+                 <Iframe url="http://localhost:3002/calendar?newEvent=true&layout=iframe"
                      width="100%"
                      height="100%"
                      id="myId2"
