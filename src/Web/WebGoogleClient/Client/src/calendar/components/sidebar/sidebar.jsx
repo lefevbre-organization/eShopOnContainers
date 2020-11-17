@@ -29,7 +29,8 @@ export class Sidebar extends PureComponent {
 
         this.state = {
             selectedLabel: props.pathname,
-            leftSideBarOpen: true           
+            leftSideBarOpen: true 
+          
         };
 
         this.navigateToList = this.navigateToList.bind(this);
@@ -59,6 +60,7 @@ export class Sidebar extends PureComponent {
 
     sidebarAction() {
         this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
+      //  this.setState({ sideBarCollapsed:true })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -173,7 +175,7 @@ export class Sidebar extends PureComponent {
         if (calendarsOthers != undefined) {
 
             const { t } = this.props;
-          
+           
 
             return (
                 <React.Fragment>

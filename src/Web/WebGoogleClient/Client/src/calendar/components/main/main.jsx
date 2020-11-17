@@ -79,6 +79,8 @@ export class Main extends Component {
         this.onCloseDialog = this.onCloseDialog.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
+     
+
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
         this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
 
@@ -116,7 +118,8 @@ export class Main extends Component {
             reminders: [],
             eventType: undefined,
             isVisibility: false,
-            to2: []
+            to2: [],
+           // sidebarCollapsed:false
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
@@ -166,7 +169,7 @@ export class Main extends Component {
         this.drowDownListEventType = undefined;
         this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
-
+       
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -203,7 +206,9 @@ export class Main extends Component {
         ];
 
     this.checkForParams();
-}
+    }
+
+   
 
     onCloseDialog() {
         this.LoadCalendarList(false)
@@ -241,6 +246,8 @@ export class Main extends Component {
 
         if (params.get('layout') != undefined) {
             this.layoutIframe = true;
+           
+           // this.setState({ sidebarCollapsed: true });
         }       
 
         if (params.get('newEvent') != undefined) {
@@ -525,6 +532,16 @@ export class Main extends Component {
             </div>);
     }
 
+
+    toggleSideBar() {
+        const toggleCollapsed = !this.state.leftSideBar.collapsed;
+        this.setState({
+            leftSideBar: {
+                collapsed: toggleCollapsed,
+            },
+        });
+    }
+
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
         this.scheduleData = this.scheduleData.filter( i => i.CalendarId !== calendarId);
@@ -620,14 +637,7 @@ export class Main extends Component {
         e.result = this.scheduleData;
     }
 
-    toggleSideBar() {
-        const toggleCollapsed = !this.state.leftSideBar.collapsed;
-        this.setState({
-            leftSideBar: {
-                collapsed: toggleCollapsed
-            }
-        });
-    }
+  
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -684,6 +694,11 @@ export class Main extends Component {
     }
 
     componentDidMount() {
+
+        if (this.layoutIframe) {           
+            this.setState({ leftSideBar: { collapsed: true } })
+        }  
+
         window.addEventListener(
             'EventClassified',
             this.handleClassificatedEvent
@@ -1298,34 +1313,61 @@ export class Main extends Component {
         if (args.requestType === 'toolBarItemRendered') {
             let logoutIconEle = scheduleElement.querySelector('.e-schedule-logout-icon');
             logoutIconEle.onclick = () => {
-                alert('logout');
+               // alert('logout');
+                signOut();
+                window.location.reload();
             };
         }
-        let userContentEle = createElement('div', {
+        let logoutContentEle = createElement('div', {
             className: 'e-profile-wrapper'
         });
 
-        scheduleElement.parentElement.appendChild(userContentEle);
-        let userIconEle = scheduleElement.querySelector('.e-schedule-logout-icon');
-        let output = this.buttonEventTypeObj;       
+        scheduleElement.parentElement.appendChild(logoutContentEle);
+           
 
     }
+
+    
+
 
     addCalendarsButton(args) {
         let scheduleElement = document.getElementById('schedule');
         if (args.requestType === 'toolBarItemRendered') {
             let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
             calendarIconEle.onclick = () => {
-                alert('calendars');
+                this.toggleSideBar()                
+                //this.profilePopupCalendar.relateTo = calendarIconEle;
+                //this.profilePopupCalendar.dataBind();
+                //if (this.profilePopupCalendar.element.classList.contains('e-popup-close')) {
+                //    this.profilePopupCalendar.show();
+                //}
+                //else {
+                //    this.profilePopupCalendar.hide();
+                //}
             };
         }
-        let userContentEle = createElement('div', {
+        let calendarContentEle = createElement('div', {
             className: 'e-profile-wrapper'
         });
 
-        scheduleElement.parentElement.appendChild(userContentEle);
-        let userIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
-        let output = this.buttonEventTypeObj;
+        scheduleElement.parentElement.appendChild(calendarContentEle);
+
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
+        //let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+
+        //let output = this.sidebarObj;
+        //this.profilePopupCalendar = new Popup(calendarContentEle, {
+        //    content: output,
+        //    relateTo: calendarIconEle,
+        //    position: { X: 'left', Y: 'bottom' },
+        //    collision: { X: 'flip', Y: 'flip' },
+        //    targetType: 'relative',
+        //    viewPortElement: scheduleElement,
+        //    width: 150,
+        //    height: 300
+        //});
+        //this.profilePopupCalendar.hide();
+       
 
     }
 
@@ -1375,12 +1417,13 @@ export class Main extends Component {
                 //if not iframe view
                 if (!this.layoutIframe) {
                     this.addConfigurationButton(args);
+                   
                 }
                 else {
                     this.addLogOutButton(args);
-                    this.addCalendarsButton(args);
+                   
                 }
-
+                this.addCalendarsButton(args);
                 break;
 
             case 'eventChanged':
@@ -1796,6 +1839,11 @@ export class Main extends Component {
        
             if (args.requestType === 'toolbarItemRendering') {
                 if (args.requestType === 'toolbarItemRendering') {
+                    let CalendarsIconItem = {
+                        align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
+                    };
+                    args.items.push(CalendarsIconItem);
+
                     if (!this.layoutIframe) {
                         let userIconItem = {
                             align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
@@ -1805,10 +1853,7 @@ export class Main extends Component {
                     }
                     else {                       
 
-                        let CalendarsIconItem = {
-                            align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
-                        };
-                        args.items.push(CalendarsIconItem);
+                       
                         let LogOutIconItem = {
                             align: 'Right', prefixIcon: 'logout-icon', text: '', cssClass: 'e-schedule-logout-icon'
                         };
@@ -1946,21 +1991,24 @@ export class Main extends Component {
                             )}
 
                         <section className='main hbox space-between'>
-                            <Sidebar
-                                sideBarCollapsed={!this.layoutIframe ? (false) : (true)}
-                                sideBarToggle={this.toggleSideBar}
-                                getCalendarList={this.sidebarCalendarList}
-                                pathname={this.props.location.pathname}
-                                calendarResult={this.props.calendarsResult}
-                                onCalendarClick={this.loadCalendarEvents}
-                                onSidebarCloseClick={this.handleShowLeftSidebarClick}
-                                onCalendarChange={this.handleScheduleDate}
-                                onCalendarOpenEditor={this.handleScheduleOpenEditor}
-                                onCalendarOpenCalnendarView={this.openCalendarView}
-                                onCalendarDelete={this.deleteCalendar}
-                                onCalendarColorModify={this.calendarColorModify}
-
-                            />
+                           
+                                <Sidebar
+                                    sideBarCollapsed={this.state.leftSideBar.collapsed}
+                                    sideBarToggle={this.toggleSideBar}
+                                    getCalendarList={this.sidebarCalendarList}
+                                    pathname={this.props.location.pathname}
+                                    calendarResult={this.props.calendarsResult}
+                                    onCalendarClick={this.loadCalendarEvents}
+                                    onSidebarCloseClick={this.handleShowLeftSidebarClick}
+                                    onCalendarChange={this.handleScheduleDate}
+                                    onCalendarOpenEditor={this.handleScheduleOpenEditor}
+                                    onCalendarOpenCalnendarView={this.openCalendarView}
+                                    onCalendarDelete={this.deleteCalendar}
+                                    onCalendarColorModify={this.calendarColorModify}                                
+                                    ref={sidebar => this.sidebarCalendarObj = sidebar}
+                                />
+                           
+                           
                             <article className='d-flex flex-column position-relative'>
                                 <div className="hidden">
                                     <AttendeeAddress

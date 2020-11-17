@@ -652,6 +652,7 @@ export class Main extends Component {
     //localStorage.clear();
   }
 
+
   onSignoutDisconnect() {
     console.log('IN ... onSignoutDisconnect');
     const { userId, token } = this.props.lexon;
