@@ -352,10 +352,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<string>(null);
             var user = await GetUserAsync(idUser);
+            AddResultTrace(user, result);
             if (user.errors?.Count == 0)
             {
                 var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
                 Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
+                AddResultTrace(temporalLinkResult, user);
                 result.data = temporalLinkResult?.data;
             }
 
@@ -377,6 +379,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
                 var tokenRequest = new TokenRequest { idApp = (int?)AppCode.Signaturit, idClienteNavision = userDecoded.data };
                 var userSignature = await GetGenericTokenAsync(tokenRequest, true);
+                AddResultTrace(userSignature, result);
 
                 var encontrado = listByPass.Find(x => x.NameService.Equals("Signature-Direct"));
                 if (encontrado?.NameService == null)
