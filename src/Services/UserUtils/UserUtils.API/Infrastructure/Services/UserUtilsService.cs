@@ -386,6 +386,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var userDecoded = await GetDecodeUserAsync(idUser);
+                result.errors.AddRange(userDecoded.errors);
+                result.infos.AddRange(userDecoded.infos);
 
                 var listByPass = _settings.Value.ByPassUrls?.ToList();
                 if (listByPass?.Count == 0)
@@ -393,6 +395,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
                 var tokenRequest = new TokenRequest { idApp = (int?)AppCode.Signaturit, idClienteNavision = userDecoded.data };
                 var userSignature = await GetGenericTokenAsync(tokenRequest, true);
+                result.errors.AddRange(userSignature.errors);
+                result.infos.AddRange(userSignature.infos);
 
                 var encontrado = listByPass.Find(x => x.NameService.Equals("Signature-Direct"));
                 if (encontrado?.NameService == null)
