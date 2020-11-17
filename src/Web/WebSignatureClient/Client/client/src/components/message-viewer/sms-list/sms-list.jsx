@@ -7,7 +7,7 @@ import {downloadAttachments2} from "../../../services/api-signaturit";
 
 const SmsList = (props) => {
 
-  const certificationType = (props.certificationType !== undefined) ? props.certificationType : 'open_every_document';
+  const certificationType = (props.certificationType !== undefined) ? props.certificationType : {key: 'type', value: 'open_every_document'};
   const documentFilter = props.sms.certificates.filter(a => a.phone === props.signer.phone)
   var documentType = props.signer.events.find(x => x.type === 'documents_opened' || x.type === 'document_opened');
   var certificationCompleted = props.getEventStatus(props.signer, 'certification_completed');
@@ -18,10 +18,10 @@ const SmsList = (props) => {
       <HeaderList {...props} />
       <div className={`${props.styles.p15}  
         ${(certificationType) 
-        && (certificationType === 'open_document' 
-        || certificationType=== 'open_every_document'
-        || certificationType === 'download_document'
-        || certificationType === 'download_every_document') 
+        && (certificationType.value === 'open_document' 
+        || certificationType.value === 'open_every_document'
+        || certificationType.value === 'download_document'
+        || certificationType.value === 'download_every_document') 
           ? props.styles['separador-email'] 
           : props.styles['separador']}`}
       >
@@ -54,13 +54,13 @@ const SmsList = (props) => {
             </div>
             <div className={props.styles.clearfix}></div>
           </div>
-          {
+          {/* {
             (certificationType) 
-            && (certificationType === 'open_sms' 
-            || certificationType === 'open_document' 
-            || certificationType === 'open_every_document'
-            || certificationType === 'download_document'
-            || certificationType === 'download_every_document') 
+            && (certificationType.value === 'open_sms' 
+            || certificationType.value === 'open_document' 
+            || certificationType.value === 'open_every_document'
+            || certificationType.value === 'download_document'
+            || certificationType.value === 'download_every_document') 
               ? <div className={`
                   ${props.styles['seguimiento-certification-individual']} 
                   ${((props.getEventStatus(props.signer, 'sms_opened')) 
@@ -82,7 +82,7 @@ const SmsList = (props) => {
                     <div className={props.styles.linea}></div>
                     <div className={props.styles.info}>
                       <div className={props.styles.estado}>
-                        {i18n.t('signatureViewer.signerCard.body.emailOpened')}
+                        {i18n.t('signatureViewer.signerCard.body.smsOpened')}
                       </div>
                       {props.getEventDate(props.signer, 'sms_opened').split(' ')[0]}<br/>
                       {props.getEventDate(props.signer, 'sms_opened').split(' ')[1]}
@@ -91,13 +91,13 @@ const SmsList = (props) => {
                   </div>
                   <div className={props.styles.clearfix}></div>
                 </div> 
-              : null}
+              : null} */}
           {
             (certificationType) 
-            && (certificationType === 'open_document' 
-            || certificationType === 'open_every_document'
-            || certificationType === 'download_document'
-            || certificationType === 'download_every_document') 
+            && (certificationType.value === 'open_document' 
+            || certificationType.value === 'open_every_document'
+            || certificationType.value === 'download_document'
+            || certificationType.value === 'download_every_document') 
               ? <div className={`
                   ${props.styles['seguimiento-certification-individual']} 
                   ${(!certificationCompleted 
@@ -105,7 +105,7 @@ const SmsList = (props) => {
                     : ``
                     )}`}
                 >
-                  <span className="lf-icon-document"></span>
+                  <span className="lf-icon-sms-open"></span>
                   <div className={props.styles['cont-check-seguimiento']}>
                     <span className={`
                       ${(certificationCompleted 
@@ -146,10 +146,10 @@ const SmsList = (props) => {
         </div>
         {
           (certificationType) 
-          && (certificationType === 'open_document' 
-          || certificationType === 'open_every_document'
-          || certificationType === 'download_document'
-          || certificationType === 'download_every_document')
+          && (certificationType.value === 'open_document' 
+          || certificationType.value === 'open_every_document'
+          || certificationType.value === 'download_document'
+          || certificationType.value === 'download_every_document')
             ? <div className={props.styles.p15}>
                 <h2 className={props.styles['document-title']}>{i18n.t('emailViewer.attaches')}</h2>
                 {documentFilter.map(certificate => 

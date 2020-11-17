@@ -91,10 +91,11 @@ export class SmsMessageViewer extends Component {
 
   }
 
-  getDocments(selectedEmail, documents) {
+  getDocments(selectedSms, documents) {
     var counter = [];
     let findRes;
-    var certificationType = selectedEmail.data.find(d => d.key === 'certification_type');
+    var certificationType = selectedSms.data.find(d => d.key === 'certification_type');
+    certificationType = ( certificationType === null || certificationType === undefined) ? {key: 'certification_type', value: 'open_every_document'} : certificationType
     documents.forEach(doc => {
       if (certificationType.value === 'open_document'){
         findRes = doc.events.find(d => d.type.toLowerCase() === 'documents_opened');
