@@ -382,7 +382,9 @@
         "emailOpened": "Email abierto",
         "docOpened": "Documento abierto",
         "docSigned": "Documento firmado",
-        "docValidated": "Documento validado"
+        "docValidated": "Documento validado",
+        "smsSent": "Sms enviado",
+        "smsDelivered": "Sms entregado"
       },
       "footer": {
         "title": "RECORDATORIOS ENVIADOS",

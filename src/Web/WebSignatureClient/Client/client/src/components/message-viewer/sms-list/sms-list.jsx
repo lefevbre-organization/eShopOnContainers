@@ -32,7 +32,7 @@ const SmsList = (props) => {
                 <span className={`${((props.getEventStatus(props.signer, 'sms_processed')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
                 <div className={`${props.styles.linea} ${props.styles['primer-estado']}`}></div>
                 <div className={props.styles.info}>
-                  <div className={props.styles.estado}> {i18n.t('signatureViewer.signerCard.body.emailSent')}</div>
+                  <div className={props.styles.estado}> {i18n.t('signatureViewer.signerCard.body.smsSent')}</div>
                   {props.getEventDate(props.signer, 'sms_processed').split(' ')[0]}<br/>
                   {props.getEventDate(props.signer, 'sms_processed').split(' ')[1]}
                 </div>
@@ -46,7 +46,7 @@ const SmsList = (props) => {
               <span className={`${((props.getEventStatus(props.signer, 'sms_delivered')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
               <div className={props.styles.linea}></div>
               <div className={props.styles.info}>
-                <div className={props.styles.estado}> {i18n.t('signatureViewer.signerCard.body.emailDelivered')}</div>
+                <div className={props.styles.estado}> {i18n.t('signatureViewer.signerCard.body.smsDelivered')}</div>
                 {props.getEventDate(props.signer, 'sms_delivered').split(' ')[0]}<br/>
                 {props.getEventDate(props.signer, 'sms_delivered').split(' ')[1]}
               </div>

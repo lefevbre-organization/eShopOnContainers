@@ -363,7 +363,9 @@
         "emailOpened": "Email opened",
         "docOpened": "Document opened",
         "docSigned": "Document signed",
-	"docValidated": "Document validated"
+        "docValidated": "Document validated",
+        "smsSent": "SMS sent",
+        "smsDelivered": "SMS delivered"
       },
       "footer": {
         "title": "SENT REMINDERS",

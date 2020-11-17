@@ -381,7 +381,9 @@
         "emailOpened": "Email ouvert",
         "docOpened": "Document ouvert",
         "docSigned": "Document signé",
-	"docValidated": "Document validé"
+        "docValidated": "Document validé",
+        "smsSent": "Sms ennvoyé",
+        "smsDelivered": "Sms remis"
       },
       "footer": {
         "title": "Rappels envoyés",
