@@ -65,7 +65,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         private void WriteError(ErrorInfo errorInfo)
         {
-            WriteLine($"origin: {errorInfo.member}[{errorInfo.line}]-> error: {errorInfo.detail}");
+            var msgError = $"origin: {errorInfo.member}[{errorInfo.line}]-> error: {errorInfo.detail}";
+            log.LogError(msgError);
+            WriteLine(msgError);
         }
 
         public void WriteLine(string msg)
