@@ -9,11 +9,11 @@ import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
 import {  
-  downloadCertificationDocument,
+  downloadSmsCertificationDocument,
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
-import EmailList from './certificate-list/email-list';
+import SmsList from './sms-list/sms-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -218,8 +218,8 @@ export class SmsMessageViewer extends Component {
     return result;
   }
 
-  downloadTrailDocument(emailId, id, name, auth) {
-    downloadCertificationDocument(emailId, id, name, auth);
+  downloadTrailDocument(smsId, id, name, auth) {
+    downloadSmsCertificationDocument(smsId, id, name, auth);
   }
 
   onCancelSignature(signatureId, auth){
@@ -272,7 +272,7 @@ export class SmsMessageViewer extends Component {
     </div>`;
 
    
-    let smsConfig = sms.data.find(x => x.key === "roles");
+    let smsConfig = sms.data.find(x => x.key === "additional_info");
     let certificationType = sms.data.find(x => x.key === "certification_type" || x.key === "type");
 
     switch (sms.status) {
@@ -311,13 +311,13 @@ export class SmsMessageViewer extends Component {
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
             <div className={`${materialize.col} ${materialize['l12']} left`}>
-              {/* {this.state.filterCertificates.map((signer, index) => {
+              {this.state.filterCertificates.map((signer, index) => {
               return (
-                <EmailList 
+                <SmsList 
                  signer={signer}
                  signatureConfig={smsConfig ? smsConfig.value.split('|')[index].split(':') : null}
-                 emailId={email.id}
-                 email={email}
+                 smsId={sms.id}
+                 sms={sms}
                  index={index}
                  key={signer.id}
                  styles={styles}
@@ -329,9 +329,9 @@ export class SmsMessageViewer extends Component {
                  getSingleEventDate={this.getSingleEventDate}
                  downloadTrailDocument={this.downloadTrailDocument}
                  auth={this.props.auth}
-                ></EmailList>            
+                ></SmsList>            
                 )
-              })} */}
+              })}
             </div>
             <div className={styles.clearfix}></div>
         </div>

@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, setTitle } from '../../actions/application';
+import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -20,19 +20,16 @@ import ComposeMessageEditor from './composeMessageEditor.jsx';
 
 import Spinner from "../spinner/spinner";
 import {
-  createSignature,
-  createSignature2,
-  addOrUpdateSignature,
-  getUserSignatures,
-  createUser,
-  decAvailableSignatures,
+  createSms,
+  
+  addOrUpdateSms,
+  getUserSms,
   notifySignature,
   cancelSignatureCen,
   preloadSms,
   getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
-//import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
 import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
@@ -43,6 +40,7 @@ import RolSelector from './rol-selector/rol-selector';
 
 class SmsMessageEditor extends Component {
   constructor(props) {
+    console.log('Entra en el sms-message-editor');
     super(props);
     this.state = {
       linkDialogVisible: false,
@@ -68,6 +66,10 @@ class SmsMessageEditor extends Component {
     this.headerFormRef = React.createRef();
     this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
+    // Global events
+    this.handleOnDrop = this.onDrop.bind(this);
+    this.handleOnDragOver = this.onDragOver.bind(this);
+    this.handleOnDragLeave = this.onDragLeave.bind(this);
     // Header Address Events
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
@@ -75,11 +77,14 @@ class SmsMessageEditor extends Component {
     this.handleOnSubjectChange = this.onSubjectChange.bind(this);
     // Editor events
     this.handleEditorChange = this.editorChange.bind(this);
+    this.onAttachButton = this.onAttachButton.bind(this);
+    this.onAttachSelected = this.onAttachSelected.bind(this);
     this.callApis = this.callApis.bind(this);
     this.combineInfo = this.combineInfo.bind(this);
     this.getDocumentsNamesAndIds = this.getDocumentsNamesAndIds.bind(this);
     this.getDocumentsIds = this.getDocumentsIds.bind(this);
     this.getDocumentsNames = this.getDocumentsNames.bind(this);
+    this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
 
     this.onChangeCertification = this.onChangeCertification.bind(this);
     this.dialogClose = this.dialogClose.bind(this);
@@ -162,6 +167,9 @@ class SmsMessageEditor extends Component {
   
 
   dialogClose(){
+  	if (this.state.centinelaDownloadError === true){
+      	this.props.onShowError();
+  	}
     this.setState({
         hideAlertDialog: false, 
         hideConfirmDialog: false, 
@@ -200,7 +208,7 @@ class SmsMessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
+    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === 'Centinela')});
     //createSignature();
   }
 
@@ -216,21 +224,7 @@ class SmsMessageEditor extends Component {
   }
 
   render() {
-    const noSignersModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
-        ${i18n.t('noSignersModal.text')}
-      </div>`;
-
-
-    const noAttachModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
-        ${i18n.t('noAttachmentsModal.text')}
-      </div>`;
-
+    
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center; 
@@ -239,18 +233,7 @@ class SmsMessageEditor extends Component {
       </div>
     `;
 
-    const onlyPdfModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
-        ${i18n.t('onlyPdfModal.text')}
-      </div>
-    `;
-    const onlyPdf = ( 
-      (this.state.certificationType === 'open_document_sms' || this.state.certificationType === 'open_every_document_sms')
-      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
-    )
-
+    // console.log(mustHaveAttachments);
     const confirmButtons = [
       {
           click: () => {
@@ -278,6 +261,8 @@ class SmsMessageEditor extends Component {
       content,
       lefebvre
     } = this.props;
+
+    console.log(content);
 
     return (
       <div
@@ -316,14 +301,14 @@ class SmsMessageEditor extends Component {
               isContacts={this.state.isContacts}
               sendingType={sendingType}
             />
-             <div className={styles.subject}>
+             {/* <div className={styles.subject}>
               <input
                 type={'text'}
                 placeholder={t('messageEditor.subject')}
                 value={subject}
                 onChange={this.handleOnSubjectChange}
               />
-            </div>
+            </div> */}
           </form>
         </div>
         <div
@@ -343,7 +328,7 @@ class SmsMessageEditor extends Component {
               onConfirmAttachRemoval={this.showCancelCenModal}
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
-              fatherContainer={'EmailMessageEditor'}
+              fatherContainer={'SmsMessageEditor'}
             ></AttachmentsWidget>
             <CertificatesWidget 
               sendingType={sendingType}
@@ -351,6 +336,7 @@ class SmsMessageEditor extends Component {
               onChange={this.onChangeCertification}
             />
           </div>
+          {/* {`${(this.props.application.newMessage && this.props.application.newMessage.content && this.props.application.newMessage.content.length) ? this.props.application.newMessage.content.length : 0}/120`} */}
           <div className={styles['action-buttons-sms']}>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.cancel}`}
@@ -369,16 +355,11 @@ class SmsMessageEditor extends Component {
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
-          visible={this.state.hideAlertDialog} 
+          visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(
-            this.state.centinelaDownloadError === true ? 
-            attachNotFound : (this.props.attachments.length === 0 ? 
-            noAttachModal : (this.state.bigAttachments ?
-            bigFileModal : (onlyPdf) ? 
-            onlyPdfModal : noSignersModal))
-          )}
+          //content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 && mustHaveAttachments ? noAttachmentsModalCertification : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : (content && content.length > 120 && this.props.attachments.length === 0) ? maxCharacters : (content && content.length > 100 && this.props.attachments.length > 0) ? maxCharactersFile : noSignersModal)))}
+          content={this.getModalContent()}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           open={this.dialogOpen("info2Dialog")} 
           close={this.dialogClose}
@@ -559,6 +540,126 @@ class SmsMessageEditor extends Component {
     );
   }
 
+  getModalContent(){
+    const onlyPdf = ( 
+      (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document')
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
+    )
+
+    const mustHaveAttachments = (
+      (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document')
+    )
+
+    const wrongPhone = this.validPhoneNumbers(this.props.to);
+
+    const noSignersModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('noSignersModal.text')}
+      </div>`;
+
+    const noAttachmentsModalCertification = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('noAttachmentsModalCertification.text')}
+      </div>`;
+
+    const noAttachModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('noAttachmentsModal.text')}
+      </div>`;
+
+    const maxCharacters = `
+    <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+    <div style='text-align: justify; text-justify: inter-word; align-self: center;
+      padding-left: 20px; font-size: 17.5px !important'>
+      ${i18n.t('maxCharactersModal.text')}
+    </div>`;
+
+    const maxCharactersFile = `
+    <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+    <div style='text-align: justify; text-justify: inter-word; align-self: center;
+      padding-left: 20px; font-size: 17.5px !important'>
+      ${i18n.t('maxCharactersModal.text2')}
+    </div>`;
+
+    const bigFileModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('bigFileModal.text')}
+      </div>
+    `;
+
+    const attachNotFound = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('attachNotFoundCentinela.text')}
+      </div>
+    `;
+
+    const onlyPdfModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('onlyPdfModal.text')}
+      </div>
+    `;
+
+    const prefixModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('prefixModal.text')}
+      </div>
+    `;
+
+    const numberModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('numberModal.text')}
+      </div>
+    `;
+
+
+    if (this.state.centinelaDownloadError === true){
+      return attachNotFound;
+    } else if(this.props.attachments.length === 0 && mustHaveAttachments){
+      return noAttachmentsModalCertification;
+    } else if (this.state.bigAttachments){
+      return bigFileModal;
+    } else if (onlyPdf){
+      return onlyPdfModal;
+    } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
+      return maxCharacters;
+    } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length > 0){
+      return maxCharactersFile;
+    } else if (wrongPhone === 'WrongPrefix'){
+      return prefixModal;
+    } else if (wrongPhone === 'WrongNumber'){
+      return numberModal;
+    } else {
+      return noSignersModal;
+    }
+    // (this.state.centinelaDownloadError === true 
+    //   ? attachNotFound : (this.props.attachments.length === 0 && mustHaveAttachments 
+    //     ? noAttachmentsModalCertification : (this.state.bigAttachments 
+    //       ? bigFileModal : (onlyPdf) 
+    //       ? onlyPdfModal : (content && content.length > 120 && this.props.attachments.length === 0) 
+    //       ? maxCharacters : (content && content.length > 100 && this.props.attachments.length > 0) 
+    //       ? maxCharactersFile : noSignersModal)))
+  }
+
+  strip(html){
+    let doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+ }
 
   bigAttachments(){
     let maxSize = 15000000;
@@ -567,29 +668,45 @@ class SmsMessageEditor extends Component {
     return (totalSize >= maxSize);
   }
 
+  validPhoneNumbers(to){
+    let res = 'Ok';
+    to.forEach(recipient => {
+      let prefix = recipient.address.substring(0,3);
+      let number = recipient.address.substring(3, recipient.address.length);
+      let isNum = /^\d+$/.test(number);
+
+      if (prefix !== '+34'){
+        res = 'WrongPrefix';
+      } else if (recipient.address.length !== 12 || !isNum ){
+        res = 'WrongNumber'
+      }
+    });
+    return res;
+  }
+
   submit() {
     if (this.props.to.length === 0 ){
       this.setState({ hideAlertDialog: true });
+    } else if (this.validPhoneNumbers(this.props.to) !== 'Ok') {
+      this.setState({ hideAlertDialog: true });
+    } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
+      this.setState({ hideAlertDialog: true});
+    } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length > 0) {
+      this.setState({ hideAlertDialog: true});
     } else if ( this.props.attachments.length === 0 
-      && (this.state.certificationType === 'open_every_document_sms' )){
+      && (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')){
         this.setState({hideAlertDialog: true})
-    } 
-    else if ( (this.state.certificationType === 'open_every_document_sms' )
+    } else if ( (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
       && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')){
       this.setState({hideAlertDialog:true})
-    }
-    else if (this.bigAttachments()){
+    } else if (this.bigAttachments()){
       this.setState({ hideAlertDialog: true});
-    }
-    else {
+    } else {
       if (this.headerFormRef.current.reportValidity()) {
         // Get content directly from editor, state content may not contain latest changes
         const content = this.getEditor().getContent();
-        const { to, subject } = this.props;
+        const { to } = this.props;
         const { lefebvre } = this.props;
-        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.certifiedEmail) 
-          ? lefebvre.userBrandings.certifiedEmail.find((b) => b.app === lefebvre.userApp) 
-          : '';
           
         let guid = lefebvre.guid;
         if (guid === null) {
@@ -608,13 +725,11 @@ class SmsMessageEditor extends Component {
           });
           this.callApis(
             to,
-            subject,
-            content.innerHTML,
+            content,
             this.props.attachments,
             lefebvre.userId,
             guid,
-            this.state.certificationType,
-            userBranding
+            this.state.certificationType
           );
         }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
@@ -687,78 +802,98 @@ class SmsMessageEditor extends Component {
     return merged;
   }
 
-  //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
+  buildDocumentsInfo(sms) {
+    let result;
+    debugger;
+    result = (sms && sms.certificates) 
+      ? sms.certificates.map((c) => {
+          return {
+            phone: c.phone,
+            name: c.name,
+            externalId: c.id,
+            document: (c.file)
+              ? {
+                externalFileName: c.file.name,
+                internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
+                  ? this.props.lefebvre.idDocuments.find((d) =>{
+                    if (d.docName.replace(/[)( ]/g, '_') === c.file.name) {
+                      return {
+                        docId: d.docId,
+                        docName: d.docName 
+                      }
+                    }
+                  })
+                  : null
+              }
+              : null
+          }
+        })
+      : null
+
+    return result;
+  }
+
   callApis(
     recipients,
-    cc,
-    subject,
     content,
     files,
-    reminders,
-    expiration,
     userId,
     guid,
-    userBrandingId
+    type
   ) {
     const { lefebvre } = this.props;
     this.setState({isCallApis: true});
-    //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
-    createSignature2(
+    createSms(
       recipients,
       content,
       files,
-      this.state.numPagesOption,
       userId,
       guid,
-      userBrandingId,
+      type,
       this.props.credentials.encrypted
-    ).then((signatureInfo) => {
-      console.log(signatureInfo);
-      if (signatureInfo.status_code) {
-        console.log(
-          'Se ha producido un error: ' +
-          signatureInfo.status_code +
-          '-' +
-          signatureInfo.message
-        );
+    ).then((smsInfo) => {
+      console.log(smsInfo);
+      if (smsInfo.status_code) {
+        console.log('Se ha producido un error: ' + smsInfo.status_code + '-' + smsInfo.message);
       } else {
-        getUserSignatures(userId).then((userInfo) => {
-          // if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
-          //   var externalIds = getDocumentsNamesAndIds(signatureInfo);
-          //   var combinedInfo = combineInfo(externalIds, lefebvre.idDocuments);
-          //   debugger;
-          //   const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp, signers: to, idDocuments:combinedInfo}
-          //   createUser(userId, signature);
-          // } else {
-          // var externalIds = this.getDocumentsIds(signatureInfo);
-          // var documentsNames = this.getDocumentsNames(signatureInfo);
-          // var combinedInfo = this.combineInfo(externalIds, lefebvre.idDocuments);
+        getUserSms(userId).then((userInfo) => {
+          var documentsInfo = this.buildDocumentsInfo(smsInfo);
           debugger;
-          console.log('Insertando sólo firma');
-          addOrUpdateSignature(
+          console.log('Insertando sólo sms');
+          addOrUpdateSms(
             userId,
-            signatureInfo.id,
+            smsInfo.id,
             guid,
             lefebvre.userApp,
+            smsInfo.created_at,
+            type,
             documentsInfo
           );
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-          notifySignature(
-            lefebvre.userId,
-            lefebvre.idUserApp,
-            documentsInfo.length
-          );
+
+          let idUserApp = lefebvre.idUserApp;
+          let numDocs = (documentsInfo && documentsInfo.length) ? documentsInfo.length : 0;
+          
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
           this.props.setUserApp('lefebvre');
           this.props.setGuid(null);
-          this.props.setTitle('');
+          //this.props.setTitle('');
           this.props.setIdDocuments(null);
           this.props.close(this.props.application);
-          this.props.preloadSms(lefebvre.userId,  this.props.application.user.credentials.encrypted)
-          getNumAvailableSignatures(lefebvre.idUserApp)
+          this.props.preloadSms(lefebvre.userId, this.props.application.user.credentials.encrypted);
+          this.props.setTitle(i18n.t('topBar.certifiedSms'));
+          this.props.setSelectedService('certifiedSms'); 
+          this.props.setSignaturesFilterKey('Mostrar todas');
+          
+          notifySignature(
+            lefebvre.userId,
+            idUserApp,
+            1
+          );
+          getNumAvailableSignatures(idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
             .catch(err => {
                 console.log(err);
@@ -769,8 +904,8 @@ class SmsMessageEditor extends Component {
     });
   }
 
-  validateAddress(updatedMessage, id, address, name) {
-    const addressData = {address: address, name: name}
+  validateAddress(updatedMessage, id, address, name, email) {
+    const addressData = {address: address, name: name, email: email}
     if(updatedMessage.to.length == this.state.MaximumSigners) {
          console.log('Maximum Signers');
     } else {
@@ -785,7 +920,7 @@ class SmsMessageEditor extends Component {
    * @param id
    * @param address
    */
-  addAddress(id, address, name) {
+  addAddress(id, address, name, email) {
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
       const recipientRepeats = updatedMessage.to.some(data => {
@@ -793,7 +928,7 @@ class SmsMessageEditor extends Component {
      });
    
      if(!recipientRepeats){
-      this.validateAddress(updatedMessage, id, address, name);
+      this.validateAddress(updatedMessage, id, address, name, email);
      }
       
     }
@@ -1027,7 +1162,9 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth)
+  preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth),
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
+  setSignaturesFilterKey: key => dispatch(setSignaturesFilterKey(key))
 });
 
 export default connect(

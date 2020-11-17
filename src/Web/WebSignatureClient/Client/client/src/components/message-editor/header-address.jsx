@@ -150,7 +150,7 @@ export class HeaderAddress extends Component {
 
   onSuggestionSelected(event, { suggestionValue }) {
     this.setState({ value: '' });
-    this.props.onAddressAdd(this.props.id, suggestionValue, '');
+    this.props.onAddressAdd(this.props.id, suggestionValue, '', '');
     setTimeout(() => HeaderAddress.clearValidation(this.inputRef.current.input));
   }
 

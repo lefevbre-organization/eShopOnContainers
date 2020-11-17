@@ -228,10 +228,13 @@
     "text": "A reminder has been sent signer"
   },
   "noSignersModal": {
-    "text": "At least one signer must be specified in order to send the request."
+    "text": "At least one recipient must be specified in order to send the request."
   },
   "noAttachmentsModal": {
     "text": "A document must be attached in order to send the request."
+  },
+  "noAttachmentsModalCertification": {
+    "text": "A document must be attached in order to send the request with the selected certification type."
   },
   "bigFileModal": {
     "text": "Max size of attached files must be lower than 15MB."
@@ -255,6 +258,10 @@
   },
   "onlyPdfModal": {
     "text": "Selected option only admits pdf files."
+  },
+  "maxCharactersModal": {
+    "text": "A SMS has a limit of 120 characters.",
+    "text2": "A SMS with an attached file has a limit of 100 characters."
   },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
@@ -295,7 +302,7 @@
     "open_document": "The receiver has seen the documents (only pdf)",
     "open_every_document": "The receiver has opened all the documents (only pdf)",
     "delivery_sms": "The receiver has received the sms",
-    "open_sms": "The recipient has viewed the documents",
+    "open_document_sms": "The recipient has viewed the documents",
     "open_every_document_sms": "The receiver has opened all the documents"
   },
   "emailViewer": {

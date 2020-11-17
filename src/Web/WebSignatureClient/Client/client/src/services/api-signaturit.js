@@ -1279,9 +1279,13 @@ export const createSms = async (recipients, body, files, lefebvreId, guid, type,
       var recipientsData = [];
       var filesData = [];
       var customFieldsData = [];
+      var userAdditionalInfo = '';
 
-      recipients.forEach(recipient => {
-        recipientsData.push({name: ' ', phone: recipient.address})
+      recipients.forEach((recipient, i) => {
+        var name = (recipient.name === null || recipient.name === undefined || recipient.name === '') ? '' : recipient.name;
+        var email = (recipient.email === null || recipient.email === undefined || recipient.email === '') ? '' : recipient.email;
+        recipientsData.push({name: name, phone: recipient.address})
+        userAdditionalInfo += `i=${i}:phone=${recipient.address}:name=${(recipient.name === '') ? '-' : name}:email=${(recipient.email === '') ? '-' : email}|`
       })
       jsonObject.recipients = recipientsData;
     
@@ -1295,11 +1299,12 @@ export const createSms = async (recipients, body, files, lefebvreId, guid, type,
   
       customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
       customFieldsData.push({name: "lefebvre_guid", value: guid});
-      customFieldsData.push({name: "body", value: body});
-      customFieldsData.push({name: "certification_type", value: type})
+      customFieldsData.push({name: "body", value: body.innerText});
+      customFieldsData.push({name: "certification_type", value: type});
+      customFieldsData.push({name: "additional_info", value: userAdditionalInfo})
       jsonObject.customFields = customFieldsData;
   
-      jsonObject.body = body;  
+      jsonObject.body = (type === 'open_document' || type === 'open_every_document') ? `${body.innerText} {{short_url}}` : body.innerText;  
   
       var raw = JSON.stringify(jsonObject);
       console.log('Raw::');
@@ -1341,7 +1346,7 @@ export const downloadSmsCertificationDocument = (smsId, certificationId, fileNam
     redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/download/${emailId}/certificate/${certificationId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/download/${smsId}/certificate/${certificationId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);

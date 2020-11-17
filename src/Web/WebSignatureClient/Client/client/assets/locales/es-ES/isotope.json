@@ -247,10 +247,13 @@
     "text": "Se acaba de enviar un recordatorio al Firmante"
   },
   "noSignersModal": {
-    "text": "Debe especificar al menos un firmante para poder enviar la solicitud."
+    "text": "Debe especificar al menos un destinatario para poder enviar la solicitud."
   },
   "noAttachmentsModal": {
     "text": "Debe adjuntar un documento para poder enviar la solicitud."
+  },
+  "noAttachmentsModalCertification": {
+    "text": "Debe adjuntar un documento para poder enviar la solicitud con el tipo de certificación seleccionado."
   },
   "bigFileModal": {
     "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
@@ -274,6 +277,10 @@
   },
   "onlyPdfModal": {
     "text": "La opción seleccionada sólo admite archivos en formato pdf."
+  },
+  "maxCharactersModal": {
+    "text": "El número máximo de caracteres para un sms es 120.",
+    "text2": "El número máximo de caracteres para un sms con ficheros adjuntos es 100."
   },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
@@ -313,8 +320,8 @@
     "open_email": "El receptor ha abierto el email",
     "open_document": "El receptor ha visto los documentos (sólo pdf)",
     "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)",
-     "delivery_sms": "El destinatario ha recibido el sms",
-    "open_sms": "El destinatario ha visto los documentos",
+    "delivery_sms": "El destinatario ha recibido el sms",
+    "open_document_sms": "El destinatario ha visto los documentos",
     "open_every_document_sms": "El destinatario ha abirto todos los documentos"
   },
   "emailViewer": {

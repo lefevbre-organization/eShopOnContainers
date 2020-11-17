@@ -16,9 +16,9 @@ const CertificatesWidget = (props) => {
       // {name: 'El receptor se ha descargado todos los documentos', checked: false, disable: false, option: 6, id: "download_every_document"},
     ]
     const smsCertificates = [
-      {name: i18n.t('certificatesWidget.delivery_sms'), checked: true, disable: true, option: 1, id: 'delivery_sms'},
-      {name: i18n.t('certificatesWidget.open_sms'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 2, id: 'open_sms'},
-      {name: i18n.t('certificatesWidget.open_every_document_sms'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 3, id: 'open_every_document_sms'},
+      {name: i18n.t('certificatesWidget.delivery_sms'), checked: true, disable: true, option: 1, id: 'delivery'},
+      {name: i18n.t('certificatesWidget.open_document_sms'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 2, id: 'open_document'},
+      {name: i18n.t('certificatesWidget.open_every_document_sms'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 3, id: 'open_every_document'},
     ]
     useEffect(() => {
       if(certificates.length == 0) {

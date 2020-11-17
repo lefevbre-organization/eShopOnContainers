@@ -627,7 +627,7 @@ class MessageList extends Component {
                         ? 
                             recipientsList.push(
                                 {
-                                    text: signer.name,
+                                    text: (signer.name.trim() === '') ? 'Desconocido' : signer.name,
                                     cssClass: 'test'
                                 },
                                 {
@@ -637,7 +637,7 @@ class MessageList extends Component {
                         : 
                             recipientsList.push(
                                 {
-                                    text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
+                                    text: (signer.name.trim() === '') ? signer.email.split('@')[0] : signer.name,
                                     cssClass: 'test'
                                 },
                                 {
@@ -649,7 +649,7 @@ class MessageList extends Component {
                         ? 
                             recipientsList.push(
                                 {
-                                    text: signer.name,
+                                    text: (signer.name.trim() === '') ? 'Desconocido' : signer.name,
                                     cssClass: 'test'
                                 },
                                 {
@@ -662,7 +662,7 @@ class MessageList extends Component {
                         :
                             recipientsList.push(
                                 {
-                                    text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
+                                    text: (signer.name.trim() === '') ? signer.email.split('@')[0] : signer.name,
                                     cssClass: 'test'
                                 },
                                 {

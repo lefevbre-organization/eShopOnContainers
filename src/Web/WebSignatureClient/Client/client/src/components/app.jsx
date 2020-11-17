@@ -789,7 +789,8 @@ class App extends Component {
           }
         })
         .catch(err => { throw new Error(err);} );
-        this.props.preloadEmails(lefebvre.userId);
+        (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedEmail") {
       this.props.setSelectedService('certifiedEmail');
       this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
@@ -853,8 +854,9 @@ class App extends Component {
             }  
           }
         })
-        .catch(err => { throw new Error(err);} );
-        this.props.preloadSignatures(lefebvre.userId);      
+        .catch(err => { throw new Error(err);} );        
+        (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedSms") {
       this.props.setSelectedService('certifiedSms');
       this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
@@ -919,7 +921,8 @@ class App extends Component {
           }
         })
         .catch(err => { throw new Error(err);} );
-        this.props.preloadSignatures(lefebvre.userId);      
+        (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
