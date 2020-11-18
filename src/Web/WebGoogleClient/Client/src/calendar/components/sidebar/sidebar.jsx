@@ -128,11 +128,11 @@ export class Sidebar extends PureComponent {
 
     renderMyCalendarView(calendarsOwner) { 
         const { t } = this.props;
-       // this.props.isIframeContainer
+        
         return (
             <React.Fragment>
 
-                {this.layoutIframeEventView ? (
+                {!this.props.isIframeContainer ? (
                     <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
                         <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
                     </div> 
