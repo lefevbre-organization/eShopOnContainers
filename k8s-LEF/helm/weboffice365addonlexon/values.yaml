@@ -51,4 +51,4 @@ configValues: |
  window.URL_ADDON_LEXON='https://lexbox-test-webaddonlauncher.lefebvre.es';
  window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es/api/v1';
  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwlex.lefebvre.es/api/v2/accounts/usermail';
- window.RELEASE = 'RC 0.35'
+ window.RELEASE = 'RC 0.36'

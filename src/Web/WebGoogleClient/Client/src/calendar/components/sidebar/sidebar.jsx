@@ -29,7 +29,8 @@ export class Sidebar extends PureComponent {
 
         this.state = {
             selectedLabel: props.pathname,
-            leftSideBarOpen: true           
+            leftSideBarOpen: true 
+          
         };
 
         this.navigateToList = this.navigateToList.bind(this);
@@ -59,6 +60,7 @@ export class Sidebar extends PureComponent {
 
     sidebarAction() {
         this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
+      //  this.setState({ sideBarCollapsed:true })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -126,14 +128,23 @@ export class Sidebar extends PureComponent {
 
     renderMyCalendarView(calendarsOwner) { 
         const { t } = this.props;
+        
         return (
             <React.Fragment>
-                <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
-                    <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>                   
-                </div>  
+
+                {!this.props.isIframeContainer ? (
+                    <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
+                        <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
+                    </div> 
+
+                ) : (
+                      <div></div> 
+                    )}
+
+
+                
                 <li key="olders-nav-title" className="pl-2 nav-title">
-                    <span> {t("calendar-sidebar.mycalendars")}</span>
-                   
+                    <span> {t("calendar-sidebar.mycalendars")}</span>                
 
                     <ButtonComponent cssClass='newcalendar e-small e-round' onClick={this.newCalendarClick} iconCss='e-btn-sb-icons e-add-icon'></ButtonComponent>
                    
@@ -173,7 +184,7 @@ export class Sidebar extends PureComponent {
         if (calendarsOthers != undefined) {
 
             const { t } = this.props;
-          
+           
 
             return (
                 <React.Fragment>
