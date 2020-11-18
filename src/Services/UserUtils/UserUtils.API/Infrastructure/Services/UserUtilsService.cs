@@ -382,8 +382,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
                 var tokenRequest = new TokenRequest { idApp = (int?)AppCode.Signaturit, idClienteNavision = userDecoded.data };
                 var userSignature = await GetGenericTokenAsync(tokenRequest, true);
-                result.errors.AddRange(userSignature.errors);
-                result.infos.AddRange(userSignature.infos);
+                AddResultTrace(userSignature, result);
 
                 var encontrado = listByPass.Find(x => x.NameService.Equals("Signature-Direct"));
                 if (encontrado?.NameService == null)
