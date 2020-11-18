@@ -64,3 +64,7 @@ env:
       value: 'https://lexbox-websignature.lefebvre.es/completed'
     - name: Signaturit
       value: 'rRSMTouEvOtQsisUtwpiKBSxVxemmfNCMqUIqvzzwzVsxZsYXxIkyzKOWLgCJhSsBwTgiaNWklPFVtcGBTEEDq'
+    - name: SignatureNotificationUrl
+      value: 'https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
+    - name: CertifiedEmailNotificationUrl
+      value: 'https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'      

@@ -8,7 +8,7 @@ import { currentUser } from './user';
 
 export const INITIAL_STATE = {
   application: {
-    title: 'Mail',
+    title: 'Lefebvre Mail',
     user: {},
     newMessage: null,
     selectedFolderId: {},

@@ -63,15 +63,15 @@ class ProviderInbox extends Component {
     }
 
     render() {
-        const { provider, email, token } = this.props;
+        const { provider, email, token, service } = this.props;
         const user = this.getUser();
         const payload = (token) ? parseJwt(token) : "";
 
         let title;
         let linkHref;
 
-        linkHref = (token) ? buildClientUrlToken(provider, token) : buildClientUrl(provider, user, payload);
-
+        linkHref = (token) ? buildClientUrlToken(provider, token, service) : buildClientUrl(provider, user, payload);
+        
         switch (provider) {
             case INBOX_GOOGLE:
                 email != null && email !== undefined
@@ -101,6 +101,7 @@ class ProviderInbox extends Component {
                 if (token) {
                     linkHref += `?prov=${user.slice(0, 3)}`
                 }
+
                 return (
                     <React.Fragment>
                         <a href={linkHref} className="d-flex align-items-center">

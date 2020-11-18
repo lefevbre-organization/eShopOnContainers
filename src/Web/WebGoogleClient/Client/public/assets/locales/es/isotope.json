@@ -39,6 +39,7 @@
     "compose-message": "Componer Mensaje",
     "to": "Para:",
     "subject": "Asunto:",
+    "draft-save": "Borrador guardado",
     "comma-separated": "lista de emails separados por coma",
     "send-message": "Enviar mensaje",
     "send": "Enviar",
@@ -109,6 +110,7 @@
   },
   "schedule": {
     "eventtype": "Tipo de evento",
+    "visibility": "Privado",
     "profesional-event": "Evento profesional",
     "personal-event": "Evento personal",
     "attendees": "Invite a los asistentes",
@@ -145,6 +147,9 @@
     "modify": "Modificar",
     "cancel": "Cancelar",
     "newevent": "Añadir tipología"
+  },
+  "contactimport": {
+    "title": "Importar Eventos"
   },
   "tooltips": {
     "lexon": "Lex-on",

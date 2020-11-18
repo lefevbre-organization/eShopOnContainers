@@ -53,19 +53,31 @@
             return x => x.app.Equals(app.ToLowerInvariant());
         }
 
-        private static FilterDefinition<UserEmails> GetFilterEmail(string externalId)
+        private static FilterDefinition<CertifiedEmail> GetFilterCertificate(string certificateId)
         {
-            return Builders<UserEmails>.Filter.ElemMatch(u => u.CertifiedEmails, email => email.ExternalId == externalId);
+            return Builders<CertifiedEmail>.Filter.ElemMatch(c => c.Certificates, cert => cert.ExternalId == certificateId);
         }
-        
-        private static ProjectionDefinition<UserEmails> GetProjectEmail(string externalId)
+
+        private static FilterDefinition<UserEmails> GetFilterEmail(string certificateId)
         {
-            return Builders<UserEmails>.Projection.Include(u => u.User).ElemMatch(u => u.CertifiedEmails, email => email.ExternalId == externalId);//.Exclude(u => u.Id);
+            return Builders<UserEmails>.Filter.ElemMatch(u => u.CertifiedEmails, GetFilterCertificate(certificateId));
         }
-        
+
+        private static FilterDefinition<EmailEventInfo> GetFilterEvents(string certificateId)
+        {
+            return Builders<EmailEventInfo>.Filter.Eq(u => u.Certificate.CertificateId, certificateId);
+        }
+
         private static Predicate<CertifiedEmail> GetFilterUserEmailGuid(string guid)
         {
             return x => x.Guid.Equals(guid.ToUpperInvariant());
+        }
+        #endregion
+
+        #region Projects
+        private static ProjectionDefinition<UserEmails> GetProjectEmail(string certificateId)
+        {
+            return Builders<UserEmails>.Projection.Include(u => u.User).ElemMatch(u => u.CertifiedEmails, GetFilterCertificate(certificateId)).Exclude(u => u.Id);
         }
         #endregion
 
@@ -80,7 +92,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado del usuario {user}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado del usuario {user}"), "SG10");
                 }
                 else
                 {
@@ -91,7 +103,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}", "SG10");
             }
             return result;
         }
@@ -106,7 +118,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra información"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra información"), "SG11");
                 }
                 else
                 {
@@ -115,7 +127,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos: {ex.Message}"); ;
+                TraceInfo(result.infos, $"Error al obtener datos: {ex.Message}", "SG11"); ;
             }
 
             return result;
@@ -130,17 +142,18 @@
             {
                 var resultReplace = await _context.Emails.ReplaceOneAsync(filter, userEmail, GetUpsertOptions());
 
-                var id = ManageCreateSignature($"User don't inserted {userEmail.User}",
+                var id = ManageCreateMessage(
+                    $"User don't inserted {userEmail.User}",
                     $"User already existed and it's been modified {userEmail.User}",
                     $"User inserted {userEmail.User}",
-                    result, resultReplace);
+                    result.infos, result.errors, resultReplace, "SG03");
 
                 result.data = userEmail;
 
             }
             catch (Exception)
             {
-                TraceInfo(result.infos, $"Error al guardar la firma {userEmail.User}");
+                TraceInfo(result.infos, $"Error al guardar la firma {userEmail.User}", "SG03");
                 throw;
             }
             return result;
@@ -156,12 +169,12 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}", "SG12");
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG12");
             }
             return result;
         }
@@ -179,7 +192,7 @@
                 if (userDb == null)
                 {
                     userDb = userEmail;
-                    TraceInfo(result.infos, $"Se inserta el usuario {userEmail.User}");
+                    TraceInfo(result.infos, $"Se inserta el usuario {userEmail.User}", "SG13");
                 }
                 else
                 {
@@ -189,7 +202,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG13");
             }
 
             result.data = true;
@@ -209,7 +222,7 @@
                 if (userDb == null)
                 {
                     userDb = userSignature;
-                    TraceInfo(result.infos, $"Se inserta el branding {brandingIn.app} con id {brandingIn.externalId} para el usuario {user}");
+                    TraceInfo(result.infos, $"Se inserta el branding {brandingIn.app} con id {brandingIn.externalId} para el usuario {user}", "SG14");
                 }
                 else
                 {
@@ -219,34 +232,31 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG14");
             }
 
             result.data = true;
             return result;
         }
 
-        public async Task<Result<UserEmails>> GetEmail(string emailId)
+        public async Task<Result<UserEmails>> GetEmail(string certificateId)
         {
             var result = new Result<UserEmails>();
-            var filter = GetFilterEmail(emailId);
-            var project = GetProjectEmail(emailId);
+            var filter = GetFilterEmail(certificateId);
+            var project = GetProjectEmail(certificateId);
 
             try
             {
-                //result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
-                //result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
                 result.data = BsonSerializer.Deserialize<UserEmails>(await _context.Emails.Find(filter).Project(project).FirstOrDefaultAsync());
-                //result.data = await _context.Signatures.Find(filter).FirstOrDefaultAsync();
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {emailId}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún email certificado para el id {certificateId}"), "SG15");
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {emailId}: {ex.Message} - {ex.StackTrace}");
+                TraceInfo(result.infos, $"Error al obtener datos de {certificateId}: {ex.Message} - {ex.StackTrace}", "SG15");
             }
             return result;
         }
@@ -301,34 +311,79 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG16");
             }
             return result;
         }
 
         #endregion
 
-         #region Helpers
-        private string ManageCreateSignature(string msgError, string msgModify, string msgInsert, Result<UserEmails> result, ReplaceOneResult resultReplace)
+        #region Events
+        public async Task<Result<bool>> SaveEvent(EmailEventInfo eventInfo)
         {
-            if (resultReplace.IsAcknowledged)
+            var result = new Result<bool>();
+
+            try
             {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                await _context.EmailEvents.InsertOneAsync(eventInfo);
+                if (eventInfo.mongoId != null)
                 {
-                    TraceInfo(result.infos, msgModify);
+                    result.data = true;
+                    TraceInfo(result.infos, $"Evento recibido - {eventInfo.mongoId}", "SG32");
                 }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                else
                 {
-                    TraceInfo(result.infos, msgInsert);
-                    return resultReplace.UpsertedId.ToString();
+                    result.data = false;
+                    TraceInfo(result.infos, $"Evento no se ha podido almacenar - {eventInfo.mongoId}", "SG32");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                TraceError(result.errors, new Exception(msgError), "1003");
+                TraceError(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "SG32");
             }
-            return null;
+            return result;
         }
+
+        public async Task<Result<List<EmailEventInfo>>> GetEvents(string certificateId)
+        {
+            var result = new Result<List<EmailEventInfo>>();
+            var result2 = new Result<EmailEventInfo>();
+            var filter = GetFilterEvents(certificateId);
+
+            try
+            {
+                if (certificateId == "all")
+                {
+
+                    //result.data = BsonSerializer.Deserialize<SignEventInfo>(await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync());
+                    result.data = await _context.EmailEvents.Find(f => true).ToListAsync();
+                }
+                else
+                {
+                    result.data = await _context.EmailEvents.Find(filter).ToListAsync();
+                }
+
+
+                if (result.data == null || result.data.Count == 0)
+                {
+                    TraceError(result.errors, new Exception($"No se encuentra ningún evento para el email certificado {certificateId}"), "SG32");
+                }
+                else
+                {
+                    var events = result.data?.ToList();
+
+                    result.data = events;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al obtener datos de {certificateId}: {ex.Message}", "SG32");
+            }
+            return result;
+        }
+        #endregion
+
+        #region Helpers
 
         private UserEmails GetNewUserEmail(string user, CertifiedEmail emailIn)
         {
@@ -371,12 +426,12 @@
             if (emailDb == null)
             {
                 userDb.CertifiedEmails.Add(emailIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un email certificado idExterno: {emailIn.ExternalId} Guid: {emailIn.Guid} App: {emailIn.App}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un email certificado idExterno: {emailIn.ExternalId} Guid: {emailIn.Guid} App: {emailIn.App}", "SG22");
             }
             else
             {
                 UpdateEmailWithOther(emailIn, emailDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el email certificado {emailIn.ExternalId}-{emailDb.ExternalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el email certificado {emailIn.ExternalId}-{emailDb.ExternalId}", "SG22");
             }
         }
 
@@ -390,12 +445,12 @@
             if (brandingDb == null)
             {
                 userDb.Brandings.Add(brandingIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}", "SG17");
             }
             else
             {
                 UpdateBrandingWithOther(brandingIn, brandingDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el branding para {brandingIn.app}-{brandingIn.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el branding para {brandingIn.app}-{brandingIn.externalId}", "SG17");
             }
         }
 

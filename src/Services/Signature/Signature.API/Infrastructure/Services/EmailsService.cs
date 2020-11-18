@@ -30,6 +30,7 @@
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
         private readonly int _timeout;
+        private readonly int _timeoutFile;
 
         public EmailsService(
             IOptions<SignatureSettings> settings
@@ -43,6 +44,7 @@
             //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _configuration = configuration;
             _timeout = 5000;
+            _timeoutFile = 90000;
 
         }
 
@@ -82,73 +84,153 @@
         }
 
         #region Events
-        public async Task<Result<bool>> SaveEvent(SignEventInfo eventInfo)
+        public async Task<Result<bool>> SaveEvent(EmailEventInfo eventInfo)
         {
-            //return await _emailsRepository.SaveEvent(eventInfo);
-            return null;
+            return await _emailsRepository.SaveEvent(eventInfo);
         }
 
-        public async Task<Result<bool>> ProcessEvent(string signatureId, string documentId, string eventType)
+        public async Task<Result<bool>> ProcessEvent(string certificateId, string eventType)
         {
-            //////var result = new Result<BsonDocument>();
-            //var response = new Result<bool>();
+            ////var result = new Result<BsonDocument>();
+            var response = new Result<bool>();
 
-            //var result = await _signaturesRepository.GetSignature(signatureId);
+            var result = await _emailsRepository.GetEmail(certificateId);
 
-            //if (result.data != null && result.data.Signatures.Count > 0)
-            //{
-            //    ////var user = result.data["user"].AsString;
-            //    ////var guid = result.data["signatures"][0]["guid"].AsString;
-            //    ////var app = result.data["signatures"][0]["app"].AsString;
+            if (result.data != null && result.data.CertifiedEmails.Count > 0)
+            {
 
-            //    var user = result.data.User;
-            //    var guid = result.data.Signatures[0].Guid;
-            //    var app = result.data.Signatures[0].App;
+                var user = result.data.User;
+                var emailId = result.data.CertifiedEmails[0].ExternalId;
+                var guid = result.data.CertifiedEmails[0].Guid;
+                var app = result.data.CertifiedEmails[0].App;
 
 
-            //    if (app == "lexon")
-            //    {
-            //        // Se comenta porque de momento no se tiene integración con lexon
-            //        // Call lexon api to store document
-            //        // Downloadfile
-            //        //var file = GetFile(signatureId, documentId, eventType);
-            //        //response = await SaveFileLexon(file);
+                if (app == "lexon")
+                {
+                    // Se comenta porque de momento no se tiene integración con lexon
+                    // Call lexon api to store document
+                    // Downloadfile
+                    //var file = GetFile(signatureId, documentId, eventType);
+                    //response = await SaveFileLexon(file);
 
-            //    }
-            //    else if (app == "centinela")
-            //    {
-            //        var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
+                }
+                else if (app == "centinela")
+                {
+                    var cenDocId = result.data.CertifiedEmails[0].Certificates.Find(e => e.ExternalId == certificateId).Document.InternalInfo.DocId;
 
-            //        switch (eventType)
-            //        {
-            //            case "document_canceled":
-            //            case "document_expired":
-            //            case "document_declined":
-            //                response = await CancelFileCentinela(guid);
-            //                break;
-            //            case "document_completed":
-            //            case "audit_trail_completed":
-            //                // Downloadfile
-            //                var file = GetFile(signatureId, documentId, eventType);
-            //                response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
-            //                break;
-            //            default:
-            //                break;
-            //        }
-            //        // Call centinela api to store document
+                    switch (eventType)
+                    {
+                        case "certification_completed":
+                            // Downloadfile
+                            var file = new SignaturitService(_settings, _configuration).DownloadCertificationFile(emailId, certificateId);
+                            response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+                            break;
+                        default:
+                            break;
+                    }
+                    // Call centinela api to store document
 
-            //    }
-            //}
+                }
+            }
 
-            //return response;
-
-            return null;
+            return response;
         }
 
-        public async Task<Result<List<SignEventInfo>>> GetEvents(string signatureId)
+        public async Task<Result<List<EmailEventInfo>>> GetEvents(string certificateId)
         {
-            //return await _signaturesRepository.GetEvents(signatureId);
-            return null;
+            return await _emailsRepository.GetEvents(certificateId);
+        }
+        #endregion
+
+
+        #region HelperFunctions
+
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string user, string eventType)
+        {
+            Console.WriteLine($"START SaveFileCentinela");
+
+            Result<bool> result;
+
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post";
+
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+            var values = new Dictionary<string, string>();
+
+            client.Timeout = _timeoutFile;
+
+            values.Add("idNavision", user);
+            values.Add("conceptId", cenDocId);
+            values.Add("name", file["fileName"].AsString);
+            values.Add("contentFile", file["fileContent"].AsString);
+
+            var outputJson = JsonConvert.SerializeObject(values);
+            request.AddHeader("Accept", "text/plain");
+            request.AddHeader("Content-Type", "application/json-patch+json");
+
+            request.AddParameter("application/json-patch+json", outputJson, ParameterType.RequestBody);
+
+            Console.WriteLine($"Call to: {url}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            Console.WriteLine($"Response: {response.Content} - {response.StatusCode}");
+
+            JObject responseJson = JObject.Parse(response.Content);
+            List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
+            List<ErrorInfo> errors = (List<ErrorInfo>)responseJson["errors"].ToObject(typeof(List<ErrorInfo>));
+
+            if (response.Content != null && errors.Count == 0)
+            {
+                result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
+            }
+            else
+            {
+                result = new Result<bool>() { errors = errors, infos = infos, data = false };
+            }
+
+            //Console.WriteLine(response.Content);
+            Console.WriteLine($"END SaveFileCentinela");
+
+            return result;
+        }
+
+        public async Task<Result<bool>> CancelFileCentinela(string cenDocId)
+        {
+
+            Console.WriteLine($"START CancelFileCentinela");
+
+            Result<bool> result;
+
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/cancelation/{cenDocId}";
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+
+            client.Timeout = _timeout;
+
+            Console.WriteLine($"Call to {url}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            Console.WriteLine($"Response: {response.ToString()}");
+
+            JObject responseJson = JObject.Parse(response.Content);
+            List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
+            List<ErrorInfo> errors = (List<ErrorInfo>)responseJson["errors"].ToObject(typeof(List<ErrorInfo>));
+
+            if (response.Content != null && errors.Count == 0)
+            {
+                result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
+            }
+            else
+            {
+                result = new Result<bool>() { errors = errors, infos = infos, data = false };
+            }
+
+            //Console.WriteLine(response.Content);
+            Console.WriteLine($"END CancelFileCentinela");
+
+            return result;
         }
         #endregion
     }

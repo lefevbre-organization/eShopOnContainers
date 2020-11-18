@@ -53,7 +53,7 @@ class AttachmentsWidget extends Component{
                             type='file'
                             name='name'
                             style={{ display: 'none' }}
-                            multiple={false}    
+                            multiple={this.props.fatherContainer === 'MessageEditor' ? false : true}    
                         />
                     </button>
                     <div className="clearfix"></div>

@@ -130,6 +130,21 @@ export const getMessageListWithRFC = (q) =>
       });
   });
 
+
+export const getDraftListWithRFC = (q) =>
+  new Promise((resolve, reject) => {
+    window.gapi.client.gmail.users.drafts
+      .list({
+        userId: 'me',
+        q: `rfc822msgid:${q}`,
+        maxResults: 1,
+      })
+      .then((response) => resolve(response))
+      .catch((err) => {
+        reject(err);
+      });
+  });
+
 const getMessageHeaders = (response) => {
   const messageResult = response.result;
 
@@ -405,7 +420,8 @@ function formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
   return body;
 }
 
-export const sendMessage = async ({ headers, body, attachments }) => {
+
+const getDataEmail = ({ headers, body, attachments }) => {
   let email = '';
   let guidGlobal = uuidv4();
   let guidRelated = uuidv4();
@@ -417,7 +433,7 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   let formattedBody = body;
   let plainTextBody;
 
-  if (body.search('<img src=') !== -1) {
+  if (body && body.search('<img src=') !== -1) {
     embeddedImagesList = getEmbeddedImages(body);
     if (embeddedImagesList.length > 0) {
       embeddedImages = true;
@@ -526,6 +542,51 @@ export const sendMessage = async ({ headers, body, attachments }) => {
     email += `${fileData2}`;
   }
   email += `--${guidGlobal}--`;
+  return email;
+}
+
+export const createDraft = async ({ headers, body, attachments, draftId }) => {
+ 
+  let email = getDataEmail({ headers, body, attachments });
+
+  return new Promise((resolve, reject) => {
+    const base64EncodedEmail = Base64.encodeURI(email);
+    let draft = null;
+    if(draftId != '') {
+      draft =  window.gapi.client.gmail.users.drafts.update({
+        userId: 'me',
+        id: draftId,
+        resource: {
+          message: {
+            raw: base64EncodedEmail,
+          }
+        },
+      });
+     } else {
+      draft = window.gapi.client.gmail.users.drafts.create({
+        userId: 'me',
+        resource: {
+          message: {
+            raw: base64EncodedEmail,
+          }
+        },
+      });
+    }
+    
+    draft.execute((err, res) => {
+      if (err.error) {
+        reject(err.error);
+      } else {
+        resolve(err);
+      }
+    });
+  });
+};
+
+
+export const sendMessage = async ({ headers, body, attachments }) => {
+  
+  let email = getDataEmail({ headers, body, attachments });
 
   return new Promise((resolve, reject) => {
     const base64EncodedEmail = Base64.encodeURI(email);

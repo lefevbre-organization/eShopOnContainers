@@ -48,6 +48,7 @@ class App extends Component {
           <Route exact path='/message/:idMail' component={AppContainer} />
           <Route exact path='/user/:idUser' component={UserLexon} />
           <Route exact path='/calendar/user/:idUser' component={UserCalendar} />
+          <Route exact path='/calendar/access/:token' component={UserCalendar} />
           <Route path='/calendar' component={AppContainerCalendar} />
          {/*<Route path='/jitsi' component={Jitsi} />*/}
           <Route path='/' component={AppContainer} />

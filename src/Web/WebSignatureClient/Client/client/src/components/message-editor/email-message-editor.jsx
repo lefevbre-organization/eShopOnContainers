@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, setTitle } from '../../actions/application';
+import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -25,7 +25,8 @@ import {
   getUserEmails,
   notifySignature,
   cancelSignatureCen,
-  preloadEmails
+  preloadEmails,
+  getNumAvailableSignatures
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
@@ -174,7 +175,7 @@ class EmailMessageEditor extends Component {
       this.fileInput.onchange = this.onAttachSelected;
     }
     
-    this.setState({isContacts: this.props.lefebvre.userApp === "centinela"});
+    this.setState({isContacts: this.props.lefebvre.roles.some(e => e === 'Centinela')});
     //createSignature();
   }
 
@@ -190,6 +191,7 @@ class EmailMessageEditor extends Component {
   }
 
   render() {
+
     const noSignersModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -227,6 +229,18 @@ class EmailMessageEditor extends Component {
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
+
+    const onlyPdfModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('onlyPdfModal.text')}
+      </div>
+    `;
+    const onlyPdf = ( 
+      (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
+    )
 
     const confirmButtons = [
       {
@@ -295,7 +309,7 @@ class EmailMessageEditor extends Component {
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
             />
-            <HeaderAddress
+            {/* <HeaderAddress
               id={'cc'}
               addresses={cc}
               onAddressAdd={this.handleAddAddress}
@@ -308,7 +322,7 @@ class EmailMessageEditor extends Component {
               getAddresses={this.props.getAddresses}
               label={t('messageEditor.cc')}
               lefebvre={lefebvre}
-            />
+            /> */}
             <div className={styles.subject}>
               <input
                 type={'text'}
@@ -337,7 +351,10 @@ class EmailMessageEditor extends Component {
               resetIsFileDrop={this.resetIsFileDrop}
               fatherContainer={'EmailMessageEditor'}
             ></AttachmentsWidget>
-            <CertificatesWidget onChange={this.onChangeCertification}/>
+            <CertificatesWidget 
+              userApp={lefebvre.userApp}
+              onChange={this.onChangeCertification}
+            />
           </div>
           <div className={styles['action-buttons']}>
             <button
@@ -361,7 +378,7 @@ class EmailMessageEditor extends Component {
           visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
+          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : noSignersModal)))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
@@ -532,6 +549,10 @@ class EmailMessageEditor extends Component {
       && (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')){
         this.setState({hideAlertDialog: true})
     } 
+    else if ( (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
+      && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')){
+      this.setState({hideAlertDialog:true})
+    }
     else if (this.bigAttachments()){
       this.setState({ hideAlertDialog: true});
     }
@@ -660,26 +681,31 @@ class EmailMessageEditor extends Component {
 
   buildDocumentsInfo(email) {
     let result;
-
-    result = (email && email.certificates) ? email.certificates.map((e) => {
-      return {
-        email: e.email,
-        name: e.name,
-        externalId: e.id,
-        document: (e.file) 
-          ? {
-              externalFileName: e.file.name, 
-              internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
-                ? this.props.lefebvre.idDocuments.find((d) => {
-                    if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
-                      return d.docId;
+    debugger;
+    result = (email && email.certificates) 
+      ? email.certificates.map((c) => {
+          return {
+            email: c.email,
+            name: c.name,
+            externalId: c.id,
+            document: (c.file)
+              ? {
+                externalFileName: c.file.name,
+                internalInfo: ( this.props.lefebvre && this.props.lefebvre.idDocuments ) 
+                  ? this.props.lefebvre.idDocuments.find((d) =>{
+                    if (d.docName.replace(/[)( ]/g, '_') === c.file.name) {
+                      return {
+                        docId: d.docId,
+                        docName: d.docName 
+                      }
                     }
-                  }) 
-                : null
-            } 
-          : null
-      };
-    }) : null ;
+                  })
+                  : null
+              }
+              : null
+          }
+        })
+      : null
 
     return result;
   }
@@ -708,48 +734,56 @@ class EmailMessageEditor extends Component {
       type,
       userBrandingId.externalId,
       this.props.credentials.encrypted
-    ).then((signatureInfo) => {
-      console.log(signatureInfo);
-      if (signatureInfo.status_code) {
-        console.log(
-          'Se ha producido un error: ' +
-          signatureInfo.status_code +
-          '-' +
-          signatureInfo.message
-        );
+    ).then((emailInfo) => {
+      console.log(emailInfo);
+      if (emailInfo.status_code) {
+        console.log('Se ha producido un error: ' + emailInfo.status_code + '-' + emailInfo.message);
       } else {
         getUserEmails(userId).then((userInfo) => {
-          var documentsInfo = this.buildDocumentsInfo(signatureInfo);
+          var documentsInfo = this.buildDocumentsInfo(emailInfo);
           debugger;
           console.log('Insertando sólo email');
           addOrUpdateEmail(
             userId,
-            signatureInfo.id,
+            emailInfo.id,
             guid,
             lefebvre.userApp,
-            signatureInfo.created_at,
+            emailInfo.created_at,
             type,
             documentsInfo
           );
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-          // notifySignature(
-          //   lefebvre.userId,
-          //   lefebvre.idUserApp,
-          //   documentsInfo.length
-          // );
-          this.props.preloadEmails(lefebvre.userId)
+
+          let idUserApp = lefebvre.idUserApp;
+          let numDocs = documentsInfo.length;
+          
+          this.props.setMailContacts(null);
+          this.props.setAdminContacts(null);
+          this.props.setUserApp('lefebvre');
+          this.props.setGuid(null);
+          //this.props.setTitle('');
+          this.props.setIdDocuments(null);
+          this.props.close(this.props.application);
+          this.props.preloadEmails(lefebvre.userId, this.props.application.user.credentials.encrypted);
+          this.props.setTitle(i18n.t('topBar.certifiedEmail'));
+          this.props.setSelectedService('certifiedEmail'); 
+          this.props.setSignaturesFilterKey('Mostrar todas');
+          
+          notifySignature(
+            lefebvre.userId,
+            idUserApp,
+            1//numDocs
+          );
+          getNumAvailableSignatures(idUserApp)
+            .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
+            .catch(err => {
+                console.log(err);
+            });
         });
       }
       this.setState({isCallApis: false});
-      this.props.setMailContacts(null);
-      this.props.setAdminContacts(null);
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
-      this.props.setTitle('');
-      this.props.setIdDocuments(null);
-      this.props.close(this.props.application);
     });
   }
 
@@ -878,13 +912,13 @@ class EmailMessageEditor extends Component {
        
     };
     if (this.props.editedMessage.attachments.length === 0){
-      let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
-      //Array.from(event.dataTransfer.files).forEach((file) => {
+      // let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
+      Array.from(event.dataTransfer.files).forEach((file) => {
         const fileReader = new FileReader();
         fileReader.onload = addAttachment.bind(this, file);
         fileReader.readAsDataURL(file);
         this.setState({isFileType: false});
-      //});
+      });
     }
     
     return true;
@@ -1031,7 +1065,9 @@ const mapDispatchToProps = (dispatch) => ({
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
   setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
-  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth)
+  preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
+  setSignaturesFilterKey: key => dispatch(setSignaturesFilterKey(key))
 });
 
 export default connect(

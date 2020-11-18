@@ -65,12 +65,18 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         private void WriteError(ErrorInfo errorInfo)
         {
-            WriteLine($"origin: {errorInfo.member}[{errorInfo.line}]-> error: {errorInfo.detail}");
+
+            WriteLine($"Origin: {errorInfo.member}[{errorInfo.line}]", true);
+            WriteLine($"Error: {errorInfo.area}/{errorInfo.code}: {errorInfo.message}", true);
+            WriteLine($"Detail: {errorInfo.detail}", true);
         }
 
-        public void WriteLine(string msg)
+        public void WriteLine(string msg, bool isError = true)
         {
-            log.LogDebug(msg);
+            if (isError)
+                log.LogDebug(msg);
+            else
+                log.LogError(msg);
             System.Diagnostics.Trace.WriteLine(msg);
         }
 
@@ -92,7 +98,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             {
                 builder.Append($"{item} ");
             }
-            WriteLine(builder.ToString());
+            WriteLine(builder.ToString(), false);
         }
 
         //public Exception GetInfoErrorFromParameters(object codeError, object valueError)
@@ -236,31 +242,37 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return (errors?.Count == 0 && count != null && count > 0);
         }
 
-        public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
+        //public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
+        //{
+        //    int? ErrorCode = null;
+        //    string Error = null;
+        //    int? Count = null;
+        //    try
+        //    {
+        //        if (idError is int)
+        //            ErrorCode = (int?)idError;
+
+        //        if (TextError is int || TextError is string)
+        //            Error = TextError.ToString();
+
+        //        if (!(ErrorCode == null && Error == null))
+        //            Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
+
+        //        if (Total is int)
+        //            Count = (int?)Total;
+        //    }
+        //    catch (Exception exp)
+        //    {
+
+        //        Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message });
+        //    }
+        //    return Count;
+        //}
+
+        public void AddResultTrace<Tin, Tout>(Result<Tin> resultIn, Result<Tout> resultOut)
         {
-            int? ErrorCode = null;
-            string Error = null;
-            int? Count = null;
-            try
-            {
-                if (idError is int)
-                    ErrorCode = (int?)idError;
-
-                if (TextError is int || TextError is string)
-                    Error = TextError.ToString();
-
-                if (!(ErrorCode == null && Error == null))
-                    Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
-
-                if (Total is int)
-                    Count = (int?)Total;
-            }
-            catch (Exception exp)
-            {
-
-                Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message });
-            }
-            return Count;
+            resultOut.errors.AddRange(resultIn.errors);
+            resultOut.infos.AddRange(resultIn.infos);
         }
     }
 }

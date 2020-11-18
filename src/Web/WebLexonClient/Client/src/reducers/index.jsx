@@ -3,6 +3,7 @@ import email from './email';
 import selections from './selections';
 import documentsReducer from './documentsReducer';
 import applicationReducer from './applicationReducer';
+import eventsReducer from './eventsReducer';
 
 export const INITIAL_STATE = {
   application: {
@@ -20,13 +21,17 @@ export const INITIAL_STATE = {
     typeSelected: null,
     initialBBDD: null,
     provider: null,
-    user: null
+    user: null,
+    app: null
   },
   documents: {
     showModalDocuments: false,
     showAttachDocuments: false,
     showImportContacts: false,
   },
+  events: {
+    eventClassifications: []
+  }
 };
 
 export default combineReducers({
@@ -34,4 +39,5 @@ export default combineReducers({
   selections,
   documentsReducer,
   applicationReducer,
+  events: eventsReducer
 });

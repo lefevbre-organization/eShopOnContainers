@@ -125,6 +125,11 @@ export const setRoles = roles => ({
     payload: roles
 })
 
+export const setTargetService = service => ({
+    type: ActionTypes.LEFEBVRE_TARGETSERVICE,
+    payload: service
+})
+
 
 export default {
     setUser,
@@ -151,5 +156,6 @@ export default {
     setIdUserApp,
     setIdDocuments,
     setAdminContacts,
-    setRoles
+    setRoles,
+    setTargetService
 };

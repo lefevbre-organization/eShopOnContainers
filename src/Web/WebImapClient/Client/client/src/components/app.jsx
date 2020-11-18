@@ -113,6 +113,7 @@ class App extends Component {
       this
     );
     this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
+    this.onRefresh = this.onRefresh.bind(this);
   }
 
   hasProduct(product) {
@@ -184,6 +185,10 @@ class App extends Component {
     this.setState({ sidebarDocked: open });
   }
 
+  onRefresh() {
+    this.refreshPoll();
+  }
+
   sendMessagePutUser(user) {
     const { selectedMessages, selected } = this.props.messages;
     console.log('messages ->', this.props.messages);
@@ -199,7 +204,7 @@ class App extends Component {
           idFolder: this.props.lexon.idFolder,
           account: this.props.all.login.formValues.user,
           provider: 'IMAP',
-          env: window.currentUser?window.currentUser.env:null
+          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
         },
       })
     );
@@ -243,7 +248,7 @@ class App extends Component {
           selectedMessages: selectedMessages,
           account: this.props.all.login.formValues.user,
           provider: 'IMAP',
-          env: window.currentUser?window.currentUser.env:null
+          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
         },
       })
     );
@@ -314,6 +319,7 @@ class App extends Component {
           <TopBar
             sideBarCollapsed={sideBar.collapsed}
             sideBarToggle={this.toggleSideBar}
+            onRefreshClick={this.onRefresh}
           />
           <div id='mainnav-app' />
           {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
@@ -527,9 +533,9 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    document.title = this.props.application.title;
+    document.title = 'Lefebvre Mail';
     //Starting poll to update the inbox automatically
-    this.startPoll();
+    //this.startPoll();
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
@@ -851,7 +857,7 @@ class App extends Component {
    * @returns {Promise<void>}
    */
   async refreshPoll() {
-    let keepPolling = true;
+    let keepPolling = false;
     try {
       if (this.props.lexon.idEmail && !this.props.lexon.emailShown) {
         const folderPromise = this.props.reloadFolders();

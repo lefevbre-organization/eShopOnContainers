@@ -32,7 +32,7 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest
+      key: all__EnableLoadTest
     - name: SignatureApiUrlHC
       key: internalurls__signatureapi__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
@@ -57,4 +57,4 @@ configValues: |
   window.API_GATEWAY_CEN = 'https://lexbox-apigwcen.lefebvre.es'
   window.API_GATEWAY_ACC = 'https://lexbox-apigwcen.lefebvre.es'
   window.POLLING_INTERVAL = 10000
-  window.RELEASE = 'RC 0.34'
+  window.RELEASE = 'RC 0.35'

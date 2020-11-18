@@ -893,7 +893,8 @@ export const createBranding2 = async (template, auth) => {
       signatures_receipt:  template.templates.signatures_receipt,
       pending_sign:  template.templates.pending_sign,
       document_canceled:  template.templates.document_canceled,
-      request_expired:  template.templates.request_expired
+      request_expired:  template.templates.request_expired,
+      emails_request : (template.templates.emails_request) ? template.templates.emails_request : ""
     }
     jsonObject.text_color = template.text_color
     jsonObject.show_survey_page = template.show_survey_page
@@ -1015,12 +1016,12 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
       var customFieldsData = [];
 
       recipients.forEach(recipient => {
-        recipientsData.push({name: recipient.address.split('@')[0], email: recipient.address})
+        recipientsData.push({name: ' ', email: recipient.address})
       })
       jsonObject.recipients = recipientsData;
     
       cc.forEach(recipient => {
-        ccData.push({name: recipient.split('@')[0], email: recipient})
+        ccData.push({name: ' ', email: recipient.address})
       });
       jsonObject.cc = ccData;
 
@@ -1201,7 +1202,9 @@ const getDocumentsEmail = (email) => {
   var documents = [];
   email.certificates.forEach(certificate => {
     if (!documents.find(document => document == JSON.stringify(certificate.file))){
-      documents.push(JSON.stringify(certificate.file));
+      if (certificate.file !== undefined){
+        documents.push(JSON.stringify(certificate.file));
+      }
     }
   });
   return documents;
@@ -1213,7 +1216,17 @@ const countCertificationEvents = (email) => {
     if (certificate.events.find(ev => ev.type == "certification_completed")){
       counter++;
     }
-  })
+  });
+  return counter;
+}
+
+const countErrorEvents = (email) => {
+  var counter = 0;
+  email.certificates.forEach(certificate => {
+    if (certificate.status === 'error'){
+      counter++;
+    }
+  });
   return counter;
 }
 
@@ -1234,8 +1247,13 @@ const calculateStatusEmails = (emails) => {
     var numRecipients = countDistinctEmails(email);
     var numDocuments = countDistinctDocuments(email);
     var numCertifiedEvents = countCertificationEvents(email);
+    var numErrorEvents = countErrorEvents(email);
 
-    if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
+    numDocuments = (numDocuments === 0) ? 1 : numDocuments;
+
+    if (numErrorEvents > 0){
+      email.status = 'error'
+    } else if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
       email.status = 'completed'
     } else {
       email.status = 'ready'
