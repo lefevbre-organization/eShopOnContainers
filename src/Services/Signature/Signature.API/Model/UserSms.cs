@@ -26,21 +26,27 @@
 
     public partial class CertifiedSms
     {
+        [JsonProperty("guid")]
         [BsonElement("guid")]
         public string Guid { get; set; }
 
+        [JsonProperty("externalId")]
         [BsonElement("externalId")]
         public string ExternalId { get; set; }
 
+        [JsonProperty("app")]
         [BsonElement("app")]
         public string App { get; set; }
 
+        [JsonProperty("created_at")]
         [BsonElement("created_at")]
         public string CreatedAt { get; set; }
 
+        [JsonProperty("type")]
         [BsonElement("type")]
         public string CertificationType { get; set; }
 
+        [JsonProperty("certificate")]
         [BsonElement("certificate")]
         public List<SmsCertificate> Certificates { get; set; }
     }

@@ -328,7 +328,7 @@
     "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)",
     "delivery_sms": "El destinatario ha recibido el sms",
     "open_document_sms": "El destinatario ha visto los documentos",
-    "open_every_document_sms": "El destinatario ha abirto todos los documentos"
+    "open_every_document_sms": "El destinatario ha abierto todos los documentos"
   },
   "emailViewer": {
     "certification": "Tipo de certificación seleccionada:",
