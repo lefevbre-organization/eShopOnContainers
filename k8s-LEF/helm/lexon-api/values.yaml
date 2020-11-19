@@ -54,7 +54,7 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: DefaultEnvironment
-      value: 'QA'
+      value: 'PRE'
     - name: UseMongo
       value: false
     - name: EnvModels__0__env
