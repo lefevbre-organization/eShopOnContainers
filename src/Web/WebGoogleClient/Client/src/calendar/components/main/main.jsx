@@ -102,7 +102,9 @@ export class Main extends Component {
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
         this.layoutIframe = false;
-        this.layoutIframeEventView = false;
+        this.layoutIframeNewEventView = false;
+        this.layoutIframeEditEventView = false;
+
         this.state = {
             isVisible: true,
             sidebarOpen: false,
@@ -205,7 +207,7 @@ export class Main extends Component {
             }
         ];
 
-    this.checkForParams();
+        this.TokensFlows();
     }
 
    
@@ -240,19 +242,19 @@ export class Main extends Component {
         }
     }
 
-    checkForParams() {
-       
-        let params = (new URL(document.location)).searchParams;
-
-        if (params.get('layout') != undefined) {
-            this.layoutIframe = true;
-           
-           // this.setState({ sidebarCollapsed: true });
-        }       
-
-        if (params.get('newEvent') != undefined) {
-            this.layoutIframeEventView = true;
+    TokensFlows() {
+        if (window != window.top)
+        {
+            this.layoutIframe = true;           
         }
+
+        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+            this.layoutIframeEditEventView = true
+        }
+        else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+            this.layoutIframeNewEventView = true
+        }
+
     }
 
     convertUnicode(input) {
@@ -753,7 +755,7 @@ export class Main extends Component {
             obj.getlistEventTypes()
            
             // New event is called by params
-            if (obj.layoutIframeEventView) {
+            if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenEditor()
                 }, 1000); 
@@ -1161,7 +1163,7 @@ export class Main extends Component {
 
             }, 1000);
 
-            if (this.layoutIframe & this.layoutIframeEventView) {
+            if (this.layoutIframe & this.layoutIframeNewEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
                 head.classList.add('hidden');
             }
@@ -1269,7 +1271,7 @@ export class Main extends Component {
             }
 
             // if from iframe is requested a new event
-            if (!this.layoutIframeEventView) {
+            if (!this.layoutIframeNewEventView) {
 
                 let TabContainer = args.element.querySelector('.custom-tab-row');
                 if (TabContainer == null) {
@@ -2185,7 +2187,7 @@ export class Main extends Component {
                     </Fragment>
 
 
-                    {this.layoutIframeEventView ? (
+                    {this.layoutIframeNewEventView && this.layoutIframe  ? (
                         <style jsx>{`
                         .e-dlg-overlay {
                             background-color: #FFFFFF !important;
