@@ -2004,7 +2004,8 @@ export class Main extends Component {
                                     onCalendarOpenEditor={this.handleScheduleOpenEditor}
                                     onCalendarOpenCalnendarView={this.openCalendarView}
                                     onCalendarDelete={this.deleteCalendar}
-                                    onCalendarColorModify={this.calendarColorModify}                                
+                                    onCalendarColorModify={this.calendarColorModify}   
+                                    isIframeContainer={this.layoutIframe} 
                                     ref={sidebar => this.sidebarCalendarObj = sidebar}
                                 />
                            
