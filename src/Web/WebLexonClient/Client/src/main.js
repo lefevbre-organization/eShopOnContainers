@@ -232,7 +232,6 @@ class Main extends Component {
 
   async handlePutUserFromLexonConnector(event) {
     console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
-    debugger;
     this.getAddonData();
     const {
       user,
