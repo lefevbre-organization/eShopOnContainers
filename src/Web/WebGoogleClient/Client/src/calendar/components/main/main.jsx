@@ -68,7 +68,7 @@ export class Main extends Component {
         this.toggleSideBar = this.toggleSideBar.bind(this);
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
-        this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
+        this.handleScheduleOpenNewEventEditor = this.handleScheduleOpenNewEventEditor.bind(this);
         this.openCalendarView = this.openCalendarView.bind(this);
         this.deleteCalendar = this.deleteCalendar.bind(this);
         this.calendarColorModify = this.calendarColorModify.bind(this);
@@ -757,10 +757,19 @@ export class Main extends Component {
             // New event is called by params
             if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
-                    obj.handleScheduleOpenEditor()
+                    obj.handleScheduleOpenNewEventEditor()
                 }, 1000); 
             }  
+
+            if (obj.layoutIframeEditEventView) {
+                setTimeout(function () {
+                    obj.handleScheduleOpenEditEventEditor()
+                }, 1000);
+            }  
+
         }, value);  
+
+
 
          //if (this.layoutIframe) {
             //    setTimeout(function () {
@@ -1348,11 +1357,11 @@ export class Main extends Component {
                 //}
             };
         }
-        let calendarContentEle = createElement('div', {
-            className: 'e-profile-wrapper'
-        });
+        //let calendarContentEle = createElement('div', {
+        //    className: 'e-profile-wrapper'
+        //});
 
-        scheduleElement.parentElement.appendChild(calendarContentEle);
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
 
         //scheduleElement.parentElement.appendChild(calendarContentEle);
         //let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
@@ -1783,14 +1792,19 @@ export class Main extends Component {
         this.scheduleObj.dataBind();
     }
 
-    handleScheduleOpenEditor() {
+    handleScheduleOpenNewEventEditor() {
         var endTimeDate = new Date();
         endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
         let cellData = {
             startTime: new Date(Date.now()),
             endTime: endTimeDate,
         };
-        this.scheduleObj.openEditor(cellData, 'Add');
+        this.scheduleObj.openEditor(cellData, 'Add'); 
+    }
+
+    handleScheduleOpenEditEventEditor() {  
+        let eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent)
+        this.scheduleObj.openEditor(eventData, 'Save');
     }
 
     sidebarCalendarList() {
@@ -2003,7 +2017,7 @@ export class Main extends Component {
                                     onCalendarClick={this.loadCalendarEvents}
                                     onSidebarCloseClick={this.handleShowLeftSidebarClick}
                                     onCalendarChange={this.handleScheduleDate}
-                                    onCalendarOpenEditor={this.handleScheduleOpenEditor}
+                                onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
                                     onCalendarOpenCalnendarView={this.openCalendarView}
                                     onCalendarDelete={this.deleteCalendar}
                                     onCalendarColorModify={this.calendarColorModify}   
