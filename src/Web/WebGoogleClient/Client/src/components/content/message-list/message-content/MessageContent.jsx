@@ -195,7 +195,6 @@ export class MessageContent extends Component {
 
   componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
-
     if (
       prevProps.emailHeaderMessageResult.headers === null &&
       emailHeaderMessageResult.headers !== null

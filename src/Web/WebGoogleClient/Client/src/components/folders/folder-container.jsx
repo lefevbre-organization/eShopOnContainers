@@ -157,7 +157,7 @@ class FolderContainer extends Component {
             window.dispatchEvent(new CustomEvent('LoadingMessage'));
             const msgRaw = await getMessage(msg.id, 'raw');
             message.raw = msgRaw.result;
-            //this.props.addMessage(message);
+            this.props.addMessage(message);
         }
 
         window.dispatchEvent(
