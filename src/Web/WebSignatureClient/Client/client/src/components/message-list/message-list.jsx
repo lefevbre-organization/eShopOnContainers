@@ -263,6 +263,7 @@ class MessageList extends Component {
     }
 
     getRecipientsInfo(element){
+        console.log('getRecipientsInfo', element);
         var result = []
 
         if (this.props.selectedService == 'signature'){
@@ -429,21 +430,21 @@ class MessageList extends Component {
         let res = [];
 
         filteredSms.map(sms => {
-            console.log('filteredSms', sms.data)
             let documentName = '';
             let subject = '';
             let recipients = '';
-            let names = '';
             let files = '';
             let date = '';
             let status = '';
             let newStatus = '';
             subject = (sms.data.find(x => x.key === "body")) ? sms.data.find(x => x.key === "body").value : 'N/A';
-            
+            const additionalInfo = sms.data.find(x => x.key == 'additional_info');
+            const emails = additionalInfo ? additionalInfo.value.split(':')[3] : '';
+      
             sms.certificates.map(s => {
-                recipients = `${recipients}${s.phone}; `
-                // names = `${names}${s.name}; `
+                recipients = `${recipients}${s.phone} ${emails.split('=')[1]}; `
             });
+         
             sms.certificates.map(s => 
                 files = (sms.certificates[0].file && sms.certificates[0].file.name) 
                 ? `${files}${s.file.name}; ` 
@@ -453,7 +454,15 @@ class MessageList extends Component {
             status = sms.status;
            
             newStatus = this.getNewStatus(status);
-            res.push({Id: sms.id, Documento: files, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
+            res.push({
+                Id: sms.id, 
+                Documento: files, 
+                Asunto: subject, 
+                Destinatarios: recipients, 
+                Fecha: date, 
+                Estado: newStatus,
+                Emails: emails.split('=')[1]
+            });
         });
         return (res.length === 0 ? [] : res);
     }
@@ -583,9 +592,11 @@ class MessageList extends Component {
     }
 
     recipientsGridTemplate(props) {
-        if (props.Destinatarios === undefined){
+        if (props.Destinatarios === undefined 
+            && props.Emails === undefined){
             return null;
         }
+
         let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
@@ -637,6 +648,9 @@ class MessageList extends Component {
                                 },
                                 {
                                     text: signer.phone
+                                },
+                                {
+                                    text: props.Emails !== '|' ? props.Emails : ''
                                 }
                             )
                         : 
@@ -646,7 +660,7 @@ class MessageList extends Component {
                                     cssClass: 'test'
                                 },
                                 {
-                                    text: signer.email
+                                    text: props.Emails !== '|' ? props.Emails : ''
                                 }
                             )
                 } else {
@@ -660,6 +674,9 @@ class MessageList extends Component {
                                 {
                                     text: signer.phone
                                 },
+                                {
+                                    text: props.Emails !== '|' ? props.Emails : ''
+                                },
                                 {   
                                     separator: true
                                 }
@@ -671,7 +688,7 @@ class MessageList extends Component {
                                     cssClass: 'test'
                                 },
                                 {
-                                    text: signer.email
+                                    text: props.Emails !== '|' ? props.Emails : ''
                                 },
                                 {   
                                     separator: true
@@ -680,15 +697,24 @@ class MessageList extends Component {
                 }
             });
         }
-        
-        console.log('recipientsList', props.Destinatarios);
+
         return ( 
 
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
                 <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                     {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
                    {this.props.selectedService === 'certifiedSms' ? 
-                   <span style={{color: '#001970'}}>{firstEmail}</span> 
+                   <>
+                    <span style={{color: '#001970'}}>{firstEmail.split(' ')[0]}</span> 
+                    <br />
+                    <span style={{position: 'absolute', marginTop: '-2px'}}>
+                        {
+                        firstEmail.split(' ')[1] !== '|' 
+                        && firstEmail.split(' ')[1] !== 'undefined' ? 
+                        firstEmail.split(' ')[1] : null
+                        }
+                    </span> 
+                   </>
                    :
                    <span>{firstEmail}</span> } 
                 </div>     

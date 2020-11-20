@@ -212,6 +212,11 @@
   }
 }
 
+.container-header-list {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
 .cont-progreso-peticion-firma {
   border: 1px solid #001978;
   border-top: 6px solid #001978;
