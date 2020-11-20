@@ -50,7 +50,7 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: DefaultEnvironment
-      value: QA
+      value: PRE
     - name: MinihubUrl
       value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl

@@ -92,7 +92,8 @@ dialogClose(args) {
          >
              {/* <div className="modalview"> <img src="img.png" alt=""  /> </div>*/}
              <div className="modalview">
-                 <Iframe url="http://localhost:3002/calendar?newEvent=true&layout=iframe"
+                 <Iframe url="
+http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6bnVsbCwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.zK3w455SefI1Ts2W8mcXXPm87pBgjiTKL8GU5_qt6-g?prov=GO0"
                      width="100%"
                      height="100%"
                      id="myId2"
@@ -129,7 +130,8 @@ dialogClose(args) {
 
             
              <div className='control-wrapper'>
-                 <Iframe url="http://localhost:3002/calendar?layout=iframe"
+                 <Iframe url="http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6InNhZHNhZHNhY3hjeHNhZCIsImlkQWN0dWF0aW9uIjoiMjMiLCJ0aXRsZSI6InJldW5pb24gaW1wb3J0YW50ZSJ9.2pmTxzzx9mDjoE7e-Ly67TzRfPiWYoCEh4aHe6wkyVE?prov=GO0
+"
                      width="754px"
                      height="425px"
                      id="myId"

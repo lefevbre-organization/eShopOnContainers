@@ -68,7 +68,7 @@ export class Main extends Component {
         this.toggleSideBar = this.toggleSideBar.bind(this);
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
-        this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
+        this.handleScheduleOpenNewEventEditor = this.handleScheduleOpenNewEventEditor.bind(this);
         this.openCalendarView = this.openCalendarView.bind(this);
         this.deleteCalendar = this.deleteCalendar.bind(this);
         this.calendarColorModify = this.calendarColorModify.bind(this);
@@ -102,7 +102,9 @@ export class Main extends Component {
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
         this.layoutIframe = false;
-        this.layoutIframeEventView = false;
+        this.layoutIframeNewEventView = false;
+        this.layoutIframeEditEventView = false;
+
         this.state = {
             isVisible: true,
             sidebarOpen: false,
@@ -205,7 +207,7 @@ export class Main extends Component {
             }
         ];
 
-    this.checkForParams();
+        this.TokensFlows();
     }
 
    
@@ -240,19 +242,19 @@ export class Main extends Component {
         }
     }
 
-    checkForParams() {
-       
-        let params = (new URL(document.location)).searchParams;
-
-        if (params.get('layout') != undefined) {
-            this.layoutIframe = true;
-           
-           // this.setState({ sidebarCollapsed: true });
-        }       
-
-        if (params.get('newEvent') != undefined) {
-            this.layoutIframeEventView = true;
+    TokensFlows() {
+        if (window != window.top)
+        {
+            this.layoutIframe = true;           
         }
+
+        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+            this.layoutIframeEditEventView = true
+        }
+        else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+            this.layoutIframeNewEventView = true
+        }
+
     }
 
     convertUnicode(input) {
@@ -753,12 +755,21 @@ export class Main extends Component {
             obj.getlistEventTypes()
            
             // New event is called by params
-            if (obj.layoutIframeEventView) {
+            if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
-                    obj.handleScheduleOpenEditor()
+                    obj.handleScheduleOpenNewEventEditor()
                 }, 1000); 
             }  
+
+            if (obj.layoutIframeEditEventView) {
+                setTimeout(function () {
+                    obj.handleScheduleOpenEditEventEditor()
+                }, 1000);
+            }  
+
         }, value);  
+
+
 
          //if (this.layoutIframe) {
             //    setTimeout(function () {
@@ -1161,7 +1172,7 @@ export class Main extends Component {
 
             }, 1000);
 
-            if (this.layoutIframe & this.layoutIframeEventView) {
+            if (this.layoutIframe & this.layoutIframeNewEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
                 head.classList.add('hidden');
             }
@@ -1269,7 +1280,7 @@ export class Main extends Component {
             }
 
             // if from iframe is requested a new event
-            if (!this.layoutIframeEventView) {
+            if (!this.layoutIframeNewEventView) {
 
                 let TabContainer = args.element.querySelector('.custom-tab-row');
                 if (TabContainer == null) {
@@ -1346,11 +1357,11 @@ export class Main extends Component {
                 //}
             };
         }
-        let calendarContentEle = createElement('div', {
-            className: 'e-profile-wrapper'
-        });
+        //let calendarContentEle = createElement('div', {
+        //    className: 'e-profile-wrapper'
+        //});
 
-        scheduleElement.parentElement.appendChild(calendarContentEle);
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
 
         //scheduleElement.parentElement.appendChild(calendarContentEle);
         //let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
@@ -1781,14 +1792,19 @@ export class Main extends Component {
         this.scheduleObj.dataBind();
     }
 
-    handleScheduleOpenEditor() {
+    handleScheduleOpenNewEventEditor() {
         var endTimeDate = new Date();
         endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
         let cellData = {
             startTime: new Date(Date.now()),
             endTime: endTimeDate,
         };
-        this.scheduleObj.openEditor(cellData, 'Add');
+        this.scheduleObj.openEditor(cellData, 'Add'); 
+    }
+
+    handleScheduleOpenEditEventEditor() {  
+        let eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent)
+        this.scheduleObj.openEditor(eventData, 'Save');
     }
 
     sidebarCalendarList() {
@@ -2001,7 +2017,7 @@ export class Main extends Component {
                                     onCalendarClick={this.loadCalendarEvents}
                                     onSidebarCloseClick={this.handleShowLeftSidebarClick}
                                     onCalendarChange={this.handleScheduleDate}
-                                    onCalendarOpenEditor={this.handleScheduleOpenEditor}
+                                onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
                                     onCalendarOpenCalnendarView={this.openCalendarView}
                                     onCalendarDelete={this.deleteCalendar}
                                     onCalendarColorModify={this.calendarColorModify}   
@@ -2185,7 +2201,7 @@ export class Main extends Component {
                     </Fragment>
 
 
-                    {this.layoutIframeEventView ? (
+                    {this.layoutIframeNewEventView && this.layoutIframe  ? (
                         <style jsx>{`
                         .e-dlg-overlay {
                             background-color: #FFFFFF !important;
