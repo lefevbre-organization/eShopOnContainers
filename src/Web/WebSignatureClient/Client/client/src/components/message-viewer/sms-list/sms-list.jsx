@@ -26,7 +26,7 @@ const SmsList = (props) => {
           : props.styles['separador']}`}
       >
         <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
-          <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'sms_processed') === false) ? props.styles['no-completado']: ``)}`}>
+          <div className={`${props.styles['seguimiento-certification-individual-sms']} ${((props.getEventStatus(props.signer, 'sms_processed') === false) ? props.styles['no-completado']: ``)}`}>
             <span className="lf-icon-mobile"></span>
               <div className={props.styles['cont-check-seguimiento']}>
                 <span className={`${((props.getEventStatus(props.signer, 'sms_processed')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
@@ -40,7 +40,7 @@ const SmsList = (props) => {
               </div>
             <div className={props.styles.clearfix}></div>
           </div>
-          <div className={`${props.styles['seguimiento-certification-individual']} ${((props.getEventStatus(props.signer, 'sms_delivered') === false) ? props.styles['no-completado']: ``)}`}>
+          <div className={`${props.styles['seguimiento-certification-individual-sms']} ${((props.getEventStatus(props.signer, 'sms_delivered') === false) ? props.styles['no-completado']: ``)}`}>
             <span className={`lf-icon-sms`}></span>
             <div className={props.styles['cont-check-seguimiento']}>
               <span className={`${((props.getEventStatus(props.signer, 'sms_delivered')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
@@ -62,7 +62,7 @@ const SmsList = (props) => {
             || certificationType.value === 'download_document'
             || certificationType.value === 'download_every_document') 
               ? <div className={`
-                  ${props.styles['seguimiento-certification-individual']} 
+                  ${props.styles['seguimiento-certification-individual-sms']} 
                   ${((props.getEventStatus(props.signer, 'sms_opened')) 
                   || (props.getEventStatus(props.signer, 'documents_opened')
                   || props.getEventStatus(props.signer, 'document_opened')) 
@@ -99,7 +99,7 @@ const SmsList = (props) => {
             || certificationType.value === 'download_document'
             || certificationType.value === 'download_every_document') 
               ? <div className={`
-                  ${props.styles['seguimiento-certification-individual']} 
+                  ${props.styles['seguimiento-certification-individual-sms']} 
                   ${(!certificationCompleted 
                     ? `${props.styles['no-completado']} ${props.styles['no-completado-doc']}` 
                     : ``

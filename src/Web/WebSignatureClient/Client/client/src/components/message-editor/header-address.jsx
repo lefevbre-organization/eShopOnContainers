@@ -22,7 +22,8 @@ export class HeaderAddress extends Component {
     this.state = {
       value: '',
       suggestions: [],
-      hideContactDialog: false
+      hideContactDialog: false,
+      maxlength: 120,
     };
     this.dialogClose = this.dialogClose.bind(this);
   }
@@ -137,7 +138,12 @@ export class HeaderAddress extends Component {
   }
 
   onSuggestionChange(event, { newValue }) {
-    this.setState({ value: newValue });
+   if(
+     newValue.length <= this.state.maxlength 
+     || this.props.sendingType != 'smsCertificate' ) {
+      this.setState({ value: newValue });
+   }
+   
   }
 
   onSuggestionsFetchRequested({ value }) {

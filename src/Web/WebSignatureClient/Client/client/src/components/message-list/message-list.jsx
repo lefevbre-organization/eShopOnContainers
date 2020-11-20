@@ -429,16 +429,21 @@ class MessageList extends Component {
         let res = [];
 
         filteredSms.map(sms => {
+            console.log('filteredSms', sms.data)
             let documentName = '';
             let subject = '';
             let recipients = '';
+            let names = '';
             let files = '';
             let date = '';
             let status = '';
             let newStatus = '';
             subject = (sms.data.find(x => x.key === "body")) ? sms.data.find(x => x.key === "body").value : 'N/A';
             
-            sms.certificates.map(s => recipients = `${recipients}${s.phone}; `);
+            sms.certificates.map(s => {
+                recipients = `${recipients}${s.phone}; `
+                // names = `${names}${s.name}; `
+            });
             sms.certificates.map(s => 
                 files = (sms.certificates[0].file && sms.certificates[0].file.name) 
                 ? `${files}${s.file.name}; ` 
@@ -676,13 +681,16 @@ class MessageList extends Component {
             });
         }
         
-        //console.log(props);
+        console.log('recipientsList', props.Destinatarios);
         return ( 
 
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
                 <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                     {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
-                    {firstEmail}
+                   {this.props.selectedService === 'certifiedSms' ? 
+                   <span style={{color: '#001970'}}>{firstEmail}</span> 
+                   :
+                   <span>{firstEmail}</span> } 
                 </div>     
                 {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
                 <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>

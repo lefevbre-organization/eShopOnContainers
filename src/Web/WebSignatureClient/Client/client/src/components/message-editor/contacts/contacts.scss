@@ -4,8 +4,27 @@
     border-bottom: 1px solid #001978;
     margin: 0;
   }
+
   ::placeholder { 
     color: gray;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #001978; 
+    border-radius: 30px;
+  }
+
+  .container-list-contacts {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .list-checked {
+      flex: auto;
   }
 
   input {

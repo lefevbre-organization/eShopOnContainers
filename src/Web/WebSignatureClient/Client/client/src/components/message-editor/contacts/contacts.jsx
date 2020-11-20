@@ -34,6 +34,7 @@ const Contacts = (props) => {
         contact.checked = emailExists;
         newContactsCentinela.push(contact);
       });
+      console.log(newContactsCentinela);
       setContacts([...newContactsCentinela]);        
     }
   }
@@ -125,7 +126,9 @@ const Contacts = (props) => {
            || contact.name.toUpperCase().includes(filter)
            || contact.email.toUpperCase().includes(filter))
            .map((contact, i) => 
-              <li key={i}>
+              <li className={style['container-list-contacts']} key={i}>
+                <div><p className="light-blue-text">{contact.phoneNumber1}</p></div>
+                <div className={style['list-checked']}>
                 <label>
                   <input 
                   type="checkbox"  
@@ -143,7 +146,7 @@ const Contacts = (props) => {
                   <span>{contact.name}</span>
                   <div className={style['email']}>{contact.email}</div>
                 </label>
-               
+                </div>
               </li> 
            )}
           </ul>
