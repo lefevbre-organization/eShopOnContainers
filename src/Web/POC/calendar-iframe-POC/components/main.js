@@ -24,7 +24,8 @@ constructor(props) {
     super(props);
 		  this.state = {
           value: "Here the selected date",
-          hidePromptDialog: false, 
+          hidePromptDialogNew: false, 
+          hidePromptDialogEdit: false, 
     }
 
     //this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -46,19 +47,34 @@ constructor(props) {
       
  }
 
-dialogOpen(args) {
+dialogOpenNew(args) {
        
    this.setState(
     {
-      hidePromptDialog: true
+      hidePromptDialogNew: true
     });
  }
    
-dialogClose(args) {
+dialogCloseNew(args) {
         this.setState({
-            hidePromptDialog: false
+            hidePromptDialogNew: false
         });        
 }
+
+dialogOpenEdit(args) {
+       
+    this.setState(
+     {
+       hidePromptDialogEdit: true
+     });
+  }
+    
+ dialogCloseEdit(args) {
+         this.setState({
+             hidePromptDialogEdit: false
+         });        
+ }
+
    
     render() {
 
@@ -70,24 +86,27 @@ dialogClose(args) {
 
          <div className='message'>
              <span className="but">
-                 <button onClick={this.dialogOpen.bind(this)}> New Event</button>
+                 <button onClick={this.dialogOpenEdit.bind(this)}> Edit Event- 2meu9mm5b5r8udqprajocit7t8</button>
+             </span>  
+             <span className="but">
+                 <button onClick={this.dialogOpenNew.bind(this)}> New Event</button>
              </span>    
              <span >{this.state.value}</span>             
          </div>
 
          <DialogComponent
-             id='dialogDraggable'
+             id='dialogNewEvent'
              isModal={true}
              //header="calendar.title"
-             visible={this.state.hidePromptDialog}
+             visible={this.state.hidePromptDialogNew}
              showCloseIcon={true}
              animationSettings={this.animationSettings}
              width='900px'   
              height= '700px'
-             ref={dialog => this.promptDialogInstance = dialog}
+             ref={dialog => this.promptDialogInstanceNew = dialog}
              target='#app'
-             open={this.dialogOpen.bind(this)}
-             close={this.dialogClose.bind(this)}
+             open={this.dialogOpenNew.bind(this)}
+             close={this.dialogCloseNew.bind(this)}
             
          >
              {/* <div className="modalview"> <img src="img.png" alt=""  /> </div>*/}
@@ -105,32 +124,43 @@ http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzd
              </div>
          </DialogComponent>
 
-         <div id="calendar" className='col-lg-6 control-section'>
-
-             {/*  <IframeN
-                 src="http://localhost:3002/calendar?layout=iframe"
-                 onLoad={({ event, iframe }) => {
-                     if (!(iframe && iframe.contentDocument)) {
-                         return;
-                     }
-
-                     const target = iframe.contentDocument.body;
-                     const nextHeight = target.offsetHeight;
-                     iframe.style.height = `${nextHeight}px`;
-
-                     const observer = new ResizeObserver(entries => {
-                         const target = iframe.contentDocument.body;
-                         const nextHeight = target.offsetHeight;
-                         iframe.style.height = `${nextHeight}px`;
-                     });
-                     observer.observe(target);
-                 }}
-             />*/}
 
 
+         <DialogComponent
+             id='dialogEditEvent'
+             isModal={true}
+             //header="calendar.title"
+             visible={this.state.hidePromptDialogEdit}
+             showCloseIcon={true}
+             animationSettings={this.animationSettings}
+             width='900px'   
+             height= '700px'
+             ref={dialog => this.promptDialogInstanceEdit = dialog}
+             target='#app'
+             open={this.dialogOpenEdit.bind(this)}
+             close={this.dialogCloseEdit.bind(this)}
+            
+         >
+             {/* <div className="modalview"> <img src="img.png" alt=""  /> </div>*/}
+             <div className="modalview">
+                 <Iframe url="
+http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IjJtZXU5bW01YjVyOHVkcXByYWpvY2l0N3Q4IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.1LAw6Cl5liiL7NJwtX9CCFYN-M_4XXt3LqJNWV4-yYo?prov=GO0"
+                     width="100%"
+                     height="100%"
+                     id="myId2"
+                     frameBorder="0"
+                     className="frame2"
+                     display="initial"
+                     position="relative" />
+
+             </div>
+         </DialogComponent>
+
+
+         <div id="calendar" className='col-lg-6 control-section'>  
             
              <div className='control-wrapper'>
-                 <Iframe url="http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6InNhZHNhZHNhY3hjeHNhZCIsImlkQWN0dWF0aW9uIjoiMjMiLCJ0aXRsZSI6InJldW5pb24gaW1wb3J0YW50ZSJ9.2pmTxzzx9mDjoE7e-Ly67TzRfPiWYoCEh4aHe6wkyVE?prov=GO0
+                 <Iframe url="http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwidGl0bGUiOiJyZXVuaW9uIGltcG9ydGFudGUifQ.jDez02aqfOhLMW24ZdB9xIPxOE8ijOr43syLbZ3YPqY?prov=GO0
 "
                      width="754px"
                      height="425px"

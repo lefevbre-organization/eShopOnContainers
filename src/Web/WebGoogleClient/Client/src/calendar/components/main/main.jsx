@@ -754,13 +754,14 @@ export class Main extends Component {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
            
-            // New event is called by params
+            // New event is called 
             if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenNewEventEditor()
                 }, 1000); 
             }  
 
+             // Edit event is called 
             if (obj.layoutIframeEditEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenEditEventEditor()
@@ -1172,7 +1173,7 @@ export class Main extends Component {
 
             }, 1000);
 
-            if (this.layoutIframe & this.layoutIframeNewEventView) {
+            if (this.layoutIframe & this.layoutIframeNewEventView || this.layoutIframeEditEventView ) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
                 head.classList.add('hidden');
             }
@@ -2201,7 +2202,7 @@ export class Main extends Component {
                     </Fragment>
 
 
-                    {this.layoutIframeNewEventView && this.layoutIframe  ? (
+                    {this.layoutIframe && this.layoutIframeNewEventView || this.layoutIframeEditEventView ? (
                         <style jsx>{`
                         .e-dlg-overlay {
                             background-color: #FFFFFF !important;
