@@ -27,5 +27,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
         Task<Result<bool>> CancelSignatureAsync(string guid);
 
+        Task<Result<bool>> NotifySignatureAsync(string service, string guid, string documentId, List<CenRecipient> recipients);
+
     }
 }
