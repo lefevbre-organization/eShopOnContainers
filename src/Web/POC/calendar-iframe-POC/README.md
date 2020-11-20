@@ -131,3 +131,19 @@
 **9. start react app:**
 
   npm start
+  
+  
+**10. Calendar´s token simulation
+
+Calling calendar (without passiing actuatioid and eventid):
+http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwidGl0bGUiOiJyZXVuaW9uIGltcG9ydGFudGUifQ.jDez02aqfOhLMW24ZdB9xIPxOE8ijOr43syLbZ3YPqY?prov=GO0
+
+
+Calling calendar new event:
+http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6bnVsbCwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.zK3w455SefI1Ts2W8mcXXPm87pBgjiTKL8GU5_qt6-g?prov=GO0"
+
+
+Calling calendar existing event:
+http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IjJtZXU5bW01YjVyOHVkcXByYWpvY2l0N3Q4IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.1LAw6Cl5liiL7NJwtX9CCFYN-M_4XXt3LqJNWV4-yYo?prov=GO0
+
+
