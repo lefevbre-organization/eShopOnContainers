@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
 import { 
   sendMessage, 
-  createDraft, 
+  // createDraft, 
   getLabelInbox 
 } from '../../api_graph';
 import { getEmailMessage } from '../content/message-list/actions/message-list.actions';
@@ -507,32 +507,32 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if((prevState.to !== this.state.to) 
-      || (prevState.cc !== this.state.cc) 
-      || (prevState.bcc !== this.state.bcc) 
-      || (prevState.subject !== this.state.subject)
-      || (prevState.content !== this.state.content)
-      || (prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && (!this.props.match.params.id)) {
-      this.saveDraft();
-    }
+    // if((prevState.to !== this.state.to) 
+    //   || (prevState.cc !== this.state.cc) 
+    //   || (prevState.bcc !== this.state.bcc) 
+    //   || (prevState.subject !== this.state.subject)
+    //   || (prevState.content !== this.state.content)
+    //   || (prevState.uppyPreviews !== this.state.uppyPreviews) 
+    //   && (!this.props.match.params.id)) {
+    //   this.saveDraft();
+    // }
     
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && this.props.match.params.id 
-      && this.state.isDraftEdit) {
-      this.saveDraft();
-    }
+    // if((prevState.to !== this.state.to 
+    //   || prevState.cc !== this.state.cc 
+    //   || prevState.bcc !== this.state.bcc 
+    //   || prevState.subject !== this.state.subject
+    //   || prevState.content !== this.state.content
+    //   || prevState.uppyPreviews !== this.state.uppyPreviews) 
+    //   && this.props.match.params.id 
+    //   && this.state.isDraftEdit) {
+    //   this.saveDraft();
+    // }
 
-    if(
-      prevProps.emailMessageResult !== this.props.emailMessageResult
-      ) {
-      this.getById();
-    }
+    // if(
+    //   prevProps.emailMessageResult !== this.props.emailMessageResult
+    //   ) {
+    //   this.getById();
+    // }
   }
 
   componentWillUnmount() {
@@ -621,18 +621,18 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != '') {
-      setTimeout(() => {
-        createDraft({
-          data: email,
-          attachments: Fileattached,
-          draftId: this.state.draftId
-        }).then((draft) => {
-          this.setState({draftTime: fullTime, draftId: draft.id});
-        })
-        .catch((err) => {
-          console.log('Error sending email:' + err);
-        });
-      }, 5000);
+      // setTimeout(() => {
+      //   createDraft({
+      //     data: email,
+      //     attachments: Fileattached,
+      //     draftId: this.state.draftId
+      //   }).then((draft) => {
+      //     this.setState({draftTime: fullTime, draftId: draft.id});
+      //   })
+      //   .catch((err) => {
+      //     console.log('Error sending email:' + err);
+      //   });
+      // }, 5000);
     }
     
   }

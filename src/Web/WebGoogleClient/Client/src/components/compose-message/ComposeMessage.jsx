@@ -4,8 +4,9 @@ import { compose } from 'redux';
 import { 
   sendMessage, 
   getMessageHeader, 
-  createDraft,
-  getDraftListWithRFC
+  // createDraft,
+  getDraftListWithRFC,
+  getAttachments
 } from '../../api';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
@@ -189,7 +190,7 @@ export class ComposeMessage extends PureComponent {
     this.showAttachActions = false;
 
     this.uppy.on('file-added', (file) => {
-      console.log('Added file', file.data);
+      console.log('Added file', file);
 
       // Define this onload every time to get file and base64 every time
       if (file.source.startsWith('Attachment:') === false) {
@@ -260,25 +261,52 @@ export class ComposeMessage extends PureComponent {
     }
   }
 
-  getAttachById(attachments) {
+  getAttachById(messageId, attachments) {
+
     const addAttachment = (attach) => {
-      const fileBob = {
-        size: attach.body.size
-      }
+      getAttachments({messageId, attachmentId: attach.body.attachmentId})
+      .then((attachment) => {
 
-      const file = new File([fileBob], attach.filename,
-      {type: attach.mimeType});
-      
-      const newAttachment = {
-        name: attach.filename,
-        size: attach.body.size,
-        type: attach.mimeType,
-        source: 'Local',
-        isRemote: false,
-        data: file,
-      };
+        console.log('addAttachment', attachment)
 
-      this.uppy.addFile(newAttachment);
+        const file = {
+          name: attach.filename,
+          content: `data:${attach.mimeType};base64,${attachment.data}`
+        }
+
+        const blob = new Blob([JSON.stringify(file)], {type : attach.mimeType});
+        // const uppyPreviews = [...this.state.uppyPreviews];
+
+        // const newAttachment = {
+        //   content: `data:${attach.mimeType};base64,${attachment.data}`,
+        //   data: blob,
+        //   size: attachment.size,
+        //   name: attach.filename,
+        //   source: `local`,
+        //   type: attach.mimeType,
+        //   isRemote: false,
+        // }
+
+        this.uppy.addFile({
+          // content: `data:${attach.mimeType};base64,${attachment.data}`,
+          name: attach.filename,
+          type: attach.mimeType,
+          data: blob, // file blob
+          source: 'Local', 
+          isRemote: false 
+        })
+
+
+        // uppyPreviews.push(newAttachment);
+
+        
+        // this.setState({
+        //   uppyPreviews
+        // });
+      })
+      .catch((err) => {
+        console.log('Error' + err);
+      });
     };
 
     attachments.forEach(file => {
@@ -296,6 +324,8 @@ export class ComposeMessage extends PureComponent {
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
+            const attachments = this.props.emailMessageResult.attach;
+            const messageId = this.props.emailMessageResult.result.id;
             const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
             const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
             const cc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Cc");
@@ -321,8 +351,8 @@ export class ComposeMessage extends PureComponent {
                 this.addAddress('bcc2', bccEmail);
               });
             }
-
-            this.getAttachById(this.props.emailMessageResult.attach);
+            console.log('getAttachById', this.props.emailMessageResult);
+            this.getAttachById(messageId, attachments);
           
             this.setState({
               subject: subject.value, 
@@ -468,32 +498,32 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && !this.props.match.params.id) {
-      this.saveDraft();
-    }   
+    // if((prevState.to !== this.state.to 
+    //   || prevState.cc !== this.state.cc 
+    //   || prevState.bcc !== this.state.bcc 
+    //   || prevState.subject !== this.state.subject
+    //   || prevState.content !== this.state.content
+    //   || prevState.uppyPreviews !== this.state.uppyPreviews) 
+    //   && !this.props.match.params.id) {
+    //   this.saveDraft();
+    // }   
 
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && this.props.match.params.id 
-      && this.state.isDraftEdit) {
-      this.saveDraft();
-    }
+    // if((prevState.to !== this.state.to 
+    //   || prevState.cc !== this.state.cc 
+    //   || prevState.bcc !== this.state.bcc 
+    //   || prevState.subject !== this.state.subject
+    //   || prevState.content !== this.state.content
+    //   || prevState.uppyPreviews !== this.state.uppyPreviews) 
+    //   && this.props.match.params.id 
+    //   && this.state.isDraftEdit) {
+    //   this.saveDraft();
+    // }
 
-    if(
-      prevProps.emailMessageResult !== this.props.emailMessageResult
-      ) {
-      this.getById();
-    }
+    // if(
+    //   prevProps.emailMessageResult !== this.props.emailMessageResult
+    //   ) {
+    //   this.getById();
+    // }
   }
 
   componentWillUnmount() {
@@ -569,7 +599,7 @@ export class ComposeMessage extends PureComponent {
       attachments: this.state.uppyPreviews,
       From: this.props.googleUser.getBasicProfile(),
     };
-
+    console.log('saveDraft', this.state.uppyPreviews)
     const validCc = getValidEmails(this.state.cc);
     if (validCc.length) {
       headers.Cc = validCc.join(', ');
@@ -588,19 +618,19 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != ''){
-      setTimeout(() => {
-        createDraft({
-          headers,
-          body: this.state.content,
-          attachments: Fileattached,
-          draftId: this.state.draftId
-        }).then((draft) => {
-          this.setState({draftTime: fullTime, draftId: draft.id});
-        })
-        .catch((err) => {
-          console.log('Error sending email:' + err);
-        });
-      }, 100);
+      // setTimeout(() => {
+      //   createDraft({
+      //     headers,
+      //     body: this.state.content,
+      //     attachments: Fileattached,
+      //     draftId: this.state.draftId
+      //   }).then((draft) => {
+      //     this.setState({draftTime: fullTime, draftId: draft.id});
+      //   })
+      //   .catch((err) => {
+      //     console.log('Error sending email:' + err);
+      //   });
+      // }, 100);
     }
     
   }
