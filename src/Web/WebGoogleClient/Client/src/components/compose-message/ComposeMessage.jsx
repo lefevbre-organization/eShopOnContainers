@@ -5,8 +5,9 @@ import {
   sendMessage, 
   getMessageHeader, 
   // createDraft,
-  getDraftListWithRFC,
-  getAttachments
+  // getAttachments,
+  getDraftListWithRFC
+  
 } from '../../api';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
@@ -261,61 +262,61 @@ export class ComposeMessage extends PureComponent {
     }
   }
 
-  getAttachById(messageId, attachments) {
+  // getAttachById(messageId, attachments) {
 
-    const addAttachment = (attach) => {
-      getAttachments({messageId, attachmentId: attach.body.attachmentId})
-      .then((attachment) => {
+  //   const addAttachment = (attach) => {
+  //     getAttachments({messageId, attachmentId: attach.body.attachmentId})
+  //     .then((attachment) => {
 
-        console.log('addAttachment', attachment)
+  //       console.log('addAttachment', attachment)
 
-        const file = {
-          name: attach.filename,
-          content: `data:${attach.mimeType};base64,${attachment.data}`
-        }
+  //       const file = {
+  //         name: attach.filename,
+  //         content: `data:${attach.mimeType};base64,${attachment.data}`
+  //       }
 
-        const blob = new Blob([JSON.stringify(file)], {type : attach.mimeType});
-        // const uppyPreviews = [...this.state.uppyPreviews];
+  //       const blob = new Blob([JSON.stringify(file)], {type : attach.mimeType});
+  //       const uppyPreviews = [...this.state.uppyPreviews];
 
-        // const newAttachment = {
-        //   content: `data:${attach.mimeType};base64,${attachment.data}`,
-        //   data: blob,
-        //   size: attachment.size,
-        //   name: attach.filename,
-        //   source: `local`,
-        //   type: attach.mimeType,
-        //   isRemote: false,
-        // }
+  //       const newAttachment = {
+  //         content: `data:${attach.mimeType};base64,${attachment.data}`,
+  //         data: blob,
+  //         size: attachment.size,
+  //         name: attach.filename,
+  //         source: `local`,
+  //         type: attach.mimeType,
+  //         isRemote: false,
+  //       }
 
-        this.uppy.addFile({
-          // content: `data:${attach.mimeType};base64,${attachment.data}`,
-          name: attach.filename,
-          type: attach.mimeType,
-          data: blob, // file blob
-          source: 'Local', 
-          isRemote: false 
-        })
+  //       this.uppy.addFile({
+  //         content: `data:${attach.mimeType};base64,${attachment.data}`,
+  //         name: attach.filename,
+  //         type: attach.mimeType,
+  //         data: blob, 
+  //         source: 'Local', 
+  //         isRemote: false 
+  //       })
 
 
-        // uppyPreviews.push(newAttachment);
+  //       uppyPreviews.push(newAttachment);
 
         
-        // this.setState({
-        //   uppyPreviews
-        // });
-      })
-      .catch((err) => {
-        console.log('Error' + err);
-      });
-    };
+  //       this.setState({
+  //         uppyPreviews
+  //       });
+  //     })
+  //     .catch((err) => {
+  //       console.log('Error' + err);
+  //     });
+  //   };
 
-    attachments.forEach(file => {
-      if(file.filename != '') {
-        addAttachment(file);
-      }
-    });
+  //   attachments.forEach(file => {
+  //     if(file.filename != '') {
+  //       addAttachment(file);
+  //     }
+  //   });
    
-  }
+  // }
 
   getById() {
     if(this.props.emailMessageResult.body != ''){
