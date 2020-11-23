@@ -36,13 +36,23 @@ constructor(props) {
     componentDidMount() { 
     
     
-    window.addEventListener("message", event => {	  
+    window.addEventListener("message", event => {
+
      var obj = event.data
      var valueJ = JSON.stringify(obj);	 
      console.log('addEventListener', event); 
      this.setState({
               value: valueJ
      });
+
+     if(JSON.parse(event.data).actionCancelled){
+        this.setState(
+            {
+              hidePromptDialogNew: false,
+              hidePromptDialogEdit: false
+            });        
+
+     }
  })
       
  }

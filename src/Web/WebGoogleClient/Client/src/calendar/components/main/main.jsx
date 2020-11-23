@@ -214,6 +214,17 @@ export class Main extends Component {
 
     onCloseDialog() {
         this.LoadCalendarList(false)
+
+       
+        window.top.postMessage(
+            JSON.stringify({
+                idEvent:undefined,
+                actionCancelled: true,
+                selectedDate: undefined
+            }),
+            window.URL_LEXON
+        );
+
     }
 
     async handleClassificatedEvent(event) {
@@ -1036,11 +1047,11 @@ export class Main extends Component {
         var DateMessage = args.data.startTime
         window.top.postMessage(
             JSON.stringify({
-                id: 2,
-                error: false,
-                message: DateMessage
+                idEvent: args.data.Id,
+                actionCancelled:false,
+                selectedDate: DateMessage
             }),
-            'http://localhost:8080'
+            window.URL_LEXON
         );
 
         //Not allow to change calendar property on update events
