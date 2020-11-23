@@ -159,6 +159,36 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             infos.Add(info);
         }
 
+        public void TraceInfoTime(
+            List<Info> infos,
+            string url,
+            DateTime? begin,
+            DateTime? end,
+            string codeInfo = "XX00")
+        {
+            if (codeInfo == "XX00") return;
+
+            if (begin == null) 
+                begin = DateTime.Now;
+
+            var messageEnd = "";
+            if (end != null)
+            {
+                var ticks = ((DateTime)begin).Ticks;
+                var tiksResponse = ((DateTime)end).Ticks - ticks;
+                messageEnd = $"Time [{end}] -> Delay[{tiksResponse}]";
+
+            }
+
+            var message = (end == null)
+                ? $"START --> {url} - {begin}"
+                : $"END ----> {url} - {messageEnd}";
+
+            TraceInfo(infos, message, codeInfo);
+            log.LogInformation(message);
+
+        }
+
         public string ManageCreateMessage(
             string msgError,
             string msgModify,
