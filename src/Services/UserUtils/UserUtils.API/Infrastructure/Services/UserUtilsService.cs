@@ -85,7 +85,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<string>(string.Empty);
             try
             {
-                //https://online.elderecho.com/ws/encriptarEntrada.do?nEntrada=E1654569
                 var url = $"{_settings.Value.OnlineUrl}/encriptarEntrada.do?nEntrada={idNavisionUser}";
 
                 using (var response = await _clientOnline.GetAsync(url))
@@ -125,7 +124,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<string>(string.Empty);
             try
             {
-                //https://online.elderecho.com/ws/desencriptarEntrada.do?entradaEncriptada=eHRscn1hYA%3D%3D
                 var url = $"{_settings.Value.OnlineUrl}/desencriptarEntrada.do?entradaEncriptada={idEncodeNavisionUser}";
 
                 using (var response = await _clientOnline.GetAsync(url))
@@ -165,11 +163,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<List<LefebvreApp>>(new List<LefebvreApp>());
             try
             {
-                var usuarioEncriptado = await GetEncodeUserAsync(idNavisionUser); // "f3NrcnZs";
-                result.errors.AddRange(usuarioEncriptado.errors);
-                result.infos.AddRange(usuarioEncriptado.infos);
+                var usuarioEncriptado = await GetEncodeUserAsync(idNavisionUser);
+                AddResultTrace(usuarioEncriptado, result);
 
-                //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
                 var url = $"{_settings.Value.MinihubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={usuarioEncriptado.data}&indMinuHub=1";
 
                 using (var response = await _clientMinihub.GetAsync(url))
@@ -218,7 +214,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                            new UserUtilsDomainException($"Error when update list of bypass of user {idNavisionUser}", ex),
                            Codes.UserUtils.GetHub,
                            Codes.Areas.Com);
-
             }
             return modelo.apps.ToList();
         }
@@ -229,7 +224,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var loginClean = HttpUtility.UrlEncode(login);
-                //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
                 var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuario?strLogin={login}&strPass={pass}";
 
                 using (var response = await _clientLogin.GetAsync(url))
@@ -259,7 +253,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                            new UserUtilsDomainException($"Error when get data of user {login} in {_settings.Value.LoginUrl}", ex),
                            Codes.UserUtils.GetUserLef,
                            Codes.Areas.Com);
-
             }
 
             return result;
@@ -270,10 +263,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<ServiceComUser>(new ServiceComUser());
             try
             {
-                //http://led-pre-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
-                //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
-                //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1676156
-
                 var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuarioPorEntrada?idUsuarioPro={idNavisionUser}";
 
                 using (var response = await _clientLogin.GetAsync(url))
@@ -313,7 +302,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<ServiceComArea[]>(null);
             try
             {
-                //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
                 var url = $"{_settings.Value.LoginUrl}/Areas/GetUsuariosProAreas?idUsuarioPro={idNavisionUser}";
 
                 using (var response = await _clientOnline.GetAsync(url))
@@ -364,15 +352,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<string>(null);
             var user = await GetUserAsync(idUser);
-            result.errors.AddRange(user.errors);
-            result.infos.AddRange(user.infos);
-
+            AddResultTrace(user, result);
             if (user.errors?.Count == 0)
             {
                 var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
                 Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
-                result.errors.AddRange(temporalLinkResult.errors);
-                result.infos.AddRange(temporalLinkResult.infos);
+                AddResultTrace(temporalLinkResult, user);
                 result.data = temporalLinkResult?.data;
             }
 
@@ -386,8 +371,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var userDecoded = await GetDecodeUserAsync(idUser);
-                result.errors.AddRange(userDecoded.errors);
-                result.infos.AddRange(userDecoded.infos);
+                AddResultTrace(userDecoded, result);
 
                 var listByPass = _settings.Value.ByPassUrls?.ToList();
                 if (listByPass?.Count == 0)
@@ -395,8 +379,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
                 var tokenRequest = new TokenRequest { idApp = (int?)AppCode.Signaturit, idClienteNavision = userDecoded.data };
                 var userSignature = await GetGenericTokenAsync(tokenRequest, true);
-                result.errors.AddRange(userSignature.errors);
-                result.infos.AddRange(userSignature.infos);
+                AddResultTrace(userSignature, result);
 
                 var encontrado = listByPass.Find(x => x.NameService.Equals("Signature-Direct"));
                 if (encontrado?.NameService == null)
@@ -442,7 +425,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new UserUtilsDomainException($"Error when get final link of bypass {newUrl}", ex), Codes.UserUtils.ByPass, Codes.Areas.Hub);
+                TraceError(result.errors,
+                           new UserUtilsDomainException($"Error when get final link of bypass {newUrl}", ex),
+                           Codes.UserUtils.ByPass,
+                           Codes.Areas.Hub);
             }
 
             return result;
@@ -509,11 +495,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return idUserLong;
         }
 
-        private long? GetIntIdCompany(string idUser)
-        {
-            long.TryParse(idUser, out long idUserLong);
-            return idUserLong;
-        }
+        //private long? GetIntIdCompany(string idUser)
+        //{
+        //    long.TryParse(idUser, out long idUserLong);
+        //    return idUserLong;
+        //}
 
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
@@ -564,14 +550,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 AddClaimToPayload(payload, tokenRequestEventNew.idActuation, nameof(tokenRequestEventNew.idActuation));
                 AddClaimToPayload(payload, tokenRequestEventNew.title, nameof(tokenRequestEventNew.title));
-               
 
                 if (tokenRequest is TokenRequestEventOpen tokenRequestEventOpen)
                 {
                     AddClaimToPayload(payload, tokenRequestEventOpen.idEvent, nameof(tokenRequestEventOpen.idEvent));
                 }
             }
-
         }
 
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
@@ -653,6 +637,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 var userLefebvreResult = (token is TokenRequestLogin myToken)
                      ? await GetUserDataWithLoginAsync(myToken.login, myToken.password)
                      : await GetUserDataWithEntryAsync(token.idClienteNavision);
+                AddResultTrace(userLefebvreResult, result);
 
                 if (userLefebvreResult?.data?._idEntrada != null)
                 {
@@ -669,21 +654,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     return result;
                 }
 
-                var apps = await GetUserUtilsAsync(token.idClienteNavision, true);
-                foreach (var app in apps.data)
+                var appsResult = await GetUserUtilsAsync(token.idClienteNavision, true);
+                AddResultTrace(appsResult, result);
+                foreach (var app in appsResult.data)
                 {
                     token.roles.Add(app.descHerramienta);
                 }
 
-                var areas = await GetAreasByUserAsync(token.idClienteNavision);
-                foreach (var area in areas.data)
+                var areasResult = await GetAreasByUserAsync(token.idClienteNavision);
+                AddResultTrace(areasResult, result);
+                foreach (var area in areasResult.data)
                 {
                     token.roles.Add(area.descArea);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new UserUtilsDomainException($"Error when validation user"), "UU20", "API");
+                TraceError(result.errors, new UserUtilsDomainException($"Error when validation user", ex), "UU20", "API");
             }
             return result;
         }
@@ -692,6 +679,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, bool addTerminatorToToken)
         {
+            _logger.LogInformation("START --> {0} con tiempo {1}", nameof(GetGenericTokenAsync), DateTime.Now);
+
             var result = await GetRolesAndValidate(tokenRequest);
 
             if (string.IsNullOrEmpty(tokenRequest.env))
@@ -699,9 +688,42 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
             if (result.data?.valid == false) return result;
 
+            await ManageTokenLexon(tokenRequest, result);
+
+            if (tokenRequest is TokenRequestCentinelaNewFirm firm)
+            {
+                firm.guid = firm.guid ?? Guid.NewGuid().ToString();
+                firm.service = firm.service ?? "signature";
+            }
+
+            var tokenString = await Task.Run(() =>
+            {
+                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
+                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
+
+                AddValuesToPayload(payload, tokenRequest);
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            });
+
+            tokenString += addTerminatorToToken ? "/" : "";
+            result.data.token = tokenString;
+
+            _logger.LogInformation("END --> {0} con token: {1}", nameof(GetGenericTokenAsync), tokenString);
+
+            return result;
+        }
+
+        private async Task ManageTokenLexon(TokenRequest tokenRequest, Result<TokenData> result)
+        {
             if (tokenRequest.idApp == _settings.Value.IdAppLexon)
             {
                 var lexUserResult = await GetLexonUserIdAsync(tokenRequest.idClienteNavision);
+                AddResultTrace(lexUserResult, result);
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idUser))
                     TraceError(result.errors, new UserUtilsDomainException($"Error get user from lexon"), Codes.UserUtils.GetToken, Codes.Areas.Api);
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
@@ -712,37 +734,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
 
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
-                tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
-
-            if (tokenRequest is TokenRequestCentinelaNewFirm firm)
-            {
-                firm.guid = firm.guid ?? Guid.NewGuid().ToString();
-                firm.service = firm.service ?? "signature";
-            }
-
-            var tokenString = await Task.Run(() =>
-            {
-                _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(GetGenericTokenAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
-
-                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
-                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
-
-                AddValuesToPayload(payload, tokenRequest);
-
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
-                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            });
-
-            _logger.LogInformation("END --> {0} con token: {1}", nameof(GetGenericTokenAsync), tokenString);
-
-            tokenString += addTerminatorToToken ? "/" : "";
-            result.data.token = tokenString;
-            //result.data.valid = true;
-
-            return result;
+                tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest, result);
         }
 
         private async Task<Result<LexUserSimple>> GetLexonUserIdAsync(string idNavisionUser)
@@ -782,18 +774,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var tokenRequest = BuidSpecificToken(token, idApp);
 
             var tokenResult = await GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
-            var lexUser = new LexUser() { idNavision = tokenRequest.idClienteNavision, idUser = tokenRequest.idUserApp, token = tokenResult.data.token };
 
+            var lexUser = new LexUser() { idNavision = tokenRequest.idClienteNavision, idUser = tokenRequest.idUserApp, token = tokenResult.data.token };
             var resultLexUser = new Result<LexUser>(lexUser);
-            resultLexUser.errors.AddRange(tokenResult.errors);
-            resultLexUser.infos.AddRange(tokenResult.infos);
+            AddResultTrace(tokenResult, resultLexUser);
 
             TraceInfo(resultLexUser.infos, $"The Token is type {tokenRequest.GetType()}", Codes.UserUtils.GetToken);
 
             return resultLexUser;
         }
 
-        private async Task<TokenRequestNewMail> GetContactDataFromLexon(TokenRequestNewMail token)
+        private async Task<TokenRequestNewMail> GetContactDataFromLexon(TokenRequestNewMail token, Result<TokenData> result)
         {
             if (token.idEntityType == (short?)LexonAdjunctionType.files
                 || token.idEntityType == (short?)LexonAdjunctionType.folders
@@ -809,6 +800,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 idUser = token.idUserApp
             };
             Result<LexContact> contactsResult = await GetLexonContactsAsync(search);
+            AddResultTrace(contactsResult, result);
             if (!string.IsNullOrEmpty(contactsResult?.data.Email))
             {
                 if (token.mailContacts == null)
@@ -856,7 +848,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<bool>(false);
 
-            // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClientNav}&NumDocuments={NumDocuments}&idUic=1
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.ClavesUrl}/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClient}&NumDocuments={numDocs}&idUic=1");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -892,7 +883,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<string>("0");
 
-            // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClientNav}&NumDocuments={NumDocuments}&idUic=1
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.ClavesUrl}/FirmaDigital/RecuperarFirmasDigitalesDisponibles?IdClientNav={idClient}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -927,8 +917,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         public async Task<Result<bool>> FirmUseAsync(string idClient, string idUser, string numDocs)
         {
             var result = new Result<bool>(false);
-
-            // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/CrearFirmaDigital?IdClientNav={idClientNav}&idUsuarioPro={idUsuarioPro}&NumDocuments={NumDocuments}&idUic=1
 
             var url = $"{_settings.Value.ClavesUrl}/FirmaDigital/CrearFirmaDigital?IdClientNav={idClient}&idUsuarioPro={idUser}&NumDocuments={numDocs}&idUic=1";
             TraceLog(parameters: new string[] { $"request:{url}" });
