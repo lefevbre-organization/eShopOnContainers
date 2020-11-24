@@ -8,7 +8,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=(
         # "rabbitmq",
-        "consul","vault",
+        # "consul","vault",
         "nosql-data",
         "sql-data"
         ),
