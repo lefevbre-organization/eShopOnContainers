@@ -18,5 +18,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
         Task<Result<ConferenceModel>> GetConferenceByIdAsync(string idNavision, int idApp, string id);
         Task<Result<ConferenceStats>> GetStatsConferenceByIdAsync(string idNavision, int idApp, string id);
+        Task<Result<UserReservation>> CreateReservationAsync(UserReservationRequest reservation);
     }
 }
