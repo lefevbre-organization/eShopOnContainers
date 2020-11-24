@@ -171,18 +171,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             if (begin == null) 
                 begin = DateTime.Now;
 
-            var messageEnd = "";
-            if (end != null)
-            {
-                var ticks = ((DateTime)begin).Ticks;
-                var tiksResponse = ((DateTime)end).Ticks - ticks;
-                messageEnd = $"Time [{end}] -> Delay[{tiksResponse}]";
-
-            }
-
             var message = (end == null)
-                ? $"START --> {url} - {begin}"
-                : $"END ----> {url} - {messageEnd}";
+                ? $"START --> {url} - Time [{begin}]"
+                : $"END ----> {url} - Time [{end}]";
 
             TraceInfo(infos, message, codeInfo);
             log.LogInformation(message);
@@ -272,32 +263,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return (errors?.Count == 0 && count != null && count > 0);
         }
 
-        //public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
-        //{
-        //    int? ErrorCode = null;
-        //    string Error = null;
-        //    int? Count = null;
-        //    try
-        //    {
-        //        if (idError is int)
-        //            ErrorCode = (int?)idError;
-
-        //        if (TextError is int || TextError is string)
-        //            Error = TextError.ToString();
-
-        //        if (!(ErrorCode == null && Error == null))
-        //            Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
-
-        //        if (Total is int)
-        //            Count = (int?)Total;
-        //    }
-        //    catch (Exception exp)
-        //    {
-
-        //        Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message });
-        //    }
-        //    return Count;
-        //}
 
         public void AddResultTrace<Tin, Tout>(Result<Tin> resultIn, Result<Tout> resultOut)
         {
