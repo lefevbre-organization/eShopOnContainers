@@ -80,7 +80,8 @@ export const INITIAL_STATE = {
         mailContacts: [],
         adminContacts: [],
         roles: [],
-        targetService: null
+        targetService: null,
+        cenContacts: []
     }
 };
 

@@ -140,30 +140,28 @@ class SmsMessageEditor extends Component {
     console.log(recipients);
     
     if (this.headerFormRef.current.reportValidity()) {
-        // Get content directly from editor, state content may not contain latest changes
-        const content = this.getEditor().getContent();
-        const { lefebvre } = this.props;
-        const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.signature) 
-          ? lefebvre.userBrandings.signature.find((b) => b.app === lefebvre.userApp) 
-          : '';
-  
-        let guid = lefebvre.guid;
-        if (guid === null) {
-          guid = uuid();
-        }
-  
-  
+      // Get content directly from editor, state content may not contain latest changes
+      const content = this.getEditor().getContent();
+      const { lefebvre } = this.props;
+      const userBranding = (lefebvre && lefebvre.userBrandings && lefebvre.userBrandings.signature) 
+        ? lefebvre.userBrandings.signature.find((b) => b.app === lefebvre.userApp) 
+        : '';
 
-          this.callApis(
-            recipients,
-            content.innerHTML,
-            lefebvre.userId,
-            guid,
-            (userBranding && userBranding.externalId) ? userBranding.externalId : ''
-          );
-        }
-        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+      let guid = lefebvre.guid;
+      if (guid === null) {
+        guid =  uuid();
+      }
+
+      this.callApis(
+        recipients,
+        content.innerHTML,
+        lefebvre.userId,
+        guid,
+        (userBranding && userBranding.externalId) ? userBranding.externalId : ''
+      );
     }
+      //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+  }
   
 
   dialogClose(){
@@ -186,7 +184,7 @@ class SmsMessageEditor extends Component {
         default:
             break;
     }
-}
+  }
 
   onDiscardSignatureOk(){
     const {close, lefebvre, application} = this.props

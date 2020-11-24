@@ -6,7 +6,7 @@ import { clearUserCredentials, setUserCredentials } from "../../actions/applicat
 import history from "../../routes/history";
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts, getService } from "../../services/jwt";
 import Cookies from 'js-cookie';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures, getUserSms } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures, getUserSms, getContactsCentinela } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
@@ -483,6 +483,21 @@ class UserLefebvre extends Component {
                                     }
                                 } 
                             });
+                            if (service === 'certifiedSms' && app === 'centinela'){
+                                getContactsCentinela(user)
+                                .then( contacts => {
+                                    var contactsInfo = []
+                                    mailContacts.forEach(phone => {
+                                        var contact = contacts.data.filter(c => c.phoneNumber1 === phone || c.phoneNumber2 === phone);
+                                        if (contact.length > 0){
+                                           contactsInfo.push({name: contact[0].fullName, email: contact[0].email, phone: `${phone}`})
+                                        }
+                                    });
+                                    if (contactsInfo.length > 0){
+                                        this.props.setCenContacts(contactsInfo);
+                                    }
+                                })
+                            }
                         }
                         this.setState({readyToRedirect: true})
                     }
@@ -577,7 +592,8 @@ const mapDispatchToProps = dispatch => ({
     setIdDocuments: ids => dispatch(ACTIONS.setIdDocuments(ids)),
     setAdminContacts: adminContacts => dispatch(ACTIONS.setAdminContacts(adminContacts)),
     setRoles: roles => dispatch(ACTIONS.setRoles(roles)),
-    setTargetService: service => dispatch(ACTIONS.setTargetService(service))
+    setTargetService: service => dispatch(ACTIONS.setTargetService(service)),
+    setCenContacts: contacts => dispatch(ACTIONS.setCenContacts(contacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLefebvre);

@@ -693,13 +693,25 @@ class App extends Component {
 
   async componentDidMount() {
     document.title = this.props.application.title;
-    var { mailContacts, adminContacts } = this.props.lefebvre;
+    var { mailContacts, adminContacts, userApp, cenContacts, targetService } = this.props.lefebvre;
     var self = this;
     let dataMailContacts = [];
     let dataAdminContacts = []; 
 
-    (mailContacts) ? mailContacts.map(c => { return dataMailContacts.push({address: c, name: ''}) }) : null;
-    (adminContacts) ? adminContacts.map(c => { return dataAdminContacts.push({address: c, name: ''}) }) : null;
+    (mailContacts) 
+      ? 
+        mailContacts.map(address => { 
+          if (targetService === 'certifiedSms' && userApp === 'centinela' && cenContacts.length > 0){
+            var contactInfo = cenContacts.filter(contact => contact.phone === address);
+            return (contactInfo && contactInfo.length > 0)
+            ? dataMailContacts.push({address: address, name: contactInfo[0].name, email: contactInfo[0].email, phone: contactInfo[0].phone })
+            : dataMailContacts.push({address: address, name: '', email: '', phone: ''});
+          } else {
+            return dataMailContacts.push({address: address, name: '', email: '', phone: ''}) 
+          }
+        }) 
+      : null;
+    (adminContacts) ? adminContacts.map(address => { return dataAdminContacts.push({address: address, name: '', email: '', phone: ''}) }) : null;
     
     //Starting poll to update the inbox automatically
     //this.startPoll();

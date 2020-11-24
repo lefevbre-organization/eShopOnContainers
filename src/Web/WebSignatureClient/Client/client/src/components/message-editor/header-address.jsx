@@ -33,10 +33,8 @@ export class HeaderAddress extends Component {
   }
 
   dialogClose(){
-    
     this.setState({
       hideContactDialog: false, 
-      
     });
   }
 
@@ -54,11 +52,19 @@ export class HeaderAddress extends Component {
         {addresses.map((address, index) => (
           <div key={index} className={`${chipClassName} ${mainCss['mdc-chip']}`}
             draggable={true}
-            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}>
-            <div className={mainCss['mdc-chip__text']}>
-             <span> {address.address.split(' ')[0]} </span>
-             <span className="light-blue-text"> {address.address.split(' ')[1]} </span>
-            </div>
+            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}
+          >
+            {
+              lefebvre.targetService === 'certifiedSms'
+              ? <div className={mainCss['mdc-chip__text']}>
+                  <span>{address.email}</span>
+                  <span className="light-blue-text"> {address.address} </span>
+                </div>
+              : <div className={mainCss['mdc-chip__text']}>
+                  <span>{address.address.split(' ')[0]}</span>
+                  <span className="light-blue-text"> {address.address.split(' ')[1]} </span>
+                </div>
+            }
             <i onClick={() => onAddressRemove(id, address)} className={`material-icons ${mainCss['mdc-chip__icon']}
                ${mainCss['mdc-chip__icon--trailing']}`}>cancel</i>
           </div>
@@ -146,8 +152,7 @@ export class HeaderAddress extends Component {
      newValue.length <= this.state.maxlength 
      || this.props.sendingType != 'smsCertificate' ) {
       this.setState({ value: newValue });
-   }
-   
+   }  
   }
 
   onSuggestionsFetchRequested({ value }) {
