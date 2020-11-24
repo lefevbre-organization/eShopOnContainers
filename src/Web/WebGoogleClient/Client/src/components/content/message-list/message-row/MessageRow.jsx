@@ -31,12 +31,11 @@ export class MessageItem extends Component {
   }
 
   getMessage(evt) {
-    this.props.history.push(`/${this.props.data.id}`);
-    // if(this.props.data.labelIds.length == 1 && this.props.data.labelIds.includes('DRAFT')){
-    //   this.props.history.push(`/compose/${this.props.data.id}`);
-    // } else {
-    //   this.props.history.push(`/${this.props.data.id}`);
-    // } 
+    if(this.props.data.labelIds.length == 1 && this.props.data.labelIds.includes('DRAFT')){
+      this.props.history.push(`/compose/${this.props.data.id}`);
+    } else {
+      this.props.history.push(`/${this.props.data.id}`);
+    } 
   }
 
   getFromName(from) {
