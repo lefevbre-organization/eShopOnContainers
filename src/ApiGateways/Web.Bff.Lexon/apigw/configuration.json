@@ -91,7 +91,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/con/{everything}",
-      "DownstreamPathTemplate": "/api/{version}/{everything}"
+      "DownstreamPathTemplate": "/api/{version}/Conference/{everything}"
     }
 
   ],
