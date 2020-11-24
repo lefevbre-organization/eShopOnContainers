@@ -47,8 +47,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         }
 
         [HttpPost("conference")]
-        [ProducesResponseType(typeof(Result<UserReservation>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<UserReservation>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostUserAsync(
         [FromBody] UserReservationRequest reservation
     )
@@ -56,9 +56,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             if (string.IsNullOrEmpty(reservation.name))
                 return BadRequest("Must be a valid name");
 
-            Result<UserReservation> result = await _service.CreateReservationAsync(reservation);
+            UserReservation result = await _service.CreateReservationAsync(reservation);
 
-            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+            return result == null ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("{idNavision}/user")]

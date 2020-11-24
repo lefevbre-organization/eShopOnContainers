@@ -91,7 +91,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return result;
         }
 
-        public async Task<Result<UserReservation>> CreateReservationAsync(UserReservationRequest reservation)
+        public async Task<UserReservation> CreateReservationAsync(UserReservationRequest reservation)
         {
             var reservationCreated = new UserReservation();
             reservationCreated.id = DateTime.Now.Ticks;
@@ -99,8 +99,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             reservationCreated.start_time = reservation.start_time;
             reservationCreated.mail_owner = reservation.mail_owner;
             reservationCreated.duration = 900000;
-            var result = new Result<UserReservation>(reservationCreated);
-            return result;
+            //var result = new Result<UserReservation>(reservationCreated);
+            return reservationCreated ;
         }
     }
 }
