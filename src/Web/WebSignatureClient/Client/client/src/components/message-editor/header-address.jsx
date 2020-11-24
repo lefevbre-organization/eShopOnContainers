@@ -61,8 +61,8 @@ export class HeaderAddress extends Component {
                   <span className="light-blue-text"> {address.address} </span>
                 </div>
               : <div className={mainCss['mdc-chip__text']}>
-                  <span>{address.address.split(' ')[0]}</span>
-                  <span className="light-blue-text"> {address.address.split(' ')[1]} </span>
+                  <span className="grey-text">{address.address.split(' ')[0]}</span>
+                  <span className="light-blue-text font-weight-bold"> {address.address.split(' ')[1]} </span>
                 </div>
             }
             <i onClick={() => onAddressRemove(id, address)} className={`material-icons ${mainCss['mdc-chip__icon']}
@@ -107,7 +107,7 @@ export class HeaderAddress extends Component {
           id="contactDialog" 
           visible={this.state.hideContactDialog} 
           animationSettings={this.animationSettings} 
-          width='45%'
+          width='39%'
           ref={dialog => this.contactDialog = dialog} 
           close={this.dialogClose}
         >

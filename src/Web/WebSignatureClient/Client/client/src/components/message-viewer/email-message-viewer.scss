@@ -273,7 +273,6 @@
 
     .separador-email::after{
      right: calc(14% - -4px);
-         right: calc(20% - -8px);
      border: solid #c52f2f00;
      content: "";
      position: absolute;
@@ -286,8 +285,13 @@
      margin-top: 1px;
     }
 
-    .separador-sms::after{
-      right: calc(20% - -8px);
+    .separador-sms {
+       border-bottom: 2px solid #e6e9f2;
+       position: relative;
+    }
+
+    .separador-sms::after {
+      right: calc(16% - -10px);
       border: solid #c52f2f00;
       content: "";
       position: absolute;
@@ -365,20 +369,24 @@
       }
     }
 
+ .container-certificate {
+    display: grid;
+    grid-template-columns: auto auto auto;
+ }
+
  .seguimiento-certification-individual-sms {
-      width: 41%;
       text-align:center;
       font-size:40px;
       color:#001978;
-      float:left;
       margin-top:20px;
-      margin-left: -8%;
+      display: grid;
+      grid-template-rows: repeat(3, max-content);
       &.no-completado{
         color:#a0a1a4;
         .linea{
           border-bottom: 2px solid #a0a1a4!important;
           &.primer-estado{
-            left: 35%!important;
+            left: 49% !important;
           }
         }
         .check-seguimiento{
@@ -400,21 +408,20 @@
           top: 10px;
           background: #f4f4f4;
           border-radius: 50%;
-          left: 47%;
+          right: 48%;
           font-size: 18px;
           z-index: 2;
         }
 
         .linea {
           border-bottom: 2px solid #001978;
-          width: 80%;
+          width: 100%;
           margin-top: 20px;
           position: absolute;
           left: -49%;
           z-index: 1;
-          margin-left: 16%;
           &.primer-estado{
-            left: 35%!important;
+           left: 49% !important;
           }
         }
         .info{

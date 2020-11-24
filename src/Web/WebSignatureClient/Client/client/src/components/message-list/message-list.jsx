@@ -548,7 +548,12 @@ class MessageList extends Component {
         let fileList = [];
         let data;
 
-        data = (this.props.emails && this.props.emails.length > 0) ? this.props.emails.find(e => e.id === props.Id) : undefined;
+        if (this.props.selectedService == 'certifiedEmail'){
+            data = (this.props.emails && this.props.emails.length > 0) ? this.props.emails.find(e => e.id === props.Id) : undefined;
+        } else if (this.props.selectedService == 'certifiedSms'){
+            data = (this.props.smsList && this.props.smsList.length > 0) ? this.props.smsList.find(e => e.id === props.Id) : undefined;
+        }
+
         if (data){
             emailsInfo = this.getFilesInfo(data);
             emailsInfo.forEach((email, i) => {
@@ -650,7 +655,7 @@ class MessageList extends Component {
                                     text: signer.phone
                                 },
                                 {
-                                    text: props.Emails !== '|' ? props.Emails : ''
+                                    text: props.Emails && props.Emails !== '|' ? props.Emails : 'Desconocido'
                                 }
                             )
                         : 
@@ -660,7 +665,7 @@ class MessageList extends Component {
                                     cssClass: 'test'
                                 },
                                 {
-                                    text: props.Emails !== '|' ? props.Emails : ''
+                                    text: signer.email
                                 }
                             )
                 } else {
@@ -675,7 +680,7 @@ class MessageList extends Component {
                                     text: signer.phone
                                 },
                                 {
-                                    text: props.Emails !== '|' ? props.Emails : ''
+                                    text: props.Emails && props.Emails !== '|' ? props.Emails : 'Desconocido'
                                 },
                                 {   
                                     separator: true
@@ -688,7 +693,7 @@ class MessageList extends Component {
                                     cssClass: 'test'
                                 },
                                 {
-                                    text: props.Emails !== '|' ? props.Emails : ''
+                                    text: signer.email
                                 },
                                 {   
                                     separator: true
@@ -701,13 +706,13 @@ class MessageList extends Component {
         return ( 
 
             <div id='container' style={{width: '100%', textAlign: 'center'}}>
-                <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
                     {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
                    {this.props.selectedService === 'certifiedSms' ? 
                    <>
-                    <span style={{color: '#001970'}}>{firstEmail.split(' ')[0]}</span> 
+                    <span style={{color: '#001970', fontWeight: '500'}}>{firstEmail.split(' ')[0]}</span> 
                     <br />
-                    <span style={{position: 'absolute', marginTop: '-2px'}}>
+                    <span style={{color: '#666666'}}>
                         {
                         firstEmail.split(' ')[1] !== '|' 
                         && firstEmail.split(' ')[1] !== 'undefined' ? 

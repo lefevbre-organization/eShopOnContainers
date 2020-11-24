@@ -129,7 +129,7 @@ const Contacts = (props) => {
            || contact.email.toUpperCase().includes(filter))
            .map((contact, i) => 
               <li className={style['container-list-contacts']} key={i}>
-                <div><p className="light-blue-text">{contact.phoneNumber1}</p></div>
+                <div><p className="light-blue-text font-weight-bold">{contact.phoneNumber1}</p></div>
                 <div className={style['list-checked']}>
                 <label>
                   <input 
@@ -145,8 +145,13 @@ const Contacts = (props) => {
                    name="checked"
                    value={contact.contactId}
                 />
-                  <span>{contact.name}</span>
-                  <div className={style['email']}>{contact.email}</div>
+                  <span 
+                    className={contact.checked 
+                    ? 'light-blue-text font-weight-bold' : 
+                    'grey-text font-weight-bold'} >
+                      {contact.name}
+                  </span>
+                  <div className={`${style['email']} grey-text`}>{contact.email}</div>
                 </label>
                 </div>
               </li> 
@@ -183,8 +188,10 @@ const Contacts = (props) => {
                 background: #ebedf4;
                 border: none;
                 height: 39px;
-                padding: 5px;
+                padding: 5px 20px 0px 16px !important;
                 font-weight: 700;
+                font-family: 'MTTMilano';
+                width: 76% !important;
               }
               .e-control.e-dropdownlist.e-lib.e-input {
                 color: #001978 !important;
@@ -200,8 +207,10 @@ const Contacts = (props) => {
               }
               .position-icon {
                 position: absolute;
-                left: 18px;
-                top: 17px;
+                left: 20px;
+                top: 9px;
+                font-size: 19px;
+                color: #8A91B5;
               }
               .right {
                 text-align: right;  
@@ -214,6 +223,7 @@ const Contacts = (props) => {
               .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
                 content: '\e90b';
                 font-family: 'lf-font' !important;
+                font-size: 15px;
               }
            `}
          </style>
