@@ -15,8 +15,12 @@
         insurances = 11,
         others = 12,
         folders = 13,
-        documents = 14
-
+        documents = 14,
+        LLAM = 30,
+        REUN = 31,
+        TRAM = 32,
+        OTRA = 33,
+        EMAIL = 45
     }
 
 

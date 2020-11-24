@@ -9,15 +9,40 @@ const Contacts = (props) => {
   
   const [contacts, setContacts] = useState([]);
 
+  const [isData, setIsdata] = useState(true);
+
   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
   const [filter, setFilter] = useState('');
+
+  const validData = (contactsCentinela) => {
+    if(contactsCentinela.data.length === 0) {
+      setIsdata(false);
+    }
+  }
+
+  const getDataCentinela = async () => {
+    if(contacts.length == 0 && isData) {
+      const user = props.lefebvre.userId;
+      const contactsCentinela = await getContactsCentinela(user);
+      validData(contactsCentinela);
+      const newContactsCentinela = [];
+       contactsCentinela.data.forEach(contact => {
+        const emailExists = props.addresses.some(address => {
+           return (address.address === contact.email)
+         });
+        contact.checked = emailExists;
+        newContactsCentinela.push(contact);
+      });
+      setContacts([...newContactsCentinela]);        
+    }
+  }
 
   useEffect(() => {
     const numberCheckeds = contacts.filter(contact => contact.checked == true);
     setNumberCheckeds(numberCheckeds.length);
     getDataCentinela();
-  });
+  }, [numberCheckeds, setNumberCheckeds, getDataCentinela]);
 
   const selectContact = [
     // { 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon') }, 
@@ -32,21 +57,6 @@ const Contacts = (props) => {
    console.log(e.value);
   }
 
-  const getDataCentinela = async () => {
-    if(contacts.length == 0 ) {
-      const user = props.lefebvre.userId;
-      const contactsCentinela = await getContactsCentinela(user);
-      const newContactsCentinela = [];
-       contactsCentinela.data.forEach(contact => {
-        const emailExists = props.addresses.some(address => {
-           return (address.address === contact.email)
-         });
-        contact.checked = emailExists;
-        newContactsCentinela.push(contact);
-      });
-      setContacts([...newContactsCentinela]);        
-    }
-  }
   
   const filterContact = (e) => {
     setFilter(e.target.value);
@@ -157,10 +167,36 @@ const Contacts = (props) => {
                 padding: 0px !important;
                 overflow: hidden;
               } 
+              .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
+             .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
+              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
+              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
+              {
+                background: #001970;
+              }
+              .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
+                background: #ebedf4;
+                border: none;
+                height: 39px;
+                padding: 5px;
+                font-weight: 700;
+              }
+              .e-control.e-dropdownlist.e-lib.e-input {
+                color: #001978 !important;
+              }
+              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+                color: #001978;
+              }
+              .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
+              .e-list-item.e-active.e-hover {
+                background-color: #eee;
+                border-color: #fff;
+                color: #001970;
+              }
               .position-icon {
-                top: -31px;
-                position: relative;
-                left: 8px;
+                position: absolute;
+                left: 18px;
+                top: 17px;
               }
               .right {
                 text-align: right;  
@@ -169,6 +205,10 @@ const Contacts = (props) => {
                 font-size: 12px;
                 color: #001978;
                 margin-top: 15px;
+              }
+              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+                content: '\e90b';
+                font-family: 'lf-font' !important;
               }
            `}
          </style>

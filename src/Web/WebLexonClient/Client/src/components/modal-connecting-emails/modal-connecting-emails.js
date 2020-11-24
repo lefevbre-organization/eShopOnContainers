@@ -11,6 +11,7 @@ import { ConnectingEmailsStep4 } from './step4';
 import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import {ConnectingEmailsStep1b} from "./step1b";
 const base64js = require('base64-js');
 
 class ModalConnectingEmails extends Component {
@@ -39,7 +40,15 @@ class ModalConnectingEmails extends Component {
   }
 
   componentDidMount() {
-    this.setState({ messages: this.props.selectedMessages });
+
+    const messages = [...this.props.selectedMessages];
+    for(let i = 0; i < messages.length; i++) {
+      const mime = parse(messages[i].raw);
+      const attachments = findAttachments(mime);
+      messages[i].attachments = attachments;
+    }
+
+    this.setState({ messages });
   }
 
   componentDidUpdate(prevProps) {
@@ -47,7 +56,14 @@ class ModalConnectingEmails extends Component {
       JSON.stringify(prevProps.selectedMessages) !==
       JSON.stringify(this.props.selectedMessages)
     ) {
-      this.setState({ messages: this.props.selectedMessages });
+      const messages = [...this.props.selectedMessages];
+      for(let i = 0; i < messages.length; i++) {
+        const mime = parse(messages[i].raw);
+        const attachments = findAttachments(mime);
+        messages[i].attachments = attachments;
+      }
+
+      this.setState({ messages });
     }
   }
 
@@ -77,6 +93,8 @@ class ModalConnectingEmails extends Component {
     const { step, step1Data } = this.state;
 
     if (step === 1) {
+      this.setState({ step: 11 });
+    } else if(step == 11) {
       this.setState({ step: 2 });
     } else if (step === 2) {
       if (
@@ -99,8 +117,10 @@ class ModalConnectingEmails extends Component {
   prevStep() {
     const { step, step1Data } = this.state;
 
-    if (step === 2) {
+    if (step === 11) {
       this.setState({ step: 1 });
+    } else if (step === 2) {
+      this.setState({ step: 11 });
     } else if (step === 3) {
       this.setState({ step: 2 });
     } else if (step === 4) {
@@ -129,6 +149,11 @@ class ModalConnectingEmails extends Component {
     }
 
     this.setState({ step1Data: data, step2Data });
+  }
+
+  changeStep1bData(data) {
+    let step1Data = this.state.step1Data;
+    this.setState({ step1Data: {...step1Data, entity: data.entity} });
   }
 
   changeStep2Data(data) {
@@ -196,11 +221,14 @@ class ModalConnectingEmails extends Component {
     const { step1Data, step2Data, step3Data } = this.state;
     const { toggleNotification } = this.props;
     const { selectedMessages } = this.props;
+    const { messages } = this.state;
     let notification = 0;
     let error = false;
 
     this.closeDialog();
     let sc = null;
+
+    debugger
 
     try {
       if (step1Data.actuation === true) {
@@ -214,10 +242,10 @@ class ModalConnectingEmails extends Component {
       ) {
         notification += 2;
         // Save email as eml format
-        for (let i = 0; i < selectedMessages.length; i++) {
-          const raw = Base64.encode(selectedMessages[i].raw, false);
+        for (let i = 0; i < messages.length; i++) {
+          const raw = Base64.encode(messages[i].raw, false);
 
-          const subject = selectedMessages[i].subject;
+          const subject = messages[i].subject;
 
           if (step1Data.copyDocuments === true) {
             try {
@@ -242,12 +270,16 @@ class ModalConnectingEmails extends Component {
 
           if (step1Data.saveDocuments === true) {
             console.log('uploadDocument: 0');
+            debugger
 
             // Save attachments
-            const mime = parse(selectedMessages[i].raw);
-            const attachments = findAttachments(mime);
+            //const mime = parse(messages[i].raw);
+            const attachments = messages[i].attachments;    //findAttachments(mime);
 
             for (let j = 0; j < attachments.length; j++) {
+              if(attachments[j].checked === false) {
+                continue;
+              }
               let rawAttach = base64js.fromByteArray(attachments[j].content);
               try {
                 const data = await uploadFile(
@@ -344,13 +376,40 @@ class ModalConnectingEmails extends Component {
 
   renderButtons() {
     const { step, step1Data } = this.state;
+    const dsbl =
+        step1Data.actuation === false &&
+        step1Data.copyDocuments === false &&
+        step1Data.saveDocuments === false;
 
     switch (step) {
+      case 11:
+        return (
+            <Fragment>
+              <Button
+                  bsPrefix='btn btn-outline-primary'
+                  onClick={() => {
+                    this.closeDialog();
+                  }}>
+                {i18n.t('classify-emails.cancel')}
+              </Button>
+              <Button
+                  bsPrefix='btn btn-outline-primary'
+                  onClick={() => {
+                    this.prevStep();
+                  }}>
+                {i18n.t('classify-emails.back')}
+              </Button>
+              <Button
+                  disabled={dsbl}
+                  bsPrefix='btn btn-primary'
+                  onClick={() => {
+                    this.nextStep();
+                  }}>
+                {i18n.t('classify-emails.continue')}
+              </Button>
+            </Fragment>
+        );
       case 1:
-        const dsbl =
-          step1Data.actuation === false &&
-          step1Data.copyDocuments === false &&
-          step1Data.saveDocuments === false;
         return (
           <Fragment>
             <Button
@@ -474,7 +533,7 @@ class ModalConnectingEmails extends Component {
       showModalDocuments,
       toggleNotification,
     } = this.props;
-    const { messages, step1Data, step } = this.state;
+    const { messages = [] } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -505,9 +564,18 @@ class ModalConnectingEmails extends Component {
                 style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep1
                   show={this.state.step === 1}
+                  attachments={messages}
                   onChange={(data) => {
                     this.changeStep1Data(data);
                   }}></ConnectingEmailsStep1>
+              </div>
+              <div
+                style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
+                <ConnectingEmailsStep1b
+                  show={this.state.step === 11}
+                  onChange={(data) => {
+                    this.changeStep1bData(data);
+                  }}></ConnectingEmailsStep1b>
               </div>
               <div
                 style={{ display: this.state.step === 2 ? 'block' : 'none' }}>

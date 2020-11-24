@@ -108,7 +108,7 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ninguna firma para el usuario {user}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ninguna firma para el usuario {user}"), "SG18");
                 }
                 else
                 {
@@ -119,7 +119,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}", "SG18");
             }
             return result;
         }
@@ -133,17 +133,18 @@
             {
                 var resultReplace = await _context.Signatures.ReplaceOneAsync(filter, userSignature, GetUpsertOptions());
 
-                userSignature.Id = ManageCreateSignature($"User don't inserted {userSignature.User}",
+                userSignature.Id = ManageCreateMessage(
+                    $"User don't inserted {userSignature.User}",
                     $"User already existed and it's been modified {userSignature.User}",
                     $"User inserted {userSignature.User}",
-                    result, resultReplace);
+                    result.infos, result.errors, resultReplace, "SG19");
 
                 result.data = userSignature;
 
             }
             catch (Exception)
             {
-                TraceInfo(result.infos, $"Error al guardar la firma {userSignature.User}");
+                TraceInfo(result.infos, $"Error al guardar la firma {userSignature.User}", "SG19");
                 throw;
             }
             return result;
@@ -159,12 +160,12 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}", "SG20");
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG20");
             }
             return result;
         }
@@ -182,7 +183,7 @@
                 if (userDb == null)
                 {
                     userDb = userSignature;
-                    TraceInfo(result.infos, $"Se inserta el usuario {userSignature.User}");
+                    TraceInfo(result.infos, $"Se inserta el usuario {userSignature.User}", "SG21");
                 }
                 else
                 {
@@ -192,7 +193,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG21");
             }
 
             result.data = true;
@@ -208,12 +209,12 @@
                 //result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {id}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {id}", "SG22");
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG22");
             }
             return result;
         }
@@ -232,7 +233,7 @@
 
                 if (userInfo.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra información del usuario {user}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra información del usuario {user}"), "SG23");
                 }
                 else
                 {
@@ -246,11 +247,11 @@
                     if (resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0)
                     {
                         result.data = num + availableSignatures;
-                        TraceInfo(result.infos, $"Se han actualizado correctamente las firmas disponibles de {user}");
+                        TraceInfo(result.infos, $"Se han actualizado correctamente las firmas disponibles de {user}", "SG23");
                     }
                     else
                     {
-                        TraceInfo(result.infos, $"No se han podido actualizar las firmas disponibles de {user}");
+                        TraceInfo(result.infos, $"No se han podido actualizar las firmas disponibles de {user}", "SG23");
                         result.data = 0;
                     }
                 }
@@ -258,7 +259,7 @@
             catch (Exception ex)
             {
 
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG23");
             }
             return result;
         }
@@ -322,7 +323,7 @@
 
                 if (userInfo.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra información del usuario {user}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra información del usuario {user}"), "SG24");
                 }
                 else
                 {
@@ -332,7 +333,7 @@
             catch (Exception ex)
             {
 
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG24");
             }
             return result;
         }
@@ -350,7 +351,7 @@
                 if (userDb == null)
                 {
                     userDb = userSignature;
-                    TraceInfo(result.infos, $"Se inserta el branding {brandingIn.app} con id {brandingIn.externalId} para el usuario {user}");
+                    TraceInfo(result.infos, $"Se inserta el branding {brandingIn.app} con id {brandingIn.externalId} para el usuario {user}", "SG25");
                 }
                 else
                 {
@@ -360,7 +361,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG25");
             }
 
             result.data = true;
@@ -382,12 +383,12 @@
 
                 if (result.data == null)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ninguna firma para el id {signatureId}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ninguna firma para el id {signatureId}"), "SG26");
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}", "SG26");
             }
             return result; 
         }
@@ -402,16 +403,16 @@
                 if (eventInfo.mongoId != null)
                 {
                     result.data = true;
-                    TraceInfo(result.infos, $"Evento recibido - {eventInfo.mongoId}");
+                    TraceInfo(result.infos, $"Evento recibido - {eventInfo.mongoId}", "SG27");
                 } else
                 {
                     result.data = false;
-                    TraceInfo(result.infos, $"Evento no se ha podido almacenar - {eventInfo.mongoId}");
+                    TraceInfo(result.infos, $"Evento no se ha podido almacenar - {eventInfo.mongoId}", "SG27");
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "2000");
+                TraceError(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "SG27");
             }
             return result;
         }
@@ -419,34 +420,22 @@
         public async Task<Result<List<SignEventInfo>>> GetEvents(string signatureId)
         {
             var result = new Result<List<SignEventInfo>>();
-            var result2 = new Result<SignEventInfo>();
             var filter = GetFilterEvents(signatureId);
             try
             {
                 if (signatureId == "all")
-                {
-                    
-                    //result.data = BsonSerializer.Deserialize<SignEventInfo>(await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync());
+                {                    
                     result.data = await _context.SignatureEvents.Find(f=> true).ToListAsync();
                 }
                 else
                 {
-                    //filter = new BsonDocument();
-                    //result2.data = await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync();
-                    //result.data = new List<SignEventInfo>();
-                    //result.data.Add(result2.data);
-
-                    //result.data = new List<SignEventInfo>();
                     result.data = await _context.SignatureEvents.Find(filter).ToListAsync();
-                    
-
-
                 }
                 
 
                 if (result.data == null || result.data.Count == 0)
                 {
-                    TraceError(result.errors, new Exception($"No se encuentra ningún evento para la firma {signatureId}"), "1003");
+                    TraceError(result.errors, new Exception($"No se encuentra ningún evento para la firma {signatureId}"), "SG28");
                 }
                 else
                 {
@@ -457,7 +446,7 @@
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}", "SG28");
             }
             return result;
         }
@@ -543,7 +532,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, ex);
+                TraceError(result.errors, ex, "SG29");
             }
             return result;
         }
@@ -553,27 +542,6 @@
         private static UpdateOptions GetUpsertOptions()
         {
             return new UpdateOptions { IsUpsert = true };
-        }
-
-        private string ManageCreateSignature(string msgError, string msgModify, string msgInsert, Result<UserSignatures> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, msgModify);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert);
-                    return resultReplace.UpsertedId.ToString();
-                }
-            }
-            else
-            {
-                TraceError(result.errors, new Exception(msgError), "1003");
-            }
-            return null;
         }
 
         private UserSignatures GetNewUserSignature(string user, string externalId, string guid, string app, List<Document> documents)
@@ -617,12 +585,12 @@
             if (signatureDb == null)
             {
                 userDb.Signatures.Add(signatureIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una firma para {signatureIn.ExternalId}-{signatureIn.Guid}-{signatureIn.App}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una firma para {signatureIn.ExternalId}-{signatureIn.Guid}-{signatureIn.App}", "SG30");
             }
             else
             {
                 UpdateSignatureWithOther(signatureIn, signatureDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la firma para {signatureIn.ExternalId}-{signatureDb.ExternalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la firma para {signatureIn.ExternalId}-{signatureDb.ExternalId}", "SG30");
             }
         }
 
@@ -636,12 +604,12 @@
             if (brandingDb == null)
             {
                 userDb.Brandings.Add(brandingIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}", "SG31");
             }
             else
             {
                 UpdateBrandingWithOther(brandingIn, brandingDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el branding para {brandingIn.app}-{brandingIn.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el branding para {brandingIn.app}-{brandingIn.externalId}", "SG31");
             }
         }
 

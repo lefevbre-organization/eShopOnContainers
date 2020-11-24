@@ -19,5 +19,8 @@ window.API_GATEWAY = 'https://lexbox-apigwlex.lefebvre.es';
 window.API_ACC_GATEWAY = 'https://lexbox-apigwacc.lefebvre.es';
 window.API_CENTINELA_GATEWAY =
   'https://lexbox-apigwcen.lefebvre.es/api/v1/cen';
+
+window.WEBSPELLCHECKER_CODE = '';
+
 window.RELEASE = 'RC DEV';
 window.SHOW_EXPERIMENTAL = '1';

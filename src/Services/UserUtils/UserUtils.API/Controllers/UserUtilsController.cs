@@ -253,6 +253,28 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         {
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
 
+            if (resultUserUtils?.data == null || resultUserUtils.errors.Count > 0)
+                return BadRequest(resultUserUtils);
+
+            return Redirect(resultUserUtils.data);
+        }
+
+        /// <summary>
+        /// Devueve una redirección hacia una url de signature
+         /// </summary>
+        /// <returns></returns>
+        [HttpGet("user/apps/redirect/signature")]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPassUrlSignaureAsync(
+              [FromQuery] string idUser = "eHZqcHllZQ%3D%3D"
+            )
+        {
+            Result<string> resultUserUtils = await _service.GetUserUtilsActualToSignatureAsync(idUser);
+
+            if (resultUserUtils?.data == null || resultUserUtils.errors.Count > 0)
+                return BadRequest(resultUserUtils);
+
             return Redirect(resultUserUtils.data);
         }
 

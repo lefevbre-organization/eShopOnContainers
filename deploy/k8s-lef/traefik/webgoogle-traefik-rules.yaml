@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webgoogle-traefik-rules
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: now-webgoogle.lefebvre.es
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: webgoogle
+              servicePort: http

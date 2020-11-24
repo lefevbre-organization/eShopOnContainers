@@ -33,10 +33,10 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: LexonApiGatewayUrlHC
-      key: internalurls__lexonapigw__hc
-    - name: AccountApiGatewayUrlHC
-      key: internalurls__accountapigw__hc
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
     - name: PortalUrlHC
       key: internalurls__portal__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
@@ -58,4 +58,4 @@ configValues: |
   window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
   window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
-  window.RELEASE = 'RC 0.33'
+  window.RELEASE = 'RC 0.36'

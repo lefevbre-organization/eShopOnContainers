@@ -49,7 +49,7 @@ env:
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
-      value: Staging
+      value: Development
     - name: OrchestratorType
       value: 'K8S'
     - name: SignaturitApiUrl
@@ -64,3 +64,7 @@ env:
       value: 'https://lexbox-test-websignature.lefebvre.es/completed'
     - name: Signaturit
       value: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'
+    - name: SignatureNotificationUrl
+      value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
+    - name: CertifiedEmailNotificationUrl
+      value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'

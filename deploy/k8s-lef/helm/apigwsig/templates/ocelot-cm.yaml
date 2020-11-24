@@ -1,0 +1,14 @@
+{{- $name := include "apigwsig.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "ocelot-{{ $name }}"
+  labels:
+    app: {{ template "apigwsig.name" . }}
+    chart: {{ template "apigwsig.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  {{ (.Files.Glob "configuration-signature.json").AsConfig  | indent 2 }}
+

@@ -596,3 +596,188 @@ export const getUserContacts = async (bbdd, idUser) => {
     throw err;
   }
 };
+
+export const getActuationTypes = async (bbdd, idUser) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/types?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    const result = await response.json();
+
+    return (result && result.data)?result.data: null;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export const getActuations = async (
+    user,
+    bbdd,
+    typeId,
+    search,
+    pageSize,
+    page
+) => {
+  const ps = pageSize || 100;
+  const cp = page || 1;
+  const url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}&env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+
+    console.log(response);
+    if (response.status === 404) {
+      return { results: { data: [], count: 0 } };
+    }
+
+    const result = await response.json();
+
+    if (result.errors.length > 0) {
+      throw result;
+    }
+
+    return { results: result.data };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/appointments/${eventId}/relation/${actuationId}?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const createAppoinment = async (bbdd, user, event) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/appointments?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        bbdd,
+        subject: event.Subject,
+        idEvent: event.Guid,
+        startDate: event.StartTime,
+        endDate: event.EndTime,
+      }),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const createActuation = async (bbdd, user, st, et, actuation, subject) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/actions?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idType: actuation,
+        issue: subject,
+        startDateTo: et,
+        startDateFrom: st,
+        billable: "0"
+      }),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+
+export const getActuationCategories = async (bbdd, user) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/categories?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getEventClassifications = async (bbdd, user, eventId) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/${eventId}?env=${window.currentEnv}&pageSize=100&pageIndex=1`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const removeEventClassifications = async (bbdd, user, idActuation) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/relation/${idActuation}/remove?env=${window.currentEnv}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({})
+    });
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};

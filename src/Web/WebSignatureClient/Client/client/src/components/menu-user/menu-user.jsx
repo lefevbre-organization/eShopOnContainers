@@ -249,13 +249,13 @@ class MenuUser extends Component {
                                             {  lefebvre.roles && lefebvre.roles.includes('Firma Digital') ? 
                                             <SignatureNumbers 
                                              title={i18n.t('menu-user.signatures-summary')}
-                                             type="signature"
+                                             icon="lf-icon-signature"
                                              available={i18n.t('menu-user.available')}
                                              consumed={i18n.t('menu-user.consumed')}
                                              availablenumber={lefebvre.numAvailableSignatures}
-                                             signatureConsumed={application.signatures.length} /> 
+                                             signatureConsumed={application.signatures.length + application.emails.length} /> 
                                              : null }
-                                            { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
+                                            {/* { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
                                             <SignatureNumbers 
                                              title={i18n.t('menu-user.email-summary')}
                                              type="email"
@@ -263,7 +263,7 @@ class MenuUser extends Component {
                                              consumed={i18n.t('menu-user.consumed')}
                                              availablenumber={lefebvre.numAvailableEmails}
                                              signatureConsumed={application.emails.length} />
-                                             : null }
+                                             : null } */}
                                             <div className='text-center'>
                                                 <button
                                                     type='button'

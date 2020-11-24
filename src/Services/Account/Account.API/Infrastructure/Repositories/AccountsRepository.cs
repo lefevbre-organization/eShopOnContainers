@@ -545,11 +545,6 @@
                                     && x.provider.Equals(provider.ToUpperInvariant());
         }
 
-        private static UpdateOptions GetUpsertOptions()
-        {
-            return new UpdateOptions { IsUpsert = true };
-        }
-
         private static List<ArrayFilterDefinition> GetFilterFromAccount(string provider, string mail)
         {
             var arrayFilters = new List<ArrayFilterDefinition>();
@@ -838,7 +833,6 @@
                 if (evByName != null)
                 {
                     TraceError(result.errors, new AccountDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), "AC43");
-                    //TraceOutputMessage(result.errors, $"Error, exist other eventType with same name {eventType.name}, review it ", null, "EventIdExist");
                 }
                 else
                 {
@@ -852,7 +846,6 @@
             else
             {
                 TraceError(result.errors, new AccountDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), "AC43");
-                //TraceOutputMessage(result.errors, $"Error, eventType id exist, review {eventType.idEvent}  or correct account ", null, "EventIdExist");
             }
         }
 
@@ -863,7 +856,6 @@
             if (ev == null)
             {
                 TraceError(result.errors, new AccountDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), "AC43");
-                //TraceOutputMessage(result.errors, $"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account ", null, "EventIdUnknow");
             }
             else
             {

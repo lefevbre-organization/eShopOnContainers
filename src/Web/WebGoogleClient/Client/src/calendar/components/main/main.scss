@@ -252,6 +252,21 @@
     width: 24px !important;
 }
 
+.schedule-header-bar.e-schedule .e-schedule-toolbar .logout-icon {
+    background-image: url('/assets/img/icon-close-session.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    
+}
+
+.schedule-header-bar.e-schedule .e-schedule-toolbar .calendar-icon {
+    background-image: url('/assets/img/icon-calendar-check.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    min-width: 24px !important;
+}
+
+
 .schedule-header-bar.e-schedule .e-schedule-toolbar .e-toolbar-items .e-schedule-user-icon .e-tbar-btn:hover {
     background-color: inherit;
 }
@@ -340,4 +355,15 @@
 .highcontrast .e-profile-wrapper .profile-container {
     background-color: #000;
 }
+
+/*.e-dlg-overlay {
+    background-color: #FFFFFF !important;
+    opacity: 1 !important;
+    box-shadow: none !important
+}
+
+.e-dialog {
+    background-color: #fff;
+    box-shadow: none !important
+}*/
 

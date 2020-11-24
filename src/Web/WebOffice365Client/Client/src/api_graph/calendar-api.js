@@ -189,18 +189,15 @@ export const deleteCalendar = (idCalendar) => {
                 reject(err);
             });
     });
-}; 
-
+};
 
 // Events Api
-
-
-export const getEventList = (idCalendar, selectedDate) => {    
+export const getMeEventList = () => {
     return new Promise(async (resolve, reject) => {
         const accessToken = await getAccessTokenSilent();
         const client = getAuthenticatedClient(accessToken);
         client
-            .api(`me/calendars/${idCalendar}/events`)
+            .api(`me/events/`)
             .get()
             .then((response) =>
                 resolve(listEventsParser(response.value)))
@@ -210,11 +207,44 @@ export const getEventList = (idCalendar, selectedDate) => {
     });
 };
 
+
+export const getEventList = (idCalendar, selectedDate) => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${idCalendar}/events?$expand=extensions($filter%3Did%20eq%20'Es.Lefebvre.LexonClassification')`)
+            .get()
+            .then((response) =>
+                resolve(listEventsParser(response.value)))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
+export const addEventClassification = (eventId, classificationId) => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`/me/events/${eventId}/extensions`)
+            .post({
+                "@odata.type": "microsoft.graph.openTypeExtension",
+                "extensionName": "Es.Lefebvre.LexonClassification",
+                "LexonClassification": "" + classificationId,
+            })
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
 export const addCalendarEvent = (idCalendar, event) => {   
     return new Promise(async (resolve, reject) => {
-
         event = EventParser(event);
-      
         const accessToken = await getAccessTokenSilent();
         const client = getAuthenticatedClient(accessToken);
         client
@@ -228,9 +258,23 @@ export const addCalendarEvent = (idCalendar, event) => {
     });
 };
 
+export const removeEventClassification = (idCalendar, eventId) => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/events/${eventId}/extensions/Es.Lefebvre.LexonClassification`)
+            .delete()
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
 export const updateCalendarEvent = (idCalendar, eventId, event) => {
     return new Promise(async (resolve, reject) => {
-
         event = EventParser(event);
 
         const accessToken = await getAccessTokenSilent();
@@ -440,7 +484,8 @@ function listACLParser(list) {
     return listParse;
 }
 
-function listEventsParser(list) {   
+function listEventsParser(list) { 
+    
     let listParse = [];
 
     if (list.length > 0) {
@@ -524,7 +569,6 @@ function listEventsParser(list) {
                 recurrenceRule = null;
             }
 
-
             //EventType
             let category;
             if (list[i].categories != undefined && list[i].categories.length > 0 ) {
@@ -533,7 +577,7 @@ function listEventsParser(list) {
                         {
                             eventTypeColor: undefined,
                             eventTypeId: undefined,
-                            eventTypeName: list[i].categories[0]
+                            eventTypeName: list[i].categories[0],
                         }
                 };
             }
@@ -541,12 +585,32 @@ function listEventsParser(list) {
                 category = undefined
             }
 
+            // Search Lexon Classification if exists
+            let lexonClassification;
+            if(list[i].extensions) {
+                for(let e = 0; e < list[i].extensions.length; e++) {
+                    if(list[i].extensions[e].extensionName === 'Es.Lefebvre.LexonClassification') {
+                        lexonClassification = list[i].extensions[e].LexonClassification;
+                        if(!category) {
+                            category = { private: {
+                                    eventTypeColor: undefined,
+                                    eventTypeId: undefined,
+                                }
+                            }
+                        }
+
+                        category.private = { ...category.private, lexonClassification: lexonClassification}
+                        break;
+                    }
+                }
+            }
+
 
             listParse.push({                   
                 id: list[i].id,
                 summary: list[i].subject,
-                Location: list[i].location.displayName,
-                Description: list[i].bodyPreview,
+                location: list[i].location.displayName,
+                description: list[i].bodyPreview,
                 //start: { dateTime: StartDate, timeZone: list[i].start.timeZone },
                 //end: { dateTime: EndDate, timeZone: list[i].end.timeZone },
                 start: { dateTime: convertUTCDateToLocalDate(new Date(list[i].start.dateTime), list[i].isAllDay), timeZone: list[i].start.timeZone },
@@ -554,6 +618,7 @@ function listEventsParser(list) {
                 //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].isAllDay,
+                isSensitivity: list[i].sensitivity === 'normal' ? false : true,
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
@@ -629,6 +694,8 @@ function EventParser(event) {
         },      
 
         IsAllDay: event.isAllDay,
+        
+        sensitivity: event.sensitivity
         //isReminderOn: true,
         //reminderMinutesBeforeStart: 1,
 
@@ -682,8 +749,6 @@ function EventParser(event) {
                         break;
 
                     case 'BYDAY':
-
-                        alert('procesamos fecha')
 
                         let arr = []
                         let valueBYDAY = recObj[key].split("=")[1]
@@ -771,12 +836,32 @@ function EventParser(event) {
     eventParse.attendees = ateendeeObj;
 
     //Categories
+    eventParse.extensions = [
+        {
+            "@odata.type": "microsoft.graph.openTypeExtension",
+            "extensionName": "Es.Lefebvre.LexonClassification",
+            "LexonClassification": "",
+        }
+    ]
     if (event.extendedProperties != undefined) {
-        let item =
-            [
-            event.extendedProperties.private.eventTypeName 
+        if(event.extendedProperties.private && event.extendedProperties.private.eventTypeName) {
+            let item =
+                [
+                    event.extendedProperties.private.eventTypeName
+                ]
+            eventParse.categories = item;
+        }
+
+        if(event.extendedProperties.private && event.extendedProperties.private.lexonClassification) {
+            //eventParse.singleValueExtendedProperties = [ ...(eventParse.singleValueExtendedProperties || []), { id: "String {47e9e6f2-3a1f-495a-a50f-b231d69a0de7} Name LexonClassification", value: '' + event.extendedProperties.private.lexonClassification}]
+            eventParse.extensions = [
+                {
+                    "@odata.type": "microsoft.graph.openTypeExtension",
+                    "extensionName": "Es.Lefebvre.LexonClassification",
+                    "LexonClassification": event.extendedProperties.private.lexonClassification,
+                }
             ]
-        eventParse.categories = item;
+        }
         //event.eventype = cat
     }
 

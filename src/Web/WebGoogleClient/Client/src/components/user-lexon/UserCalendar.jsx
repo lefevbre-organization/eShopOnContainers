@@ -20,6 +20,9 @@ import {
   getIdCompany,
   getMailContacts,
   getIdMail,
+  getTitle,
+  getIdActuation,
+  getIdEvent
 } from '../../utils/jwt';
 import jwt from 'njwt';
 import Spinner from '../../components/spinner/spinner';
@@ -69,6 +72,15 @@ class UserLexon extends Component {
     const idMail = this.props.match.params.token
       ? getIdMail(payload)
       : this.props.match.params.idMail;
+    const idEvent = this.props.match.params.token
+      ? getIdEvent(payload)
+      : null
+    const idActuation = this.props.match.params.token
+      ? getIdActuation(payload)
+      : null
+    const title = this.props.match.params.token
+      ? getTitle(payload)
+      : null
 
     const claims = this.props.match.params.token
       ? { idClienteNavision: getUserId(payload) }
@@ -90,6 +102,10 @@ class UserLexon extends Component {
       bbdd: bbdd,
       company: company,
     });
+
+    this.props.setIdEvent(idEvent);
+    this.props.setIdActuation(idActuation);
+    this.props.setTitle(title);
 
     if (mailContacts) {
       console.log('Contactos recibidos');
@@ -185,12 +201,24 @@ class UserLexon extends Component {
       //   return <Redirect to="/" />;
       // }else{
       //   return <Redirect to={`/message/${this.props.match.params.idMail}`}/>;
-      // }
+      // }       
+
       if (
         this.props.lexon.idMail === undefined ||
         this.props.lexon.idMail === null
       ) {
-        return <Redirect to='/calendar' />;
+
+          //params for iframe enbebed functions
+          var params = new URLSearchParams(this.props.location.search);
+
+          if (params.get('layout')) {
+              return <Redirect to='/calendar?layout=iframe' />;
+             
+          }
+          else {
+              return <Redirect to='/calendar' />;
+          }
+       
       } else {
        // return <Redirect to={`/message/${this.props.lexon.idMail}`} />;
       }
@@ -212,6 +240,9 @@ const mapDispatchToProps = (dispatch) => ({
   setIdMail: (idMail) => dispatch(ACTIONS.setIdMail(idMail)),
   setToken: (token) => dispatch(ACTIONS.setToken(token)),
   setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
+  setIdEvent: (id) => dispatch(ACTIONS.setIdEvent(id)),
+  setIdActuation: (id) => dispatch(ACTIONS.setIdActuation(id)),
+  setTitle: (title) => dispatch(ACTIONS.setTitle(title))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);

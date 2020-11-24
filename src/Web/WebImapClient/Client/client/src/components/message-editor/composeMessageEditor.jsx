@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, {Fragment, useEffect} from 'react';
 import {
   RichTextEditorComponent,
   Toolbar,
@@ -191,6 +191,7 @@ class ComposeMessageEditor extends React.Component {
   constructor(props) {
     super(props);
     this.refEditor = null;
+    this.spellCheckerInstance = null;
   }
 
   getContent() {
@@ -205,8 +206,26 @@ class ComposeMessageEditor extends React.Component {
     return false;
   }
 
+  componentDidMount() {
+    this.spellCheckerInstance = window.WEBSPELLCHECKER.init({
+      container: document.getElementById("toolsRTE_2"),
+      lang: 'es_ES',
+      detectLocalizationLanguage: true,
+      serviceId: window.WEBSPELLCHECKER_CODE,
+      enableGrammar: true,
+      enableBadgeButton: true
+    });
+  }
+
+  componentWillUnmount() {
+    if(this.spellCheckerInstance) {
+      this.spellCheckerInstance.destroy();
+    }
+  }
+
   render() {
     const { onChange, defaultValue = '' } = this.props;
+
     return (
       <Fragment>
         <RichTextEditorComponent

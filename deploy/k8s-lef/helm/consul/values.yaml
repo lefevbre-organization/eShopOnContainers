@@ -1,0 +1,41 @@
+global:
+  datacenter: vault-kubernetes-guide
+  repository: hashicorp/consul
+  # enabled is the master enabled/disabled setting.
+  # If true, servers, clients, Consul DNS and the Consul UI will be enabled.
+  # Each component can override this default via its component-specific
+  # "enabled" config.
+  # If false, no components will be installed by default and per-component
+  # opt-in is required, such as by setting `server.enabled` to true.
+  enabled: true
+
+  # name sets the prefix used for all resources in the helm chart.
+  # If not set, the prefix will be "<helm release name>-consul".
+  name: null
+
+  # domain is the domain Consul will answer DNS queries for
+  # (see https://www.consul.io/docs/agent/options.html#_domain) and the domain
+  # services synced from Consul into Kubernetes will have,
+  # e.g. `service-name.service.consul`.
+  domain: consul
+
+  # image is the name (and tag) of the Consul Docker image for clients and
+  # servers. This can be overridden per component.
+  # This should be pinned to a specific version tag, otherwise you may
+  # inadvertently upgrade your Consul version.
+  #
+  # Examples:
+  #   # Consul 1.5.0
+  #   image: "consul:1.5.0"
+  #   # Consul Enterprise 1.5.0
+  #   image: "hashicorp/consul-enterprise:1.5.0-ent"
+  image: "consul:1.8.5"
+
+client:
+  enabled: true
+
+server:
+  replicas: 1
+  bootstrapExpect: 1
+  disruptionBudget:
+    maxUnavailable: 0

@@ -7,16 +7,16 @@ Param(
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=(
-        "nosql-data"
-        # "sql-data"
+        "nosql-data",
+        "sql-data"
         # "rabbitmq"
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
-        "conference-api","lexon-api", "lexonmysql-api", "account-api","centinela-api", "userutils-api", "signature-api", "database-api",    
-        "apigwlex",  "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
-        "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "websignature",  
-        "webaddonlauncher", "weboffice365addonlexon",
+        "conference-api", "lexon-api", "lexonmysql-api", "account-api", "centinela-api", "userutils-api", "signature-api", "database-api", 
+        "apigwlex", "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
+        "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "webimapserver", 
         "webstatus"
         ),
