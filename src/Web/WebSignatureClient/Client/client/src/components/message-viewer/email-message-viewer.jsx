@@ -230,7 +230,7 @@ export class EmailMessageViewer extends Component {
 
       if (!(name in lookup)) {
         lookup[name] = 1;
-        result.push(name);
+        result.push({ text: name });
       }
     }
     return result;
