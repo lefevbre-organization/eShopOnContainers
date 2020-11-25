@@ -1465,9 +1465,9 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
       })
       jsonObject.recipients = recipientsData;
     
-      cc.forEach(recipient => {
-        ccData.push({name: ' ', email: recipient.address})
-      });
+      // cc.forEach(recipient => {
+      //   ccData.push({name: ' ', email: recipient.address})
+      // });
       jsonObject.cc = ccData;
 
       files.forEach(file => {
@@ -1505,7 +1505,7 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
           if (response.ok){
             return response.json();
           } else {
-            return response.text();
+            throw `${response.text()}`;
           }
         })
         .then(result => {
@@ -1513,8 +1513,8 @@ export const createEmail = async (recipients, cc, subject, body, files, lefebvre
           resolve(result)
         })
         .catch(error => {
+          console.log('error', error);
           reject(error);
-          console.log('error', error)
         });
     })
 }
@@ -2010,6 +2010,48 @@ export const cancelSignatureCen = async (guid) => {
     //fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}}`, requestOptions)
     fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/signatures/cancelation/${guid}`, requestOptions)
     .then(response => response.json())
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const notifyCen = async (service, guid, docId, recipients) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+
+    var recipientsData = [];
+
+    recipients.forEach(recipient => {
+      (service === 'signature') 
+        ? recipientsData.push({name: recipient.name, email: recipient.email})
+        : recipientsData.push({name: recipient.name, email: recipient.address})
+    });
+
+    var raw = JSON.stringify(recipientsData);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    }
+    // localhost: https://localhost:44331/api/v1/Centinela
+    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/signatures/notify/${service}/${guid}/${docId}`, requestOptions)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        return response.text();
+      }
+    })
     .then(result => {
       console.log(result);
       resolve(result);

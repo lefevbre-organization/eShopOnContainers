@@ -2,14 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
-import EDITOR_BUTTONS from './editor-buttons';
-import Button from '../buttons/button';
 import HeaderAddress from './header-address';
-import MceButton from './mce-button';
-import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
 import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
-import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
@@ -24,13 +19,12 @@ import {
   addOrUpdateEmail,
   getUserEmails,
   notifySignature,
+  notifyCen,
   cancelSignatureCen,
   preloadEmails,
   getNumAvailableSignatures
 } from '../../services/api-signaturit';
-import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
-import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
 import  AttachmentsWidget  from './widgets/attachments-widget2';
 import  CertificatesWidget  from './widgets/certificates-widget';
@@ -55,7 +49,8 @@ class EmailMessageEditor extends Component {
       MaximumSigners: 40,
       isCallApis: false,
       isFileType: false,
-      isContacts: false
+      isContacts: false,
+      createError: false
     };
 
     this.fileInput = null;
@@ -140,15 +135,20 @@ class EmailMessageEditor extends Component {
 
 
   dialogClose(){
+    var reload = this.state.createError;
     if (this.state.centinelaDownloadError === true){
       this.props.onShowError();
-    }
+    } 
     this.setState({
         hideAlertDialog: false, 
         bigAttachments: false, 
         centinelaDownloadError: false,
-        hideConfirmDialog: false
+        hideConfirmDialog: false,
+        createError: false
     });
+    if (reload){
+      location.reload();
+    }
   }
 
   dialogOpen(){
@@ -237,6 +237,15 @@ class EmailMessageEditor extends Component {
         ${i18n.t('onlyPdfModal.text')}
       </div>
     `;
+
+    const errCreatingRequest = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        Se ha producido un error al crear la solicitud. Inténtelo de nuevo.
+      </div>
+    `;
+
     const onlyPdf = ( 
       (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document' || this.state.certificationType === 'download_document' || this.state.certificationType === 'download_every_document')
       && this.props.application.newMessage.attachments.some(a => a.contentType.toUpperCase() !== 'APPLICATION/PDF')
@@ -380,7 +389,7 @@ class EmailMessageEditor extends Component {
           visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : noSignersModal)))}
+          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.state.createError === true) ? errCreatingRequest : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : noSignersModal)))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
@@ -736,7 +745,8 @@ class EmailMessageEditor extends Component {
       type,
       userBrandingId.externalId,
       this.props.credentials.encrypted
-    ).then((emailInfo) => {
+    )
+    .then((emailInfo) => {
       console.log(emailInfo);
       if (emailInfo.status_code) {
         console.log('Se ha producido un error: ' + emailInfo.status_code + '-' + emailInfo.message);
@@ -778,14 +788,26 @@ class EmailMessageEditor extends Component {
             idUserApp,
             1//numDocs
           );
+          
           getNumAvailableSignatures(idUserApp)
             .then( res => this.props.setNumAvailableSignatures(parseInt(res.data)))
             .catch(err => {
                 console.log(err);
             });
-        });
+          
+          if (lefebvre && lefebvre.userApp === 'centinela' && lefebvre.idDocuments){
+            lefebvre.idDocuments.forEach(document => {
+              notifyCen('certifiedEmail', lefebvre.guid, document.docId, recipients)
+              .catch(err => console.log(err));
+            });
+          }  
+          }
+        );
       }
       this.setState({isCallApis: false});
+    })
+    .catch(() => {
+      this.setState({createError: true, hideAlertDialog: true});
     });
   }
 
@@ -1043,20 +1065,6 @@ const mapDispatchToProps = (dispatch) => ({
   editMessage: (message) => {
     dispatch(editMessage(message));
   },
-  sendMessage: (
-    credentials,
-    { inReplyTo, references, to, cc, bcc, attachments, subject, content }
-  ) =>
-    sendMessage(dispatch, credentials, {
-      inReplyTo,
-      references,
-      to,
-      cc,
-      bcc,
-      attachments,
-      subject,
-      content,
-    }),
   // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
