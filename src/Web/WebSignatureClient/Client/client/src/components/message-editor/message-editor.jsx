@@ -29,7 +29,8 @@ import {
   notifySignature,
   cancelSignatureCen,
   preloadSignatures2,
-  getNumAvailableSignatures
+  getNumAvailableSignatures,
+  notifyCen
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
@@ -1016,6 +1017,7 @@ class MessageEditor extends Component {
             lefebvre.idUserApp,
             1//documentsInfo.length
           );
+          
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
           this.props.setUserApp('lefebvre');
@@ -1033,6 +1035,13 @@ class MessageEditor extends Component {
             .catch(err => {
                 console.log(err);
             });
+
+          if (lefebvre && lefebvre.userApp === 'centinela' && lefebvre.idDocuments){
+            lefebvre.idDocuments.forEach(document => {
+              notifyCen('signature', lefebvre.guid, document.docId, recipients)
+              .catch(err => console.log(err));
+            });
+          }
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
