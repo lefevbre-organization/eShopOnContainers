@@ -1,6 +1,4 @@
-﻿using Autofac.Core;
-
-namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models
 {
     public class UserConference
     {

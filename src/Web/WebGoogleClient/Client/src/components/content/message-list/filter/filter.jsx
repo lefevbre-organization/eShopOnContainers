@@ -21,6 +21,7 @@ export const MessagesFilter = ({onChangeFilter}) => {
                 title={''}>
                 <i style={{}} className={`lf-icon ${activeFilter===''?'lf-icon-filter-1':'lf-icon-filter-applied'}`}></i>
             </div>
+            { open &&
             <div className={`filter-body ${open?'visible':''}`}>
                 <ul>
                     <li className={`${activeFilter === ''? 'active':''}`} onClick={()=>{_onChangeFilter('')}}><span><i className={`lf-icon lf-icon-check`}></i></span>Todos</li>
@@ -28,6 +29,7 @@ export const MessagesFilter = ({onChangeFilter}) => {
                     <li className={`${activeFilter === 'unread'? 'active':''}`} onClick={()=>{_onChangeFilter('unread')}}><span><i className='lf-icon lf-icon-check'></i></span>No leídos</li>
                 </ul>
             </div>
+            }
             <style jsx>{`
               .filter-button {
                 cursor:pointer;

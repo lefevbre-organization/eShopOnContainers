@@ -46,6 +46,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return Ok(new Result<string>(data));
         }
 
+        [HttpPost("conference")]
+        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PostUserAsync(
+        [FromBody] UserReservationRequest reservation
+    )
+        {
+            if (string.IsNullOrEmpty(reservation.name))
+                return BadRequest("Must be a valid name");
+
+            UserReservation result = await _service.CreateReservationAsync(reservation);
+
+            return result == null ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpGet("{idNavision}/user")]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]

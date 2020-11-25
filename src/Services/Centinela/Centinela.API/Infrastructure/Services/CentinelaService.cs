@@ -462,5 +462,44 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
+        public async Task<Result<bool>> NotifySignatureAsync(string service, string guid, string documentId, List<CenRecipient> recipients)
+        {
+            var result = new Result<bool>(false);
+            try
+            {
+                Console.WriteLine($"[{DateTime.Now}] START NotifySignatureAsync");
+
+                var url = $"{_settings.Value.CentinelaUrl}/sign/beginprocess/{service}/{documentId}/{guid}";
+
+                Console.WriteLine($"[{DateTime.Now}] Call to: {url}");
+
+                HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(recipients), Encoding.UTF8, "application/json");
+
+                using var response = await _client.PostAsync(url, httpContent);
+
+                Console.WriteLine($"[{DateTime.Now}] Response: {response.ToString()}");
+
+                var responseText = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    result.data = true;
+                    TraceInfo(result.infos, $"Se notifica la creación de una nueva petición Service:{service} -- GUID:{guid} -- DocId: {documentId}  --  {responseText}", "CE10");
+                }
+                else
+                {
+                    TraceError(result.errors, new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when NotifySignature-> { (int)response.StatusCode } - { response.ReasonPhrase} "), "CE10", "CENTINELASVC");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[{DateTime.Now}] Error: {ex.ToString()}");
+                TraceError(result.errors, new CentinelaDomainException($"Error when NotifySignature {_settings.Value.CentinelaUrl}", ex), "CE10", "CENTINELASVC");
+            }
+
+            Console.WriteLine($"[{DateTime.Now}]  END NotifySignatureAsync");
+
+            return result;
+        }
+
     }
 }

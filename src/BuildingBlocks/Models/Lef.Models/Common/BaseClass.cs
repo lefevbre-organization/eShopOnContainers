@@ -159,6 +159,27 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             infos.Add(info);
         }
 
+        public void TraceInfoTime(
+            List<Info> infos,
+            string url,
+            DateTime? begin,
+            DateTime? end,
+            string codeInfo = "XX00")
+        {
+            if (codeInfo == "XX00") return;
+
+            if (begin == null) 
+                begin = DateTime.Now;
+
+            var message = (end == null)
+                ? $"START --> {url} - Time [{begin}]"
+                : $"END ----> {url} - Time [{end}]";
+
+            TraceInfo(infos, message, codeInfo);
+            log.LogInformation(message);
+
+        }
+
         public string ManageCreateMessage(
             string msgError,
             string msgModify,
@@ -242,32 +263,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return (errors?.Count == 0 && count != null && count > 0);
         }
 
-        //public int? AddOutPutParameters(List<ErrorInfo> Errors, object idError, object TextError, object Total)
-        //{
-        //    int? ErrorCode = null;
-        //    string Error = null;
-        //    int? Count = null;
-        //    try
-        //    {
-        //        if (idError is int)
-        //            ErrorCode = (int?)idError;
-
-        //        if (TextError is int || TextError is string)
-        //            Error = TextError.ToString();
-
-        //        if (!(ErrorCode == null && Error == null))
-        //            Errors.Add(new ErrorInfo() { code = ErrorCode.ToString(), message = Error });
-
-        //        if (Total is int)
-        //            Count = (int?)Total;
-        //    }
-        //    catch (Exception exp)
-        //    {
-
-        //        Errors.Add(new ErrorInfo() { code = "100", message = exp.Message, detail = exp.InnerException?.Message });
-        //    }
-        //    return Count;
-        //}
 
         public void AddResultTrace<Tin, Tout>(Result<Tin> resultIn, Result<Tout> resultOut)
         {

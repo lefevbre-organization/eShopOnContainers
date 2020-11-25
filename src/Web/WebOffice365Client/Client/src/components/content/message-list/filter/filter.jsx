@@ -21,13 +21,24 @@ export const MessagesFilter = ({onChangeFilter}) => {
                 title={''}>
                 <i style={{}} className={`lf-icon ${activeFilter===''?'lf-icon-filter-1':'lf-icon-filter-applied'}`}></i>
             </div>
-            <div className={`filter-body ${open?'visible':''}`}>
-                <ul>
-                    <li className={`${activeFilter === ''? 'active':''}`} onClick={()=>{_onChangeFilter('')}}><span><i className={`lf-icon lf-icon-check`}></i></span>Todos</li>
-                    <li className={`${activeFilter === 'read'? 'active':''}`} onClick={()=>{_onChangeFilter('read')}}><span><i className='lf-icon lf-icon-check'></i></span>Leídos</li>
-                    <li className={`${activeFilter === 'unread'? 'active':''}`} onClick={()=>{_onChangeFilter('unread')}}><span><i className='lf-icon lf-icon-check'></i></span>No leídos</li>
-                </ul>
-            </div>
+            {open &&
+                <div className={`filter-body ${open ? 'visible' : ''}`}>
+                    <ul>
+                        <li className={`${activeFilter === '' ? 'active' : ''}`} onClick={() => {
+                            _onChangeFilter('')
+                        }}><span><i className={`lf-icon lf-icon-check`}></i></span>Todos
+                        </li>
+                        <li className={`${activeFilter === 'read' ? 'active' : ''}`} onClick={() => {
+                            _onChangeFilter('read')
+                        }}><span><i className='lf-icon lf-icon-check'></i></span>Leídos
+                        </li>
+                        <li className={`${activeFilter === 'unread' ? 'active' : ''}`} onClick={() => {
+                            _onChangeFilter('unread')
+                        }}><span><i className='lf-icon lf-icon-check'></i></span>No leídos
+                        </li>
+                    </ul>
+                </div>
+            }
             <style jsx>{`
               .filter-button {
                 cursor:pointer;

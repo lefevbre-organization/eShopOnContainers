@@ -86,9 +86,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var url = $"{_settings.Value.OnlineUrl}/encriptarEntrada.do?nEntrada={idNavisionUser}";
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, url, inicio, null, Codes.UserUtils.UserEncode);
 
                 using (var response = await _clientOnline.GetAsync(url))
                 {
+                    TraceInfoTime(result.infos, url, inicio, DateTime.Now, Codes.UserUtils.UserEncode);
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
@@ -125,9 +128,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var url = $"{_settings.Value.OnlineUrl}/desencriptarEntrada.do?entradaEncriptada={idEncodeNavisionUser}";
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, url, inicio, null, Codes.UserUtils.UserDecode);
 
                 using (var response = await _clientOnline.GetAsync(url))
                 {
+                    TraceInfoTime(result.infos, url, inicio, DateTime.Now, Codes.UserUtils.UserDecode);
+
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
@@ -167,9 +174,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 AddResultTrace(usuarioEncriptado, result);
 
                 var url = $"{_settings.Value.MinihubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={usuarioEncriptado.data}&indMinuHub=1";
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, url, inicio, null, Codes.UserUtils.GetHub);
+
 
                 using (var response = await _clientMinihub.GetAsync(url))
                 {
+                    TraceInfoTime(result.infos, url, inicio, DateTime.Now, Codes.UserUtils.GetHub);
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
@@ -225,9 +236,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 var loginClean = HttpUtility.UrlEncode(login);
                 var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuario?strLogin={login}&strPass={pass}";
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, url, inicio, null, Codes.UserUtils.GetUserLef);
 
                 using (var response = await _clientLogin.GetAsync(url))
                 {
+                    TraceInfoTime(result.infos, url, inicio, DateTime.Now, Codes.UserUtils.GetUserLef);
+
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
@@ -264,9 +279,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuarioPorEntrada?idUsuarioPro={idNavisionUser}";
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, url, inicio, null, Codes.UserUtils.GetUserLef);
 
                 using (var response = await _clientLogin.GetAsync(url))
                 {
+                    TraceInfoTime(result.infos, url, inicio, DateTime.Now, Codes.UserUtils.GetUserLef);
+
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
@@ -303,9 +322,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var url = $"{_settings.Value.LoginUrl}/Areas/GetUsuariosProAreas?idUsuarioPro={idNavisionUser}";
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, url, inicio, null, Codes.UserUtils.GetAreas);
 
                 using (var response = await _clientOnline.GetAsync(url))
                 {
+                    TraceInfoTime(result.infos, url, inicio, DateTime.Now, Codes.UserUtils.GetAreas);
+
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
@@ -352,15 +375,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<string>(null);
             var user = await GetUserAsync(idUser);
-            result.errors.AddRange(user.errors);
-            result.infos.AddRange(user.infos);
-
+            AddResultTrace(user, result);
             if (user.errors?.Count == 0)
             {
                 var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
                 Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
-                result.errors.AddRange(temporalLinkResult.errors);
-                result.infos.AddRange(temporalLinkResult.infos);
+                AddResultTrace(temporalLinkResult, user);
                 result.data = temporalLinkResult?.data;
             }
 
@@ -682,9 +702,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, bool addTerminatorToToken)
         {
-            _logger.LogInformation("START --> {0} con tiempo {1}", nameof(GetGenericTokenAsync), DateTime.Now);
-
             var result = await GetRolesAndValidate(tokenRequest);
+            var inicio = DateTime.Now;
+            TraceInfoTime(result.infos, nameof(GetGenericTokenAsync), inicio, null, Codes.UserUtils.GetToken);
 
             if (string.IsNullOrEmpty(tokenRequest.env))
                 tokenRequest.env = _settings.Value.DefaultEnvironment;
@@ -716,13 +736,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             tokenString += addTerminatorToToken ? "/" : "";
             result.data.token = tokenString;
 
-            _logger.LogInformation("END --> {0} con token: {1}", nameof(GetGenericTokenAsync), tokenString);
+            TraceInfoTime(result.infos, nameof(GetGenericTokenAsync), inicio, DateTime.Now, Codes.UserUtils.GetToken);
 
             return result;
         }
 
         private async Task ManageTokenLexon(TokenRequest tokenRequest, Result<TokenData> result)
         {
+            var inicio = DateTime.Now;
+            TraceInfoTime(result.infos, "Lexon User and contacts", inicio, null, Codes.UserUtils.GetToken);
+
             if (tokenRequest.idApp == _settings.Value.IdAppLexon)
             {
                 var lexUserResult = await GetLexonUserIdAsync(tokenRequest.idClienteNavision);
@@ -738,6 +761,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
                 tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest, result);
+
+            TraceInfoTime(result.infos, "Lexon User and contacts", inicio, DateTime.Now, Codes.UserUtils.GetToken);
+
         }
 
         private async Task<Result<LexUserSimple>> GetLexonUserIdAsync(string idNavisionUser)
