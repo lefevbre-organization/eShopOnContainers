@@ -4,10 +4,11 @@ import { compose } from 'redux';
 import { 
   sendMessage, 
   getMessageHeader, 
-  // createDraft,
-  // getAttachments,
-  getDraftListWithRFC
-  
+  createDraft,
+  getDraftListWithRFC,
+  getAttachments,
+  dataUrlToFile,
+  deleteDraft
 } from '../../api';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
@@ -262,61 +263,39 @@ export class ComposeMessage extends PureComponent {
     }
   }
 
-  // getAttachById(messageId, attachments) {
+  getAttachById(messageId, attachments) {
 
-  //   const addAttachment = (attach) => {
-  //     getAttachments({messageId, attachmentId: attach.body.attachmentId})
-  //     .then((attachment) => {
+    const addAttachment = (attach) => {
+      getAttachments({messageId, attachmentId: attach.body.attachmentId})
+      .then((attachment) => {
+        const dataUrl = attachment.data;
 
-  //       console.log('addAttachment', attachment)
+        const blob = dataUrlToFile({dataUrl, mimeType: attach.mimeType });
 
-  //       const file = {
-  //         name: attach.filename,
-  //         content: `data:${attach.mimeType};base64,${attachment.data}`
-  //       }
-
-  //       const blob = new Blob([JSON.stringify(file)], {type : attach.mimeType});
-  //       const uppyPreviews = [...this.state.uppyPreviews];
-
-  //       const newAttachment = {
-  //         content: `data:${attach.mimeType};base64,${attachment.data}`,
-  //         data: blob,
-  //         size: attachment.size,
-  //         name: attach.filename,
-  //         source: `local`,
-  //         type: attach.mimeType,
-  //         isRemote: false,
-  //       }
-
-  //       this.uppy.addFile({
-  //         content: `data:${attach.mimeType};base64,${attachment.data}`,
-  //         name: attach.filename,
-  //         type: attach.mimeType,
-  //         data: blob, 
-  //         source: 'Local', 
-  //         isRemote: false 
-  //       })
-
-
-  //       uppyPreviews.push(newAttachment);
-
-        
-  //       this.setState({
-  //         uppyPreviews
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.log('Error' + err);
-  //     });
-  //   };
-
-  //   attachments.forEach(file => {
-  //     if(file.filename != '') {
-  //       addAttachment(file);
-  //     }
-  //   });
+        var fileOfBlob = new File([blob], attach.filename);
    
-  // }
+        this.uppy.addFile({
+          content: `data:${attach.mimeType};base64,${attachment.data}`,
+          name: attach.filename,
+          type: attach.mimeType,
+          data: fileOfBlob, 
+          source: 'Local', 
+          isRemote: false 
+        });
+    
+      })
+      .catch((err) => {
+        console.log('Error' + err);
+      });
+    };
+
+    attachments.forEach(file => {
+      if(file.filename != '') {
+        addAttachment(file);
+      }
+    });
+   
+  }
 
   getById() {
     if(this.props.emailMessageResult.body != ''){
@@ -352,7 +331,7 @@ export class ComposeMessage extends PureComponent {
                 this.addAddress('bcc2', bccEmail);
               });
             }
-            console.log('getAttachById', this.props.emailMessageResult);
+
             this.getAttachById(messageId, attachments);
           
             this.setState({
@@ -418,7 +397,7 @@ export class ComposeMessage extends PureComponent {
     } else if (this.props.mailContacts) {
       this.props.setMailContacts(null);
     }
-
+    deleteDraft({ draftId: this.state.draftId });
     this.props.history.push('/inbox');
   }
 
@@ -499,32 +478,32 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // if((prevState.to !== this.state.to 
-    //   || prevState.cc !== this.state.cc 
-    //   || prevState.bcc !== this.state.bcc 
-    //   || prevState.subject !== this.state.subject
-    //   || prevState.content !== this.state.content
-    //   || prevState.uppyPreviews !== this.state.uppyPreviews) 
-    //   && !this.props.match.params.id) {
-    //   this.saveDraft();
-    // }   
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && !this.props.match.params.id) {
+      this.saveDraft();
+    }   
 
-    // if((prevState.to !== this.state.to 
-    //   || prevState.cc !== this.state.cc 
-    //   || prevState.bcc !== this.state.bcc 
-    //   || prevState.subject !== this.state.subject
-    //   || prevState.content !== this.state.content
-    //   || prevState.uppyPreviews !== this.state.uppyPreviews) 
-    //   && this.props.match.params.id 
-    //   && this.state.isDraftEdit) {
-    //   this.saveDraft();
-    // }
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && this.props.match.params.id 
+      && this.state.isDraftEdit) {
+      this.saveDraft();
+    }
 
-    // if(
-    //   prevProps.emailMessageResult !== this.props.emailMessageResult
-    //   ) {
-    //   this.getById();
-    // }
+    if(
+      prevProps.emailMessageResult !== this.props.emailMessageResult
+      ) {
+      this.getById();
+    }
   }
 
   componentWillUnmount() {
@@ -567,7 +546,7 @@ export class ComposeMessage extends PureComponent {
       this.setState({ showEmptySubjectWarning: true });
       return;
     }
-
+    deleteDraft({ draftId: this.state.draftId });
     this._sendEmail();
   }
 
@@ -600,7 +579,7 @@ export class ComposeMessage extends PureComponent {
       attachments: this.state.uppyPreviews,
       From: this.props.googleUser.getBasicProfile(),
     };
-    console.log('saveDraft', this.state.uppyPreviews)
+ 
     const validCc = getValidEmails(this.state.cc);
     if (validCc.length) {
       headers.Cc = validCc.join(', ');
@@ -619,19 +598,19 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != ''){
-      // setTimeout(() => {
-      //   createDraft({
-      //     headers,
-      //     body: this.state.content,
-      //     attachments: Fileattached,
-      //     draftId: this.state.draftId
-      //   }).then((draft) => {
-      //     this.setState({draftTime: fullTime, draftId: draft.id});
-      //   })
-      //   .catch((err) => {
-      //     console.log('Error sending email:' + err);
-      //   });
-      // }, 100);
+      setTimeout(() => {
+        createDraft({
+          headers,
+          body: this.state.content,
+          attachments: Fileattached,
+          draftId: this.state.draftId
+        }).then((draft) => {
+          this.setState({draftTime: fullTime, draftId: draft.id});
+        })
+        .catch((err) => {
+          console.log('Error sending email:' + err);
+        });
+      }, 100);
     }
     
   }

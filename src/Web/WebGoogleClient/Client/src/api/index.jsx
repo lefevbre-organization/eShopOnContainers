@@ -545,6 +545,59 @@ const getDataEmail = ({ headers, body, attachments }) => {
   return email;
 }
 
+export const getAttachments = async ({ messageId, attachmentId }) => {
+  return new Promise((resolve, reject) => {
+    const request = window.gapi.client.gmail.users.messages.attachments.get({
+      userId: 'me',
+      messageId: messageId, 
+      id: attachmentId
+    });
+    request.execute((err, res) => {
+      if (err.error) {
+        reject(err.error);
+      } else {
+        resolve(err);
+      }
+    });
+  });
+};
+
+export const dataUrlToFile = ({dataUrl, mimeType}) => {
+ 
+ dataUrl = dataUrl
+  .replace(/-/g, "+")
+  .replace(/_/g, "/");
+  
+  const byteCharacters = window.atob(dataUrl);
+  
+  let byteNumbers = byteCharacters.length;
+  let byteArray = new Uint8Array(byteNumbers);
+
+  while (byteNumbers--) {
+    byteArray[byteNumbers] = byteCharacters.charCodeAt(byteNumbers);
+  }
+  return new Blob([byteArray], {
+    type: mimeType
+  });
+
+}
+
+export const deleteDraft = async ({ draftId }) => {
+  return new Promise((resolve, reject) => {
+    const request = window.gapi.client.gmail.users.drafts.delete({
+      userId: 'me',
+      id: draftId
+    });
+    request.execute((err, res) => {
+      if (err.error) {
+        reject(err.error);
+      } else {
+        resolve(err);
+      }
+    });
+  });
+};
+
 export const createDraft = async ({ headers, body, attachments, draftId }) => {
  
   let email = getDataEmail({ headers, body, attachments });
