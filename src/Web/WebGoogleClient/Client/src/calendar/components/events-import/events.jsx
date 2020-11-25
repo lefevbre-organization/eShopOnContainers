@@ -8,14 +8,12 @@ import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
 import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api/accounts";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import LexonComponentCalendar from '../../../apps/lexon_content_calendar';
-import './contacts.scss';
+import './events.scss';
 
 
-export class ContactsImport extends React.Component {
+export class EventsImport extends React.Component {
     constructor(props) {
         super(props);
-            
-      
 
         this.toasts = [
             { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
@@ -55,22 +53,22 @@ export class ContactsImport extends React.Component {
         this.state.name = this.TitleTypeEventObj.value;
     }    
 
-    render() {  
-       
+    render() {
+        debugger;
         return (  
             <div className="row custom-margin custom-padding-5 material2">
                 <div className="col-xs-12 col-sm-12 col-lg-12 col-md-12"> 
                     <div className="Ccontainer" >
                         <LexonComponentCalendar />
-                                <div className="e-footer-content">
-                                    <ButtonComponent
-                                        id="newevent"                                       
-                                        cssClass='hidden e-control e-btn e-lib e-primary e-event-save e-flat'
-                                        onClick={this.onPressActionButton.bind(this)}
-                                        ref={(scope) => { this.addBtn = scope }}
-                                    > Aceptar</ButtonComponent>                                    
-                                </div>
+                            <div className="e-footer-content">
+                                <ButtonComponent
+                                    id="newevent"
+                                    cssClass='hidden e-control e-btn e-lib e-primary e-event-save e-flat'
+                                    onClick={this.onPressActionButton.bind(this)}
+                                    ref={(scope) => { this.addBtn = scope }}
+                                > Aceptar</ButtonComponent>
                             </div>
+                        </div>
                        
                     <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                         id='toast_pos'
@@ -88,7 +86,7 @@ export class ContactsImport extends React.Component {
     }
 }
 
-export default ContactsImport;
+export default EventsImport;
 
 
 

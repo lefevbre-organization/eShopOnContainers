@@ -49,7 +49,7 @@ import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../eventtypes/eventtype';
-import { ContactsImport } from '../contacts-import/contacts'
+import { EventsImport } from '../events-import/events'
 import { getEventTypes } from "../../../api/accounts";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 import AttendeeAddress from './attendee/attendee-address';
@@ -110,7 +110,7 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             hidePromptEventTypeDialog: false,
-            hidePromptImportContactsDialog: false,
+            showPromptImportContactsDialog: false,
             calendarToEdit: undefined,
             //tagAttendess: [],
             reminders: [],
@@ -178,9 +178,9 @@ export class Main extends Component {
                 //{ text: 'Reunion', id: '5', backgroundColor: '#F9FF33' },
                 //{ text: 'Presentación', id: '6', backgroundColor: '#F3D59A' },
                 //{ text: 'Seminarios', id: '7', backgroundColor: '#9AF3EA' },
-                //{ text: 'Aprendizaje', id: '7', backgroundColor: '#0F6259' },            
+                //{ text: 'Aprendizaje', id: '7', backgroundColor: '#0F6259' },
                 //{ text: 'Talleres', id: '8', backgroundColor: '#F8CBE9' },
-                //{ text: 'Otros', id: '9', backgroundColor: '#F5F3F4' },           
+                //{ text: 'Otros', id: '9', backgroundColor: '#F5F3F4' },
             ];
 
         this.items = [
@@ -236,12 +236,12 @@ export class Main extends Component {
     }
 
     checkForParams() {
-       
+
         let params = (new URL(document.location)).searchParams;
 
         if (params.get('layout') != undefined) {
             this.layoutIframe = true;
-        }       
+        }
 
         if (params.get('newEvent') != undefined) {
             this.layoutIframeEventView = true;
@@ -283,12 +283,12 @@ export class Main extends Component {
     }
 
     deleteCalendar(args) {
-       
-        this.toastObj.show(this.toasts[0]);
-        const calendarid = args.currentTarget.id 
 
-        deleteCalendar(args.currentTarget.id)        
-            .then(result => {                
+        this.toastObj.show(this.toasts[0]);
+        const calendarid = args.currentTarget.id
+
+        deleteCalendar(args.currentTarget.id)
+            .then(result => {
                 this.LoadCalendarList(true)
                 this.sidebarCalendarList();
 
@@ -376,7 +376,7 @@ export class Main extends Component {
     openImportConcatcsView(args) {
         this.setState(
             {
-                hidePromptImportContactsDialog: true
+                showPromptImportContactsDialog: true
             });
     }
 
@@ -386,7 +386,7 @@ export class Main extends Component {
         //    this.toastObj.show(this.toasts[1]);
         //}
         this.setState({
-            hidePromptImportContactsDialog: false
+            showPromptImportContactsDialog: false
         });
     }
 
@@ -511,7 +511,7 @@ export class Main extends Component {
                         {props.IsAllDay ? (
                               <span>todo el día</span>
                         ) : (
-                               
+
                               <span> {props.StartTime.toLocaleTimeString('es-ES')} - {props.EndTime.toLocaleTimeString('es-ES')}</span>
                             )}
                     </span>
@@ -543,16 +543,16 @@ export class Main extends Component {
                     }
                     this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
                     continue;
-                }               
+                }
 
                 //managing all day from googe calendar issues
                 if (event.end.date) {
                     let date1 = new Date(event.start.date);
                     let date2 = new Date(event.end.date);
                     const diffTime = Math.abs(date1 - date2);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-                    if (diffDays == 1) {                       
-                        date2.setDate(date2.getDate() - 1)                    
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays == 1) {
+                        date2.setDate(date2.getDate() - 1)
                         event.end.date = date2.toISOString();
                     }
                 }
@@ -565,7 +565,7 @@ export class Main extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
-               
+
 
                 // Recurrence
                 let recurrenceRule
@@ -630,6 +630,7 @@ export class Main extends Component {
     }
 
     sendMessagePutUser(user) {
+        debugger
         const { selectedMessages, googleUser } = this.props;
 
         window.dispatchEvent(
@@ -642,7 +643,7 @@ export class Main extends Component {
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: googleUser.getBasicProfile().getEmail(),
-                    app: 'calendar',
+                    app: this.state.showPromptImportContactsDialog?'calendar:import':'calendar',
                     env: window.currentUser?window.currentUser.env : null
                 }
             })
@@ -722,33 +723,33 @@ export class Main extends Component {
             );
         });
 
-       
 
-        this.sidebarCalendarList();        
+
+        this.sidebarCalendarList();
 
         //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
-        }        
+        }
 
         let obj = this;
         setTimeout(function () {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
-           
+
             // New event is called by params
             if (obj.layoutIframeEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenEditor()
-                }, 1000); 
-            }  
-        }, value);  
+                }, 1000);
+            }
+        }, value);
 
          //if (this.layoutIframe) {
             //    setTimeout(function () {
             //        obj.handleScheduleOpenEditor()
-            //    }, 1000);  
+            //    }, 1000);
             //}
     }
 
@@ -843,7 +844,7 @@ export class Main extends Component {
             // 'visibility': values.Visibility ? 'private' : 'normal'
         }
 
-        //event Type    
+        //event Type
         if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
             let item;
             if (values.EventType.name != undefined) {
@@ -878,7 +879,7 @@ export class Main extends Component {
         //    "private": {
         //        'eventType': '1'
         //    },
-        //}, 
+        //},
 
         //Recurrence
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
@@ -893,7 +894,7 @@ export class Main extends Component {
         }
         event.attendees = ateendeeObj;
 
-        //Reminders      
+        //Reminders
 
         let reminders = []
         let arrR = this.remObj.listviewInstance.dataSource;
@@ -920,7 +921,7 @@ export class Main extends Component {
         //    //args.cancel = true; //cancels the drop action
 
         //}
-        //else {            
+        //else {
         //    //enable the drop action
         //    args.navigation.enable = true;
         //}
@@ -952,7 +953,7 @@ export class Main extends Component {
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
             if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
-                // this.tabObj.refresh()               
+                // this.tabObj.refresh()
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id == undefined) {
                     this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
@@ -981,7 +982,7 @@ export class Main extends Component {
         );
     }
 
-    ToogleCalendarResourceDirective(args) {        
+    ToogleCalendarResourceDirective(args) {
         if (args.data.Id != undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
             ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
@@ -992,7 +993,7 @@ export class Main extends Component {
         else {
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.remove('disabledbutton');
-        }    
+        }
     }
 
     doubleOpen(args) {
@@ -1018,7 +1019,7 @@ export class Main extends Component {
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
-        
+
         //Not allow to change calendar property on update events
         if (args.data.Id != undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
@@ -1030,7 +1031,7 @@ export class Main extends Component {
         else {
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.remove('disabledbutton');
-        } 
+        }
 
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
@@ -1047,7 +1048,7 @@ export class Main extends Component {
 
         // default values for Atendees coming from event args
         if (args.data.Attendees != undefined) {
-            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
             var arr = [];
             Object.keys(args.data.Attendees).forEach(function (key) {
                 arr.push(args.data.Attendees[key].email);
@@ -1070,7 +1071,7 @@ export class Main extends Component {
         // default values for Reminders coming from event args
 
         if (args.data.Reminders != undefined) {
-            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
             var arr = [];
             Object.keys(args.data.Reminders).forEach(function (key) {
                 //arr.push(args.data.Reminders[key]);
@@ -1166,12 +1167,12 @@ export class Main extends Component {
                     calendarRole != "writer") {
                     var editButton = document.querySelector('.e-event-delete');
                     editButton.disabled = true;
-                    
+
                     var editButtonSave = document.querySelector('.e-event-save');
                     editButtonSave.hidden= true;
                 }
-            }            
-           
+            }
+
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
@@ -1221,16 +1222,16 @@ export class Main extends Component {
                      className: 'e-field', attrs: { name: 'Visibility' }
                  });
                  containerVisibility.appendChild(inputVisibility);
- 
+
                  this.drowDownListVisibility = new CheckBoxComponent({
                      value: this.state.isVisibility,
                      label: i18n.t("schedule.visibility"),
                      checked: this.state.isVisibility
                  });
- 
+
                  this.drowDownListVisibility.appendTo(inputVisibility);
                  inputVisibility.setAttribute('name', 'Visibility');
- 
+
 
 
                 // Adding attendees2 tag element
@@ -1245,7 +1246,7 @@ export class Main extends Component {
                 //var nodeA = ReactDOM.findDOMNode(this.tagObj);
                 //containerTab.appendChild(nodeA);
 
-                // Adding reminder element  
+                // Adding reminder element
                 let containerRem = createElement('div', { className: 'custom-field-container' });
                 rowReminders.appendChild(containerRem);
                 var nodeR = ReactDOM.findDOMNode(this.remObj);
@@ -1285,7 +1286,7 @@ export class Main extends Component {
                     console.log(this.tabInstance);
                     this.tabObj.selectedItem = 0;
                     this.tabObj.refresh();
-                    //} 
+                    //}
                     }
             }
 
@@ -1317,7 +1318,7 @@ export class Main extends Component {
                 let userContentEle = createElement('div', {
                     className: 'e-profile-wrapper'
                 });
-               
+
                 scheduleElement.parentElement.appendChild(userContentEle);
                 let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
                 let output = this.buttonEventTypeObj;
@@ -1349,11 +1350,11 @@ export class Main extends Component {
                 })
 
                 if (desc) {
-                   
+
                     //reset reminders
                     desc.Reminders = [];
 
-                    //Update Reminders                
+                    //Update Reminders
                     let arrR = this.remObj.listviewInstance.dataSource;
                     if (arrR.length > 0) {
                         Object.keys(arrR).forEach(function (key) {
@@ -1368,7 +1369,7 @@ export class Main extends Component {
                     //reset attendess
                     desc.Attendees = [];
 
-                    //Update Attendess    
+                    //Update Attendess
                     let att = this.state.to2;
                     if (att != undefined) {
                         Object.keys(att).forEach(function (key) {
@@ -1381,7 +1382,7 @@ export class Main extends Component {
                     if (desc.EventType != undefined && desc.EventType != null) {
                         let item;
                         item = this.eventTypeDataSource.find(x => x.text == desc.EventType)
-                        // create EventType with structure 
+                        // create EventType with structure
                         let eventType = [];
                         if (item != undefined) {
                             eventType.name = item.text;
@@ -1436,14 +1437,14 @@ export class Main extends Component {
                 break;
 
             case 'eventCreated':
-               
+
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
-                if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {                   
+                if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
-     
+
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
 
@@ -1452,7 +1453,7 @@ export class Main extends Component {
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
 
-                       
+
 
                         // this.scheduleObj.eventWindow.resetForm();
                         args.data[0].Id = result.id;
@@ -1467,7 +1468,7 @@ export class Main extends Component {
                         if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
                             let item;
                             item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                            // create EventType with structure 
+                            // create EventType with structure
                             let eventType = [];
                             if (item != undefined) {
                                 eventType.name = item.text;
@@ -1476,7 +1477,7 @@ export class Main extends Component {
                                 args.data[0].EventType = eventType;
                             }
                         }
-                      
+
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
@@ -1500,7 +1501,7 @@ export class Main extends Component {
                             console.log('error ->', error);
                         }
                     })
-              
+
                 break;
 
             case 'eventRemoved':
@@ -1513,7 +1514,7 @@ export class Main extends Component {
                     var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
                     item = args.data[0].parent.Id + '_' + ExcRecurenceDate;
                     calendarFromRemove = args.changedRecords[0].CalendarId
-                    // item = args.data[0].parent.Id + '_' + args.data[0].parent.RecurrenceException; 
+                    // item = args.data[0].parent.Id + '_' + args.data[0].parent.RecurrenceException;
                 }
 
                 //call function to remvove event
@@ -1525,7 +1526,7 @@ export class Main extends Component {
         //this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
         //    args.cancel = true;
 
-        //} 
+        //}
 
     }
 
@@ -1554,16 +1555,16 @@ export class Main extends Component {
                     if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
                         error.result.error.errors[0].reason == "forbidden") {
                         this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
-                        this.scheduleObj.refreshEvents();                       
+                        this.scheduleObj.refreshEvents();
                         this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                        console.log('error ->', error);                       
+                        console.log('error ->', error);
                         return;
                     }
                 }
                 else {
                     this.toastObj.show(this.toasts[2]);
                     console.log('error ->', error);
-                }    
+                }
             })
     }
 
@@ -1582,13 +1583,13 @@ export class Main extends Component {
     }
 
     loadCalendarEvents(calendar, checked) {
-        this.scheduleObj.showSpinner();   
+        this.scheduleObj.showSpinner();
 
         let predicate;
 
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
-                this.defaultCalendar = calendar;               
+                this.defaultCalendar = calendar;
 
                 //Set checkedCalendarResourceData calendar items as cheked
                 this.resourceCalendarData.find(x => x.id == calendar).checked = checked
@@ -1663,9 +1664,9 @@ export class Main extends Component {
         })
 
 
-       
 
-       
+
+
 
 
 
@@ -1777,7 +1778,7 @@ export class Main extends Component {
                 const to = to2.join(',');
                 this.setState({ to2, to });
                // this.props.setMailContacts(to);
-           
+
             }
         }
     }
@@ -1903,7 +1904,7 @@ export class Main extends Component {
                                         onAddressRemove={this.handleRemoveAddress}
                                         onAddressMove={this.handleMoveAddress}
                                         getAddresses={this.props.getAddresses}
-                                        label={i18n.t('compose-message.to')}                                       
+                                        label={i18n.t('compose-message.to')}
                                         ref={tag => this.tagObjHead = tag}
                                     />
                                 </div>
@@ -1954,7 +1955,7 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
-                                                //delayUpdate='false' 
+                                                //delayUpdate='false'
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
@@ -1964,7 +1965,7 @@ export class Main extends Component {
                                                 height='650px'
                                                 views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}
-                                                popupOpen={this.onPopupOpen.bind(this)}                                               
+                                                popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 //allowVirtualScrolling = "true"
@@ -2049,15 +2050,15 @@ export class Main extends Component {
                                     id='contactImports'
                                     isModal={true}
                                     header={i18n.t("contactimport.title")}
-                                    visible={this.state.hidePromptImportContactsDialog}
+                                    visible={this.state.showPromptImportContactsDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
-                                    width='575px'
+                                    width='900px'
                                     ref={dialog => this.promptDialogEventTypeInstance = dialog}
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogImportConcatcsClose.bind(this)}>
-                                    <div>{(this.state.hidePromptImportContactsDialog) ? <ContactsImport
+                                    <div>{(this.state.showPromptImportContactsDialog) ? <EventsImport
                                         getlistEventTypes={this.getlistEventTypes.bind(this)}
                                         googleUser={this.props.googleUser}
                                         close={this.dialogClose.bind(this)}
