@@ -3,7 +3,7 @@ import i18n from 'i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
 
-import {getUserContacts} from '../../services/services-lexon';
+import {getUserContacts} from '../../../services/services-lexon';
 
 export class Step1 extends React.Component {
   constructor(props) {

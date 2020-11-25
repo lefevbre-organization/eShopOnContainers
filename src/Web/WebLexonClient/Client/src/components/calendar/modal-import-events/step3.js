@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import i18n from 'i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-import {getUserContacts} from '../../services/services-lexon';
+import {getUserContacts} from '../../../services/services-lexon';
 
 export class Step3 extends React.Component {
   constructor(props) {

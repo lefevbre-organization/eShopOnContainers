@@ -7,9 +7,9 @@ import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
 import { Step4 } from './step4';
-import ACTIONS from '../../actions/documentsAction';
+import ACTIONS from '../../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import Spinner from '../spinner/spinner';
+import Spinner from '../../spinner/spinner';
 
 class ModalImportEvents extends Component {
   constructor() {
@@ -121,6 +121,9 @@ class ModalImportEvents extends Component {
   }
 
   render() {
+    debugger
+    return <p>Hola mundo!</p>
+    /*
     const { showSpinner, step, contacts, errors, numContacts } = this.state;
     const { showImportContacts, user, bbdd } = this.props;
 
@@ -227,7 +230,6 @@ class ModalImportEvents extends Component {
           }
 
           .e-radio:checked + .e-success::after {
-            /* csslint allow: adjoining-classes */
             background-color: #001978;
             border-color: #001978;
           }
@@ -409,7 +411,6 @@ class ModalImportEvents extends Component {
           }
 
           .modal-footer .btn-primary:hover {
-            /* background-color: #e5e8f1 !important; */
           }
 
           .modal-footer .btn-primary {
@@ -698,6 +699,7 @@ class ModalImportEvents extends Component {
         `}</style>
       </div>
     );
+     */
   }
 }
 
