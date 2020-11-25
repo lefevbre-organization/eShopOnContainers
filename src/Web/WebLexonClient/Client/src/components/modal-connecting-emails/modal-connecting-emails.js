@@ -59,7 +59,7 @@ class ModalConnectingEmails extends Component {
       const messages = [...this.props.selectedMessages];
       for(let i = 0; i < messages.length; i++) {
         const mime = parse(messages[i].raw);
-        const attachments = this.findAttachments(mime);
+        const attachments = findAttachments(mime);
         messages[i].attachments = attachments;
       }
 
@@ -228,8 +228,6 @@ class ModalConnectingEmails extends Component {
     this.closeDialog();
     let sc = null;
 
-    debugger
-
     try {
       if (step1Data.actuation === true) {
         sc = await this.saveClassifications();
@@ -270,8 +268,6 @@ class ModalConnectingEmails extends Component {
 
           if (step1Data.saveDocuments === true) {
             console.log('uploadDocument: 0');
-            debugger
-
             // Save attachments
             //const mime = parse(messages[i].raw);
             const attachments = messages[i].attachments;    //findAttachments(mime);

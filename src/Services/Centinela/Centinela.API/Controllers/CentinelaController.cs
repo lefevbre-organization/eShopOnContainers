@@ -228,5 +228,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpPost("signatures/notify/{service}/{guid}/{documentId}")]
+        [ProducesResponseType(typeof(Result<ConceptFile>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> NotifySignature([FromRoute] string service, [FromRoute] string guid, [FromRoute] string documentId, [FromBody] List<CenRecipient> recipients)
+        {
+            Console.WriteLine($"START {Request.Path.Value}");
+
+            var result = await _service.NotifySignatureAsync(service, guid, documentId, recipients);
+
+            if (result.errors.Count == 0)
+            {
+                return StatusCode(201, result);
+            }
+
+            Console.WriteLine($"END {Request.Path.Value}");
+
+            return BadRequest(result);
+        }
     }
 }

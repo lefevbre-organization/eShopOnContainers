@@ -1,8 +1,16 @@
 import * as moment from 'moment';
 import jwt_decode from 'jwt-decode';
 
+const users = [];
+
 export const getUser = async (userId) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
+
+  // Cache user
+  if(users[userId]) {
+      return users[userId];
+  }
+
   let url2 = `${window.API_GATEWAY}/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true`;
   if(window.currentUser && window.currentUser.env) {
       url += `?env=${window.currentUser.env}`;
@@ -24,6 +32,7 @@ export const getUser = async (userId) => {
     user.data.lexonUserId = navUser.data.idUser;
     const userData = jwt_decode(navUser.data.token, {complete: true});
     user.data.tokenDecoded = userData;
+    users[userId] = user;
         return user;
     } catch (err) {
         throw err;

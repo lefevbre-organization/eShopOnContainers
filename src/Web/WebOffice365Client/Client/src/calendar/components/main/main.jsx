@@ -223,6 +223,15 @@ export class Main extends Component {
         this.checkForParams()
     }
 
+    toggleSideBar() {
+        const toggleCollapsed = !this.state.leftSideBar.collapsed;
+        this.setState({
+            leftSideBar: {
+                collapsed: toggleCollapsed,
+            },
+        });
+    }
+
     async setGlobalization() {
         if (window.navigator.language.includes("es-")
             || (window.navigator.language == "es")
@@ -512,7 +521,7 @@ export class Main extends Component {
 
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
-        this.scheduleData = [];
+        this.scheduleData = this.scheduleData.filter( i => i.CalendarId !== calendarId);
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -619,14 +628,7 @@ export class Main extends Component {
         e.result = this.scheduleData;
     }
 
-    toggleSideBar() {
-        const toggleCollapsed = !this.state.leftSideBar.collapsed;
-        this.setState({
-            leftSideBar: {
-                collapsed: toggleCollapsed
-            }
-        });
-    }
+   
 
     sendMessagePutUser(user) {
         const { selectedMessages, User } = this.props;
