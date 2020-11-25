@@ -630,7 +630,6 @@ export class Main extends Component {
     }
 
     sendMessagePutUser(user) {
-        debugger
         const { selectedMessages, googleUser } = this.props;
 
         window.dispatchEvent(

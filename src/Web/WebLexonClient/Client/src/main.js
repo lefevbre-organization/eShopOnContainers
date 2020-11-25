@@ -234,7 +234,6 @@ class Main extends Component {
 
   async handlePutUserFromLexonConnector(event) {
     console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
-    debugger
     this.getAddonData();
     const {
       user,
@@ -296,8 +295,10 @@ class Main extends Component {
         this.setState({ user: newUser });
         this.props.setUser(newUser.idUser);
 
+        debugger
         getCompanies(newUser)
           .then((result) => {
+            debugger
             if (Array.isArray(result.errors)) {
               result.errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
@@ -310,6 +311,7 @@ class Main extends Component {
               isLoading: false,
               companies: result.companies || [],
             });
+            debugger
             if (Array.isArray(result.errors)) {
               result.errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
@@ -319,6 +321,7 @@ class Main extends Component {
             }
           })
           .catch((errors) => {
+            debugger
             this.setState({ isLoading: false });
             if (Array.isArray(errors)) {
               errors.forEach((error) =>
@@ -332,6 +335,7 @@ class Main extends Component {
       })
       .catch((errors) => {
         this.setState({ isLoading: false });
+        debugger;
         if (Array.isArray(errors)) {
           errors.forEach((error) => this.props.addError(JSON.stringify(error)));
         } else {
@@ -390,7 +394,6 @@ class Main extends Component {
   }
 
   render() {
-    debugger
     const {
       addonData,
       isLoading,
@@ -411,6 +414,9 @@ class Main extends Component {
     }
 
     console.log('Rendering initial DDBB: ' + bbdd);
+    if(errors && errors.length > 0) {
+      debugger
+    }
 
     return (
       <section>

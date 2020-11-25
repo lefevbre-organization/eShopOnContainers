@@ -54,8 +54,7 @@ export class EventsImport extends React.Component {
     }    
 
     render() {
-        debugger;
-        return (  
+        return (
             <div className="row custom-margin custom-padding-5 material2">
                 <div className="col-xs-12 col-sm-12 col-lg-12 col-md-12"> 
                     <div className="Ccontainer" >

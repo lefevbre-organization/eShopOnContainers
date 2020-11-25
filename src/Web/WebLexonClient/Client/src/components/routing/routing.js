@@ -16,23 +16,25 @@ import MessageClassifications from '../addon-conecting-emails/addon-conecting-em
 import AddonAttachDocument from '../addon-attach-documents/addon-attach-documents';
 import { connect } from 'react-redux';
 import CalendarSelectAction from "../calendar/select-action/select-action";
-import ModalImportEvents from "../modal-import-events/modal-import-events";
+import ModalImportEvents from "../calendar/modal-import-events/modal-import-events";
 
 class Routing extends Component {
   constructor(props) {
     super(props);
     let actualPage = PAGE_SELECT_COMPANY;
 
-    if (props.casefile !== null && props.casefile !== undefined) {
-      actualPage = PAGE_CASEFILE;
-    } else if(props.addonData && 
-      props.addonData.addonType === "MessageRead") {
-      actualPage = PAGE_MESSAGE_CLASSIFICATIONS;
-    } else if(props.addonData && 
-      props.addonData.addonType === "MessageCompose") {
-      actualPage = PAGE_DOCUMENT_ATTACHED;
-    } else if(props.app === 'calendar:import') {
+    if (props.app === 'calendar:import') {
       actualPage = PAGE_IMPORT_EVENTS;
+    } else {
+      if (props.casefile !== null && props.casefile !== undefined) {
+        actualPage = PAGE_CASEFILE;
+      } else if (props.addonData &&
+          props.addonData.addonType === "MessageRead") {
+        actualPage = PAGE_MESSAGE_CLASSIFICATIONS;
+      } else if (props.addonData &&
+          props.addonData.addonType === "MessageCompose") {
+        actualPage = PAGE_DOCUMENT_ATTACHED;
+      }
     }
 
     this.state = {
@@ -59,6 +61,7 @@ class Routing extends Component {
       composerOpen
     } = this.props;
 
+    debugger
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return (
