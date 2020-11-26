@@ -29,5 +29,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
         Task<Result<bool>> NotifySignatureAsync(string service, string guid, string documentId, List<CenRecipient> recipients);
 
+        Task<Result<bool>> CertificationPostAsync(CertificationFile file, string route = "");
+
     }
 }
