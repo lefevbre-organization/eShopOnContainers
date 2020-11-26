@@ -61,7 +61,6 @@ class Routing extends Component {
       composerOpen
     } = this.props;
 
-    debugger
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return (

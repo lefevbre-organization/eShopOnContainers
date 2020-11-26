@@ -2,6 +2,7 @@ import * as moment from 'moment';
 import jwt_decode from 'jwt-decode';
 
 export const getUser = async userId => {
+    debugger
   let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
   let url2 = `${window.API_GATEWAY}/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true`;
   if(window.currentUser && window.currentUser.env) {

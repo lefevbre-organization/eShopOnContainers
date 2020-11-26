@@ -244,7 +244,7 @@ class Main extends Component {
       provider = 'DEFAULT',
       account = 'default@default.def',
       app = "mail",
-      env = 'QA'
+      env
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({
@@ -295,10 +295,8 @@ class Main extends Component {
         this.setState({ user: newUser });
         this.props.setUser(newUser.idUser);
 
-        debugger
         getCompanies(newUser)
           .then((result) => {
-            debugger
             if (Array.isArray(result.errors)) {
               result.errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
@@ -311,7 +309,6 @@ class Main extends Component {
               isLoading: false,
               companies: result.companies || [],
             });
-            debugger
             if (Array.isArray(result.errors)) {
               result.errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
@@ -321,7 +318,6 @@ class Main extends Component {
             }
           })
           .catch((errors) => {
-            debugger
             this.setState({ isLoading: false });
             if (Array.isArray(errors)) {
               errors.forEach((error) =>
@@ -335,7 +331,6 @@ class Main extends Component {
       })
       .catch((errors) => {
         this.setState({ isLoading: false });
-        debugger;
         if (Array.isArray(errors)) {
           errors.forEach((error) => this.props.addError(JSON.stringify(error)));
         } else {
@@ -414,9 +409,6 @@ class Main extends Component {
     }
 
     console.log('Rendering initial DDBB: ' + bbdd);
-    if(errors && errors.length > 0) {
-      debugger
-    }
 
     return (
       <section>

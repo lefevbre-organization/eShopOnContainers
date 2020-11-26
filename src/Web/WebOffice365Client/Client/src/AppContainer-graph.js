@@ -42,6 +42,7 @@ class AppContainerGraph extends Component {
   componentDidMount() {
     const user = this.props.match.params.idUser;
     const stateStorage = getStateStorage();
+    debugger
     if (!user && stateStorage) {
       const userLexon = stateStorage.lexon;
       if (userLexon && userLexon.user) {

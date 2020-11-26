@@ -121,7 +121,6 @@ class ModalImportEvents extends Component {
   }
 
   render() {
-    debugger
     return <p>Hola mundo!</p>
     /*
     const { showSpinner, step, contacts, errors, numContacts } = this.state;
