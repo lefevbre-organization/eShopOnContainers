@@ -743,28 +743,14 @@ class MessageList extends Component {
                 pageOrientation: 'Landscape'
                 
             };
+            this.grid.columns[0].visible = false;
             this.grid.pdfExport(exportProperties);
-            // let pdfdata = [];
-            // const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
-            // for(let i=0; i<query.queries.length; i++ ){
-            // if(query.queries[i].fn === 'onPage'){
-            //     query.queries.splice(i,1);// remove page query to get all records
-            //     break;
-            // }
-            // }
-            // new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
-            // .then((e) => {
-            //     pdfdata = e.result;   // get all filtered records
-            //     const exportProperties= {
-            //     dataSource: pdfdata,
-            //     pageOrientation: 'Landscape'
-            //     };
-            //     if (this.grid) {
-            //     this.grid.pdfExport(exportProperties);
-            //     }
-            // }).catch((e) => true);
+            /* show columns after pdfExport */
+            this.grid.columns[0].visible = true; 
         } else if (this.grid && event.item.id.includes('excel')){
+            this.grid.columns[0].visible = false;
             this.grid.excelExport();
+            this.grid.columns[0].visible = true; 
         } else if (this.grid && event.item.id.includes('print')) {
             this.grid.print();
             const cols = this.grid.getColumns();
@@ -1072,7 +1058,7 @@ class MessageList extends Component {
                     delayUpdate='true'
                 >
                     <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />
+                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} width='55' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
