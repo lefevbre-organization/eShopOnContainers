@@ -29,6 +29,7 @@ window.URL_MF_IMAP = 'http://localhost:9000/user';
 
 window.URL_MF_LEXON = 'http://localhost:3004/static/js/main.js';
 window.URL_MF_LEXON_BASE = 'http://localhost:3004';
+window.URL_LEXON=
 
 window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.URL_MF_CENTINELA_BASE = 'http://localhost:3005';
@@ -39,5 +40,10 @@ window.API_CENTINELA_GATEWAY =
 window.URL_MF_DATABASE = 'http://localhost:3006/static/js/main.js';
 window.URL_MF_DATABASE_BASE = 'http://localhost:3006';
 
+window.WEBSPELLCHECKER_CODE = '';
+
+window.URL_LEXON ="http://localhost:8080"
 window.RELEASE = 'RC DEV';
 window.SHOW_EXPERIMENTAL = '1';
+
+

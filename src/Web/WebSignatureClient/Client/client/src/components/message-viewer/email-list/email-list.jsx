@@ -177,7 +177,8 @@ const EmailList = (props) => {
                         ? <div className={props.styles['document-opened']}>
                             <div className={`${props.styles['certificate-document-title']} light-blue-text`}><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
                             <div className={`${props.styles['certificate-document']} light-blue-text`}>
-                              <span className="lf-icon-document-validate">{certificate.file.name}</span>
+                              <span className="lf-icon-document-validate"></span>
+                              <span className="ml-2">{certificate.file.name}</span>
                             </div>
                             {
                               (props.certificationType.value === 'open_document')
@@ -194,7 +195,8 @@ const EmailList = (props) => {
                         : <div className={props.styles['document-opened']}>
                             <div className={`${props.styles['certificate-pending']}`}><b>{i18n.t('emailViewer.pendingDoc')}</b></div>
                             <div>
-                              <span className="lf-icon-document">{certificate.file.name}</span>
+                              <span className="lf-icon-document"></span>
+                              <span className="ml-2">{certificate.file.name}</span>
                             </div>
                           </div>
                     }

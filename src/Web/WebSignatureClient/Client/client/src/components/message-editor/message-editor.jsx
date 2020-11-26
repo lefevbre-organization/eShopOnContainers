@@ -29,7 +29,8 @@ import {
   notifySignature,
   cancelSignatureCen,
   preloadSignatures2,
-  getNumAvailableSignatures
+  getNumAvailableSignatures,
+  notifyCen
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
@@ -1014,8 +1015,9 @@ class MessageEditor extends Component {
           notifySignature(
             lefebvre.userId,
             lefebvre.idUserApp,
-            documentsInfo.length
+            1//documentsInfo.length
           );
+          
           this.props.setMailContacts(null);
           this.props.setAdminContacts(null);
           this.props.setUserApp('lefebvre');
@@ -1025,7 +1027,7 @@ class MessageEditor extends Component {
           this.props.setIdDocuments(null);
           this.props.setSelectedService('signature');
           this.props.setSignaturesFilterKey('Mostrar todas');
-          this.props.preloadSignatures(lefebvre.userId);
+          this.props.preloadSignatures(lefebvre.userId, this.props.application.user.credentials.encrypted);
           this.props.close(this.props.application);
       
           getNumAvailableSignatures(lefebvre.idUserApp)
@@ -1033,6 +1035,13 @@ class MessageEditor extends Component {
             .catch(err => {
                 console.log(err);
             });
+
+          if (lefebvre && lefebvre.userApp === 'centinela' && lefebvre.idDocuments){
+            lefebvre.idDocuments.forEach(document => {
+              notifyCen('signature', lefebvre.guid, document.docId, recipients)
+              .catch(err => console.log(err));
+            });
+          }
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});

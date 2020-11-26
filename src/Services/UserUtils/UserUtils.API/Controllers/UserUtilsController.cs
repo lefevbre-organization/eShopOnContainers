@@ -253,6 +253,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         {
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
 
+            if (resultUserUtils?.data == null || resultUserUtils.errors.Count > 0)
+                return BadRequest(resultUserUtils);
+
             return Redirect(resultUserUtils.data);
         }
 
@@ -268,6 +271,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             )
         {
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToSignatureAsync(idUser);
+
+            if (resultUserUtils?.data == null || resultUserUtils.errors.Count > 0)
+                return BadRequest(resultUserUtils);
 
             return Redirect(resultUserUtils.data);
         }

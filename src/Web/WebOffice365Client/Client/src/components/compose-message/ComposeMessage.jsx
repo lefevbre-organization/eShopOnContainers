@@ -5,6 +5,8 @@ import { compose } from 'redux';
 import { 
   sendMessage, 
   createDraft, 
+  dataUrlToFile,
+  deleteDraft,
   getLabelInbox 
 } from '../../api_graph';
 import { getEmailMessage } from '../content/message-list/actions/message-list.actions';
@@ -139,7 +141,8 @@ export class ComposeMessage extends PureComponent {
       isPriority: false,
       readConfirmation: false,
       draftTime: '',
-      draftId: ''
+      draftId: '',
+      isDraftEdit: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
@@ -273,23 +276,71 @@ export class ComposeMessage extends PureComponent {
     }
   }
 
+  getAttachById(attachments) {
+    const addAttachment = (attach) => { 
+     
+      const dataUrl = attach.contentBytes;
+
+      const blob = dataUrlToFile({dataUrl, mimeType: attach.contentType });
+
+      var fileOfBlob = new File([blob], attach.name);
+ 
+      this.uppy.addFile({
+        content: `data:${attach.contentType};base64,${attach.contentBytes}`,
+        name: attach.name,
+        type: attach.contentType,
+        data: fileOfBlob, 
+        source: 'Local', 
+        isRemote: false 
+      });
+   
+    };
+
+    attachments.forEach(file => {
+      if(file.name != '') {
+        addAttachment(file);
+      }
+    });
+   
+  }
+
   getById() {
     if(this.props.emailMessageResult.body != ''){
+        const attachments = this.props.emailMessageResult.attach
         const id = this.props.emailMessageResult.result.id
         const toRecipients = this.props.emailMessageResult.result.toRecipients;
-   
+        const ccRecipients = this.props.emailMessageResult.result.ccRecipients;
+        const bccRecipients = this.props.emailMessageResult.result.bccRecipients;
         toRecipients.forEach(toRecipient => {
           setTimeout(() => {
             this.addAddress('to', toRecipient.emailAddress.address);
           }, 100);
         });
+        ccRecipients.forEach(ccRecipient => {
+          setTimeout(() => {
+            this.addAddress('cc', ccRecipient.emailAddress.address);
+          }, 100);
+        });
+
+        bccRecipients.forEach(bccRecipient => {
+          setTimeout(() => {
+            this.addAddress('bcc2', bccRecipient.emailAddress.address);
+          }, 100);
+        });
+       const newAttachments = attachments.filter((attachment, index, self) =>
+        index === self.findIndex((x) => ( x.name === attachment.name ))
+       );
+  
+        this.getAttachById(newAttachments);
+
         const subject = this.props.emailMessageResult.result.subject;
         const body = this.props.emailMessageResult.result.bodyPreview
         this.setState({
           draftId: id,
           subject: subject, 
           defaultContent: body,
-          content: body
+          content: body,
+          isDraftEdit: true
         });
     }
   }
@@ -382,6 +433,7 @@ export class ComposeMessage extends PureComponent {
       this.props.setMailContacts(null);
     }
     //this.resetFields();
+    deleteDraft({ draftId: this.state.draftId });
     this.closeModal();
   }
 
@@ -454,10 +506,17 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevState.to !== this.state.to 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) {
+    if((prevState.to !== this.state.to) 
+      || (prevState.cc !== this.state.cc) 
+      || (prevState.bcc !== this.state.bcc) 
+      || (prevState.subject !== this.state.subject)
+      || (prevState.content !== this.state.content)
+      || (prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && (!this.props.match.params.id)) {
+      this.saveDraft();
+    }
+    
+    if(this.props.match.params.id && this.state.isDraftEdit) {
       this.saveDraft();
     }
 
@@ -505,7 +564,7 @@ export class ComposeMessage extends PureComponent {
       this.setState({ showEmptySubjectWarning: true });
       return;
     }
-
+    deleteDraft({ draftId: this.state.draftId });
     this._sendEmail();
   }
 
@@ -518,7 +577,8 @@ export class ComposeMessage extends PureComponent {
         minute: '2-digit', 
         second: "2-digit"
       });
-    return time >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
+    const hour = time.slice(0, 2);
+    return hour >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
   }
   
   saveDraft() {
@@ -528,9 +588,19 @@ export class ComposeMessage extends PureComponent {
       Subject: this.state.subject,
       attachments: this.state.uppyPreviews,
     };
+
+    const validCc = getValidEmails(this.state.cc);
+    if (validCc.length) {
+      headers.Cc = validCc.join(', ');
+    }
+
+    const validBcc = getValidEmails(this.state.bcc);
+    if (validBcc.length) {
+      headers.Bcc = validBcc.join(', ');
+    }
+
     const Fileattached = this.state.uppyPreviews;
-
-
+    console.log(`<${uuid()}-${uuid()}@lefebvre.es>`);
     const email = Object.assign({}, this.state, {
       subject: this.state.subject,
       internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
@@ -538,19 +608,27 @@ export class ComposeMessage extends PureComponent {
 
     const fullTime = this.getTimeDraft();
     
-    if(this.state.to != '' || this.state.subject != '' || this.state.content != '') {
+    if(this.state.to != '' 
+    || this.state.cc != ''
+    || this.state.bcc != ''
+    || this.state.subject != '' 
+    || this.state.content != '') {
       setTimeout(() => {
         createDraft({
           data: email,
           attachments: Fileattached,
           draftId: this.state.draftId
         }).then((draft) => {
-          this.setState({draftTime: fullTime, draftId: draft.id});
+          this.setState({
+            draftTime: fullTime, 
+            draftId: draft.id, 
+            isDraftEdit: false
+          });
         })
         .catch((err) => {
           console.log('Error sending email:' + err);
         });
-      }, 1500);
+      }, 5000);
     }
     
   }

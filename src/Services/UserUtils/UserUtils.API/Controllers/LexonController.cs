@@ -163,7 +163,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         }
 
         /// <summary>
-        /// Permite obtener los token necesarios para crear un nuevo mail
+        /// Permite obtener los token necesarios para abrir un mail
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
@@ -183,7 +183,59 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
                 tokenRequest.idApp = _settings.Value.IdAppLexon;
 
             var result = await _service.GetGenericTokenAsync( tokenRequest, addTerminatorToToken);
-            result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/mail.open" });
+            result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/mail/open" });
+
+            return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
+        }
+
+        /// <summary>
+        /// Permite obtener los token necesarios para crear un nuevo evento
+        /// </summary>
+        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
+        /// <returns></returns>
+        [HttpPut("token/event/new")]
+        [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenAsync(
+            [FromBody] TokenRequestEventNew tokenRequest
+            , bool addTerminatorToToken = true
+            )
+        {
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
+                && (tokenRequest.idActuation != null))
+                return BadRequest("Must be a valid idActuation to link to new event");
+
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
+
+            var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
+            result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/event/new" });
+
+            return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
+        }
+
+        /// <summary>
+        /// Permite obtener los token necesarios para abrir un evento
+        /// </summary>
+        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
+        /// <returns></returns>
+        [HttpPut("token/event/open")]
+        [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenAsync(
+            [FromBody] TokenRequestEventOpen tokenRequest
+            , bool addTerminatorToToken = true
+            )
+        {
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
+                || string.IsNullOrEmpty(tokenRequest.idEvent))
+                return BadRequest("Must be a valid idClient and valid idMail");
+
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
+
+            var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
+            result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/event/open" });
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }

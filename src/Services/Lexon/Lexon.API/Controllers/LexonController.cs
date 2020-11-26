@@ -50,7 +50,7 @@ namespace Lexon.API.Controllers
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = "QA")
+        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = null)
 
         {
             if (string.IsNullOrEmpty(idUserNavision))
@@ -75,7 +75,7 @@ namespace Lexon.API.Controllers
         [HttpGet("user/getid")]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396", string env = "QA")
+        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396", string env = null)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
@@ -88,7 +88,7 @@ namespace Lexon.API.Controllers
         [Route("companies")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = "QA")
+        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = null)
 
         {
             if (string.IsNullOrEmpty(idUser))
@@ -212,7 +212,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> CheckRelationsMailAsync(
             [FromBody] MailInfo mail,
             [FromRoute] string idUser = "449",
-            [FromQuery] string env = "QA"
+            [FromQuery] string env = null
             )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
@@ -244,7 +244,7 @@ namespace Lexon.API.Controllers
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<LexEntityTypeList, LexEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesTypesAsync(string env = "QA")
+        public async Task<IActionResult> GetEntitiesTypesAsync(string env = null)
         {
             var result = await _usersService.GetEntityTypesAsync(env);
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);

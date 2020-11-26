@@ -10,7 +10,7 @@
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequest">
     <Position X="6.75" Y="0.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAACBAAAAAAEAAAAAAAAQAAAAAA=</HashCode>
+      <HashCode>AAAAgAACAAAAAAAAAAACBAAAAAAEAAAAAAAAQAAAAAA=</HashCode>
       <FileName>Token\TokenRequest.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -29,7 +29,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestLogin">
-    <Position X="8.5" Y="3.25" Width="2" />
+    <Position X="9.5" Y="3.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAA=</HashCode>
       <FileName>Token\TokenRequestLogin.cs</FileName>
@@ -45,7 +45,7 @@
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestCentinelaNewFirm">
     <Position X="3" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAIAAAAACAAAAQAAAAAAAAAAAAAAAg=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAACAAAAQAAAAAAEAAAAAAAAg=</HashCode>
       <FileName>Token\TokenRequestCentinelaNewFirm.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -66,8 +66,22 @@
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelView">
     <Position X="1" Y="3" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAEAAQIAABAAAAAAAAABAAAAAAAAAAAAAAQCgBAEIA=</HashCode>
+      <HashCode>AAAEAAQKAABAAAAAAAAABAAAAAAAAAAAAAAQCgBAEIA=</HashCode>
       <FileName>Token\TokenModelView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestEventNew">
+    <Position X="8.25" Y="5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Token\TokenRequestEventNew.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestEventOpen">
+    <Position X="8.5" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Token\TokenRequestEventOpen.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

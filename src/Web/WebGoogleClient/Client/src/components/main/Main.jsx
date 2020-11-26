@@ -53,7 +53,7 @@ import {
   getUser,
 } from '../../api/accounts';
 import { PROVIDER } from '../../constants';
-import { getMessageListWithRFC } from '../../api/';
+import {getMessage, getMessageListWithRFC} from '../../api/';
 import {addContact, getContacts, searchContactByEmail} from "../../api/contacts-api";
 import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 
@@ -123,9 +123,9 @@ export class Main extends Component {
       },
     });
   }
-
-  sendMessagePutUser(user) {
+  async sendMessagePutUser(user) {
     const { selectedMessages, googleUser } = this.props;
+
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
@@ -304,7 +304,6 @@ export class Main extends Component {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
     before rendering anything else */
-
     this.getLabelList();
 
     window.addEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
@@ -651,6 +650,7 @@ export class Main extends Component {
     //sessionStorage.clear();
     //localStorage.clear();
   }
+
 
   onSignoutDisconnect() {
     console.log('IN ... onSignoutDisconnect');

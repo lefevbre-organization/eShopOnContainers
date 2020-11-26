@@ -59,7 +59,7 @@ class ModalConnectingEmails extends Component {
       const messages = [...this.props.selectedMessages];
       for(let i = 0; i < messages.length; i++) {
         const mime = parse(messages[i].raw);
-        const attachments = this.findAttachments(mime);
+        const attachments = findAttachments(mime);
         messages[i].attachments = attachments;
       }
 

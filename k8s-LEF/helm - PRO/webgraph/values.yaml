@@ -63,5 +63,6 @@ configValues: |
   window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
   window.URL_MF_DATABASE_BASE='http://localhost:3006'
   window.URL_REDIRECT= 'https://lexbox-webgraph.lefebvre.es'
+  window.URL_LEXON ='https://front.lex-on.es/'
   window.SHOW_EXPERIMENTAL='0'
-  window.RELEASE= 'RC 0.35'
+  window.RELEASE= 'RC 0.36'
