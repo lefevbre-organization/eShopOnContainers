@@ -378,7 +378,7 @@ class MessageList extends Component {
             }
         });
         
-
+      
         let res = [];
 
         filteredEmails.map(email => {
@@ -390,12 +390,23 @@ class MessageList extends Component {
             let status = '';
             let newStatus = '';
             subject = (email.data.find(x => x.key === "subject")) ? email.data.find(x => x.key === "subject").value : 'Sin asunto';
-            email.certificates.map(d => recipients = `${recipients}${d.email}; `);
-            email.certificates.map(d => 
+
+            let filterCertificates = [];
+            
+            email.certificates.map(d => { 
+                let index = filterCertificates.findIndex(x => (x.email === d.email));
+                if (index === -1){
+                    filterCertificates.push(d);
+                } 
+            });
+
+            filterCertificates.map(d => { 
+                recipients = `${recipients}${d.email}; `;
                 files = (email.certificates[0].file && email.certificates[0].file.name) 
                 ? `${files}${d.file.name}; ` 
-                : '');
- 
+                : '';
+            });
+            
             date = new Date(email.created_at);
             status = email.status;
            
@@ -1026,7 +1037,7 @@ class MessageList extends Component {
         //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
         var emails = ( this.props.emails && this.props.emails.length > 0 ) ? this.getEmails(this.props.emails) : [];
         var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
-
+  
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
