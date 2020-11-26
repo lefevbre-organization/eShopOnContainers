@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /weboffice365addonlexon
+pathBase: /webportal
 
 image:
-  repository: elefebvreoncontainers/weboffice365addonlexon
+  repository: elefebvreoncontainers/webportalclient
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -37,7 +37,9 @@ env:
       key: internalurls__lexonapi__hc
     - name: AccountApiUrlHC
       key: internalurls__accountapi__hc
-  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+    - name: PortalUrlHC
+      key: internalurls__portal__hc
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
@@ -45,10 +47,15 @@ env:
       value: 'K8S'
     - name: IsClusterEnv
       value: 'True'
+
 configValues: |
- window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.URL_ADDON_LEXON_BASE = "https://lexbox-test-weboffice365addonlexon.lefebvre.es"
- window.URL_ADDON_LEXON = 'https://lexbox-test-webaddonlauncher.lefebvre.es'
- window.API_GATEWAY='https://lexbox-apigwlex.lefebvre.es/api/v1'
- window.URL_GET_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
- window.RELEASE = 'RC 0.36'
+  window.REACT_APP_ENVIRONMENT='PRO'
+  window.API_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es'
+  window.URL_INBOX_GOOGLE= 'https://lexbox-webgoogle.lefebvre.es'
+  window.URL_INBOX_OUTLOOK= 'https://lexbox-webgraph.lefebvre.es'
+  window.URL_INBOX_IMAP= 'https://lexbox-webimap.lefebvre.es' 
+  window.URL_GET_USER ='https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
+  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
+  window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
+  window.RELEASE = 'RC 0.34'

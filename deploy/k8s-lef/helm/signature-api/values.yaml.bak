@@ -53,18 +53,18 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: SignaturitApiUrl
-      value: 'https://api.signaturit.com/v3'
+      value: 'https://api.sandbox.signaturit.com/v3'
     - name: LexonFilesUrl
       value: 'https://led-dev-lexon.eu.els.local/index.php'
     - name: LexonApiGwUrl
-      value: 'https://lexbox-apigwlex.lefebvre.es/api/v1'
+      value: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1'
     - name: CentinelaApiGwUrl
-      value: 'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
+      value: 'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
-      value: 'https://lexbox-websignature.lefebvre.es/completed'
+      value: 'https://lexbox-test-websignature.lefebvre.es/completed'
     - name: Signaturit
-      value: 'rRSMTouEvOtQsisUtwpiKBSxVxemmfNCMqUIqvzzwzVsxZsYXxIkyzKOWLgCJhSsBwTgiaNWklPFVtcGBTEEDq'
+      value: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'
     - name: SignatureNotificationUrl
-      value: 'https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
+      value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
     - name: CertifiedEmailNotificationUrl
-      value: 'https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'      
+      value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'
