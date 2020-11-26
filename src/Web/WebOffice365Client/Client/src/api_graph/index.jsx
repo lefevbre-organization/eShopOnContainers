@@ -544,8 +544,43 @@ export const emailAttachments = (data) => {
   return email;
 };
 
-export const createDraft = async ({ data, attachments, draftId }) => {
+export const dataUrlToFile = ({dataUrl, mimeType}) => {
+   
+  const byteCharacters = window.atob(dataUrl);
+  
+  let byteNumbers = byteCharacters.length;
+  let byteArray = new Uint8Array(byteNumbers);
 
+  while (byteNumbers--) {
+    byteArray[byteNumbers] = byteCharacters.charCodeAt(byteNumbers);
+  }
+  return new Blob([byteArray], {
+    type: mimeType
+  });
+ 
+ }
+
+export const deleteDraft = async ({ draftId }) => {
+  
+  try {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+    let response = null;
+    if(draftId != '') {
+      response =  await client
+      .api(`/me/messages/${draftId}`)
+      .version('beta')
+      .delete();  
+    } 
+    return response;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+
+};
+
+export const createDraft = async ({ data, attachments, draftId }) => {
   let email = '';
   email = emailBody(data);
   email += emailToRecipients(data);
