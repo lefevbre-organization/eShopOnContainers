@@ -671,7 +671,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    document.title = this.props.application.title;
+    // document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
     var self = this;
     let dataMailContacts = [];

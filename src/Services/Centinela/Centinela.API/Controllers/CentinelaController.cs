@@ -188,13 +188,39 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<ConceptFile>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SignatureFilePost(
-        [FromBody] ConceptFile file
+            [FromBody] ConceptFile file
         )
         {
             Console.WriteLine($"START {Request.Path.Value}");
 
             Result<ConceptFile> resultFile = new Result<ConceptFile>(file);
             var result = await _service.FilePostAsync(file, Request.Path.Value);
+
+            if (result.errors.Count == 0)
+            {
+                resultFile.errors = result.errors;
+                resultFile.infos = result.infos;
+                return StatusCode(201, resultFile);
+            }
+
+
+            Console.WriteLine($"END {Request.Path.Value}");
+
+            return BadRequest(result);
+        }
+
+        [HttpPost("signatures/audit/post/certification/email")]
+        [HttpPost("signatures/audit/post/certification/sms")]
+        [ProducesResponseType(typeof(Result<ConceptFile>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EmailCertificationPost(
+            [FromBody] CertificationFile file
+        )
+        {
+            Console.WriteLine($"START {Request.Path.Value}");
+
+            Result<CertificationFile> resultFile = new Result<CertificationFile>(file);
+            var result = await _service.CertificationPostAsync(file, Request.Path.Value);
 
             if (result.errors.Count == 0)
             {

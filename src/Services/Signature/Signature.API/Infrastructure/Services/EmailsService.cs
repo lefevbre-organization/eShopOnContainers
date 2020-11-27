@@ -116,14 +116,17 @@
                 }
                 else if (app == "centinela")
                 {
-                    var cenDocId = result.data.CertifiedEmails[0].Certificates.Find(e => e.ExternalId == certificateId).Document.InternalInfo.DocId;
+                    var certificate = result.data.CertifiedEmails[0].Certificates.Find(e => e.ExternalId == certificateId);
+                    var cenDocId = certificate.Document.InternalInfo.DocId;
+                    var email = certificate.Email;
+                    var name = certificate.Name;
 
                     switch (eventType)
                     {
                         case "certification_completed":
                             // Downloadfile
                             var file = new SignaturitService(_settings, _configuration).DownloadCertificationFile(emailId, certificateId);
-                            response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+                            response = await SaveFileCentinela(file, guid, cenDocId, email, name, user, eventType);
                             break;
                         default:
                             break;
@@ -145,26 +148,21 @@
 
         #region HelperFunctions
 
-        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string user, string eventType)
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string email, string name, string user, string eventType)
         {
             Console.WriteLine($"START SaveFileCentinela");
 
             Result<bool> result;
 
-            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post";
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/email";
 
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
-            var values = new Dictionary<string, string>();
+            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { fullName = "", phoneNumber1 = "", email} };
 
             client.Timeout = _timeoutFile;
 
-            values.Add("idNavision", user);
-            values.Add("conceptId", cenDocId);
-            values.Add("name", file["fileName"].AsString);
-            values.Add("contentFile", file["fileContent"].AsString);
-
-            var outputJson = JsonConvert.SerializeObject(values);
+            var outputJson = JsonConvert.SerializeObject(jsonBody);
             request.AddHeader("Accept", "text/plain");
             request.AddHeader("Content-Type", "application/json-patch+json");
 

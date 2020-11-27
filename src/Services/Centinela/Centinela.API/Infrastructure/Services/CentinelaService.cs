@@ -119,7 +119,62 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
+        public async Task<Result<bool>> CertificationPostAsync(CertificationFile file, string route = "")
+        {
+            var result = new Result<bool>(false);
+            var ticks = DateTime.Now.Ticks;
+            var url = GetUrlCertificationCentinela(file, route);
+
+            try
+            {
+                TraceInfo(result.infos, $"Se inicia petición CertificationPost {DateTime.Now}", Codes.Centinela.CertificationPost);
+
+                CleanNameFile(file, out string name);
+
+                SerializeToMultiPart(file, out MultipartFormDataContent content);
+                
+                using var response = await _client.PostAsync(url, content);
+                var tiksResponse = DateTime.Now.Ticks - ticks;
+                //Console.WriteLine($"[{DateTime.Now}] Response: {response}");
+                TraceInfo(result.infos, $"Finaliza petición PostFile con duración {tiksResponse}", Codes.Centinela.CertificationPost);
+
+                var responseText = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    result.data = true;
+                    TraceInfo(result.infos, $"Se guarda el fichero {file.Name} - {responseText} - {response.ReasonPhrase}", Codes.Centinela.CertificationPost);
+                }
+                else
+                {
+                    TraceError(result.errors,
+                               new CentinelaDomainException($"Response not ok: ({responseText}) when filePost with code-> { (int)response.StatusCode } - { response.ReasonPhrase} "),
+                               Codes.Centinela.CertificationPost,
+                               Codes.Areas.Centinela);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new CentinelaDomainException($"Error when filePost {file.Name}", ex), Codes.Centinela.CertificationPost, Codes.Areas.Centinela);
+            }
+
+            return result;
+        }
+
+
         private void CleanNameFile(ConceptFile fileMail, out string cleanName)
+        {
+            fileMail.Name = RemoveProblematicChars(fileMail.Name);
+
+            var name = Path.GetFileNameWithoutExtension(fileMail.Name);
+            name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
+            name = string.Concat(name.Split(Path.GetInvalidPathChars()));
+            var maxlenght = name.Length > 250 ? 250 : name.Length;
+
+            fileMail.Name = $"{name.Substring(0, maxlenght)}{Path.GetExtension(fileMail.Name)}";
+            cleanName = name;
+        }
+
+        private void CleanNameFile(CertificationFile fileMail, out string cleanName)
         {
             fileMail.Name = RemoveProblematicChars(fileMail.Name);
 
@@ -151,6 +206,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             multipartContent = new MultipartFormDataContent() { { byteArrayContent } };
         }
 
+        private void SerializeToMultiPart(CertificationFile file, out MultipartFormDataContent multipartContent)
+        {
+            multipartContent = new MultipartFormDataContent();
+            var jsonParams = new
+                {
+                    Name = file.recipient.fullName ?? "",
+                    Email = file.recipient.email ?? "",
+                    Phone = file.recipient.phoneNumber1 ?? ""
+                };
+            multipartContent.Add(new StringContent(JsonConvert.SerializeObject(jsonParams), Encoding.UTF8, "application/json"));
+
+            byte[] newBytes = Convert.FromBase64String(file.ContentFile);
+            var byteArrayContent = new ByteArrayContent(newBytes);
+            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
+            byteArrayContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                Name = file.Name,
+                FileName = file.Name
+            };
+
+            multipartContent.Add(byteArrayContent);
+        }
+
         private string GetUrlCentinela(ConceptFile fileMail, string route)
         {
             var url = "";
@@ -162,8 +240,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 case "/api/v1/Centinela/signatures/audit/post":
                     url = $"{_settings.Value.CentinelaUrl}/sign/uploadsignaudit/{fileMail.ConceptId}";
                     break;
+                case "/api/v1/Centinela/signatures/audit/post/certification/email":
+                    url = $"{_settings.Value.CentinelaUrl}/sign/uploadcertifiedemailaudit/{fileMail.ConceptId}";
+                    break;
+                case "/api/v1/Centinela/signatures/audit/post/certification/sms":
+                    url = $"{_settings.Value.CentinelaUrl}/sign/uploadcertifiedsmsaudit/{fileMail.ConceptId}";
+                    break;
                 default:
                     url = $"{_settings.Value.CentinelaUrl}/conectamail/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.idNavision}";
+                    break;
+            }
+            return url;
+        }
+
+        private string GetUrlCertificationCentinela(CertificationFile certificationFile, string route)
+        {
+            var url = "";
+            switch (route)
+            {
+                case "/api/v1/Centinela/signatures/audit/post/certification/email":
+                    url = $"{_settings.Value.CentinelaUrl}/sign/uploadcertifiedemailaudit/{certificationFile.Guid}/{certificationFile.DocumentId}";
+                    break;
+                case "/api/v1/Centinela/signatures/audit/post/certification/sms":
+                    url = $"{_settings.Value.CentinelaUrl}/sign/uploadcertifiedsmsaudit/{certificationFile.Guid}/{certificationFile.DocumentId}";
                     break;
             }
             return url;
