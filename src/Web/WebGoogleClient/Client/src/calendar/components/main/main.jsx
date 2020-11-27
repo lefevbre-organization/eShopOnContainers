@@ -878,7 +878,7 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
-            // 'visibility': values.Visibility ? 'private' : 'normal'
+            'visibility': values.Visibility ? 'private' : 'default'
         }
 
         //event Type    
