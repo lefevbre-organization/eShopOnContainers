@@ -6,178 +6,220 @@ import {
     ProgressBarComponent
 } from "@syncfusion/ej2-react-progressbar";
 import i18n from 'i18next';
+import {DropDownListComponent} from "@syncfusion/ej2-react-dropdowns";
+import {RadioButtonComponent} from "@syncfusion/ej2-react-buttons";
+import {DatePickerComponent} from "@syncfusion/ej2-react-calendars";
+
+const Frame = ({disabled, number, title, children}) => {
+    return <div className="ie-frame" style={{opacity: disabled ? 0.5 : 1}}>
+        <div className="ie-frame-header">
+            <div className="ie-frame-number">{number}</div>
+            <div className="ie-frame-title">{title}</div>
+        </div>
+        <div className="ie-frame-body">
+            {children}
+        </div>
+    </div>
+}
 
 export class Step2 extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            progress: -1,
-            validContacts: this.props.contacts.filter( it => it.valid ).length
-        };
-        this.contacts = [];
-        this.contactUploaded = this.contactUploaded.bind(this);
-
-        this.itv = null;
     }
 
     componentDidMount() {
-        this.setState({progress: 0}, ()=>{
-            this.uploadContacts();
-        });
+        // this.setState({progress: 0}, ()=>{
+        //     this.uploadContacts();
+        // });
     }
 
     componentWillUnmount() {
-        window.removeEventListener('contactUploaded', this.contactUploaded);
+        // window.removeEventListener('contactUploaded', this.contactUploaded);
 
-        if(this.itv) {
-            clearInterval(this.itv);
-            this.itv = null;
-        }
-    }
-
-    uploadContacts() {
-        window.addEventListener('contactUploaded', this.contactUploaded);
-
-        const {contacts}=this.props;
-
-        if(contacts.length > 0) {
-            this.setState({validContacts: contacts.length}, ()=>{
-                this.itv = setInterval(()=> {
-                    if(contacts.length === 0) {
-                        clearInterval(this.itv);
-                        this.itv = null;
-                        this.props.onUploadCompleted();
-                        return;
-                    }
-                    const c = contacts.shift();
-                    this.uploadContact(c);
-                }, 1000);
-            })
-        } else {
-         // Proceso completado
-            this.setState({validContacts: 0}, ()=>{
-                this.props.onUploadCompleted();
-            });
-        }
-    }
-
-    uploadContact(contact) {
-        this.contacts.push(contact);
-        const tags = [...contact.tags];
-        tags[2] = i18n.t(`classification.${contact.idType}`);
-        window.dispatchEvent(new CustomEvent('uploadContact', { detail: { contact: {...contact, tags }} }));
-    }
-
-    contactUploaded(data) {
-        const { progress } = this.state;
-        const index = this.contacts.indexOf(data.detail.contact);
-        if(index > -1) {
-            this.contacts.splice(index, 1);
-        }
-        this.setState({progress: progress + 1});
+        // if(this.itv) {
+        //     clearInterval(this.itv);
+        //     this.itv = null;
+        // }
     }
 
     render() {
-        const {progress, validContacts} = this.state;
-        let pc = 0;
-        if(progress > -1 && validContacts > 0) {
-             pc = Math.floor(progress * 100 / validContacts);
-        } else if(validContacts === 0) {
-            pc = 100;
-        }
+        const { progress } = this.props;
+        const disabled = progress < 100;
 
         return (
             <Fragment>
-                <div className='panel-body'>
-                    <div className="advice">{i18n.t('modal-import-contacts.step2.importing1')}</div>
-                    <div className="advice"><p>{i18n.t('modal-import-contacts.step2.importing')} {progress} {i18n.t('modal-import-contacts.step2.of')} {validContacts}</p></div>
-
-                    <div className="progress-container">
-                        <ProgressBarComponent id="label-container" ref={this.progresRef}
-                                              type='Circular'
-                                              width='160px'
-                                              height='160px'
-                                              cornerRadius='Round'
-                                              progressColor="#001978"
-                                              progressThickness={8}
-                                              startAngle={180}
-                                              endAngle={180}
-                                              value={pc}
-                                              animation={{
-                                                  enable: false,
-                                                  duration: 2000,
-                                                  delay: 0,
-                                              }}
-                        >
-                            <Inject services={[ProgressAnnotation]}/>
-                            <ProgressBarAnnotationsDirective>
-                                <ProgressBarAnnotationDirective className="annotation"
-                                                                content={`${pc}%`}>
-
-                                </ProgressBarAnnotationDirective>
-                            </ProgressBarAnnotationsDirective>
-
-                        </ProgressBarComponent>
+                <div className="progress-container">
+                    <ProgressBarComponent id="label-container" ref={this.progresRef}
+                                          type='Linear'
+                                          width='100%'
+                                          progressColor="#001978"
+                                          trackThickness={26}
+                                          progressThickness={26}
+                                          showProgressValue={true}
+                                          value={progress}
+                                          labelStyle={{
+                                              textAlignment: 'Center',
+                                              fontFamily: 'MTTMilano-Medium',
+                                              text: `MIGRADO ${progress}%`,
+                                              color: '#fff'
+                                          }}
+                                          animation={{
+                                              enable: false,
+                                              duration: 2000,
+                                              delay: 0,
+                                          }}
+                    >
+                    </ProgressBarComponent>
+                </div>
+                <div className="ie-dialogborder">
+                    <Frame disabled={disabled} number={20000} title={"Nº TOTAL"}>
+                        <span className="lf-icon-calendar"></span>
+                    </Frame>
+                    <Frame disabled={disabled} number={19998} title={"MIGRADOS"}>
+                        <span className="lf-icon-check-round"></span>
+                    </Frame>
+                    <div className="ie-warning-wrapper">
+                        <Frame disabled={disabled} number={2} title={"NO MIGRADOS"}>
+                            <span className="lf-icon-warning"></span>
+                        </Frame>
+                        <div className={`ie-frame-button ${disabled?'disabled':''}`} >
+                            <span className="lf-icon-visible"></span>
+                            <div style={{paddingTop: 4}}>VER INFORME</div>
+                        </div>
                     </div>
                 </div>
                 <style jsx>{`
-          .panel-body {
+          
+          .ie-warning-wrapper {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 20px;
-            box-sizing: border-box;
-            height: 490px;
-            width: 805px;
-            border: 1px solid #d2d2d2;
-            background-color: #ffffff;
-            padding-top: 70px;
           }
-          
-          .advice {
-            flex: 0;
-            margin-top: 20px;
-            text-align: center;
-            width: 100%;
-            height: 14px;
-            color: #7f8cbb;
-            font-family: MTTMilano-Medium;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0;
-            line-height: 24px;
-          }
-          
-          .progress-container {
-            flex: 1;
-            width: 100%;
-            height: 300px;
+          .ie-frame-button {
+            height: 34px;
+            background-color: #C43741;
+            cursor: pointer;
+            color: white;
             display: flex;
             justify-content: center;
-            align-content: flex-end;
-            padding-top: 60px;
+            font-size: 16px;
+            font-family: MTTMilano-Medium;
+            align-items: center;
           }
           
-          .e-control.e-progressbar.e-lib div {
-            color: #001978;
-            font-size: 26px;
+          .ie-frame-button.disabled {
+            cursor: default;
+            opacity: 0.5;
           }
 
+
+          .ie-frame-button .lf-icon-visible {
+            font-size: 22px;
+            margin-right: 10px;
+          }
           
-        `}</style>
+          p {
+            color: #333333;
+            font-family: MTTMilano-Medium;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0;
+            line-height: 19px;
+          }
+          
+          .ie-title {
+            text-align: justify;
+          }
+          
+          .ie-dialogborder {
+            display: flex;
+            border: 1px solid #d2d2d2;
+            width: 100%;
+            height: 389px;
+            margin-bottom: 20px;
+            padding: 20px;
+          }
+          
+          .ie-dialogborder > div {
+            flex: 1;
+            height: 100%;
+            margin: 10px;
+          }
+          
+          .ie-buttonwrapper {
+            width: 100%;
+            text-align: right;
+          }
+          
+          .ie-buttonwrapper > button:first-child {
+            margin: 0 20px;
+          }
+            
+          .ie-dropwrapper {
+          margin-bottom: 20px;
+          }
+          
+          .ie-dateswrapper {
+            padding-top: 20px;
+            display: flex;
+          }
+          
+          .ie-dateswrapper > div {
+            flex: 1;
+            padding: 0 20px;
+          }
+          
+          .ie-frame {
+            background-color: #E5E8F1;
+            flex: 1;
+          }
+          .ie-frame-header {
+            height: 75px;
+            background-color:#001978;
+            display: flex;
+            padding: 20px 10px;
+          }
+          
+          .ie-frame-number{
+            color: white;
+            font-size: 45px;
+            font-family: 'MTTMilano-Medium';
+            font-weight: bold;          
+        }          
+       
+          .ie-frame-title {
+            color: white;
+            font-size: 16px;
+            font-family: 'MTTMilano-Medium';
+            font-weight: bold;          
+          }
+        
+        .ie-frame-body {
+          display: flex;
+          flex: 1;
+          justify-content: center;
+          align-items: center;
+          height: calc(100% - 75px);
+        }
+        
+            .ie-frame-body > span {
+            font-size: 160px;
+            }
+            
+            .ie-frame-body > span.lf-icon-calendar {
+              color: #ccd1e4;
+            }
+            
+            .ie-frame-body > span.lf-icon-check-round {
+              color: #AFDDAD;
+            }
+            
+            .ie-frame-body > span.lf-icon-warning {
+              color: #D5909A;
+            }
+            
+        `} </style>
             </Fragment>
         );
     }
 }
 
-function ValidateEmail(email) {
-    if (!email || email === '') return false;
-
-    if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-        return (true)
-    }
-    return (false)
-}
