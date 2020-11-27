@@ -10,6 +10,8 @@ metadata:
     chart: {{ template "conference-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Values.lef.version | quote }} 
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
