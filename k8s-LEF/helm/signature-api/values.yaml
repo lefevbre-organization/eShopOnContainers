@@ -68,3 +68,5 @@ env:
       value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
     - name: CertifiedEmailNotificationUrl
       value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'
+    - name: CertifiedSmsNotificationUrl
+      value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedSms/post.json'
