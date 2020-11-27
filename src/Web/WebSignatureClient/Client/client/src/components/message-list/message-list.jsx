@@ -725,12 +725,12 @@ class MessageList extends Component {
             ){
             if (this.props.selectedService === 'signature'){
                 var signature = this.props.signatures.find(s => s.id === event.data.Id);
-                this.props.setTitle(i18n.t('signatureViewer.title'));
                 this.props.signatureClicked(signature);
+                this.props.setTitle(i18n.t('signatureViewer.title'));
             } else if (this.props.selectedService === 'certifiedEmail'){
                 var email = this.props.emails.find(s => s.id === event.data.Id);
-                this.props.setTitle(i18n.t('emailViewer.title'));
                 this.props.emailClicked(email);
+                this.props.setTitle(i18n.t('emailViewer.title'));
             }
             
         }
@@ -740,8 +740,7 @@ class MessageList extends Component {
         if (this.grid && event.item.id.includes('pdfexport') ) {
             let exportProperties = {
                 exportType: 'CurrentPage',
-                pageOrientation: 'Landscape'
-                
+                pageOrientation: 'Landscape' 
             };
             this.grid.columns[0].visible = false;
             this.grid.pdfExport(exportProperties);
@@ -763,19 +762,18 @@ class MessageList extends Component {
     }
 
     dropDownOptionSelected (args){
-        console.log(args);
         if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
         this.props.selectedService == 'signature') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const signature = this.props.signatures.find(s => s.id === id);
-            this.props.setTitle('PROGRESO DE FIRMA');
             this.props.signatureClicked(signature);
+            this.props.setTitle('PROGRESO DE FIRMA');
         } else if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
         this.props.selectedService == 'certifiedEmail') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const email = this.props.emails.find(s => s.id === id);
-            this.props.setTitle('PROGRESO DE EMAIL CERTIFICADO');
             this.props.emailClicked(email);
+            this.props.setTitle('PROGRESO DE EMAIL CERTIFICADO');
         } else if (args.item.text === i18n.t('signaturesGrid.menuCancel')){
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
