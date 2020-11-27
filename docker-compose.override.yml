@@ -372,7 +372,7 @@ services:
       - ModulosComunes=https://led-pre-serviceclaves.lefebvre.es
       - SignatureNotificationUrl=https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json
       - CertifiedEmailNotificationUrl=https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json
-      - CertifiedSmsNotificationUrl=https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedSms/post.json
+      - CertifiedSmsNotificationUrl=https://lexbox-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedSms/post.json
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
