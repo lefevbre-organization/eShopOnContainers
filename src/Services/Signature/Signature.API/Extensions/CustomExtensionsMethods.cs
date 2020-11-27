@@ -50,6 +50,8 @@ namespace Signature.API.Extensions
             services.AddTransient<ISignaturitService, SignaturitService>();
             services.AddTransient<IEmailsService, EmailsService>();
             services.AddTransient<IEmailsRepository, EmailsRepository>();
+            services.AddTransient<ISmsService, SmsService>();
+            services.AddTransient<ISmsRepository, SmsRepository>();
 
             return services;
         }
@@ -89,11 +91,11 @@ namespace Signature.API.Extensions
             //}
             //else
             //{
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "Signature-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
+            hcBuilder
+                .AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "Signature-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
             //}
 
             return services;

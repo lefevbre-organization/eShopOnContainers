@@ -24,23 +24,23 @@
     using Newtonsoft.Json.Linq;
     #endregion
 
-    public class EmailsService : IEmailsService
+    public class SmsService : ISmsService
     {
-        public readonly IEmailsRepository _emailsRepository;
+        public readonly ISmsRepository _smsRepository;
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
         private readonly int _timeout;
         private readonly int _timeoutFile;
 
-        public EmailsService(
+        public SmsService(
             IOptions<SignatureSettings> settings
-            , IEmailsRepository emailsRepository
+            , ISmsRepository smsRepository
             , IConfiguration configuration
             //, IEventBus eventBus
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _emailsRepository = emailsRepository ?? throw new ArgumentNullException(nameof(emailsRepository));
+            _smsRepository = smsRepository ?? throw new ArgumentNullException(nameof(smsRepository));
             //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _configuration = configuration;
             _timeout = 5000;
@@ -48,45 +48,35 @@
 
         }
 
-        public async Task<Result<UserEmails>> GetEmails(string user)
+        public async Task<Result<UserSms>> GetSms(string user)
         {
-            return await _emailsRepository.GetUser(user);
+            return await _smsRepository.GetUser(user);
         }
 
-        public async Task<Result<List<UserEmails>>> GetAll()
+        public async Task<Result<List<UserSms>>> GetAll()
         {
-            return await _emailsRepository.GetAll();
+            return await _smsRepository.GetAll();
         }
 
-        public async Task<Result<UserEmails>> CreateEmail(UserEmails email)
+        public async Task<Result<UserSms>> CreateSms(UserSms sms)
         {
-            return await _emailsRepository.Create(email);
+            return await _smsRepository.Create(sms);
         }
 
         public async Task<Result<bool>> Remove(string user)
         {
-            return await _emailsRepository.Remove(user);
+            return await _smsRepository.Remove(user);
         }
 
-        public async Task<Result<bool>> UpSertEmail(string user, CertifiedEmail emailIn)
+        public async Task<Result<bool>> UpSertSms(string user, CertifiedSms smsIn)
         {
-            return await _emailsRepository.UpSertEmail(user, emailIn);
-        }
-
-        public async Task<Result<bool>> UpSertBranding(string user, UserBranding brandingIn)
-        {
-            return await _emailsRepository.UpSertBranding(user, brandingIn);
-        }
-
-        public async Task<Result<bool>> ResetUserBrandings(string user)
-        {
-            return await _emailsRepository.ResetUserBrandings(user);
+            return await _smsRepository.UpSertSms(user, smsIn);
         }
 
         #region Events
-        public async Task<Result<bool>> SaveEvent(EmailEventInfo eventInfo)
+        public async Task<Result<bool>> SaveEvent(SmsEventInfo eventInfo)
         {
-            return await _emailsRepository.SaveEvent(eventInfo);
+            return await _smsRepository.SaveEvent(eventInfo);
         }
 
         public async Task<Result<bool>> ProcessEvent(string certificateId, string eventType)
@@ -94,15 +84,15 @@
             ////var result = new Result<BsonDocument>();
             var response = new Result<bool>();
 
-            var result = await _emailsRepository.GetEmail(certificateId);
+            var result = await _smsRepository.GetSms(certificateId);
 
-            if (result.data != null && result.data.CertifiedEmails.Count > 0)
+            if (result.data != null && result.data.CertifiedSms.Count > 0)
             {
 
                 var user = result.data.User;
-                var emailId = result.data.CertifiedEmails[0].ExternalId;
-                var guid = result.data.CertifiedEmails[0].Guid;
-                var app = result.data.CertifiedEmails[0].App;
+                var smsId = result.data.CertifiedSms[0].ExternalId;
+                var guid = result.data.CertifiedSms[0].Guid;
+                var app = result.data.CertifiedSms[0].App;
 
 
                 if (app == "lexon")
@@ -116,17 +106,17 @@
                 }
                 else if (app == "centinela")
                 {
-                    var certificate = result.data.CertifiedEmails[0].Certificates.Find(e => e.ExternalId == certificateId);
+                    var certificate = result.data.CertifiedSms[0].Certificates.Find(e => e.ExternalId == certificateId);
                     var cenDocId = certificate.Document.InternalInfo.DocId;
-                    var email = certificate.Email;
+                    var phone = certificate.Phone;
                     var name = certificate.Name ?? "";
 
                     switch (eventType)
                     {
                         case "certification_completed":
                             // Downloadfile
-                            var file = new SignaturitService(_settings, _configuration).DownloadCertificationFile(emailId, certificateId);
-                            response = await SaveFileCentinela(file, guid, cenDocId, email, name);
+                            var file = new SignaturitService(_settings, _configuration).DownloadSmsCertificationFile(smsId, certificateId);
+                            response = await SaveFileCentinela(file, guid, cenDocId, phone, name);
                             break;
                         default:
                             break;
@@ -139,26 +129,26 @@
             return response;
         }
 
-        public async Task<Result<List<EmailEventInfo>>> GetEvents(string certificateId)
+        public async Task<Result<List<SmsEventInfo>>> GetEvents(string certificateId)
         {
-            return await _emailsRepository.GetEvents(certificateId);
+            return await _smsRepository.GetEvents(certificateId);
         }
         #endregion
 
 
         #region HelperFunctions
 
-        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string email, string name)
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string phone, string name)
         {
             Console.WriteLine($"START SaveFileCentinela");
 
             Result<bool> result;
 
-            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/email";
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/sms";
 
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
-            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { fullName = name, phoneNumber1 = "", email } };
+            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { name, phone } };
 
             client.Timeout = _timeoutFile;
 

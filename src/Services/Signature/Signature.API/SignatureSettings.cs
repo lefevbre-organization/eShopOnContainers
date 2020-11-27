@@ -11,6 +11,8 @@
         public string CollectionTest { get; set; }
         public string CollectionEmails { get; set; }
         public string CollectionEmailEvents { get; set; }
+        public string CollectionSms { get; set; }
+        public string CollectionSmsEvents { get; set; }
 
         //public string CollectionMasters { get; set; }
 
@@ -25,6 +27,7 @@
         public string CallBackUrl { get; set; }
         public string SignatureNotificationUrl { get; set; }
         public string CertifiedEmailNotificationUrl { get; set; }
+        public string CertifiedSmsNotificationUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }
