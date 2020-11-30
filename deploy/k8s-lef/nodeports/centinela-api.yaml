@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: centinela-api
+spec:
+  type: NodePort
+  selector:
+    app: centinela-api
+  ports:
+    - port: 80
+      nodePort: 30018
+      name: centinela-api-port

@@ -31,6 +31,10 @@ const CertificatesWidget = (props) => {
       }
     }, [emailCertificates, certificates, smsCertificates]);
 
+    useEffect(() => {
+      props.onChange(certificates);
+    }, [certificates]);
+
     const handleChecked = (e) => {
         let isCheck = !e.target.checked ? false : true;
         let index = e.target.value;

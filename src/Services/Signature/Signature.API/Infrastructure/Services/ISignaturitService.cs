@@ -12,7 +12,7 @@
     {
         Task<RestSharp.IRestResponse> GetSignatures(string user);
 
-        Task<RestSharp.IRestResponse> CancelSignature(string  signatureId);
+        Task<RestSharp.IRestResponse> CancelSignature(string signatureId);
 
         Task<RestSharp.IRestResponse> CreateSignature(CreateSignaturit signatureInfo);
 

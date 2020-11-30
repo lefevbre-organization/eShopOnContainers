@@ -52,7 +52,7 @@
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
-        public async Task<IActionResult> GetSignatures([FromRoute]string user, [FromHeader] string Authorization)
+        public async Task<IActionResult> GetSignatures([FromRoute] string user, [FromHeader] string Authorization)
         {
             HttpRequest httpRequest = HttpContext.Request;
 
@@ -165,7 +165,7 @@
                 {
                     Console.WriteLine("Response Error");
                     Console.WriteLine(response.Content.ToString());
-                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}" );
+                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}");
                 }
             }
             catch (TimeoutException)
@@ -213,7 +213,7 @@
                 var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
                 string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
 
-                return File(response.RawBytes, response.ContentType, fileName); 
+                return File(response.RawBytes, response.ContentType, fileName);
             }
             catch (TimeoutException)
             {
@@ -719,7 +719,7 @@
 
             var valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
 
-            Console.WriteLine($"TokenValid:{valid} - {authToken}");        
+            Console.WriteLine($"TokenValid:{valid} - {authToken}");
 
             //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
             //Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")

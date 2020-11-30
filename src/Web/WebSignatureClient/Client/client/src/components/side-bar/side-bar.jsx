@@ -417,19 +417,18 @@ class SideBar extends Component {
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
             if (lefebvre.userId === 'E1654569'){
               this.props.setAvailableSignatures(response.data);
-              this.props.setTitle(t('messageEditor.title'));
-              this.props.setAppTitle(i18n.t('topBar.app'));
               this.props.newMessage('signature', lefebvre.sign);
+              this.props.setAppTitle(i18n.t('topBar.app'));
+              this.props.setTitle(i18n.t('messageEditor.title'));
               this.props.setUserApp('lefebvre');
             }
           }
         } else {
           this.props.setAvailableSignatures(response.data);
-          this.props.setTitle(t('messageEditor.title'));
-          this.props.setAppTitle(i18n.t('topBar.app'));
           this.props.newMessage('signature', lefebvre.sign);
-          this.props.setUserApp('lefebvre');
-        }
+          this.props.setAppTitle(i18n.t('topBar.app'));
+              this.props.setTitle(i18n.t('messageEditor.title'));
+          this.props.setUserApp('lefebvre');        }
       })
       .catch(err => {
         if (err.message === "Failed to fetch"){
@@ -439,9 +438,9 @@ class SideBar extends Component {
           // this.props.setAvailableSignatures(1);
           if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
             if (lefebvre.userId === 'E1654569'){
-              this.props.setAppTitle(i18n.t('topBar.app'));
               this.props.newMessage('signature', lefebvre.sign);
-              this.props.setTitle(t('messageEditor.title'));
+              this.props.setAppTitle(i18n.t('topBar.app'));
+              this.props.setTitle(i18n.t('messageEditor.title'));
               this.props.setUserApp('lefebvre');
             }
           }

@@ -57,7 +57,7 @@
         {
             return await _emailsRepository.GetAll();
         }
-            
+
         public async Task<Result<UserEmails>> CreateEmail(UserEmails email)
         {
             return await _emailsRepository.Create(email);

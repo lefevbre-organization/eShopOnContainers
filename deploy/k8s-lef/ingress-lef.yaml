@@ -1,0 +1,99 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  labels:
+    app: elefebvre
+    component: frontend
+  name: elefebvre-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"  
+spec:
+  rules:
+  - http: 
+      paths:
+      - path: /webaddonlexon
+        backend:
+          serviceName: webaddonlexon
+          servicePort: 80
+      - path: /webcentinelaclient
+        backend:
+          serviceName: webcentinelaclient
+          servicePort: 80
+      - path: /webgoogleclient
+        backend:
+          serviceName: webgoogleclient
+          servicePort: 80
+      - path: /webofficeclient
+        backend:
+          serviceName: webofficeclient
+          servicePort: 80
+      - path: /weblexonclient
+        backend:
+          serviceName: weblexonclient
+          servicePort: 80
+      - path: /webimapclient
+        backend:
+          serviceName: webimapclient
+          servicePort: 80
+      - path: /websignatureclient
+        backend:
+          serviceName: websignatureclient
+          servicePort: 80
+      - path: /webstatus
+        backend:
+          serviceName: webstatus
+          servicePort: 80
+      - path: /webaccountapigw 
+        backend:
+          serviceName: ocelotapigw-acc
+          servicePort: 80          
+      - path: /weblexonapigw
+        backend:
+          serviceName: ocelotapigw-lex
+          servicePort: 80                          
+      - path: /webcentinelaapigw
+        backend:
+          serviceName: ocelotapigw-cen
+          servicePort: 80                          
+      - path: /websignatureapigw 
+        backend:
+          serviceName: ocelotapigw-sig
+          servicePort: 80    
+      - path: /webdatabaseapigw 
+        backend:
+          serviceName: ocelotapigw-dat
+          servicePort: 80         
+      - path: /lexon.api
+        backend:
+          serviceName: lexon.api
+          servicePort: 80
+      - path: /lexon.mysql.api
+        backend:
+          serviceName: lexon.mysql.api
+          servicePort: 80
+      - path: /account.api
+        backend:
+          serviceName: account.api
+          servicePort: 80                      
+      - path: /signature.api
+        backend:
+          serviceName: signature.api
+          servicePort: 80  
+      - path: /database.api
+        backend:
+          serviceName: database.api
+          servicePort: 80                    
+      - path: /centinela.api
+        backend:
+          serviceName: centinela.api
+          servicePort: 80                      
+      - path: /userutils.api
+        backend:
+          serviceName: userutils.api
+          servicePort: 80                      
+      - path: /
+        backend:
+          serviceName: webportalclient
+          servicePort: 80
+                    
+

@@ -91,11 +91,11 @@ namespace Signature.API.Extensions
             //}
             //else
             //{
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "Signature-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
+            hcBuilder
+                .AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "Signature-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
             //}
 
             return services;

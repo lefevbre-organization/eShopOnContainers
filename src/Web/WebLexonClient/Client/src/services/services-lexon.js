@@ -316,7 +316,7 @@ export const getUser = async (userNavision) => {
     const result = await response.json();
     const user = result.data;
 
-    const url2 = `${window.URL_GET_ACCOUNTS}/${user.idNavision}`;
+    const url2 = `${window.URL_GET_ACCOUNTS}/${user.idNavision || userNavision}`;
     const response2 = await fetch(url2, { method: 'GET' });
     const result2 = await response2.json();
 

@@ -13,7 +13,7 @@ namespace Signature.API.Infrastructure.Services
 {
     public class SignaturitService : ISignaturitService
     {
-        
+
         //private readonly IEventBus _eventBus;
         //private readonly IHttpClientFactory _clientFactory;
         //private readonly HttpClient _client;
@@ -106,7 +106,8 @@ namespace Signature.API.Infrastructure.Services
                 {
                     Console.WriteLine($"Adding recipient_{i} - Photo");
                     request.AddParameter($"recipients[{i}][require_photo]", Convert.ToInt32(recipient.doubleAuthInfo));
-                } else if (recipient.doubleAuthType == "sms") 
+                }
+                else if (recipient.doubleAuthType == "sms")
                 {
                     Console.WriteLine($"Adding recipient_{i} - SMS");
                     request.AddParameter($"recipients[{i}][phone]", recipient.doubleAuthInfo);
@@ -153,7 +154,7 @@ namespace Signature.API.Infrastructure.Services
                     Console.WriteLine($"number: {signatureInfo.reminders.Length}");
                     foreach (var reminder in signatureInfo.reminders)
                     {
-                        
+
                         request.AddParameter($"reminders[{i}]", reminder);
                         i += 1;
                     }
@@ -186,7 +187,7 @@ namespace Signature.API.Infrastructure.Services
             Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
 
             IRestResponse response = await client.ExecuteAsync(request);
-            
+
             Console.WriteLine($"Response: {response.Content.ToString()}");
 
             Console.WriteLine("END CreateSignature");

@@ -105,7 +105,7 @@ namespace Signature.API.Infrastructure
         //}
 
         public IMongoCollection<UserSignatures> Signatures => Database.GetCollection<UserSignatures>(_settings.Value.CollectionSignatures);
-        
+
         public IMongoCollection<Signatures> SignaturesTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Signatures>(_settings.Value.CollectionSignatures);

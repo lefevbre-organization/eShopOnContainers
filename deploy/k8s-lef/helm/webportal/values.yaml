@@ -1,0 +1,61 @@
+replicaCount: 1
+clusterName: eshop-aks
+pathBase: /webportal
+
+image:
+  repository: elefebvreoncontainers/webportalclient
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations: {}
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# env defines the environment variables that will be declared in the pod
+env:
+  urls:
+  # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
+  configmap:
+    - name: ApplicationInsights__InstrumentationKey
+      key: all__InstrumentationKey
+    - name: UseLoadTest
+      key: all_EnableLoadTest
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
+    - name: PortalUrlHC
+      key: internalurls__portal__hc
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Development
+    - name: OrchestratorType
+      value: 'K8S'
+    - name: IsClusterEnv
+      value: 'True'
+
+configValues: |
+  window.REACT_APP_ENVIRONMENT='PRE'
+  window.API_ACCOUNTS='https://lexbox-dev-apigwacc.lefebvre.es'
+  window.URL_INBOX_GOOGLE= 'https://lexbox-dev-webgoogle.lefebvre.es'
+  window.URL_INBOX_OUTLOOK= 'https://lexbox-dev-webgraph.lefebvre.es'
+  window.URL_INBOX_IMAP= 'https://lexbox-dev-webimap.lefebvre.es'
+  window.URL_GET_USER =  'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
+  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
+  window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
+  window.RELEASE = 'RC 0.36'

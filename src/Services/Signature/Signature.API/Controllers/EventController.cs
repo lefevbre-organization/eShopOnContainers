@@ -61,7 +61,7 @@
                 Console.WriteLine($"START signatureEvent");
 
                 var finalResult = new Result<bool>();
-              
+
                 if (eventinfo.Type == "document_completed" || eventinfo.Type == "audit_trail_completed" ||
                     eventinfo.Type == "document_canceled" || eventinfo.Type == "document_expired" || eventinfo.Type == "error" || eventinfo.Type == "document_declined")
                 {
@@ -94,7 +94,7 @@
             {
                 throw;
             }
-            
+
 
             return Ok();
         }
@@ -118,7 +118,7 @@
                     var signatureId = eventinfo.Document.Signature.Id;
                     var documentId = eventinfo.Document.DocumentId;
                     var logResult = await _signaturesService.SaveEvent(eventinfo);
-                    
+
                     Console.WriteLine($"Event saved in Mongo");
                     Console.WriteLine($"[{DateTime.Now}] Call to ProcessEvent start");
 
@@ -221,7 +221,7 @@
                 {
                     //var signatureId = eventinfo.Document.Signature.Id;
                     var certificateId = eventinfo.Certificate.CertificateId;
-                    
+
                     var logResult = await _emailsService.SaveEvent(eventinfo);
 
                     Console.WriteLine($"Event saved in Mongo");
