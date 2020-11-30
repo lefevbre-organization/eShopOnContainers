@@ -143,13 +143,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<ConferenceModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ConferenceModel>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ConferenceCreateAsync(
-            [FromBody] ConferenceModel conference,
             [FromRoute] string idNavision = "E1621396",
             int idApp = 1
         )
         {
-            if (string.IsNullOrEmpty(conference.id))
-                return BadRequest("Must be a valid id of coference");
+            //if (string.IsNullOrEmpty(conference.id))
+            //    return BadRequest("Must be a valid id of coference");
+
+            Result<ConferenceModel> result = await _service.CreateConferenceAsync(idNavision, idApp, null);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{idNavision}/conferences/create/advance")]
+        [ProducesResponseType(typeof(Result<ConferenceModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ConferenceModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ConferenceCreateAdvanceAsync(
+            [FromBody] ConferenceModel conference,
+            [FromRoute] string idNavision = "E1621396",
+            int idApp = 1
+)
+        {
+            //if (string.IsNullOrEmpty(conference.id))
+            //    return BadRequest("Must be a valid id of coference");
 
             Result<ConferenceModel> result = await _service.CreateConferenceAsync(idNavision, idApp, conference);
 
@@ -190,19 +206,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("{idNavision}/conferences/stats/{id}")]
+        [HttpGet("{idNavision}/conferences/stats")]
         [ProducesResponseType(typeof(Result<ConferenceStats>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ConferenceStats>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetStatsConferenceByIdAsync(
             [FromRoute] string idNavision = "E1621396",
-            [FromRoute] string id = "1",
             int idApp = 1
             )
         {
-            if (string.IsNullOrEmpty(idNavision) || string.IsNullOrEmpty(id))
-                return BadRequest("Must be a valid idUserNavision  and id of conference");
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("Must be a valid idUserNavision");
 
-            Result<ConferenceStats> result = await _service.GetStatsConferenceByIdAsync(idNavision, idApp, id);
+            Result<ConferenceStats> result = await _service.GetStatsConferenceByIdAsync(idNavision, idApp, null);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
