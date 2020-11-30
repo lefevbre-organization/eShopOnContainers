@@ -44,7 +44,7 @@ env:
       key: conference__ConnectionString
     - name: Database
       key: conference__Database
-    - name: Version
+    - name: DeployVersion
       key: all_Version
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values: {}

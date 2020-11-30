@@ -6,6 +6,6 @@ lef:
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT
-      value: 'Development'
+      value: Development
     - name: OrchestratorType
       value: 'K8S'
