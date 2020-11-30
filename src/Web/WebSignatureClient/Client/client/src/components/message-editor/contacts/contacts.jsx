@@ -29,7 +29,7 @@ const Contacts = (props) => {
       const newContactsCentinela = [];
        contactsCentinela.data.forEach(contact => {
         const emailExists = props.addresses.some(address => {
-           return (address.address === contact.email)
+           return (address.email === contact.email)
          });
         contact.checked = emailExists;
         newContactsCentinela.push(contact);

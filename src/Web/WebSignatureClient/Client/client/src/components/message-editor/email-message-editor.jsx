@@ -100,7 +100,7 @@ class EmailMessageEditor extends Component {
     });
     this.setState({
       selectedCertificationOption: max,
-      certificationType: selectedOptions[max-1].certificate
+      certificationType: selectedOptions.length > 0 ? selectedOptions[max-1].certificate : 'delivery'
     })
     console.log("***++++++****+++++****++++****++++");
     console.log('Selected Options:')

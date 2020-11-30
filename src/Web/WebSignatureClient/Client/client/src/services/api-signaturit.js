@@ -1621,7 +1621,7 @@ export const getSms = async (filters, auth, offset, sms = []) => {
 }
 
 // Creates a new sms calling internal proxy api
-export const createSms = async (recipients, body, files, lefebvreId, guid, type, auth) => {
+export const createSms = async (recipients, body, files, lefebvreId, guid, type, auth, validPhoneNumbers) => {
     return new Promise((resolve, reject) => {
       var myHeaders = new Headers();
       myHeaders.append("Accept", "text/plain");
@@ -1638,8 +1638,9 @@ export const createSms = async (recipients, body, files, lefebvreId, guid, type,
       recipients.forEach((recipient, i) => {
         var name = (recipient.name === null || recipient.name === undefined || recipient.name === '') ? '' : recipient.name;
         var email = (recipient.email === null || recipient.email === undefined || recipient.email === '') ? '' : recipient.email;
-        recipientsData.push({name: name, phone: recipient.address})
-        userAdditionalInfo += `i=${i}:phone=${recipient.address}:name=${(recipient.name === '') ? '-' : name}:email=${(recipient.email === '') ? '-' : email}|`
+        var phone = validPhoneNumbers[i].normalizedPhone;
+        recipientsData.push({name: name, phone: phone})
+        userAdditionalInfo += `i=${i}:phone=${validPhoneNumbers[i].cleanPhone}:name=${(recipient.name === '') ? '-' : name}:email=${(recipient.email === '') ? '-' : email}|`
       })
       jsonObject.recipients = recipientsData;
     

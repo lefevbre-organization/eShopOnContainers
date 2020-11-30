@@ -108,7 +108,7 @@ class SmsMessageEditor extends Component {
     });
     this.setState({
       selectedCertificationOption: max,
-      certificationType: selectedOptions[max-1].certificate
+      certificationType: selectedOptions.length > 0 ? selectedOptions[max-1].certificate : 'delivery'
     })
   }
 
@@ -548,7 +548,7 @@ class SmsMessageEditor extends Component {
       (this.state.certificationType === 'open_document' || this.state.certificationType === 'open_every_document')
     )
 
-    const wrongPhone = this.validPhoneNumbers(this.props.to);
+    const wrongPhone = this.validPhoneNumbers(this.props.to).desc;
 
     const noSignersModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
@@ -667,25 +667,47 @@ class SmsMessageEditor extends Component {
   }
 
   validPhoneNumbers(to){
-    let res = 'Ok';
+    let res = {valid: true, desc: 'Ok', phones: []};
     to.forEach(recipient => {
       let prefix = recipient.address.substring(0,3);
       let number = recipient.address.substring(3, recipient.address.length);
       let isNum = /^\d+$/.test(number);
+      let phoneLength = recipient.address.length;
 
-      if (prefix !== '+34'){
-        res = 'WrongPrefix';
-      } else if (recipient.address.length !== 12 || !isNum ){
-        res = 'WrongNumber'
+      if (!isNum) {
+        res = {valid: false, desc: 'WrongNumber', phones: []};
+      }
+      else if (prefix.substring(0,1) === '+' && prefix !== '+34'){
+        res = {valid: false, desc: 'WrongPrefix', phones: []};
+      }
+      else if (prefix.substring(0,4) === '0034' && phoneLength !== 13){
+        res = {valid: false, desc: 'WrongNumber', phones: []};
+      }
+      else if (!prefix.substring(0,1) === '+' && phoneLength !== 9){
+        res = {valid: false, desc: 'WrongNumber', phones: []};
+      }
+
+      if (res.valid){
+        if (isNum && phoneLength === 9){
+          res.phones.push({originalPhone: recipient.address, normalizedPhone: `+34${recipient.address}`, cleanPhone: recipient.address});
+        }
+        else if (phoneLength === 12 && prefix === '+34'){
+          res.phones.push({originalPhone: recipient.address, normalizedPhone: recipient.address, cleanPhone: recipient.address.substring(3, 12)});
+        }
+        else if (phoneLength === 13 && prefix === '003'){
+          res.phones.push({originalPhone: recipient.address, normalizedPhone: `+34${recipient.address.substring(4, 13)}`, cleanPhone: recipient.address.substring(4, 13)});
+        }
       }
     });
     return res;
   }
 
   submit() {
+    let validPhoneNumbers = this.validPhoneNumbers(this.props.to);
+
     if (this.props.to.length === 0 ){
       this.setState({ hideAlertDialog: true });
-    } else if (this.validPhoneNumbers(this.props.to) !== 'Ok') {
+    } else if (!validPhoneNumbers.valid) {
       this.setState({ hideAlertDialog: true });
     } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
       this.setState({ hideAlertDialog: true});
@@ -727,7 +749,8 @@ class SmsMessageEditor extends Component {
             this.props.attachments,
             lefebvre.userId,
             guid,
-            this.state.certificationType
+            this.state.certificationType,
+            validPhoneNumbers.phones
           );
         }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
@@ -837,7 +860,8 @@ class SmsMessageEditor extends Component {
     files,
     userId,
     guid,
-    type
+    type,
+    validPhoneNumbers
   ) {
     const { lefebvre } = this.props;
     this.setState({isCallApis: true});
@@ -848,7 +872,8 @@ class SmsMessageEditor extends Component {
       userId,
       guid,
       type,
-      this.props.credentials.encrypted
+      this.props.credentials.encrypted,
+      validPhoneNumbers
     ).then((smsInfo) => {
       console.log(smsInfo);
       if (smsInfo.status_code) {

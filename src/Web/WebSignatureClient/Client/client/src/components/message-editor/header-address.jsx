@@ -58,7 +58,7 @@ export class HeaderAddress extends Component {
               lefebvre.targetService === 'certifiedSms'
               ? <div className={mainCss['mdc-chip__text']}>
                   <span>{address.email}</span>
-                  <span className="light-blue-text"> {address.address} </span>
+                  <span className="light-blue-text"> {address.phone} </span>
                 </div>
               : <div className={mainCss['mdc-chip__text']}>
                   <span className="grey-text">{address.address.split(' ')[0]}</span>
