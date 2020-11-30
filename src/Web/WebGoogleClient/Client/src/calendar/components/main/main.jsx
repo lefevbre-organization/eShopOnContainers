@@ -1440,7 +1440,6 @@ export class Main extends Component {
                 //if not iframe view
                 if (!this.layoutIframe) {
                     this.addConfigurationButton(args);
-                   
                 }
                 else {
                     this.addLogOutButton(args);
@@ -2098,7 +2097,7 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
-                                                //delayUpdate='false' 
+                                                //delayUpdate='false'
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
@@ -2108,7 +2107,7 @@ export class Main extends Component {
                                                 height='650px'
                                                 views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}
-                                                popupOpen={this.onPopupOpen.bind(this)}                                               
+                                                popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
                                                 //actionComplete={this.onActionComplete.bind(this)}
                                                 //allowVirtualScrolling = "true"
