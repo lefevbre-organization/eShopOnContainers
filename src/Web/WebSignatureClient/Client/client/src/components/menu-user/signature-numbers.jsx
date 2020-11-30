@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './menu-user.scss';
 
 const SignatureNumbers = props => (
-  <div className={styles['container']}>
+  <div className={`${styles['container-signature-numbers']} container`}>
     <div className={styles['signature-summary']}>
       <span className={props.icon}></span> 
       <span className="ml-2">{props.title}</span>
