@@ -276,7 +276,7 @@
                     Console.WriteLine($"Event saved in Mongo");
                     Console.WriteLine($"[{DateTime.Now}] Call to ProcessEvent start");
 
-                    var processResult = _emailsService.ProcessEvent(certificateId, eventinfo.Type);
+                    var processResult = _smsService.ProcessEvent(certificateId, eventinfo.Type);
 
                     Console.WriteLine($"[{DateTime.Now}] Call to ProcessEvent end");
 
