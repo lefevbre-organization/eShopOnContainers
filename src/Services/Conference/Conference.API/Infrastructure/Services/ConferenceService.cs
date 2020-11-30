@@ -19,7 +19,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         public readonly IConferenceRepository _repo;
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly HttpClient _clientOnline;
+        private readonly HttpClient _clientJitsi;
         private readonly HttpClient _clientUserUtils;
         private readonly IOptions<ConferenceSettings> _settings;
 
@@ -37,17 +37,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
 
-            _clientOnline = _clientFactory.CreateClient();
-            _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
-
-            _clientOnline = _clientFactory.CreateClient();
-            _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
-
-            var authData = Convert.ToBase64String(
-                Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
-
-            _clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
-            _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+            _clientJitsi = _clientFactory.CreateClient();
+            _clientJitsi.BaseAddress = new Uri(_settings.Value.JitsiUrl);
+            _clientJitsi.DefaultRequestHeaders.Add("Accept", "application/json");
+            //_clientJitsi.DefaultRequestHeaders.Add("Content-Type", "application/json");
 
             _clientUserUtils = _clientFactory.CreateClient();
             _clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
@@ -67,6 +60,39 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return result;
         }
 
+                public async Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, int idApp)
+        {
+            var result = new Result<List<ConferenceSimple>>(new List<ConferenceSimple>());
+
+            try
+            {
+                var url = $"{_settings.Value.JitsiUrl}/colibri/conferences";
+
+                using (var response = await _clientJitsi.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ConferenceSimple[]>(rawResult));
+                            result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new ConferenceDomainException($"Error when get list of conferences ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Conferences.Get, "JITSISVC");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new ConferenceDomainException($"Error when get data of conferences {_settings.Value.JitsiUrl}", ex), Codes.Conferences.Get, "JITSISVC");
+            }
+
+            return result;
+        }
         public async Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, int idApp)
         {
             var result = new Result<List<ConferenceSimple>>(new List<ConferenceSimple>());
@@ -101,6 +127,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             reservationCreated.duration = 900000;
             //var result = new Result<UserReservation>(reservationCreated);
             return reservationCreated ;
+        }
+
+        public async Task<Result<UserRoom>> CreateRoomAsync(string idNavision, string name, int idApp)
+        {
+            var url = @"https://meet-test.lefebvre.es/http-bind?room={name}";
+            //client https://meet-test.lefebvre.es/http-bind?room=testlefebvre
+            // request payload : 
+            // <body content="text/xml; charset=utf-8" hold="1" rid="2774357881" to="meet.jitsi" ver="1.6" wait="60" xml:lang="en" xmlns="http://jabber.org/protocol/httpbind" xmlns:xmpp="urn:xmpp:xbosh" xmpp:version="1.0"/>
+            // response :
+            // <body authid='8ff9d004-78a4-41c0-b561-a8c82768d2e1' inactivity='60' hold='1' polling='5' xmlns:stream='http://etherx.jabber.org/streams' xmpp:version='1.0' wait='60' sid='8ff9d004-78a4-41c0-b561-a8c82768d2e1' ver='1.6' from='meet.jitsi' secure='true' xmlns:xmpp='urn:xmpp:xbosh' xmlns='http://jabber.org/protocol/httpbind' requests='2'>
+            //<stream:features xmlns='jabber:client'>
+            //  <mechanisms xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>
+            //    <mechanism>ANONYMOUS</mechanism>
+            //  </mechanisms>
+            //  <starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>
+            //</stream:features>
+            //</body>
+
+            var httpClient = new HttpClient();
+            var someXmlString = "<body content='text/xml; charset=utf-8' hold='1' rid='2774357881' to='meet.jitsi' ver='1.6' wait='60' xml:lang='en' xmlns='http://jabber.org/protocol/httpbind' xmlns:xmpp='urn:xmpp:xbosh' xmpp:version='1.0'/>";
+            var stringContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
+            var respone = await httpClient.PostAsync(url, stringContent);
+            throw new NotImplementedException();
         }
     }
 }

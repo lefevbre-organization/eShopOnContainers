@@ -49,9 +49,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [HttpPost("conference")]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> PostUserAsync(
+        public async Task<IActionResult> ConferenceCreateAsync(
         [FromBody] UserReservationRequest reservation
-    )
+            )
         {
             if (string.IsNullOrEmpty(reservation.name))
                 return BadRequest("Must be a valid name");
@@ -59,6 +59,38 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             UserReservation result = await _service.CreateReservationAsync(reservation);
 
             return result == null ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{idNavision}/room/{name}")]
+        [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CreateRoomAsync(
+            [FromRoute] string idNavision = "E1621396",
+            [FromRoute] string name = "nuevaSala",
+            [FromQuery] int idApp = 1)
+        {
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("Must be a valid idUserNavision");
+
+            Result<UserRoom> result = await _service.CreateRoomAsync(idNavision, name, idApp);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{idNavision}/room/{name}/notify")]
+        [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> NotifyRommAsync(
+            [FromRoute] string idNavision = "E1621396",
+            [FromRoute] string name = "nuevaSala",
+            [FromQuery] int idApp = 1)
+        {
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("Must be a valid idUserNavision");
+
+            Result<UserRoom> result = await _service.NotifyRoomAsync(idNavision, name, idApp);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("{idNavision}/user")]
