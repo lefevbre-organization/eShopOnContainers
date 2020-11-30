@@ -1,0 +1,161 @@
+.menu-user {
+  cursor: pointer;
+}
+
+header h1 {
+  color: black;
+}
+
+.content .header {
+  background-color: white;
+  text-align: right;
+  border: none;
+  display: block;
+  padding-left: 24px;
+  padding-right: 24px;
+  font-size: 0.875rem;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.content .header > span {
+  color: #001978;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.menu-container {
+  position: absolute;
+  background-color: white;
+  top: 40px;
+  right: -30px;
+  width: 385px;
+  z-index: 110;
+  cursor: default;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+  0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 1px solid #cdd1e0;
+  border-radius: 0;
+  color: #001978;
+}
+
+.show-sign.menu-container {
+  width: 800px;
+  height: 446px;
+}
+
+.dropdown-menu {
+  top: 5px;
+  right: 13px;
+  position: absolute;
+  left: auto;
+  width: 24px;
+  height: 24px;
+}
+
+ .dropdown-menu:before {
+  bottom: -13px;
+  right: -8px;
+  border-bottom-color: rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-menu:after {
+  bottom: -13px;
+  right: -8px;
+  border-bottom-color: #fff;
+}
+
+.user-image-and-name {
+  padding: 24px;
+}
+
+.user-image-and-name .scrollbar-container {
+  width: 100%;
+}
+
+.menu-title {
+  font-size: 18px;
+  font-weight: 500;
+  border-bottom: 1px solid;
+  padding-bottom: 5px;
+  text-align: left;
+  color: #001978;
+}
+
+.menu-title .mb-5 {
+  text-decoration: none;
+  color: #001978 !important;
+}
+
+.btn-custom {
+  background-color: #001970; 
+}
+
+.btn-custom:hover {
+  color: #fff; 
+  padding: 0px;
+  background-color: #001970; 
+}
+
+.btn-custom:focus {
+  color: #fff; 
+  background-color: #001970; 
+}
+
+.user-circle {
+  width: 110px;
+  height: 110px;
+  background: #001978;
+  margin: auto;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+
+.user-nameInitial {
+  padding-top: 32px;
+  color: #35448F;
+  letter-spacing: -3px;
+  font-size: xx-large;
+}
+ .container {
+  margin-top: 20px;  
+}
+
+.signature-summary {
+  margin-bottom: 15px;
+  font-family: 'MTTMilano-Bold';
+  display: flex;
+}
+  
+.container-summary {
+  display: flex !important;
+  margin-bottom: 10px
+}
+  
+.signature-available {
+  flex: 0 0 81%;
+  border-bottom: 1px solid;
+}
+  
+.signature-consumed {
+  flex: 0 0 81%;
+  border-bottom: 1px solid #96979C;
+  color: #96979C
+}
+  
+.box-number {
+  width: 70px;
+  height: 30px;
+  text-align: center;
+  padding-top: 4px;
+  color: white;
+}
+
+.available-number { 
+ background: #001978;
+}
+            
+.consumed-number {
+  background: #96979C;
+}
+

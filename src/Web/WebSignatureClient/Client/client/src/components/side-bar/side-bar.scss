@@ -1,8 +1,6 @@
 @import '../../styles/partials/variables';
 @import '@material/drawer/mdc-drawer';
 
-
-
 .side-bar {
     display: flex;
     position: fixed;
@@ -80,12 +78,7 @@
         overflow-y: auto;
     }
 
-
-    .scroll-style {
-        /*overflow: hidden;*/
-    }
-
-    .nueva-firma{
+    .nueva-firma {
         color:#001978;
         padding:8px 15px;
         text-transform: uppercase;
@@ -96,8 +89,13 @@
           font-size:70%;
           //margin-right:10px;
         }
-      }
+    } 
+    div > div > span > button {
+        font-size: 18px !important;
+        color: #001978 !important;
+    }
 }
+
 
 .add-signature-toggle {
   display: flex;

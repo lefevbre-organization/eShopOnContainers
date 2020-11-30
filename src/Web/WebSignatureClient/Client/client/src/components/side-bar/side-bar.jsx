@@ -119,7 +119,6 @@ class SideBar extends Component {
     ];
 
     return (
-   
       <aside
         onDragOver={this.handleOnDragOver}
         onDragLeave={this.handleOnDragLeave}
@@ -134,21 +133,14 @@ class SideBar extends Component {
           ${styles['top-container']} 
           ${!collapsed ? styles['divheader'] : 
           styles['divheader-without-side-bar']}`}>
-          {/*{(location.protocol !== 'https:' &&
-            <span className='material-icons' isotip={t('sideBar.errors.noSSL')}
-              isotip-position='bottom-start' isotip-size='small'>
-            lock_open
-            </span>)}*/}
           {this.props.errors.diskQuotaExceeded && (
             <span
-              className='material-icons'
               isotip={t('sideBar.errors.diskQuotaExceeded')}
               isotip-position='bottom-start'
               isotip-size='small'>
               disc_full
             </span>
           )}
-          {/* <img className={styles.logo} border="0" alt="Lefebvre" src="assets/images/logo-elderecho.png"></img>*/}
           <div className={`${!collapsed ? styles['add-signature-toggle'] : ''}`}>
 
             { collapsed ?  
@@ -175,7 +167,6 @@ class SideBar extends Component {
               className={`${mainCss['mdc-button']}
                       ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
               onClick={this.handleOnNewSending}>
-              {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
               <img
                 className={styles.plusbuttton}
                 border='0'
@@ -198,7 +189,6 @@ class SideBar extends Component {
           animationSettings={this.animationSettings} 
           width='40%' 
           showCloseIcon={true} 
-          // isModal={true}
           open={this.dialogOpen.bind(this)} 
           close={this.sendTypeDialogClose.bind(this)} >
           <SendingTypeSelector 
@@ -208,7 +198,7 @@ class SideBar extends Component {
           />
         </DialogComponent>
         <DialogComponent 
-          id="noSignaturesDialog" 
+          id='noSignaturesDialog'
           header=' ' 
           visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
@@ -216,49 +206,40 @@ class SideBar extends Component {
           showCloseIcon={true} 
           content={contenido}//'Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí' 
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          // buttons={this.alertButtons} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose}
-          //position={ this.position }
         ></DialogComponent>
         <DialogComponent 
-              id="confirmDialog" 
-              header=' ' 
-              visible={this.state.hideConfirmDialog} 
-              showCloseIcon={true} 
-              animationSettings={this.animationSettings} 
-              width='60%' 
-              content={confirmDiscard} 
-              ref={dialog => this.confirmDialogInstance = dialog} 
-              //target='#target' 
-              buttons={confirmButtons} 
-              open={this.dialogOpen.bind(this)} 
-              close={this.dialogClose}
-            />
+          id="confirmDialog" 
+          header=' ' 
+          visible={this.state.hideConfirmDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='60%' 
+          content={confirmDiscard} 
+          ref={dialog => this.confirmDialogInstance = dialog} 
+          //target='#target' 
+          buttons={confirmButtons} 
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose}
+        />
         <style jsx global>
           {`
-            #noSignaturesDialog{
-              max-height: 927px;
-              width: 300px;
-              left: 770px;
-              //top: 392.5px;
-              z-index: 1001;
-              //transform: translateY(+200%);
-            }
-
-            #sendingTypeDialog{
+            #sendingTypeDialog {
               top: 17% !important;
             }
 
-            #sendingTypeDialog .e-dlg-header{
+            #sendingTypeDialog .e-dlg-header {
               width: 60% !important;
             }
 
-            #noSignaturesDialog_dialog-header, #noSignaturesDialog_title, #noSignaturesDialog_dialog-content, .e-footer-content{
-              background: #c5343f;
-              color: #fff;
-              display:flex;
+            #noSignaturesDialog_dialog-header, 
+            #noSignaturesDialog_title, 
+            #noSignaturesDialog_dialog-content, 
+            .e-footer-content  {
+              background: #c5343f !important;
+              color: #fff !important;
+              display:flex !important;
             }
 
             #sendingTypeDialog_dialog-header, #sendingTypeDialog_title {
@@ -297,18 +278,8 @@ class SideBar extends Component {
               font-size: 12px
             }
 
-            noSignaturesDialog .e-btn.e-flat.e-primary {
+            #noSignaturesDialog .e-btn.e-flat.e-primary {
               color: #fff !important;
-            }
-
-            .material-icons {
-              font-size: 18px !important;
-              color: #001978 !important;
-            }
-
-            .right-icon {
-              position: absolute;
-              right: 0px;
             }
           `}
         </style>
