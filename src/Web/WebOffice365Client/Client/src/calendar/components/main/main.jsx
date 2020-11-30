@@ -65,8 +65,7 @@ import { Eventtype } from '../eventtypes/eventtype';
 import { getEventTypes } from "../../../api_graph/calendar-api";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 import AttendeeAddress from './attendee/attendee-address';
-
-
+import ContactsImport from "../../../components/contacts-import/contacts";
 
 export class Main extends Component {
 
@@ -95,6 +94,7 @@ export class Main extends Component {
 
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
         this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
+        this.onImportContactsTypeClick = this.onImportContactsTypeClick.bind(this);
 
         this.cancel = false;
 
@@ -123,6 +123,7 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             hidePromptEventTypeDialog: false,
+            hidePromptImportContactsDialog: false,
             calendarToEdit: undefined,
             //tagAttendess: [],
             reminders: [],
@@ -221,6 +222,42 @@ export class Main extends Component {
         ];
 
         this.checkForParams()
+    }
+
+    addConfigurationButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+            userIconEle.onclick = () => {
+                this.profilePopup.relateTo = userIconEle;
+                console.log(this.profilePopup);
+                this.profilePopup.dataBind();
+                if (this.profilePopup.element.classList.contains('e-popup-close')) {
+                    this.profilePopup.show();
+                }
+                else {
+                    this.profilePopup.hide();
+                }
+            };
+        }
+        let userContentEle = createElement('div', {
+            className: 'e-profile-wrapper'
+        });
+
+        scheduleElement.parentElement.appendChild(userContentEle);
+        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+        let output = this.buttonEventTypeObj;
+        this.profilePopup = new Popup(userContentEle, {
+            content: output,
+            relateTo: userIconEle,
+            position: { X: 'left', Y: 'bottom' },
+            collision: { X: 'flip', Y: 'flip' },
+            targetType: 'relative',
+            viewPortElement: scheduleElement,
+            width: 150,
+            height: 60
+        });
+        this.profilePopup.hide();
     }
 
     toggleSideBar() {
@@ -1332,41 +1369,9 @@ export class Main extends Component {
 
         switch (args.requestType) {
 
-            //case 'toolBarItemRendered':
-
-            //    let scheduleElement = document.getElementById('schedule');
-            //    if (args.requestType === 'toolBarItemRendered') {
-            //        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-            //        userIconEle.onclick = () => {
-            //            this.profilePopup.relateTo = userIconEle;
-            //            this.profilePopup.dataBind();
-            //            if (this.profilePopup.element.classList.contains('e-popup-close')) {
-            //                this.profilePopup.show();
-            //            }
-            //            else {
-            //                this.profilePopup.hide();
-            //            }
-            //        };
-            //    }
-            //    let userContentEle = createElement('div', {
-            //        className: 'e-profile-wrapper'
-            //    });
-            //    scheduleElement.parentElement.appendChild(userContentEle);
-            //    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-            //    let output = this.buttonEventTypeObj.element;
-            //    this.profilePopup = new Popup(userContentEle, {
-            //        content: output,
-            //        relateTo: userIconEle,
-            //        position: { X: 'left', Y: 'bottom' },
-            //        collision: { X: 'flip', Y: 'flip' },
-            //        targetType: 'relative',
-            //        viewPortElement: scheduleElement,
-            //        width: 150,
-            //        height: 60
-            //    });
-            //    this.profilePopup.hide();
-
-            //    break;
+            case 'toolBarItemRendered':
+                this.addConfigurationButton(args);
+                break;
 
             case 'eventChanged':
 
@@ -1772,14 +1777,14 @@ export class Main extends Component {
     }
 
     onActionBegin(args) {
-        //if (args.requestType === 'toolbarItemRendering') {
-        //    if (args.requestType === 'toolbarItemRendering') {
-        //        let userIconItem = {
-        //            align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
-        //        };
-        //        args.items.push(userIconItem);
-        //    }
-        //}
+        if (args.requestType === 'toolbarItemRendering') {
+           if (args.requestType === 'toolbarItemRendering') {
+               let userIconItem = {
+                   align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+               };
+               args.items.push(userIconItem);
+           }
+        }
     }
 
     onEventTypeClick() {
@@ -1822,6 +1827,27 @@ export class Main extends Component {
         }
     }
 
+    onImportContactsTypeClick() {
+        this.profilePopup.hide();
+        this.openImportConcatcsView();
+    }
+
+    openImportConcatcsView(args) {
+        this.setState(
+            {
+                hidePromptImportContactsDialog: true
+            });
+    }
+
+    // Import Concatcs View Dialog
+    dialogImportConcatcsClose(args) {
+        //if (args == undefined) {
+        //    this.toastObj.show(this.toasts[1]);
+        //}
+        this.setState({
+            hidePromptImportContactsDialog: false
+        });
+    }
 
     render() {
 
@@ -1962,11 +1988,12 @@ export class Main extends Component {
                                 </div>
 
                                 <div className="hidden">
-                                    <ButtonComponent
-                                        cssClass='e-flat e-primary'
-                                        onClick={this.onEventTypeClick.bind(this)}
-                                        ref={but => this.buttonEventTypeObj = but}
-                                    >Tipos de eventos</ButtonComponent>
+                                    <div className='buttons-wrapper'  ref={but => this.buttonEventTypeObj = but}>
+                                        <ButtonComponent
+                                            cssClass='e-flat e-primary'
+                                            onClick={this.onImportContactsTypeClick.bind(this)}
+                                        >Importar eventos</ButtonComponent>
+                                    </div>
                                 </div>
 
                                 <div className='schedule-control-section'>
@@ -2060,6 +2087,24 @@ export class Main extends Component {
                                     <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtype
                                         getlistEventTypes={this.getlistEventTypes.bind(this)}
                                         user={this.props.User}
+                                        close={this.dialogClose.bind(this)}
+                                    /> : ''}</div>
+                                </DialogComponent>
+                                <DialogComponent
+                                    id='contactImports'
+                                    isModal={true}
+                                    header={i18n.t("contactimport.title")}
+                                    visible={this.state.hidePromptImportContactsDialog}
+                                    showCloseIcon={true}
+                                    animationSettings={this.animationSettings}
+                                    width='575px'
+                                    ref={dialog => this.promptDialogEventTypeInstance = dialog}
+                                    target='#target'
+                                    open={this.dialogOpen.bind(this)}
+                                    close={this.dialogImportConcatcsClose.bind(this)}>
+                                    <div>{(this.state.hidePromptImportContactsDialog) ? <ContactsImport
+                                        getlistEventTypes={this.getlistEventTypes.bind(this)}
+                                        googleUser={this.props.googleUser}
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
                                 </DialogComponent>

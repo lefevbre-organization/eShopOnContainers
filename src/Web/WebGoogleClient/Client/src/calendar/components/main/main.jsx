@@ -1442,7 +1442,6 @@ export class Main extends Component {
                 //if not iframe view
                 if (!this.layoutIframe) {
                     this.addConfigurationButton(args);
-
                 }
                 else {
                     this.addLogOutButton(args);
