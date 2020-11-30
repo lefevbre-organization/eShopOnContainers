@@ -21,5 +21,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         Task<UserReservation> CreateReservationAsync(UserReservationRequest reservation);
         Task<Result<UserRoom>> CreateRoomAsync(string idNavision, string name, int idApp);
         Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, int idApp);
+        Task<Result<UserRoom>> SecureRoomAsync(string idNavision, string name, string pass, int idApp);
     }
 }

@@ -11,6 +11,7 @@
         public string UserUtilsUrl { get; set; }
 
         public string JitsiUrl { get; set; }
+        public string JitsiRoomUrl { get; set; }
 
 
         public string EventBusConnection { get; set; }

@@ -91,6 +91,7 @@
             public static readonly string InternalApi = "APISVC";
             public static readonly string Online = "ONLINESVC";
             public static readonly string Centinela = "CENTINELASVC";
+            public static readonly string Mongo = "MONGO";
         }
 
         public static class Conferences
@@ -100,6 +101,11 @@
             public static readonly string GetConferences = "CN03";
             public static readonly string Modify = "CN04";
             public static readonly string Remove = "CN05";
+
+            public static readonly string RoomCreate = "CN20";
+            public static readonly string RoomNotify = "CN21";
+            public static readonly string RoomGet = "CN22";
+
 
             public static readonly string GetStats = "CN10";
 

@@ -6,4 +6,5 @@
 
         public string url { get; set; }
     }
+
 }

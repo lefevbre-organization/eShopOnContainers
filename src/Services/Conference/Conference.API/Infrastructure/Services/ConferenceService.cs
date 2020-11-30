@@ -62,39 +62,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return result;
         }
 
-                public async Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, int idApp)
-        {
-            var result = new Result<List<ConferenceSimple>>(new List<ConferenceSimple>());
 
-            try
-            {
-                var url = $"{_settings.Value.JitsiUrl}/colibri/conferences";
-
-                using (var response = await _clientJitsi.GetAsync(url))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var rawResult = await response.Content.ReadAsStringAsync();
-
-                        if (!string.IsNullOrEmpty(rawResult))
-                        {
-                            var resultado = (JsonConvert.DeserializeObject<ConferenceSimple[]>(rawResult));
-                            result.data = resultado.ToList();
-                        }
-                    }
-                    else
-                    {
-                        TraceError(result.errors, new ConferenceDomainException($"Error when get list of conferences ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Conferences.Get, "JITSISVC");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new ConferenceDomainException($"Error when get data of conferences {_settings.Value.JitsiUrl}", ex), Codes.Conferences.Get, "JITSISVC");
-            }
-
-            return result;
-        }
         public async Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, int idApp)
         {
             var result = new Result<List<ConferenceSimple>>(new List<ConferenceSimple>());
@@ -246,11 +214,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return reservationCreated ;
         }
 
-        public async Task<Result<UserRoom>> CreateRoomAsync(string idNavision, string name, int idApp)
+        public async Task<Result<UserRoom>> CreateRoomAsync(string idNavision, string name, int idApplication)
         {
-            var url = @"https://meet-test.lefebvre.es/http-bind?room={name}";
-            //client https://meet-test.lefebvre.es/http-bind?room=testlefebvre
+            var rid = GetJitsiRid(10); //DateTime.Now.Ticks;
+            //rid = 1766853816;
+            var wait = "60";
+            var lang = "en";
+            var result = new Result<UserRoom>(new UserRoom() { url = $"{_settings.Value.JitsiRoomUrl}/{name}"});
+
+
             // request payload : 
+            // <body content="text/xml; charset=utf-8" hold="1" rid="1766853815" to="meet.jitsi" ver="1.6" wait="60" xml:lang="en" xmlns="http://jabber.org/protocol/httpbind" xmlns:xmpp="urn:xmpp:xbosh" xmpp:version="1.0"/>
+            // <body rid="1766853816" sid="965edbb6-d5f4-47ac-81be-8676582e7f58" xmlns="http://jabber.org/protocol/httpbind"><auth mechanism="ANONYMOUS" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/></body>
             // <body content="text/xml; charset=utf-8" hold="1" rid="2774357881" to="meet.jitsi" ver="1.6" wait="60" xml:lang="en" xmlns="http://jabber.org/protocol/httpbind" xmlns:xmpp="urn:xmpp:xbosh" xmpp:version="1.0"/>
             // response :
             // <body authid='8ff9d004-78a4-41c0-b561-a8c82768d2e1' inactivity='60' hold='1' polling='5' xmlns:stream='http://etherx.jabber.org/streams' xmpp:version='1.0' wait='60' sid='8ff9d004-78a4-41c0-b561-a8c82768d2e1' ver='1.6' from='meet.jitsi' secure='true' xmlns:xmpp='urn:xmpp:xbosh' xmlns='http://jabber.org/protocol/httpbind' requests='2'>
@@ -262,11 +237,144 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             //</stream:features>
             //</body>
 
-            var httpClient = new HttpClient();
-            var someXmlString = "<body content='text/xml; charset=utf-8' hold='1' rid='2774357881' to='meet.jitsi' ver='1.6' wait='60' xml:lang='en' xmlns='http://jabber.org/protocol/httpbind' xmlns:xmpp='urn:xmpp:xbosh' xmpp:version='1.0'/>";
-            var stringContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
-            var respone = await httpClient.PostAsync(url, stringContent);
+
+            try
+            {
+                var url = $"{_settings.Value.JitsiRoomUrl}/http-bind?room={name}";
+
+                var someXmlString = $"<body content='text/xml; charset=utf-8' hold='1' rid='{rid}' to='meet.jitsi' ver='1.6' wait='{wait}' xml:lang='{lang}' xmlns='http://jabber.org/protocol/httpbind' xmlns:xmpp='urn:xmpp:xbosh' xmpp:version='1.0'/>";
+                var xmlContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
+                using (var response = await _clientJitsi.PostAsync(url, xmlContent))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            TraceInfo(result.infos, rawResult, Codes.Conferences.RoomCreate);
+                            result.data.idApp = idApplication.ToString();
+                            result.data.idNavision = idNavision;
+                        }
+                        else
+                        {
+                            TraceError(result.errors,
+                                       new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} : response:[{rawResult}]-> {(int)response.StatusCode} - {response.ReasonPhrase}"),
+                                       Codes.Conferences.RoomCreate,
+                                       "JITSISVC");
+
+                        }
+
+                    }
+                    else
+                        TraceError(result.errors,
+                                   new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} -> {(int)response.StatusCode} - {response.ReasonPhrase}"),
+                                   Codes.Conferences.RoomCreate,
+                                   "JITSISVC");
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new ConferenceDomainException($"Error when call external service of Jitsi {_settings.Value.JitsiRoomUrl}", ex),
+                           Codes.Conferences.RoomCreate,
+                           "JITSISVC");
+            }
+            return result;
+        }
+
+        private string GetJitsiRid(int length)
+        {
+            var random = new Random();
+            const string chars = "123456789";
+            return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+
+
+
+        public Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, int idApp)
+        {
             throw new NotImplementedException();
+        }
+
+        public async Task<Result<UserRoom>> SecureRoomAsync(string idNavision, string name, string pass, int idApp)
+        {
+            // <body rid="1160796438" sid="50f79c79-a5a8-4b76-ab5b-c66b4951c606" xmlns="http://jabber.org/protocol/httpbind">
+            //    <iq id="545a108f-e898-4cb9-b3cd-0742ead0734a:sendIQ" to="916359@muc.meet.jitsi" type="set" xmlns="jabber:client">
+            //        <query xmlns="http://jabber.org/protocol/muc#owner">
+            //            <x type="submit" xmlns="jabber:x:data">
+            //                <field var="FORM_TYPE">
+            //                    <value>http://jabber.org/protocol/muc#roomconfig</value>
+            //                </field>
+            //                <field var="muc#roomconfig_roomsecret">
+            //                    <value>123456</value>
+            //                </field>
+            //                <field var="muc#roomconfig_whois">
+            //                    <value>anyone</value>
+            //                </field>
+            //            </x>
+            //        </query>
+            //    </iq>
+            //</body>
+
+            var result = new Result<UserRoom>(new UserRoom() { url = $"{_settings.Value.JitsiRoomUrl}/{name}" });
+            var rid = "1160796438";
+            var guid = "50f79c79-a5a8-4b76-ab5b-c66b4951c606";
+            var newGuid = Guid.NewGuid(); //545a108f-e898-4cb9-b3cd-0742ead0734a
+            try
+            {
+                var url = $"{_settings.Value.JitsiRoomUrl}/http-bind?room={name}";
+
+                var bodyBegin = $"<body rid='{rid}' sid='{guid}' xmlns='http://jabber.org/protocol/httpbind'>";
+                var queryBegin = $"<iq id='{newGuid}:sendIQ' to='916359@muc.meet.jitsi' type='set' xmlns='jabber:client'>" +
+                                 $"<query xmlns='http://jabber.org/protocol/muc#owner'>" +
+                                 $"<x type='submit' xmlns='jabber:x:data'>";
+                var fieldType = "<field var='FORM_TYPE'><value>http://jabber.org/protocol/muc#roomconfig</value></field>";
+                var fieldSecret = $"<field var='muc#roomconfig_roomsecret'><value>{pass}</value></field>";
+                var fieldWho = "<field var='muc#roomconfig_whois'><value>anyone</value></field>";
+
+                var end = $"</x></query></iq></body>";
+
+                var someXmlString = $"{bodyBegin}{queryBegin}{fieldType}{fieldSecret}{fieldWho}{end}";
+                var xmlContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
+                using (var response = await _clientJitsi.PostAsync(url, xmlContent))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            TraceInfo(result.infos, rawResult, Codes.Conferences.RoomCreate);
+                            result.data.idApp = idApp.ToString();
+                            result.data.idNavision = idNavision;
+                        }
+                        else
+                        {
+                            TraceError(result.errors,
+                                       new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} : response:[{rawResult}]-> {(int)response.StatusCode} - {response.ReasonPhrase}"),
+                                       Codes.Conferences.RoomCreate,
+                                       "JITSISVC");
+
+                        }
+
+                    }
+                    else
+                        TraceError(result.errors,
+                                   new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} -> {(int)response.StatusCode} - {response.ReasonPhrase}"),
+                                   Codes.Conferences.RoomCreate,
+                                   "JITSISVC");
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new ConferenceDomainException($"Error when call external service of Jitsi {_settings.Value.JitsiRoomUrl}", ex),
+                           Codes.Conferences.RoomCreate,
+                           "JITSISVC");
+            }
+            return result;
         }
     }
 }

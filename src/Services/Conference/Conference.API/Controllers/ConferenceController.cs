@@ -80,7 +80,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [HttpPost("{idNavision}/room/{name}/notify")]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> NotifyRommAsync(
+        public async Task<IActionResult> NotifyRoomAsync(
             [FromRoute] string idNavision = "E1621396",
             [FromRoute] string name = "nuevaSala",
             [FromQuery] int idApp = 1)
@@ -89,6 +89,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
                 return BadRequest("Must be a valid idUserNavision");
 
             Result<UserRoom> result = await _service.NotifyRoomAsync(idNavision, name, idApp);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{idNavision}/room/{name}/secure")]
+        [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SecurizeRoomAsync(
+            [FromRoute] string idNavision = "E1621396",
+            [FromRoute] string name = "nuevaSala",
+            [FromQuery] int idApp = 1,
+            [FromBody] string pass = "12345")
+        {
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("Must be a valid idUserNavision");
+
+            Result<UserRoom> result = await _service.SecureRoomAsync(idNavision, name, pass, idApp);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
