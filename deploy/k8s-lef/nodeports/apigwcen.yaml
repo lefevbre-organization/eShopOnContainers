@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: apigwcen
+spec:
+  type: NodePort
+  selector:
+    app: apigwcen
+  ports:
+    - port: 80
+      nodePort: 30015
+      name: apigwcen-port
