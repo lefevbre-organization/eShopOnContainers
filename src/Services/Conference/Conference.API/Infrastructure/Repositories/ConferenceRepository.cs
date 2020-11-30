@@ -39,7 +39,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         //    await _context.PublishThroughEventBusAsync(eventAssoc, session);
         //}
 
-
         public async Task<Result<UserConference>> GetUserAsync(string idUser, short idApp)
         {
             var result = new Result<UserConference>();
@@ -49,7 +48,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
                 if (result.data == null)
                     TraceError(result.errors, new ConferenceDomainException($"No se encuentra ningún usuario {idUser}"), Codes.Conferences.Get, Codes.Areas.Mongo);
-
             }
             catch (Exception ex)
             {
@@ -80,7 +78,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
                 var eventAssoc = new AddUserConferenceIntegrationEvent(user.idNavision, user.idApp);
                 _eventBus.Publish(eventAssoc);
-                //  await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
             }
             catch (Exception ex)
             {
@@ -119,14 +116,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         private void ReviewUser(UserConference userMail)
         {
             userMail.idNavision = userMail.idNavision.ToUpperInvariant();
-
-            //if (userMail.rooms.Count > 0)
-            //{
-            //    foreach (var acc in userMail.accounts)
-            //    {
-            //        ReviewAccountMail(acc);
-            //    }
-            //}
         }
 
         private static FilterDefinition<UserConference> GetFilterUser(string idUser, short idApp = 1)
@@ -140,19 +129,31 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         {
             var result = new Result<UserConference>();
 
-            var resultUpdate = await _context.UserConferences.UpdateOneAsync(
-                 GetFilterUser(idUser, idApp),
-                 Builders<UserConference>.Update.AddToSet($"rooms.$[i]", room),
-                 new UpdateOptions { ArrayFilters = GetFilterFromRooms(room.id) }
-             );
-
-            if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+            var user = await GetUserAsync(idUser, idApp);
+            var rooms = user.data.rooms?.ToList();
+            var roomFind = rooms?.FirstOrDefault(x => x.id == room.id || ( x.name != null && x.name.Equals(room.name)));
+            if (roomFind == null)
             {
-                TraceInfo(result.infos, $"Se modifica la room {room.id} del usuario {idUser}", Codes.Lexon.AddClassificationToList);
+                TraceInfo(result.infos, $"Se crea la room {room.id} del usuario {idUser}", Codes.Conferences.RoomCreate);
+                rooms.Add(room);
+            }
+            else
+            {
+                TraceInfo(result.infos, $"Se modifica la room {room.id} del usuario {idUser}", Codes.Conferences.RoomCreate);
+                roomFind = room;
+            }
 
-                var eventAssoc = new ManageRoomIntegrationEvent(idUser, idApp, room);
-                _eventBus.Publish(eventAssoc);
-                result.data.idNavision = idUser;
+            user.data.rooms = rooms.ToArray();
+
+            var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(idUser, idApp), user.data, GetUpsertOptions());
+
+            if (resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
+            {
+
+                var eventReplace = new ManageRoomIntegrationEvent(idUser, idApp, room, roomFind);
+                _eventBus.Publish(eventReplace);
+
+                result.data = user.data;
                 result.data.rooms = new Room[] { room };
             }
 
@@ -166,7 +167,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.id", roomId)))
             };
         }
-
 
         public async Task<Result<UserConference>> GetRoomAsync(string idUser, short idApp, string id)
         {
@@ -182,7 +182,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                     if (rooms?.Count > 0)
                     {
                         var sala = rooms?.Find(GetFilterRoomId(id));
-                      
 
                         if (sala == null)
                             TraceInfo(result.infos, $"No se encuentra ningúna sala con ese id {id} del usuario {idUser}", Codes.Conferences.RoomGet);
@@ -205,7 +204,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         {
             return x => x.id.Equals(idRoom);
         }
-
-
     }
 }

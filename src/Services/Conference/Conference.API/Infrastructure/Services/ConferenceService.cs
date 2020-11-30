@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Services
 {
@@ -49,21 +49,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-
-        public async Task<Result<UserConference>> GetUserAsync(string idNavisionUser, int idApp)
-        {
-            var result = new Result<UserConference>(new UserConference());
-            return result;
-        }
+        public async Task<Result<UserConference>> GetUserAsync(string idNavisionUser, short idApp)
+            => await _repo.GetUserAsync(idNavisionUser, idApp);
 
         public async Task<Result<UserConference>> PostUserAsync(UserConference user)
-        {
-            var result = new Result<UserConference>(new UserConference());
-            return result;
-        }
+            => await _repo.PostUserAsync(user);
 
-
-        public async Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, int idApp)
+        public async Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, short idApp)
         {
             var result = new Result<List<ConferenceSimple>>(new List<ConferenceSimple>());
 
@@ -97,7 +89,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return result;
         }
 
-        public async Task<Result<ConferenceModel>> CreateConferenceAsync(string idNavision, int idApp, ConferenceModel conference)
+        public async Task<Result<ConferenceModel>> CreateConferenceAsync(string idNavision, short idApp, ConferenceModel conference)
         {
             var result = new Result<ConferenceModel>(new ConferenceModel());
             try
@@ -115,7 +107,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                             var resultado = (JsonConvert.DeserializeObject<ConferenceModel>(rawResult));
                             result.data = resultado;
                         }
-
                     }
                     else
                         TraceError(result.errors, new ConferenceDomainException($"Probably error in jitsi when create conference -> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Conferences.Create, "JITSISVC");
@@ -132,11 +123,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         {
             url = $"{_settings.Value.JitsiUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
-            var json = parameters == null ? "{}": JsonConvert.SerializeObject(parameters);
+            var json = parameters == null ? "{}" : JsonConvert.SerializeObject(parameters);
             data = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        public async Task<Result<ConferenceModel>> GetConferenceByIdAsync(string idNavision, int idApp, string id)
+        public async Task<Result<ConferenceModel>> GetConferenceByIdAsync(string idNavision, short idApp, string id)
         {
             var result = new Result<ConferenceModel>(new ConferenceModel());
             try
@@ -169,7 +160,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return result;
         }
 
-        public async Task<Result<ConferenceStats>> GetStatsConferenceByIdAsync(string idNavision, int idApp, string id)
+        public async Task<Result<ConferenceStats>> GetStatsConferenceByIdAsync(string idNavision, short idApp, string id)
         {
             var result = new Result<ConferenceStats>(new ConferenceStats());
             try
@@ -211,19 +202,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             reservationCreated.mail_owner = reservation.mail_owner;
             reservationCreated.duration = 900000;
             //var result = new Result<UserReservation>(reservationCreated);
-            return reservationCreated ;
+            return reservationCreated;
         }
 
-        public async Task<Result<UserRoom>> CreateRoomAsync(string idNavision, string name, int idApplication)
+        public async Task<Result<UserConference>> CreateRoomAsync(string idNavision, string name, string pass, short idApp)
         {
-            var rid = GetJitsiRid(10); //DateTime.Now.Ticks;
-            //rid = 1766853816;
-            var wait = "60";
-            var lang = "en";
-            var result = new Result<UserRoom>(new UserRoom() { url = $"{_settings.Value.JitsiRoomUrl}/{name}"});
+            var rid = GetJitsiRid(10);  //1766853816;
+            var wait = "90";
+            var lang = "es";
+            var result = new Result<UserConference>(new UserConference());
 
-
-            // request payload : 
+            // request payload :
             // <body content="text/xml; charset=utf-8" hold="1" rid="1766853815" to="meet.jitsi" ver="1.6" wait="60" xml:lang="en" xmlns="http://jabber.org/protocol/httpbind" xmlns:xmpp="urn:xmpp:xbosh" xmpp:version="1.0"/>
             // <body rid="1766853816" sid="965edbb6-d5f4-47ac-81be-8676582e7f58" xmlns="http://jabber.org/protocol/httpbind"><auth mechanism="ANONYMOUS" xmlns="urn:ietf:params:xml:ns:xmpp-sasl"/></body>
             // <body content="text/xml; charset=utf-8" hold="1" rid="2774357881" to="meet.jitsi" ver="1.6" wait="60" xml:lang="en" xmlns="http://jabber.org/protocol/httpbind" xmlns:xmpp="urn:xmpp:xbosh" xmpp:version="1.0"/>
@@ -237,24 +226,38 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             //</stream:features>
             //</body>
 
-
             try
             {
                 var url = $"{_settings.Value.JitsiRoomUrl}/http-bind?room={name}";
+                var bodyXml = $"<body content='text/xml; charset=utf-8' hold='1' rid='{rid}' to='meet.jitsi' ver='1.6' wait='{wait}' xml:lang='{lang}' xmlns='http://jabber.org/protocol/httpbind' xmlns:xmpp='urn:xmpp:xbosh' xmpp:version='1.0' />";
 
-                var someXmlString = $"<body content='text/xml; charset=utf-8' hold='1' rid='{rid}' to='meet.jitsi' ver='1.6' wait='{wait}' xml:lang='{lang}' xmlns='http://jabber.org/protocol/httpbind' xmlns:xmpp='urn:xmpp:xbosh' xmpp:version='1.0'/>";
-                var xmlContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
+                var xmlContent = new StringContent(bodyXml, Encoding.UTF8, "application/xml");
                 using (var response = await _clientJitsi.PostAsync(url, xmlContent))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
-
-                        if (!string.IsNullOrEmpty(rawResult))
+                        var room = new Room
                         {
-                            TraceInfo(result.infos, rawResult, Codes.Conferences.RoomCreate);
-                            result.data.idApp = idApplication.ToString();
-                            result.data.idNavision = idNavision;
+                            id = rid,
+                            url = $"{_settings.Value.JitsiRoomUrl}/{name}",
+                            name = name
+                        };
+
+                        XDocument xd = XDocument.Parse(rawResult);
+                        foreach (XElement element in xd.Elements())
+                        {
+                            room.guidJitsi = element.Attribute("authid")?.Value;
+                        }
+
+                        var userResult = await _repo.UpsertRoomAsync(idNavision, idApp, room);
+                        AddResultTrace(userResult, result);
+
+                        if (!string.IsNullOrEmpty(room.guidJitsi))
+                        {
+                            TraceInfo(result.infos, $"se Obtiene un guid de Jitsi {room.guidJitsi} que se guarda en el usuario {idNavision}", Codes.Conferences.RoomCreate);
+                            result.data = userResult.data;
+                            AddResultTrace(userResult, result);
                         }
                         else
                         {
@@ -262,9 +265,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                                        new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} : response:[{rawResult}]-> {(int)response.StatusCode} - {response.ReasonPhrase}"),
                                        Codes.Conferences.RoomCreate,
                                        "JITSISVC");
-
                         }
-
                     }
                     else
                         TraceError(result.errors,
@@ -290,15 +291,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-
-
-
-        public Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, int idApp)
+        public Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, short idApp)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<Result<UserRoom>> SecureRoomAsync(string idNavision, string name, string pass, int idApp)
+        public async Task<Result<UserRoom>> SecureRoomAsync(string idNavision, string idRoom, string pass, short idApp)
         {
             // <body rid="1160796438" sid="50f79c79-a5a8-4b76-ab5b-c66b4951c606" xmlns="http://jabber.org/protocol/httpbind">
             //    <iq id="545a108f-e898-4cb9-b3cd-0742ead0734a:sendIQ" to="916359@muc.meet.jitsi" type="set" xmlns="jabber:client">
@@ -317,26 +315,36 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             //        </query>
             //    </iq>
             //</body>
+            var result = new Result<UserRoom>();
 
-            var result = new Result<UserRoom>(new UserRoom() { url = $"{_settings.Value.JitsiRoomUrl}/{name}" });
-            var rid = "1160796438";
-            var guid = "50f79c79-a5a8-4b76-ab5b-c66b4951c606";
-            var newGuid = Guid.NewGuid(); //545a108f-e898-4cb9-b3cd-0742ead0734a
             try
             {
-                var url = $"{_settings.Value.JitsiRoomUrl}/http-bind?room={name}";
+                var userRoom = new UserRoom { idNavision = idNavision };
 
-                var bodyBegin = $"<body rid='{rid}' sid='{guid}' xmlns='http://jabber.org/protocol/httpbind'>";
-                var queryBegin = $"<iq id='{newGuid}:sendIQ' to='916359@muc.meet.jitsi' type='set' xmlns='jabber:client'>" +
-                                 $"<query xmlns='http://jabber.org/protocol/muc#owner'>" +
-                                 $"<x type='submit' xmlns='jabber:x:data'>";
-                var fieldType = "<field var='FORM_TYPE'><value>http://jabber.org/protocol/muc#roomconfig</value></field>";
-                var fieldSecret = $"<field var='muc#roomconfig_roomsecret'><value>{pass}</value></field>";
-                var fieldWho = "<field var='muc#roomconfig_whois'><value>anyone</value></field>";
+                var userResult = await GetUserAsync(idNavision, idApp);
 
-                var end = $"</x></query></iq></body>";
+                var rooms = userResult.data.rooms?.ToList();
+                var roomFind = rooms?.FirstOrDefault(x => x.id == idRoom);
+                if (roomFind == null)
+                {
+                    TraceInfo(result.infos, $"No hay room que securizar {idRoom} del usuario {idNavision}", Codes.Conferences.RoomSecure);
+                    return result;
+                }
 
-                var someXmlString = $"{bodyBegin}{queryBegin}{fieldType}{fieldSecret}{fieldWho}{end}";
+                if (roomFind.pass != null)
+                {
+                    TraceInfo(result.infos, $"Ya se ha securizado la room {idRoom} del usuario {idNavision}", Codes.Conferences.RoomSecure);
+                    return result;
+                }
+
+                TraceInfo(userResult.infos, $"Se intenta securizar la room {idRoom} del usuario {idNavision}", Codes.Conferences.RoomSecure);
+
+                var url = $"{_settings.Value.JitsiRoomUrl}/http-bind?room={roomFind.name}";
+
+                var bodyBegin = $"<body rid='{roomFind.id}' sid='{roomFind.guidJitsi}' xmlns='http://jabber.org/protocol/httpbind'>";
+                var end = "</body>";
+                var someXmlString = $"{bodyBegin}{GetIqPass(pass)}{end}";
+
                 var xmlContent = new StringContent(someXmlString, Encoding.UTF8, "application/xml");
                 using (var response = await _clientJitsi.PostAsync(url, xmlContent))
                 {
@@ -347,34 +355,46 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                         if (!string.IsNullOrEmpty(rawResult))
                         {
                             TraceInfo(result.infos, rawResult, Codes.Conferences.RoomCreate);
-                            result.data.idApp = idApp.ToString();
-                            result.data.idNavision = idNavision;
                         }
                         else
                         {
                             TraceError(result.errors,
                                        new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} : response:[{rawResult}]-> {(int)response.StatusCode} - {response.ReasonPhrase}"),
-                                       Codes.Conferences.RoomCreate,
-                                       "JITSISVC");
-
+                                       Codes.Conferences.RoomSecure,
+                                       Codes.Areas.Jitsi);
                         }
-
                     }
                     else
                         TraceError(result.errors,
                                    new ConferenceDomainException($"Probably error in jitsi when create room  {_settings.Value.JitsiRoomUrl} -> {(int)response.StatusCode} - {response.ReasonPhrase}"),
-                                   Codes.Conferences.RoomCreate,
-                                   "JITSISVC");
+                                   Codes.Conferences.RoomSecure,
+                                   Codes.Areas.Jitsi);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors,
+                TraceError(result.errors, 
                            new ConferenceDomainException($"Error when call external service of Jitsi {_settings.Value.JitsiRoomUrl}", ex),
-                           Codes.Conferences.RoomCreate,
-                           "JITSISVC");
+                           Codes.Conferences.RoomSecure,
+                           Codes.Areas.Jitsi);
             }
+
             return result;
+        }
+
+        private string GetIqPass(string pass)
+        {
+            var newGuid = Guid.NewGuid();
+
+            var queryBegin = $"<iq id='{newGuid}:sendIQ' to='916359@muc.meet.jitsi' type='set' xmlns='jabber:client'>" +
+                 $"<query xmlns='http://jabber.org/protocol/muc#owner'>" +
+                 $"<x type='submit' xmlns='jabber:x:data'>";
+            var fieldType = "<field var='FORM_TYPE'><value>http://jabber.org/protocol/muc#roomconfig</value></field>";
+            var fieldSecret = $"<field var='muc#roomconfig_roomsecret'><value>{pass}</value></field>";
+            var fieldWho = "<field var='muc#roomconfig_whois'><value>anyone</value></field>";
+            var queryEnd = $"</x></query></iq>";
+
+            return $"{queryBegin}{fieldType}{fieldSecret}{fieldWho}{queryEnd}";
         }
     }
 }

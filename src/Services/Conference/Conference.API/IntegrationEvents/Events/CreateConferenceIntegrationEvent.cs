@@ -33,13 +33,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEve
         }
     }
 
-    public class ManageRoomIntegrationEvent : IntegrationEvent
+    public class CreateRoomIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
         public short IdApp { get; set; }
         public Room RoomData { get; set; }
 
-        public ManageRoomIntegrationEvent(
+        public CreateRoomIntegrationEvent(
             string user,
             short idApp,
             Room room)
@@ -47,6 +47,26 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEve
             User = user;
             IdApp = idApp;
             RoomData = room;
+        }
+    }
+
+    public class ManageRoomIntegrationEvent : IntegrationEvent
+    {
+        public string User { get; set; }
+        public short IdApp { get; set; }
+        public Room RoomData { get; set; }
+        public Room RoomDataOld { get; set; }
+
+        public ManageRoomIntegrationEvent(
+            string user,
+            short idApp,
+            Room room,
+            Room oldRoom)
+        {
+            User = user;
+            IdApp = idApp;
+            RoomData = room;
+            RoomDataOld = oldRoom;
         }
     }
 }

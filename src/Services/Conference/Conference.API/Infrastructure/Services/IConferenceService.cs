@@ -7,20 +7,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 {
     public interface IConferenceService
     {
-
-        Task<Result<UserConference>> GetUserAsync(string idNavisionUser, int idApp);
+        Task<Result<UserConference>> GetUserAsync(string idNavisionUser, short idApp);
 
         Task<Result<UserConference>> PostUserAsync(UserConference user);
 
-        Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, int idApp);
+        Task<Result<List<ConferenceSimple>>> GetConferencesAsync(string idNavisionUser, short idApp);
 
-        Task<Result<ConferenceModel>> CreateConferenceAsync(string idNavision, int idApp, ConferenceModel conference);
+        Task<Result<ConferenceModel>> CreateConferenceAsync(string idNavision, short idApp, ConferenceModel conference);
 
-        Task<Result<ConferenceModel>> GetConferenceByIdAsync(string idNavision, int idApp, string id);
-        Task<Result<ConferenceStats>> GetStatsConferenceByIdAsync(string idNavision, int idApp, string id);
+        Task<Result<ConferenceModel>> GetConferenceByIdAsync(string idNavision, short idApp, string id);
+
+        Task<Result<ConferenceStats>> GetStatsConferenceByIdAsync(string idNavision, short idApp, string id);
+
         Task<UserReservation> CreateReservationAsync(UserReservationRequest reservation);
-        Task<Result<UserRoom>> CreateRoomAsync(string idNavision, string name, int idApp);
-        Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, int idApp);
-        Task<Result<UserRoom>> SecureRoomAsync(string idNavision, string name, string pass, int idApp);
+
+        Task<Result<UserConference>> CreateRoomAsync(string idNavision, string name, short idApp);
+
+        Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, short idApp);
+
+        Task<Result<UserRoom>> SecureRoomAsync(string idNavision, string idRoom, string pass, short idApp);
     }
 }

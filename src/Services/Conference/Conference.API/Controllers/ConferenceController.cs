@@ -65,14 +65,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateRoomAsync(
+            [FromRoute] string name,
             [FromRoute] string idNavision = "E1621396",
-            [FromRoute] string name = "nuevaSala",
-            [FromQuery] int idApp = 1)
+            [FromQuery] short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
 
-            Result<UserRoom> result = await _service.CreateRoomAsync(idNavision, name, idApp);
+            Result<UserConference> result = await _service.CreateRoomAsync(idNavision, name, idApp);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -83,7 +83,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         public async Task<IActionResult> NotifyRoomAsync(
             [FromRoute] string idNavision = "E1621396",
             [FromRoute] string name = "nuevaSala",
-            [FromQuery] int idApp = 1)
+            [FromQuery] short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
@@ -97,15 +97,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SecurizeRoomAsync(
+            [FromQuery] string pass,
             [FromRoute] string idNavision = "E1621396",
-            [FromRoute] string name = "nuevaSala",
-            [FromQuery] int idApp = 1,
-            [FromBody] string pass = "12345")
+            [FromRoute] string idRoom = "1234",
+            [FromQuery] short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
 
-            Result<UserRoom> result = await _service.SecureRoomAsync(idNavision, name, pass, idApp);
+            Result<UserRoom> result = await _service.SecureRoomAsync(idNavision, idRoom, pass, idApp);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -115,7 +115,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserAsync(
             [FromRoute]string idNavision = "E1621396",
-            int idApp = 1)
+            short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
@@ -146,7 +146,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<List<ConferenceSimple>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesAsync(
             [FromRoute] string idNavision = "E1621396",
-            int idApp = 1)
+            short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
@@ -161,7 +161,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<ConferenceModel>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ConferenceCreateAsync(
             [FromRoute] string idNavision = "E1621396",
-            int idApp = 1
+            short idApp = 1
         )
         {
             //if (string.IsNullOrEmpty(conference.id))
@@ -178,8 +178,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         public async Task<IActionResult> ConferenceCreateAdvanceAsync(
             [FromBody] ConferenceModel conference,
             [FromRoute] string idNavision = "E1621396",
-            int idApp = 1
-)
+            short idApp = 1
+            )
         {
             //if (string.IsNullOrEmpty(conference.id))
             //    return BadRequest("Must be a valid id of coference");
@@ -195,7 +195,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         public async Task<IActionResult> GetConferenceByIdAsync(
             [FromRoute] string idNavision = "E1621396",
             [FromRoute] string id = "1",
-            int idApp = 1
+            short idApp = 1
             )
         {
             if (string.IsNullOrEmpty(idNavision) || string.IsNullOrEmpty(id))
@@ -212,7 +212,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         public async Task<IActionResult> ConferenceUpdateAsync(
             [FromBody] ConferenceModel conference,
             [FromRoute] string idNavision = "E1621396",
-            int idApp = 1
+            short idApp = 1
         )
         {
             if (string.IsNullOrEmpty(conference.id))
@@ -228,7 +228,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<ConferenceStats>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetStatsConferenceByIdAsync(
             [FromRoute] string idNavision = "E1621396",
-            int idApp = 1
+            short idApp = 1
             )
         {
             if (string.IsNullOrEmpty(idNavision))
