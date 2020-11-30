@@ -27,6 +27,7 @@
         public string CallBackUrl { get; set; }
         public string SignatureNotificationUrl { get; set; }
         public string CertifiedEmailNotificationUrl { get; set; }
+        public string CertifiedSmsNotificationUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

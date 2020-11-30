@@ -119,14 +119,14 @@
                     var certificate = result.data.CertifiedEmails[0].Certificates.Find(e => e.ExternalId == certificateId);
                     var cenDocId = certificate.Document.InternalInfo.DocId;
                     var email = certificate.Email;
-                    var name = certificate.Name;
+                    var name = certificate.Name ?? "";
 
                     switch (eventType)
                     {
                         case "certification_completed":
                             // Downloadfile
                             var file = new SignaturitService(_settings, _configuration).DownloadCertificationFile(emailId, certificateId);
-                            response = await SaveFileCentinela(file, guid, cenDocId, email, name, user, eventType);
+                            response = await SaveFileCentinela(file, guid, cenDocId, email, name);
                             break;
                         default:
                             break;
@@ -148,17 +148,17 @@
 
         #region HelperFunctions
 
-        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string email, string name, string user, string eventType)
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string email, string name)
         {
             Console.WriteLine($"START SaveFileCentinela");
 
             Result<bool> result;
 
-            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/email";
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/sms";
 
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
-            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { fullName = "", phoneNumber1 = "", email} };
+            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { name, email } };
 
             client.Timeout = _timeoutFile;
 

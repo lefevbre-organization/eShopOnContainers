@@ -451,8 +451,8 @@ namespace Signature.API.Infrastructure.Services
 
             Console.WriteLine($"Adding body");
             request.AddParameter("body", emailSms.body);
-            //Console.WriteLine($"Adding notification url: {_settings.Value.CertifiedEmailNotificationUrl}");
-            //request.AddParameter("events_url", _settings.Value.CertifiedEmailNotificationUrl);
+            Console.WriteLine($"Adding notification url: {_settings.Value.CertifiedSmsNotificationUrl}");
+            request.AddParameter("events_url", _settings.Value.CertifiedSmsNotificationUrl);
 
             Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
 
