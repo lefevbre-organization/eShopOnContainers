@@ -378,7 +378,7 @@ class MessageList extends Component {
             }
         });
         
-
+      
         let res = [];
 
         filteredEmails.map(email => {
@@ -390,12 +390,23 @@ class MessageList extends Component {
             let status = '';
             let newStatus = '';
             subject = (email.data.find(x => x.key === "subject")) ? email.data.find(x => x.key === "subject").value : 'Sin asunto';
-            email.certificates.map(d => recipients = `${recipients}${d.email}; `);
-            email.certificates.map(d => 
+
+            let filterCertificates = [];
+            
+            email.certificates.map(d => { 
+                let index = filterCertificates.findIndex(x => (x.email === d.email));
+                if (index === -1){
+                    filterCertificates.push(d);
+                } 
+            });
+
+            filterCertificates.map(d => { 
+                recipients = `${recipients}${d.email}; `;
                 files = (email.certificates[0].file && email.certificates[0].file.name) 
                 ? `${files}${d.file.name}; ` 
-                : '');
- 
+                : '';
+            });
+            
             date = new Date(email.created_at);
             status = email.status;
            
@@ -714,12 +725,12 @@ class MessageList extends Component {
             ){
             if (this.props.selectedService === 'signature'){
                 var signature = this.props.signatures.find(s => s.id === event.data.Id);
-                this.props.setTitle(i18n.t('signatureViewer.title'));
                 this.props.signatureClicked(signature);
+                this.props.setTitle(i18n.t('signatureViewer.title'));
             } else if (this.props.selectedService === 'certifiedEmail'){
                 var email = this.props.emails.find(s => s.id === event.data.Id);
-                this.props.setTitle(i18n.t('emailViewer.title'));
                 this.props.emailClicked(email);
+                this.props.setTitle(i18n.t('emailViewer.title'));
             }
             
         }
@@ -729,31 +740,16 @@ class MessageList extends Component {
         if (this.grid && event.item.id.includes('pdfexport') ) {
             let exportProperties = {
                 exportType: 'CurrentPage',
-                pageOrientation: 'Landscape'
-                
+                pageOrientation: 'Landscape' 
             };
+            this.grid.columns[0].visible = false;
             this.grid.pdfExport(exportProperties);
-            // let pdfdata = [];
-            // const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
-            // for(let i=0; i<query.queries.length; i++ ){
-            // if(query.queries[i].fn === 'onPage'){
-            //     query.queries.splice(i,1);// remove page query to get all records
-            //     break;
-            // }
-            // }
-            // new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
-            // .then((e) => {
-            //     pdfdata = e.result;   // get all filtered records
-            //     const exportProperties= {
-            //     dataSource: pdfdata,
-            //     pageOrientation: 'Landscape'
-            //     };
-            //     if (this.grid) {
-            //     this.grid.pdfExport(exportProperties);
-            //     }
-            // }).catch((e) => true);
+            /* show columns after pdfExport */
+            this.grid.columns[0].visible = true; 
         } else if (this.grid && event.item.id.includes('excel')){
+            this.grid.columns[0].visible = false;
             this.grid.excelExport();
+            this.grid.columns[0].visible = true; 
         } else if (this.grid && event.item.id.includes('print')) {
             this.grid.print();
             const cols = this.grid.getColumns();
@@ -766,19 +762,18 @@ class MessageList extends Component {
     }
 
     dropDownOptionSelected (args){
-        console.log(args);
         if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
         this.props.selectedService == 'signature') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const signature = this.props.signatures.find(s => s.id === id);
-            this.props.setTitle('PROGRESO DE FIRMA');
             this.props.signatureClicked(signature);
+            this.props.setTitle('PROGRESO DE FIRMA');
         } else if (args.item.text === i18n.t('signaturesGrid.menuEdit') && 
         this.props.selectedService == 'certifiedEmail') {
             const id = this.grid.getSelectedRecords()[0].Id;
             const email = this.props.emails.find(s => s.id === id);
-            this.props.setTitle('PROGRESO DE EMAIL CERTIFICADO');
             this.props.emailClicked(email);
+            this.props.setTitle('PROGRESO DE EMAIL CERTIFICADO');
         } else if (args.item.text === i18n.t('signaturesGrid.menuCancel')){
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
@@ -1026,7 +1021,7 @@ class MessageList extends Component {
         //var emails = (this.props.emails && this.props.emails.length > 0) ? this.props.emails : [{}];
         var emails = ( this.props.emails && this.props.emails.length > 0 ) ? this.getEmails(this.props.emails) : [];
         var selectedServices = (this.props.selectedService && this.props.selectedService == 'signature') ? firmas : emails;
-
+  
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
         const languageSpit = (navigator.language).split('-');
@@ -1061,7 +1056,7 @@ class MessageList extends Component {
                     delayUpdate='true'
                 >
                     <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />
+                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} width='55' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>

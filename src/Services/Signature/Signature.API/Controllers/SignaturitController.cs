@@ -43,6 +43,8 @@
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
+        #region Signatures
+
 
         [HttpGet]
         [Route("signatures/getSignatures/{user}")]
@@ -50,7 +52,7 @@
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
-        public async Task<IActionResult> GetSignatures([FromRoute]string user, [FromHeader] string Authorization)
+        public async Task<IActionResult> GetSignatures([FromRoute] string user, [FromHeader] string Authorization)
         {
             HttpRequest httpRequest = HttpContext.Request;
 
@@ -163,7 +165,7 @@
                 {
                     Console.WriteLine("Response Error");
                     Console.WriteLine(response.Content.ToString());
-                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}" );
+                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}");
                 }
             }
             catch (TimeoutException)
@@ -211,7 +213,7 @@
                 var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
                 string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
 
-                return File(response.RawBytes, response.ContentType, fileName); 
+                return File(response.RawBytes, response.ContentType, fileName);
             }
             catch (TimeoutException)
             {
@@ -355,7 +357,9 @@
             }
 
         }
+        #endregion
 
+        #region Branding
         [HttpPost]
         [Route("signatures/newBranding")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
@@ -412,13 +416,13 @@
                 }
                 else
                 {
-                    if (response.ErrorException != null && response.ErrorException.Message == "The request timed-out") 
+                    if (response.ErrorException != null && response.ErrorException.Message == "The request timed-out")
                     {
                         throw new TimeoutException(response.ErrorException.Message);
-                    } 
-                    else 
-                    { 
-                        throw new Exception($"Error: {response.Content}"); 
+                    }
+                    else
+                    {
+                        throw new Exception($"Error: {response.Content}");
                     }
                 }
             }
@@ -432,6 +436,9 @@
             }
 
         }
+        #endregion
+
+        #region CertifiedEmail
 
 
         [HttpGet]
@@ -564,6 +571,141 @@
             }
         }
 
+        #endregion
+
+        #region CertifiedSms
+        [HttpGet]
+        [Route("sms/getSms/{user}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> GetSms([FromRoute] string user, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("A user must be provided");
+
+            try
+            {
+                var response = await _signaturitService.GetSms(user);
+
+                return Ok(response.Content);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+            }
+        }
+
+
+        [HttpPost]
+        [Route("sms/newSms")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> CreateSms([FromBody] CreateSms smsInfo, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (Object.Equals(smsInfo, null))
+                return BadRequest("Signature information must be provided.");
+
+            try
+            {
+                var response = await _signaturitService.CreateSms(smsInfo);
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Response IsSuccessful");
+                    return Ok(response.Content);
+                }
+                else
+                {
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    if (response.ErrorException != null)
+                    {
+                        throw new Exception($"Internal Exception: {response.ErrorException.Message} - Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
+                    else
+                    {
+                        throw new Exception($"Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
+            }
+
+        }
+
+
+        [HttpGet]
+        [Route("sms/download/{smsId}/certificate/{certificateId}/")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> DownloadSmsCertification([FromRoute] string smsId, [FromRoute] string certificateId, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(smsId) || string.IsNullOrEmpty(certificateId))
+                return BadRequest("A signatureId and documentId must be provided.");
+
+            try
+            {
+
+                var response = await _signaturitService.DownloadSmsCertification(smsId, certificateId);
+
+                var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+                string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+                return File(response.RawBytes, response.ContentType, fileName);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+
+            }
+        }
+        #endregion
+
+        #region Token
         private bool checkToken(string authToken)
         {
             var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/utils/Lexon/token/validation?validateCaducity=false");
@@ -577,7 +719,7 @@
 
             var valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
 
-            Console.WriteLine($"TokenValid:{valid} - {authToken}");        
+            Console.WriteLine($"TokenValid:{valid} - {authToken}");
 
             //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
             //Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
@@ -587,5 +729,6 @@
 
             return valid;
         }
+        #endregion
     }
 }

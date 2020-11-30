@@ -481,7 +481,8 @@ class App extends Component {
       return <MessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } else if(application.newMessage &&
       Object.keys(application.newMessage).length > 0
-      && application.newMessage.sendingType == 'emailCertificate') {
+      && application.newMessage.sendingType == 'emailCertificate'
+      ) {
         return <EmailMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
@@ -671,7 +672,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    document.title = this.props.application.title;
+    // document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
     var self = this;
     let dataMailContacts = [];

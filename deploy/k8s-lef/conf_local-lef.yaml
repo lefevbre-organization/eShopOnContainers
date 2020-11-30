@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: externalcfg
+  labels:
+    app: elefevbre  
+data:
+  lexon__ConnectionString: mongodb://nosql-data
+  lexon__Database: LexonApiDb
+  lexon__LexonMySqlUrl: todo
+  lexon__LexonFilesUrl: todo
+  lexonmysql__ConnectionString: Server=sql-data;Initial Catalog=Microsoft.eShopOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word;
+  lexonmysql__LexonHubUrl: todo-a-eliminar-por-userutils
+  centinela__ConnectionString: mongodb://nosql-data
+  centinela__Database: CentinelaApiDb
+  centinela__CentinelaUrl: todo
+  centinela__CentinelaLogin: todo
+  centinela__CentinelaPassword: todo
+  userutils__ConnectionString: mongodb://nosql-data
+  userutils__Database: UserUtilsDb
+  userutils__MinihubUrl: todo
+  userutils__LoginUrl: todo
+  userutils__OnlineUrl: todo
+  userutils__OnlineLogin: todo
+  userutils__OnlinePassword: todo
+  userutils__TokenCaducity: 1000
+  userutils__TokenKey: todo
+  accounts__ConnectionString: mongodb://nosql-data
+  accounts__Database: LocationsDb #MailAccounts
+  signature__ConnectionString: mongodb://nosql-data
+  signature__Database: signature
+  identity__ConnectionString: Server=sql-data;Initial Catalog=Microsoft.eShopOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word;
+  all__EventBusConnection: rabbitmq
+  all__EventBusUserName: guest
+  all__EventBusPassword: guest
+  all__InstrumentationKey: ""
+  all__EnableLoadTest: "False"
+  all__UseAzureServiceBus: "False"
+
+
+

@@ -12,7 +12,7 @@
     {
         Task<RestSharp.IRestResponse> GetSignatures(string user);
 
-        Task<RestSharp.IRestResponse> CancelSignature(string  signatureId);
+        Task<RestSharp.IRestResponse> CancelSignature(string signatureId);
 
         Task<RestSharp.IRestResponse> CreateSignature(CreateSignaturit signatureInfo);
 
@@ -31,6 +31,12 @@
         Task<RestSharp.IRestResponse> CreateEmail(CreateEmail emailInfo);
 
         Task<RestSharp.IRestResponse> DownloadCertification(string emailId, string certificationId);
+
+        Task<RestSharp.IRestResponse> GetSms(string user);
+
+        Task<RestSharp.IRestResponse> CreateSms(CreateSms smsInfo);
+
+        Task<RestSharp.IRestResponse> DownloadSmsCertification(string smsId, string certificationId);
 
     }
 }

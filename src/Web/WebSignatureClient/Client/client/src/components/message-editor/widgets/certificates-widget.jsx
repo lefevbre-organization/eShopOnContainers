@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './widgets.scss';
 import i18n from 'i18next';
 import Checkbox from "../../form/checkbox/checkbox";
@@ -14,6 +14,10 @@ const CertificatesWidget = (props) => {
         // {name: 'El receptor se ha descargado el documento', checked: false, disable: false, option: 5, id: "download_document"},
         // {name: 'El receptor se ha descargado todos los documentos', checked: false, disable: false, option: 6, id: "download_every_document"},
     ]);
+
+    useEffect(() => {
+      props.onChange(certificates);
+    }, [certificates]);
 
     const handleChecked = (e) => {
         let isCheck = !e.target.checked ? false : true;

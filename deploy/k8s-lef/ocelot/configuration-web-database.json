@@ -1,0 +1,35 @@
+﻿{
+  "ReRoutes": [
+    {
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "database",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/dat/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/Database/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userutils",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
+    }
+   
+  ],
+    "GlobalConfiguration": {
+      "RequestIdKey": "OcRequestId",
+      "AdministrationPath": "/administration"
+    }
+}
+  

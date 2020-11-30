@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.svc.conferenceapi }}
+  labels:
+    app: {{ template "conference-api.name" . }}
+    chart: {{ template "conference-api.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Values.lef.version | quote }} 
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "conference-api.name" . }}
+    release: {{ .Release.Name }}

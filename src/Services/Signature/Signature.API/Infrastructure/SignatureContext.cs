@@ -76,9 +76,11 @@ namespace Signature.API.Infrastructure
             //if (!BsonClassMap.IsClassMapRegistered(typeof(Signatures))) { BsonClassMap.RegisterClassMap<Signatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserSignatures))) { BsonClassMap.RegisterClassMap<UserSignatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseBrandings))) { BsonClassMap.RegisterClassMap<BaseBrandings>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserEmails))) { BsonClassMap.RegisterClassMap<UserEmails>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserSms))) { BsonClassMap.RegisterClassMap<UserSms>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(SignEventInfo))) { BsonClassMap.RegisterClassMap<SignEventInfo>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(EmailEventInfo))) { BsonClassMap.RegisterClassMap<EmailEventInfo>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(UserEmails))) { BsonClassMap.RegisterClassMap<UserEmails>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(SmsEventInfo))) { BsonClassMap.RegisterClassMap<SmsEventInfo>(); }
             //if (!BsonClassMap.IsClassMapRegistered(typeof(Signature.API.Model.EventInfo))) { BsonClassMap.RegisterClassMap<Signature.API.Model.EventInfo>(); }
         }
 
@@ -103,7 +105,7 @@ namespace Signature.API.Infrastructure
         //}
 
         public IMongoCollection<UserSignatures> Signatures => Database.GetCollection<UserSignatures>(_settings.Value.CollectionSignatures);
-        
+
         public IMongoCollection<Signatures> SignaturesTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Signatures>(_settings.Value.CollectionSignatures);
@@ -140,6 +142,17 @@ namespace Signature.API.Infrastructure
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserEmails>(_settings.Value.CollectionEmails);
         }
+
+        public IMongoCollection<UserSms> Sms => Database.GetCollection<UserSms>(_settings.Value.CollectionSms);
+
+        public IMongoCollection<UserSms> SmsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserSms>(_settings.Value.CollectionSms);
+        }
+
+        public IMongoCollection<SmsEventInfo> SmsEvents => Database.GetCollection<SmsEventInfo>(_settings.Value.CollectionSmsEvents);
+
+        public IMongoCollection<SmsEventInfo> SmsEventsTransaction => Database.GetCollection<SmsEventInfo>(_settings.Value.CollectionSmsEvents);
 
         //public IMongoCollection<SignatureMaster> SignatureMasters
         //{

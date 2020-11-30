@@ -1,0 +1,6 @@
+configValues: |
+  window.REACT_APP_ENVIRONMENT='DEV'
+  window.PATH_BASE='https://lexbox-dev'
+  window.PATH_DOMINION='lefebvre.es'
+  window.SHOW_EXPERIMENTAL='1'
+  window.RELEASE = 'RC 98.39'
