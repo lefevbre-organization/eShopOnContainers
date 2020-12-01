@@ -696,6 +696,10 @@ public class ImapService {
         ret.put("mail.imaps.socketFactory", mailSSLSocketFactory);
         ret.put("mail.imaps.socketFactory.fallback", false);
         ret.put("mail.imaps.ssl.socketFactory", mailSSLSocketFactory);
+        ret.put("mail.imap.partialfetch","false");
+        ret.put("mail.imap.fetchsize", "1048576"); 
+        ret.put("mail.imaps.partialfetch", "false"); 
+        ret.put("mail.imaps.fetchsize", "1048576");
         return ret;
     }
 
