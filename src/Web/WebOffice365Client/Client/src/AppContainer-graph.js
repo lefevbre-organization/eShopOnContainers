@@ -189,9 +189,9 @@ class AppContainerGraph extends Component {
       error: { message: message, debug: debug },
     });
   }
-
+ //loginPopup
   async login() {
-    try {
+      try {       
       await this.userAgentApplication.loginRedirect({
         scopes: config.scopes,
         prompt: 'select_account',

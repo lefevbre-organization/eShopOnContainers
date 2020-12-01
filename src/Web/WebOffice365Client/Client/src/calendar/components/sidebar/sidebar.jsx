@@ -128,9 +128,16 @@ export class Sidebar extends PureComponent {
         const { t } = this.props;
         return (
             <React.Fragment>
-                <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
-                    <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>                   
-                </div>  
+
+                {!this.props.isIframeContainer ? (
+                    <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
+                        <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
+                    </div>
+
+                ) : (
+                        <div></div>
+                    )}
+
                 <li key="olders-nav-title" className="pl-2 nav-title">
                     <span> {t("calendar-sidebar.mycalendars")}</span>
                    

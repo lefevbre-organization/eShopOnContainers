@@ -178,13 +178,13 @@ export class Main extends Component {
         this.drowDownListEventType = undefined;
         this.drowDownListSensitivity = undefined;
 
-        //params for iframe enbebed functions
-        if (this.props.location.search == "?layout=iframe") {
-            this.layoutIframe = true;
-        }
-        else {
-            this.layoutIframe = false;
-        }
+        ////params for iframe enbebed functions
+        //if (this.props.location.search == "?layout=iframe") {
+        //    this.layoutIframe = true;
+        //}
+        //else {
+        //    this.layoutIframe = false;
+        //}
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -710,6 +710,11 @@ export class Main extends Component {
     }
 
     componentDidMount() {
+
+        if (this.layoutIframe) {
+            this.setState({ leftSideBar: { collapsed: true } })
+        }  
+
         window.addEventListener(
             'EventClassified',
             this.handleClassificatedEvent
@@ -1346,47 +1351,88 @@ export class Main extends Component {
 
     }
 
+    addLogOutButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let logoutIconEle = scheduleElement.querySelector('.e-schedule-logout-icon');
+            logoutIconEle.onclick = () => {
+                // alert('logout');
+                signOut();
+                window.location.reload();
+            };
+        }
+        let logoutContentEle = createElement('div', {
+            className: 'e-profile-wrapper'
+        });
+
+        scheduleElement.parentElement.appendChild(logoutContentEle);
+
+
+    }
+
+
+
+
+    addCalendarsButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+            calendarIconEle.onclick = () => {
+                this.toggleSideBar()
+                //this.profilePopupCalendar.relateTo = calendarIconEle;
+                //this.profilePopupCalendar.dataBind();
+                //if (this.profilePopupCalendar.element.classList.contains('e-popup-close')) {
+                //    this.profilePopupCalendar.show();
+                //}
+                //else {
+                //    this.profilePopupCalendar.hide();
+                //}
+            };
+        }
+        //let calendarContentEle = createElement('div', {
+        //    className: 'e-profile-wrapper'
+        //});
+
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
+
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
+        //let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+
+        //let output = this.sidebarObj;
+        //this.profilePopupCalendar = new Popup(calendarContentEle, {
+        //    content: output,
+        //    relateTo: calendarIconEle,
+        //    position: { X: 'left', Y: 'bottom' },
+        //    collision: { X: 'flip', Y: 'flip' },
+        //    targetType: 'relative',
+        //    viewPortElement: scheduleElement,
+        //    width: 150,
+        //    height: 300
+        //});
+        //this.profilePopupCalendar.hide();
+
+
+    }
+
     onEventRendered(args) {
 
         let event;
 
         switch (args.requestType) {
 
-            //case 'toolBarItemRendered':
+            case 'toolBarItemRendered':
 
-            //    let scheduleElement = document.getElementById('schedule');
-            //    if (args.requestType === 'toolBarItemRendered') {
-            //        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-            //        userIconEle.onclick = () => {
-            //            this.profilePopup.relateTo = userIconEle;
-            //            this.profilePopup.dataBind();
-            //            if (this.profilePopup.element.classList.contains('e-popup-close')) {
-            //                this.profilePopup.show();
-            //            }
-            //            else {
-            //                this.profilePopup.hide();
-            //            }
-            //        };
-            //    }
-            //    let userContentEle = createElement('div', {
-            //        className: 'e-profile-wrapper'
-            //    });
-            //    scheduleElement.parentElement.appendChild(userContentEle);
-            //    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-            //    let output = this.buttonEventTypeObj.element;
-            //    this.profilePopup = new Popup(userContentEle, {
-            //        content: output,
-            //        relateTo: userIconEle,
-            //        position: { X: 'left', Y: 'bottom' },
-            //        collision: { X: 'flip', Y: 'flip' },
-            //        targetType: 'relative',
-            //        viewPortElement: scheduleElement,
-            //        width: 150,
-            //        height: 60
-            //    });
-            //    this.profilePopup.hide();
+                //if not iframe view
+                if (!this.layoutIframe) {
+                   // this.addConfigurationButton(args);
 
-            //    break;
+                }
+                else {
+                    this.addLogOutButton(args);
+
+                }
+                this.addCalendarsButton(args);
+                break;
 
             case 'eventChanged':
 
@@ -1800,14 +1846,35 @@ export class Main extends Component {
     }
 
     onActionBegin(args) {
-        //if (args.requestType === 'toolbarItemRendering') {
-        //    if (args.requestType === 'toolbarItemRendering') {
-        //        let userIconItem = {
-        //            align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
-        //        };
-        //        args.items.push(userIconItem);
-        //    }
-        //}
+
+        //ask for iframe
+
+        if (args.requestType === 'toolbarItemRendering') {
+            if (args.requestType === 'toolbarItemRendering') {
+                let CalendarsIconItem = {
+                    align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
+                };
+                args.items.push(CalendarsIconItem);
+
+                if (!this.layoutIframe) {
+                    //let userIconItem = {
+                    //    align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                    //};
+
+                    //args.items.push(userIconItem);
+                }
+                else {
+
+
+                    let LogOutIconItem = {
+                        align: 'Right', prefixIcon: 'logout-icon', text: '', cssClass: 'e-schedule-logout-icon'
+                    };
+                    args.items.push(LogOutIconItem);
+                }
+
+            }
+        }
+
     }
 
     onEventTypeClick() {
@@ -1932,7 +1999,7 @@ export class Main extends Component {
 
                         <section className='main hbox space-between'>
                             <Sidebar
-                                sideBarCollapsed={!this.layoutIframe ? (false) : (true)}
+                                sideBarCollapsed={this.state.leftSideBar.collapsed}
                                 sideBarToggle={this.toggleSideBar}
                                 getCalendarList={this.sidebarCalendarList}
                                 pathname={this.props.location.pathname}
@@ -1944,6 +2011,7 @@ export class Main extends Component {
                                 onCalendarOpenCalnendarView={this.openCalendarView}
                                 onCalendarDelete={this.deleteCalendar}
                                 onCalendarColorModify={this.calendarColorModify}
+                                isIframeContainer={this.layoutIframe} 
 
                             />
                             <article className='d-flex flex-column position-relative'>

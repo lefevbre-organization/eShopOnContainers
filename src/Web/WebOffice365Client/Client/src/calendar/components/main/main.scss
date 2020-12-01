@@ -260,6 +260,21 @@
     display: none;
 }
 
+.schedule-header-bar.e-schedule .e-schedule-toolbar .logout-icon {
+    background-image: url('/assets/img/icon-close-session.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.schedule-header-bar.e-schedule .e-schedule-toolbar .calendar-icon {
+    background-image: url('/assets/img/icon-calendar-check.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    min-width: 24px !important;
+}
+
+
+
 .e-profile-wrapper {
     width: 210px;
     height: 80px;
@@ -348,3 +363,4 @@
 #target > div:nth-child(2) {
      z-index: 1004 !important;
 }
+
