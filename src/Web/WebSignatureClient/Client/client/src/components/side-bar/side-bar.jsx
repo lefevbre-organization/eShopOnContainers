@@ -223,66 +223,6 @@ class SideBar extends Component {
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose}
         />
-        <style jsx global>
-          {`
-            #sendingTypeDialog {
-              top: 17% !important;
-            }
-
-            #sendingTypeDialog .e-dlg-header {
-              width: 60% !important;
-            }
-
-            #noSignaturesDialog_dialog-header, 
-            #noSignaturesDialog_title, 
-            #noSignaturesDialog_dialog-content, 
-            .e-footer-content  {
-              background: #c5343f !important;
-              color: #fff !important;
-              display:flex !important;
-            }
-
-            #sendingTypeDialog_dialog-header, #sendingTypeDialog_title {
-              background: #001978;
-              color: #fff;
-              font-size: 14px;
-              padding-left: 22px;
-            }
-
-            #sendingTypeDialog_dialog-header {
-              padding: 24px !important;
-            }
-
-            #sendingTypeDialog_dialog-content {
-              padding-top: 15px;
-              padding-bottom: 30px;
-            }
-
-            #confirmDialog_dialog-header > button > span {
-              color: white;
-              font-size: 12px;
-            }
-
-            #sendingTypeDialog_dialog-header > button > span {
-              color: white;
-              font-size: 12px;
-            }
-
-            .e-dlg-header {
-              width: 1% !important;
-            }
-
-            .e-dialog .e-icon-dlg-close::before {
-              content: '\e7fc';
-              position: relative;
-              font-size: 12px
-            }
-
-            #noSignaturesDialog .e-btn.e-flat.e-primary {
-              color: #fff !important;
-            }
-          `}
-        </style>
       </aside>
     );
   }

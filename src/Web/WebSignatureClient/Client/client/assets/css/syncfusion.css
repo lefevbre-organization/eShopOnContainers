@@ -1,3 +1,48 @@
+/* Component Sibar */
+
+#noSignaturesDialog #noSignaturesDialog_dialog-header, 
+#noSignaturesDialog #noSignaturesDialog_title, 
+#noSignaturesDialog #noSignaturesDialog_dialog-content, 
+#noSignaturesDialog .e-footer-content  {
+    background: #c5343f !important;
+    color: #fff !important;
+    display:flex !important;
+}
+
+ #noSignaturesDialog .e-btn.e-flat.e-primary {
+    color: #fff !important;
+}
+
+#sendingTypeDialog {
+  top: 17% !important;
+}
+
+#sendingTypeDialog .e-dlg-header {
+  width: 60% !important;
+}
+
+#sendingTypeDialog #sendingTypeDialog_dialog-header, 
+#sendingTypeDialog #sendingTypeDialog_title {
+  background: #001978;
+  color: #fff;
+  font-size: 14px;
+  padding-left: 22px;
+}
+
+#sendingTypeDialog #sendingTypeDialog_dialog-header {
+  padding: 24px !important;
+}
+
+#sendingTypeDialog #sendingTypeDialog_dialog-content {
+  padding-top: 15px;
+  padding-bottom: 30px;
+}
+
+#sendingTypeDialog #sendingTypeDialog_dialog-header > button > span {
+  color: white;
+  font-size: 12px;
+}
+
 /* Component message-list  */
 #message-list .e-headercell {
     background-color: #001978 !important;
