@@ -7,6 +7,7 @@ import { resetDefaultAccount } from "../../api/accounts";
 
 
 export class Login extends Component {
+   
 
 goBack() {
    if (typeof this.props.lexon !== 'undefined') {
@@ -24,7 +25,12 @@ goBack() {
    }
 }
 
-  render() {
+    render() {
+        let iframe = false
+        if (window != window.top) {
+            iframe = true
+        }
+
     return (
       <div className="d-flex align-content-center align-items-center w-100 h-100 text-center">
         <div className="mx-auto ">
@@ -33,9 +39,9 @@ goBack() {
                 type="dark"
                 onClick={this.props.onSignIn}
                 label={i18n.t("login.button")}              
-              />
+                    />
               <Button
-                className="mr-left font-weight-bold btn-outline-primary margin-top"
+                className={`mr-left font-weight-bold btn-outline-primary margin-top ${iframe ? "hidden" : ""}`}                        
                 title={i18n.t("login.cancel")}
                 color="secondary"
                 onClick={() => {

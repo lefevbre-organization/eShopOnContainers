@@ -82,7 +82,7 @@ export class Main extends Component {
         this.toggleSideBar = this.toggleSideBar.bind(this);
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
-        this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
+        this.handleScheduleOpenNewEventEditor = this.handleScheduleOpenNewEventEditor.bind(this);
         this.openCalendarView = this.openCalendarView.bind(this);
         this.deleteCalendar = this.deleteCalendar.bind(this);
         this.calendarColorModify = this.calendarColorModify.bind(this);
@@ -220,7 +220,7 @@ export class Main extends Component {
             }
         ];
 
-        this.checkForParams()
+        this.TokensFlows();
     }
 
     toggleSideBar() {
@@ -245,17 +245,18 @@ export class Main extends Component {
         }
     }
 
-    checkForParams() {
-
-        let params = (new URL(document.location)).searchParams;
-
-        if (params.get('layout') != undefined) {
+    TokensFlows() {
+        if (window != window.top) {
             this.layoutIframe = true;
         }
 
-        if (params.get('newEvent') != undefined) {
-            this.layoutIframeEventView = true;
+        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+            this.layoutIframeEditEventView = true
         }
+        else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+            this.layoutIframeNewEventView = true
+        }
+
     }
 
     convertUnicode(input) {
@@ -685,6 +686,17 @@ export class Main extends Component {
 
     onCloseDialog() {
         this.LoadCalendarList(false)
+
+
+        window.top.postMessage(
+            JSON.stringify({
+                idEvent: undefined,
+                actionCancelled: true,
+                selectedDate: undefined
+            }),
+            window.URL_LEXON
+        );
+
     }
 
     async handleClassificatedEvent(event) {
@@ -752,10 +764,17 @@ export class Main extends Component {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
 
-             // New event is called by params
-            if (obj.layoutIframeEventView) {
+            // New event is called 
+            if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
-                    obj.handleScheduleOpenEditor()
+                    obj.handleScheduleOpenNewEventEditor()
+                }, 1000);
+            }
+
+            // Edit event is called 
+            if (obj.layoutIframeEditEventView) {
+                setTimeout(function () {
+                    obj.handleScheduleOpenEditEventEditor()
                 }, 1000);
             }  
 
@@ -1023,11 +1042,11 @@ export class Main extends Component {
         var DateMessage = args.data.startTime
         window.top.postMessage(
             JSON.stringify({
-                id: 2,
-                error: false,
-                message: DateMessage
+                idEvent: args.data.Id,
+                actionCancelled: false,
+                selectedDate: DateMessage
             }),
-            'http://localhost:8080'
+            window.URL_LEXON
         );
 
         //Not allow to change calendar property on update events
@@ -1173,10 +1192,11 @@ export class Main extends Component {
 
             }, 1000);
 
-            if (this.layoutIframe & this.layoutIframeEventView) {
+            if (this.layoutIframe & this.layoutIframeNewEventView || this.layoutIframeEditEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
                 head.classList.add('hidden');
             }
+
             this.selectedEvent = { ...args.data,  ...(this.scheduleData.find( item => item.Id === args.data.Id ) || undefined)};
 
             this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
@@ -1719,7 +1739,9 @@ export class Main extends Component {
         this.scheduleObj.dataBind();
     }
 
-    handleScheduleOpenEditor() {
+   
+
+    handleScheduleOpenNewEventEditor() {
         var endTimeDate = new Date();
         endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
         let cellData = {
@@ -1728,6 +1750,12 @@ export class Main extends Component {
         };
         this.scheduleObj.openEditor(cellData, 'Add');
     }
+
+    handleScheduleOpenEditEventEditor() {
+        let eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent)
+        this.scheduleObj.openEditor(eventData, 'Save');
+    }
+
 
     sidebarCalendarList() {
         this.props.getCalendars();
