@@ -96,7 +96,10 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add appointment to lexon", ex), Codes.LexonActuations.UpsertAppointment, "MYSQLCONN");
+                TraceError(result.errors,
+                           new LexonDomainException($"Error when add appointment to lexon", ex),
+                           Codes.LexonActuations.UpsertAppointment,
+                           Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -136,14 +139,20 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), Codes.LexonActuations.RemoveAppointment, "MYSQLCONN");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when remove appointment of lexon", ex),
+                               Codes.LexonActuations.RemoveAppointment,
+                               Codes.Areas.MySqlConn);
                 }
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), Codes.LexonActuations.RemoveAppointment, "MYSQL");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Mysql don´t remove the classification"),
+                               Codes.LexonActuations.RemoveAppointment,
+                               Codes.Areas.MySqlConn);
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }
@@ -187,7 +196,10 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add appointment to action", ex), Codes.LexonActuations.AddAppointmentAction, "MYSQLCONN");
+                TraceError(result.errors,
+                           new LexonDomainException($"Error when add appointment to action", ex),
+                           Codes.LexonActuations.AddAppointmentAction,
+                           Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -224,7 +236,10 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when remove appointment of lexon", ex), Codes.LexonActuations.RemoveAppointmentAction, "MYSQLCONN");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when remove appointment of lexon", ex),
+                               Codes.LexonActuations.RemoveAppointmentAction,
+                               Codes.Areas.MySqlConn);
                 }
             }
 
@@ -284,7 +299,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.infos.Count > 1)
-                                        TraceError(result.errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.LexonActuations.GetRelationsOfAppointment, "MYSQL");
+                                        TraceError(result.errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.LexonActuations.GetRelationsOfAppointment, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.infos, "MySql get and empty string with this search", Codes.LexonActuations.GetRelationsOfAppointment);
                                 }
@@ -294,7 +309,10 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when get relations of appointment", ex), Codes.LexonActuations.GetRelationsOfAppointment, "MYSQLCONN");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when get relations of appointment", ex),
+                               Codes.LexonActuations.GetRelationsOfAppointment,
+                               Codes.Areas.MySqlConn);
                 }
             }
 
@@ -321,6 +339,63 @@ namespace Lexon.Infrastructure.Services
                 act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.entityIdType);
                 // act.idMail = appointmentActuation.uid;
             }
+        }
+
+        public async Task<Result<List<LexAppointment>>> GetAppointmentsAsync(string idUser, string bbdd, string env, string fromDate, string toDate, int pageSize, int pageIndex)
+        {
+            var result = new Result<List<LexAppointment>>(new List<LexAppointment>());
+            ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonActuations.GetAppointments);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    string filtro = GetAppointmentsSearchFilter(idUser, bbdd, fromDate, toDate);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAppointments, conn))
+                    {
+                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
+                        var r = command.ExecuteNonQuery();
+                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetAppointments, nameof(GetAppointmentsAsync));
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+
+                            while (reader.Read())
+                            {
+                                var rawJson = reader.GetValue(0).ToString();
+                                var resultado = (JsonConvert.DeserializeObject<LexAppointment[]>(rawJson)).ToList();
+                                result.data = resultado;
+                            }
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when get actuations", ex),
+                               Codes.LexonActuations.GetActuations,
+                               Codes.Areas.MySqlConn);
+                }
+            }
+
+            if (_settings.Value.UseMongo)
+            {
+                //await GetActuationCategoriesMongoAsync(result);
+            }
+
+            return result;
+        }
+
+        private string GetAppointmentsSearchFilter(string idUser, string bbdd, string fromDate, string toDate)
+        {
+            return $"{{ " +
+                GetUserFilter(bbdd, idUser) +
+                GetTextFilter("StartDate", fromDate) +
+                GetTextFilter("EndDate", toDate) +
+            $" }}";
         }
 
         private string GetRelationsApointmentFilter(string bbdd, string idUser, string idAppointment)
@@ -370,7 +445,10 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when get thet types of actuations", ex), Codes.LexonActuations.GetActuationTypes, "MYSQLCONN");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when get thet types of actuations", ex),
+                               Codes.LexonActuations.GetActuationTypes,
+                               Codes.Areas.MySqlConn);
                 }
             }
 
@@ -420,7 +498,10 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when get thet categories of actuations", ex), Codes.LexonActuations.GetActuationCategories, "MYSQLCONN");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when get thet categories of actuations", ex),
+                               Codes.LexonActuations.GetActuationCategories,
+                               Codes.Areas.MySqlConn);
                 }
             }
 
@@ -478,7 +559,10 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when get actuations", ex), Codes.LexonActuations.GetActuations, "MYSQLCONN");
+                    TraceError(result.errors,
+                               new LexonDomainException($"Error when get actuations", ex),
+                               Codes.LexonActuations.GetActuations,
+                               Codes.Areas.MySqlConn);
                 }
             }
 
@@ -489,7 +573,6 @@ namespace Lexon.Infrastructure.Services
 
             return result;
         }
-
         private string GetActuationSearchFilter(string idUser, string bbdd, string idType, int? idCategory, string filter)
         {
             return $"{{ " +
@@ -529,7 +612,10 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add action", ex), Codes.LexonActuations.AddAction, "MYSQLCONN");
+                TraceError(result.errors,
+                           new LexonDomainException($"Error when add action", ex),
+                           Codes.LexonActuations.AddAction,
+                           Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -565,7 +651,6 @@ namespace Lexon.Infrastructure.Services
                 //GetTextFilter("idLexnet", action.IdLexnet) +
                 $" }}";
         }
-
         #endregion Actuations
     }
 }

@@ -32,7 +32,7 @@ namespace Lexon.Infrastructure.Services
             if (codeError != null)
             {
                 codeError += $" in {procCaller} - SP[{command.CommandText}]";
-                TraceError(errors, new LexonDomainException(codeError), idError, "MYSQL");
+                TraceError(errors, new LexonDomainException(codeError), idError, Codes.Areas.MySql);
             }
         }
 

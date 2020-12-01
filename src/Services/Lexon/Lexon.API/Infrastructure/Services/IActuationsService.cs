@@ -1,6 +1,7 @@
 ﻿using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lexon.Infrastructure.Services
@@ -50,6 +51,6 @@ namespace Lexon.Infrastructure.Services
                                                        string env,
                                                        string idUser,
                                                        string bbdd);
-
+        Task<Result<List<LexAppointment>>> GetAppointmentsAsync(string idUser, string bbdd, string env, string fromDate, string toDate, int pageSize, int pageIndex);
     }
 }

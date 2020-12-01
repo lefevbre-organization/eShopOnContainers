@@ -60,6 +60,7 @@ namespace Lexon.API
         public string GetActuationTypes { get; set; }
         public string GetActuationCategories { get; set; }
         public string GetActuations { get; set; }
+        public string GetAppointments { get; set; }
         public string SearchAppointmentRelations { get; set; }
         public string GetAdvisorFiles { get; set; }
 

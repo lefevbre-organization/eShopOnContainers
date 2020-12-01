@@ -9,6 +9,8 @@
             public static readonly string AddAppointmentAction = "LX52";
             public static readonly string RemoveAppointmentAction = "LX53";
             public static readonly string GetRelationsOfAppointment = "LX54";
+            public static readonly string GetAppointments = "LX55";
+
 
             public static readonly string GetActuationTypes = "LX60";
             public static readonly string GetActuationCategories = "LX61";
@@ -91,6 +93,8 @@
             public static readonly string InternalApi = "APISVC";
             public static readonly string Online = "ONLINESVC";
             public static readonly string Centinela = "CENTINELASVC";
+            public static readonly string MySqlConn = "MYSQLCONN";
+            public static readonly string MySql = "MYSQL";
         }
     }
 }
