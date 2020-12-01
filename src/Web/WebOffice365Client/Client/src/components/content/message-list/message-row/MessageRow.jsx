@@ -32,11 +32,12 @@ export class MessageItem extends PureComponent {
 
   getMessage(evt) {
     const EncodeIdMessage = encodeURI(this.props.data.id);
-    if(this.props.data.isDraft){
-      this.props.history.push(`/compose/${EncodeIdMessage}`);
-    } else {
-      this.props.history.push(`/${EncodeIdMessage}`);
-    } 
+    this.props.history.push(`/${EncodeIdMessage}`);
+    // if(this.props.data.isDraft) {
+    //   this.props.history.push(`/compose/${EncodeIdMessage}`);
+    // } else {
+    //   this.props.history.push(`/${EncodeIdMessage}`);
+    // } 
   }
 
   getFromName(from) {
