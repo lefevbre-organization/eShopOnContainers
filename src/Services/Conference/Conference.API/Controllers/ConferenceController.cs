@@ -46,7 +46,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return Ok(new Result<string>(data));
         }
 
-        [HttpPost("conference")]
+        [HttpPost("conference/js")]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ConferenceCreateAsync(
@@ -61,7 +61,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors.Count > 0 ? (IActionResult)BadRequest(result.data) : Ok(result.data);
         }
 
-        [HttpPost("conference/qs")]
+        [HttpPost("conference")]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ConferenceCreateQSAsync(
@@ -127,7 +127,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{idNavision}/room/{name}/redirect")]
+        [HttpGet("{idNavision}/room/{name}/redirect")]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateRoomRedirectAsync(
@@ -140,7 +140,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
 
             Result<UserConference> result = await _service.CreateRoomAsync(idNavision, name, idApp);
 
-            if (result.data.rooms?.ToList()?.Count > 0 || result?.data?.rooms[0].url == null || result.errors.Count > 0)
+            if (result.data.rooms?.ToList()?.Count <= 0 || result?.data?.rooms[0].url == null || result.errors.Count > 0)
                 return BadRequest(result);
 
             return Redirect(result.data.rooms[0].url);
