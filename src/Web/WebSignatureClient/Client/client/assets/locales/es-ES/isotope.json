@@ -340,6 +340,21 @@
     },
     "title": "PROGRESO DE EMAIL"
   },
+  "smsViewer": {
+    "certification": "Tipo de certificación seleccionada:",
+    "smsDelivered": "El receptor ha recibido el SMS",
+    "docOpened": "El receptor ha visto los documentos",
+    "openEveryDocument": "El receptor ha abierto todos los documentos",
+    "docDownloaded": "El receptor se ha descargado el documento",
+    "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
+    "attaches": "DOCUMENTOS ADJUNTOS",
+    "attachedDocOpened": "Documento abierto",
+    "pendingDoc": "Pendiente de abrir",
+    "buttons": {
+      "downloadTrail": "Descargar auditoria"
+    },
+    "title": "PROGRESO DE SMS"
+  },
   "signatureViewer":{
     "grid": {
       "document": "Documento",

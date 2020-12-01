@@ -312,7 +312,7 @@
     "docOpened": "the recipient has opened the document",
     "openEveryDocument": "The recipient has opened the every documents",
     "docDownloaded": "the recipient has downloaded the document",
-    "downloadEveryDocument": "the recipient has downloaded the every documents",
+    "downloadEveryDocument": "the recipient has downloaded all documents",
     "attaches": "ATTACHED DOCUMENTS",
     "attachedDocOpened": "Document opened",
     "pendingDoc": "Pending to open",
@@ -320,6 +320,21 @@
       "downloadTrail": "Download audit"
     },
     "title": "EMAIL PROGRESS"
+  },
+  "smsViewer": {
+    "certification": "Type of certification selected:",
+    "smsDelivered": "The recipient has received the SMS",
+    "docOpened": "The recipient has opened the document",
+    "openEveryDocument": "The recipient has opened the every documents",
+    "docDownloaded": "The recipient has downloaded the document",
+    "downloadEveryDocument": "The recipient has downloaded all documents",
+    "attaches": "ATTACHED DOCUMENTS",
+    "attachedDocOpened": "Document opened",
+    "pendingDoc": "Pending to open",
+    "buttons": {
+      "downloadTrail": "Download audit"
+    },
+    "title": "SMS PROGRESS"
   },
   "signatureViewer":{
     "grid": {

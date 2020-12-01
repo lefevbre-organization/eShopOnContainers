@@ -332,8 +332,8 @@
   },
   "emailViewer": {
     "certification": "Tipo de certificación seleccionada:",
-    "emailDelivered": "el receptor ha recibido el mail",
-    "emailOpened": "el receptor ha abierto el mail",
+    "emailDelivered": "El receptor ha recibido el mail",
+    "emailOpened": "El receptor ha abierto el mail",
     "docOpened": "El receptor ha visto los documentos",
     "openEveryDocument": "El receptor ha abierto todos los documentos",
     "docDownloaded": "El receptor se ha descargado el documento",
@@ -345,6 +345,21 @@
       "downloadTrail": "Descargar auditoria"
     },
     "title": "PROGRESO DE EMAIL"
+  },
+  "smsViewer": {
+    "certification": "Tipo de certificación seleccionada:",
+    "smsDelivered": "El receptor ha recibido el SMS",
+    "docOpened": "El receptor ha visto los documentos",
+    "openEveryDocument": "El receptor ha abierto todos los documentos",
+    "docDownloaded": "El receptor se ha descargado el documento",
+    "downloadEveryDocument": "El receptor se ha descargado todos los documentos",
+    "attaches": "DOCUMENTOS ADJUNTOS",
+    "attachedDocOpened": "Documento abierto",
+    "pendingDoc": "Pendiente de abrir",
+    "buttons": {
+      "downloadTrail": "Descargar auditoria"
+    },
+    "title": "PROGRESO DE SMS"
   },
   "signatureViewer":{
     "grid": {

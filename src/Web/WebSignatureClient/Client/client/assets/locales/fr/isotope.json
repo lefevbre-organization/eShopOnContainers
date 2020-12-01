@@ -325,12 +325,12 @@
   },
   "emailViewer": {
     "certification": "Type de certification sélectionné:",
-    "emailDelivered": "le destinataire a reçu le mail",
-    "emailOpened": "le destinataire a ouvert le mail",
-    "docOpened": "le destinataire a ouvert les document",
+    "emailDelivered": "Le destinataire a reçu le mail",
+    "emailOpened": "Le destinataire a ouvert le mail",
+    "docOpened": "Le destinataire a ouvert les document",
     "openEveryDocument": "Le destinataire a ouvert tous les documents",
-    "docDownloaded": "le destinataire a téléchargé les document",
-    "downloadEveryDocument": "le destinataire a téléchargé tous les documents",
+    "docDownloaded": "Le destinataire a téléchargé les document",
+    "downloadEveryDocument": "Le destinataire a téléchargé tous les documents",
     "attaches": "DOCUMENTS ATTACHÉS",
     "attachedDocOpened": "Document ouvert",
     "pendingDoc": "En attendant l'ouverture",
@@ -338,6 +338,21 @@
       "downloadTrail": "Télécharger audit"
     },
     "title": "DÉTAILS DE LE MAIL"
+  },
+  "smsViewer": {
+    "certification": "Type de certification sélectionné:",
+    "smsDelivered": "Le destinataire a reçu le SMS",
+    "docOpened": "Le destinataire a ouvert les document",
+    "openEveryDocument": "Le destinataire a ouvert tous les documents",
+    "docDownloaded": "Le destinataire a téléchargé les document",
+    "downloadEveryDocument": "Le destinataire a téléchargé tous les documents",
+    "attaches": "DOCUMENTS ATTACHÉS",
+    "attachedDocOpened": "Document ouvert",
+    "pendingDoc": "En attendant l'ouverture",
+    "buttons": {
+      "downloadTrail": "Télécharger audit"
+    },
+    "title": "DÉTAILS DE LE SMS"
   },
   "signatureViewer":{
     "grid": {

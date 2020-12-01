@@ -37,8 +37,17 @@ const Details = (props) => {
               
                 : ''
               }</td>
-              <td>{(props.detail.data.find(x => x.key === "subject")) ? 
-              props.detail.data.find(x => x.key === "subject").value : "Sin asunto"} </td>
+              <td>
+                {
+                  props.service === 'sms'
+                    ? (props.detail.data.find(x => x.key === "body"))
+                        ? props.detail.data.find(x => x.key === "body").value 
+                        : "Sin asunto"
+                    : (props.detail.data.find(x => x.key === "subject")) 
+                      ? props.detail.data.find(x => x.key === "subject").value 
+                      : "Sin asunto"
+                } 
+              </td>
               <td>
                   {/* <ul className={props.styles['tooltip-firmantes']}>
                       <li>Maria cruces <span className={props.styles.email}>margia-cruces@gmail.com</span></li>

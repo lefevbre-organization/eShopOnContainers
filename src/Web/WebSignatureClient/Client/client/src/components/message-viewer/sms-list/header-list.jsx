@@ -2,16 +2,14 @@ import React from 'react';
 import i18n from 'i18next';
 
 const HeaderList = props => {
-  const additionalInfo = props.sms.data.find(x => x.key == 'additional_info');
-  const emails = additionalInfo ? additionalInfo.value.split(':')[3] : '';
-  const email = emails.split('=')[1]  !== '|' ? emails.split('=')[1] : '';
-  const name = props.signer.name;
+  const email = props.signatureConfig[3].replace('email=-', '').replace('email=','');
+  const name = props.signatureConfig[2].replace('name=-', '').replace('name=','');
     return (
         <div className={`${props.styles.p15} ${props.styles.separador} ${props.styles['container-header-list']}`}>
         <div>
           <div>
-            <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}</span>
-            <span className={`${props.styles['certification-email']} ml-4`}>{name ? name : email}: {props.signer.phone}</span>
+            <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}:</span>
+            <span className={`${props.styles['certification-email']} ml-4`}>{name ? name : email} {props.signer.phone.replace('+34', '')}</span>
           </div>
           <div className="text-center"> 
             <span>

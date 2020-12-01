@@ -669,10 +669,11 @@ class SmsMessageEditor extends Component {
   validPhoneNumbers(to){
     let res = {valid: true, desc: 'Ok', phones: []};
     to.forEach(recipient => {
-      let prefix = recipient.address.substring(0,3);
-      let number = recipient.address.substring(3, recipient.address.length);
+      let phone = (recipient && recipient.address && recipient.address.includes('@')) ? recipient.address.split(' ')[1] : recipient.address;
+      let prefix = phone.substring(0,3);
+      let number = phone.substring(3, phone.length);
       let isNum = /^\d+$/.test(number);
-      let phoneLength = recipient.address.length;
+      let phoneLength = phone.length;
 
       if (!isNum) {
         res = {valid: false, desc: 'WrongNumber', phones: []};
@@ -689,13 +690,13 @@ class SmsMessageEditor extends Component {
 
       if (res.valid){
         if (isNum && phoneLength === 9){
-          res.phones.push({originalPhone: recipient.address, normalizedPhone: `+34${recipient.address}`, cleanPhone: recipient.address});
+          res.phones.push({originalPhone: phone, normalizedPhone: `+34${phone}`, cleanPhone: phone});
         }
         else if (phoneLength === 12 && prefix === '+34'){
-          res.phones.push({originalPhone: recipient.address, normalizedPhone: recipient.address, cleanPhone: recipient.address.substring(3, 12)});
+          res.phones.push({originalPhone: phone, normalizedPhone: phone, cleanPhone: phone.substring(3, 12)});
         }
         else if (phoneLength === 13 && prefix === '003'){
-          res.phones.push({originalPhone: recipient.address, normalizedPhone: `+34${recipient.address.substring(4, 13)}`, cleanPhone: recipient.address.substring(4, 13)});
+          res.phones.push({originalPhone: phone, normalizedPhone: `+34${phone.substring(4, 13)}`, cleanPhone: phone.substring(4, 13)});
         }
       }
     });
@@ -927,8 +928,8 @@ class SmsMessageEditor extends Component {
     });
   }
 
-  validateAddress(updatedMessage, id, address, name, email) {
-    const addressData = {address: address, name: name, email: email}
+  validateAddress(updatedMessage, id, address, name, email, phone) {
+    const addressData = {address: address, name: name, email: email, phone: phone}
     if(updatedMessage.to.length == this.state.MaximumSigners) {
          console.log('Maximum Signers');
     } else {
@@ -943,7 +944,7 @@ class SmsMessageEditor extends Component {
    * @param id
    * @param address
    */
-  addAddress(id, address, name, email) {
+  addAddress(id, address, name, email, phone) {
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
       const recipientRepeats = updatedMessage.to.some(data => {
@@ -951,7 +952,7 @@ class SmsMessageEditor extends Component {
      });
    
      if(!recipientRepeats){
-      this.validateAddress(updatedMessage, id, address, name, email);
+      this.validateAddress(updatedMessage, id, address, name, email, phone);
      }
       
     }

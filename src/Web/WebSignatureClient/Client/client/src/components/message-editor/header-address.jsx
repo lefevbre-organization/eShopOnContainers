@@ -55,10 +55,10 @@ export class HeaderAddress extends Component {
             onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}
           >
             {
-              lefebvre.targetService === 'certifiedSms'
+              sendingType === 'smsCertificate'
               ? <div className={mainCss['mdc-chip__text']}>
                   <span>{address.email}</span>
-                  <span className="light-blue-text"> {address.phone} </span>
+                  <span className="light-blue-text"> {address.address} </span>
                 </div>
               : <div className={mainCss['mdc-chip__text']}>
                   <span className="grey-text">{address.address.split(' ')[0]}</span>

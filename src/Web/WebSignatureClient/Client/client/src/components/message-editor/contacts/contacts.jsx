@@ -77,10 +77,16 @@ const Contacts = (props) => {
   const getContactsInfo = () => {
     contacts.forEach(contact => {
         if(contact.checked) {
-          let email = props.sendingType != 'smsCertificate' 
-          ? contact.email : `${contact.email} ${contact.phoneNumber1}`;
+          
+          let address = props.sendingType === 'smsCertificate' ? contact.phoneNumber1 : contact.email; 
+          let name = contact.name;
+          let email = contact.email;
+          let phone = contact.phoneNumber1;
+
+          // let email = props.sendingType != 'smsCertificate' 
+          // ? contact.email : `${contact.email} ${contact.phoneNumber1}`;
           setTimeout(() => {
-            props.onAddressAdd(props.id, email, contact.name);
+            props.onAddressAdd(props.id, address, name, email, phone);
           });
         }
     });

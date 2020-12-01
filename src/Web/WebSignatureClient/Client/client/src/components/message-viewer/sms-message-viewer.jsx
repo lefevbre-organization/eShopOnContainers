@@ -116,25 +116,25 @@ export class SmsMessageViewer extends Component {
     console.log('getReceiverEvent', receiver);
     switch (receiver) {
       case 'delivery':
-        return (i18n.t('emailViewer.emailDelivered'));
+        return (i18n.t('smsViewer.smsDelivered'));
 
       case 'open_email': 
-        return (i18n.t('emailViewer.emailOpened'));
+        return (i18n.t('smsViewer.smsOpened'));
 
       case 'open_document': 
-      return (i18n.t('emailViewer.docOpened'));
+      return (i18n.t('smsViewer.docOpened'));
 
       case 'open_every_document': 
-      return (i18n.t('emailViewer.openEveryDocument'));
+      return (i18n.t('smsViewer.openEveryDocument'));
 
       case 'download_document': 
-      return (i18n.t('emailViewer.docDownloaded'));
+      return (i18n.t('smsViewer.docDownloaded'));
 
       case 'download_every_document': 
-      return (i18n.t('emailViewer.downloadEveryDocument'));
+      return (i18n.t('smsViewer.downloadEveryDocument'));
       
       default:
-        return (i18n.t('emailViewer.emailDelivered'));
+        return (i18n.t('smsViewer.emailDelivered'));
     }
   }
 

@@ -42,6 +42,7 @@ import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import { detailedDiff } from 'deep-object-diff';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
+import { CLS_RM_WHITE_SPACE } from "@syncfusion/ej2-react-richtexteditor";
 
 L10n.load({
     'es-ES': {
@@ -450,10 +451,28 @@ class MessageList extends Component {
             let newStatus = '';
             subject = (sms.data.find(x => x.key === "body")) ? sms.data.find(x => x.key === "body").value : 'N/A';
             const additionalInfo = sms.data.find(x => x.key == 'additional_info');
-            const emails = additionalInfo ? additionalInfo.value.split(':')[3] : '';
+
+            // ExampleData:
+            //i=0:phone=+34600102030:name=Pepito Pérez:email=pepitoperez@hotmail.com|i=1:phone=+34600405060:name=Pepita Ridruejo:email=pepitaridruejo@gmail.com|
+            //recipientsInfo-> [[i=0, phone=+34600102030, etc],[i=1, phone=+34600405060, etc]]
+            //emails->[email=pepitoperez@hotmail.com, email=pepitaridruejo@gmail.com]
+            //phones->[phone=+34600102030, phone=+34600405060]
+            
+            let recipientsInfo = additionalInfo ? (additionalInfo.value.split('|')).map(v => v.split(':')) : '';
+            let phones = additionalInfo ? (additionalInfo.value.split('|')).map(v => v.split(':')).map(e => e[1]) : '';
+            let emails2 = additionalInfo ? (additionalInfo.value.split('|')).map(v => v.split(':')).map(e => e[3]) : '';
+            const emails = additionalInfo ? additionalInfo.value.split(':')[3].replace('|', '') : '';
+            recipientsInfo.pop(); //removes last empty item
+            emails2.pop(); //removes last empty item
+            phones.pop(); //removes last empty item
+
+            phones = phones.map(p => p.replace('phone=','')).map(p => p.replace('+34',''))
       
-            sms.certificates.map(s => {
-                recipients = `${recipients}${s.phone} ${emails.split('=')[1]}; `
+            sms.certificates.map((s, i) => {
+                recipientsInfo[i] !== [""] && recipientsInfo[i] !== undefined
+                    //? recipients = `${recipients}${recipientsInfo[i][1].split('=')[1]} ${recipientsInfo[i][3].split('=')[1].replace('|', '')}; `
+                    ? recipients = `${recipients}${phones[i]} ${recipientsInfo[i][3].split('=')[1].replace('|', '')}; `
+                    : recipients = recipients;
             });
          
             sms.certificates.map(s => 
@@ -472,7 +491,7 @@ class MessageList extends Component {
                 Destinatarios: recipients, 
                 Fecha: date, 
                 Estado: newStatus,
-                Emails: emails.split('=')[1]
+                Emails: emails2.map(e => e.split('=')[1])
             });
         });
         return (res.length === 0 ? [] : res);
@@ -663,10 +682,10 @@ class MessageList extends Component {
                                     cssClass: 'test'
                                 },
                                 {
-                                    text: signer.phone
+                                    text: (signer.phone.substring(0,3) === '+34') ? signer.phone.substring(3,12) : signer.phone
                                 },
                                 {
-                                    text: props.Emails && props.Emails !== '|' ? props.Emails : 'Desconocido'
+                                    text: props.Emails && props.Emails[i] && props.Emails !== '|' ? props.Emails[i] : 'Desconocido'
                                 }
                             )
                         : 
@@ -688,10 +707,10 @@ class MessageList extends Component {
                                     cssClass: 'test'
                                 },
                                 {
-                                    text: signer.phone
+                                    text: (signer.phone.substring(0,3) === '+34') ? signer.phone.substring(3,12) : signer.phone
                                 },
                                 {
-                                    text: props.Emails && props.Emails !== '|' ? props.Emails : 'Desconocido'
+                                    text: props.Emails && props.Emails[i] && props.Emails !== '|' ? props.Emails[i] : 'Desconocido'
                                 },
                                 {   
                                     separator: true
