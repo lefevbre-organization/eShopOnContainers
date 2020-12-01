@@ -41,18 +41,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
         public async Task<Result<UserConference>> GetUserAsync(string idUser, short idApp)
         {
+            var filter = GetFilterUser(idUser, idApp);
+            return await GetUserCommonAsync(filter);
+        }
+
+        public async Task<Result<UserConference>> GetUserByRoomAsync(string roomNameOrId)
+        {
+            var filter =  GetFilterUserByRoomId(roomNameOrId);
+            return await GetUserCommonAsync(filter);        
+        }
+        private async Task<Result<UserConference>> GetUserCommonAsync(FilterDefinition<UserConference> filter)
+        {
             var result = new Result<UserConference>();
             try
             {
-                result.data = await _context.UserConferences.Find(GetFilterUser(idUser, idApp)).FirstOrDefaultAsync();
+                result.data = await _context.UserConferences.Find(filter).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceError(result.errors, new ConferenceDomainException($"No se encuentra ningún usuario {idUser}"), Codes.Conferences.Get, Codes.Areas.Mongo);
+                    TraceError(result.errors, new ConferenceDomainException($"No se encuentra ningún usuario"), Codes.Conferences.Get, Codes.Areas.Mongo);
             }
             catch (Exception ex)
             {
                 TraceError(result.errors,
-                           new ConferenceDomainException($"Error when get user {idUser}", ex),
+                           new ConferenceDomainException($"Error when get users", ex),
                            Codes.Conferences.Get,
                            Codes.Areas.Mongo
                            );
@@ -121,8 +132,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         private static FilterDefinition<UserConference> GetFilterUser(string idUser, short idApp = 1)
         {
             return Builders<UserConference>.Filter.And(
-            Builders<UserConference>.Filter.Eq(u => u.idNavision, idUser.ToUpperInvariant()),
-            Builders<UserConference>.Filter.Eq(u => u.idApp, idApp));
+                Builders<UserConference>.Filter.Eq(u => u.idNavision, idUser.ToUpperInvariant()),
+                Builders<UserConference>.Filter.Eq(u => u.idApp, idApp)
+                );
+        }
+
+        private static FilterDefinition<UserConference> GetFilterUserByRoomId(string idRoom)
+        {
+            return Builders<UserConference>.Filter.Or(
+                Builders<UserConference>.Filter.Eq("rooms.id", idRoom),
+                Builders<UserConference>.Filter.Eq("rooms.name", idRoom)
+                );
         }
 
         public async Task<Result<UserConference>> UpsertRoomAsync(string idUser, short idApp, Room room)
@@ -131,7 +151,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
             var user = await GetUserAsync(idUser, idApp);
             var rooms = user.data.rooms?.ToList();
-            var roomFind = rooms?.FirstOrDefault(x => x.id == room.id || ( x.name != null && x.name.Equals(room.name)));
+            var roomFind = rooms?.FirstOrDefault(x => x.id == room.id || (x.name != null && x.name.Equals(room.name)));
             if (roomFind == null)
             {
                 TraceInfo(result.infos, $"Se crea la room {room.id} del usuario {idUser}", Codes.Conferences.RoomCreate);
@@ -143,13 +163,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 roomFind = room;
             }
 
-            user.data.rooms = rooms.ToArray();
+           // user.data.rooms = rooms.ToArray();
 
             var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(idUser, idApp), user.data, GetUpsertOptions());
 
             if (resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
             {
-
                 var eventReplace = new ManageRoomIntegrationEvent(idUser, idApp, room, roomFind);
                 _eventBus.Publish(eventReplace);
 
@@ -203,6 +222,37 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         private static Predicate<Room> GetFilterRoomId(string idRoom)
         {
             return x => x.id.Equals(idRoom);
+        }
+
+        public async Task<Result<int>> DeleteRoom(string idRoom)
+        {
+        
+            var result = new Result<int>();
+
+            var user = await GetUserByRoomAsync(idRoom);
+            var rooms = user.data.rooms?.ToList();
+            var deletedRooms = rooms.RemoveAll(x => x.id == idRoom);
+
+
+            if (deletedRooms > 0)
+            {
+                TraceInfo(result.infos, $"Se eliminan {deletedRooms} room(s) con id {idRoom} del usuario {user.data.idNavision}", Codes.Conferences.RoomCreate);
+            }
+
+
+           // user.data.rooms = rooms.ToArray();
+
+            var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(user.data.idNavision, user.data.idApp), user.data, GetUpsertOptions());
+
+            if (resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
+            {
+                var eventReplace = new DeleteRoomIntegrationEvent(user.data.idNavision, user.data.idApp, idRoom);
+                _eventBus.Publish(eventReplace);
+
+                result.data = deletedRooms;
+            }
+
+            return result;
         }
     }
 }

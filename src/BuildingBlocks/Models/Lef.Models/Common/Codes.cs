@@ -109,7 +109,8 @@
             public static readonly string RoomModify = "CN21";
             public static readonly string RoomNotify = "CN22";
             public static readonly string RoomSecure = "CN23";
-            public static readonly string RoomGet = "CN24";
+            public static readonly string RoomReservation = "CN24";
+            public static readonly string RoomGet = "CN25";
 
         }
     }

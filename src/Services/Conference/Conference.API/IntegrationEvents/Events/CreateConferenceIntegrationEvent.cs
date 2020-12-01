@@ -69,4 +69,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEve
             RoomDataOld = oldRoom;
         }
     }
+
+    public class DeleteRoomIntegrationEvent : IntegrationEvent
+    {
+        public string User { get; set; }
+        public short IdApp { get; set; }
+        public string RoomId { get; set; }
+
+        public DeleteRoomIntegrationEvent(
+            string user,
+            short idApp,
+            string roomId)
+        {
+            User = user;
+            IdApp = idApp;
+            RoomId = roomId;
+        }
+    }
 }

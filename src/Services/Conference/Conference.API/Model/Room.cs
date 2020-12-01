@@ -38,6 +38,17 @@
         public string createdAt { get; set; }
 
         /// <summary>
+        /// date of creation in jitsi 
+        /// </summary>
+        public string startedAt { get; set; }
+
+        /// <summary>
+        /// date of creator in jitsi
+        /// </summary>
+        public string owner { get; set; }
+
+
+        /// <summary>
         /// date of delete or remove of conference
         /// </summary>
         public string terminatedAt { get; set; }
