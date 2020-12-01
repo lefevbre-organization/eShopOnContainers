@@ -28,18 +28,23 @@ export class Step2 extends React.Component {
     }
 
     componentDidMount() {
-        // this.setState({progress: 0}, ()=>{
-        //     this.uploadContacts();
-        // });
+
     }
 
     componentWillUnmount() {
-        // window.removeEventListener('contactUploaded', this.contactUploaded);
+    }
 
-        // if(this.itv) {
-        //     clearInterval(this.itv);
-        //     this.itv = null;
-        // }
+    getEvents() {
+        const { eventType, calendarId } = this.state;
+
+        window.dispatchEvent(
+            new CustomEvent('GetEvents', {
+                detail: {
+                    eventType,
+                    calendarId
+                }
+            })
+        );
     }
 
     render() {

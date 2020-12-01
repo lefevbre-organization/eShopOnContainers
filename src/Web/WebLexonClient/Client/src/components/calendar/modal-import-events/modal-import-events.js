@@ -160,10 +160,11 @@ class ModalImportEvents extends Component {
 
     renderContent() {
         const {step, companies, progress} = this.state;
+        const { calendars } = this.props;
 
         switch (step) {
             case 1:
-                return <Step1 companies={companies}></Step1>;
+                return <Step1 companies={companies} calendars={calendars}></Step1>;
             case 2:
                 return <Step2 progress={progress}></Step2>;
             default:
@@ -195,7 +196,7 @@ const mapStateToProps = (state) => {
     return {
         showImportContacts: state.documentsReducer.showImportContacts,
         companySelected: state.selections.companySelected,
-        selectedMessages: state.email.selectedMessages,
+        calendars: state.email.selectedMessages,
         user: state.selections.user
     };
 };

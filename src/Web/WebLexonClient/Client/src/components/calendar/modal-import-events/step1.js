@@ -14,6 +14,7 @@ export class Step1 extends React.Component {
     super(props);
 
     this.companiesFields = { text: 'name', value: 'bbdd'};
+    this.calendarsFields = { text: 'summary', value: 'id'}
     this.startDate = new Date();
     this.endDate = new Date();
   }
@@ -28,7 +29,7 @@ export class Step1 extends React.Component {
   }
 
   render() {
-    const { companies } = this.props;
+    const { companies, calendars } = this.props;
 
     return (
       <Fragment>
@@ -40,7 +41,7 @@ export class Step1 extends React.Component {
           </div>
           <div className="ie-dropwrapper">
             <p>Selecciona el calendario de destino</p>
-            <DropDownListComponent id="companies" dataSource={[]} fields={this.companiesFields} placeholder="" popupHeight="220px" />
+            <DropDownListComponent id="calendars" dataSource={calendars} fields={this.calendarsFields} placeholder="" popupHeight="220px" />
           </div>
           <div className="ie-dateswrapper">
             <div>

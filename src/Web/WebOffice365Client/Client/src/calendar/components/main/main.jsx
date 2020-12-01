@@ -123,7 +123,7 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             hidePromptEventTypeDialog: false,
-            hidePromptImportContactsDialog: false,
+            showromptImportContactsDialog: false,
             calendarToEdit: undefined,
             //tagAttendess: [],
             reminders: [],
@@ -669,18 +669,24 @@ export class Main extends Component {
 
     sendMessagePutUser(user) {
         const { selectedMessages, User } = this.props;
+        let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
+        debugger;
+        if(this.state.showromptImportContactsDialog) {
+            sm = this.props.calendarsResult.calendars || []
+        }
+
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: [ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ],
+                    selectedMessages: sm,
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
                     account: User.email,
                     env: window.currentUser?window.currentUser.env :null,
-                    app: 'calendar',
+                    app: this.state.showromptImportContactsDialog?'calendar:import':'calendar'
                 }
             })
         );
@@ -1835,7 +1841,7 @@ export class Main extends Component {
     openImportConcatcsView(args) {
         this.setState(
             {
-                hidePromptImportContactsDialog: true
+                showromptImportContactsDialog: true
             });
     }
 
@@ -1845,7 +1851,7 @@ export class Main extends Component {
         //    this.toastObj.show(this.toasts[1]);
         //}
         this.setState({
-            hidePromptImportContactsDialog: false
+            showromptImportContactsDialog: false
         });
     }
 
@@ -2094,15 +2100,15 @@ export class Main extends Component {
                                     id='contactImports'
                                     isModal={true}
                                     header={i18n.t("contactimport.title")}
-                                    visible={this.state.hidePromptImportContactsDialog}
+                                    visible={this.state.showromptImportContactsDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
-                                    width='575px'
+                                    width='900px'
                                     ref={dialog => this.promptDialogEventTypeInstance = dialog}
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogImportConcatcsClose.bind(this)}>
-                                    <div>{(this.state.hidePromptImportContactsDialog) ? <ContactsImport
+                                    <div>{(this.state.showromptImportContactsDialog) ? <ContactsImport
                                         getlistEventTypes={this.getlistEventTypes.bind(this)}
                                         googleUser={this.props.googleUser}
                                         close={this.dialogClose.bind(this)}
