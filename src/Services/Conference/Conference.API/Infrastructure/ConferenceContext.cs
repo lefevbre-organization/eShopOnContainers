@@ -46,7 +46,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(CenUser))) { BsonClassMap.RegisterClassMap<CenUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserConference))) { BsonClassMap.RegisterClassMap<UserConference>(); }
+        }
+
+        public IMongoCollection<UserConference> UserConferences => Database.GetCollection<UserConference>(_settings.Value.Collection);
+
+        public IMongoCollection<UserConference> AccountsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserConference>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
