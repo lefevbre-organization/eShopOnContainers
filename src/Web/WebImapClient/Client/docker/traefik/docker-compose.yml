@@ -11,7 +11,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   isotope-server:
-    image: avalverdelefebvre/react-imapsmtp-docker:server-latest
+    image: elefebvreoncontainers/webimapserver:linux-dev-36
     ports:
       - "9010:9010"
     labels:
@@ -19,7 +19,7 @@ services:
       - "traefik.frontend.rule=PathPrefixStrip:/api/"
 
   isotope-client:
-    image: avalverdelefebvre/react-imapsmtp-docker:client-newdesign-latest
+    image: elefebvreoncontainers/webimapclient:linux-dev-36
     ports:
       - "8081:80"
     labels:

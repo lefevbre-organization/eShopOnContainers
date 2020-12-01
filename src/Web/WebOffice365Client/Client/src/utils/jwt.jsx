@@ -35,6 +35,18 @@ export const getIdMail = payload =>{
   return(payload.hasOwnProperty('idMail') ? payload.idMail : null);
 }
 
+export const getIdActuation = payload => {
+    return (payload.hasOwnProperty('idActuation') ? payload.idActuation : null)
+}
+
+export const getIdEvent = payload => {
+    return (payload.hasOwnProperty('idEvent') ? payload.idEvent : null)
+}
+
+export const getTitle = payload => {
+    return (payload.hasOwnProperty('title') ? payload.title : null)
+}
+
 export const getImapFolder = payload =>{
   if (payload && payload.folder){
     if (payload.folder.indexOf("::") !== -1){

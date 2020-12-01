@@ -16,6 +16,9 @@ import {
   getIdCompany,
   getMailContacts,
   getIdMail,
+  getTitle,
+  getIdActuation,
+  getIdEvent
 } from '../../utils/jwt';
 import jwt from 'njwt';
 import Spinner from '../../components/spinner/spinner';
@@ -64,6 +67,15 @@ class UserCalendar extends Component {
     const idMail = this.props.match.params.token
       ? getIdMail(payload)
       : this.props.match.params.idMail;
+    const idEvent = this.props.match.params.token
+      ? getIdEvent(payload)
+      : null
+    const idActuation = this.props.match.params.token
+      ? getIdActuation(payload)
+      : null
+    const title = this.props.match.params.token
+      ? getTitle(payload)
+      : null
 
     const claims = this.props.match.params.token
       ? { idClienteNavision: getUserId(payload) }
@@ -85,6 +97,10 @@ class UserCalendar extends Component {
       company: company,
     });
 
+      this.props.setIdEvent(idEvent);
+      this.props.setIdActuation(idActuation);
+      this.props.setTitle(title);
+
     if (mailContacts) {
       console.log('Contactos recibidos');
       const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
@@ -94,6 +110,7 @@ class UserCalendar extends Component {
         this.props.setMailContacts(mailContacts);
       }
     }
+
 
     if (idMail) {
       this.props.setIdMail(idMail);
@@ -218,13 +235,16 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setUser: (user) => dispatch(ACTIONS.setUser(user)),
-  setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: (mailContacts) =>
+    setUser: (user) => dispatch(ACTIONS.setUser(user)),
+    setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
+    setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
-  setIdMail: (idMail) => dispatch(ACTIONS.setIdMail(idMail)),
-  setToken: (token) => dispatch(ACTIONS.setToken(token)),
-  setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
+    setIdMail: (idMail) => dispatch(ACTIONS.setIdMail(idMail)),
+    setToken: (token) => dispatch(ACTIONS.setToken(token)),
+    setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
+    setIdEvent: (id) => dispatch(ACTIONS.setIdEvent(id)),
+    setIdActuation: (id) => dispatch(ACTIONS.setIdActuation(id)),
+    setTitle: (title) => dispatch(ACTIONS.setTitle(title))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserCalendar);
