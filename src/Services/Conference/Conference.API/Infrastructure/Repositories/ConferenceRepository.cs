@@ -163,7 +163,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 roomFind = room;
             }
 
-           // user.data.rooms = rooms.ToArray();
+            user.data.rooms = rooms.ToArray();
 
             var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(idUser, idApp), user.data, GetUpsertOptions());
 
@@ -231,7 +231,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
             var user = await GetUserByRoomAsync(idRoom);
             var rooms = user.data.rooms?.ToList();
-            var deletedRooms = rooms.RemoveAll(x => x.id == idRoom);
+            var deletedRooms = rooms.RemoveAll(x => x.id == idRoom || x.name == idRoom);
 
 
             if (deletedRooms > 0)
@@ -240,7 +240,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             }
 
 
-           // user.data.rooms = rooms.ToArray();
+           user.data.rooms = rooms.ToArray();
 
             var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(user.data.idNavision, user.data.idApp), user.data, GetUpsertOptions());
 

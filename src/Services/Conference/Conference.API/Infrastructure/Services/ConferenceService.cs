@@ -229,7 +229,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
                 }
 
-                //userResult.data.rooms = rooms.ToArray();
+                userResult.data.rooms = rooms.ToArray();
 
                 var resultUserReplace = await _repo.PostUserAsync(userResult.data);
                 AddResultTrace(resultUserReplace, reservationCreated);
@@ -391,7 +391,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 var userResult = await GetUserByRoomAsync(idRoom);
 
                 var rooms = userResult.data.rooms?.ToList();
-                var roomFind = rooms?.FirstOrDefault(x => x.id == idRoom);
+                var roomFind = rooms?.FirstOrDefault(x => x.id == idRoom || x.name == idRoom);
                 if (roomFind == null)
                 {
                     TraceInfo(result.infos, $"No hay room que securizar {idRoom} del usuario {userResult.data.idNavision}", Codes.Conferences.RoomSecure);
