@@ -49,6 +49,12 @@ export class Login extends React.Component {
 
     render() {
         const { t } = this.props;
+
+        let iframe = false
+        if (window != window.top) {
+            iframe = true
+        }
+
         return (
             <div className="d-flex align-content-center align-items-center w-100 h-100 text-center w3-btn">
                 <div className="mx-auto">
@@ -61,7 +67,7 @@ export class Login extends React.Component {
                                 logout={this.props.logout}
                             />
                             <Button
-                                className="mr-left font-weight-bold btn-outline-primary margin-top"
+                                className={`mr-left font-weight-bold btn-outline-primary margin-top ${iframe ? "hidden" : ""}`}     
                                 title={t("login.cancel")}
                                 color="secondary"
                                 onClick={() => {

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: externalcfg
+  labels:
+    app: elefevbre
+data:
+  userutils__ConnectionString: mongodb://nosql-data
+  userutils__Database: UserUtilsDb
+  account__ConnectionString: mongodb://nosql-data
+  account__Database: LocationsDb #MailAccounts
+  lexon__ConnectionString: mongodb://nosql-data
+  lexon__Database: LexonApiDb
+  centinela__ConnectionString: mongodb://nosql-data
+  centinela__Database: CentinelaApiDb
+  signature__ConnectionString: mongodb://nosql-data
+  signature__Database: signature
+  identity__ConnectionString: Server=sql-data;Initial Catalog=Microsoft.eShopOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word;
+  all__EventBusConnection: rabbitmq
+  all__InstrumentationKey: ""
+  all__EnableLoadTest: "False"
+  all__UseAzureServiceBus: "False"

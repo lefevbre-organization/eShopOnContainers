@@ -1,17 +1,15 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEvents.Events;
+using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Repositories
@@ -20,6 +18,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
     {
         private readonly ConferenceContext _context;
         private readonly IOptions<ConferenceSettings> _settings;
+        private readonly IEventBus _eventBus;
 
         public ConferenceRepository(
               IOptions<ConferenceSettings> settings
@@ -29,255 +28,231 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             ) : base(logger)
         {
             _settings = settings;
+            _eventBus = eventBus;
             _context = new ConferenceContext(settings, eventBus);
         }
 
-        //private static FilterDefinition<CenUser> GetFilterLexUser(string idUser)
+        //private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
         //{
-        //    return
-        //        Builders<CenUser>.Filter.And(
-        //            Builders<CenUser>.Filter.Gte(u => u.version, 1),
-        //            Builders<CenUser>.Filter.Eq(u => u.idNavision, idUser)
-        //        );
+        //    var eventLogEntry = new IntegrationEventLogEntry(eventAssoc, Guid.NewGuid());
+        //    await _context.IntegrationEventLogsTransaction(session).InsertOneAsync(eventLogEntry);
+        //    await _context.PublishThroughEventBusAsync(eventAssoc, session);
         //}
 
-        private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
+        public async Task<Result<UserConference>> GetUserAsync(string idUser, short idApp)
         {
-            var eventLogEntry = new IntegrationEventLogEntry(eventAssoc, Guid.NewGuid());
-            await _context.IntegrationEventLogsTransaction(session).InsertOneAsync(eventLogEntry);
-            await _context.PublishThroughEventBusAsync(eventAssoc, session);
+            var filter = GetFilterUser(idUser, idApp);
+            return await GetUserCommonAsync(filter);
         }
 
-
-         private static IEnumerable<LexEntity> GetEntitiesSearch(IEntitySearchView search, LexCompany company)
+        public async Task<Result<UserConference>> GetUserByRoomAsync(string roomNameOrId)
         {
-            if (search is EntitySearchFoldersView)
-            {
-                var searchFolder = search as EntitySearchFoldersView;
-                return company.entities.Where
-                    (ent =>
-                        (ent.idType == (searchFolder.idType)
-                            && (searchFolder.idFolder == null || (ent.idFolder == searchFolder.idFolder) || (ent.idRelated == searchFolder.idFolder))
-                            && (searchFolder.idParent == null || (ent.idRelated == searchFolder.idParent) || (ent.idFolder == searchFolder.idParent))
-                            && (searchFolder.search == null || (ent.description.Contains(searchFolder.search) || ent.code.Contains(searchFolder.search) || ent.email.Contains(searchFolder.search)))
-                    ));
-            }
-            else if (search is EntitySearchDocumentsView)
-            {
-                var searchDoc = search as EntitySearchDocumentsView;
-                return company.entities.Where
-                    (ent =>
-                        (ent.idType == (searchDoc.idType)
-                            && (searchDoc.idFolder == null || (ent.idFolder == searchDoc.idFolder) || (ent.idRelated == searchDoc.idFolder))
-                            && (searchDoc.search == null || (ent.description.Contains(searchDoc.search) || ent.code.Contains(searchDoc.search) || ent.email.Contains(searchDoc.search)))
-                    ));
-            }
-
-            var searchSimple = search as EntitySearchView;
-            return company.entities.Where
-                (ent =>
-                    (ent.idType == (searchSimple.idType)
-                        && (searchSimple.search != null || (ent.description.Contains(searchSimple.search) || ent.code.Contains(searchSimple.search) || ent.email.Contains(searchSimple.search)))
-                ));
+            var filter =  GetFilterUserByRoomId(roomNameOrId);
+            return await GetUserCommonAsync(filter);        
         }
-        //public async Task<Result<bool>> UpsertEntitiesAsync(IEntitySearchView search, MySqlCompany resultMySql)
-        //{
-        //    var result = new Result<bool>();
+        private async Task<Result<UserConference>> GetUserCommonAsync(FilterDefinition<UserConference> filter)
+        {
+            var result = new Result<UserConference>();
+            try
+            {
+                result.data = await _context.UserConferences.Find(filter).FirstOrDefaultAsync();
 
-        //    var filterUser = GetFilterLexUser(((EntitySearchView)search).idUser);
+                if (result.data == null)
+                    TraceError(result.errors, new ConferenceDomainException($"No se encuentra ningún usuario"), Codes.Conferences.Get, Codes.Areas.Mongo);
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new ConferenceDomainException($"Error when get users", ex),
+                           Codes.Conferences.Get,
+                           Codes.Areas.Mongo
+                           );
+            }
+            return result;
+        }
 
-        //    try
-        //    {
-        //        var arrayFiltersSimple = GetFilterFromEntities(((EntitySearchView)search).bbdd);
+        public async Task<Result<UserConference>> PostUserAsync(UserConference user)
+        {
+            var result = new Result<UserConference>();
+            ReviewUser(user);
 
-        //        var resultUpdate = await _context.CenUsers.UpdateOneAsync(
-        //            filterUser,
-        //            Builders<CenUser>.Update
-        //                .AddToSetEach($"companies.$[i].entities", resultMySql.Data.ToArray()),
-        //                new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
-        //        );
+            try
+            {
+                var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(user.idNavision, user.idApp), user, GetUpsertOptions());
 
-        //        if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
-        //        {
-        //            TraceInfo(result.infos, $"Se modifica el usuario {((EntitySearchView)search).idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {((EntitySearchView)search).idType}");
-        //            result.data = resultUpdate.ModifiedCount > 0;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"fallo al  actualizar entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
-        //    }
+                user.Id = ManageUpsert<UserConference>($"Don´t insert or modify the user {user.idNavision}",
+                    $"Se modifica el usuario {user.idNavision}",
+                    $"Se inserta el usuario {user.idNavision} con {resultReplace.UpsertedId}",
+                     result, resultReplace);
 
-        //    return result;
-        //}
+                result.data = user;
 
-        //public async Task<Result<bool>> UpsertRelationsAsync(ClassificationSearchView search, MySqlCompany resultMySql)
-        //{
-        //    var result = new Result<bool>();
+                var eventAssoc = new AddUserConferenceIntegrationEvent(user.idNavision, user.idApp);
+                _eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new ConferenceDomainException("Error when create user conference", ex),
+                           Codes.Conferences.Create,
+                           Codes.Areas.Mongo);
+            }
+            return result;
+        }
 
-        //    var filterUser = GetFilterLexUser(search.idUser);
+        private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
+        {
+            if (resultReplace.IsAcknowledged)
+            {
+                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, msgModify, Codes.Conferences.Create);
+                }
+                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                {
+                    TraceInfo(result.infos, msgInsert, Codes.Conferences.Create);
+                    return resultReplace.UpsertedId.ToString();
+                }
+            }
+            else
+            {
+                TraceError(result.errors,
+                           new ConferenceDomainException(msgError),
+                           Codes.Conferences.Create,
+                           Codes.Areas.Mongo);
+            }
+            return null;
+        }
 
-        //    try
-        //    {
-        //        var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
+        private void ReviewUser(UserConference userMail)
+        {
+            userMail.idNavision = userMail.idNavision.ToUpperInvariant();
+        }
 
-        //        var resultUpdate = await _context.CenUsers.UpdateOneAsync(
-        //            filterUser,
-        //            Builders<CenUser>.Update
-        //                .AddToSetEach($"companies.$[i].actuations", resultMySql.DataActuation.ToArray()),
-        //                new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
-        //        );
+        private static FilterDefinition<UserConference> GetFilterUser(string idUser, short idApp = 1)
+        {
+            return Builders<UserConference>.Filter.And(
+                Builders<UserConference>.Filter.Eq(u => u.idNavision, idUser.ToUpperInvariant()),
+                Builders<UserConference>.Filter.Eq(u => u.idApp, idApp)
+                );
+        }
 
-        //        if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
-        //        {
-        //            TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo o actualizando las relaciones del mail {search.idMail}");
-        //            result.data = resultUpdate.ModifiedCount > 0;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"fallo al  actualizar relaciones de {search.idUser}: {ex.Message}");
-        //    }
+        private static FilterDefinition<UserConference> GetFilterUserByRoomId(string idRoom)
+        {
+            return Builders<UserConference>.Filter.Or(
+                Builders<UserConference>.Filter.Eq("rooms.id", idRoom),
+                Builders<UserConference>.Filter.Eq("rooms.name", idRoom)
+                );
+        }
 
-        //    return result;
-        //}
+        public async Task<Result<UserConference>> UpsertRoomAsync(string idUser, short idApp, Room room)
+        {
+            var result = new Result<UserConference>();
 
-        //private static List<ArrayFilterDefinition> GetFilterFromEntities(string bbdd)
-        //{
-        //    return new List<ArrayFilterDefinition>
-        //    {
-        //        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd)))
-        //    };
-        //}
+            var user = await GetUserAsync(idUser, idApp);
+            var rooms = user.data.rooms?.ToList();
+            var roomFind = rooms?.FirstOrDefault(x => x.id == room.id || (x.name != null && x.name.Equals(room.name)));
+            if (roomFind == null)
+            {
+                TraceInfo(result.infos, $"Se crea la room {room.id} del usuario {idUser}", Codes.Conferences.RoomCreate);
+                rooms.Add(room);
+            }
+            else
+            {
+                TraceInfo(result.infos, $"Se modifica la room {room.id} del usuario {idUser}", Codes.Conferences.RoomCreate);
+                roomFind = room;
+            }
 
-        //private static List<ArrayFilterDefinition> GetFilterFromEntity(string bbdd, short? idType, long? idRelated)
-        //{
-        //    var doc_j = new BsonDocument() {
-        //         new BsonElement("j.idType", idType),
-        //        new BsonElement("j.idRelated", idRelated)
-        //    };
+           // user.data.rooms = rooms.ToArray();
 
-        //    return new List<ArrayFilterDefinition>
-        //    {
-        //        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd))),
-        //        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(doc_j))
-        //    };
-        //}
+            var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(idUser, idApp), user.data, GetUpsertOptions());
 
-        //private static List<ArrayFilterDefinition> GetFilterFromRelation(string bbdd, string uid)
-        //{
-        //    return new List<ArrayFilterDefinition>
-        //    {
-        //        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd))),
-        //        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument( new BsonElement("j.uid", uid)))
-        //    };
-        //}
+            if (resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
+            {
+                var eventReplace = new ManageRoomIntegrationEvent(idUser, idApp, room, roomFind);
+                _eventBus.Publish(eventReplace);
 
-       
-        //public async Task<Result<long>> AddClassificationToListAsync(ClassificationAddView actuation)
-        //{
-        //    var result = new Result<long>(0);
-        //    var cancel = default(CancellationToken);
-        //    TraceLog(parameters: new string[] { $"idUser:{actuation.idUser}", $"bbdd:{actuation.bbdd}", $"idMail:{actuation.listaMails}", $"idRelated:{actuation.idRelated}", $"idType:{actuation.idType}" });
+                result.data = user.data;
+                result.data.rooms = new Room[] { room };
+            }
 
-        //    using (var session = await _context.StartSession(cancel))
-        //    {
-        //        session.StartTransaction();
-        //        try
-        //        {
-        //            await AddAndPublish(actuation, session, result);
+            return result;
+        }
 
-        //            await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
-        //            session.AbortTransaction();
-        //        }
-        //    }
-        //    return result;
-        //}
+        private static List<ArrayFilterDefinition> GetFilterFromRooms(string roomId)
+        {
+            return new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.id", roomId)))
+            };
+        }
 
-        //private async Task AddAndPublish(ClassificationAddView actuation, IClientSessionHandle session, Result<long> result)
-        //{
-        //    foreach (var mailData in actuation.listaMails)
-        //    {
-        //        var actua = new LexActuation
-        //        {
-        //            date = mailData.Date,
-        //            entityIdType = (short)actuation.idType,
-        //            entityType = Enum.GetName(typeof(LexonAdjunctionType), actuation.idType),
-        //            idMail = mailData.Uid,
-        //            idRelated = (long)actuation.idRelated
-        //        };
+        public async Task<Result<UserConference>> GetRoomAsync(string idUser, short idApp, string id)
+        {
+            var result = new Result<UserConference>();
+            try
+            {
+                var resultUser = await GetUserAsync(idUser, idApp);
+                if (resultUser.data == null)
+                    TraceError(result.errors, new Exception($"No se encuentra ningún usuario {idUser}"), Codes.Conferences.RoomGet, Codes.Areas.Mongo);
+                else
+                {
+                    var rooms = resultUser.data?.rooms?.ToList();
+                    if (rooms?.Count > 0)
+                    {
+                        var sala = rooms?.Find(GetFilterRoomId(id));
 
-        //        var resultUpdate = await _context.CenUsersTransaction(session).UpdateOneAsync(
-        //             GetFilterLexUser(actuation.idUser),
-        //             Builders<CenUser>.Update.AddToSet($"companies.$[i].actuations", actua),
-        //             new UpdateOptions { ArrayFilters = GetFilterFromEntities(actuation.bbdd) }
-        //         );
+                        if (sala == null)
+                            TraceInfo(result.infos, $"No se encuentra ningúna sala con ese id {id} del usuario {idUser}", Codes.Conferences.RoomGet);
 
-        //        if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-        //        {
-        //            TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación");
-        //            result.data += 1;
+                        result.data.rooms = new Room[] { sala };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new ConferenceDomainException($"Error when get room {id} of {idUser}", ex),
+                           Codes.Conferences.RoomGet,
+                           Codes.Areas.Mongo);
+            }
+            return result;
+        }
 
-        //            //var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
-        //            //await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-        //        }
-        //    }
-        //}
+        private static Predicate<Room> GetFilterRoomId(string idRoom)
+        {
+            return x => x.id.Equals(idRoom);
+        }
 
-        //public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView actuation)
-        //{
-        //    var result = new Result<long>(0);
-        //    var cancel = default(CancellationToken);
-        //    TraceLog(parameters: new string[] { $"idUser:{actuation.idUser}", $"bbdd:{actuation.bbdd}", $"idMail:{actuation.idMail}", $"idRelated:{actuation.idRelated}", $"idType:{actuation.idType}" });
+        public async Task<Result<int>> DeleteRoom(string idRoom)
+        {
+        
+            var result = new Result<int>();
 
-        //    using (var session = await _context.StartSession(cancel))
-        //    {
-        //        session.StartTransaction();
-        //        try
-        //        {
-        //            await RemoveAndPublish(actuation, session, result);
+            var user = await GetUserByRoomAsync(idRoom);
+            var rooms = user.data.rooms?.ToList();
+            var deletedRooms = rooms.RemoveAll(x => x.id == idRoom);
 
-        //            await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
-        //            session.AbortTransaction();
-        //        }
-        //    }
-        //    return result;
-        //}
 
-        //private async Task RemoveAndPublish(ClassificationRemoveView actuation, IClientSessionHandle session, Result<long> result)
-        //{
-        //    var typeName = Enum.GetName(typeof(LexonAdjunctionType), actuation.idType);
+            if (deletedRooms > 0)
+            {
+                TraceInfo(result.infos, $"Se eliminan {deletedRooms} room(s) con id {idRoom} del usuario {user.data.idNavision}", Codes.Conferences.RoomCreate);
+            }
 
-        //    var resultUpdate = await _context.CenUsersTransaction(session).UpdateOneAsync(
-        //        GetFilterLexUser(actuation.idUser),
-        //        Builders<CenUser>.Update.Pull($"companies.$[i].actuations.$[j]", actuation.idMail),
-        //            new UpdateOptions
-        //            {
-        //                ArrayFilters = new List<ArrayFilterDefinition>
-        //                    {
-        //                        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.bbdd", actuation.bbdd)),
-        //                        new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", actuation.idMail))
-        //                    }
-        //            }
-        //    );
 
-        //    if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-        //    {
-        //        TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación");
-        //        result.data = resultUpdate.ModifiedCount;
+           // user.data.rooms = rooms.ToArray();
 
-        //        //var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
-        //        //await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-        //    }
-        //}
+            var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(user.data.idNavision, user.data.idApp), user.data, GetUpsertOptions());
 
+            if (resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
+            {
+                var eventReplace = new DeleteRoomIntegrationEvent(user.data.idNavision, user.data.idApp, idRoom);
+                _eventBus.Publish(eventReplace);
+
+                result.data = deletedRooms;
+            }
+
+            return result;
+        }
     }
 }

@@ -1,0 +1,34 @@
+server:
+  affinity: ""
+  ha:
+    enabled: true
+
+  # image sets the repo and tag of the vault-k8s image to use for the injector.
+  image:
+    repository: "hashicorp/vault-k8s"
+    tag: "0.6.0"
+    pullPolicy: IfNotPresent
+
+injector:
+  # True if you want to enable vault agent injection.
+  enabled: true
+
+  # If true, will enable a node exporter metrics endpoint at /metrics.
+  metrics:
+    enabled: false
+
+  # External vault server address for the injector to use. Setting this will
+  # disable deployment of a vault server along with the injector.
+  externalVaultAddr: ""
+
+  # image sets the repo and tag of the vault-k8s image to use for the injector.
+  image:
+    repository: "hashicorp/vault-k8s"
+    tag: "0.6.0"
+    pullPolicy: IfNotPresent
+ 
+    # Configures the log verbosity of the injector. Supported log levels: Trace, Debug, Error, Warn, Info
+  logLevel: "info"
+
+  # Configures the log format of the injector. Supported log formats: "standard", "json".
+  logFormat: "standard"

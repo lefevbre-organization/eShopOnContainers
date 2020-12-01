@@ -3,7 +3,7 @@
     public class SctpConnection
     {
         public string id { get; set; }
-        public int? expire { get; set; }
+        public long? expire { get; set; }
         public bool? initiator { get; set; }
         public string endpoint { get; set; }
         public int? port { get; set; }

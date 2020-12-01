@@ -1,0 +1,62 @@
+replicaCount: 1
+clusterName: eshop-aks
+pathBase: /webaddonlauncher
+
+image:
+  repository: elefebvreoncontainers/webaddonlauncher
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations: {}
+  tls: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# env defines the environment variables that will be declared in the pod
+env:
+  urls:
+  # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
+  configmap:
+    - name: ApplicationInsights__InstrumentationKey
+      key: all__InstrumentationKey
+    - name: UseLoadTest
+      key: all__EnableLoadTest
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Development
+    - name: OrchestratorType
+      value: 'K8S'
+    - name: IsClusterEnv
+      value: 'True'
+configValues: |
+ window.REACT_APP_ENVIRONMENT='PRODUCTION'
+ window.GOOGLE_SCRIPT='https://script.google.com/macros/d/17OVCKEejIyIITkMSVlF3KJelJFI1ouLFeoS2Wj4sO7U4hlS1URiK_Ntk/usercallback'
+ window.GOOGLE_SCRIPT_CENTINELA = "https://script.google.com/macros/d/18bbI8rJ8sutRyRBVtWKZlbWis0YWyDlU8c_x_DzYK1lvL0BuHy3LzjGC/usercallback"
+ window.API_GATEWAY='https://lexbox-dev-apigwlex.lefebvre.es'
+ window.URL_MF_LEXON='https://lexbox-dev-weblexon.lefebvre.es/static/js/main.js'
+ window.URL_GET_ACCOUNTS='https://lexbox-dev-apigwacc.lefebvre.es/api/v2/accounts/usermail'
+ window.URL_MF_LEXON_BASE='https://lexbox-dev-weblexon.lefebvre.es'
+ window.URL_GET_USER='https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils'
+ window.URL_MF_CENTINELA = "https://lexbox-dev-webcentinela.lefebvre.es/static/js/main.js"
+ window.URL_MF_CENTINELA_BASE = "https://lexbox-dev-webcentinela.lefebvre.es"
+ window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
+ window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
+ window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';
+ window.RELEASE = 'RC 0.36'
