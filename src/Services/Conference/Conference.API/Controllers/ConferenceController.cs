@@ -111,19 +111,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{idNavision}/room/{name}/notify/{idRoom}")]
+        [HttpPost("{idNavision}/room/notify")]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> NotifyRoomAsync(
+            [FromBody] Room room,
             [FromRoute] string idNavision = "E1621396",
-            [FromRoute] string idRoom = "123456789",
-            [FromRoute] string name = "nuevaSala",
             [FromQuery] short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
 
-            Result<UserRoom> result = await _service.NotifyRoomAsync(idNavision, name, idRoom, idApp);
+            Result<UserRoom> result = await _service.NotifyRoomAsync(idNavision, idApp, room);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }

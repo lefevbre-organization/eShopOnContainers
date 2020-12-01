@@ -331,20 +331,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             return new string(Enumerable.Repeat(chars, length).Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        public async Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, string name, string idRoom, short idApp)
+        public async Task<Result<UserRoom>> NotifyRoomAsync(string idNavision, short idApp, Room room)
         {
             var result = new Result<UserRoom>(new UserRoom());
             try
             {
-                var room = new Room
-                {
-                    id = idRoom,
-                    url = $"{_settings.Value.JitsiRoomUrl}/{name}",
-                    name = name
-                };
 
                 var userResult = await _repo.UpsertRoomAsync(idNavision, idApp, room);
                 AddResultTrace(userResult, result);
+
                 if (userResult.errors.Count > 0 || userResult.data?.rooms?.ToList().Count == 0)
                 {
                     TraceError(result.errors,
@@ -356,13 +351,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 }
                 result.data = new UserRoom() { idNavision = userResult.data.idNavision, room = userResult.data.rooms[0] };
 
-                TraceInfo(result.infos, $"se Obtiene un guid de Jitsi {room.guidJitsi} que se guarda en el usuario {idNavision}", Codes.Conferences.RoomCreate);
+                TraceInfo(result.infos, $"Se modifica la room {room.name} del usuario {idNavision}", Codes.Conferences.RoomNotify);
             }
             catch (Exception ex)
             {
                 TraceError(result.errors,
-                           new ConferenceDomainException($"Error when call external service of Jitsi {_settings.Value.JitsiRoomUrl}", ex),
-                           Codes.Conferences.RoomCreate,
+                           new ConferenceDomainException($"Error when update data of Room {room.name}", ex),
+                           Codes.Conferences.RoomNotify,
                            Codes.Areas.InternalApi);
             }
             return result;
