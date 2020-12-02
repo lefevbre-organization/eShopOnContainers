@@ -29,6 +29,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _log = log ?? throw new ArgumentNullException(nameof(log));
+            _log.LogError("Recibe llamada Conference");
+            System.Diagnostics.Trace.TraceError("Recibe llamada reportada momentaneamente como error para depurar");
         }
 
         /// <summary>
@@ -41,8 +43,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         public IActionResult Test()
         {
             var data = $"Conference v.{ _settings.Value.Version}";
-            System.Diagnostics.Trace.WriteLine(data);
-            _log.LogDebug(data);
+            _log.LogError(data);
             return Ok(new Result<string>(data));
         }
 
@@ -70,6 +71,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             [FromQuery] string mail_owner
             )
         {
+            _log.LogError($"conference: {name} con {mail_owner}");
             var reservation = new UserReservationRequest() { mail_owner = mail_owner, name = name, start_time = start_time };
             //name=testroom1&start_time=2048-04-20T17%3A55%3A12.000Z&mail_owner=client1%40xmpp.com
             if (string.IsNullOrEmpty(reservation.name))
@@ -89,6 +91,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         {
             if (string.IsNullOrEmpty(id))
                 return BadRequest("Must be a valid id");
+            _log.LogError($"delete: {id}");
 
             Result<int> result = await _service.DeleteRoomAsync(id);
 
@@ -105,6 +108,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         {
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
+
+            _log.LogError($"room: {name} con {idNavision}");
 
             Result<UserConference> result = await _service.CreateRoomAsync(idNavision, name, idApp);
 
