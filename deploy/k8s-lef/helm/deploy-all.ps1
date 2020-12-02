@@ -15,8 +15,9 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
         # "lexon-api",  
-        "conference-api", "lexon-api", "account-api", "centinela-api", "userutils-api", "signature-api", "database-api", 
-        "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
+        "conference-api", "lexon-api", "account-api", "centinela-api", "userutils-api", "signature-api",  
+        # "database-api", "webdatabase", 
+        "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "webimapserver", 
         "webstatus"
@@ -63,13 +64,16 @@ function Install-Chart  {
 $dns = $externalDns
 $sslEnabled=$false
 $sslIssuer=""
+$envYalm="dev.yaml"
 
 if ($sslSupport -eq "staging") {
+    $envYalm="pre.yaml"
     $sslEnabled=$true
     $tlsSecretName="efef-letsencrypt-staging"
     $sslIssuer="letsencrypt-staging"
 }
 elseif ($sslSupport -eq "prod") {
+    $envYalm="pro.yaml"
     $sslEnabled=$true
     $tlsSecretName="elef-letsencrypt-prod"
     $sslIssuer="letsencrypt-prod"
@@ -80,16 +84,16 @@ elseif ($sslSupport -eq "custom") {
 
 
 if ($useLocalk8s -eq $true) {
-    Write-Host "select useLocalk8s configure with  ingress_values_dockerk8s.yaml" -ForegroundColor Green
+    Write-Host "select useLocalk8s configure with  ingress_values_dockerk8s.yaml" -ForegroundColor Gray
     $ingressValuesFile="ingress_values_dockerk8s.yaml"
     $dns="localhost"
 } else{
-    Write-Host "select external kubernetes configure with ingress_values.yaml" -ForegroundColor Green
+    Write-Host "select external kubernetes configure with ingress_values.yaml" -ForegroundColor Gray
     $ingressValuesFile="ingress_values.yaml"
 
 }
 
-Write-Host "The pullPolicy is set to $imagePullPolicy" -ForegroundColor Green
+Write-Host "The pullPolicy is set to $imagePullPolicy" -ForegroundColor Gray
 Write-Host "Always -> nunca usa imagenes locales." -ForegroundColor Gray
 Write-Host "Never-> solo usa imagenes locales y los pods será erroneos si no existen" -ForegroundColor Gray
 Write-Host "IfNotPresent -> usa imagenes locales. Si no existen intentará descargarlas" -ForegroundColor Gray
@@ -98,8 +102,7 @@ $pullPolicy = $imagePullPolicy
 
 if ($useLocalImages -eq $true) {
     Write-Host "Al usar imagenes locales Se fuerza a la pullPolicy a Never" -ForegroundColor Gray
-#   $pullPolicy = "Always"
-  $pullPolicy = "Never"
+    $pullPolicy = "Never"
 }
 
 if ($externalDns -eq "aks") {
@@ -133,17 +136,14 @@ if ($useLocalk8s -and $sslEnabled) {
 }
 
 if ($clean) {
-    Write-Host "Search previous helm releases $appName to clean..." -ForegroundColor Green
-    # $listOfReleases=$(helm ls --filter elefebvre -q)
 	$listOfReleases=$(helm ls --filter $appName -q) 
  
     if ([string]::IsNullOrEmpty($listOfReleases)) {
-        Write-Host "No previous releases found!" -ForegroundColor Green
+        Write-Host "<<<<<<<<<<  No previous releases found!  >>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Gray
 	}else{
-        Write-Host "Previous releases found" -ForegroundColor Green
-        Write-Host "Cleaning previous helm releases..." -ForegroundColor Green
+        Write-Host "<<<<<<<<<<  Previous releases found -> Uninstall ...  >>>>>>>>>>>>" -ForegroundColor Yellow
         helm uninstall $listOfReleases
-   		Write-Host "Previous releases deleted (old purge cmd)" -ForegroundColor Green
+   		Write-Host "<<<<<<<<<<  Previous releases deleted (old purge cmd) >>>>>>>>>>>>" -ForegroundColor Yellow
     }
 }
 
@@ -157,8 +157,6 @@ if (-not [string]::IsNullOrEmpty($registry)) {
     }
 }
 
-Write-Host "Begin eLefebvreOnContainers installation using Helm" -ForegroundColor Green
-
 if ($deployInfrastructure) {
     foreach ($infra in $infras) {
         Write-Host "Installing infrastructure:  $appName-$infra with app.yalm, inf.yalm, $ingressValuesFile, app.name=$appName, inf.k8s.dns=$dns" -ForegroundColor Green
@@ -170,16 +168,18 @@ else {
 }
 
 if ($deployCharts) {
-    Write-Host "Installing charts and gateways with common data -> app.yalm, inf.yalm, $ingressValuesFile, app.name=$appName, inf.k8s.dns=$dns, ingress.hosts={$dns}, image.tag=$imageTag, image.pullPolicy=$pullPolicy, inf.tls.enabled=$sslEnabled, inf.mesh.enabled=$useMesh " -ForegroundColor Green
+    Write-Host "Installing charts and gateways  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Green
 
     foreach ($chart in $charts) {
-        Write-Host "Installing: $chart with $ingressMeshAnnotationsFile, app.name=$appName, inf.k8s.dns=$dns, image.tag=$imageTag, inf.k8s.local=$useLocalk8s" -ForegroundColor Green
-        Install-Chart $chart "-f app.yaml --values inf.yaml -f $ingressValuesFile -f $ingressMeshAnnotationsFile --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.tls.enabled=$sslEnabled --set inf.mesh.enabled=$useMesh --set inf.k8s.local=$useLocalk8s --set image.tag=$imageTag " $useCustomRegistry
+        Write-Host "Installing: <<<<<<<<<<<<<<<<<<<<<<<<<<<<< $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+        Install-Chart $chart "-f app.yaml --values inf.yaml -f $ingressValuesFile -f $ingressMeshAnnotationsFile -f $envYalm --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.tls.enabled=$sslEnabled --set inf.mesh.enabled=$useMesh --set inf.k8s.local=$useLocalk8s --set image.tag=$imageTag " $useCustomRegistry
+        Write-Host "Installed: <<<<<<<<<<<<<<<<<<<<<<<<<<<<< $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
     }
 
     foreach ($chart in $gateways) {
-        Write-Host "Installing Api Gateway Chart: $chart" -ForegroundColor Green
-        Install-Chart $chart "-f app.yaml -f inf.yaml -f $ingressValuesFile  --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.mesh.enabled=$useMesh  --set inf.tls.enabled=$sslEnabled --set image.tag=$imageTag" $false
+        Write-Host "Installing: <<<<<<<<<<<<<<<< Api Gateway Chart: $chart >>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+        Install-Chart $chart "-f app.yaml -f inf.yaml -f $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.mesh.enabled=$useMesh --set inf.tls.enabled=$sslEnabled --set image.tag=$imageTag" $false
+        Write-Host "Installed: <<<<<<<<<<<<<<<< Api Gateway Chart: $chart >>>>>>>>>>>>>>>>>"  -ForegroundColor Green
         
     }
 
@@ -188,4 +188,6 @@ else {
     Write-Host "eLefebvreOnContainers non-infrastructure charts aren't installed (-deployCharts is false)" -ForegroundColor Yellow
 }
 
-Write-Host "helm charts installed." -ForegroundColor Green
+Write-Host "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<" -ForegroundColor DarkBlue
+Write-Host "<<<<<<<<<<<    helm charts installed.    >>>>>>>>>>" -ForegroundColor DarkBlue
+Write-Host ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor DarkBlue
