@@ -922,6 +922,12 @@ class SmsMessageEditor extends Component {
             .catch(err => {
                 console.log(err);
             });
+          if (lefebvre && lefebvre.userApp === 'centinela' && lefebvre.idDocuments){
+            lefebvre.idDocuments.forEach(document => {
+              notifyCen('certifiedSms', lefebvre.guid, document.docId, recipients)
+              .catch(err => console.log(err));
+            });
+          } 
         });
       }
       this.setState({isCallApis: false, hideRolDialog: false});
