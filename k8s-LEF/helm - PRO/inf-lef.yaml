@@ -43,7 +43,7 @@ inf:
   version:
     major: 0
     minor: 34
-    complete: RC 00.36
+    complete: RC 00.37
 #  registry:                # Uncomment "registry" to specify registry secret
 #    secretName:            # secretName is the name of the secret inside k8s   
 #    server:                # Registry login server
