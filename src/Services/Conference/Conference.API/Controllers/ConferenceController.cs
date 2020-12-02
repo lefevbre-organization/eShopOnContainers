@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Services;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
 {
@@ -62,7 +63,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors.Count > 0 ? (IActionResult)BadRequest(result.data) : Ok(result.data);
         }
 
-        [HttpPost("conference")]
+        [HttpPost("conference/qs")]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ConferenceCreateQSAsync(
@@ -71,7 +72,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             [FromQuery] string mail_owner
             )
         {
-            _log.LogError($"conference: {name} con {mail_owner}");
+            _log.LogError($"conference qs: {name} con {mail_owner}");
             var reservation = new UserReservationRequest() { mail_owner = mail_owner, name = name, start_time = start_time };
             //name=testroom1&start_time=2048-04-20T17%3A55%3A12.000Z&mail_owner=client1%40xmpp.com
             if (string.IsNullOrEmpty(reservation.name))
@@ -80,6 +81,37 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             var result = await _service.CreateReservationAsync(reservation);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result.data) : Ok(result.data);
+        }
+
+        [HttpPost("conference")]
+        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ConferenceCreateBodyAsync()
+        {
+            var reservation = new UserReservationRequest();
+            using (var reader = new StreamReader(Request.Body))
+            {
+                var body = await reader.ReadToEndAsync();
+                _log.LogError($"conference body: {body}");
+                string[] parameters = body.Split('&');
+                foreach (var pa in parameters)
+                {
+                    string[] param_values = pa.Split('=');
+
+                    if (param_values.Length > 0 && param_values[0].Equals("name"))
+                        reservation.name = param_values[1];
+                    if (param_values.Length > 0 && param_values[0].Equals("mail_owner"))
+                        reservation.name = param_values[1];
+                    if (param_values.Length > 0 && param_values[0].Equals("start_time"))
+                        reservation.name = param_values[1];
+                    
+                }
+                //name=testroom1&start_time=2048-04-20T17%3A55%3A12.000Z&mail_owner=client1%40xmpp.com
+            }
+
+            var result = await _service.CreateReservationAsync(reservation);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result.data);
         }
 
         [HttpDelete("conference/{id}")]
@@ -170,7 +202,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserAsync(
-            [FromRoute]string idNavision = "E1621396",
+            [FromRoute] string idNavision = "E1621396",
             short idApp = 1)
         {
             if (string.IsNullOrEmpty(idNavision))
@@ -185,7 +217,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostUserAsync(
-                [FromBody] UserConference user 
+                [FromBody] UserConference user
             )
         {
             if (string.IsNullOrEmpty(user.idNavision))
@@ -196,13 +228,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-
         [HttpGet("conferences")]
         [ProducesResponseType(typeof(Result<List<ConferenceSimple>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<ConferenceSimple>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetConferencesAsync()
         {
-
             Result<List<ConferenceSimple>> result = await _service.GetActiveConferencesAsync();
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
@@ -290,7 +320,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
-
     }
 }
