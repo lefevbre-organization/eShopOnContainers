@@ -5,56 +5,22 @@ import { selectFolder } from '../../actions/application';
 import { clearSelectedMessage, getCredentials } from '../../services/application';
 import { getSelectedFolder } from '../../selectors/folders';
 import mainCss from '../../styles/main.scss';
-import styles from './message-viewer.scss';
+import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
-import { 
-  downloadSignedDocument,  
-  downloadSignedDocument2, 
-  downloadTrailDocument, 
-  downloadTrailDocument2,
-  downloadAttachments2,
-  sendReminder, 
-  sendReminder2, 
+import {  
+  downloadSmsCertificationDocument,
   cancelSignature,
-   cancelSignature2 
+  cancelSignature2 
 } from "../../services/api-signaturit";
-import SignatureList from './signature-list/signature-list';
+import SmsList from './sms-list/sms-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
 
-export function addressGroups(address) {
-  const ret = {
-    name: '',
-    email: ''
-  };
-  const formattedFrom = address.match(/^"(.*)"/);
-  ret.name = formattedFrom !== null ? formattedFrom[1] : address;
-  ret.email = formattedFrom !== null ? address.substring(formattedFrom[0].length).trim().replace(/[<>]/g, '') : '';
-  return ret;
-}
-
-export const modalReminder = `
-  <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      Se acaba de enviar un recordatorio.
-    </div>
-`;
-
-export const modalCancelOk = `
-  <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      Petición cancelada correctamente.
-    </div>
-`;
-
-
-
-export class MessageViewer extends Component {
+export class SmsMessageViewer extends Component {
   constructor(props) {
-    console.log('Entra en el MessageViewer');
     super(props);
     this.state = {
       hideAlertDialog: false,
@@ -63,15 +29,13 @@ export class MessageViewer extends Component {
       signatureId: '',
       auth: '',
       signer: 0,
+      filterCertificates: []
     };
-    this.dialogClose = this.dialogClose.bind(this);
-    this.dialogOpen = this.dialogOpen.bind(this);
+    this.dialogClose = this.dialogClose;
+    this.dialogOpen = this.dialogOpen;
 
     //Sin firmas 
     this.animationSettings = { effect: 'None' };
-    // this.alertButtonRef = element => {
-    //   this.alertButtonEle = element;
-    // };
     this.alertButtons = [{
       // Click the footer buttons to hide the Dialog
       click: () => {
@@ -80,9 +44,6 @@ export class MessageViewer extends Component {
       buttonModel: { content: 'Aceptar', isPrimary: true }
     }];
 
-    // this.confirmButtonRef = element => {
-    //   this.confirmButtonEle = element;
-    // };
     this.confirmButtons = [{
         click: () => {
             this.setState({ hideConfirmDialog: false });
@@ -96,6 +57,85 @@ export class MessageViewer extends Component {
         },
         buttonModel: { content: 'Si', isPrimary: true }
       }];
+  }
+
+  componentDidMount() {
+    let filter = [];
+    const sms = this.props.selectedSms;
+    sms.certificates.forEach(certificate => {
+      let index = filter.findIndex(x => (x.phone === certificate.phone));
+      if (index === -1){
+        filter.push(certificate);
+      } else if (filter[index].events.length < certificate.events.length){
+        // This is to assure we pick the node that contains all the events because certification_completed is present only in one node
+        filter[index] = certificate;
+      }
+    });
+    this.setState({filterCertificates: filter});
+  }
+
+  componentDidUpdate(prevProps){
+    if (JSON.stringify(this.props.selectedSms) !== JSON.stringify(prevProps.selectedSms)){
+      let filter = [];
+      this.props.selectedSms.certificates.forEach(certificate => {
+        let index = filter.findIndex(x => (x.phone === certificate.phone));
+        if (index === -1){
+          filter.push(certificate);
+        } else if (filter[index].events.length < certificate.events.length){
+          // This is to assure we pick the node that contains all the events because certification_completed is present only in one node
+          filter[index] = certificate;
+        }
+      });
+      this.setState({filterCertificates: filter});
+    }
+
+  }
+
+  getDocments(selectedSms, documents) {
+    var counter = [];
+    let findRes;
+    var certificationType = selectedSms.data.find(d => d.key === 'certification_type');
+    certificationType = ( certificationType === null || certificationType === undefined) ? {key: 'certification_type', value: 'open_every_document'} : certificationType
+    documents.forEach(doc => {
+      if (certificationType.value === 'open_document'){
+        findRes = doc.events.find(d => d.type.toLowerCase() === 'documents_opened');
+      } else if (certificationType.value === 'open_every_document') {
+        findRes = doc.events.find(d => d.type.toLowerCase() === 'document_opened');
+      }
+      
+      (findRes) ? counter.push(findRes) : null;
+    })
+    
+    
+   console.log('getDocments', counter.length);
+   return (counter) ? counter.length : 0;
+  }
+  
+
+  getReceiverEvent(receiver) {
+    console.log('getReceiverEvent', receiver);
+    switch (receiver) {
+      case 'delivery':
+        return (i18n.t('smsViewer.smsDelivered'));
+
+      case 'open_email': 
+        return (i18n.t('smsViewer.smsOpened'));
+
+      case 'open_document': 
+      return (i18n.t('smsViewer.docOpened'));
+
+      case 'open_every_document': 
+      return (i18n.t('smsViewer.openEveryDocument'));
+
+      case 'download_document': 
+      return (i18n.t('smsViewer.docDownloaded'));
+
+      case 'download_every_document': 
+      return (i18n.t('smsViewer.downloadEveryDocument'));
+      
+      default:
+        return (i18n.t('smsViewer.emailDelivered'));
+    }
   }
 
   getEventStatus(signer, ev){
@@ -142,9 +182,9 @@ export class MessageViewer extends Component {
     return res;
   }
 
-  getDocuments(signature){
+  getFiles(email) {
     var lookup = {};
-    var items = signature.documents;
+    var items = email.certificates;
     var result = [];
 
     for (var item, i = 0; item = items[i++];) {
@@ -152,19 +192,24 @@ export class MessageViewer extends Component {
 
       if (!(name in lookup)) {
         lookup[name] = 1;
-        result.push(name);
+        result.push(
+          {
+              text:  name,
+         
+          }
+      )  ;
       }
     }
     return result;
   }
 
-  getSigners(signature){
+  getRecipients(sms){
     var lookup = {};
-    var items = signature.documents;
+    var items = sms.certificates;
     var result = [];
 
     for (var item, i = 0; item = items[i++];) {
-      var name = item.email;
+      var name = item.phone;
 
       if (!(name in lookup)) {
         lookup[name] = 1;
@@ -174,27 +219,12 @@ export class MessageViewer extends Component {
     return result;
   }
 
-  onSendReminder(signatureId, documents, auth){
-    sendReminder2(signatureId, auth);
-    documents.forEach((document, index) => {
-      var signers = document.events
-      if(signers.length > 0) {
-        signers.forEach((signer) => {
-            if(signer.type != 'document_signed'){
-                this.setState({ 
-                  hideAlertDialog: true, 
-                  signer: (index + 1) 
-                });
-                return;
-            }
-        });
-      }
-    });
+  downloadTrailDocument(smsId, id, name, auth) {
+    downloadSmsCertificationDocument(smsId, id, name, auth);
   }
 
   onCancelSignature(signatureId, auth){
     this.setState({ hideConfirmDialog: true, signatureId: signatureId, auth: auth });
-    //cancelSignature2(signatureId, auth);
   }
 
   onCancelSignatureOk(){
@@ -204,8 +234,6 @@ export class MessageViewer extends Component {
     cancelSignature2(signatureId, auth)
     .then(() => {
       this.setState({ hideAlertDialog2: true, signatureId: '', auth: '' });
-      this.props.setUserApp('lefebvre');
-      this.props.setGuid(null);
     })
     .catch(() => {
       this.setState({ hideAlertDialog2: true, signatureId: '', auth: '' });
@@ -220,115 +248,35 @@ export class MessageViewer extends Component {
   });
   }
 
-  dialogOpen(instance){
-    switch (instance) {
-      case "alertDialog":
-        (this.alertDialogInstance) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;   
-        break;
-      case "confirmDialog":
-        (this.confirmDialogInstance) ? this.confirmDialogInstance.cssClass = 'e-fixed' : null;
-        break;
-      default:
-        break;
-    }
+  dialogOpen(){
+    this.alertDialogInstance.cssClass = 'e-fixed';
   }
-
-  getDaysBetweenDates(date1, date2) {
-   
-    // To calculate the time difference of two dates 
-    var Difference_In_Time = date2.getTime() - date1.getTime(); 
-    
-    // To calculate the no. of days between two dates 
-    var Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24); 
-  
-    return Math.round(Difference_In_Days);
-  }
-
 
   render() {
-    console.log('Entra en el message viewer');
-    const signature = this.props.selectedSignature;
+    const sms = this.props.selectedSms;
+
     let status;
     let status_style;
+   
     const contenido = `
-    <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
-      ${i18n.t('reminderSentModal.text') + ' ' 
-      + this.state.signer + '.'}
-    </div>`;
-
-    const contenido2 = `
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
       ${i18n.t('cancelledSignatureModal.text')}
     </div>`;
 
-    const contenido3 = `
+    const contenido1 = `
     <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
       ${i18n.t('cancelConfirmationModal.text2')}
     </div>`;
 
-    let reminderText;
-    let expirationDays = signature.data.find(x => x.key === 'expiration');
-    let expirationText = i18n.t('signatureViewer.widgets.expiration.doesntExpires');
-    let passedTime =  this.getDaysBetweenDates(new Date(signature.created_at), new Date());
-    let reminderConfig = signature.data.find(x => x.key === "reminders");
-    let signatureConfig = signature.data.find(x => x.key === "roles");
+   
+    let smsConfig = sms.data.find(x => x.key === "additional_info");
+    let certificationType = sms.data.find(x => x.key === "certification_type" || x.key === "type");
 
-    
-    if (reminderConfig === undefined || reminderConfig === null){
-      reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
-    } else {
-      switch (reminderConfig.value) {
-        case 'notConfigured':
-          reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
-          break;
-        case 'Daily':
-          reminderText = i18n.t('signatureViewer.widgets.reminders.daily');
-          break;
-        case 'Weekly':
-          reminderText = i18n.t('signatureViewer.widgets.reminders.weekly');
-          break;
-        default:
-          if (reminderConfig.value.startsWith('Custom')){
-            reminderText = i18n.t('signatureViewer.widgets.reminders.everyXdays').replace('___', reminderConfig.value.split(':')[1]);
-          } else {
-            reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
-          }
-          break;
-      }
-    }
-    
-    if ((expirationDays && expirationDays.value === 0) || expirationDays === undefined || expirationDays.value === "notConfigured"){
-      expirationText = i18n.t('signatureViewer.widgets.expiration.notConfigured');
-    }
-    else {
-      if (expirationDays.value !== "never"){
-        expirationText = 
-        (expirationDays.value - passedTime) < 0 ? 
-        i18n.t('signatureViewer.widgets.expiration.expired')
-        : i18n.t('signatureViewer.widgets.expiration.expires')
-        .replace('___',  expirationDays.value - passedTime);
-      }
-    }
-
-    switch (signature.status) {
-      case 'canceled':
-        status = i18n.t('signaturesGrid.statusCancelled');
-        status_style = 'cancelada';
-        break;
-      case 'declined':
-        status = i18n.t('signaturesGrid.statusDeclined');
-        status_style = 'cancelada';
-        break;
-      case 'expired':
-        status = i18n.t('signaturesGrid.statusExpired');
-        status_style = 'cancelada';
-        break;      
+    switch (sms.status) {
       case 'completed':
         status = i18n.t('signaturesGrid.statusCompleted');
         status_style = 'completada'
@@ -356,65 +304,33 @@ export class MessageViewer extends Component {
          styles={styles}
          status_style={status_style}
          status={status}
-         detail={signature}
-         getSigners={this.getSigners}
-         service={'signature'}
+         detail={sms}
+         getSigners={this.getRecipients}
+         getFiles={this.getFiles}
+         service={'sms'}
         />
-        <button 
-          className={`${styles['btn-gen-border']} left modal-trigger`} 
-          href="#demo-modal2" 
-          onClick={() => this.onCancelSignature(signature.id, this.props.auth)} 
-          disabled={signature.status==='canceled' || signature.status ==='completed'}>
-            {i18n.t('signatureViewer.buttons.cancel')}
-        </button>
-        <button 
-          className={`${styles['btn-gen']} modal-trigger right`} 
-          href="#demo-modal1"
-          onClick={() => this.onSendReminder(signature.id, signature.documents, this.props.auth)} 
-          disabled={signature.status==='canceled' || signature.status ==='completed'}>
-           {i18n.t('signatureViewer.buttons.reminder')}
-        </button>
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
-            <div className={`${materialize.col} ${materialize['l4']} right`}>
-                <div className={styles['cont-generico']}>
-                    <span className="lf-icon-calendar-cross"></span><span className={styles['title-generico']}>{i18n.t('signatureViewer.widgets.expiration.title')}</span>
-                    <p style={{paddingTop: '10px'}}>{expirationText}</p>
-                    <div className={styles.clearfix}></div>
-                </div>
-                <div className={styles['cont-generico']}>
-                    <span className="lf-icon-calendar"></span><span className={styles['title-generico']}>{i18n.t('signatureViewer.widgets.reminders.title')}</span>
-                    <p style={{paddingTop: '10px'}}>{reminderText}</p>
-                    <div className={styles.clearfix}></div>
-                </div>
-                <button 
-                  className={`${styles['btn-gen']} modal-trigger ${styles.mB10} right`}
-                  onClick={() => downloadSignedDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
-                  disabled={signature.status !=='completed'}>
-                    {i18n.t('signatureViewer.buttons.download')}
-                </button> 
-                <button 
-                  className={`${styles['btn-gen']} modal-trigger right`}
-                  onClick={() => downloadTrailDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
-                  disabled={signature.status !=='completed'}>
-                    {i18n.t('signatureViewer.buttons.downloadTrail')}
-                </button>
-            </div>            
-            <div className={`${materialize.col} ${materialize['l8']} left`}>
-              {signature.documents.map((signer, index) => {
+            <div className={`${materialize.col} ${materialize['l12']} left`}>
+              {this.state.filterCertificates.map((signer, index) => {
               return (
-                <SignatureList 
+                <SmsList 
                  signer={signer}
-                 signatureConfig={signatureConfig ? signatureConfig.value.split('|')[index].split(':') : null}
-                 signatureId={signature.id}
+                 signatureConfig={smsConfig ? smsConfig.value.split('|')[index].split(':') : null}
+                 smsId={sms.id}
+                 sms={sms}
                  index={index}
                  key={signer.id}
                  styles={styles}
+                 getReceiverEvent={this.getReceiverEvent}
+                 certificationType={certificationType}
+                 getDocments={this.getDocments}
                  getEventDate={this.getEventDate}
                  getEventStatus={this.getEventStatus}
                  getSingleEventDate={this.getSingleEventDate}
+                 downloadTrailDocument={this.downloadTrailDocument}
                  auth={this.props.auth}
-                ></SignatureList>            
+                ></SmsList>            
                 )
               })}
             </div>
@@ -427,14 +343,11 @@ export class MessageViewer extends Component {
           visible={this.state.hideAlertDialog || this.state.hideAlertDialog2} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.hideAlertDialog) ? contenido : contenido2}//'Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí' 
+          content={contenido}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          //buttons={this.alertButtons} 
-          open={this.dialogOpen("infoDialog")} 
-          close={this.dialogClose}
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose.bind(this)}
           showCloseIcon={true}
-          //position={ this.position }
         ></DialogComponent>
         <DialogComponent 
           id="confirmDialog" 
@@ -443,12 +356,11 @@ export class MessageViewer extends Component {
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
           width='60%'
-          content={contenido3} 
+          content={contenido1} 
           ref={dialog => this.confirmDialogInstance = dialog} 
-          //target='#target' 
           buttons={this.confirmButtons} 
-          open={this.dialogOpen("confirmDialog")} 
-          close={this.dialogClose}
+          open={() => this.dialogOpen} 
+          close={() => this.dialogClose}
         ></DialogComponent>
         <style global jsx>
           {`
@@ -579,13 +491,13 @@ export class MessageViewer extends Component {
   }
 }
 
-MessageViewer.propTypes = {
+SmsMessageViewer.propTypes = {
   refreshMessageActiveRequests: PropTypes.number,
   selectedMessage: PropTypes.object,
   className: PropTypes.string
 };
 
-MessageViewer.defaultProps = {
+SmsMessageViewer.defaultProps = {
   className: ''
 };
 
@@ -598,7 +510,7 @@ const mapStateToProps = state => {
     lefebvre: state.lefebvre,
     login: state.login,
     credentials: state.application.user.credentials,
-    selectedSignature: state.application.selectedSignature,
+    selectedSms: state.application.selectedSms,
     auth: state.application.user.credentials.encrypted
   }
 };
@@ -607,11 +519,7 @@ const mapDispatchToProps = dispatch => ({
   showFolder: folder => {
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
-  },
-  // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
-  setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
-  setGuid: guid => dispatch(ACTIONS.setGUID(guid))
+  }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MessageViewer);
+export default connect(mapStateToProps, mapDispatchToProps)(SmsMessageViewer);

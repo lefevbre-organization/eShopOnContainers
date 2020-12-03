@@ -118,7 +118,6 @@ const EmailList = (props) => {
                         <div>
                           <span className={props.styles['document-detail']}>
                             <b>
-                              {/* {props.signer.events.filter(x => x.type === 'documents_opened').length}/{documentFilter.length} */}
                               {props.getDocments(props.email, documentFilter)}/{documentFilter.length}
                             </b>
                           </span>

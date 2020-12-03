@@ -6,6 +6,6 @@
         public long DocumentId { get; set; }
         public string ContentFile { get; set; }
         public string Name { get; set; }
-        public CenContact recipient { get; set; }
+        public CenRecipient recipient { get; set; }
     }
 }

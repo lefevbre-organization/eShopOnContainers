@@ -255,7 +255,7 @@ class MenuUser extends Component {
                                              available={i18n.t('menu-user.available')}
                                              consumed={i18n.t('menu-user.consumed')}
                                              availablenumber={lefebvre.numAvailableSignatures}
-                                             signatureConsumed={application.signatures.length + application.emails.length} /> 
+                                             signatureConsumed={application.signatures.length + application.emails.length + application.smsList.length} /> 
                                              : null }
                                             {/* { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
                                             <SignatureNumbers 

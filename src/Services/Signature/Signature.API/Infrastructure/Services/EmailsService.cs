@@ -154,11 +154,11 @@
 
             Result<bool> result;
 
-            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/email";
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/sms";
 
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
-            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { fullName = name, phoneNumber1 = "", email } };
+            var jsonBody = new { guid, documentId = cenDocId, contentFile = file["fileContent"].AsString, name = file["fileName"].AsString, recipient = new { name, email } };
 
             client.Timeout = _timeoutFile;
 
