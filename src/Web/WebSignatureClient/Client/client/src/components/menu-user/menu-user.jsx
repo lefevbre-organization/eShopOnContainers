@@ -196,7 +196,9 @@ class MenuUser extends Component {
             acronym = '?';
         }
         const nameCut = lefebvre.userName.split(' ');
-        const nameInitial = `${nameCut[0].slice(0, 1)} ${nameCut[1].slice(0, 1)}`
+        const nameInitial = (nameCut && nameCut.length === 2) 
+          ? `${nameCut[0].slice(0, 1)} ${nameCut[1].slice(0, 1)}` 
+          : `${nameCut[0].slice(0, 1)}`;
 
         return (
             <Fragment>
