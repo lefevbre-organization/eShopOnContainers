@@ -15,7 +15,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
         # "lexon-api",  
-        "account-api", "conference-api", "lexon-api", "centinela-api", "userutils-api", "signature-api",  
+        "account-api", "centinela-api", "conference-api", "lexon-api", "signature-api", "userutils-api",  
         # "database-api", "webdatabase", 
         "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
@@ -26,8 +26,8 @@ Param(
         "apigwlex", 
         "apigwacc",
         "apigwcen",
-        "apigwsig",
-        "apigwdat" 
+        "apigwsig"
+        # "apigwdat" 
         ),
     [parameter(Mandatory=$false)][string]$aksName="",
     [parameter(Mandatory=$false)][bool]$useLocalImages=$false,

@@ -1,5 +1,9 @@
 apiVersion: v1
-appVersion: "1.0"
-description: A Helm chart for Kubernetes
+description: Gateway for signature api  
 name: apigwsig
-version: 0.1.0
+home: https://github.com/lefevbre-organization/eShopOnContainers
+icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
+keywords: ["gateway", "infrastructure"]
+version: 0.37.0
+sources:
+  - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/ApiGateways/ApiGw-Base

@@ -1,5 +1,4 @@
 apiVersion: v1
-appVersion: "0.37"
 description: Email account management API  
 name: account-api
 home: https://github.com/lefevbre-organization/eShopOnContainers

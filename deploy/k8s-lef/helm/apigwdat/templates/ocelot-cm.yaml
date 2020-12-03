@@ -9,6 +9,8 @@ metadata:
     chart: {{ template "apigwdat.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   {{ (.Files.Glob "configuration-database.json").AsConfig  | indent 2 }}
 

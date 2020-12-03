@@ -9,14 +9,16 @@ metadata:
     chart: {{ template "apigwdat.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }} 
 data:
   internalurls__identity: http://{{ .Values.app.svc.identity }}
   internalurls__identity__hc: http://{{ .Values.app.svc.identity }}/hc
   internalurls__account__hc: http://{{ .Values.app.svc.accountapi }}/hc
-  internalurls__lexon__hc: http://{{ .Values.app.svc.lexonapi }}/hc
-  internalurls__lexonmysql__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc
   internalurls__centinela__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
-  internalurls__userutils__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
+  internalurls__conference__hc: http://{{ .Values.app.svc.conferenceapi }}/hc
+  internalurls__lexon__hc: http://{{ .Values.app.svc.lexonapi }}/hc
   internalurls__signature__hc: http://{{ .Values.app.svc.signatureapi }}/hc
-  internalurls__database__hc: http://{{ .Values.app.svc.databaseapi }}/hc
+  internalurls__userutils__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
+  all__Version: {{ .Chart.Version | quote }}
 

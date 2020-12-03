@@ -46,7 +46,7 @@ env:
     - name: Database
       key: account__Database
     - name: DeployVersion
-      key: all_Version
+      key: all__Version
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values: {}
 
