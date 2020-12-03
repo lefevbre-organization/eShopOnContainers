@@ -95,8 +95,9 @@ class UserLefebvre extends Component {
             this.setState({type: 'expired'});
         } else {
             var signatureRole = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
-            var emailRole = payload.roles.some( e => e === 'Email Certificado');
+            var emailRole = signatureRole;//payload.roles.some( e => e === 'Email Certificado');
             var centinelaRole = payload.roles.some(e => e.toUpperCase() === 'CENTINELA');
+            var lexonRole = payload.roles.some(e => e.toUpperCase() === 'LEX-ON');
 
             var roleOk = signatureRole || emailRole;
 
@@ -110,6 +111,7 @@ class UserLefebvre extends Component {
                 (signatureRole) ? rolesList.push('Firma Digital') : null;
                 (emailRole) ? rolesList.push('Email Certificado') : null;
                 (centinelaRole) ? rolesList.push('Centinela') : null;
+                (lexonRole) ? rolesList.push('Lexon') : null;
 
                 this.props.setRoles(rolesList);
 
