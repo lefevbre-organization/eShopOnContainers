@@ -28,7 +28,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 context.Exception,
                 context.Exception.Message);
 
-            if (context.Exception.GetType() == typeof(DatabaseDomainException))
+            if (context.Exception.GetType() == typeof(ConferenceDomainException))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {

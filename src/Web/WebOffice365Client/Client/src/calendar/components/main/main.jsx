@@ -82,7 +82,7 @@ export class Main extends Component {
         this.toggleSideBar = this.toggleSideBar.bind(this);
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
-        this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
+        this.handleScheduleOpenNewEventEditor = this.handleScheduleOpenNewEventEditor.bind(this);
         this.openCalendarView = this.openCalendarView.bind(this);
         this.deleteCalendar = this.deleteCalendar.bind(this);
         this.calendarColorModify = this.calendarColorModify.bind(this);
@@ -178,13 +178,13 @@ export class Main extends Component {
         this.drowDownListEventType = undefined;
         this.drowDownListSensitivity = undefined;
 
-        //params for iframe enbebed functions
-        if (this.props.location.search == "?layout=iframe") {
-            this.layoutIframe = true;
-        }
-        else {
-            this.layoutIframe = false;
-        }
+        ////params for iframe enbebed functions
+        //if (this.props.location.search == "?layout=iframe") {
+        //    this.layoutIframe = true;
+        //}
+        //else {
+        //    this.layoutIframe = false;
+        //}
 
         // to change when api would be ready
         this.eventTypeDataSource =
@@ -220,7 +220,7 @@ export class Main extends Component {
             }
         ];
 
-        this.checkForParams()
+        this.TokensFlows();
     }
 
     toggleSideBar() {
@@ -245,17 +245,18 @@ export class Main extends Component {
         }
     }
 
-    checkForParams() {
-
-        let params = (new URL(document.location)).searchParams;
-
-        if (params.get('layout') != undefined) {
+    TokensFlows() {
+        if (window != window.top) {
             this.layoutIframe = true;
         }
 
-        if (params.get('newEvent') != undefined) {
-            this.layoutIframeEventView = true;
+        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+            this.layoutIframeEditEventView = true
         }
+        else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+            this.layoutIframeNewEventView = true
+        }
+
     }
 
     convertUnicode(input) {
@@ -685,6 +686,17 @@ export class Main extends Component {
 
     onCloseDialog() {
         this.LoadCalendarList(false)
+
+
+        window.top.postMessage(
+            JSON.stringify({
+                idEvent: undefined,
+                actionCancelled: true,
+                selectedDate: undefined
+            }),
+            window.URL_LEXON
+        );
+
     }
 
     async handleClassificatedEvent(event) {
@@ -698,6 +710,11 @@ export class Main extends Component {
     }
 
     componentDidMount() {
+
+        if (this.layoutIframe) {
+            this.setState({ leftSideBar: { collapsed: true } })
+        }  
+
         window.addEventListener(
             'EventClassified',
             this.handleClassificatedEvent
@@ -752,10 +769,17 @@ export class Main extends Component {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
 
-             // New event is called by params
-            if (obj.layoutIframeEventView) {
+            // New event is called 
+            if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
-                    obj.handleScheduleOpenEditor()
+                    obj.handleScheduleOpenNewEventEditor()
+                }, 1000);
+            }
+
+            // Edit event is called 
+            if (obj.layoutIframeEditEventView) {
+                setTimeout(function () {
+                    obj.handleScheduleOpenEditEventEditor()
                 }, 1000);
             }  
 
@@ -1023,11 +1047,11 @@ export class Main extends Component {
         var DateMessage = args.data.startTime
         window.top.postMessage(
             JSON.stringify({
-                id: 2,
-                error: false,
-                message: DateMessage
+                idEvent: args.data.Id,
+                actionCancelled: false,
+                selectedDate: DateMessage
             }),
-            'http://localhost:8080'
+            window.URL_LEXON
         );
 
         //Not allow to change calendar property on update events
@@ -1173,10 +1197,11 @@ export class Main extends Component {
 
             }, 1000);
 
-            if (this.layoutIframe & this.layoutIframeEventView) {
+            if (this.layoutIframe & this.layoutIframeNewEventView || this.layoutIframeEditEventView) {
                 var head = document.getElementById("schedule_dialog_wrapper_dialog-header");
                 head.classList.add('hidden');
             }
+
             this.selectedEvent = { ...args.data,  ...(this.scheduleData.find( item => item.Id === args.data.Id ) || undefined)};
 
             this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
@@ -1326,47 +1351,88 @@ export class Main extends Component {
 
     }
 
+    addLogOutButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let logoutIconEle = scheduleElement.querySelector('.e-schedule-logout-icon');
+            logoutIconEle.onclick = () => {
+                // alert('logout');
+                signOut();
+                window.location.reload();
+            };
+        }
+        let logoutContentEle = createElement('div', {
+            className: 'e-profile-wrapper'
+        });
+
+        scheduleElement.parentElement.appendChild(logoutContentEle);
+
+
+    }
+
+
+
+
+    addCalendarsButton(args) {
+        let scheduleElement = document.getElementById('schedule');
+        if (args.requestType === 'toolBarItemRendered') {
+            let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+            calendarIconEle.onclick = () => {
+                this.toggleSideBar()
+                //this.profilePopupCalendar.relateTo = calendarIconEle;
+                //this.profilePopupCalendar.dataBind();
+                //if (this.profilePopupCalendar.element.classList.contains('e-popup-close')) {
+                //    this.profilePopupCalendar.show();
+                //}
+                //else {
+                //    this.profilePopupCalendar.hide();
+                //}
+            };
+        }
+        //let calendarContentEle = createElement('div', {
+        //    className: 'e-profile-wrapper'
+        //});
+
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
+
+        //scheduleElement.parentElement.appendChild(calendarContentEle);
+        //let calendarIconEle = scheduleElement.querySelector('.e-schedule-calendar-icon');
+
+        //let output = this.sidebarObj;
+        //this.profilePopupCalendar = new Popup(calendarContentEle, {
+        //    content: output,
+        //    relateTo: calendarIconEle,
+        //    position: { X: 'left', Y: 'bottom' },
+        //    collision: { X: 'flip', Y: 'flip' },
+        //    targetType: 'relative',
+        //    viewPortElement: scheduleElement,
+        //    width: 150,
+        //    height: 300
+        //});
+        //this.profilePopupCalendar.hide();
+
+
+    }
+
     onEventRendered(args) {
 
         let event;
 
         switch (args.requestType) {
 
-            //case 'toolBarItemRendered':
+            case 'toolBarItemRendered':
 
-            //    let scheduleElement = document.getElementById('schedule');
-            //    if (args.requestType === 'toolBarItemRendered') {
-            //        let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-            //        userIconEle.onclick = () => {
-            //            this.profilePopup.relateTo = userIconEle;
-            //            this.profilePopup.dataBind();
-            //            if (this.profilePopup.element.classList.contains('e-popup-close')) {
-            //                this.profilePopup.show();
-            //            }
-            //            else {
-            //                this.profilePopup.hide();
-            //            }
-            //        };
-            //    }
-            //    let userContentEle = createElement('div', {
-            //        className: 'e-profile-wrapper'
-            //    });
-            //    scheduleElement.parentElement.appendChild(userContentEle);
-            //    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
-            //    let output = this.buttonEventTypeObj.element;
-            //    this.profilePopup = new Popup(userContentEle, {
-            //        content: output,
-            //        relateTo: userIconEle,
-            //        position: { X: 'left', Y: 'bottom' },
-            //        collision: { X: 'flip', Y: 'flip' },
-            //        targetType: 'relative',
-            //        viewPortElement: scheduleElement,
-            //        width: 150,
-            //        height: 60
-            //    });
-            //    this.profilePopup.hide();
+                //if not iframe view
+                if (!this.layoutIframe) {
+                   // this.addConfigurationButton(args);
 
-            //    break;
+                }
+                else {
+                    this.addLogOutButton(args);
+
+                }
+                this.addCalendarsButton(args);
+                break;
 
             case 'eventChanged':
 
@@ -1719,7 +1785,9 @@ export class Main extends Component {
         this.scheduleObj.dataBind();
     }
 
-    handleScheduleOpenEditor() {
+   
+
+    handleScheduleOpenNewEventEditor() {
         var endTimeDate = new Date();
         endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
         let cellData = {
@@ -1728,6 +1796,12 @@ export class Main extends Component {
         };
         this.scheduleObj.openEditor(cellData, 'Add');
     }
+
+    handleScheduleOpenEditEventEditor() {
+        let eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent)
+        this.scheduleObj.openEditor(eventData, 'Save');
+    }
+
 
     sidebarCalendarList() {
         this.props.getCalendars();
@@ -1772,14 +1846,35 @@ export class Main extends Component {
     }
 
     onActionBegin(args) {
-        //if (args.requestType === 'toolbarItemRendering') {
-        //    if (args.requestType === 'toolbarItemRendering') {
-        //        let userIconItem = {
-        //            align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
-        //        };
-        //        args.items.push(userIconItem);
-        //    }
-        //}
+
+        //ask for iframe
+
+        if (args.requestType === 'toolbarItemRendering') {
+            if (args.requestType === 'toolbarItemRendering') {
+                let CalendarsIconItem = {
+                    align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
+                };
+                args.items.push(CalendarsIconItem);
+
+                if (!this.layoutIframe) {
+                    //let userIconItem = {
+                    //    align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                    //};
+
+                    //args.items.push(userIconItem);
+                }
+                else {
+
+
+                    let LogOutIconItem = {
+                        align: 'Right', prefixIcon: 'logout-icon', text: '', cssClass: 'e-schedule-logout-icon'
+                    };
+                    args.items.push(LogOutIconItem);
+                }
+
+            }
+        }
+
     }
 
     onEventTypeClick() {
@@ -1904,7 +1999,7 @@ export class Main extends Component {
 
                         <section className='main hbox space-between'>
                             <Sidebar
-                                sideBarCollapsed={!this.layoutIframe ? (false) : (true)}
+                                sideBarCollapsed={this.state.leftSideBar.collapsed}
                                 sideBarToggle={this.toggleSideBar}
                                 getCalendarList={this.sidebarCalendarList}
                                 pathname={this.props.location.pathname}
@@ -1916,6 +2011,7 @@ export class Main extends Component {
                                 onCalendarOpenCalnendarView={this.openCalendarView}
                                 onCalendarDelete={this.deleteCalendar}
                                 onCalendarColorModify={this.calendarColorModify}
+                                isIframeContainer={this.layoutIframe} 
 
                             />
                             <article className='d-flex flex-column position-relative'>

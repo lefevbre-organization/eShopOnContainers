@@ -211,9 +211,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             multipartContent = new MultipartFormDataContent();
             var jsonParams = new
                 {
-                    Name = file.recipient.fullName ?? "",
-                    Email = file.recipient.email ?? "",
-                    Phone = file.recipient.phoneNumber1 ?? ""
+                    Name = file.recipient.Name ?? "",
+                    Email = file.recipient.Email ?? "",
+                    Phone = file.recipient.Phone ?? ""
                 };
             multipartContent.Add(new StringContent(JsonConvert.SerializeObject(jsonParams), Encoding.UTF8, "application/json"));
 

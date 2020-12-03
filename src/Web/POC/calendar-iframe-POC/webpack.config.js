@@ -1,5 +1,10 @@
 var webpack = require('webpack');
 module.exports = {
+  devServer: {
+     headers: {
+        'X-Frame-Options': 'sameorigin'
+    }
+  },
   entry: {
     app: './app.js'
   },
@@ -10,6 +15,7 @@ module.exports = {
     publicPath: '/',
     filename: 'app.js'
   },
+  
   module: {
     rules: [
       {

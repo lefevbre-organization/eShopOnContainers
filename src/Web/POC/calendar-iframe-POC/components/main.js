@@ -104,7 +104,7 @@ import './App.css';
                 close={this.dialogCloseNew.bind(this)}>
             
                 <div className="modalview">
-                    <Iframe url="https://lexbox-test-webgoogle.lefebvre.es/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6bnVsbCwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.zK3w455SefI1Ts2W8mcXXPm87pBgjiTKL8GU5_qt6-g/?prov=GO0"
+                    <Iframe url="http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6bnVsbCwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.zK3w455SefI1Ts2W8mcXXPm87pBgjiTKL8GU5_qt6-g/?prov=GO0"
                         width="100%"
                         height="100%"
                         id="myId2"
@@ -133,7 +133,7 @@ import './App.css';
                 close={this.dialogCloseEdit.bind(this)}>
                 
                 <div className="modalview">
-                    <Iframe url="https://lexbox-test-webgoogle.lefebvre.es/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IjJtZXU5bW01YjVyOHVkcXByYWpvY2l0N3Q4IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.1LAw6Cl5liiL7NJwtX9CCFYN-M_4XXt3LqJNWV4-yYo/?prov=GO0"
+                    <Iframe url="http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IkFBTWtBRFl3TjJVNU9XWmxMV1V3WkRrdE5EUTNZaTA1TVRRMkxUTXhZbVV5TUdFeE1qY3dOZ0JHQUFBQUFBQUJHVHJpc3Q2NVI1WGxWZm1ZM0tBcUJ3QWNuQmlLTHdsS1FydmlCOFhrd3hhY0FBQUFBQUVOQUFBY25CaUtMd2xLUXJ2aUI4WGt3eGFjQUFHMDI3dFFBQUE9IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.Xfjw1EYSed8YNaYrqp5EzjVB27AumFDeG-_4jE09siw/?prov=GO0"
                         width="100%"
                         height="100%"
                         id="myId2"
@@ -148,14 +148,14 @@ import './App.css';
 
             <div id="calendar" className='col-lg-6 control-section'> 
                 <div className='control-wrapper'>
-                    <Iframe url="https://lexbox-test-webgoogle.lefebvre.es/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwidGl0bGUiOiJyZXVuaW9uIGltcG9ydGFudGUifQ.jDez02aqfOhLMW24ZdB9xIPxOE8ijOr43syLbZ3YPqY/?prov=GO0"
+                    <Iframe url="http://localhost:3002/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwidGl0bGUiOiJyZXVuaW9uIGltcG9ydGFudGUifQ.jDez02aqfOhLMW24ZdB9xIPxOE8ijOr43syLbZ3YPqY/?prov=OU0"
                         width="754px"
                         height="425px"
                         id="myId"
                         frameBorder="0"
                         className="frame"
                         allow="fullscreen"
-                        //sandbox='allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation'
+                       // sandbox='allow-same-origin'
                         display="initial"
                         //loading = "cargando..."
                         position="relative" 
@@ -165,5 +165,7 @@ import './App.css';
         </div>); 
     }
 }
+
+//eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IkFBTWtBRFl3TjJVNU9XWmxMV1V3WkRrdE5EUTNZaTA1TVRRMkxUTXhZbVV5TUdFeE1qY3dOZ0JHQUFBQUFBQUJHVHJpc3Q2NVI1WGxWZm1ZM0tBcUJ3QWNuQmlLTHdsS1FydmlCOFhrd3hhY0FBQUFBQUVOQUFBY25CaUtMd2xLUXJ2aUI4WGt3eGFjQUFHMDI3dFFBQUE9IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.Xfjw1EYSed8YNaYrqp5EzjVB27AumFDeG-_4jE09siw
 
 export default Main;

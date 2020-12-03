@@ -4,18 +4,38 @@
     border-bottom: 1px solid #001978;
     margin: 0;
   }
+
   ::placeholder { 
     color: gray;
   }
 
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #001978; 
+    border-radius: 30px;
+  }
+
+  .container-list-contacts {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .list-checked {
+      flex: auto;
+  }
+
   input {
-    width: 90% !important;
+    width: 100% !important;
   }
 
   ul {
     position: relative;
     height: 50vh;
     overflow-y: auto;
+    overflow-x: hidden;
   }
 
   li {
@@ -34,7 +54,7 @@
   }
   
   .serch-contacts {
-    padding-left: 25px !important;
+    padding-left: 33px !important;
     background: #ebedf4 !important;
     border: none !important;
     height: 39px !important;
@@ -53,6 +73,7 @@
     margin-left: 50px;
     padding: 4px;
     margin-top: -20px;
+    font-family: 'MTTMilano';
   }
   
   .btn-modal {

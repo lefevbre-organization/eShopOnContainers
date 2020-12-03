@@ -29,7 +29,6 @@ class AttachmentsWidget extends Component{
       }
 
     render(){
-        console.log('AttachmentsWidget',this.props.sendingType);
         return (
             <div className={styles['widget']}>
                 <div className={styles['p10']}>

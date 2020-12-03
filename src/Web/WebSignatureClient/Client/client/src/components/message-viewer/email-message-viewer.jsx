@@ -13,7 +13,7 @@ import {
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
-import EmailList from './email-list/email-list';
+import EmailList from './certificate-list/email-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -230,7 +230,7 @@ export class EmailMessageViewer extends Component {
 
       if (!(name in lookup)) {
         lookup[name] = 1;
-        result.push(name);
+        result.push({ text: name });
       }
     }
     return result;
@@ -295,10 +295,6 @@ export class EmailMessageViewer extends Component {
     let certificationType = email.data.find(x => x.key === "certification_type" || x.key === "type");
 
     switch (email.status) {
-      case 'canceled':
-        status = i18n.t('signaturesGrid.statusCancelled');
-        status_style = 'cancelada';
-        break;
       case 'declined':
         status = i18n.t('signaturesGrid.statusDeclined');
         status_style = 'cancelada';

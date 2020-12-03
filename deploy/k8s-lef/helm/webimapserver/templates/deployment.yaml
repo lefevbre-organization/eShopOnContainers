@@ -69,7 +69,7 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
 ---    
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: restart-{{ template "webimapserver.fullname" . }}

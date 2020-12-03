@@ -33,6 +33,7 @@ class SideBar extends Component {
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
     this.handleOnNewEmailCertificate = this.onNewEmailCertificate.bind(this);
+    this.handleOnNewSmsCertificate = this.onNewSmsCertificate.bind(this);
     this.handleOnNewSending = this.onNewSending.bind(this);
     this.dialogClose = this.dialogClose.bind(this);
     
@@ -194,6 +195,7 @@ class SideBar extends Component {
           <SendingTypeSelector 
             onNewMessage={this.handleOnNewMessage}
             onNewEmailCertificate={this.handleOnNewEmailCertificate}
+            onNewSmsCertificate={this.handleOnNewSmsCertificate}
             lefebvre={lefebvre}
           />
         </DialogComponent>
@@ -420,6 +422,13 @@ class SideBar extends Component {
           this.props.setNumAvailableSignatures(0);
       });
     }
+    this.sendTypeDialogClose();
+  }
+
+  onNewSmsCertificate() {
+    this.props.newMessage('smsCertificate', null);
+    this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
+    this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
     this.sendTypeDialogClose();
   }
 

@@ -24,14 +24,17 @@
     },
     "filterMenu": "SIGNATURES",
     "filterMenuEmail": "CERTIFIED EMAIL",
+    "filterMenuSms": "CERTIFIED SMS",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
     "filterCancelled": "Cancelled",
     "signature": "Advanced signature",
     "certifiedEmail": "Certified email",
+    "certifiedSms": "Certified SMS",
     "sendingTypeSignature": "Signature with biometric data",
-    "sendingTypeEmail": "Certify your communications"
+    "sendingTypeEmail": "Certify your communications",
+    "sendingTypeSms": "Certify your SMS"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -51,7 +54,8 @@
       "cancel": "Cancel"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "CERTIFIED EMAIL"
+    "certifiedEmail": "CERTIFIED EMAIL",
+    "certifiedSms": "CERTIFIED SMS"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -117,7 +121,9 @@
       "photoInfo": "Number of photos attached",
       "phone": "Number of phone"
     },
-    "title": "CREATE NEW SIGNATURE"
+    "title": "CREATE NEW SIGNATURE",
+    "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
+    "certifiedSmsTitle": "CERTIFIED SMS"
   },
   "forwardAction": {
     "From": "From",
@@ -222,10 +228,13 @@
     "text": "A reminder has been sent signer"
   },
   "noSignersModal": {
-    "text": "At least one signer must be specified in order to send the request."
+    "text": "At least one recipient must be specified in order to send the request."
   },
   "noAttachmentsModal": {
     "text": "A document must be attached in order to send the request."
+  },
+  "noAttachmentsModalCertification": {
+    "text": "A document must be attached in order to send the request with the selected certification type."
   },
   "bigFileModal": {
     "text": "Max size of attached files must be lower than 15MB."
@@ -249,6 +258,10 @@
   },
   "onlyPdfModal": {
     "text": "Selected option only admits pdf files."
+  },
+  "maxCharactersModal": {
+    "text": "A SMS has a limit of 120 characters.",
+    "text2": "A SMS with an attached file has a limit of 100 characters."
   },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
@@ -287,7 +300,10 @@
     "delivery": "The receiver has received the email",
     "open_email": "The receiver has opened the email",
     "open_document": "The receiver has seen the documents (only pdf)",
-    "open_every_document": "The receiver has opened all the documents (only pdf)"
+    "open_every_document": "The receiver has opened all the documents (only pdf)",
+    "delivery_sms": "The receiver has received the sms",
+    "open_document_sms": "The recipient has viewed the documents",
+    "open_every_document_sms": "The receiver has opened all the documents"
   },
   "emailViewer": {
     "certification": "Type of certification selected:",
@@ -296,7 +312,7 @@
     "docOpened": "the recipient has opened the document",
     "openEveryDocument": "The recipient has opened the every documents",
     "docDownloaded": "the recipient has downloaded the document",
-    "downloadEveryDocument": "the recipient has downloaded the every documents",
+    "downloadEveryDocument": "the recipient has downloaded all documents",
     "attaches": "ATTACHED DOCUMENTS",
     "attachedDocOpened": "Document opened",
     "pendingDoc": "Pending to open",
@@ -304,6 +320,21 @@
       "downloadTrail": "Download audit"
     },
     "title": "EMAIL PROGRESS"
+  },
+  "smsViewer": {
+    "certification": "Type of certification selected:",
+    "smsDelivered": "The recipient has received the SMS",
+    "docOpened": "The recipient has opened the document",
+    "openEveryDocument": "The recipient has opened the every documents",
+    "docDownloaded": "The recipient has downloaded the document",
+    "downloadEveryDocument": "The recipient has downloaded all documents",
+    "attaches": "ATTACHED DOCUMENTS",
+    "attachedDocOpened": "Document opened",
+    "pendingDoc": "Pending to open",
+    "buttons": {
+      "downloadTrail": "Download audit"
+    },
+    "title": "SMS PROGRESS"
   },
   "signatureViewer":{
     "grid": {
@@ -347,7 +378,9 @@
         "emailOpened": "Email opened",
         "docOpened": "Document opened",
         "docSigned": "Document signed",
-	"docValidated": "Document validated"
+        "docValidated": "Document validated",
+        "smsSent": "SMS sent",
+        "smsDelivered": "SMS delivered"
       },
       "footer": {
         "title": "SENT REMINDERS",
@@ -389,7 +422,7 @@
   },
   "contacts": {
     "lexon": "Contact Lex-ON",
-    "centinela": "Contact Centinela",
+    "centinela": "Contact CENTINELA",
     "search": "Search contact",
     "selected": "selected"
   },

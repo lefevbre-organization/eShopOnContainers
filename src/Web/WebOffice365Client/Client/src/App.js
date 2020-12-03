@@ -12,7 +12,7 @@ class App extends Component {
     componentDidMount() {
         console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
     }
-
+    
     render() {
         return (
             <Router>
@@ -28,7 +28,7 @@ class App extends Component {
                     <Route exact path='/calendar/user/:idUser' component={UserCalendar} />
                     <Route exact path='/calendar/access/:token' component={UserCalendar} />
                     <Route path='/calendar' component={AppContainerCalendar} />
-                    <Route path="/" component={AppContainer} />
+                    <Route path="/" component={window != window.top ? AppContainerCalendar : AppContainer} />
                     {/* <AppContainer /> */}
                 </Switch>
             </Router>

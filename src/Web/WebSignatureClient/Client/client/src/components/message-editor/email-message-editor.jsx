@@ -100,7 +100,7 @@ class EmailMessageEditor extends Component {
     });
     this.setState({
       selectedCertificationOption: max,
-      certificationType: selectedOptions[max-1].certificate
+      certificationType: selectedOptions.length > 0 ? selectedOptions[max-1].certificate : 'delivery'
     })
     console.log("***++++++****+++++****++++****++++");
     console.log('Selected Options:')
@@ -317,6 +317,7 @@ class EmailMessageEditor extends Component {
               label={i18n.t('messageEditor.to')}
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
+              sendingType={sendingType}
             />
             {/* <HeaderAddress
               id={'cc'}
@@ -363,6 +364,7 @@ class EmailMessageEditor extends Component {
             <CertificatesWidget 
               userApp={lefebvre.userApp}
               onChange={this.onChangeCertification}
+              sendingType={sendingType}
             />
           </div>
           <div className={styles['action-buttons']}>

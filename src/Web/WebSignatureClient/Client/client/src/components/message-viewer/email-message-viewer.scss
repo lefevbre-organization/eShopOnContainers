@@ -212,6 +212,11 @@
   }
 }
 
+.container-header-list {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
 .cont-progreso-peticion-firma {
   border: 1px solid #001978;
   border-top: 6px solid #001978;
@@ -279,6 +284,25 @@
      background: #f4f4f4;
      margin-top: 1px;
     }
+
+    .separador-sms {
+       border-bottom: 2px solid #e6e9f2;
+       position: relative;
+    }
+
+    .separador-sms::after {
+      right: calc(16% - -10px);
+      border: solid #c52f2f00;
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      border-width: 33px;
+      border-right: #e6e9f2 solid 4px;
+      border-bottom: #e6e9f2 solid 4px;
+      transform: rotate(-134deg);
+      background: #f4f4f4;
+      margin-top: 1px;
+    }
     
      .seguimiento-certification-individual {
       width: 30%;
@@ -344,6 +368,75 @@
         }
       }
     }
+
+ .container-certificate {
+    display: grid;
+    grid-template-columns: auto auto auto;
+ }
+
+ .seguimiento-certification-individual-sms {
+      text-align:center;
+      font-size:40px;
+      color:#001978;
+      margin-top:20px;
+      display: grid;
+      grid-template-rows: repeat(3, max-content);
+      &.no-completado{
+        color:#a0a1a4;
+        .linea{
+          border-bottom: 2px solid #a0a1a4!important;
+          &.primer-estado{
+            left: 49% !important;
+          }
+        }
+        .check-seguimiento{
+          top:15px!important;
+          width: 12px;
+          height: 12px;
+          border:3px solid #a0a1a4;
+        }
+        .estado{color:#777!important}
+      }
+      &.no-completado-doc {
+        .estado{color:#E9AE79!important}
+      }
+      .cont-check-seguimiento {
+        position: relative;
+        .check-seguimiento {
+          position: absolute;
+          color: #001978;
+          top: 10px;
+          background: #f4f4f4;
+          border-radius: 50%;
+          right: 48%;
+          font-size: 18px;
+          z-index: 2;
+        }
+
+        .linea {
+          border-bottom: 2px solid #001978;
+          width: 100%;
+          margin-top: 20px;
+          position: absolute;
+          left: -49%;
+          z-index: 1;
+          &.primer-estado{
+           left: 49% !important;
+          }
+        }
+        .info{
+          color:#777;
+          font-size:13px;
+          padding-top:40px;
+          .estado{
+            color:#001978;
+            font-weight:500;
+            margin-bottom:10px;
+          }
+        }
+      }
+    }
+
     li {
       .tit-firmante{
         text-transform: uppercase;

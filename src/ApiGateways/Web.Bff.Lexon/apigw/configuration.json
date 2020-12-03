@@ -83,7 +83,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "PATCH" ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "PATCH", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "conference.api",
