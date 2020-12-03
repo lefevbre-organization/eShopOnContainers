@@ -155,7 +155,7 @@ import './App.css';
                         frameBorder="0"
                         className="frame"
                         allow="fullscreen"
-                        //sandbox='allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts allow-top-navigation'
+                       // sandbox='allow-same-origin'
                         display="initial"
                         //loading = "cargando..."
                         position="relative" 
