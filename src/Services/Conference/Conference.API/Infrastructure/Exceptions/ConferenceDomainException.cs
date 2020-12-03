@@ -5,16 +5,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
     /// <summary>
     /// Exception type for app exceptions
     /// </summary>
-    public class DatabaseDomainException : Exception
+    public class ConferenceDomainException : Exception
     {
-        public DatabaseDomainException()
+        public ConferenceDomainException()
         { }
 
-        public DatabaseDomainException(string message)
+        public ConferenceDomainException(string message)
             : base(message)
         { }
 
-        public DatabaseDomainException(string message, Exception innerException)
+        public ConferenceDomainException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

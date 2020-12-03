@@ -3,7 +3,7 @@
     public class SsrcGroup
     {
         public string semantics { get; set; }
-        public int[] sources { get; set; }
+        public long[] sources { get; set; }
 
     }
 }

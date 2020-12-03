@@ -145,6 +145,37 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet("{idUser}/{bbdd}/appointments")]
+        [ProducesResponseType(typeof(Result<List<LexAppointment>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LexAppointment>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAppointmentsAsync(
+            [FromRoute] string idUser = "449",
+            [FromRoute] string bbdd = "lexon_admin_02",
+            [FromQuery] string env = "QA",
+            [FromQuery] string fromDate = null,
+            [FromQuery] string toDate = null,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int pageIndex = 0
+        )
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd))
+                return BadRequest("values invalid. Must be a valid idUser and bbdd ");
+            if (pageIndex == 0) pageIndex = 1;
+            if (pageSize == 0) pageSize = 10;
+
+            Result<List<LexAppointment>> result = await _svc.GetAppointmentsAsync(
+                idUser: idUser,
+                bbdd: bbdd,
+                env: env,
+                fromDate: fromDate,
+                toDate: toDate,
+                pageSize,
+                pageIndex);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpDelete("{idUser}/{bbdd}/appointments/remove/{idAppointment}")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
