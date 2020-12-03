@@ -45,10 +45,8 @@ env:
       key: account__ConnectionString
     - name: Database
       key: account__Database
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: OrchestratorType
-      value: 'K8S'
+    - name: DeployVersion
+      key: all_Version
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values: {}
 

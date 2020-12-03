@@ -1,7 +1,7 @@
 lef:
   env: 'dev'
   lex_env: 'QA'
-  version: 0.36
+  version: 0.37
 
 env:
   values:

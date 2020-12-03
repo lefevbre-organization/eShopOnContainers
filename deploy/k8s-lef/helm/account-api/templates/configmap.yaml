@@ -12,6 +12,8 @@ metadata:
     chart: {{ template "account-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Values.lef.version | quote }} 
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
@@ -20,3 +22,4 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   account__ConnectionString: mongodb://{{ $mongo }}
   account__Database: {{ .Values.inf.mongo.account.database }}
+  all_Version: {{ .Values.lef.version | quote }}

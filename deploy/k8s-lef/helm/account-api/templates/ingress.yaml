@@ -10,6 +10,8 @@ metadata:
     chart: {{ template "account-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Values.lef.version | quote }} 
 {{- with .Values.ingress.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
