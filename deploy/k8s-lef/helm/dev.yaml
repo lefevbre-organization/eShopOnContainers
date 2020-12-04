@@ -45,6 +45,33 @@ signature:
     notification: '/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
     notificationcertified: '/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
 
+svchub:
+  url: 'led-pre-servicehub.eu.els.local' # name: MinihubUrl
+
+svconline:
+  url: 'herculesppd.lefebvre.es' # name: OnlineUrl
+  login: 'ws'
+  pass: '22lcqsp11lsw'
+
+svccomtools:
+  url: 'led-pre-servicecomtools.eu.els.local' # name: LoginUrl
+  
+svcclaves:
+  url: 'led-pre-serviceclaves.lefebvre.es' # name: ClavesUrl  
+
+userutils:
+  token:
+    caducity: 1500
+    key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+  bypass:
+    lex:
+      id: 'Lex-On'
+      url: 'lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+    sig:
+      id: 'Signature-Direct'
+      url: 'lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}'
+
+
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default

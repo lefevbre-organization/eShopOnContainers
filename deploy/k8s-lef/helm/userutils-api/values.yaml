@@ -45,43 +45,39 @@ env:
       key: userutils__ConnectionString
     - name: Database
       key: userutils__Database
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: DefaultEnvironment
-      value: PRE
+    - name: DeployVersion
+      key: all__Version
     - name: MinihubUrl
-      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
+      key: urls__HubUrlExternal  # 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
-      value: 'https://herculesppd.lefebvre.es/webclient46/ws'
+      key: urls__OnlineUrlExternal  # 'https://herculesppd.lefebvre.es/webclient46/ws'
     - name: LoginUrl
-      value: 'http://led-pre-servicecomtools.eu.els.local'
-    - name: CentinelaApiUrl
-      value: 'http://centinela-api/api/v1/Centinela'
-    - name: LexonApiUrl
-      value: 'http://lexon-api/api/v1/Lexon'
+      key: urls__ComToolsUrlExternal  # 'http://led-pre-servicecomtools.eu.els.local'
     - name: ClavesUrl
-      value: 'https://led-pre-serviceclaves.lefebvre.es'
+      key: urls__ClavesUrlExternal # 'https://led-pre-serviceclaves.lefebvre.es'
+    - name: CentinelaApiUrl
+      key: urls__CentinelaApi # 'http://centinela-api/api/v1/Centinela'
+    - name: LexonApiUrl
+      key: urls__LexonApi  # 'http://lexon-api/api/v1/Lexon'
     - name: SignaturitApiUrl
-      value: 'http://signature-api/api/v1/Signaturit'
+      key: urls__SignatureApi  # 'http://signature-api/api/v1/Signaturit'
     - name: ByPassUrls__0__NameService
-      value: Lex-On
+      key: urls__ByPassLexOnId #Lex-On
     - name: ByPassUrls__0__UrlByPass
-      value: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+      key: urls__ByPassLexOnUrl #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
     - name: ByPassUrls__1__NameService
-      value: Signature-Direct
+      key: urls__ByPassSigId #Signature-Direct
     - name: ByPassUrls__1__UrlByPass
-      value: 'https://lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}'
-    - name: OrchestratorType
-      value: 'K8S'
+      key: urls__ByPassSigUrl #'https://lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}'
     - name: OnlineLogin
-      value: 'ws'
+      key: all__OnlineLogin 
     - name: OnlinePasssword
-      value: '22lcqsp11lsw'
+      key: all__OnlinePass 
     - name: TokenCaducity
-      value: 1500
+      key: userutils__TokenCaducity
     - name: TokenKey
-      value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+      key: userutils__TokenKey 
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values: {}
 
 

@@ -1,7 +1,11 @@
 {{- $name := include "userutils-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
-{{- $signature := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
+{{- $gwlex := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
+{{- $clientsig := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
+{{- $cen := include "url-of" (list .Values.app.ingress.entries.centinelaapi .) -}}
+{{- $lex := include "url-of" (list .Values.app.ingress.entries.lexonapi .) -}}
+{{- $sig := include "url-of" (list .Values.app.ingress.entries.signatureapi .) -}}
 {{- $mongo := include "mongo-name" . -}}
 
 apiVersion: v1
@@ -13,12 +17,33 @@ metadata:
     chart: {{ template "userutils-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
-  urls__Signature: https://{{ $signature }}
+  urls__Signature: https://{{ $clientsig }}
+  urls__LexonApi: https://{{ $lex }}/api/v1/Lexon
+  urls__SignatureApi: https://{{ $sig }}/api/v1/Signaturit
+  urls__CentinelaApi: https://{{ $cen }}/api/v1/Centinela
   all__EventBusConnection: {{ .Values.inf.eventbus.constr }}
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   userutils__ConnectionString: mongodb://{{ $mongo }}
   userutils__Database: {{ .Values.inf.mongo.centinela.database }}
+  all__Version: {{ .Chart.Version | quote }}
+  userutils__TokenCaducity: {{ .Values.userutils.token.caducity }}
+  userutils__TokenKey: {{ .Values.userutils.token.key }}
+  urls__HubUrlExternal: http://{{ .Values.svchub.url }}/Herramientas/get
+  urls__OnlineUrlExternal: http://{{ .Values.svconline.url }}/webcliente46/ws
+  all__OnlineLogin: {{ .Values.svconline.login }}
+  all__OnlinePass: {{ .Values.svconline.pass }}
+  urls__ComToolsUrlExternal: http://{{ .Values.svccomtools.url }}
+  urls__ClavesUrlExternal: https://{{ .Values.svcclaves.url }}
+  urls__ByPassLexOnId: {{ .Values.userutils.bypass.lex.id }}
+  urls__ByPassLexOnUrl: https://{{ $gwlex }}/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
+  urls__ByPassLexOnUrl_bis: https://{{ .Values.userutils.bypass.lex.url }}
+  urls__ByPassSigId: {{ .Values.userutils.bypass.sig.id }}
+  urls__ByPassSigUrl: https://{{ $clientsig }}/access/{tokenSignature}
+  urls__ByPassSigUrl_bis: https://{{ .Values.userutils.bypass.sig.url }}
+
