@@ -1,0 +1,135 @@
+@font-face {
+    font-family: 'LefebvreFont';
+    src: local('LefebvreFont'), url(/public/assets/fonts/lf-font.woff) format('woff');
+}
+
+.menu-minihub-container {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border: 1px solid #cdd1e0;
+    border-radius: 0;
+    color: #001978;
+    position: absolute;
+    background-color: white;
+    text-align: center;
+    top: 40px !important;
+    right: -2px !important;
+    width: 385px;
+    z-index: 110;
+}
+
+.dropdown-menu-minihub-arrow {
+    /* display: inline; */
+    top: 25px;
+    right: 118px;
+    position: absolute;
+    left: auto;
+    width: 24px;
+    height: 24px;
+}
+
+.dropdown-menu-minihub-arrow:before {
+    bottom: 8px;
+    right: -111px;
+    border-bottom-color: rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-menu-minihub-arrow:after {
+    bottom: 8px;
+    right: -111px;
+    border-bottom-color: #fff;
+}
+
+.content .header {
+    background-color: white;
+    text-align: right;
+    border: none;
+    display: block;
+    padding: 24px;            
+    font-size: 0.875rem;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.content .header > span {
+    color: #001978;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.menu-title {
+    font-size: 18px;
+    font-weight: 500;
+    border-bottom: 1px solid;
+    padding-bottom: 5px;
+    text-align: left;
+    color: #001978;
+}
+
+.menu-title .mb-5 {
+    text-decoration: none;
+    color: #001978 !important;
+}
+
+.menu-main-panel {
+    height: 60vh;    
+    position: relative; 
+}
+
+.menu-header__text-products {
+    color: #9A9898;
+    font-family: MTTMilano;
+    font-size: 12px !important;
+    line-height: 20px;
+}
+
+.menu-header__blocks {
+    text-align: center;
+    padding-left: 20px !important;
+    padding-right: 20px;
+    font-size: 11px;
+    float: left;
+    position: relative;
+    width: 100%;
+}
+
+.menu-header__body-generic {
+    position: relative;
+    float: left;
+    width: 100%;
+    text-align: left;
+    padding-top: 20px;
+}
+
+.menu-header__block-product {
+    width: 50%;
+    position: relative;
+    float: left;
+    text-align: center;
+    margin-bottom: 31px;
+    text-transform: uppercase;
+    color: #001978;
+    font-family: MTTMilano;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+ .menu-header__block-icon-product:hover, .menu-header__block-icon-product:visited {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.menu-header__block-icon-product {
+    height: 50px;
+    line-height: 52px;
+    width: 50px;
+    margin: 0 auto 9px auto;
+    background-color: #001978;
+    border-radius: 50px;
+    color: #FFFFFF;
+    font-size: 27px;
+    border: none;
+    outline: none;
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+}
