@@ -1,0 +1,57 @@
+configValues: |
+  window.REACT_APP_ENVIRONMENT='QA'
+  window.SHOW_EXPERIMENTAL='1'
+  window.RELEASE = 'RC 0.37'
+  window.PATH_BASE='https://lexbox-dev'
+  window.PATH_GW_ACC='-apigwacc.lefebvre.es/api/v2'
+  window.PATH_GW_LEX='-apigwlex.lefebvre.es/api/v1'
+  window.PATH_CL_GOO='-webgoogle.lefebvre.es'
+  window.PATH_CL_OUT='-webgraph.lefebvre.es'
+  window.PATH_CL_IMAP='-webimap.lefebvre.es'
+  window.PATH_CL_ILEX='-weblexon.lefebvre.es'
+  window.URL_MF_DATABASE_BASE='http://localhost:3006'
+  window.URL_LEXON ='http://localhost:8080'
+
+  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
+  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
+  window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
+  window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
+
+  window.URL_UPDATE_DEFAULTACCOUNT='https://lexbox-dev-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/updatedefaultaccount'
+  window.URL_RESET_DEFAULTACCOUNT='https://lexbox-dev-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser'
+  window.URL_DELETE_ACCOUNT='https://lexbox-dev-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider'
+  window.URL_SELECT_ACCOUNT='https://lexbox-dev.lefebvre.es'
+  window.URL_GET_ACCOUNTS='https://lexbox-dev-apigwacc.lefebvre.es/api/v2/accounts/usermail'
+  window.URL_GET_EVENTSTYPE='https://lexbox-dev-apigwacc.lefebvre.es/api/v2';
+  window.URL_MF_GOOGLE='https://lexbox-dev-webgoogle.lefebvre.es/user'
+  window.URL_MF_OUTLOOK='https://lexbox-dev-webgraph.lefebvre.es/user'
+  window.URL_MF_IMAP='https://lexbox-dev-webimap.lefebvre.es/user'
+  window.URL_MF_LEXON='https://lexbox-dev-weblexon.lefebvre.es/static/js/main.js'
+  window.API_GATEWAY='https://lexbox-dev-apigwlex.lefebvre.es'
+  window.URL_MF_LEXON_BASE = 'https://lexbox-dev-weblexon.lefebvre.es'
+  window.URL_MF_CENTINELA = 'https://lexbox-dev-webcentinela.lefebvre.es/static/js/main.js'
+  window.URL_MF_CENTINELA_BASE = 'https://lexbox-dev-webcentinela.lefebvre.es' 
+  window.API_CENTINELA_GATEWAY =   'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
+  window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
+  window.URL_REDIRECT='https://lexbox-test-webgraph.lefebvre.es'
+  window.API_GATEWAY='http://lexbox-dev-apigwlex.lefebvre.es'
+
+  window.URL_ADDON_LEXON_BASE='https://lexbox-dev-weboffice365addoncentinela.lefebvre.es';
+  window.URL_ADDON_LEXON='https://lexbox-dev-webaddonlauncher.lefebvre.es';
+  window.URL_GET_TOKEN='https://lexbox-dev-apigwlex.lefebvre.es/api/v1';
+
+  window.API_ACCOUNTS='https://lexbox-dev-apigwacc.lefebvre.es'
+  window.URL_INBOX_GOOGLE= 'https://lexbox-dev-webgoogle.lefebvre.es'
+  window.URL_INBOX_OUTLOOK= 'https://lexbox-dev-webgraph.lefebvre.es'
+  window.URL_INBOX_IMAP= 'https://lexbox-dev-webimap.lefebvre.es'
+  window.URL_GET_USER =  'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+
+  window.API_SIGN_GATEWAY = 'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice'
+  window.API_UTILS_GATEWAY = 'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/utils'
+  window.URL_GET_ACCOUNTS = 'https://lexbox-dev-apigwacc.lefebvre.es/api/v2/accounts/usermail'
+  window.URL_GET_USER = 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.API_GATEWAY_LEX = 'https://lexbox-dev-apigwlex.lefebvre.es'
+  window.API_GATEWAY_CEN = 'https://lexbox-dev-apigwcen.lefebvre.es'
+  window.API_GATEWAY_ACC = 'https://lexbox-dev-apigwcen.lefebvre.es'
+  window.POLLING_INTERVAL = 10000
+

@@ -12,6 +12,8 @@ metadata:
     chart: {{ template "webimapserver.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrlExternal: http://{{ $identity }}
   all__EventBusConnection: {{ .Values.inf.eventbus.constr }}

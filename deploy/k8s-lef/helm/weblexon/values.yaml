@@ -35,15 +35,5 @@ env:
       key: all_EnableLoadTest
     - name: LexonApiGatewayUrlHC
       key: internalurls__lexonapigw__hc
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: OrchestratorType
-      value: 'K8S'
-    - name: IsClusterEnv
-      value: 'True'
-configValues: |
- window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.API_GATEWAY='http://lexbox-dev-apigwlex.lefebvre.es'
- window.RELEASE = 'RC 0.36'
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values: {}

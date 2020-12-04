@@ -82,3 +82,5 @@ env:
       value: false
     - name: Environments # list of environments admit in the cluster
       value: ['DEVS','DEV','QA','PRE']
+    - name: IsClusterEnv
+      value: 'True'
