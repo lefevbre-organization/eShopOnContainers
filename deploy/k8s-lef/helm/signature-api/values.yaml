@@ -46,25 +46,23 @@ env:
       key: signature__ConnectionString
     - name: Database
       key: signature__Database
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: OrchestratorType
-      value: 'K8S'
+    - name: DeployVersion
+      key: all__Version
     - name: SignaturitApiUrl
-      value: 'https://api.sandbox.signaturit.com/v3'
+      key: urls__SignatureUrlExternal #'https://api.sandbox.signaturit.com/v3'
     - name: LexonFilesUrl
-      value: 'https://led-dev-lexon.eu.els.local/index.php'
+      key: urls__LexonUrlExternal #'https://led-dev-lexon.eu.els.local/index.php'
     - name: LexonApiGwUrl
-      value: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
+      key: urls__LexonGateway #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
     - name: CentinelaApiGwUrl
-      value: 'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
+      key: urls__CentinelaGateway #'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
-      value: 'https://lexbox-dev-websignature.lefebvre.es/completed'
+      key: urls__SignatureClient #'https://lexbox-dev-websignature.lefebvre.es/completed'
     - name: Signaturit
-      value: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'
+      key: all__SignaturePass
     - name: SignatureNotificationUrl
-      value: 'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
+      key: urls__SignatureNotification #'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
     - name: CertifiedEmailNotificationUrl
-      value: 'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'
+      key: urls__SignatureNotificationCertified #'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values: {} 
