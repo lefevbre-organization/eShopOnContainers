@@ -1,5 +1,4 @@
 /* Component Sibar */
-
 #noSignaturesDialog #noSignaturesDialog_dialog-header, 
 #noSignaturesDialog #noSignaturesDialog_title, 
 #noSignaturesDialog #noSignaturesDialog_dialog-content, 
@@ -593,4 +592,13 @@ textarea.materialize-textarea___2dl8r {
     background-color: #e5e8f1 !important;
     background: #e5e8f1 !important;
     color: #001978 !important;
+}
+/* component menu-list */
+ #noServiceDialog #noServiceDialog_dialog-header, 
+ #noServiceDialog_title, 
+ #noServiceDialog_dialog-content, 
+ #noServiceDialog .e-footer-content {
+  background: #c5343f;
+  color: #fff;
+  display:flex;
 }

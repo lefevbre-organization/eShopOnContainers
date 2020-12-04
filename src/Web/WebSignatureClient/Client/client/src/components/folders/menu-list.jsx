@@ -131,7 +131,7 @@ export class MenuListClass extends Component {
             open={() => this.dialogOpen} 
             close={this.dialogClose.bind(this)}
           />
-          
+
           <DialogComponent 
            id="noServiceDialog" 
            visible={this.state.hideAlertDialog} 
@@ -146,16 +146,7 @@ export class MenuListClass extends Component {
 
           <style jsx global>
             {` 
-              #noServiceDialog_dialog-header, #noServiceDialog_title, #noServiceDialog_dialog-content, .e-footer-content{
-                background: #c5343f;
-                color: #fff;
-                display:flex;
-              }
-              .event-disable {
-                pointer-events: none;
-                opacity: 0.5;
-                background: #CCC;
-              }
+             
             `}
           </style>
         </div>
@@ -266,7 +257,6 @@ export class MenuListClass extends Component {
   }
 
 }
-
 
 const mapStateToProps = state => ({
   application: state.application,
