@@ -12,6 +12,8 @@ metadata:
     chart: {{ template "database-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
@@ -20,3 +22,7 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   database__ConnectionString: mongodb://{{ $mongo }}
   database__Database: {{ .Values.inf.mongo.database.database }}
+  all__Version: {{ .Chart.Version | quote }}
+  urls__OnlineUrlExternal: http://{{ .Values.online.url }}
+  all__OnlinePass: {{ .Values.online.pass }}
+  all__OnlineUser: {{ .Values.online.user }}
