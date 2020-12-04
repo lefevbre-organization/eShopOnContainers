@@ -12,6 +12,8 @@ metadata:
     chart: {{ template "lexon-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
@@ -20,3 +22,19 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   lexon__ConnectionString: mongodb://{{ $mongo }}
   lexon__Database: {{ .Values.inf.mongo.lexon.database }}
+  all__Version: {{ .Chart.Version | quote }}
+  lexon__Devs: {{ .Values.lexon.devs.env }}
+  lexon__DevsConn: {{ .Values.lexon.devs.conn }}
+  lexon__DevsUrl: {{ .Values.lexon.devs.url }}
+  lexon__Dev: {{ .Values.lexon.dev.env }}
+  lexon__DevConn: {{ .Values.lexon.dev.conn }}
+  lexon__DevUrl: {{ .Values.lexon.dev.url }}
+  lexon__Qa: {{ .Values.lexon.qa.env }}
+  lexon__QaConn: {{ .Values.lexon.qa.conn }}
+  lexon__QaUrl: {{ .Values.lexon.qa.url }}
+  lexon__Pre: {{ .Values.lexon.pre.env }}
+  lexon__PreConn: {{ .Values.lexon.pre.conn }}
+  lexon__PreUrl: {{ .Values.lexon.pre.url }}
+  lexon__Pro: {{ .Values.lexon.pro.env }}
+  lexon__ProConn: {{ .Values.lexon.pro.conn }}
+  lexon__ProUrl: {{ .Values.lexon.pro.url }}
