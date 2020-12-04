@@ -9,6 +9,8 @@ const Contacts = (props) => {
   
   const [contacts, setContacts] = useState([]);
 
+  const [selectedOption, setSelectedOption] = useState('centinela');
+
   const [contactsCentinela, setContactsCentinela] = useState([]);
 
   const [contactsLexon, setContactsLexon] = useState([]);
@@ -17,9 +19,11 @@ const Contacts = (props) => {
 
   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
-  const [numberCheckedsLexon, setNumberCheckedsLexon] = useState(0);
+  // const [numberCheckedsLexon, setNumberCheckedsLexon] = useState(0);
 
   const [filter, setFilter] = useState('');
+
+  const [addresses, setAddresses] = useState(props.addresses);
 
   const centinela = props.lefebvre.roles.some(rol => rol === 'Centinela');
 
@@ -64,10 +68,10 @@ const Contacts = (props) => {
     if (contacts.length === 0 && isData){
       //const user = props.lefebvre.idUserApp;
       //const bbdd = "lexon_admin_02"; //props.lefebvre.bbdd;
-      const env = "QA"; //props.lefebvre.env;
+      const env = "DEV"; //props.lefebvre.env;
       let selectContactLex = [];
 
-      getBBDDLexon(props.lefebvre.userId)
+      getBBDDLexon(props.lefebvre.userId, env)
       .then(lexDataBases => {
         if (lexDataBases && lexDataBases.data !== null){
           const lexUserId = lexDataBases.data.idUser;
@@ -101,6 +105,7 @@ const Contacts = (props) => {
                   const emailExists = props.addresses.some(address => {
                     return (address.address === contact.email)
                   });
+                  contact.id = `${contact.id}_${contact.idType}_${contact.entityType}_${company.bbdd}`
                   contact.checked = emailExists;
                   contactsLexon.push(contact);
                 }
@@ -137,21 +142,50 @@ const Contacts = (props) => {
   useEffect(() => {
     const numberCheckeds = contacts.filter(contact => contact.checked == true);
     setNumberCheckeds(numberCheckeds.length);
-  }, [numberCheckeds]);
+  }, [numberCheckeds, contacts]);
 
   useEffect(() => {
-    const numberCheckedsLexon = contactsLexon.filter(contact => contact.checked == true);
-    setNumberCheckedsLexon(numberCheckedsLexon.length);
-  }, [numberCheckedsLexon]);
+    if (centinela && contactsCentinela && contactsCentinela.length){
+      const cenCheckedContacts = contactsCentinela.filter(c => c.checked === true);
+      let aux = [];
+      cenCheckedContacts.map(c => aux.push({address: c.email, name: c.name}))
+      if (cenCheckedContacts){
+        // var uniqueResultOne = props.addresses.filter(function(obj) {
+        //   return !aux.some(function(obj2) {
+        //       return obj.value == obj2.value;
+        //   });
+        // }); 
+        // console.log(uniqueResultOne);
+        const results = aux.filter(({ address: id1 }) => !props.addresses.some(({ address: id2 }) => id2 === id1));
+        console.log(results);
+        //const test = aux.filter(c => !props.addresses.include(c));
+        const contactsToUncheck = cenCheckedContacts.filter(c => !props.addresses.filter(a => a.address === c.email && a.name === c.name));
+        //console.log(test);
+        console.log(cenCheckedContacts);
+        console.log(contactsToUncheck);
+      }
+      //setContacts([...contacts]);
+    }
+  }, props.addresses)
+
+  
+
+  // useEffect(() => {
+  //   const numberCheckedsLexon = contactsLexon.filter(contact => contact.checked == true);
+  //   setNumberCheckedsLexon(numberCheckedsLexon.length);
+  // }, [numberCheckedsLexon, contacts]);
 
   useEffect(() => {
    if (centinela && lexon){
      getDataCentinela()
      getDataLexon();
+     setSelectedOption('centinela');
    } else if (centinela) {
      getDataCentinela();
+     setSelectedOption('centinela');
    } else {
      getDataLexon();
+     setSelectedOption('lexon');
    }
   }, []);
 
@@ -178,6 +212,7 @@ const Contacts = (props) => {
     } else if (e.value === 'centinela'){
       setContacts(contactsCentinela);
     }
+    setSelectedOption(e.value);
   }
 
   const filterContact = (e) => {
@@ -188,17 +223,25 @@ const Contacts = (props) => {
     let isCheck = !e.target.checked ? false : true;
     let contactId = e.target.value;
     contacts.forEach(contact => {
+      if (selectedOption === 'lexon'){
+        if (contact.id === contactId){
+          contact.checked = isCheck;
+        }
+      } else if(selectedOption === 'centinela'){
         if(contact.contactId == contactId) {
           contact.checked = isCheck;
         }
+      }
     });
     setContacts([...contacts]);
   }
 
   const getContactsInfo = () => {
+    let newContacts = [];
     contacts.forEach(contact => {
         if(contact.checked) {
           setTimeout(() => {
+            newContacts.push(props.id, contact.email, contact.name);
             props.onAddressAdd(props.id, contact.email, contact.name);
           });
         }
@@ -206,17 +249,19 @@ const Contacts = (props) => {
     contactsLexon.forEach(contact => {
       if(contact.checked) {
         setTimeout(() => {
+          newContacts.push(props.id, contact.email, contact.name);
           props.onAddressAdd(props.id, contact.email, contact.name);
         });
       }
     })
-    setContacts([]); 
+    //setContacts([]); 
+    setAddresses([...props.addresses, ...newContacts])
     props.dialogClose();
   }
 
   const dialogClose = () => {
-    setContacts([]);
-    setContactsLexon([]); 
+    //setContacts([]);
+    //setContactsLexon([]); 
     props.dialogClose();
   }
 
@@ -255,20 +300,20 @@ const Contacts = (props) => {
            || contact.name.toUpperCase().includes(filter)
            || contact.email.toUpperCase().includes(filter))
            .map((contact, i) => 
-              <li key={i}>
+              <li key={(selectedOption === 'centinela') ? i : `${i}_${contact.id}`}>
                 <label>
                   <input 
                   type="checkbox"  
                   checked={contact.checked} 
                   onChange={handleChecked}
                   name="checked"
-                  value={contact.contactId}
+                  value={(selectedOption === 'centinela') ? contact.contactId : `${contact.id}`}
                   />
                    <Checkbox
                    checked={contact.checked} 
                    onChange={handleChecked}
                    name="checked"
-                   value={contact.contactId}
+                   value={(selectedOption === 'centinela') ? contact.contactId  : `${contact.id}`}
                 />
                   <span>{contact.name}</span>
                   <div className={style['email']}>{contact.email}</div>

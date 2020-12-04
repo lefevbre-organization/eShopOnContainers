@@ -1481,7 +1481,7 @@ export const getBBDDLexon = async (user, env) => {
       redirect: 'follow'
     }
 
-    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${user}&env=QA`, requestOptions)
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${user}&env=${env}`, requestOptions)
     .then(response => {
       if (response.ok){
         return response.json();
