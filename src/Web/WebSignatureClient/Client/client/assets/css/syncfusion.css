@@ -1,3 +1,116 @@
+/* App.jsx */
+#info2Dialog {
+    max-height: 927px;
+    width: 300px;
+    z-index: 1001;
+    left: 35% !important;
+    position: absolute !important;
+}
+
+#info2Dialog #info2Dialog_dialog-header, 
+#info2Dialog_title, #info2Dialog_dialog-content, 
+#info2Dialog.e-footer-content,
+#info2Dialog .e-footer-content {
+    background: #001970;
+    color: #fff;
+    display:flex;
+}
+
+#confirmDialog .e-dlg-header{
+    width: 1%;
+}
+
+#confirmDialog_dialog-header, .e-dialog 
+.e-icon-dlg-close::before {
+    content: '\e7fc';
+    position: relative;
+    color: white;
+    font-size: 15px;
+}
+
+#confirmDialog .e-btn.e-flat.e-primary {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+    letter-spacing: .7px;
+    color: #001978 !important;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 0 !important;
+    border: 2px solid #fff !important;
+    min-width: 80px;
+}
+            
+#confirmDialog .e-btn.e-flat.e-primary:hover {
+    background-color: #e5e8f1 !important;
+    background: #e5e8f1 !important;
+    color: #001978 !important;
+}
+            
+#confirmDialog .e-btn.e-flat.e-primary:active {
+    background-color: #e5e8f1 !important;
+    background: #e5e8f1 !important;
+    color: #001978 !important;
+}
+
+.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn {
+    margin-right: 0;
+    margin-left: auto;
+    color: #fff !important
+}
+            
+.e-dialog .e-btn .e-btn-icon.e-icon-dlg-close {
+    color: white !important;
+}
+
+.e-btn-icon .e-icon-dlg-close .e-icons {
+    color: #fff !important;
+}
+
+.e-dialog .e-dlg-header-content 
+.e-btn.e-dlg-closeicon-btn {
+    margin-right: 0;
+    margin-left: auto;
+    color: #fff !important;
+    height: 15px;
+    background-color: transparent;
+}
+
+.e-dialog 
+.e-btn.e-dlg-closeicon-btn:hover, 
+.e-dialog .e-btn.e-dlg-closeicon-btn:focus, 
+.e-dialog .e-btn.e-dlg-closeicon-btn:active {
+    background-color: transparent !important;
+}
+
+.btn-modal-close {
+    text-transform: uppercase;
+    font-size: 13px;
+    font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+    letter-spacing: .7px;
+    color: #fff !important;
+    padding: 10px;
+    background-color: #001978 !important;
+    min-width: 80px;
+    border-radius: 0 !important;
+    border: 2px solid #fff !important;
+}
+               
+.btn-modal-close:hover {
+    background-color: #e5e8f1 !important;
+    background: #e5e8f1 !important;
+    color: #001978 !important;
+}
+
+.btn-modal-close:active {
+    background-color: #e5e8f1 !important;
+    background: #e5e8f1 !important;
+    color: #001978 !important;
+}
+.e-control .e-btn .e-lib .e-flmenu-okbtn .e-primary .e-flat{
+    color: #001970 !important;
+}
+
 /* Component Sibar */
 #noSignaturesDialog #noSignaturesDialog_dialog-header, 
 #noSignaturesDialog #noSignaturesDialog_title, 
@@ -160,19 +273,8 @@ thead > tr > th.e-headercell.e-defaultcursor {
     background: #001970 !important;
 }
 
-#message-list input:not([type]), 
-input[type=text]:not(.browser-default___2ZECf), 
-input[type=password]:not(.browser-default___2ZECf), 
-input[type=email]:not(.browser-default___2ZECf),
-input[type=url]:not(.browser-default___2ZECf), 
-input[type=time]:not(.browser-default___2ZECf), 
-input[type=date]:not(.browser-default___2ZECf), 
-input[type=datetime]:not(.browser-default___2ZECf), 
-input[type=datetime-local]:not(.browser-default___2ZECf), 
-input[type=tel]:not(.browser-default___2ZECf), 
-input[type=number]:not(.browser-default___2ZECf), 
-input[type=search]:not(.browser-default___2ZECf), 
-textarea.materialize-textarea___2dl8r {
+#message-list .e-grid input:not([type]), 
+input[type=search]:not(.browser-default___2ZECf){
     background-color: transparent !important;
     border: none !important;
     border-radius: 0 !important;
@@ -601,4 +703,27 @@ textarea.materialize-textarea___2dl8r {
   background: #c5343f;
   color: #fff;
   display:flex;
+}
+
+/* component contacts  */
+
+#main-contact .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
+    background: #ebedf4;
+    border: none;
+    height: 39px;
+    padding: 5px 20px 0px 16px !important;
+    font-weight: 700;
+    font-family: 'MTTMilano';
+    width: 76% !important;
+}
+
+#contactDialog_dialog-content {
+    padding: 0px !important;
+    overflow: hidden;
+} 
+
+.e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+    content: '\e90b';
+    font-family: 'lf-font' !important;
+    font-size: 15px;
 }

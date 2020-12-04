@@ -100,7 +100,7 @@ const Contacts = (props) => {
   }
 
   return (
-      <div className={style['main-contact']}>
+      <div id="main-contact" className={style['main-contact']}>
           <div className="contact row">
               <div className="input-field col s7 left">
                   <input 
@@ -110,9 +110,9 @@ const Contacts = (props) => {
                   className={style['serch-contacts']} 
                   onChange={filterContact}  
                    />
-                  <span className="lf-icon-search position-icon"></span>
+                  <span className={`${style['position-icon']} lf-icon-search`}></span>
               </div>
-              <div className="input-field col s5 right">
+              <div className={`${style['right']} input-field col s5`}>
               <DropDownListComponent 
                 id="select-contact"
                 className={style['select-contact']} 
@@ -177,62 +177,6 @@ const Contacts = (props) => {
                  </div>
           </div>
           <div className="clearfix"></div>
-         <style jsx global>
-            {` 
-              #contactDialog_dialog-content {
-                padding: 0px !important;
-                overflow: hidden;
-              } 
-              .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
-             .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
-              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
-              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
-              {
-                background: #001970;
-              }
-              .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
-                background: #ebedf4;
-                border: none;
-                height: 39px;
-                padding: 5px 20px 0px 16px !important;
-                font-weight: 700;
-                font-family: 'MTTMilano';
-                width: 76% !important;
-              }
-              .e-control.e-dropdownlist.e-lib.e-input {
-                color: #001978 !important;
-              }
-              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-                color: #001978;
-              }
-              .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
-              .e-list-item.e-active.e-hover {
-                background-color: #eee;
-                border-color: #fff;
-                color: #001970;
-              }
-              .position-icon {
-                position: absolute;
-                left: 20px;
-                top: 9px;
-                font-size: 19px;
-                color: #8A91B5;
-              }
-              .right {
-                text-align: right;  
-              }
-              .select-contacts {
-                font-size: 12px;
-                color: #001978;
-                margin-top: 15px;
-              }
-              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-                content: '\e90b';
-                font-family: 'lf-font' !important;
-                font-size: 15px;
-              }
-           `}
-         </style>
       </div>
     )
 }

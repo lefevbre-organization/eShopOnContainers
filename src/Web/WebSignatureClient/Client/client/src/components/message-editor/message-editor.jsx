@@ -404,6 +404,7 @@ class MessageEditor extends Component {
  
     return (
       <div
+        id="main-message-editor"
         className={`${className} ${styles['message-editor']}`}
         onDrop={this.handleOnDrop}
         onDragOver={this.handleOnDragOver}
