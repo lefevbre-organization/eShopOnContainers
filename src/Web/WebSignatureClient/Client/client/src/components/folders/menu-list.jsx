@@ -143,12 +143,6 @@ export class MenuListClass extends Component {
            open={() => this.dialogOpen} 
            close={this.dialogClose.bind(this)}
           />
-
-          <style jsx global>
-            {` 
-             
-            `}
-          </style>
         </div>
     );
   }
