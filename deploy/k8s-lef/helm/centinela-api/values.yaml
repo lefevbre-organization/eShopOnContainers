@@ -45,16 +45,14 @@ env:
       key: centinela__ConnectionString
     - name: Database
       key: centinela__Database
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
     - name: CentinelaUrl
-      value: 'https://compliance-api.affin.es/api/secure'
-    - name: CentinelaPassword
-      value: 'led.2018'
+      key: urls__CentinelaUrlExternal
     - name: CentinelaLogin
-      value: 'centinelaApi'
-    - name: OrchestratorType
-      value: 'K8S'
+      key: all__CentinelaUser
+    - name: CentinelaPassword
+      key: all__CentinelaPass
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values: {}
+
+ 
 

@@ -2,6 +2,11 @@ lef:
   env: 'dev'
   lex_env: 'QA'
 
+centinela:
+  user: 'centinelaApi'
+  pass: 'led.2018'
+  url: 'compliance-api.affin.es/api/secure'
+
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT

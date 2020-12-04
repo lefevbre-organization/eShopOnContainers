@@ -10,6 +10,8 @@ metadata:
     chart: {{ template "centinela-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
