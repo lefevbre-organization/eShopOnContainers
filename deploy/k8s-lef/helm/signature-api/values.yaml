@@ -53,9 +53,9 @@ env:
     - name: LexonFilesUrl
       key: urls__LexonUrlExternal #'https://led-dev-lexon.eu.els.local/index.php'
     - name: LexonApiGwUrl
-      key: urls__LexonGateway #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
+      key: urls__LexonApi #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
     - name: CentinelaApiGwUrl
-      key: urls__CentinelaGateway #'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
+      key: urls__CentinelaApi #'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
       key: urls__SignatureClient #'https://lexbox-dev-websignature.lefebvre.es/completed'
     - name: Signaturit
@@ -64,5 +64,8 @@ env:
       key: urls__SignatureNotification #'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
     - name: CertifiedEmailNotificationUrl
       key: urls__SignatureNotificationCertified #'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'
+    - name: CertifiedSmsNotificationUrl
+      key: urls__SignatureSmsCertified 
+
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values: {} 

@@ -1,9 +1,9 @@
 {{- $name := include "signature-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
-{{- $gwlex := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
-{{- $gwcen := include "url-of" (list .Values.app.ingress.entries.centinelaapigw .) -}}
-{{- $gwsig := include "url-of" (list .Values.app.ingress.entries.signatureapigw .) -}}
+{{- $lex := include "url-of" (list .Values.app.ingress.entries.lexonapi .) -}}
+{{- $cen := include "url-of" (list .Values.app.ingress.entries.centinelaapi .) -}}
+{{- $sig := include "url-of" (list .Values.app.ingress.entries.signatureapi .) -}}
 {{- $clientsig := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
 {{- $mongo := include "mongo-name" . -}}
 
@@ -30,13 +30,11 @@ data:
   urls__SignatureUrlExternal: https://{{ .Values.signature.url }}
   all__SignaturePass: {{ .Values.signature.pass }}
   urls__LexonUrlExternal: https://{{ .Values.lexon.dev.url }}
-  urls__LexonGateway: https://{{ $gwlex }}/api/v1
-  urls__LexonGateway_bis: https://{{ .Values.signature.gwlexurl }}/api/v1
-  urls__CentinelaGateway: https://{{ $gwcen }}/api/v1
-  urls__CentinelaGateway_bis: https://{{ .Values.signature.gwcenurl }}/api/v1/cen
+  urls__LexonApi: https://{{ $lex }}/api/v1
+  urls__CentinelaApi: https://{{ $cen }}/api/v1
+  urls__SignatureApi: https://{{ $sig }}/api/v1
   urls__SignatureClient: https://{{ $clientsig }}/completed
   urls__SignatureClient_bis: https://{{ .Values.signature.callbackurl }}/completed
-  urls__SignatureGateway: https://{{ $gwsig }}/api/v1/signservice
-  urls__SignatureGateway_bis: https://{{ .Values.signature.gwcenurl }}/api/v1/signservice
-  urls__SignatureNotification: https://{{ $gwsig }}{{ .Values.signature.paths.notification}}
-  urls__SignatureNotificationCertified: https://{{ $gwsig }}{{ .Values.signature.paths.notificationcertified}}
+  urls__SignatureNotification: https://{{ $sig }}{{ .Values.signature.paths.mail}}
+  urls__SignatureNotificationCertified: https://{{ $sig }}{{ .Values.signature.paths.certified_mail}}
+  urls__SignatureSmsCertified: https://{{ $sig }}{{ .Values.signature.paths.certified_sms}}

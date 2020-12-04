@@ -36,14 +36,12 @@ lexon:
 signature:
   url: 'api.sandbox.signaturit.com/v3' # name: SignaturitApiUrl
   pass: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'   # name: Signaturit
-  lexurl: 'https://led-dev-lexon.eu.els.local' #name : LexonFilesUrl
-  gwlexurl: 'lexbox-dev-apigwlex.lefebvre.es'   # name: LexonApiGwUrl
-  gwcenurl: 'lexbox-dev-apigwcen.lefebvre.es'   # name: CentinelaApiGwUrl
-  gwsigurl: 'lexbox-dev-apigwsig.lefebvre.es'  
+  lex_url: 'https://led-dev-lexon.eu.els.local' #name : LexonFilesUrl
   callbackurl: 'lexbox-dev-websignature.lefebvre.es'   # name: CallBackUrl
   paths:
-    notification: '/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
-    notificationcertified: '/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
+    mail: '/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
+    certified_mail: '/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
+    certified_sms: '/SignaturitEvent/certifiedSms/post.json'   # name: CertifiedSmsNotificationUrl
 
 svchub:
   url: 'led-pre-servicehub.eu.els.local' # name: MinihubUrl
