@@ -34,8 +34,8 @@ env:
     - name: UseLoadTest
       key: all_EnableLoadTest
     - name: LexonApiUrlHC
-      key: internalurls__lexonapi__hc
+      key: internalurls__lexonapigw__hc
     - name: AccountApiUrlHC
-      key: internalurls__accountapi__hc
+      key: internalurls__accountapigw__hc
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values: {}

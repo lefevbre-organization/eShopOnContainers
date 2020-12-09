@@ -4,7 +4,7 @@ description: Addon Launcher
 home: https://github.com/lefevbre-organization/eShopOnContainers
 icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
 keywords: ["imap", "gmail", "outlook", "addon", "launcher", "webclient"]
-version: 0.37.0
+version: 0.37.2
 sources:
   - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/Addon/Centinela
 
