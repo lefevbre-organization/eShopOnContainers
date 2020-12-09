@@ -6,11 +6,6 @@ centinela:
   pass: 'led.2018'
   url: 'compliance-api.affin.es/api/secure'
 
-online:
-  user: 'ws'
-  pass: '22lcqsp11lsw'
-  url: 'herculesppd.lefebvre.es/webclient46'
-
 lexon:
   devs:
     env: 'DEVS'

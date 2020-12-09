@@ -6,11 +6,6 @@ centinela:
   pass: 'muWeEtF3ht#9yJPB'
   url: 'centinela-api.lefebvre.es/api/secure'
 
-online:
-  user: 'ws'
-  pass: '22lcqsp11lsw'
-  url: 'online.elderecho.com/ws'
-
 lexon:
   devs:
     env: 'DEVS'
