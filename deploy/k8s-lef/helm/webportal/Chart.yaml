@@ -1,5 +1,11 @@
 apiVersion: v1
-appVersion: "0.18"
-description: A Helm chart for Kubernetes
 name: webportal
+description: Portal for mail clients 
+home: https://github.com/lefevbre-organization/eShopOnContainers
+icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
+keywords: ["imap", "gmail", "outlook", "addon", "launcher", "webclient"]
 version: 0.37.0
+sources:
+  - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/Web/WebPortalClient
+
+
