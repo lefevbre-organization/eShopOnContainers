@@ -880,6 +880,10 @@ input[type=search]:not(.browser-default___2ZECf){
     color: #001978;
 }
 
+#main-contact .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+    color: #001978;
+}
+
 #main-rol-selector .e-dropdownbase .e-list-item.e-active, 
 #main-rol-selector .e-dropdownbase .e-list-item.e-active.e-hover,
 #main-contact .e-dropdownbase .e-list-item.e-active,  
