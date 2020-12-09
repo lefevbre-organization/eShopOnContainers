@@ -154,7 +154,7 @@
 
             Result<bool> result;
 
-            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/sms";
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post/certification/email";
 
             var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
