@@ -135,7 +135,7 @@ const Contacts = (props) => {
            || contact.email.toUpperCase().includes(filter))
            .map((contact, i) => 
               <li className={style['container-list-contacts']} key={i}>
-                <div><p className="light-blue-text font-weight-bold">{contact.phoneNumber1}</p></div>
+                <div><p className={`${style['font-size-phone']} light-blue-text font-weight-bold`}>{contact.phoneNumber1}</p></div>
                 <div className={style['list-checked']}>
                 <label>
                   <input 
@@ -164,7 +164,9 @@ const Contacts = (props) => {
            )}
           </ul>
           <div className="row cont-inf-seleccionados">
-           <div className="col s5 select-contacts">{numberCheckeds}/{contacts.length} {i18n.t('contacts.selected')}</div>
+            <div className={`${style['select-contact-length']} col s5 light-blue-text`}>
+                {numberCheckeds}/{contacts.length} {i18n.t('contacts.selected')}
+            </div>
                  <div className="col s7 right-align">
                       <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}
                       onClick={dialogClose} >

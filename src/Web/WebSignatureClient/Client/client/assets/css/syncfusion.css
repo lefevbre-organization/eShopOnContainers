@@ -20,8 +20,8 @@
     width: 1%;
 }
 
-#confirmDialog_dialog-header, .e-dialog 
-.e-icon-dlg-close::before {
+#confirmDialog #confirmDialog_dialog-header, 
+#confirmDialog .e-dialog .e-icon-dlg-close::before {
     content: '\e7fc';
     position: relative;
     color: white;
@@ -663,8 +663,8 @@ input[type=search]:not(.browser-default___2ZECf){
     justify-content: flex-end;
 }
    
-#confirmDialog #confirmDialog_dialog-header, .e-dialog 
-.e-icon-dlg-close::before {
+#confirmDialog #confirmDialog_dialog-header, 
+#confirmDialog .e-dialog .e-icon-dlg-close::before {
     content: '\e7fc';
     position: relative;
     color: white;
@@ -722,8 +722,179 @@ input[type=search]:not(.browser-default___2ZECf){
     overflow: hidden;
 } 
 
-.e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+/* .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
     content: '\e90b';
     font-family: 'lf-font' !important;
     font-size: 15px;
+} */
+
+/*component message viewer*/
+#infoDialog-viewer {
+    max-height: 927px;
+    width: 300px;
+    left: 770px;
+    z-index: 1001;
+}
+
+#infoDialog-viewer 
+#infoDialog-viewer_dialog-header, 
+#infoDialog-viewer_title, 
+#infoDialog-viewer_dialog-content, 
+#infoDialog-viewer .e-footer-content{
+    background: #001970;
+    color: #fff;
+    display:flex;
+}
+
+#infoDialog-viewer, 
+.e-dialog .e-dlg-content {
+    font-size: 17.5px !important;
+}
+
+.e-btn .e-btn-icon.e-icon-right, .e-css.e-btn .e-btn-icon.e-icon-right {
+    display: none;
+}
+
+/* component message editor */
+#info2Dialog {
+    max-height: 927px;
+    width: 60%;
+    left: 20% !important;
+    z-index: 1001;
+}
+
+#info2Dialog_dialog-header, 
+#info2Dialog_title, 
+#info2Dialog_dialog-content, 
+#info2Dialog.e-footer-content, 
+.e-footer-content {
+    background: #001970;
+    color: #fff;
+    display:flex;
+}
+
+#rolDialog {
+    top: 20% !important;
+}
+
+#rolDialog_title {
+    width: 40% !important;
+    color: #001970;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+#rolDialog_dialog-header > button {
+    margin-right: 10px;
+}
+
+#rolDialog_dialog-header > button > span {
+    color: #001978 !important;
+}
+
+.message-editor___1BSzC 
+.header___2SVSM 
+.address___2e6fn 
+.chip___3gDJb {
+    border-color: #001970 !important;
+}
+
+.message-editor___1BSzC 
+.header___2SVSM 
+.address___2e6fn 
+.chip___3gDJb i {
+    color: #001970;
+}
+
+.e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
+    margin-right: 0;
+    margin-left: auto;
+    color: #fff
+}
+
+.e-btn.e-flat.e-primary {
+    color: #fff !important;
+}
+
+.e-btn-icon .e-icon-dlg-close .e-icons{
+    color: #fff;
+ }
+.e-dialog .e-dlg-header-content 
+.e-btn.e-dlg-closeicon-btn {
+    margin-right: 0;
+    margin-left: auto;
+    color: #fff;
+    height: 15px;
+    background-color: transparent;
+}
+
+.e-dialog .e-icon-dlg-close::before {
+    content: '\e7fc';
+    position: relative;
+    font-size: 15px;
+}
+            
+#toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
+    height: calc(100% - 20px) !important;
+}   
+
+#toolsRTE_2rte-view {
+    overflow: hidden;
+}   
+
+#rolDialog_dialog-content {
+    padding: 0px !important;
+    overflow: hidden;
+} 
+
+#rolDialog_dialog-content > div > div > table > tr > td:nth-child(4) > div > span {
+    width: 100% !important;
+    background: #ebedf4;
+    border: none;
+    height: 2.5rem;
+    padding: 5px;
+}
+
+#main-rol-selector .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
+#main-rol-selector .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
+#main-rol-selector .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
+#main-rol-selector .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
+{
+     background: #001970;
+}
+
+#main-rol-selector .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
+    background: #ebedf4;
+    border: none;
+    height: 2.5rem;
+    padding: 5px;
+    font-weight: 700;
+}
+
+#main-rol-selector .e-control.e-dropdownlist.e-lib.e-input,
+#main-contact .e-control.e-dropdownlist.e-lib.e-input {
+    color: #001978 !important;
+}
+
+#main-rol-selector .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+    color: #001978;
+}
+
+#main-rol-selector .e-dropdownbase .e-list-item.e-active, 
+#main-rol-selector .e-dropdownbase .e-list-item.e-active.e-hover,
+#main-contact .e-dropdownbase .e-list-item.e-active,  
+#main-contact .e-dropdownbase .e-list-item.e-active.e-hover {
+    background-color: #eee;
+    border-color: #fff;
+    color: #001970;
+}
+
+#main-rol-selector .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before, 
+#main-contact .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
+    content: '\e90b';
+    font-family: 'lf-font' !important;
+}
+
+#contactDialog {
+    top: 17% !important;
 }

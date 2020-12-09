@@ -230,7 +230,7 @@ class ComposeMessageEditor extends React.Component {
             ]}
           />
         </RichTextEditorComponent>
-        <style jsx>{`
+        {/* <style jsx>{`
           .e-richtexteditor.e-rte-tb-expand {
             border: none;
             position: static !important;
@@ -238,7 +238,7 @@ class ComposeMessageEditor extends React.Component {
           .e-richtexteditor.e-rte-tb-expand .e-rte-content {
             border-bottom: none;
           }
-        `}</style>
+        `}</style> */}
       </Fragment>
     );
   }
