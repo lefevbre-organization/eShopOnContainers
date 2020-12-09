@@ -334,7 +334,7 @@ export class ComposeMessage extends PureComponent {
         this.getAttachById(newAttachments);
 
         const subject = this.props.emailMessageResult.result.subject;
-        const body = this.props.emailMessageResult.result.bodyPreview
+        const body = this.props.emailMessageResult.result.body.content
         this.setState({
           draftId: id,
           subject: subject, 
