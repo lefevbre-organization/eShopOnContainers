@@ -1,8 +1,8 @@
 {{- $name := include "signature-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
-{{- $lex := include "url-of" (list .Values.app.ingress.entries.lexonapi .) -}}
 {{- $cen := include "url-of" (list .Values.app.ingress.entries.centinelaapi .) -}}
+{{- $lex := include "url-of" (list .Values.app.ingress.entries.lexonapi .) -}}
 {{- $sig := include "url-of" (list .Values.app.ingress.entries.signatureapi .) -}}
 {{- $clientsig := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
 {{- $mongo := include "mongo-name" . -}}

@@ -13,12 +13,19 @@ Param(
         "sql-data"
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
-    [parameter(Mandatory=$false)][string[]]$charts=(
+    [parameter(Mandatory=$false)][bool]$deployClients=$true,
+    [parameter(Mandatory=$false)][bool]$deployServices=$true,
+    [parameter(Mandatory=$false)][bool]$deployGateways=$true,
+    [parameter(Mandatory=$false)][string[]]$clients=(
+        # "websignature",  
+        "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela" 
+        # "webdatabase"
+        ),
+    [parameter(Mandatory=$false)][string[]]$services=(
         # "lexon-api",  
         "account-api", "centinela-api", "conference-api", "lexon-api", "signature-api", "userutils-api",  
-        # "database-api", "webdatabase", 
-        "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
-        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
+        # "database-api", 
         "webimapserver", 
         "webstatus"
         ),
@@ -64,16 +71,19 @@ function Install-Chart  {
 $dns = $externalDns
 $sslEnabled=$false
 $sslIssuer=""
-$envYalm="dev.yaml"
+$envYaml="dev.yaml"
+$clientYaml="react_dev.yaml"
 
 if ($sslSupport -eq "staging") {
-    $envYalm="pre.yaml"
+    $envYaml="pre.yaml"
+    $clientYaml="react_pre.yaml"
     $sslEnabled=$true
     $tlsSecretName="efef-letsencrypt-staging"
     $sslIssuer="letsencrypt-staging"
 }
 elseif ($sslSupport -eq "prod") {
-    $envYalm="pro.yaml"
+    $envYaml="pro.yaml"
+    $clientYaml="react_pro.yaml"
     $sslEnabled=$true
     $tlsSecretName="elef-letsencrypt-prod"
     $sslIssuer="letsencrypt-prod"
@@ -81,7 +91,6 @@ elseif ($sslSupport -eq "prod") {
 elseif ($sslSupport -eq "custom") {
     $sslEnabled=$true
 }
-
 
 if ($useLocalk8s -eq $true) {
     Write-Host "select useLocalk8s configure with  ingress_values_dockerk8s.yaml" -ForegroundColor Gray
@@ -168,19 +177,38 @@ else {
 }
 
 if ($deployCharts) {
-    Write-Host "Installing charts and gateways  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Green
+    Write-Host "Installing charts: services, clients and gateways  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Green
 
-    foreach ($chart in $charts) {
-        Write-Host "Installing: <<<<<<<<<<<<<<<<<<<<<<<<<<<<< $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
-        Install-Chart $chart "-f app.yaml --values inf.yaml -f $ingressValuesFile -f $ingressMeshAnnotationsFile -f $envYalm --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.tls.enabled=$sslEnabled --set inf.mesh.enabled=$useMesh --set inf.k8s.local=$useLocalk8s --set image.tag=$imageTag " $useCustomRegistry
-        Write-Host "Installed: <<<<<<<<<<<<<<<<<<<<<<<<<<<<< $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+    if ($deployClients) {
+        Write-Host "Installing clients  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Yellow
+    
+        foreach ($chart in $clients) {
+            Write-Host "Installing: <<<<<<<<<<<<<<<<<<<<<< Client: $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+            Install-Chart $chart "-f app.yaml --values inf.yaml -f $ingressValuesFile -f $ingressMeshAnnotationsFile -f $envYaml -f $clientYaml --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.tls.enabled=$sslEnabled --set inf.mesh.enabled=$useMesh --set inf.k8s.local=$useLocalk8s --set image.tag=$imageTag " $useCustomRegistry
+            Write-Host "Installed: <<<<<<<<<<<<<<<<<<<<<< Client: $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+        }
     }
 
-    foreach ($chart in $gateways) {
-        Write-Host "Installing: <<<<<<<<<<<<<<<< Api Gateway Chart: $chart >>>>>>>>>>>>>>>>>"  -ForegroundColor Green
-        Install-Chart $chart "-f app.yaml -f inf.yaml -f $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.mesh.enabled=$useMesh --set inf.tls.enabled=$sslEnabled --set image.tag=$imageTag" $false
-        Write-Host "Installed: <<<<<<<<<<<<<<<< Api Gateway Chart: $chart >>>>>>>>>>>>>>>>>"  -ForegroundColor Green
-        
+    if ($deployServices) {
+        Write-Host "Installing sevices  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Yellow
+
+        foreach ($chart in $services) {
+            Write-Host "Installing: <<<<<<<<<<<<<<<<<<<< Service:  $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+            Install-Chart $chart "-f app.yaml --values inf.yaml -f $ingressValuesFile -f $ingressMeshAnnotationsFile -f $envYaml --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.tls.enabled=$sslEnabled --set inf.mesh.enabled=$useMesh --set inf.k8s.local=$useLocalk8s --set image.tag=$imageTag " $useCustomRegistry
+            Write-Host "Installed: <<<<<<<<<<<<<<<<<<<< Service: $chart >>>>>>>>>>>>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+        }
+
+    }
+
+    if ($deployGateways) {
+        Write-Host "Installing gateways  >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" -ForegroundColor Yellow
+
+        foreach ($chart in $gateways) {
+            Write-Host "Installing: <<<<<<<<<<<<<<<< Api Gateway Chart: $chart >>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+            Install-Chart $chart "-f app.yaml -f inf.yaml -f $ingressValuesFile -f $envYaml --set app.name=$appName --set inf.k8s.dns=$dns --set ingress.hosts={$dns} --set image.pullPolicy=$pullPolicy --set inf.mesh.enabled=$useMesh --set inf.tls.enabled=$sslEnabled --set image.tag=$imageTag" $false
+            Write-Host "Installed: <<<<<<<<<<<<<<<< Api Gateway Chart: $chart >>>>>>>>>>>>>>>>>"  -ForegroundColor Green
+            
+        }
     }
 
 }

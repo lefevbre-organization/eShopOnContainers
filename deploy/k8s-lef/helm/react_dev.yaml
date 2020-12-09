@@ -1,7 +1,7 @@
 configValues: |
   window.REACT_APP_ENVIRONMENT='QA'
   window.SHOW_EXPERIMENTAL='1'
-  window.RELEASE = 'RC 0.37'
+  window.RELEASE = 'RC 0.37.2'
   window.PATH_BASE='https://lexbox-dev'
   window.PATH_GW_ACC='-apigwacc.lefebvre.es/api/v2'
   window.PATH_GW_LEX='-apigwlex.lefebvre.es/api/v1'
@@ -52,6 +52,6 @@ configValues: |
   window.URL_GET_USER = 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
   window.API_GATEWAY_LEX = 'https://lexbox-dev-apigwlex.lefebvre.es'
   window.API_GATEWAY_CEN = 'https://lexbox-dev-apigwcen.lefebvre.es'
-  window.API_GATEWAY_ACC = 'https://lexbox-dev-apigwcen.lefebvre.es'
+  window.API_GATEWAY_ACC = 'https://lexbox-dev-apigwacc.lefebvre.es'
   window.POLLING_INTERVAL = 10000
 
