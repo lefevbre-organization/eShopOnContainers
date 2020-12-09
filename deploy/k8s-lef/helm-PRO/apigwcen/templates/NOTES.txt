@@ -1,2 +1,0 @@
-eLefebvre API Gateway for Centinela API services installed
-----------------------------------------------------------

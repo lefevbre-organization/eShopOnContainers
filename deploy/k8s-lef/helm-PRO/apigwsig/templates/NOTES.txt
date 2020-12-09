@@ -1,2 +1,0 @@
-eLefebvre Signature API Gateway for LEX-ON services installed
-----------------------------------------------------------
