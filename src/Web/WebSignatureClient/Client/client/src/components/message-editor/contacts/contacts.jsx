@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import i18n from 'i18next';
 import { getContactsCentinela, getContactsLexon, getBBDDLexon } from '../../../services/api-signaturit';
@@ -19,11 +19,23 @@ const Contacts = (props) => {
 
   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
+  const [selectContact, setSelectContact] = useState([]);
+
+  const prevAddress = usePrevious(props.addresses);
+
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
   // const [numberCheckedsLexon, setNumberCheckedsLexon] = useState(0);
 
   const [filter, setFilter] = useState('');
 
-  const [addresses, setAddresses] = useState(props.addresses);
+  //const [addresses, setAddresses] = useState(props.addresses);
 
   const centinela = props.lefebvre.roles.some(rol => rol === 'Centinela');
 
@@ -31,7 +43,7 @@ const Contacts = (props) => {
 
   //const [selectContact, setSelectContact] = useState([]);
 
-  const [fetchData, setFetchData] = useState(true);
+  //const [fetchData, setFetchData] = useState(true);
 
   const validData = (contacts) => {
     if(contacts.data.length === 0) {
@@ -107,7 +119,9 @@ const Contacts = (props) => {
                   });
                   contact.id = `${contact.id}_${contact.idType}_${contact.entityType}_${company.bbdd}`
                   contact.checked = emailExists;
-                  contactsLexon.push(contact);
+                  if (contactsLexon.length < 350){
+                    contactsLexon.push(contact);
+                  }
                 }
               })
 
@@ -130,51 +144,62 @@ const Contacts = (props) => {
     }
   }
 
-  // useEffect(() => {
-  //   const numberCheckeds = contacts.filter(contact => contact.checked == true);
-  //   const numberCheckedsLexon = contactsLexon.filter(contact => contact.checked === true);
-  //   setNumberCheckeds(numberCheckeds.length);
-  //   setNumberCheckedsLexon(numberCheckedsLexon.length)
-  //   getDataCentinela();
-  //   getDataLexon();
-  // }, [numberCheckeds, numberCheckedsLexon, selectContact, setNumberCheckeds, setNumberCheckedsLexon, getDataCentinela, getDataLexon]);
-
   useEffect(() => {
     const numberCheckeds = contacts.filter(contact => contact.checked == true);
     setNumberCheckeds(numberCheckeds.length);
   }, [numberCheckeds, contacts]);
 
-  useEffect(() => {
-    if (centinela && contactsCentinela && contactsCentinela.length){
-      const cenCheckedContacts = contactsCentinela.filter(c => c.checked === true);
-      let aux = [];
-      cenCheckedContacts.map(c => aux.push({address: c.email, name: c.name}))
-      if (cenCheckedContacts){
-        // var uniqueResultOne = props.addresses.filter(function(obj) {
-        //   return !aux.some(function(obj2) {
-        //       return obj.value == obj2.value;
-        //   });
-        // }); 
-        // console.log(uniqueResultOne);
-        const results = aux.filter(({ address: id1 }) => !props.addresses.some(({ address: id2 }) => id2 === id1));
-        console.log(results);
-        //const test = aux.filter(c => !props.addresses.include(c));
-        const contactsToUncheck = cenCheckedContacts.filter(c => !props.addresses.filter(a => a.address === c.email && a.name === c.name));
-        //console.log(test);
-        console.log(cenCheckedContacts);
-        console.log(contactsToUncheck);
+  function findRemovedContact(currentValue, index, arr) {
+    var ret = false;
+    this.forEach(address => {
+      if (currentValue.checked === true && currentValue.email === address.address){
+        ret = true;
       }
-      //setContacts([...contacts]);
+    });
+    return ret;
+  }
+
+  useEffect(() => {
+    if (prevAddress && props.addresses && prevAddress.length > props.addresses.length){
+      let contactFound = false;
+      if (centinela && contactsCentinela && contactsCentinela.length){
+        const cenCheckedContactsOriginal = contactsCentinela.filter(c => c.checked === true);
+        let cenCheckedContactsFormated = [];
+        cenCheckedContactsOriginal.map(c => cenCheckedContactsFormated.push({address: c.email, name: c.name}))
+        if (cenCheckedContactsOriginal){
+          const cenRemovedContacts = cenCheckedContactsFormated.filter(({ address: id1 }) => !props.addresses.some(({ address: id2 }) => id2 === id1));
+          const removedIndex = contactsCentinela.findIndex(findRemovedContact, cenRemovedContacts);
+          if (prevAddress.length > props.addresses.length){
+            if (removedIndex !== -1){
+              contactsCentinela[removedIndex].checked = false
+              contactFound = true;
+            }
+          }
+
+          setContactsCentinela([...contactsCentinela]);
+        }
+      }
+      
+      if (!contactFound && lexon && contactsLexon && prevAddress.length > props.addresses.length){
+        const lexCheckedContactsOriginal = contactsLexon.filter(c => c.checked === true);
+        let lexCheckedContactsFormated = [];
+        lexCheckedContactsOriginal.map(c => lexCheckedContactsFormated.push({address: c.email, name: c.name}))
+        if (lexCheckedContactsOriginal){
+          const lexRemovedContacts = lexCheckedContactsFormated.filter(({ address: id1 }) => !props.addresses.some(({ address: id2 }) => id2 === id1));
+          const removedIndexLex = contactsLexon.findIndex(findRemovedContact, lexRemovedContacts);
+          if (prevAddress.length > props.addresses.length){
+            if (removedIndexLex !== -1){
+              contactsLexon[removedIndexLex].checked = false
+              contactFound = true;
+            }          
+          }          
+          setContactsLexon([...contactsLexon]);
+        }
+      }
     }
   }, props.addresses)
 
   
-
-  // useEffect(() => {
-  //   const numberCheckedsLexon = contactsLexon.filter(contact => contact.checked == true);
-  //   setNumberCheckedsLexon(numberCheckedsLexon.length);
-  // }, [numberCheckedsLexon, contacts]);
-
   useEffect(() => {
    if (centinela && lexon){
      getDataCentinela()
@@ -189,16 +214,26 @@ const Contacts = (props) => {
    }
   }, []);
 
+  useEffect(() => {
+    if (centinela && lexon){
+      setSelectContact([{ 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon')}, {'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela')}])
+    } else if (centinela) {
+      setSelectContact([{'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela')}]);
+    } else {
+      setSelectContact([{ 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon')}]);
+    }
+  }, []);
+
   // useEffect(() => {
   //   (lexon) ? getDataLexon() : null; 
   // }, []);
  
-  const selectContact =
-    (centinela && lexon)
-      ? [{ 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon')}, {'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela')}]
-      : (centinela) 
-        ? [{'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela')}]
-        : [{ 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon')}];
+  // const selectContact =
+  //   (centinela && lexon)
+  //     ? [{ 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon')}, {'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela')}]
+  //     : (centinela) 
+  //       ? [{'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela')}]
+  //       : [{ 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon')}];
           
 
   const contactFields = { text: 'SelectContact', value: 'Id' };
@@ -238,7 +273,7 @@ const Contacts = (props) => {
 
   const getContactsInfo = () => {
     let newContacts = [];
-    contacts.forEach(contact => {
+    contactsCentinela.forEach(contact => {
         if(contact.checked) {
           setTimeout(() => {
             newContacts.push(props.id, contact.email, contact.name);
@@ -255,13 +290,15 @@ const Contacts = (props) => {
       }
     })
     //setContacts([]); 
-    setAddresses([...props.addresses, ...newContacts])
+    //setAddresses([...props.addresses, ...newContacts])
+    setSelectedOption('');
     props.dialogClose();
   }
 
   const dialogClose = () => {
     //setContacts([]);
     //setContactsLexon([]); 
+    setSelectedOption('');
     props.dialogClose();
   }
 
