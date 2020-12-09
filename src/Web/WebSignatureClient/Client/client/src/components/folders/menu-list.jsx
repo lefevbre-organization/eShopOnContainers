@@ -117,6 +117,17 @@ export class MenuListClass extends Component {
            disable={lefebvre.roles
            && lefebvre.roles.includes('SMS Certificado') ?
            true : false} />     
+
+          <MenuItem 
+           id={'document'}
+           title={i18n.t('sideBar.filterMenuDocument')}
+           icon="lf-icon-certified-document"
+           onClick={this.onDocumentClick}
+           getConfirm={this.getConfirm}
+           collapsed={collapsed}
+           disable={lefebvre.roles
+           && lefebvre.roles.includes('SMS Certificado') ?
+           true : false} />     
       
           <DialogComponent 
             id="confirmDialog" 
@@ -224,6 +235,28 @@ export class MenuListClass extends Component {
       this.props.setGuid(null);
       this.props.setIdDocuments(null);
       this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
+      this.props.setSelectedService('certifiedSms'); 
+      this.props.close(this.props.application);
+    }
+  }
+
+  onDocumentClick = (event, key) => {
+    const { close, lefebvre } = this.props;
+    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+      this.setState({hideConfirmDialog: true});
+    } else {
+      event.stopPropagation();
+      this.props.signatureClicked(null);
+      this.props.emailClicked(null);
+      this.props.smsClicked(null);
+      this.props.setSignaturesFilterKey(key);
+      this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setUserApp('lefebvre');
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setGuid(null);
+      this.props.setIdDocuments(null);
+      this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
       this.props.setSelectedService('certifiedSms'); 
       this.props.close(this.props.application);
     }

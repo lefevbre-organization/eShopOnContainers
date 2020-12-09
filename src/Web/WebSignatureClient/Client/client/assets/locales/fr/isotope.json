@@ -44,6 +44,7 @@
     "filterMenu": "Signatures",
     "filterMenuEmail": "Email certifié",
     "filterMenuSms": "SMS certifié",
+    "filterMenuDocument": "CERTIFICATION",
     "filterAll": "Montrer toutes",
     "filterInProgress": "En progrés",
     "filterCompleted": "Complétées",
@@ -73,7 +74,8 @@
     },
     "app": "SIGNATURE",
     "certifiedEmail": "EMAIL CERTIFIÉ",
-    "certifiedSms": "SMS CERTIFIÉ"
+    "certifiedSms": "SMS CERTIFIÉ",
+    "certifiedDocument": "CERTIFICATION DU DOCUMENT"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",

@@ -26,7 +26,8 @@ const MenuItem = props => {
              <span>{i18n.t('sideBar.filterAll')}</span>
              } 
           </a>
-        </li>
+        </li>  
+        {id != 'document' ? 
         <li className={`${styles['en-progreso']}`}>
           <a href="#" id={option1} onClick={event => onClick(event, option1)}>
             <span className="lf-icon-folder">
@@ -36,7 +37,8 @@ const MenuItem = props => {
              <span>{i18n.t('sideBar.filterInProgress')}</span>
             } 
           </a>
-        </li>
+        </li> : null}
+        {id != 'document' ?
         <li className={`${styles.completadas}`}>
           <a href="#" id={option2} onClick={event => onClick(event, option2)}>
             <span className="lf-icon-folder">
@@ -46,8 +48,8 @@ const MenuItem = props => {
              <span>{i18n.t('sideBar.filterCompleted')}</span>
             } 
           </a>
-        </li>
-        {id == 'signature' ? 
+        </li> : null}
+        {(id == 'signature' && id != 'document') ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-folder">
@@ -58,7 +60,7 @@ const MenuItem = props => {
             } 
           </a>
         </li> : null}
-        {id == 'sms' ? 
+        {(id == 'sms' && id != 'document') ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-unsolved">
