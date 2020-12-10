@@ -83,6 +83,9 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
     case ActionTypes.APPLICATION_SMS_SELECT:
       return {...state, selectedSms: {...action.payload}};
 
+    case ActionTypes.APPLICATION_DOCUMENT_SELECT:
+      return {...state, selectedDocument: {...action.payload}};
+
     case ActionTypes.APPLICATION_SERVICE_SELECT:
       return {...state, selectedService: action.payload};
       
@@ -135,6 +138,13 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
       const newState = {...state};
       const smsList = action.payload.smsList;
       newState.smsList = smsList
+      return newState;
+    }
+
+    case ActionTypes.APPLICATION_DOCUMENTS_PRE_DOWNLOAD: {
+      const newState = {...state};
+      const documents = action.payload.documents;
+      newState.documents = documents
       return newState;
     }
 
