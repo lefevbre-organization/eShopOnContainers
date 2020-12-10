@@ -215,15 +215,16 @@ export class Main extends Component {
     onCloseDialog() {
         this.LoadCalendarList(false)
 
-       
-        window.top.postMessage(
-            JSON.stringify({
-                idEvent:undefined,
-                actionCancelled: true,
-                selectedDate: undefined
-            }),
-            window.URL_LEXON
-        );
+        if (window != window.top) {
+            window.top.postMessage(
+                JSON.stringify({
+                    idEvent: undefined,
+                    actionCancelled: true,
+                    selectedDate: undefined
+                }),
+                window.URL_LEXON
+            );
+        }
 
     }
 
@@ -1044,15 +1045,17 @@ export class Main extends Component {
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
-        var DateMessage = args.data.startTime
-        window.top.postMessage(
-            JSON.stringify({
-                idEvent: args.data.Id,
-                actionCancelled:false,
-                selectedDate: DateMessage
-            }),
-            window.URL_LEXON
-        );
+        if (window != window.top) {
+            var DateMessage = args.data.startTime
+            window.top.postMessage(
+                JSON.stringify({
+                    idEvent: args.data.Id,
+                    actionCancelled: false,
+                    selectedDate: DateMessage
+                }),
+                window.URL_LEXON
+            );
+        }
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -2029,7 +2032,7 @@ export class Main extends Component {
                                     onCalendarClick={this.loadCalendarEvents}
                                     onSidebarCloseClick={this.handleShowLeftSidebarClick}
                                     onCalendarChange={this.handleScheduleDate}
-                                onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
+                                    onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
                                     onCalendarOpenCalnendarView={this.openCalendarView}
                                     onCalendarDelete={this.deleteCalendar}
                                     onCalendarColorModify={this.calendarColorModify}   
