@@ -47,6 +47,14 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
           && props.lefebvre.roles.includes('SMS certificado') ?
           false : true } />
+        <SendingType
+        title={i18n.t('sideBar.certifiedDocument')}
+        subTitle={i18n.t('sideBar.sendingTypeDocument')}
+        getConfirm={getConfirm}
+        onClick={props.onNewDocumentCertificate}
+        disable={ props.lefebvre.roles
+          && props.lefebvre.roles.includes('SMS certificado') ?
+          false : true } />
       <DialogComponent
         id="noServiceDialog"
         visible={hideAlertDialog}

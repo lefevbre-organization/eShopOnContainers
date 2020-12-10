@@ -33,9 +33,11 @@
     "signature": "Advanced signature",
     "certifiedEmail": "Certified email",
     "certifiedSms": "Certified SMS",
+    "certifiedDocument": "Document certification",
     "sendingTypeSignature": "Signature with biometric data",
     "sendingTypeEmail": "Certify your communications",
-    "sendingTypeSms": "Certify your SMS"
+    "sendingTypeSms": "Certify your SMS",
+    "sendingTypeDocument": "Certify your documents"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -125,7 +127,8 @@
     },
     "title": "CREATE NEW SIGNATURE",
     "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
-    "certifiedSmsTitle": "CERTIFIED SMS"
+    "certifiedSmsTitle": "CERTIFIED SMS", 
+    "certifiedDocumentTitle": "DOCUMENT CERTIFICATION"
   },
   "forwardAction": {
     "From": "From",
