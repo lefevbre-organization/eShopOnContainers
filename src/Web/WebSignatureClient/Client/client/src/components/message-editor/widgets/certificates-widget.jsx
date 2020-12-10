@@ -5,15 +5,31 @@ import Checkbox from "../../form/checkbox/checkbox";
 
 const CertificatesWidget = (props) => {
 
-    const [certificates, setCertificates] = useState([
-        {name: i18n.t('certificatesWidget.delivery'), checked: true, disable: true, option: 1, id: 'delivery'},
-        {name: i18n.t('certificatesWidget.open_email'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 2, id: 'open_email'},
-        {name: i18n.t('certificatesWidget.open_document'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 3, id: 'open_document'},
-        {name: i18n.t('certificatesWidget.open_every_document'), checked: false, disable: false, option: 4, id: 'open_every_document'}
-        //,
-        // {name: 'El receptor se ha descargado el documento', checked: false, disable: false, option: 5, id: "download_document"},
-        // {name: 'El receptor se ha descargado todos los documentos', checked: false, disable: false, option: 6, id: "download_every_document"},
-    ]);
+    const [certificates, setCertificates] = useState([]);
+    const emailCertificates = [
+      {name: i18n.t('certificatesWidget.delivery'), checked: true, disable: true, option: 1, id: 'delivery'},
+      {name: i18n.t('certificatesWidget.open_email'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 2, id: 'open_email'},
+      {name: i18n.t('certificatesWidget.open_document'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 3, id: 'open_document'},
+      {name: i18n.t('certificatesWidget.open_every_document'), checked: false, disable: false, option: 4, id: 'open_every_document'}
+      //,
+      // {name: 'El receptor se ha descargado el documento', checked: false, disable: false, option: 5, id: "download_document"},
+      // {name: 'El receptor se ha descargado todos los documentos', checked: false, disable: false, option: 6, id: "download_every_document"},
+    ]
+    const smsCertificates = [
+      {name: i18n.t('certificatesWidget.delivery_sms'), checked: true, disable: true, option: 1, id: 'delivery'},
+      {name: i18n.t('certificatesWidget.open_document_sms'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 2, id: 'open_document'},
+      {name: i18n.t('certificatesWidget.open_every_document_sms'), checked: (props.userApp === 'centinela') ? true : false, disable: (props.userApp === 'centinela') ? true : false, option: 3, id: 'open_every_document'},
+    ]
+    useEffect(() => {
+      if(certificates.length == 0) {
+        if(props.sendingType == 'emailCertificate') {
+          setCertificates(emailCertificates);
+        } else {
+          setCertificates(smsCertificates);
+        }
+        
+      }
+    }, [emailCertificates, certificates, smsCertificates]);
 
     useEffect(() => {
       props.onChange(certificates);

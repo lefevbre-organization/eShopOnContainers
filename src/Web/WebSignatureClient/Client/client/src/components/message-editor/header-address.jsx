@@ -22,7 +22,8 @@ export class HeaderAddress extends Component {
     this.state = {
       value: '',
       suggestions: [],
-      hideContactDialog: false
+      hideContactDialog: false,
+      maxlength: 120,
     };
     this.dialogClose = this.dialogClose.bind(this);
   }
@@ -32,10 +33,8 @@ export class HeaderAddress extends Component {
   }
 
   dialogClose(){
-    
     this.setState({
       hideContactDialog: false, 
-      
     });
   }
 
@@ -43,7 +42,7 @@ export class HeaderAddress extends Component {
     const {
       id,
       className, chipClassName, autoSuggestClassName, autoSuggestMenuClassName,
-      label, addresses, onAddressRemove, lefebvre, isContacts
+      label, addresses, onAddressRemove, lefebvre, isContacts, sendingType
     } = this.props;
     const { suggestions, value } = this.state;
     return (
@@ -53,8 +52,19 @@ export class HeaderAddress extends Component {
         {addresses.map((address, index) => (
           <div key={index} className={`${chipClassName} ${mainCss['mdc-chip']}`}
             draggable={true}
-            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}>
-            <div className={mainCss['mdc-chip__text']}>{address.address}</div>
+            onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address.address)}
+          >
+            {
+              sendingType === 'smsCertificate'
+              ? <div className={mainCss['mdc-chip__text']}>
+                  <span>{address.email}</span>
+                  <span className="light-blue-text"> {address.address} </span>
+                </div>
+              : <div className={mainCss['mdc-chip__text']}>
+                  <span className="grey-text">{address.address.split(' ')[0]}</span>
+                  <span className="light-blue-text font-weight-bold"> {address.address.split(' ')[1]} </span>
+                </div>
+            }
             <i onClick={() => onAddressRemove(id, address)} className={`material-icons ${mainCss['mdc-chip__icon']}
                ${mainCss['mdc-chip__icon--trailing']}`}>cancel</i>
           </div>
@@ -97,7 +107,7 @@ export class HeaderAddress extends Component {
           id="contactDialog" 
           visible={this.state.hideContactDialog} 
           animationSettings={this.animationSettings} 
-          width='45%'
+          width='39%'
           ref={dialog => this.contactDialog = dialog} 
           close={this.dialogClose}
         >
@@ -107,6 +117,7 @@ export class HeaderAddress extends Component {
             dialogClose={this.dialogClose}
             lefebvre={lefebvre}
             addresses={addresses}
+            sendingType={sendingType}
           />
          
         </DialogComponent> : null}
@@ -137,7 +148,11 @@ export class HeaderAddress extends Component {
   }
 
   onSuggestionChange(event, { newValue }) {
-    this.setState({ value: newValue });
+   if(
+     newValue.length <= this.state.maxlength 
+     || this.props.sendingType != 'smsCertificate' ) {
+      this.setState({ value: newValue });
+   }  
   }
 
   onSuggestionsFetchRequested({ value }) {
@@ -150,7 +165,7 @@ export class HeaderAddress extends Component {
 
   onSuggestionSelected(event, { suggestionValue }) {
     this.setState({ value: '' });
-    this.props.onAddressAdd(this.props.id, suggestionValue, '');
+    this.props.onAddressAdd(this.props.id, suggestionValue, '', '');
     setTimeout(() => HeaderAddress.clearValidation(this.inputRef.current.input));
   }
 
@@ -178,7 +193,7 @@ export class HeaderAddress extends Component {
   validateEmail(event) {
     const target = event.target;
     const error = validateEmail(target.value);
-    if (error) {
+    if (error && this.props.sendingType != 'smsCertificate') {
       event.preventDefault();
       target.setCustomValidity(error);
       setTimeout(() => target.reportValidity());

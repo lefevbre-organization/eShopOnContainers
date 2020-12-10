@@ -666,6 +666,7 @@ function returnCreateEventParser(list) {
 function EventParser(event) {
     let eventParse;
 
+    debugger
     var startDate = new Date(event.start.dateTime);
     var endDate = new Date(event.end.dateTime);
     

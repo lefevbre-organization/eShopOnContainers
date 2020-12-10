@@ -29,11 +29,12 @@ const Contacts = (props) => {
       const newContactsCentinela = [];
        contactsCentinela.data.forEach(contact => {
         const emailExists = props.addresses.some(address => {
-           return (address.address === contact.email)
+           return (address.email === contact.email)
          });
         contact.checked = emailExists;
         newContactsCentinela.push(contact);
       });
+      console.log(newContactsCentinela);
       setContacts([...newContactsCentinela]);        
     }
   }
@@ -76,8 +77,16 @@ const Contacts = (props) => {
   const getContactsInfo = () => {
     contacts.forEach(contact => {
         if(contact.checked) {
+          
+          let address = props.sendingType === 'smsCertificate' ? contact.phoneNumber1 : contact.email; 
+          let name = contact.name;
+          let email = contact.email;
+          let phone = contact.phoneNumber1;
+
+          // let email = props.sendingType != 'smsCertificate' 
+          // ? contact.email : `${contact.email} ${contact.phoneNumber1}`;
           setTimeout(() => {
-            props.onAddressAdd(props.id, contact.email, contact.name);
+            props.onAddressAdd(props.id, address, name, email, phone);
           });
         }
     });
@@ -125,7 +134,9 @@ const Contacts = (props) => {
            || contact.name.toUpperCase().includes(filter)
            || contact.email.toUpperCase().includes(filter))
            .map((contact, i) => 
-              <li key={i}>
+              <li className={style['container-list-contacts']} key={i}>
+                <div><p className="light-blue-text font-weight-bold">{contact.phoneNumber1}</p></div>
+                <div className={style['list-checked']}>
                 <label>
                   <input 
                   type="checkbox"  
@@ -140,10 +151,15 @@ const Contacts = (props) => {
                    name="checked"
                    value={contact.contactId}
                 />
-                  <span>{contact.name}</span>
-                  <div className={style['email']}>{contact.email}</div>
+                  <span 
+                    className={contact.checked 
+                    ? 'light-blue-text font-weight-bold' : 
+                    'grey-text font-weight-bold'} >
+                      {contact.name}
+                  </span>
+                  <div className={`${style['email']} grey-text`}>{contact.email}</div>
                 </label>
-               
+                </div>
               </li> 
            )}
           </ul>
@@ -178,8 +194,10 @@ const Contacts = (props) => {
                 background: #ebedf4;
                 border: none;
                 height: 39px;
-                padding: 5px;
+                padding: 5px 20px 0px 16px !important;
                 font-weight: 700;
+                font-family: 'MTTMilano';
+                width: 76% !important;
               }
               .e-control.e-dropdownlist.e-lib.e-input {
                 color: #001978 !important;
@@ -195,8 +213,10 @@ const Contacts = (props) => {
               }
               .position-icon {
                 position: absolute;
-                left: 18px;
-                top: 17px;
+                left: 20px;
+                top: 9px;
+                font-size: 19px;
+                color: #8A91B5;
               }
               .right {
                 text-align: right;  
@@ -209,6 +229,7 @@ const Contacts = (props) => {
               .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
                 content: '\e90b';
                 font-family: 'lf-font' !important;
+                font-size: 15px;
               }
            `}
          </style>

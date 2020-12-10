@@ -14,7 +14,11 @@ import {
     AUTH_IN_PROGRESS,
 } from './constants';
 import { getStateStorage } from './localstorage';
-import { getUserApplication, getMessageByInternetMessageId } from './api_graph';
+import { 
+    getUserApplication, 
+    getUserApplicationIframe,
+    getMessageByInternetMessageId 
+} from './api_graph';
 import ACTIONS from './actions/lexon';
 import CU_ACTIONS from './actions/user';
 import * as base64 from 'base-64';
@@ -23,7 +27,7 @@ class AppContainerGraph extends Component {
     constructor(props) {
         super(props);
 
-        this.userAgentApplication = getUserApplication();
+        this.userAgentApplication = window != window.top ? getUserApplicationIframe()  : getUserApplication() ;
         var user = this.userAgentApplication.getAccount();
 
         this.state = {
@@ -172,7 +176,9 @@ class AppContainerGraph extends Component {
                 <Login
                     isAuthenticated={this.state.isAuthenticated}
                     user={this.state.user}
-                    authButtonMethod={this.login.bind(this)}
+                    authButtonMethod={window != window.top ? 
+                        this.loginIframe.bind(this) : 
+                        this.login.bind(this)}
                     logout={this.logout.bind(this)}
                     lexon={this.props.lexon}
                 />
@@ -195,6 +201,37 @@ class AppContainerGraph extends Component {
             await this.userAgentApplication.loginRedirect({
                 scopes: config.scopes,
                 prompt: 'select_account',
+            });
+            await this.getUserProfile();
+        } catch (err) {
+            var error = {};
+
+            if (typeof err === 'string') {
+                var errParts = err.split('|');
+                error =
+                    errParts.length > 1
+                        ? { message: errParts[1], debug: errParts[0] }
+                        : { message: err };
+            } else {
+                error = {
+                    message: err.message,
+                    debug: JSON.stringify(err),
+                };
+            }
+
+            this.setState({
+                isAuthenticated: false,
+                user: {},
+                error: error,
+            });
+        }
+    }
+
+    async loginIframe() {
+        try {
+            await this.userAgentApplication.loginPopup({
+                scopes: config.scopes,
+                prompt: 'select_account'
             });
             await this.getUserProfile();
         } catch (err) {

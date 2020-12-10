@@ -130,6 +130,10 @@ export const setTargetService = service => ({
     payload: service
 })
 
+export const setCenContacts = contactsInfo => ({
+    type: ActionTypes.LEFEBVRE_CENCONTACTS,
+    payload: contactsInfo
+})
 
 export default {
     setUser,
@@ -157,5 +161,6 @@ export default {
     setIdDocuments,
     setAdminContacts,
     setRoles,
-    setTargetService
+    setTargetService,
+    setCenContacts
 };
