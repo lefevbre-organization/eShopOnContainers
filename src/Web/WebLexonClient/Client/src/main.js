@@ -15,6 +15,7 @@ import {
   getUser,
   addClassification,
 } from './services/services-lexon';
+import {PAGE_IMPORT_EVENTS} from "./constants";
 
 class Main extends Component {
   constructor(props) {
@@ -34,6 +35,7 @@ class Main extends Component {
       provider: null,
       account: null,
       isAddon: false,
+      redirectTo: ''
     };
 
     this.handleSentMessage = this.handleSentMessage.bind(this);
@@ -252,7 +254,7 @@ class Main extends Component {
         provider,
         account,
         env,
-        app
+        app,
       });
     }
 
@@ -398,6 +400,7 @@ class Main extends Component {
       idCaseFile,
       bbdd,
       idCompany,
+      redirectTo
     } = this.state;
     const { errors } = this.props;
 
@@ -428,6 +431,7 @@ class Main extends Component {
               casefile={idCaseFile}
               bbdd={bbdd}
               company={idCompany}
+              redirectTo={redirectTo}
             />
           )}
         </Fragment>

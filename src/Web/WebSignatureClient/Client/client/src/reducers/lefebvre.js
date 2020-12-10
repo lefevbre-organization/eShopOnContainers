@@ -172,6 +172,12 @@ const lefebvre = (state = INITIAL_STATE.lefebvre, action = {}) => {
                 ...state,
                 targetService: action.payload
             }
+        
+        case ActionTypes.LEFEBVRE_CENCONTACTS:
+            return {
+                ...state,
+                cenContacts: action.payload
+            }
             
         default:
             return state;

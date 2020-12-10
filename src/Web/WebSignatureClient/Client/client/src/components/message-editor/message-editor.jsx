@@ -438,6 +438,7 @@ class MessageEditor extends Component {
               label={i18n.t('messageEditor.to')}
               lefebvre={lefebvre}
               isContacts={this.state.isContacts}
+              sendingType={sendingType}
             />
             <HeaderAddress
               id={'cc'}
@@ -452,6 +453,7 @@ class MessageEditor extends Component {
               getAddresses={this.props.getAddresses}
               label={t('messageEditor.cc')}
               lefebvre={lefebvre}
+              sendingType={sendingType}
             />
             <div className={styles.subject}>
               <input

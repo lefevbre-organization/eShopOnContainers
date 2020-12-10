@@ -41,16 +41,19 @@
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
-    "filterMenu": "Signatures demandées",
+    "filterMenu": "Signatures",
     "filterMenuEmail": "Email certifié",
+    "filterMenuSms": "SMS certifié",
     "filterAll": "Montrer toutes",
     "filterInProgress": "En progrés",
     "filterCompleted": "Complétées",
     "filterCancelled": "Anulées",
     "signature": "Signature avancée",
     "certifiedEmail": "Email certifié",
+    "certifiedSms": "SMS certifié",
     "sendingTypeSignature": "Signature avec données biométriques",
-    "sendingTypeEmail": "Certifiez vos communications"
+    "sendingTypeEmail": "Certifiez vos communications",
+    "sendingTypeSms": "Certifiez vos SMS"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -69,7 +72,8 @@
       "cancel": "Cancelar"
     },
     "app": "SIGNATURE",
-    "filterMenuEmail": "Email certifié"
+    "certifiedEmail": "EMAIL CERTIFIÉ",
+    "certifiedSms": "SMS CERTIFIÉ"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -135,7 +139,9 @@
       "photoInfo": "Number of photos attached",
       "phone": "Number of téléphone"
     },
-    "title": "CRÉER UNE SIGNATURE"
+    "title": "CRÉER UNE SIGNATURE",
+    "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
+    "certifiedSmsTitle": "CERTIFIED SMS"
   },
   "forwardAction": {
     "From": "De",
@@ -240,10 +246,13 @@
     "text": "Rappel envoyé au signataire"
   },
   "noSignersModal": {
-    "text": "Vous devez spécifier au moins un signataire pour envoyer la demande."
+    "text": "Vous devez spécifier au moins un destinataire pour envoyer la demande."
   },
   "noAttachmentsModal": {
     "text": "Vous devez joindre un document pour l'envoyer la demande."
+  },
+  "noAttachmentsModalCertification": {
+    "text": "Vous devez joindre un document pour pouvoir envoyer la demande avec le type de certification sélectionné."
   },
   "bigFileModal": {
     "text": "La taille maximale des pièces jointes ne doit pas dépasser 15MB."
@@ -267,6 +276,10 @@
   },
   "onlyPdfModal": {
     "text": "L'option sélectionnée ne prend en charge que les fichiers au format pdf"
+  },
+  "maxCharactersModal": {
+    "text": "Le nombre maximum de caractères pour un SMS est de 120.",
+    "text2": "Le nombre maximum de caractères pour un sms avec fichiers joints est de 100."
   },
   "attachmentsWidget": {
     "title": "pièces jointes",
@@ -305,16 +318,19 @@
     "delivery": "Le destinataire a reçu l'e-mail",
     "open_email": "Le destinataire a ouvert l'e-mail",
     "open_document": "Le destinataire a consulté les documents (pdf uniquement)",
-    "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)"
+    "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)",
+    "delivery_sms": "Le destinataire a reçu le sms",
+    "open_document_sms": "Le destinataire a consulté les documents",
+    "open_every_document_sms": "Le destinataire a ouvert tous les documents"
   },
   "emailViewer": {
     "certification": "Type de certification sélectionné:",
-    "emailDelivered": "le destinataire a reçu le mail",
-    "emailOpened": "le destinataire a ouvert le mail",
-    "docOpened": "le destinataire a ouvert les document",
+    "emailDelivered": "Le destinataire a reçu le mail",
+    "emailOpened": "Le destinataire a ouvert le mail",
+    "docOpened": "Le destinataire a ouvert les document",
     "openEveryDocument": "Le destinataire a ouvert tous les documents",
-    "docDownloaded": "le destinataire a téléchargé les document",
-    "downloadEveryDocument": "le destinataire a téléchargé tous les documents",
+    "docDownloaded": "Le destinataire a téléchargé les document",
+    "downloadEveryDocument": "Le destinataire a téléchargé tous les documents",
     "attaches": "DOCUMENTS ATTACHÉS",
     "attachedDocOpened": "Document ouvert",
     "pendingDoc": "En attendant l'ouverture",
@@ -322,6 +338,21 @@
       "downloadTrail": "Télécharger audit"
     },
     "title": "DÉTAILS DE LE MAIL"
+  },
+  "smsViewer": {
+    "certification": "Type de certification sélectionné:",
+    "smsDelivered": "Le destinataire a reçu le SMS",
+    "docOpened": "Le destinataire a ouvert les document",
+    "openEveryDocument": "Le destinataire a ouvert tous les documents",
+    "docDownloaded": "Le destinataire a téléchargé les document",
+    "downloadEveryDocument": "Le destinataire a téléchargé tous les documents",
+    "attaches": "DOCUMENTS ATTACHÉS",
+    "attachedDocOpened": "Document ouvert",
+    "pendingDoc": "En attendant l'ouverture",
+    "buttons": {
+      "downloadTrail": "Télécharger audit"
+    },
+    "title": "DÉTAILS DE LE SMS"
   },
   "signatureViewer":{
     "grid": {
@@ -365,7 +396,9 @@
         "emailOpened": "Email ouvert",
         "docOpened": "Document ouvert",
         "docSigned": "Document signé",
-	"docValidated": "Document validé"
+        "docValidated": "Document validé",
+        "smsSent": "Sms ennvoyé",
+        "smsDelivered": "Sms remis"
       },
       "footer": {
         "title": "Rappels envoyés",
@@ -407,7 +440,7 @@
   },
   "contacts": {
     "lexon": "Contact Lex-ON",
-    "centinela": "Contact Centinela",
+    "centinela": "Contact CENTINELA",
     "search": "Trouver un contact",
     "selected": "choisi"
   },
