@@ -125,7 +125,7 @@ class Routing extends Component {
                 user={user}
                 bbddAddon={bbdd}
                 addonData={addonData}
-                toggleNotification={toggleNotification}
+                toggleImportContacts={toggleNotification}
             />
         );
 
@@ -243,7 +243,7 @@ class Routing extends Component {
 }
 
 Routing.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   companies: PropTypes.array.isRequired,
   toggleNotification: PropTypes.func.isRequired
 };

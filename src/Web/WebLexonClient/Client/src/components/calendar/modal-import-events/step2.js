@@ -48,49 +48,54 @@ export class Step2 extends React.Component {
     }
 
     render() {
-        const { progress } = this.props;
+        const { progress, numEvents, imported, errors } = this.props;
         const disabled = progress < 100;
 
         return (
             <Fragment>
                 <div className="progress-container">
                     <ProgressBarComponent id="label-container" ref={this.progresRef}
-                                          type='Linear'
-                                          width='100%'
-                                          progressColor="#001978"
-                                          trackThickness={26}
-                                          progressThickness={26}
-                                          showProgressValue={true}
-                                          value={progress}
-                                          labelStyle={{
-                                              textAlignment: 'Center',
-                                              fontFamily: 'MTTMilano-Medium',
-                                              text: `MIGRADO ${progress}%`,
-                                              color: '#fff'
-                                          }}
-                                          animation={{
-                                              enable: false,
-                                              duration: 2000,
-                                              delay: 0,
-                                          }}
+                      type='Linear'
+                      width='100%'
+                      progressColor="#001978"
+                      trackThickness={26}
+                      progressThickness={26}
+                      showProgressValue={true}
+                      value={progress}
+                      labelStyle={{
+                          textAlignment: 'Center',
+                          fontFamily: 'MTTMilano-Medium',
+                          text: `MIGRADO ${progress}%`,
+                          color: '#fff'
+                      }}
+                      animation={{
+                          enable: false,
+                          duration: 2000,
+                          delay: 0,
+                      }}
                     >
                     </ProgressBarComponent>
                 </div>
                 <div className="ie-dialogborder">
-                    <Frame disabled={disabled} number={20000} title={"Nº TOTAL"}>
+                    <Frame disabled={disabled} number={numEvents} title={"Nº TOTAL"}>
                         <span className="lf-icon-calendar"></span>
                     </Frame>
-                    <Frame disabled={disabled} number={19998} title={"MIGRADOS"}>
+                    <Frame disabled={disabled} number={disabled?'':imported} title={"MIGRADOS"}>
                         <span className="lf-icon-check-round"></span>
                     </Frame>
                     <div className="ie-warning-wrapper">
-                        <Frame disabled={disabled} number={2} title={"NO MIGRADOS"}>
+                        <Frame disabled={disabled} number={disabled?'':errors.length} title={"NO MIGRADOS"}>
                             <span className="lf-icon-warning"></span>
                         </Frame>
-                        <div className={`ie-frame-button ${disabled?'disabled':''}`} >
+                        {errors && errors.length > 0 &&
+                        <div className={`ie-frame-button ${disabled ? 'disabled' : ''}`}>
                             <span className="lf-icon-visible"></span>
-                            <div style={{paddingTop: 4}}>VER INFORME</div>
+                            <div style={{paddingTop: 4}} onClick={() => {
+                                this.props.onViewReport();
+                            }}>VER INFORME
+                            </div>
                         </div>
+                        }
                     </div>
                 </div>
                 <style jsx>{`

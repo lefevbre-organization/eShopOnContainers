@@ -77,9 +77,8 @@ export class Main extends Component {
         this.handleAddAddress = this.addAddress.bind(this);
         this.handleRemoveAddress = this.removeAddress.bind(this);
         this.onCloseDialog = this.onCloseDialog.bind(this);
+        this.onExportEvents = this.onExportEvents.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
-
-
 
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
         this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
@@ -411,6 +410,66 @@ export class Main extends Component {
         });
     }
 
+    async onExportEvents(eventData) {
+        const { detail } = eventData;
+        const {events, calendar } = detail;
+        let errors = [];
+        let progress  = 0;
+        let eventsImported = 0;
+
+        for(let i = 0; i < events.length; i++) {
+            const sd = moment(events[i].startDate).toISOString();
+            const ed = moment(events[i].endDate).toISOString();
+
+            const lefEvent = {
+                start: {
+                    dateTime: sd,
+                    timeZone: 'Europe/Madrid'
+                },
+                end: { dateTime: ed,
+                    timeZone: 'Europe/Madrid'
+                },
+                isAllDay: this.isAllDay(events[i]),
+                summary: events[i].subject,
+                attendees: []
+            };
+
+            try {
+                const res = await addCalendarEvent(calendar, lefEvent);
+                eventsImported++
+            } catch(err) {
+                errors.push({ event: events[i], error: err});
+            }
+
+            dispatchEvent(new CustomEvent('ExportEventsProgress', {
+                detail: {
+                    completed: false,
+                    progress: Math.round(i * 100 / events.length),
+                    errors,
+                    eventsImported
+                }
+            }));
+            await this.sleep(1000);
+        }
+
+        dispatchEvent(new CustomEvent('ExportEventsProgress', { detail: { completed: true, progress: 100, errors,
+                eventsImported }}));
+    }
+
+    async sleep(time) {
+        return new Promise((resolve) => {
+            setTimeout(()=>{
+                resolve();
+            }, time);
+        })
+    }
+
+    isAllDay(event) {
+        if(event.startDate.endsWith("00:00:00.000000") && event.endDate.endsWith("00:00:00.000000") && event.startDate === event.endDate) {
+            return true;
+        }
+        return false;
+    }
 
     toastCusAnimation = {
         hide: { duration: '1' },
@@ -655,12 +714,16 @@ export class Main extends Component {
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
+        let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
+        if(this.state.showPromptImportContactsDialog) {
+            sm = this.props.calendarsResult.calendars || []
+        }
 
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[],
+                    selectedMessages: sm,
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
@@ -731,6 +794,8 @@ export class Main extends Component {
             'GetUserFromCentinelaConnector',
             this.handleGetUserFromCentinelaConnector
         );
+
+        window.addEventListener('ExportEvents', this.onExportEvents)
 
         window.addEventListener('RemoveSelectedDocument', (event) => {
             this.props.deleteMessage(event.detail.id);
@@ -861,6 +926,8 @@ export class Main extends Component {
             'GetUserFromCentinelaConnector',
             this.handleGetUserFromCentinelaConnector
         );
+
+        window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
 
 

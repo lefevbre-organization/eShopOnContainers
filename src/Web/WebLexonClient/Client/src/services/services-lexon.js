@@ -780,3 +780,31 @@ export const removeEventClassifications = async (bbdd, user, idActuation) => {
     throw err;
   }
 };
+
+export const getEvents = async (bbdd, user, fromDate, toDate) => {
+  // fromDate and toDate format: YYYY-MM-DD
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments?pageSize=0&pageIndex=0`;
+  if(fromDate) {
+    url += `&fromDate=${fromDate}`;
+  }
+  if(toDate) {
+    url += `&toDate=${toDate}`;
+  }
+  if(window.currentEnv) {
+    url += `&env=${window.currentEnv}`;
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    });
+    const result = await response.json();
+    return result.data;
+  } catch (err) {
+    throw err;
+  }
+};

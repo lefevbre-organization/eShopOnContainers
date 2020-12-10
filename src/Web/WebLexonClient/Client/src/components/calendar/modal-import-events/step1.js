@@ -13,10 +13,16 @@ export class Step1 extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      typeSelected: 0
+    }
     this.companiesFields = { text: 'name', value: 'bbdd'};
     this.calendarsFields = { text: 'summary', value: 'id'}
     this.startDate = new Date();
     this.endDate = new Date();
+    this.onChangeType = this.onChangeType.bind(this);
+    this.onChangeStartDate = this.onChangeStartDate.bind(this);
+    this.onChangeEndDate = this.onChangeEndDate.bind(this);
   }
 
   async componentDidMount() {
@@ -28,6 +34,28 @@ export class Step1 extends React.Component {
     window.removeEventListener('getContactListResult', this.contactListLoaded);
   }
 
+  onChangeType(event) {
+    let val = 0;
+    switch(event.value) {
+      case 'date': val = 0; break;
+      case 'all': val = 1; break;
+      case 'future': val = 2; break;
+    }
+
+    this.setState({typeSelected: val})
+    this.props.onChangeType(val);
+  }
+
+  onChangeStartDate(event) {
+    this.startDate = event.value;
+    this.props.onChangeDates(this.startDate, this.endDate);
+  }
+
+  onChangeEndDate(event) {
+    this.endDate = event.value;
+    this.props.onChangeDates(this.startDate, this.endDate);
+  }
+
   render() {
     const { companies, calendars } = this.props;
 
@@ -37,26 +65,26 @@ export class Step1 extends React.Component {
         <div className="ie-dialogborder">
           <div className="ie-dropwrapper">
             <p>Selecciona la base de datos de origen</p>
-            <DropDownListComponent id="companies" dataSource={companies} fields={this.companiesFields} placeholder="" popupHeight="220px" />
+            <DropDownListComponent id="companies" dataSource={companies} fields={this.companiesFields} placeholder="" popupHeight="220px" change={ (ddbb) => { this.props.onChangeDDBB(ddbb.value); } } />
           </div>
           <div className="ie-dropwrapper">
             <p>Selecciona el calendario de destino</p>
-            <DropDownListComponent id="calendars" dataSource={calendars} fields={this.calendarsFields} placeholder="" popupHeight="220px" />
+            <DropDownListComponent id="calendars" dataSource={calendars} fields={this.calendarsFields} placeholder="" popupHeight="220px" change={ (cal) => { this.props.onChangeCalendar(cal.value); } } />
           </div>
           <div className="ie-dateswrapper">
             <div>
               <p>Tipo de evento</p>
-              <RadioButtonComponent checked={true} label='Fecha' name='eventType' value="date"></RadioButtonComponent>
-              <RadioButtonComponent label='Todos los eventos' name='eventType' value="all"></RadioButtonComponent>
-              <RadioButtonComponent label='Eventos futuros' name='eventType' value="future"></RadioButtonComponent>
+              <RadioButtonComponent change={ this.onChangeType } checked={true} label='Fecha' name='eventType' value="date"></RadioButtonComponent>
+              <RadioButtonComponent change={ this.onChangeType } label='Todos los eventos' name='eventType' value="all"></RadioButtonComponent>
+              <RadioButtonComponent change={ this.onChangeType } label='Eventos futuros' name='eventType' value="future"></RadioButtonComponent>
             </div>
             <div>
               <p>Comienzo</p>
-              <DatePickerComponent value={this.startDate}></DatePickerComponent>
+              <DatePickerComponent disabled={this.state.typeSelected === 1} format='dd/MM/yyyy' change={this.onChangeStartDate} value={this.startDate}></DatePickerComponent>
             </div>
             <div>
               <p>Fin</p>
-              <DatePickerComponent value={this.endDate}></DatePickerComponent>
+              <DatePickerComponent  disabled={this.state.typeSelected === 1} format='dd/MM/yyyy' change={this.onChangeEndDate} value={this.endDate}></DatePickerComponent>
             </div>
           </div>
         </div>

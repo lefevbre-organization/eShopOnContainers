@@ -90,6 +90,7 @@ export class Main extends Component {
         this.handleAddAddress = this.addAddress.bind(this);
         this.handleRemoveAddress = this.removeAddress.bind(this);
         this.onCloseDialog = this.onCloseDialog.bind(this);
+        this.onExportEvents = this.onExportEvents.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
@@ -123,7 +124,7 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             hidePromptEventTypeDialog: false,
-            showromptImportContactsDialog: false,
+            showPromptImportContactsDialog: false,
             calendarToEdit: undefined,
             //tagAttendess: [],
             reminders: [],
@@ -670,8 +671,7 @@ export class Main extends Component {
     sendMessagePutUser(user) {
         const { selectedMessages, User } = this.props;
         let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
-        debugger;
-        if(this.state.showromptImportContactsDialog) {
+        if(this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
 
@@ -686,7 +686,7 @@ export class Main extends Component {
                     provider: this.props.lexon.provider,
                     account: User.email,
                     env: window.currentUser?window.currentUser.env :null,
-                    app: this.state.showromptImportContactsDialog?'calendar:import':'calendar'
+                    app: this.state.showPromptImportContactsDialog?'calendar:import':'calendar'
                 }
             })
         );
@@ -760,6 +760,9 @@ export class Main extends Component {
             'GetUserFromCentinelaConnector',
             this.handleGetUserFromCentinelaConnector
         );
+
+        window.addEventListener('ExportEvents', this.onExportEvents)
+
 
         window.addEventListener('RemoveSelectedDocument', (event) => {
             this.props.deleteMessage(event.detail.id);
@@ -866,6 +869,7 @@ export class Main extends Component {
             'GetUserFromCentinelaConnector',
             this.handleGetUserFromCentinelaConnector
         );
+        window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
 
 
@@ -1841,7 +1845,7 @@ export class Main extends Component {
     openImportConcatcsView(args) {
         this.setState(
             {
-                showromptImportContactsDialog: true
+                showPromptImportContactsDialog: true
             });
     }
 
@@ -1851,8 +1855,55 @@ export class Main extends Component {
         //    this.toastObj.show(this.toasts[1]);
         //}
         this.setState({
-            showromptImportContactsDialog: false
+            showPromptImportContactsDialog: false
         });
+    }
+
+    async onExportEvents(eventData) {
+        const { detail } = eventData;
+        const {events, calendar } = detail;
+        let errors = [];
+        let progress  = 0;
+        let eventsImported = 0;
+
+        for(let i = 0; i < events.length; i++) {
+            const lefEvent = {
+                start: {
+                    dateTime: events[i].startDate,
+                    timeZone: 'Europe/Madrid'
+                },
+                end: { dateTime: events[i].endDate,
+                    timeZone: 'Europe/Madrid'
+                },
+                isAllDay: this.isAllDay(events[i]),
+                subject: events[i].subject,
+                summary: events[i].subject,
+                attendees: []
+            };
+            try {
+                const res = await addCalendarEvent(calendar, lefEvent);
+                eventsImported++
+            } catch(err) {
+                errors.push({ event: events[i], error: err});
+            }
+            dispatchEvent(new CustomEvent('ExportEventsProgress', { detail: {
+                    completed: false,
+                    progress: Math.round(i * 100 / events.length),
+                    errors,
+                    eventsImported
+                }}));
+            await this.sleep(1000);
+        }
+
+        dispatchEvent(new CustomEvent('ExportEventsProgress', { detail: { completed: true, progress: 100, errors,
+                eventsImported }}));
+    }
+
+    isAllDay(event) {
+        if(event.startDate.endsWith("00:00:00.000000") && event.endDate.endsWith("00:00:00.000000") && event.startDate === event.endDate) {
+            return true;
+        }
+        return false;
     }
 
     render() {
@@ -2099,8 +2150,8 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='contactImports'
                                     isModal={true}
-                                    header={i18n.t("contactimport.title")}
-                                    visible={this.state.showromptImportContactsDialog}
+                                    header={"Importar eventos"}
+                                    visible={this.state.showPromptImportContactsDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
                                     width='900px'
@@ -2108,7 +2159,7 @@ export class Main extends Component {
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogImportConcatcsClose.bind(this)}>
-                                    <div>{(this.state.showromptImportContactsDialog) ? <ContactsImport
+                                    <div>{(this.state.showPromptImportContactsDialog) ? <ContactsImport
                                         getlistEventTypes={this.getlistEventTypes.bind(this)}
                                         googleUser={this.props.googleUser}
                                         close={this.dialogClose.bind(this)}
