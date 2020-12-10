@@ -31,6 +31,7 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
                       && props.lefebvre.roles.includes('Firma Digital') ?
           true : false} />
+
       <SendingType
         title={i18n.t('sideBar.certifiedEmail')}
         subTitle={i18n.t('sideBar.sendingTypeEmail')}
@@ -39,6 +40,7 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
           && props.lefebvre.roles.includes('Email Certificado') ?
           true : false} />
+
       <SendingType
         title={i18n.t('sideBar.certifiedSms')}
         subTitle={i18n.t('sideBar.sendingTypeSms')}
@@ -47,6 +49,7 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
           && props.lefebvre.roles.includes('SMS certificado') ?
           false : true } />
+
         <SendingType
         title={i18n.t('sideBar.certifiedDocument')}
         subTitle={i18n.t('sideBar.sendingTypeDocument')}
@@ -55,15 +58,16 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
           && props.lefebvre.roles.includes('SMS certificado') ?
           false : true } />
-      <DialogComponent
-        id="noServiceDialog"
-        visible={hideAlertDialog}
-        width='50%'
-        showCloseIcon={true}
-        content={contenido}
-        close={dialogClose}
-      />
-    </>
+
+        <DialogComponent
+          id="noServiceDialog"
+          visible={hideAlertDialog}
+          width='50%'
+          showCloseIcon={true}
+          content={contenido}
+          close={dialogClose}
+        />
+      </>
   );
 };
 
