@@ -7,23 +7,28 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "userutils.api"
-        # "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
-        # "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
-        # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
-        # "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
-        # "webstatus"
+        # "userutils.api"
+        "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
+        #  "database.api", 
+        "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
+        # "webdatabaseclient", 
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
+        "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
+        # "webdatabaseapigw", 
+        "webstatus"
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "userutils.api"
-        # "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
-        # "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
-        # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
-        # "ocelotapigw", 
-        # "webstatuslef"
+        # "userutils.api"
+        "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
+        #  "database.api",
+        "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
+        # "webdatabaseclient", 
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
+        "ocelotapigw", 
+        "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-37.3",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-37.patapum",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
