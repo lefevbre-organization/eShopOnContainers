@@ -2,7 +2,7 @@
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $cen := include "url-of" (list .Values.app.ingress.entries.centinelaapi .) -}}
-{{- $lex := include "url-of" (list .Values.app.ingress.entries.lexonapi .) -}}
+{{- $lexgw := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
 {{- $sig := include "url-of" (list .Values.app.ingress.entries.signatureapi .) -}}
 {{- $clientsig := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
 {{- $mongo := include "mongo-name" . -}}
@@ -30,7 +30,8 @@ data:
   urls__SignatureUrlExternal: https://{{ .Values.signature.url }}
   all__SignaturePass: {{ .Values.signature.pass }}
   urls__LexonUrlExternal: https://{{ .Values.lexon.dev.url }}
-  urls__LexonApi: https://{{ $lex }}/api/v1
+  urls__LexonApi: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
+  urls__LexonApi_bis: https://{{ $lexgw }}/api/v1
   urls__CentinelaApi: https://{{ $cen }}/api/v1
   urls__SignatureApi: https://{{ $sig }}/api/v1
   urls__SignatureClient: https://{{ $clientsig }}/completed

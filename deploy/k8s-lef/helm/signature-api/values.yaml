@@ -53,7 +53,7 @@ env:
     - name: LexonFilesUrl
       key: urls__LexonUrlExternal #'https://led-dev-lexon.eu.els.local/index.php'
     - name: LexonApiGwUrl
-      key: urls__LexonApi #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
+      key: urls__LexonApi #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/'
     - name: CentinelaApiGwUrl
       key: urls__CentinelaApi #'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
