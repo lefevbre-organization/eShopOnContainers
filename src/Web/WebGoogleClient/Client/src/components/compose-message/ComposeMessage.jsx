@@ -300,7 +300,7 @@ export class ComposeMessage extends PureComponent {
   getById() {
     if(this.props.emailMessageResult.body != ''){
       const messageId = this.props.emailMessageResult.result.messageHeaders.find(x => 
-        x.name == "Message-ID" || x.nasme == "Message-Id");
+        x.name == "Message-ID" || x.name == "Message-Id");
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
