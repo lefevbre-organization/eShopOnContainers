@@ -2094,6 +2094,70 @@ export const getContactsCentinela = async(user) => {
   });
 }
 
+export const getContactsLexon = async(user, db, env) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+
+    var raw = JSON.stringify({bbdd: db, idUser: user});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    }
+
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/classifications/contact/all`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        throw `${response.text()}`;
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getBBDDLexon = async (user, env) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    }
+
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${user}`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        throw `${response.text()}`;
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
 export const getAvailableSignatures = async (companyId, numDocuments) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();

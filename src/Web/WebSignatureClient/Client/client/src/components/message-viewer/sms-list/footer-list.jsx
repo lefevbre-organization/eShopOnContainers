@@ -7,7 +7,7 @@ const FooterList = props => {
         <>
            {
                 (props.getEventStatus(props.certificate, "document_opened") === true) 
-                || (props.getEventStatus(props.certificate, props.documentType) && certificationCompleted)  
+                || (props.getEventStatus(props.certificate, props.documentType) && props.certificationCompleted)  
                  ? <div className={props.styles['document-opened']}>
                     <div className={`${props.styles['certificate-document-title']} light-blue-text`}><b>{i18n.t('emailViewer.attachedDocOpened')}</b></div>
                     <div className={`${props.styles['certificate-document']} light-blue-text`}>

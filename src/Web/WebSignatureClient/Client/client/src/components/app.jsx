@@ -701,7 +701,7 @@ class App extends Component {
     (mailContacts) 
       ? 
         mailContacts.map(address => { 
-          if (targetService === 'certifiedSms' && userApp === 'centinela' && cenContacts.length > 0){
+          if (targetService === 'certifiedSms' && userApp === 'centinela' && cenContacts && cenContacts.length > 0){
             var contactInfo = cenContacts.filter(contact => contact.phone === address);
             return (contactInfo && contactInfo.length > 0)
             ? dataMailContacts.push({address: address, name: contactInfo[0].name, email: contactInfo[0].email, phone: contactInfo[0].phone })
