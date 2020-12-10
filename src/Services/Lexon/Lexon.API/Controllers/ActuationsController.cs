@@ -173,7 +173,17 @@ namespace Lexon.API.Controllers
                 pageSize,
                 pageIndex);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+            if (result.errors.Count() > 0 && result.data?.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && (result.data == null || result.data?.Count == 0))
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpDelete("{idUser}/{bbdd}/appointments/remove/{idAppointment}")]

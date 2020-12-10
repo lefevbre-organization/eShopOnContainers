@@ -8,8 +8,8 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=(
         "nosql-data",
-        "sql-data"
-        # "rabbitmq"
+        "sql-data",
+         "rabbitmq"
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(

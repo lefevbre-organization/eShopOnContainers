@@ -30,6 +30,28 @@ export const getUserApplication = () => {
   return userAgentApplication;
 };
 
+export const getUserApplicationIframe = () => {
+  if (userAgentApplication === null) {
+    const redirectUri = window.location.origin;
+
+    userAgentApplication = new UserAgentApplication({
+      auth: {
+        clientId: config.appId,
+        redirectUri: redirectUri,
+        postLogoutRedirectUri: window.URL_REDIRECT,
+      },
+      cache: {
+        cacheLocation: 'localStorage',
+        storeAuthStateInCookie: true,
+      },
+    });
+
+    userAgentApplication.handleRedirectCallback((error, response) => {});
+  }
+
+  return userAgentApplication;
+}
+
 export const getAuthenticatedClient = (accessToken) => {
   // Initialize Graph client
   const client = graph.Client.init({

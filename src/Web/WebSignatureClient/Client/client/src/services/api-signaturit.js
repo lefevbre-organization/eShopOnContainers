@@ -1,6 +1,355 @@
-import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails } from '../actions/application';
+import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList } from '../actions/application';
 import { resolve } from 'path';
 
+const fakedata = [
+  {
+      "certificates": [
+          {
+              "created_at": "2020-11-23T18:00:00+0000",
+              "id": "6f35be89-f6e7-4ee0-bff3-b294b0669300",
+              "name": "",
+              "phone": "+34696634322",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:00:00+0000",
+                      "type": "sms_processed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:05:00+0000",
+                      "type": "certification_completed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:10:00+0000",
+                      "type": "sms_delivered"
+                  }
+              ],
+              "status": "sent"
+          }
+      ],
+      "created_at": "2020-11-23T18:00:00+0000",
+      "data": [
+          {
+              "key": "body",
+              "value": " Prueba simulada 001"
+          },
+          {
+              "key": "additional_info",
+              "value": "i=0:phone=+34696634322:name=Jorge Valls Povedano:email=jorge.valls.povedano@gmail.com|"
+          },
+          {
+              "key": "lefebvre_guid",
+              "value": "f8c8f87f-dfed-48eb-9241-695b1ff61c00"
+          },
+          {
+              "key": "certification_type",
+              "value": "delivery"
+          },
+          {
+              "key": "lefebvre_id",
+              "value": "E1654569"
+          }
+      ],
+      "id": "5951a596-2904-11eb-8356-0241c1fe0400"
+  },
+  {
+      "certificates": [
+          {
+              "created_at": "2020-11-23T18:10:00+0000",
+              "file": {
+                  "name": "Seguro.pdf",
+                  "pages": 2,
+                  "size": 143835
+              },
+              "id": "b5eafe43-dd7f-4073-8127-04fe51b62b01",
+              "name": "",
+              "phone": "+34684113869",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:10:00+0000",
+                      "type": "sms_processed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:10:05+0000",
+                      "type": "sms_delivered"
+                  }
+              ],
+              "status": "sent"
+          }
+      ],
+      "created_at": "2020-11-23T18:10:00+0000",
+      "data": [
+          {
+              "key": "lefebvre_id",
+              "value": "E1654569"
+          },
+          {
+              "key": "body",
+              "value": "Prueba simulada 002"
+          },
+          {
+              "key": "lefebvre_guid",
+              "value": "eab9e49b-0c65-480f-a4f7-891c04548101"
+          },
+          {
+              "key": "certification_type",
+              "value": "open_every_document"
+          },
+          {
+              "key": "additional_info",
+              "value": "i=0:phone=+34684113869:name=Jorge Valls:email=jorgevalls@hotmail.com|"
+          }
+      ],
+      "id": "d7fd20f8-2998-11eb-8356-0241c1fe0401"
+  },
+  {
+      "certificates": [
+          {
+              "created_at": "2020-11-23T18:15:00+0000",
+              "file": {
+                  "name": "Seguro.PDF",
+                  "pages": 2,
+                  "size": 143835
+              },
+              "id": "6e9148b3-b6db-4afd-bdba-834513b7bf02",
+              "name": "Jorge Valls",
+              "phone": "+34684113869",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:15:00+0000",
+                      "type": "sms_processed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:15:05+0000",
+                      "type": "sms_delivered"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:15:10+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:15:15+0000",
+                      "type": "document_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:15:20+0000",
+                      "type": "certification_completed"
+                  }
+              ],
+              "status": "sent"
+          },
+          {
+              "created_at": "2020-11-23T18:15:00+0000",
+              "file": {
+                  "name": "Acta_notarial.pdf",
+                  "pages": 1,
+                  "size": 30783
+              },
+              "id": "b5b46001-11c5-4752-94c8-52f20a674002",
+              "name": "Jorge Valls",
+              "phone": "+34684113869",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:15:30+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:15:35+0000",
+                      "type": "document_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:15:40+0000",
+                      "type": "document_opened"
+                  }
+              ],
+              "status": "in_queue"
+          },
+          {
+              "created_at": "2020-11-23T18:20:00+0000",
+              "file": {
+                  "name": "Acta_notarial.pdf",
+                  "pages": 1,
+                  "size": 30783
+              },
+              "id": "c2bbfbdd-3e96-488a-8cde-8d59e9a95902",
+              "name": "Valerie Campos",
+              "phone": "+34696634322",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:20:05+0000",
+                      "type": "sms_processed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:20:10+0000",
+                      "type": "sms_delivered"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:20:15+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:20:20+0000",
+                      "type": "document_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:20:25+0000",
+                      "type": "certification_completed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:20:30+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:25:35+0000",
+                      "type": "documents_opened"
+                  }
+              ],
+              "status": "sent"
+          },
+          {
+              "created_at": "2020-11-23T18:30:00+0000",
+              "file": {
+                  "name": "Seguro.PDF",
+                  "pages": 2,
+                  "size": 143835
+              },
+              "id": "f64b3cb3-343a-4246-920c-effc0596b805",
+              "name": "Valerie Campos",
+              "phone": "+34696634322",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:30:00+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:30:10+0000",
+                      "type": "document_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:30:15+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:30:20+0000",
+                      "type": "documents_opened"
+                  }
+              ],
+              "status": "in_queue"
+          }
+      ],
+      "created_at": "2020-11-23T18:30:00+0000",
+      "data": [
+          {
+              "key": "subject",
+              "value": "TEST 002: 2 RECIPIENTS - OPEN EVERY DOCUMENT"
+          },
+          {
+              "key": "lefebvre_id",
+              "value": "E1654569"
+          },
+          {
+              "key": "type",
+              "value": "open_every_document"
+          },
+    {
+              "key": "additional_info",
+              "value": "i=0:phone=+34684113869:name=Jorge Valls:email=jorgevalls@hotmail.com|i=1:phone=+34696634322:name=Valerie Campos:email=vavicampos@gmail.com|"
+          }
+      ],
+      "id": "f2c8c256-2349-11eb-8356-0241c1fe0405"
+  },
+  {
+      "certificates": [
+          {
+              "created_at": "2020-11-23T18:35:00+0000",
+              "file": {
+                  "name": "Seguro.pdf",
+                  "pages": 2,
+                  "size": 143835
+              },
+              "id": "58e40b23-db1d-413c-b5ba-899bc8e66a06",
+              "name": "",
+              "phone": "+34672095663",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:35:00+0000",
+                      "type": "sms_processed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:10+0000",
+                      "type": "sms_delivered"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:20+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:25+0000",
+                      "type": "document_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:30+0000",
+                      "type": "certification_completed"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:35+0000",
+                      "type": "documents_opened"
+                  }
+              ],
+              "status": "sent"
+          },
+          {
+              "created_at": "2020-11-23T18:35:00+0000",
+              "file": {
+                  "name": "Acta_notarial.pdf",
+                  "pages": 1,
+                  "size": 30783
+              },
+              "id": "672f0108-2314-4af5-9008-3c2ffb0d6006",
+              "name": "",
+              "phone": "+34672095663",
+              "events": [
+                  {
+                      "created_at": "2020-11-23T18:35:40+0000",
+                      "type": "documents_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:45+0000",
+                      "type": "document_opened"
+                  },
+                  {
+                      "created_at": "2020-11-23T18:35:50+0000",
+                      "type": "documents_opened"
+                  }
+              ],
+              "status": "in_queue"
+          }
+      ],
+      "created_at": "2020-11-23T18:40:00+0000",
+      "data": [
+          {
+              "key": "body",
+              "value": "Esto es una prueba de sms certificado en la demo 35"
+          },
+          {
+              "key": "lefebvre_id",
+              "value": "E1654569"
+          },
+          {
+              "key": "additional_info",
+              "value": "i=0:phone=+34672095663:name=Sergio López:email=s.lopez@gmail.com|"
+          },
+          {
+              "key": "lefebvre_guid",
+              "value": "e49df929-fc2b-42b6-a3bf-0957b733dca8"
+          },
+          {
+              "key": "certification_type",
+              "value": "open_every_document"
+          }
+      ],
+      "id": "ff257613-2988-11eb-8356-0241c1fe04da"
+  }
+];
 // tenia 94 left y 5 width
 // const coordinates = [
 //   {
@@ -501,6 +850,102 @@ export const addOrUpdateBrandingEmail = async (user, brandingInfo) => {
         reject(error)
       });
   })
+}
+
+
+/*
+   _____                 ____             _                  _ 
+  / ____|               |  _ \           | |                | |
+ | (___  _ __ ___  ___  | |_) | __ _  ___| | _____ _ __   __| |
+  \___ \| '_ ` _ \/ __| |  _ < / _` |/ __| |/ / _ \ '_ \ / _` |
+  ____) | | | | | \__ \ | |_) | (_| | (__|   <  __/ | | | (_| |
+ |_____/|_| |_| |_|___/ |____/ \__,_|\___|_|\_\___|_| |_|\__,_|
+                                                                                                                           
+*/
+
+export const getUserSms = async userId => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedSms/${userId}`, requestOptions)
+      .then(response => response.json())
+      .then(result => resolve(result))
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+};
+
+// Creates a new user with empty signatures or with a new signature
+export const createUserSms = async (userId, certifiedSms = []) => {
+  var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+    myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+  \n  "user\": \"${userId}\",
+  \n  \"certifiedSms\": ${JSON.stringify(certifiedSms)}
+  \n}`;
+
+  console.log("Este es el raw de CreateUserSms");
+  console.log(raw);
+  console.log({raw});
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedSms/addUser`, requestOptions)
+    .then(response => {
+      console.log(response);
+      response.text()
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+// Adds or updates a sms of a given user
+export const addOrUpdateSms = async (userId, externalId, guid, app, createdAt, type, certificates) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Accept", "text/plain");
+  myHeaders.append("Content-Type", "application/json-patch+json");
+  myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+    \n  \"guid\": \"${guid}\",
+    \n  \"externalId\": \"${externalId}\",
+    \n  \"app\": \"${app}\",
+    \n  \"created_at\": \"${createdAt}\",
+    \n  \"type\": \"${type}\",
+    \n  \"certificate\": ${JSON.stringify(certificates)}
+    \n}`;
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedSms/${userId}/sms/addorupdate`, requestOptions)
+    .then(response => {
+      console.log(response);
+      response.text()
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
 }
 
 // END OF LEFEBVRE SIGNATURE API CALLS
@@ -1100,6 +1545,177 @@ export const downloadCertificationDocument = (emailId, certificationId, fileName
     .catch(error => console.log('error', error));
 }
 
+/*
+
+   _____ _                   _              _ _               _____               
+  / ____(_)                 | |            (_) |             / ____|              
+ | (___  _  __ _ _ __   __ _| |_ _   _ _ __ _| |_   ______  | (___  _ __ ___  ___ 
+  \___ \| |/ _` | '_ \ / _` | __| | | | '__| | __| |______|  \___ \| '_ ` _ \/ __|
+  ____) | | (_| | | | | (_| | |_| |_| | |  | | |_            ____) | | | | | \__ \
+ |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  |_|\__|          |_____/|_| |_| |_|___/
+            __/ |                                                                 
+           |___/                                                                  
+
+*/
+
+export function preloadSms(dispatch, filters, auth) {
+  return new Promise((resolve, reject) => {
+
+    let offset = 0;
+
+    getSms(filters, auth, offset)
+    .then(sms => {
+      console.log('Sms Before:')
+      console.log(sms);
+      //console.log(JSON.parse(fakedata));
+      fakedata.forEach(data => {
+        sms.push(data);
+      });
+      
+      sms = calculateStatusSms(sms);
+      console.log('sms After:')
+      console.log({sms});
+      var sortedSms = sms.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0));
+      dispatch(preDownloadSmsList(sortedSms));
+      resolve(sortedSms);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getSms = async (filters, auth, offset, sms = []) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${auth}`);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/getSms/${filters}&offset=${offset}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        sms = sms.concat(result);
+        if (result.length === 100){
+          resolve(getSms(filters, auth, offset + result.length, emails));
+        } else {
+          // console.log('Datos recibidos de signaturit - GetSignatures:');
+          // console.log({signatures});
+          // signatures = calculateStatus(signatures);
+          // console.log({signatures});
+          // dispatch(preDownloadSignatures(signatures));
+          resolve(sms);
+        }
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+// Creates a new sms calling internal proxy api
+export const createSms = async (recipients, body, files, lefebvreId, guid, type, auth, validPhoneNumbers) => {
+    return new Promise((resolve, reject) => {
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "text/plain");
+      myHeaders.append("Content-Type", "application/json-patch+json");
+      myHeaders.append("Content-Type", "text/plain");
+      myHeaders.append("Authorization", `${auth}`);
+  
+      var jsonObject = {};
+      var recipientsData = [];
+      var filesData = [];
+      var customFieldsData = [];
+      var userAdditionalInfo = '';
+
+      recipients.forEach((recipient, i) => {
+        var name = (recipient.name === null || recipient.name === undefined || recipient.name === '') ? '' : recipient.name;
+        var email = (recipient.email === null || recipient.email === undefined || recipient.email === '') ? '' : recipient.email;
+        var phone = validPhoneNumbers[i].normalizedPhone;
+        recipientsData.push({name: name, phone: phone})
+        userAdditionalInfo += `i=${i}:phone=${validPhoneNumbers[i].cleanPhone}:name=${(recipient.name === '') ? '-' : name}:email=${(recipient.email === '') ? '-' : email}|`
+      })
+      jsonObject.recipients = recipientsData;
+    
+      files.forEach(file => {
+        filesData.push({file: file.content, fileName: file.fileName})
+      })
+      jsonObject.files = filesData;
+
+      jsonObject.certificationType = type;
+  
+  
+      customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
+      customFieldsData.push({name: "lefebvre_guid", value: guid});
+      customFieldsData.push({name: "body", value: body.innerText});
+      customFieldsData.push({name: "certification_type", value: type});
+      customFieldsData.push({name: "additional_info", value: userAdditionalInfo})
+      jsonObject.customFields = customFieldsData;
+  
+      jsonObject.body = (type === 'open_document' || type === 'open_every_document') ? `${body.innerText} {{short_url}}` : body.innerText;  
+  
+      var raw = JSON.stringify(jsonObject);
+      console.log('Raw::');
+      console.log(raw);
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/newSms`, requestOptions)
+        .then(response => {
+          if (response.ok){
+            return response.json();
+          } else {
+            return response.text();
+          }
+        })
+        .then(result => {
+          console.log(result)
+          resolve(result)
+        })
+        .catch(error => {
+          reject(error);
+          console.log('error', error)
+        });
+    })
+}
+  
+// Downloads the trail information of a certified sms calling internal proxy api
+export const downloadSmsCertificationDocument = (smsId, certificationId, fileName, auth) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `${auth}`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/sms/download/${smsId}/certificate/${certificationId}`, requestOptions)
+    .then(response => response.blob())
+    .then(blob => {
+      console.log(blob);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'audit-'+fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+    .catch(error => console.log('error', error));
+}
+
 
 /*
   HELPER FUNCTIONS
@@ -1198,9 +1814,25 @@ const getRecipientsEmail= (email) => {
   return result;
 }
 
-const getDocumentsEmail = (email) => {
+const getRecipientsSms= (sms) => {
+  var lookup = {};
+  var items = sms.certificates;
+  var result = [];
+
+  for (var item, i = 0; item = items[i++];) {
+    var phone = item.phone;
+
+    if (!(phone in lookup)) {
+      lookup[phone] = 1;
+      result.push(phone);
+    }
+  }
+  return result;
+}
+
+const getDocumentsCertification = (emailOrSms) => {
   var documents = [];
-  email.certificates.forEach(certificate => {
+  emailOrSms.certificates.forEach(certificate => {
     if (!documents.find(document => document == JSON.stringify(certificate.file))){
       if (certificate.file !== undefined){
         documents.push(JSON.stringify(certificate.file));
@@ -1210,9 +1842,9 @@ const getDocumentsEmail = (email) => {
   return documents;
 }
 
-const countCertificationEvents = (email) => {
+const countCertificationEvents = (emailOrSms) => {
   var counter = 0;
-  email.certificates.forEach(certificate => {
+  emailOrSms.certificates.forEach(certificate => {
     if (certificate.events.find(ev => ev.type == "certification_completed")){
       counter++;
     }
@@ -1220,9 +1852,9 @@ const countCertificationEvents = (email) => {
   return counter;
 }
 
-const countErrorEvents = (email) => {
+const countErrorEvents = (emailOrSms) => {
   var counter = 0;
-  email.certificates.forEach(certificate => {
+  emailOrSms.certificates.forEach(certificate => {
     if (certificate.status === 'error'){
       counter++;
     }
@@ -1235,8 +1867,13 @@ const countDistinctEmails = (email) => {
   return distinctEmails.length;
 }
 
-const countDistinctDocuments = (email) => {
-  var distinctDocuments = getDocumentsEmail(email)
+const countDistinctSms = (sms) => {
+  var distinctPhones = getRecipientsSms(sms)
+  return distinctPhones.length;
+}
+
+const countDistinctDocuments = (emailOrSms) => {
+  var distinctDocuments = getDocumentsCertification(emailOrSms)
   return distinctDocuments.length;
 }
 
@@ -1261,6 +1898,28 @@ const calculateStatusEmails = (emails) => {
 
   })
   return emails
+}
+
+const calculateStatusSms = (smsList) => {
+  smsList.forEach(sms => {
+    var numNodes = sms.certificates.length;
+    var numRecipients = countDistinctSms(sms);
+    var numDocuments = countDistinctDocuments(sms);
+    var numCertifiedEvents = countCertificationEvents(sms);
+    var numErrorEvents = countErrorEvents(sms);
+  
+    numDocuments = (numDocuments === 0) ? 1 : numDocuments;
+
+    if (numErrorEvents > 0){
+      sms.status = 'error'
+    } else if (numCertifiedEvents == numRecipients && numNodes == numRecipients * numDocuments){
+      sms.status = 'completed'
+    } else {
+      sms.status = 'ready'
+    }
+
+  })
+  return smsList
 }
 
 // END HELPER FUNCTIONS
@@ -1433,6 +2092,70 @@ export const getContactsCentinela = async(user) => {
       reject(error);
     });
   });
+}
+
+export const getContactsLexon = async(user, db, env) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+
+    var raw = JSON.stringify({bbdd: db, idUser: user});
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    }
+
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/classifications/contact/all`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        throw `${response.text()}`;
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
+export const getBBDDLexon = async (user, env) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    }
+
+    fetch(`${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${user}`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.json();
+      } else {
+        throw `${response.text()}`;
+      }}
+    )
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
 }
 
 export const getAvailableSignatures = async (companyId, numDocuments) => {
