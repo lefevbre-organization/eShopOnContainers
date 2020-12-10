@@ -26,7 +26,7 @@ Param(
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-36.1",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-37.3",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
@@ -109,7 +109,7 @@ if ($buildImages) {
             Write-Host "=====================================" -ForegroundColor DarkCyan
             Write-Host "Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
             Write-Host "=====================================" -ForegroundColor DarkCyan
-            docker-compose -p .. -f ../docker-compose.yml build $service
+            docker-compose -p .. -f ../../docker-compose.yml build $service
         }
     }
 }
@@ -153,29 +153,29 @@ if ($deployKubernetes){
         ExecKube -cmd 'delete secret docker-registry registry-key'
 
         # Create the Docker registry key secret
-        ExecKube -cmd 'create secret docker-registry registry-key `
+        ExecKube -cmd "create secret docker-registry registry-key `
         --docker-server=$registryFDQN `
         --docker-username=$dockerUser `
         --docker-password=$dockerPassword `
-        --docker-email=not@used.com'
+        --docker-email=not@used.com"
     }
 
     # Removing previous services & deployments
     Write-Host "Removing existing services & deployments.." -ForegroundColor Yellow
     Write-Host "Delete the ingress-lef.yaml paths" -ForegroundColor Red
-    ExecKube -cmd 'delete deployments --all'
-    ExecKube -cmd 'delete services --all'
-    ExecKube -cmd 'delete configmap internalurls'
-    ExecKube -cmd 'delete configmap urls'
-    ExecKube -cmd 'delete configmap externalcfg'
-    ExecKube -cmd 'delete configmap ocelot'
-    ExecKube -cmd 'delete -f ingress-lef.yaml'
+    ExecKube -cmd "delete deployments --all"
+    ExecKube -cmd "delete services --all"
+    ExecKube -cmd "delete configmap internalurls"
+    ExecKube -cmd "delete configmap urls"
+    ExecKube -cmd "delete configmap externalcfg"
+    ExecKube -cmd "delete configmap ocelot"
+    ExecKube -cmd "delete -f ingress-lef.yaml"
 
     # start sql, rabbitmq, frontend deployments
     if ($deployInfrastructure) {
         Write-Host 'Deploying infrastructure deployments (databases, redis, RabbitMQ...)' -ForegroundColor Yellow
         Write-Host "Create the sql-data-lef.yaml rabbitmq-lef.yaml -nosql-data-lef.yaml" -ForegroundColor Red
-        ExecKube -cmd 'create -f sql-data-lef.yaml -f rabbitmq-lef.yaml -f nosql-data-lef.yaml'
+        ExecKube -cmd "create -f sql-data-lef.yaml -f rabbitmq-lef.yaml -f nosql-data-lef.yaml"
     }
 
     Write-Host 'Deploying ocelot APIGW from ocelot/deployment-lef.yaml y ocelot/service-lef.yaml ans config files' -ForegroundColor Yellow
@@ -183,10 +183,11 @@ if ($deployKubernetes){
     ExecKube "create configmap ocelot `
         --from-file=mm=ocelot/configuration-web-account.json `
         --from-file=mm=ocelot/configuration-web-lexon.json `
-        --from-file=mm=ocelot/configuration-web-centinela.json`
-        --from-file=mm=ocelot/configuration-web-database.json `
+        --from-file=mm=ocelot/configuration-web-centinela.json `
         --from-file=ws=ocelot/configuration-web-signature.json "
 
+    # --from-file=mm=ocelot/configuration-web-database.json `
+    
     ExecKube -cmd "apply -f ocelot/deployment-lef.yaml"
     ExecKube -cmd "apply -f ocelot/service-lef.yaml"
 
@@ -198,18 +199,18 @@ if ($deployKubernetes){
     ExecKube -cmd 'create -f internalurls-lef.yaml'
 
     Write-Host "Create configmap urls" -ForegroundColor Red
-    ExecKube -cmd 'create configmap urls `
+    ExecKube -cmd "create configmap urls `
         --from-literal=apigwlex_e=http://$($externalDns)/weblexonapigw `
         --from-literal=apigwacc_e=http://$($externalDns)/webaccountapigw `
         --from-literal=apigwcen_e=http://$($externalDns)/webcentinelaapigw `
         --from-literal=apigwsig_e=http://$($externalDns)/websignatureapigw `
-        --from-literal=apigwdat_e=http://$($externalDns)/webdatabaseapigw `
-        --from-literal=database_e=http://$($externalDns)/database-api `
         --from-literal=userutils_e=http://$($externalDns)/userutils-api `
         --from-literal=signature_e=http://$($externalDns)/signature-api `
         --from-literal=lexon_e=http://$($externalDns)/lexon-api `
-        --from-literal=account_e=http://$($externalDns)/account-api `
-        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api' 
+        --from-literal=account_e=http://$($externalDns)/account-api "
+
+    # --from-literal=apigwdat_e=http://$($externalDns)/webdatabaseapigw `
+    # --from-literal=database_e=http://$($externalDns)/database-api "
 
     ExecKube -cmd 'label configmap urls app=elefebvre'
 
@@ -227,50 +228,51 @@ if ($deployKubernetes){
 
     Write-Host "Update Image containers to use prefix '$registry$dockerOrg' and tag '$imageTag'" -ForegroundColor Yellow
 
-    ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$imageTag'
-    ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$imageTag'
-    ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$imageTag'
-    ExecKube -cmd 'set image deployments/centinela centinela=${registryPath}${dockerOrg}/centinela.api:$imageTag'
-    ExecKube -cmd 'set image deployments/signature signature=${registryPath}${dockerOrg}/signature.api:$imageTag'
-    ExecKube -cmd 'set image deployments/database database=${registryPath}${dockerOrg}/database.api:$imageTag'
-    ExecKube -cmd 'set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$imageTag'
-    ExecKube -cmd 'set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$imageTag'
-    ExecKube -cmd 'set image deployments/webofficeclient webofficeclient=${registryPath}${dockerOrg}/webofficeclient:$imageTag'
-    ExecKube -cmd 'set image deployments/weblexonclient weblexonclient=${registryPath}${dockerOrg}/weblexonclient:$imageTag'
-    ExecKube -cmd 'set image deployments/webloginaddonlexon webloginaddonlexon=${registryPath}${dockerOrg}/webloginaddonlexon:$imageTag'
-    ExecKube -cmd 'set image deployments/webimapclient webimapclient=${registryPath}${dockerOrg}/webimapclient:$imageTag'
-	ExecKube -cmd 'set image deployments/websignatureclient websignatureclient=${registryPath}${dockerOrg}/websignatureclient:$imageTag'
-    ExecKube -cmd 'set image deployments/webstatus webstatus=${registryPath}${dockerOrg}/webstatus:$imageTag'
+    ExecKube -cmd "set image deployments/account account=${registryPath}${dockerOrg}/account.api:$imageTag"
+    ExecKube -cmd "set image deployments/centinela centinela=${registryPath}${dockerOrg}/centinela.api:$imageTag"
+    ExecKube -cmd "set image deployments/conference conference=${registryPath}${dockerOrg}/conference.api:$imageTag"
+    # ExecKube -cmd "set image deployments/database database=${registryPath}${dockerOrg}/database.api:$imageTag"
+    ExecKube -cmd "set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$imageTag"
+    ExecKube -cmd "set image deployments/signature signature=${registryPath}${dockerOrg}/signature.api:$imageTag"
+    ExecKube -cmd "set image deployments/userutils userutils=${registryPath}${dockerOrg}/userutils.api:$imageTag"
+    ExecKube -cmd "set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$imageTag"
+    ExecKube -cmd "set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$imageTag"
+    ExecKube -cmd "set image deployments/webofficeclient webofficeclient=${registryPath}${dockerOrg}/webofficeclient:$imageTag"
+    ExecKube -cmd "set image deployments/weblexonclient weblexonclient=${registryPath}${dockerOrg}/weblexonclient:$imageTag"
+    ExecKube -cmd "set image deployments/webloginaddonlexon webloginaddonlexon=${registryPath}${dockerOrg}/webloginaddonlexon:$imageTag"
+    ExecKube -cmd "set image deployments/webimapclient webimapclient=${registryPath}${dockerOrg}/webimapclient:$imageTag"
+	ExecKube -cmd "set image deployments/websignatureclient websignatureclient=${registryPath}${dockerOrg}/websignatureclient:$imageTag"
+    ExecKube -cmd "set image deployments/webstatus webstatus=${registryPath}${dockerOrg}/webstatus:$imageTag"
 
-    ExecKube -cmd 'set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-    ExecKube -cmd 'set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-	ExecKube -cmd 'set image deployments/apigwsig apigwsig=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-	ExecKube -cmd 'set image deployments/apigwcen apigwcen=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-	ExecKube -cmd 'set image deployments/apigwdat apigwdat=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+    ExecKube -cmd "set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$imageTag"
+	ExecKube -cmd "set image deployments/apigwcen apigwcen=${registryPath}${dockerOrg}/ocelotapigw:$imageTag"
+    ExecKube -cmd "set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$imageTag"
+	ExecKube -cmd "set image deployments/apigwsig apigwsig=${registryPath}${dockerOrg}/ocelotapigw:$imageTag"
+	# ExecKube -cmd "set image deployments/apigwdat apigwdat=${registryPath}${dockerOrg}/ocelotapigw:$imageTag"
 
     Write-Host "Execute rollout..." -ForegroundColor Yellow
-    ExecKube -cmd 'rollout resume deployments/lexon'
-    ExecKube -cmd 'rollout resume deployments/lexonmysql'
-    ExecKube -cmd 'rollout resume deployments/account'
-    ExecKube -cmd 'rollout resume deployments/centinela'
-    ExecKube -cmd 'rollout resume deployments/signature'
-    ExecKube -cmd 'rollout resume deployments/database'
-    ExecKube -cmd 'rollout resume deployments/webportalclient'
-    ExecKube -cmd 'rollout resume deployments/webgoogleclient'
-    ExecKube -cmd 'rollout resume deployments/webofficeclient'
-    ExecKube -cmd 'rollout resume deployments/weblexonclient'
-    ExecKube -cmd 'rollout resume deployments/webloginaddonlexon'
-    ExecKube -cmd 'rollout resume deployments/webimapclient'
-	ExecKube -cmd 'rollout resume deployments/websignatureclient'
-    ExecKube -cmd 'rollout resume deployments/webstatus'
-    ExecKube -cmd 'rollout resume deployments/apigwlex'
-    ExecKube -cmd 'rollout resume deployments/apigwacc'
-	ExecKube -cmd 'rollout resume deployments/apigwsig'
-	ExecKube -cmd 'rollout resume deployments/apigwcen'
-	ExecKube -cmd 'rollout resume deployments/apigwdat'
+    ExecKube -cmd "rollout resume deployments/lexon"
+    ExecKube -cmd "rollout resume deployments/account"
+    ExecKube -cmd "rollout resume deployments/centinela"
+    ExecKube -cmd "rollout resume deployments/signature"
+    ExecKube -cmd "rollout resume deployments/database"
+    ExecKube -cmd "rollout resume deployments/webportalclient"
+    ExecKube -cmd "rollout resume deployments/webgoogleclient"
+    ExecKube -cmd "rollout resume deployments/webofficeclient"
+    ExecKube -cmd "rollout resume deployments/weblexonclient"
+    ExecKube -cmd "rollout resume deployments/webloginaddonlexon"
+    ExecKube -cmd "rollout resume deployments/webimapclient"
+	ExecKube -cmd "rollout resume deployments/websignatureclient"
+    ExecKube -cmd "rollout resume deployments/webstatus"
+    ExecKube -cmd "rollout resume deployments/apigwlex"
+    ExecKube -cmd "rollout resume deployments/apigwacc"
+	ExecKube -cmd "rollout resume deployments/apigwsig"
+    ExecKube -cmd "rollout resume deployments/apigwcen"
+    
+	# ExecKube -cmd "rollout resume deployments/apigwdat"
 
     Write-Host "Adding/Updating ingress resource from ingress-lef.yalm..." -ForegroundColor Yellow
-    ExecKube -cmd 'apply -f ingress-lef.yaml'
+    ExecKube -cmd "apply -f ingress-lef.yaml" 
 
     Write-Host "WebPortal is exposed at http://$externalDns, WebStatus at http://$externalDns/webstatus" -ForegroundColor Green
 }

@@ -6,20 +6,18 @@ metadata:
     app: elefebvre  
 data:
 # Internal Services & healthchecks
-  lexon: http://lexon.api
-  lexon__hc: http://lexon.api/hc
-  lexonmysql: http://lexon.mysql.api
-  lexonmysql__hc: http://lexon.mysql.api/hc
   account: http://account.api
   account__hc: http://account.api/hc
+  centinela: http://centinela.api
+  centinela__hc: http://centinela.api/hc
+  # database: http://database.api
+  # database__hc: http://database.api/hc
+  lexon: http://lexon.api
+  lexon__hc: http://lexon.api/hc
   signature: http://signature.api
   signature__hc: http://signature.api/hc  
   userutils: http://userutils.api
   userutils__hc: http://userutils.api/hc
-  centinela: http://centinela.api
-  centinela__hc: http://centinela.api/hc
-  database: http://database.api
-  database__hc: http://database.api/hc
   webportalclient__hc: http://webportalclient/hc
   webgoogleclient__hc: http://webgoogleclient/hc
   webofficeclient__hc: http://webofficeclient/hc
@@ -30,11 +28,11 @@ data:
 # API GWs
   apigwacc: http://ocelotapigw-acc
   accountapigw__hc: http://ocelotapigw-acc/hc
-  apigwlex: http://ocelotapigw-lex
-  lexonapigw__hc: http://ocelotapigw-lex/hc
   apigwcen: http://ocelotapigw-cen
   centinelaapigw__hc: http://ocelotapigw-cen/hc
+  apigwlex: http://ocelotapigw-lex
+  lexonapigw__hc: http://ocelotapigw-lex/hc
   apigwsig: http://ocelotapigw-sig
   signatureapigw__hc: http://ocelotapigw-sig/hc
-  apigwdat: http://ocelotapigw-dat
-  databaseapigw__hc: http://ocelotapigw-dat/hc
+  # apigwdat: http://ocelotapigw-dat
+  # databaseapigw__hc: http://ocelotapigw-dat/hc

@@ -67,10 +67,6 @@ spec:
         backend:
           serviceName: lexon.api
           servicePort: 80
-      - path: /lexon.mysql.api
-        backend:
-          serviceName: lexon.mysql.api
-          servicePort: 80
       - path: /account.api
         backend:
           serviceName: account.api

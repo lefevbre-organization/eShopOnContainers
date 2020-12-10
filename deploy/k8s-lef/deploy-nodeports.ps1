@@ -5,7 +5,6 @@ kubectl apply -f .\nodeports\apigwlex.yaml
 kubectl apply -f .\nodeports\apigwsig.yaml
 kubectl apply -f .\nodeports\centinela-api.yaml
 kubectl apply -f .\nodeports\lexon-api.yaml
-kubectl apply -f .\nodeports\lexon-mysql-api.yaml
 kubectl apply -f .\nodeports\nosql-service.yaml
 kubectl apply -f .\nodeports\rabbitmq-admin.yaml
 kubectl apply -f .\nodeports\signature-api.yaml

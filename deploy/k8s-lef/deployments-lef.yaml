@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: lexon
@@ -70,69 +70,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: lexonmysql
-spec:
-  paused: true
-  template:
-    metadata:
-      labels:
-        app: elefebvre
-        component: lexonmysql
-    spec:
-      containers:
-      - name: lexonmysql
-        image: elefebvreoncotainers/lexonmysql.api
-        imagePullPolicy: Always
-        env:
-        - name: PATH_BASE
-          value: /lexonmysql-api
-        - name: ConnectionString
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: lexonmysql__ConnectionString
-        - name: LexonHubUrl
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: lexonmysql__LexonHubUrl
-        - name: EventBusConnection
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__EventBusConnection
-        - name: EventBusUserName
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__EventBusUserName
-        - name: EventBusPassword
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__EventBusPassword
-        - name: ApplicationInsights__InstrumentationKey
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__InstrumentationKey
-        - name: UseLoadTest
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__EnableLoadTest
-        - name: OrchestratorType
-          value: 'K8S'
-        ports:
-        - containerPort: 80
-        
-      imagePullSecrets:
-      - name: registry-key
----
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: centinela
@@ -209,7 +147,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: userutils
@@ -306,7 +244,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: accounts
@@ -368,7 +306,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: signatures
@@ -430,7 +368,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webportalclient
@@ -492,7 +430,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webgoogleclient
@@ -539,7 +477,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webofficeclient
@@ -586,7 +524,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: weblexonclient
@@ -633,7 +571,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webaddonlexon
@@ -690,7 +628,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webimapclient
@@ -737,7 +675,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: websignatureclient
@@ -779,7 +717,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webcentinelaclient
@@ -821,7 +759,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: webstatus
@@ -917,7 +855,7 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
-apiVersion: extensions/v1beta1
+apiVersion: extensions/v1
 kind: Deployment
 metadata:
   name: database
