@@ -98,6 +98,7 @@ class UserLefebvre extends Component {
             var emailRole = signatureRole; //payload.roles.some( e => e === 'Email Certificado');
             var smsRole = (idUserApp === 51) ? true : false;//payload.roles.some( e => e === 'Sms Certificado');
             var centinelaRole = payload.roles.some(e => e.toUpperCase() === 'CENTINELA');
+            var lexonRole = payload.roles.some(e => e.toUpperCase() === 'LEX-ON');
 
             var roleOk = signatureRole || emailRole || smsRole;
 
@@ -112,6 +113,7 @@ class UserLefebvre extends Component {
                 (emailRole) ? rolesList.push('Email Certificado') : null;
                 (smsRole) ? rolesList.push('SMS Certificado') : null;
                 (centinelaRole) ? rolesList.push('Centinela') : null;
+                (lexonRole) ? rolesList.push('Lexon') : null;
 
                 this.props.setRoles(rolesList);
 

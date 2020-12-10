@@ -306,7 +306,7 @@
     "open_email": "The receiver has opened the email",
     "open_document": "The receiver has seen the documents (only pdf)",
     "open_every_document": "The receiver has opened all the documents (only pdf)",
-    "delivery_sms": "The receiver has received the sms",
+    "delivery_sms": "The receiver has received the SMS",
     "open_document_sms": "The recipient has viewed the documents",
     "open_every_document_sms": "The receiver has opened all the documents"
   },

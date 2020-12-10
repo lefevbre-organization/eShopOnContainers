@@ -1,8 +1,8 @@
-import React, {Fragment} from "react";
+import React from "react";
 
 const Spinner = () => {
   return (
-    <Fragment>
+    <React.Fragment>
       <div className="bg-white">
        <div className="preloader-holder-blue"></div>
       </div>
@@ -76,7 +76,7 @@ const Spinner = () => {
           }
         }
     `}</style>
-    </Fragment>
+    </React.Fragment>
     
   );
 };
