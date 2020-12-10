@@ -13,8 +13,8 @@ window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.URL_MF_DATABASE = 'http://localhost:3006/static/js/main.js';
 window.URL_MF_DATABASE_BSE = 'http://localhost:3006';
 
-//window.URL_MF_LEXON = "https://lexbox-test-weblexon.lefebvre.es/static/js/main.js";
-//window.URL_MF_LEXON_BASE = "https://lexbox-test-weblexon.lefebvre.es";
+//window.URL_MF_LEXON = "https://lexbox-dev-weblexon.lefebvre.es/static/js/main.js";
+//window.URL_MF_LEXON_BASE = "https://lexbox-dev-weblexon.lefebvre.es";
 window.API_GATEWAY = 'https://lexbox-apigwlex.lefebvre.es';
 window.API_ACC_GATEWAY = 'https://lexbox-apigwacc.lefebvre.es';
 window.API_CENTINELA_GATEWAY =

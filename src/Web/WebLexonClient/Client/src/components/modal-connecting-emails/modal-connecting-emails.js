@@ -267,7 +267,6 @@ class ModalConnectingEmails extends Component {
           }
 
           if (step1Data.saveDocuments === true) {
-            console.log('uploadDocument: 0');
             // Save attachments
             //const mime = parse(messages[i].raw);
             const attachments = messages[i].attachments;    //findAttachments(mime);
