@@ -365,8 +365,11 @@ namespace Lexon.Infrastructure.Services
                             while (reader.Read())
                             {
                                 var rawJson = reader.GetValue(0).ToString();
-                                var resultado = (JsonConvert.DeserializeObject<LexAppointment[]>(rawJson)).ToList();
-                                result.data = resultado;
+                                if (!string.IsNullOrEmpty(rawJson))
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<LexAppointment[]>(rawJson)).ToList();
+                                    result.data = resultado;
+                                }
                             }
 
                         }
