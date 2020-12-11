@@ -47,20 +47,28 @@ env:
       key: userutils__Database
     - name: DeployVersion
       key: all__Version
+    - name: TokenCaducity
+      key: userutils__TokenCaducity
+    - name: TokenKey
+      key: userutils__TokenKey 
     - name: MinihubUrl
-      key: urls__HubUrlExternal  # 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
+      key: urls__HubUrlExternal
     - name: OnlineUrl
-      key: urls__OnlineUrlExternal  # 'https://herculesppd.lefebvre.es/webclient46/ws'
+      key: urls__OnlineUrlExternal
+    - name: OnlineLogin
+      key: all__OnlineLogin 
+    - name: OnlinePasssword
+      key: all__OnlinePass 
     - name: LoginUrl
-      key: urls__ComToolsUrlExternal  # 'http://led-pre-servicecomtools.eu.els.local'
+      key: urls__ComToolsUrlExternal 
     - name: ClavesUrl
-      key: urls__ClavesUrlExternal # 'https://led-pre-serviceclaves.lefebvre.es'
-    - name: CentinelaApiUrl
-      key: urls__CentinelaApi # 'http://centinela-api/api/v1/Centinela'
+      key: urls__ClavesUrlExternal 
     - name: LexonApiUrl
-      key: urls__LexonApi  # 'http://lexon-api/api/v1/Lexon'
+      key: urls__LexonApi  
+    - name: CentinelaApiUrl
+      key: urls__CentinelaApi 
     - name: SignaturitApiUrl
-      key: urls__SignatureApi  # 'http://signature-api/api/v1/Signaturit'
+      key: urls__SignatureApi
     - name: ByPassUrls__0__NameService
       key: urls__ByPassLexOnId #Lex-On
     - name: ByPassUrls__0__UrlByPass
@@ -69,14 +77,6 @@ env:
       key: urls__ByPassSigId #Signature-Direct
     - name: ByPassUrls__1__UrlByPass
       key: urls__ByPassSigUrl #'https://lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}'
-    - name: OnlineLogin
-      key: all__OnlineLogin 
-    - name: OnlinePasssword
-      key: all__OnlinePass 
-    - name: TokenCaducity
-      key: userutils__TokenCaducity
-    - name: TokenKey
-      key: userutils__TokenKey 
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values: {}
 

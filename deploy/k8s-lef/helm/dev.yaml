@@ -76,6 +76,6 @@ env:
     - name: UseMongo  # if set to true, use de mongo to admi use without external 
       value: false
     - name: Environments # list of environments admit in the cluster
-      value: ['DEVS','DEV','QA','PRE']
+      value: ["DEVS","DEV","QA","PRE"]
     - name: IsClusterEnv
       value: 'True'

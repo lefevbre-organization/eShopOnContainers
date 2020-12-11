@@ -27,23 +27,23 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   userutils__ConnectionString: mongodb://{{ $mongo }}
   userutils__Database: {{ .Values.inf.mongo.centinela.database }}
-  urls__Signature: https://{{ $clientsig }}
-  urls__LexonApi: 'https://{{ $lex }}/api/v1/Lexon'
-  urls__SignatureApi: 'https://{{ $sig }}/api/v1/Signaturit'
-  urls__CentinelaApi: 'https://{{ $cen }}/api/v1/Centinela'
-  all__Version: {{ .Chart.Version | quote }}
   userutils__TokenCaducity: {{ .Values.userutils.token.caducity | quote}}
   userutils__TokenKey: {{ .Values.userutils.token.key | quote}}
+  all__Version: {{ .Chart.Version | quote }}
   urls__HubUrlExternal: http://{{ .Values.svchub.url }}/Herramientas/get
   urls__OnlineUrlExternal: http://{{ .Values.svconline.url }}/webcliente46/ws
   all__OnlineLogin: {{ .Values.svconline.login | quote }}
   all__OnlinePass: {{ .Values.svconline.pass | quote }}
   urls__ComToolsUrlExternal: http://{{ .Values.svccomtools.url }}
   urls__ClavesUrlExternal: https://{{ .Values.svcclaves.url }}
+  urls__LexonApi: http://{{ .Values.app.ingress.entries.lexonapi }}/api/v1/Lexon
+  urls__SignatureApi: http://{{ .Values.app.ingress.entries.signatureapi }}/api/v1/Signaturit
+  urls__CentinelaApi: http://{{ .Values.app.ingress.entries.centinelaapi }}/api/v1/Centinela
+  urls__Signature: https://{{ .Values.app.ingress.entries.signature }}
   urls__ByPassLexOnId: {{ .Values.userutils.bypass.lex.id | quote}}
   urls__ByPassLexOnUrl: 'https://{{ $gwlex }}/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
-  urls__ByPassLexOnUrl_bis: 'https://{{ .Values.userutils.bypass.lex.url }}'
+  # urls__ByPassLexOnUrl_bis: 'https://{{ .Values.userutils.bypass.lex.url }}'
   urls__ByPassSigId: {{ .Values.userutils.bypass.sig.id | quote}}
-  urls__ByPassSigUrl: 'https://{{ $clientsig }}/access/{tokenSignature}'
-  urls__ByPassSigUrl_bis: 'https://{{ .Values.userutils.bypass.sig.url }}'
+  urls__ByPassSigUrl: 'https://{{ .Values.app.ingress.entries.signature }}/access/{tokenSignature}'
+  # urls__ByPassSigUrl_bis: 'https://{{ .Values.userutils.bypass.sig.url }}'
 
