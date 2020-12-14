@@ -289,6 +289,7 @@ class MessageList extends Component {
       }
 
       if (checked === true) {
+        debugger
         Promise.all(prs).then((msgs) => {
           for (let i = 0; i < msgs.length; i++) {
             const msg = msgs[i];
@@ -311,10 +312,11 @@ class MessageList extends Component {
                   account: this.props.all.login.formValues.user,
                   folder: this.props.selectedFolder.fullName,
                   provider: 'IMAP',
-                  raw: msg.raw,
+                  raw: null// msg.raw,
                 },
               })
             );
+            msg.raw = null;
             console.log(
               `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
             );
@@ -332,6 +334,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
+        debugger
         console.log('LoadingMessage: 5');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
         const rm = readMessageRaw(
@@ -342,11 +345,11 @@ class MessageList extends Component {
           message
         ).then((response) => {
           // update redux message with raw data
-          this.props.messageSelected(
+/*          this.props.messageSelected(
             [{ ...message, raw: response.raw }],
             checked,
             this.props.selectedFolder.fullName
-          );
+          );*/
 
           // Send message to connectors
           window.dispatchEvent(
@@ -364,6 +367,7 @@ class MessageList extends Component {
               },
             })
           );
+          response = null;
           console.log(
             `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
           );

@@ -268,7 +268,9 @@ class AddonConnectingEmails extends Component {
           
           if (step1Data.saveDocuments === true) {
             // Save attachments
+            console.time("Parsing message1");
             const mime = parse(msgRaw.result.data.raw);
+            console.timeEnd("Parsing message1");
             const attachments = findAttachments(mime);
             for (let j = 0; j < attachments.length; j++) {
               let rawAttach = base64js.fromByteArray(attachments[j].content);
