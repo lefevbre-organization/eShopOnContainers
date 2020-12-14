@@ -49,9 +49,9 @@ env:
     - name: DeployVersion
       key: all__Version
     - name: SignaturitApiUrl
-      key: urls__SignatureUrlExternal #'https://api.sandbox.signaturit.com/v3'
+      key: urls__SignatureUrlExternal
     - name: LexonFilesUrl
-      key: urls__LexonUrlExternal #'https://led-dev-lexon.eu.els.local/index.php'
+      key: urls__LexonUrlExternal
     - name: LexonApiGwUrl
       key: urls__LexonApi #'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/'
     - name: CentinelaApiGwUrl

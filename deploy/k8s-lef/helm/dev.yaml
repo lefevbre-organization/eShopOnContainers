@@ -29,14 +29,15 @@ lexon:
     url: 'www.lex-on.es'      
 
 signature:
-  url: 'api.sandbox.signaturit.com/v3' # name: SignaturitApiUrl
+  url: 'api.sandbox.signaturit.com/v3'
   pass: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'   # name: Signaturit
-  lex_url: 'https://led-dev-lexon.eu.els.local' #name : LexonFilesUrl
-  callbackurl: 'lexbox-dev-websignature.lefebvre.es'   # name: CallBackUrl
+  lex_url: 'https://led-dev-lexon.eu.els.local'
+  callback_url: 'lexbox-dev-websignature.lefebvre.es' 
+  gw_url: 'lexbox-dev-apigwsig.lefebvre.es' 
   paths:
-    mail: '/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
-    certified_mail: '/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
-    certified_sms: '/SignaturitEvent/certifiedSms/post.json'   # name: CertifiedSmsNotificationUrl
+    mail: '/api/v1/signservice/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
+    certified_mail: '/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
+    certified_sms: '/api/v1/signservice/SignaturitEvent/certifiedSms/post.json'   # name: CertifiedSmsNotificationUrl
 
 svchub:
   url: 'led-pre-servicehub.eu.els.local' # name: MinihubUrl
@@ -76,6 +77,6 @@ env:
     - name: UseMongo  # if set to true, use de mongo to admi use without external 
       value: false
     - name: Environments # list of environments admit in the cluster
-      value: ["DEVS","DEV","QA","PRE"]
+      value: [DEVS,DEV,QA,PRE]
     - name: IsClusterEnv
       value: 'True'

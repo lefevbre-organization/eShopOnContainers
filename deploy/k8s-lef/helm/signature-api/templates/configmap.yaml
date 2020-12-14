@@ -31,11 +31,10 @@ data:
   all__SignaturePass: {{ .Values.signature.pass }}
   urls__LexonUrlExternal: https://{{ .Values.lexon.dev.url }}
   urls__LexonApi: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
-  urls__LexonApi_bis: https://{{ $lexgw }}/api/v1
-  urls__CentinelaApi: https://{{ $cen }}/api/v1
-  urls__SignatureApi: https://{{ $sig }}/api/v1
-  urls__SignatureClient: https://{{ $clientsig }}/completed
-  urls__SignatureClient_bis: https://{{ .Values.signature.callbackurl }}/completed
-  urls__SignatureNotification: https://{{ $sig }}{{ .Values.signature.paths.mail}}
-  urls__SignatureNotificationCertified: https://{{ $sig }}{{ .Values.signature.paths.certified_mail}}
-  urls__SignatureSmsCertified: https://{{ $sig }}{{ .Values.signature.paths.certified_sms}}
+  urls__LexonApi_bis: https://{{ .Values.app.ingress.entries.lexonapigw}}/api/v1
+  urls__CentinelaApi: https://{{ .Values.app.ingress.entries.centinelaapi }}/api/v1
+  urls__SignatureApi: https://{{ .Values.app.ingress.entries.signatureapi }}/api/v1
+  urls__SignatureClient: https://{{ .Values.signature.callback_url }}/completed
+  urls__SignatureNotification: https://{{ .Values.signature.gw_url }}{{ .Values.signature.paths.mail}}
+  urls__SignatureNotificationCertified: https://{{ .Values.signature.gw_url }}{{ .Values.signature.paths.certified_mail}}
+  urls__SignatureSmsCertified: https://{{ .Values.signature.gw_url }}{{ .Values.signature.paths.certified_sms}}
