@@ -302,8 +302,8 @@
     "open_document": "The receiver has seen the documents (only pdf)",
     "open_every_document": "The receiver has opened all the documents (only pdf)",
     "delivery_sms": "The receiver has received the SMS",
-    "open_document_sms": "The recipient has viewed the documents",
-    "open_every_document_sms": "The receiver has opened all the documents"
+    "open_document_sms": "The recipient has viewed the documents (only pdf)",
+    "open_every_document_sms": "The receiver has opened all the documents (only pdf)"
   },
   "emailViewer": {
     "certification": "Type of certification selected:",
