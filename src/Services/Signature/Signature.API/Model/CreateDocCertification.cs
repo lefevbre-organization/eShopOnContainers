@@ -8,6 +8,8 @@ namespace Signature.API.Model
     public class CreateDocCertification
     {
         public string user { get; set; }
+        public string guid { get; set; }
+        public string app { get; set; }
         public List<UserFile> files { get; set; }
     }
 }

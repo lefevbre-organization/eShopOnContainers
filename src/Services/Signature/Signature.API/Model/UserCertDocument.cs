@@ -4,11 +4,18 @@
     using System.Collections.Generic;
 
     using System.Globalization;
+    using MongoDB.Bson;
+    using MongoDB.Bson.Serialization.Attributes;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
     public partial class UserCertDocuments
     {
+        [BsonId]
+        [BsonIgnoreIfDefault]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        
         [JsonProperty("user")]
         public string User { get; set; }
 
@@ -40,5 +47,13 @@
 
         [JsonProperty("app")]
         public string App { get; set; }
+
+        [BsonIgnore]
+        [JsonProperty("md5")]
+        private string md5 { set { Crc = value; } }
+
+        [BsonIgnore]
+        [JsonProperty("id")]
+        private string id { set { ExternalId = value; } }
     }
 }

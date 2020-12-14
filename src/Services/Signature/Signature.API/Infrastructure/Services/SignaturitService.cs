@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using Signature.API.Infrastructure.Repositories;
+using Newtonsoft.Json;
 
 namespace Signature.API.Infrastructure.Services
 {
     public class SignaturitService : ISignaturitService
     {
 
+        public readonly IDocumentsRepository _documentsRepository;
         //private readonly IEventBus _eventBus;
         //private readonly IHttpClientFactory _clientFactory;
         //private readonly HttpClient _client;
@@ -44,6 +47,20 @@ namespace Signature.API.Infrastructure.Services
             //_client = _clientFactory.CreateClient();
             //_client.BaseAddress = new Uri(_settings.Value.SignatureMySqlUrl);
             //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
+            _configuration = configuration;
+            _timeout = 10000;
+            _timeoutCreate = 90000;
+            _guid = Guid.NewGuid();
+        }
+
+        public SignaturitService(
+            IOptions<SignatureSettings> settings
+            , IConfiguration configuration
+            , IDocumentsRepository documentsRepository
+            )
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _documentsRepository = documentsRepository ?? throw new ArgumentNullException(nameof(documentsRepository));
             _configuration = configuration;
             _timeout = 10000;
             _timeoutCreate = 90000;
@@ -653,6 +670,111 @@ namespace Signature.API.Infrastructure.Services
             Console.WriteLine($"{_guid} - END DownloadCertifiedDocumentAudit");
 
             return response;
+        }
+
+        public async Task<IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo)
+        {
+            Console.WriteLine($"{_guid} - START CertifyDocumentSync");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files.json");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files.json");
+            var i = 0;
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Adding parameters");
+
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+
+            foreach (UserFile file in docInfo.files)
+            {
+                Console.WriteLine($"Sending file_{i}");
+                request.AddFileBytes($"file", file.file, file.fileName);
+                i += 1;
+            }
+
+            IRestResponse response = await client.ExecuteAsync(request);
+            //IRestResponse response;
+
+            if (response.IsSuccessful)
+            {
+                var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
+                response = await insertInMongo(docInfo, response);
+                
+                //var jsonContent = JsonConvert.DeserializeObject<CertDocument>("{\r\n    \"id\": \"b89aec11-1f51-48ca-bf51-814928d84e71\",\r\n    \"crc\": \"ea0c6d39c6cfc4a74bc54766432dd9ec\",\r\n    \"created_at\": \"Fri, 27 Nov 2020 09:11:37 +0000\",\r\n    \"email\": \"firmadigital@lefebvre.es\",\r\n    \"name\": \"Acta notarial.pdf\",\r\n    \"size\": 71120\r\n}");
+                //response = await insertInMongo(docInfo, jsonContent);
+
+            }
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CertifyDocumentSync");
+
+            return response;
+        }
+        #endregion
+
+        #region Mongo
+        public async Task<IRestResponse> insertInMongo(CreateDocCertification docInfo, IRestResponse response)
+        {
+            Console.WriteLine($"{_guid} - START insertInMongo");
+
+            var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
+            //var jsonContent = response;
+
+            jsonContent.App = docInfo.app;
+            jsonContent.Guid = docInfo.guid;
+
+            var user = await _documentsRepository.GetUser(docInfo.user);
+            object result;
+
+            if (user.data == null)
+            {
+                // Create new registry
+                result = await _documentsRepository.Create(
+                    new UserCertDocuments()
+                    {
+                        User = docInfo.user,
+                        Documents = new List<CertDocument>() {
+                            new CertDocument() {
+                                Guid = docInfo.guid,
+                                ExternalId = jsonContent.ExternalId,
+                                Crc = jsonContent.Crc,
+                                CreatedAt = jsonContent.CreatedAt,
+                                Email = jsonContent.Email,
+                                Name = jsonContent.Name,
+                                Size = jsonContent.Size,
+                                App = docInfo.app
+                            }
+                        }
+                    }
+               );
+            } else
+            {
+                // Upsert registry
+                result = await _documentsRepository.UpSertDocument(docInfo.user, 
+                    new CertDocument() {
+                        Guid = docInfo.guid,
+                        ExternalId = jsonContent.ExternalId,
+                        Crc = jsonContent.Crc,
+                        CreatedAt = jsonContent.CreatedAt,
+                        Email = jsonContent.Email,
+                        Name = jsonContent.Name,
+                        Size = jsonContent.Size,
+                        App = docInfo.app
+                    });
+            }
+
+            // Ver qué hago aquí con el result
+
+            // Descargo el documento de auditoría:
+            var fileResponse = await DownloadCertifiedDocumentAudit(jsonContent.ExternalId);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END insertInMongo");
+
+            return fileResponse;
         }
         #endregion
     }
