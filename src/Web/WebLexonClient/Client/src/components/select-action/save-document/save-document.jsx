@@ -40,7 +40,7 @@ class SaveDocument extends Component {
 }
 
 SaveDocument.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.any.isRequired
 };
 
 const mapStateToProps = state => {

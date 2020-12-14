@@ -132,7 +132,7 @@ class Classification extends Component {
 }
 
 Classification.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.any.isRequired,
   mail: PropTypes.string.isRequired,
   classification: PropTypes.object.isRequired,
   updateClassifications: PropTypes.func.isRequired,

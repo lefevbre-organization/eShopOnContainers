@@ -136,7 +136,7 @@ export class MessageList extends Component {
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       const msgRaw = await getMessage(msg.id, 'raw');
       message.raw = msgRaw.result;
-      this.props.addMessage(message);
+      //this.props.addMessage(message);
     }
 
     window.dispatchEvent(
@@ -144,6 +144,7 @@ export class MessageList extends Component {
         detail: message,
       })
     );
+    message.raw = null;
 
     window.dispatchEvent(new CustomEvent('LoadedMessage'));
   }
