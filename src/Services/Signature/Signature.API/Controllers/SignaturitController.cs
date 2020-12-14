@@ -705,6 +705,137 @@
         }
         #endregion
 
+        #region DocumentCertification
+        [HttpPost]
+        [Route("documentCertification/new")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> CertifyDocument([FromBody] CreateDocCertification docInfo, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (Object.Equals(docInfo, null))
+                return BadRequest("Document information must be provided.");
+
+            try
+            {
+                var response = await _signaturitService.CertifyDocument(docInfo);
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Response IsSuccessful");
+                    return Ok(response.Content);
+                }
+                else
+                {
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    if (response.ErrorException != null)
+                    {
+                        throw new Exception($"Internal Exception: {response.ErrorException.Message} - Signaturit Response Content: {response.Content} - Signaturit Response StatusCode: {response.StatusCode}");
+                    }
+                    else
+                    {
+                        throw new Exception($"Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
+            }
+
+        }
+
+        [HttpGet]
+        [Route("documentCertification/get/{id}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> GetCertifiedDocument([FromRoute] string id, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(id))
+                return BadRequest("A user must be provided");
+
+            try
+            {
+                var response = await _signaturitService.GetCertifiedDocuments(id);
+
+                return Ok(response.Content);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        [Route("documentCertification/download/audit/{id}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> DownloadCertifiedDocumentAudit([FromRoute] string docId, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(docId) )
+                return BadRequest("A documentId must be provided.");
+
+            try
+            {
+
+                var response = await _signaturitService.DownloadCertifiedDocumentAudit(docId);
+
+                var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+                string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+                return File(response.RawBytes, response.ContentType, fileName);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+
+            }
+        }
+
+        #endregion
+
         #region Token
         private bool checkToken(string authToken)
         {
