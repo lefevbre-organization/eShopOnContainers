@@ -47,9 +47,10 @@ inf:
     useLoadTest: false      # If running under loading test or not
     useAzureStorage: false  # If catalog api uses azure storage or not
 
-#  registry:                # Uncomment "registry" to specify registry secret
-#    secretName:            # secretName is the name of the secret inside k8s   
-#    server:                # Registry login server
-#    login:                 # User login
-#    pwd:                   # User pwd
+  registry:                # Uncomment "registry" to specify registry secret
+    secretName: elefebvre-docker-secret               # name of the secret inside k8s   
+    server: index.docker.io                           # Registry login server
+    login: freyeslefebvre                             # User login
+    pwd: NetEb9221                                    # User pwd
+    mail: f.reyes-ext@lefebvre.es                     # mail of user (optional)
 
