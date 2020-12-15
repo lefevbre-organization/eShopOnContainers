@@ -799,7 +799,7 @@
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
-        public async Task<IActionResult> DownloadCertifiedDocumentAudit([FromRoute] string docId, [FromHeader] string Authorization)
+        public async Task<IActionResult> DownloadCertifiedDocumentAudit([FromRoute] string id, [FromHeader] string Authorization)
         {
             HttpRequest httpRequest = HttpContext.Request;
 
@@ -809,13 +809,13 @@
             if (!checkToken(httpRequest.Headers["Authorization"]))
                 return BadRequest("Access token invalid");
 
-            if (string.IsNullOrEmpty(docId) )
+            if (string.IsNullOrEmpty(id) )
                 return BadRequest("A documentId must be provided.");
 
             try
             {
 
-                var response = await _signaturitService.DownloadCertifiedDocumentAudit(docId);
+                var response = await _signaturitService.DownloadCertifiedDocumentAudit(id);
 
                 var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
                 string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
@@ -891,17 +891,26 @@
         #region Token
         private bool checkToken(string authToken)
         {
+            bool valid = false;
             var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/utils/Lexon/token/validation?validateCaducity=false");
             client.Timeout = 10000;
+
             var request = new RestRequest(Method.PUT);
             request.AddHeader("Accept", "text/plain");
             request.AddHeader("Content-Type", "application/json-patch+json");
-            //request.AddHeader("Content-Type", "text/plain");
             request.AddParameter("application/json-patch+json,text/plain", $"\"{authToken}\"", ParameterType.RequestBody);
+            
             IRestResponse response = client.Execute(request);
 
-            var valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
-
+            if (response.IsSuccessful)
+            {
+                valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
+            }
+            else
+            {
+                Console.WriteLine("Response is not successfull");
+            }
+            
             Console.WriteLine($"TokenValid:{valid} - {authToken}");
 
             //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
