@@ -1680,7 +1680,9 @@ export const notifyCen = async (service, guid, docId, recipients) => {
     recipients.forEach(recipient => {
       (service === 'signature') 
         ? recipientsData.push({name: recipient.name, email: recipient.email})
-        : recipientsData.push({name: recipient.name, email: recipient.address})
+        : (service === 'certifiedEmail') 
+            ? recipientsData.push({name: recipient.name, email: recipient.address})
+            : recipientsData.push({name: recipient.name, email: recipient.email, phone: recipient.phone})
     });
 
     var raw = JSON.stringify(recipientsData);
