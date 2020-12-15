@@ -142,7 +142,7 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
     }
     case ActionTypes.APPLICATION_OUTBOX_EVENT_NOTIFIED: {
       const newState = {...state};
-      newState.outbox.eventNotified = true;
+      newState.outbox = { ...newState.outbox, eventNotified: true };
       return newState;
     }
     default:

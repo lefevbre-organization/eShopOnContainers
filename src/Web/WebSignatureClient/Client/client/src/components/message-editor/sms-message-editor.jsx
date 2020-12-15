@@ -27,7 +27,8 @@ import {
   notifySignature,
   cancelSignatureCen,
   preloadSms,
-  getNumAvailableSignatures
+  getNumAvailableSignatures,
+  notifyCen
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';

@@ -16,6 +16,9 @@ import {
   addClassification,
 } from './services/services-lexon';
 import {PAGE_IMPORT_EVENTS} from "./constants";
+import dbStore from "./services/dbstore";
+import parse from "emailjs-mime-parser";
+
 
 class Main extends Component {
   constructor(props) {
@@ -187,16 +190,27 @@ class Main extends Component {
   handleKeyPress(event) {
     console.log('HandleEvent Client -> Lexon - Checkclick');
 
-    event.detail.chkselected
-      ? this.props.addMessage({
+    if(event.detail.chkselected) {
+       global.mimeParserAsync(event.detail.raw).then(  mime => {
+        const attachments = findAttachments(JSON.parse(mime));
+
+        this.props.addMessage({
           id: event.detail.extMessageId,
           //extMessageId: event.detail.extMessageId,
           subject: event.detail.subject,
           folder: event.detail.folder,
           sentDateTime: event.detail.sentDateTime,
-          raw: event.detail.raw,
-        })
-      : this.props.deleteMessage(event.detail.extMessageId);
+          raw: null, // event.detail.raw,
+          attachments: attachments.map( a => ({  name: a.Filename, checked: a.checked }) )
+        });
+
+        dbStore.saveMessage({ id: event.detail.id, attachments });
+        event.detail.raw = null;
+      })
+    } else {X
+      this.props.deleteMessage(event.detail.extMessageId);
+    }
+
   }
 
   handleCheckAllclick(event) {
@@ -477,3 +491,20 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
+
+
+
+const findAttachments = (email) => {
+  let attachs = [];
+  if (email.Attachments) {
+    for (let i = 0; i < email.Attachments.length; i++) {
+        attachs.push({
+          ...email.Attachments[i],
+          checked: true,
+        });
+      }
+    }
+
+  return attachs;
+};
+
