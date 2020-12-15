@@ -34,7 +34,6 @@ class DBStore {
             const transaction = this.db.transaction('Messages', 'readonly');
             const store = transaction.objectStore('Messages');
             store.get( messageId ).onsuccess=  event => {
-                debugger
                 resolve(event.target.result);
             };
         })
