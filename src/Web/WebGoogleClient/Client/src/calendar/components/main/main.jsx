@@ -1063,7 +1063,7 @@ export class Main extends Component {
                 // this.tabObj.refresh()
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id == undefined) {
-                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                    //this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
                     //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
