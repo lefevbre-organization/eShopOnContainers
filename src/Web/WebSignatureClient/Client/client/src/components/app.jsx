@@ -14,6 +14,7 @@ import SideBar from './side-bar/side-bar';
 import MessageEditor from './message-editor/message-editor';
 import EmailMessageEditor from './message-editor/email-message-editor';
 import SmsMessageEditor from './message-editor/sms-message-editor';
+import DocumentMessageEditor from './message-editor/document-message-editor'
 import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import EmailMessageViewer from './message-viewer/email-message-viewer';
@@ -495,6 +496,13 @@ class App extends Component {
       && application.newMessage.sendingType == 'smsCertificate'
     ) {
       return <SmsMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
+    } else if
+    (
+      application.newMessage &&
+      Object.keys(application.newMessage).length > 0
+      && application.newMessage.sendingType == 'documentCertificate'
+    ) {
+      return <DocumentMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
     } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {

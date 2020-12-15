@@ -404,6 +404,26 @@ $flag-size: 18px;
   }
 }
 
+.document-message-editor {
+  padding-left: 42px;
+  .box-attach {
+      background: #E8E8F1;
+      padding: 32px;
+      box-shadow: 1px 2px 5px grey;
+  }
+  .dropzone {
+      box-sizing: border-box;
+      height: 132px;
+      background: #F0F0FD;
+      border: 1px dashed rgba(100,124,138,0.4);
+      border-radius: 4px;
+      text-align: center;
+      padding: 20px;
+      margin-bottom: 20px;
+  }
+       
+}
+
 @media (max-width: 1300px) {
   // .editor-container {
   //   height: 88% !important;
