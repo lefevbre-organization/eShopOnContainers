@@ -1,0 +1,80 @@
+@page "/drive"
+@attribute [Authorize]
+@using System.Security.Claims
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using Lefebvre.Shared
+
+
+<div class="">
+    <h1 class="d-inline">Google Drive</h1>
+    <button class="btn btn-info float-right d-inline">Refresh</button>
+</div>
+
+
+<table class="table table-hover table-striped"  >
+    <thead class="thead-dark">
+        <tr>
+            <th>Kind</th>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Mime Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (DriveFile item in Files)
+        {    
+            <tr>
+                <td>@item.kind</td>
+                <td>@item.id</td>
+                <td>@item.name</td>
+                <td>@item.mimeType</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    private ClaimsPrincipal AuthenticationStateProviderUser { get; set; }
+    public string sub {get; set; }
+    public List<DriveFile> Files { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Files = new List<DriveFile>();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        AuthenticationState authenticationState;
+        authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        this.AuthenticationStateProviderUser = authenticationState.User;
+        foreach (var item in this.AuthenticationStateProviderUser.Claims)
+        {
+            if(item.Type == "sub")   sub = item.Value.ToString();
+        }
+        await RefreshFiles();
+        
+    }
+
+    public async Task RefreshFiles()
+    {
+        try
+        {
+            Files = await Http.GetFromJsonAsync<List<DriveFile>>($"GoogleDrive?UserId={sub}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+
+}
