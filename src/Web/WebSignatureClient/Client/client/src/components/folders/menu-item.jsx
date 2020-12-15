@@ -60,7 +60,7 @@ const MenuItem = props => {
             } 
           </a>
         </li> : null}
-        {(id == 'sms' && id != 'document') ? 
+        {(id == 'sms' && id != 'sms') ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-unsolved">

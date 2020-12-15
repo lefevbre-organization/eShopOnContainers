@@ -6,7 +6,7 @@ import { clearUserCredentials, setUserCredentials } from "../../actions/applicat
 import history from "../../routes/history";
 import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts, getService } from "../../services/jwt";
 import Cookies from 'js-cookie';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures, getUserSms, getContactsCentinela } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, addOrUpdateBrandingEmail, createTemplate, verifyJwtSignature, getUserEmails, createUserEmail, getNumAvailableSignatures, getUserSms, getContactsCentinela, getUserCertifiedDocuments, createUserCertifiedDocument } from "../../services/api-signaturit";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
 import CentinelaBaseTemplate from "../../templates/CentinelaBaseTemplate.json";
@@ -97,10 +97,11 @@ class UserLefebvre extends Component {
             var signatureRole = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
             var emailRole = signatureRole; //payload.roles.some( e => e === 'Email Certificado');
             var smsRole = (idUserApp === 51) ? true : false;//payload.roles.some( e => e === 'Sms Certificado');
+            var certDocumentRole = (idUserApp === 51) ? true : false;
             var centinelaRole = payload.roles.some(e => e.toUpperCase() === 'CENTINELA');
             var lexonRole = payload.roles.some(e => e.toUpperCase() === 'LEX-ON');
 
-            var roleOk = signatureRole || emailRole || smsRole;
+            var roleOk = signatureRole || emailRole || smsRole || certDocumentRole;
 
             if ( !roleOk && user === 'E1621396' ){
                 roleOk = true;
@@ -112,6 +113,7 @@ class UserLefebvre extends Component {
                 (signatureRole) ? rolesList.push('Firma Digital') : null;
                 (emailRole) ? rolesList.push('Email Certificado') : null;
                 (smsRole) ? rolesList.push('SMS Certificado') : null;
+                (certDocumentRole) ? rolesList.push('Documentos Certificados') : null;
                 (centinelaRole) ? rolesList.push('Centinela') : null;
                 (lexonRole) ? rolesList.push('Lexon') : null;
 
@@ -485,6 +487,7 @@ class UserLefebvre extends Component {
                                     }
                                 } 
                             });
+                            
                             if (service === 'certifiedSms' && app === 'centinela'){
                                 getContactsCentinela(user)
                                 .then( contacts => {
@@ -500,6 +503,15 @@ class UserLefebvre extends Component {
                                     }
                                 })
                             }
+                        }
+
+                        if (certDocumentRole){
+                            getUserCertifiedDocuments(user)
+                            .then(userInfo => {
+                                if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.erros[0].code && userInfo.errors[0].code === "SG52"){
+                                    createUserCertifiedDocument(user);
+                                }
+                            })
                         }
                         this.setState({readyToRedirect: true})
                     }

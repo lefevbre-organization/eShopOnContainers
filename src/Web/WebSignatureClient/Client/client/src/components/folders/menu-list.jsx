@@ -39,12 +39,10 @@ export class MenuListClass extends Component {
       hideAlertDialog: false,
       isDisable: true
     }
-
   }
 
   componentDidMount() {
     this.props.setAppTitle(i18n.t('topBar.app'));
-    
   }
   
   getConfirm = () => {
@@ -242,9 +240,6 @@ export class MenuListClass extends Component {
 
   onDocumentClick = (event, key) => {
     const { close, lefebvre } = this.props;
-    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
-      this.setState({hideConfirmDialog: true});
-    } else {
       event.stopPropagation();
       this.props.signatureClicked(null);
       this.props.emailClicked(null);
@@ -257,10 +252,9 @@ export class MenuListClass extends Component {
       this.props.setGuid(null);
       this.props.setIdDocuments(null);
       this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
-      this.props.setSelectedService('certifiedSms'); 
+      this.props.setSelectedService('certifiedDocument'); 
       this.props.close(this.props.application);
-    }
-  }
+  };
 
   dialogClose(){
     this.setState({

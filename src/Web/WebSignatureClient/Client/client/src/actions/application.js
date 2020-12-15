@@ -36,7 +36,7 @@ export const preDownloadMessages = messages => ({type: ActionTypes.APPLICATION_M
 export const preDownloadSignatures = signatures => ({type: ActionTypes.APPLICATION_SIGNATURE_PRE_DOWNLOAD, payload: {signatures}});
 export const preDownloadEmails = emails => ({type: ActionTypes.APPLICATION_EMAILS_PRE_DOWNLOAD, payload: {emails}});
 export const preDownloadSmsList = smsList => ({type: ActionTypes.APPLICATION_SMSLIST_PRE_DOWNLOAD, payload: {smsList}});
-export const preDownloadDocuments = documents => ({type: ActionTypes.APPLICATION_DOCUMENTS_PRE_DOWNLOAD, payload: {emails}});
+export const preDownloadDocuments = documents => ({type: ActionTypes.APPLICATION_DOCUMENTS_PRE_DOWNLOAD, payload: {documents}});
 export const replaceMessageEmbeddedImages = (folder, message, attachment, blob) => ({type: ActionTypes.APPLICATION_MESSAGE_REPLACE_IMAGE, payload: {folder, message, attachment, blob}});
 export const setError = (type, value) => ({type: ActionTypes.APPLICATION_ERROR_SET, payload: {type, value}});
 

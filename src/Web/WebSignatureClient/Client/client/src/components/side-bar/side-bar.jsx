@@ -225,21 +225,21 @@ class SideBar extends Component {
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose}
           //position={ this.position }
-        ></DialogComponent>
+        />
         <DialogComponent 
-              id="confirmDialog" 
-              header=' ' 
-              visible={this.state.hideConfirmDialog} 
-              showCloseIcon={true} 
-              animationSettings={this.animationSettings} 
-              width='60%' 
-              content={confirmDiscard} 
-              ref={dialog => this.confirmDialogInstance = dialog} 
-              //target='#target' 
-              buttons={confirmButtons} 
-              open={this.dialogOpen.bind(this)} 
-              close={this.dialogClose}
-            />
+          id="confirmDialog" 
+          header=' ' 
+          visible={this.state.hideConfirmDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='60%' 
+          content={confirmDiscard} 
+          ref={dialog => this.confirmDialogInstance = dialog} 
+          //target='#target' 
+          buttons={confirmButtons} 
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose}
+        />
         <style jsx global>
           {`
             #noSignaturesDialog{
