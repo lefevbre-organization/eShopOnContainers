@@ -1,4 +1,4 @@
-import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList } from '../actions/application';
+import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList, preDownloadDocuments } from '../actions/application';
 import { resolve } from 'path';
 
 // tenia 94 left y 5 width
@@ -609,7 +609,7 @@ export const addOrUpdateSms = async (userId, externalId, guid, app, createdAt, t
                                                                                   
 */ 
 
-export const getUserCertifiedDocuments = async userId => {
+export const getUserCertifiedDocuments = async (userId) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -620,9 +620,10 @@ export const getUserCertifiedDocuments = async userId => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/${userId}`, requestOptions)
+    //fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/${userId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/E1654569`, requestOptions)
       .then(response => response.json())
-      .then(result => resolve(result))
+      .then(result => resolve(result.data.documents))
       .catch(error => {
         console.log('error', error);
         reject(error);
@@ -699,6 +700,21 @@ export const addOrUpdateCertifiedDocument = async (userId, externalId, guid, app
     })
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
+}
+
+export function preloadCertifiedDocuments (dispatch, userId) {
+  return new Promise((resolve, reject) => {
+    getUserCertifiedDocuments(userId)
+    .then(documents => {
+      console.log({documents});
+      dispatch(preDownloadDocuments(documents));
+      resolve(documents);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  }) 
 }
 
 // END OF LEFEBVRE SIGNATURE API CALLS

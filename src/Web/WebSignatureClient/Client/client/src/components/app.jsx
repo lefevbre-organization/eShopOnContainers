@@ -77,7 +77,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getUserCertifiedDocuments } from "../services/api-signaturit";
+import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getUserCertifiedDocuments, preloadCertifiedDocuments } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -803,6 +803,7 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );
         (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedEmail") {
       this.props.setSelectedService('certifiedEmail');
       this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
@@ -869,6 +870,7 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );        
         (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedSms") {
       this.props.setSelectedService('certifiedSms');
       this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
@@ -935,15 +937,16 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );
         (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedDocument") {
       this.props.setSelectedService('certifiedDocument');
       this.props.setTitle(i18n.t('messageEditor.certifiedDocumentTitle'));
       this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
       this.props.preloadCertifiedDocuments(lefebvre.userId)
       .catch(err => { throw new Error(err);} );
-      
       (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
       (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+      (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
@@ -1183,7 +1186,7 @@ const mapDispatchToProps = dispatch => ({
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
   preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth),
-  preloadCertifiedDocuments: (userId) => getUserCertifiedDocuments(dispatch, userId),
+  preloadCertifiedDocuments: (userId) => preloadCertifiedDocuments(dispatch, userId),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   emailClicked: email => dispatch(selectEmail(email)),
   smsClicked: sms => dispatch(selectSms(sms)),

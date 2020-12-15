@@ -137,10 +137,14 @@ class UserLefebvre extends Component {
                 .then( res => {
                     if (res == true){
                         
-                        const token = Cookies.get(`Lefebvre.Signaturit.${user}`)
+                        var token = Cookies.get(`Lefebvre.Signaturit.${user}`)
                         
                         if (token)
                         Cookies.remove(`Lefebvre.Signaturit.${user}`)
+
+                        if (token === undefined) {
+                            token = this.props.match.params.token;
+                        }
                         //store the new token in cookie
                         Cookies.set(`Lefebvre.Signaturit.${user}`, this.props.match.params.token, {
                             expires: 1,
@@ -148,6 +152,7 @@ class UserLefebvre extends Component {
                           });
         
                         this.props.setToken(this.props.match.params.token);
+                        //token = this.props.match.params.token;
                     
                         if (signatureRole){
                             getUserSignatures(user)
@@ -487,7 +492,7 @@ class UserLefebvre extends Component {
                                     }
                                 } 
                             });
-                            
+
                             if (service === 'certifiedSms' && app === 'centinela'){
                                 getContactsCentinela(user)
                                 .then( contacts => {
