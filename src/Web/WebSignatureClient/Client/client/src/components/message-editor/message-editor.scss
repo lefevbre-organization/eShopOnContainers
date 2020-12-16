@@ -413,13 +413,39 @@ $flag-size: 18px;
   }
   .dropzone {
       box-sizing: border-box;
-      height: 132px;
+      height: auto;
       background: #F0F0FD;
       border: 1px dashed rgba(100,124,138,0.4);
       border-radius: 4px;
-      text-align: center;
-      padding: 20px;
+      padding: 100px;
       margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+  }
+
+  .icon-drag-drop {
+      color: #7680B1;
+      font-size: 5rem;
+      margin-bottom: 50px;
+  }
+
+  p {
+    color: #7680B1;
+  }
+
+  .drop-file {
+    font-size: 1.563rem;
+  } 
+
+  .desktop-file a {
+    border-bottom: 1px solid #7680B1;
+  }
+
+  .file-list {
+    display: grid;
+    grid-template-columns: max-content auto max-content;
   }
        
 }

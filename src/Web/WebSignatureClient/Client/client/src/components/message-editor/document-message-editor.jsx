@@ -5,8 +5,6 @@ import { Col } from 'reactstrap';
 import Dropzone from "react-dropzone";
 import styles from './message-editor.scss';
 
-
-
 class DocumentMessageEditor extends Component {
   constructor(props) {
     super(props);
@@ -14,6 +12,11 @@ class DocumentMessageEditor extends Component {
         files: []
     }
 
+  }
+
+  componentWillUnmount() {
+    // Make sure to revoke the data uris to avoid memory leaks
+    this.state.files.forEach(file => URL.revokeObjectURL(file.preview))
   }
 
   onDrop(files) {
@@ -42,24 +45,32 @@ class DocumentMessageEditor extends Component {
             xhr.open('POST', 'https://httpbin.org/post', true);
             xhr.send(formData);
     })
-
-   
   }
+  
+  getSizeFile(size) {
+    if (size === 0) return '0 Bytes';
 
-  omponentWillUnmount() {
-    // Make sure to revoke the data uris to avoid memory leaks
-    this.state.files.forEach(file => URL.revokeObjectURL(file.preview))
-  }
+    const kb = 1024;
+
+    const sizes = ['bytes', 'kb', 'mb', 'gb'];
+
+    const i = Math.floor(Math.log(size) / Math.log(kb));
+
+    return parseFloat((size / Math.pow(kb, i)).toFixed(2)) + ' ' + sizes[i];
+  } 
 
   render() {
-    const {files} = this.state;
-
+    const { files } = this.state;
+    console.log('document-message-editor', files);
     const thumbs = files.map(file => (
         <div key={file.name}>
-          <div>
-            <img
+          <div className={styles['file-list']}>
+            {/* <img
               src={file.preview}
-            />
+            /> */}
+            <span>{file.name}</span>
+            <span className="ml-5">{this.getSizeFile(file.size)}</span>
+            <a ><span className="lf-icon-close-round light-blue-text"></span></a>
           </div>
         </div>
       ));
@@ -74,10 +85,13 @@ class DocumentMessageEditor extends Component {
           {({getRootProps, getInputProps}) => (
             <div {...getRootProps({ className: styles['dropzone'] })}>
               <input {...getInputProps()} />
-              <p>Drop files here</p>
+              <span className={`lf-icon-drag-drop ${styles['icon-drag-drop']}`}></span>
+              <p className={styles['drop-file']}>Arrastra tu archivo aquí</p>
+              <p className={styles['desktop-file']}>o cárgalo desde <a>tu equipo</a> </p>
             </div>
           )}
         </Dropzone>
+        <h5 className="light-blue-text">Archivo</h5>
         <aside>
           {thumbs}
         </aside>
