@@ -1,0 +1,37 @@
+<div class="form-group row">
+    <label for="@Id" class="col-sm-2 col-form-label">@Etiqueta</label>
+    <div class="col-sm-10">
+        <input type="text" class="@plaintext" id="@Id" value="@Data" readonly="@inputreadonly" @oninput="@OnDataChanged" />
+    </div>
+</div>
+
+@code {
+    
+    [Parameter]
+    public string Id { get; set; } = "";
+
+    [Parameter]
+    public string Etiqueta { get; set; } = "";
+
+    [Parameter]
+    public string Data {get; set;}
+
+    [Parameter]
+    public EventCallback<string> DataChanged  { get; set; }
+
+    private async Task OnDataChanged(ChangeEventArgs e)
+    {
+        Data = e.Value.ToString();
+        await DataChanged.InvokeAsync(Data);
+    }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    private bool inputreadonly => ReadOnly;
+
+    private string plaintext => ReadOnly?   "form-control-plaintext": "form-control";
+
+
+
+}

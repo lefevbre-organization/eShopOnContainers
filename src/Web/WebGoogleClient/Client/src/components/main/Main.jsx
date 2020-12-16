@@ -755,6 +755,7 @@ export class Main extends Component {
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
                       googleUser={this.props.googleUser}
+                      labelsResult={this.props.labelsResult}
                     />
                   )}
                 />
@@ -784,6 +785,7 @@ export class Main extends Component {
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
                       googleUser={this.props.googleUser}
+                      labelsResult={this.props.labelsResult}
                     />
                   )}
                 />

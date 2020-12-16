@@ -485,21 +485,21 @@ class UserLefebvre extends Component {
                                     }
                                 } 
                             });
-                            if (service === 'certifiedSms' && app === 'centinela'){
-                                getContactsCentinela(user)
-                                .then( contacts => {
-                                    var contactsInfo = []
-                                    mailContacts.forEach(phone => {
-                                        var contact = contacts.data.filter(c => c.phoneNumber1 === phone || c.phoneNumber2 === phone);
-                                        if (contact.length > 0){
-                                           contactsInfo.push({name: contact[0].fullName, email: contact[0].email, phone: `${phone}`})
-                                        }
-                                    });
-                                    if (contactsInfo.length > 0){
-                                        this.props.setCenContacts(contactsInfo);
-                                    }
-                                })
-                            }
+                            // if (service === 'certifiedSms' && app === 'centinela'){
+                            //     getContactsCentinela(user)
+                            //     .then( contacts => {
+                            //         var contactsInfo = []
+                            //         mailContacts.forEach(phone => {
+                            //             var contact = contacts.data.filter(c => c.phoneNumber1 === phone || c.phoneNumber2 === phone);
+                            //             if (contact.length > 0){
+                            //                contactsInfo.push({name: contact[0].fullName, email: contact[0].email, phone: `${phone}`})
+                            //             }
+                            //         });
+                            //         if (contactsInfo.length > 0){
+                            //             this.props.setCenContacts(contactsInfo);
+                            //         }
+                            //     })
+                            // }
                         }
                         this.setState({readyToRedirect: true})
                     }

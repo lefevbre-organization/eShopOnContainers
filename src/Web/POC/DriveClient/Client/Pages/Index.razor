@@ -1,0 +1,51 @@
+﻿@page "/"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+
+<h1>@sub</h1>
+
+<section class="mb-4">
+
+    <h1 class="mb-4">Authentication State Provider</h1>
+
+    <h2 class="mb-4">Hello, @this.AuthenticationStateProviderUser.Identity.Name!</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Key</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in this.AuthenticationStateProviderUser.Claims)
+            {
+                <tr>
+                    <td>@claim.Type</td>
+                    <td>@claim.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</section>
+
+@code {
+    
+    private ClaimsPrincipal AuthenticationStateProviderUser { get; set; }
+    private string sub {get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        AuthenticationState authenticationState;
+        authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        this.AuthenticationStateProviderUser = authenticationState.User;
+        foreach (var item in this.AuthenticationStateProviderUser.Claims)
+        {
+            if(item.Type == "sub")   sub = item.Value.ToString();
+        }
+         
+    }
+}

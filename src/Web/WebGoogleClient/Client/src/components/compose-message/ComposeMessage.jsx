@@ -332,8 +332,10 @@ export class ComposeMessage extends PureComponent {
               });
             }
 
-            this.getAttachById(messageId, attachments);
-          
+            if(attachments) {
+              this.getAttachById(messageId, attachments);
+            }
+         
             this.setState({
               subject: subject.value, 
               defaultContent: this.props.emailMessageResult.body,
@@ -383,10 +385,20 @@ export class ComposeMessage extends PureComponent {
   }
 
   closeModal() {
-    this.props.history.push('/inbox');
+    const findSelected = this.props.labelsResult.labels.find(x =>
+      x.name == "DRAFT" && x.selected == true
+     );
+     if(findSelected) {
+      this.props.history.push(`/${findSelected.id}`);
+     } else if(this.state.draftId) {
+      this.props.history.push('/draft');
+     } else {
+      this.props.history.push('/inbox');
+     }
+    
   }
 
-  goBack() {
+   goBack() {
     if (this.props.casefile != null && this.props.casefile !== undefined) {
       window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
       this.props.setCaseFile({
@@ -397,8 +409,13 @@ export class ComposeMessage extends PureComponent {
     } else if (this.props.mailContacts) {
       this.props.setMailContacts(null);
     }
-    deleteDraft({ draftId: this.state.draftId });
-    this.props.history.push('/inbox');
+    if(this.state.draftId) {
+        deleteDraft({ draftId: this.state.draftId }).then(() => {
+          this.closeModal();
+        });
+    } else {
+      this.closeModal();
+    } 
   }
 
   async sentEmail(message) {
@@ -546,7 +563,7 @@ export class ComposeMessage extends PureComponent {
       this.setState({ showEmptySubjectWarning: true });
       return;
     }
-    deleteDraft({ draftId: this.state.draftId });
+
     this._sendEmail();
   }
 
@@ -662,7 +679,13 @@ export class ComposeMessage extends PureComponent {
         console.log('Error sending email:' + err);
       });
     this.resetFields();
-    this.closeModal();
+    if(this.state.draftId) {
+        deleteDraft({ draftId: this.state.draftId }).then(() => {
+          this.closeModal();
+        });
+    } else {
+      this.closeModal();
+    } 
   }
 
   getContentByHeader(message, header) {

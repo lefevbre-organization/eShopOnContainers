@@ -88,7 +88,6 @@ class ModalImportEvents extends Component {
     }
 
     setLoading(loading) {
-        debugger
         this.setState({showSpinner: loading});
     }
 

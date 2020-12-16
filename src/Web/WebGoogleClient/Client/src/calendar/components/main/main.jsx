@@ -53,6 +53,7 @@ import { EventsImport } from '../events-import/events'
 import { getEventTypes } from "../../../api/accounts";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 import AttendeeAddress from './attendee/attendee-address';
+import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
 
 export class Main extends Component {
@@ -212,7 +213,15 @@ export class Main extends Component {
 
 
     onCloseDialog() {
+        console.log()
         this.LoadCalendarList(false)
+        const buttons = document.getElementsByClassName("e-footer-content");
+        if(buttons) {
+            for (let i = 0; i < buttons.length; i ++) {
+                buttons[i].style.visibility = 'visible';
+            }
+        }
+
 
         if (window != window.top) {
             window.top.postMessage(
@@ -312,7 +321,6 @@ export class Main extends Component {
             .then(result => {
                 this.LoadCalendarList(true)
                 this.sidebarCalendarList();
-
                 this.scheduleData = this.scheduleData.filter(function (obj) {
                     return obj.CalendarId !== calendarid;
                 });
@@ -688,7 +696,6 @@ export class Main extends Component {
                     reminders = event.reminders.overrides;
                 }
 
-
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -1056,18 +1063,38 @@ export class Main extends Component {
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
+        debugger
 
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
+            if(args.selectedIndex === 0 && args.selectingIndex === 1) {
+                // Hide buttons
+                const buttons = document.getElementsByClassName("e-footer-content");
+                if(buttons) {
+                    for (let i = 0; i < buttons.length; i ++) {
+                        buttons[i].style.visibility = 'hidden';
+                    }
+                }
+            } else if(args.selectedIndex === 1 && args.selectingIndex === 0) {
+                // Show buttons
+                const buttons = document.getElementsByClassName("e-footer-content");
+                if(buttons) {
+                    for (let i = 0; i < buttons.length; i ++) {
+                        buttons[i].style.visibility = 'visible';
+                    }
+                }
+            }
+
             if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
                 // this.tabObj.refresh()
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id == undefined) {
-                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                    //this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
                     //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
+                    debugger
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
@@ -1077,7 +1104,6 @@ export class Main extends Component {
         }
         else {
             args.cancel = true
-
         }
     }
 
@@ -1360,14 +1386,13 @@ export class Main extends Component {
                 rowReminders.appendChild(containerRem);
                 var nodeR = ReactDOM.findDOMNode(this.remObj);
                 containerRem.appendChild(nodeR);
-
             }
 
             // if from iframe is requested a new event
             if (!this.layoutIframeNewEventView) {
 
                 let TabContainer = args.element.querySelector('.custom-tab-row');
-                if (TabContainer == null) {
+                if (TabContainer === null) {
                     if (args.element.querySelector('.e-dlg-content')) {
                         let formContainer = args.element.querySelector('.e-schedule-form');
                         let Element = args.element.querySelector('.e-dlg-content');
@@ -1521,6 +1546,7 @@ export class Main extends Component {
                 break;
 
             case 'eventChanged':
+                debugger
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -1622,6 +1648,12 @@ export class Main extends Component {
 
             case 'eventCreated':
 
+/*                if(args.data[0].Id) {
+                    // refresh events view from api
+                    this.LoadCalendarList(false)
+                    return;
+                }*/
+
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
@@ -1715,6 +1747,7 @@ export class Main extends Component {
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
+        debugger
         addCalendarEvent(CalendarId, event)
             .then(result => {
                 if (!hiddeMessage) {
@@ -2020,6 +2053,8 @@ export class Main extends Component {
                 return this.renderSpinner();
             }
         }
+
+        console.log("Rendering.... " + this.scheduleData.length)
 
         return (
             <div id='target' className='control-section'>
