@@ -211,6 +211,8 @@ class ComposeMessageEditor extends React.Component {
           ref={ref => (this.refEditor = ref)}
           showCharCount={false}
           locale={'es-ES'}
+          showCharCount={(this.props.caller && this.props.caller === 'sms') ? true : false}
+          maxLength={(this.props.caller && this.props.caller === 'sms') ? (this.props.certType && this.props.certType === 'delivery') ? 120 : 100 : -1}
           insertImageSettings={{ saveFormat: 'Base64' }}
           toolbarSettings={toolbarSettings}
           value={defaultValue}
