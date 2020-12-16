@@ -120,6 +120,7 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
+    "smsCharCounter": "Message SMS. Maximum #char caractères.",
     "grid": {
       "name": "Nom",
       "email": "Email",
@@ -279,7 +280,7 @@
   },
   "maxCharactersModal": {
     "text": "Le nombre maximum de caractères pour un SMS est de 120.",
-    "text2": "Le nombre maximum de caractères pour un sms avec fichiers joints est de 100."
+    "text2": "Le nombre maximum de caractères pour un SMS avec fichiers joints est de 100."
   },
   "attachmentsWidget": {
     "title": "pièces jointes",
@@ -319,9 +320,9 @@
     "open_email": "Le destinataire a ouvert l'e-mail",
     "open_document": "Le destinataire a consulté les documents (pdf uniquement)",
     "open_every_document": "Le destinataire a ouvert tous les documents (pdf uniquement)",
-    "delivery_sms": "Le destinataire a reçu le sms",
-    "open_document_sms": "Le destinataire a consulté les documents",
-    "open_every_document_sms": "Le destinataire a ouvert tous les documents"
+    "delivery_sms": "Le destinataire a reçu le SMS",
+    "open_document_sms": "Le destinataire a consulté les documents (pdf uniquement)",
+    "open_every_document_sms": "Le destinataire a ouvert tous les documents (pdf uniquement)"
   },
   "emailViewer": {
     "certification": "Type de certification sélectionné:",
@@ -397,8 +398,8 @@
         "docOpened": "Document ouvert",
         "docSigned": "Document signé",
         "docValidated": "Document validé",
-        "smsSent": "Sms ennvoyé",
-        "smsDelivered": "Sms remis"
+        "smsSent": "SMS ennvoyé",
+        "smsDelivered": "SMS remis"
       },
       "footer": {
         "title": "Rappels envoyés",

@@ -44,7 +44,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
         public IActionResult Test()
         {
             var data = $"Conference v.{ _settings.Value.Version}";
-            _log.LogError(data);
+            //_log.LogError(data);
             return Ok(new Result<string>(data));
         }
 

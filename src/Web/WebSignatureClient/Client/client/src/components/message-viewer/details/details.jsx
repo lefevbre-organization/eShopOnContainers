@@ -54,7 +54,7 @@ const Details = (props) => {
                       <li>Maria cruces <span className={props.styles.email}>m.lopez@gsel.com</span></li>
                   </ul> */}
                   <span>
-                  <DropDownButtonComponent className={`${props.styles['bola-firmantes']} ${props.styles[props.status_style]}`} items={props.getSigners(props.detail)}>{props.getSigners(props.detail).length}</DropDownButtonComponent>
+                  <DropDownButtonComponent cssClass={`${props.styles['bola-firmantes']} ${props.styles[props.status_style]}`} items={props.getSigners(props.detail)}>{props.getSigners(props.detail).length}</DropDownButtonComponent>
                   </span>
               </td>
                 <td>

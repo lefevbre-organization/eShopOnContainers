@@ -1,0 +1,160 @@
+@page "/configuration"
+@attribute [Authorize]
+@using System.Security.Claims
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using Lefebvre.Shared
+
+<div class="container">
+    
+    <h1 class="mb-5">Configuración del Usuario</h1>
+    
+    <div style="display: none;">
+        <Textbox Id="clienteid" Etiqueta="Cliente ID" @bind-Data="@Secret.ClientId" ReadOnly="@Secret.SaveKeys" />
+        <Textbox Id="secretid" Etiqueta="Secret ID" @bind-Data="@Secret.ClientSecret" ReadOnly="@Secret.SaveKeys" />
+        
+        @if(!Secret.SaveKeys)
+        {
+            <button class="btn btn-primary ml-2" @onclick="SaveSecret">Guardar Llaves</button>
+        }
+    </div>
+
+    <div class="dropdown-divider"></div>
+    
+    <Textbox Id="token" Etiqueta="Token" @bind-Data="@Token.Token" ReadOnly="@Token.TokenReadOnly" />
+    <Textbox Id="refreshtoken" Etiqueta="Refresh Token" @bind-Data="@Token.TokenRefresh" ReadOnly="@Token.TokenReadOnly" />
+    <div class="dropdown-divider"></div>
+    @if(Token.TokenReadOnly)
+    {
+        <button class="btn btn-primary" @onclick="RefreshTokenAccess">Refrescar Token</button>
+    }else{
+        <button class="btn btn-primary" @onclick="SaveToken" >Guardar Tokens</button>
+    }
+
+    <div class="mb-5"></div>
+    <h2>Instrucciones de Configuración.</h2>
+    <p>Para poder generar los Tokens de acceso por favor ir a <a href="https://developers.google.com/oauthplayground" target="_blank" rel="noopener noreferrer">OAuth PlayGround de Google</a> 
+    y habilitar las siguientes APIS:
+    </p>
+    <ul>
+        <li>Drive API v3 > https://www.googleapis.com/auth/drive</li>
+    </ul>
+    <img src="imagen1.png" />
+    <p>Paso seguido hacer click a Authorize APIs y autenticarse con la Cuenta que desea gestionar en la aplicación.</p>
+
+    <p>Por último genere genere los token de acceso dando click al boton Exchange authorization code for tokens</p>
+
+    <img src="imagen2.png" />
+
+    <p>Copie y pegue los tokens de acceso y de click en Guardar.</p>
+</div>
+
+@code {
+
+    private ClaimsPrincipal AuthenticationStateProviderUser { get; set; }
+    public string sub {get; set; }
+    public GoogleSecret Secret { get; set; }
+    public GoogleToken Token { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        Secret = new GoogleSecret(){ ClientReadOnly = false};
+        Token = new GoogleToken() { TokenReadOnly = false } ;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        AuthenticationState authenticationState;
+        authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        this.AuthenticationStateProviderUser = authenticationState.User;
+        foreach (var item in this.AuthenticationStateProviderUser.Claims)
+        {
+            if(item.Type == "sub")   sub = item.Value.ToString();
+        }
+        await RefreshSecret();
+        await RefreshToken();
+    }
+
+    public async Task RefreshSecret()
+    {
+        try
+        {
+            Secret = await Http.GetFromJsonAsync<GoogleSecret>($"Secret/GetSecret?UserId={sub}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+
+    public async Task RefreshToken()
+    {
+        try
+        {
+            Token = await Http.GetFromJsonAsync<GoogleToken>($"Token/GetToken?UserId={sub}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+
+    public async Task RefreshTokenAccess()
+    {
+        try
+        {
+            await Http.GetAsync($"Token/RefreshToken?UserId={sub}");
+            await RefreshToken();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+
+    public async Task SaveSecret()
+    {
+        try
+        {
+            Secret.UserId = sub;
+            var _request = await Http.PostAsJsonAsync<GoogleSecret>("Secret/CreateSecret", Secret);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    public async Task SaveToken()
+    {
+        try
+        {
+            Token.UserId = sub;
+            var _request = await Http.PostAsJsonAsync<GoogleToken>("Token/CreateToken", Token);
+        }
+        catch (System.Exception)
+        {
+            
+            throw;
+        }
+    }
+
+
+
+
+}

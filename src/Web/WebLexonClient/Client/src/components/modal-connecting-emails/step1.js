@@ -184,7 +184,7 @@ export class ConnectingEmailsStep1 extends React.Component {
 }
 
 const getAttachmentName = (attach) => {
-  return attach.headers['content-type'][0].params.name;
+  return attach.name;
 };
 
 const MessageWithAttachments = ({msg, onChange}) => {

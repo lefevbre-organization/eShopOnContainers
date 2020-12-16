@@ -121,6 +121,7 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
+    "smsCharCounter": "Mensaje SMS. Máximo #char caracteres.",
     "grid": {
       "name": "Nombre",
       "email": "Email",
@@ -279,8 +280,8 @@
     "text": "La opción seleccionada sólo admite archivos en formato pdf."
   },
   "maxCharactersModal": {
-    "text": "El número máximo de caracteres para un sms es 120.",
-    "text2": "El número máximo de caracteres para un sms con ficheros adjuntos es 100."
+    "text": "El número máximo de caracteres para un SMS es 120.",
+    "text2": "El número máximo de caracteres para un SMS con ficheros adjuntos es 100."
   },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
@@ -320,9 +321,9 @@
     "open_email": "El receptor ha abierto el email",
     "open_document": "El receptor ha visto los documentos (sólo pdf)",
     "open_every_document": "El receptor ha abierto todos los documentos (sólo pdf)",
-    "delivery_sms": "El destinatario ha recibido el sms",
-    "open_document_sms": "El destinatario ha visto los documentos",
-    "open_every_document_sms": "El destinatario ha abirto todos los documentos"
+    "delivery_sms": "El destinatario ha recibido el SMS",
+    "open_document_sms": "El destinatario ha visto los documentos (sólo pdf)",
+    "open_every_document_sms": "El destinatario ha abirto todos los documentos (sólo pdf)"
   },
   "emailViewer": {
     "certification": "Tipo de certificación seleccionada:",
@@ -398,8 +399,8 @@
         "docOpened": "Documento abierto",
         "docSigned": "Documento firmado",
         "docValidated": "Documento validado",
-        "smsSent": "Sms enviado",
-        "smsDelivered": "Sms entregado"
+        "smsSent": "SMS enviado",
+        "smsDelivered": "SMS entregado"
       },
       "footer": {
         "title": "RECORDATORIOS ENVIADOS",

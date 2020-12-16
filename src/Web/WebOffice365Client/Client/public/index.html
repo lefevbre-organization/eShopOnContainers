@@ -40,6 +40,13 @@
     <script src="https://transloadit.edgly.net/releases/uppy/v0.29.1/dist/uppy.min.js"></script>
     <script src="https://svc.webspellchecker.net/spellcheck31/wscbundle/wscbundle.js"></script>
     <script src="%PUBLIC_URL%/config.js"></script>
+    <script src="/assets/wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("/assets/mimeparser.wasm?v=0.4"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
     <title>Lefebvre Mail</title>
     <style>
         .preloader-holder-blue {

@@ -107,7 +107,7 @@ const SmsList = (props) => {
             ? <div className={props.styles.p15}>
                 <h2 className={props.styles['document-title']}>{i18n.t('emailViewer.attaches')}</h2>
                 {documentFilter.map(certificate => 
-                  <FooterList {...{...props, certificate, documentType}} />   
+                  <FooterList {...{...props, certificate, documentType, certificationCompleted}} />   
                 )}
               </div> 
             : null

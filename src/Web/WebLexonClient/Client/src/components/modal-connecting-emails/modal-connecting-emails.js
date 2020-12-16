@@ -12,6 +12,7 @@ import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import {ConnectingEmailsStep1b} from "./step1b";
+import dbStore from "../../services/dbstore";
 const base64js = require('base64-js');
 
 class ModalConnectingEmails extends Component {
@@ -42,12 +43,6 @@ class ModalConnectingEmails extends Component {
   componentDidMount() {
 
     const messages = [...this.props.selectedMessages];
-    for(let i = 0; i < messages.length; i++) {
-      const mime = parse(messages[i].raw);
-      const attachments = findAttachments(mime);
-      messages[i].attachments = attachments;
-    }
-
     this.setState({ messages });
   }
 
@@ -57,12 +52,6 @@ class ModalConnectingEmails extends Component {
       JSON.stringify(this.props.selectedMessages)
     ) {
       const messages = [...this.props.selectedMessages];
-      for(let i = 0; i < messages.length; i++) {
-        const mime = parse(messages[i].raw);
-        const attachments = findAttachments(mime);
-        messages[i].attachments = attachments;
-      }
-
       this.setState({ messages });
     }
   }
@@ -268,14 +257,15 @@ class ModalConnectingEmails extends Component {
 
           if (step1Data.saveDocuments === true) {
             // Save attachments
-            //const mime = parse(messages[i].raw);
             const attachments = messages[i].attachments;    //findAttachments(mime);
+            const msg = await  dbStore.getMessage(messages[i].id);
 
             for (let j = 0; j < attachments.length; j++) {
               if(attachments[j].checked === false) {
                 continue;
               }
-              let rawAttach = base64js.fromByteArray(attachments[j].content);
+
+              let rawAttach = base64js.fromByteArray(msg.attachments[j].Content);
               try {
                 const data = await uploadFile(
                   step1Data.actuation === false
@@ -286,7 +276,7 @@ class ModalConnectingEmails extends Component {
                   step1Data.actuation === true ? sc[i] : undefined,
                   this.props.companySelected.bbdd,
                   this.props.user.idUser,
-                  attachments[j].contentType.params.name,
+                  attachments[j].name,
                   rawAttach
                 );
                 if (!data || data.response.status > 201) {
@@ -1146,36 +1136,4 @@ export default connect(
   mapDispatchToProps
 )(ModalConnectingEmails);
 
-const findAttachments = (email) => {
-  let attachs = [];
-  if (email.childNodes) {
-    for (let i = 0; i < email.childNodes.length; i++) {
-      if (
-        email.childNodes[i]._isMultipart === false &&
-        isAttachment(email.childNodes[i].headers)
-      ) {
-        attachs.push({
-          ...email.childNodes[i],
-          checked: true,
-        });
-      } else {
-        attachs = [...attachs, ...findAttachments(email.childNodes[i])];
-      }
-    }
-  }
-  return attachs;
-};
 
-const isAttachment = (node) => {
-  let bRes = false;
-  if (node['x-attachment-id']) {
-    bRes = true;
-  } else if (
-    node['content-disposition'] &&
-    node['content-disposition'][0].params.filename
-  ) {
-    bRes = true;
-  }
-
-  return bRes;
-};

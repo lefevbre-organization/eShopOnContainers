@@ -78,6 +78,7 @@ namespace Signature.API.Infrastructure
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseBrandings))) { BsonClassMap.RegisterClassMap<BaseBrandings>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserEmails))) { BsonClassMap.RegisterClassMap<UserEmails>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserSms))) { BsonClassMap.RegisterClassMap<UserSms>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserCertDocuments))) { BsonClassMap.RegisterClassMap<UserCertDocuments>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(SignEventInfo))) { BsonClassMap.RegisterClassMap<SignEventInfo>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(EmailEventInfo))) { BsonClassMap.RegisterClassMap<EmailEventInfo>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(SmsEventInfo))) { BsonClassMap.RegisterClassMap<SmsEventInfo>(); }
@@ -153,6 +154,13 @@ namespace Signature.API.Infrastructure
         public IMongoCollection<SmsEventInfo> SmsEvents => Database.GetCollection<SmsEventInfo>(_settings.Value.CollectionSmsEvents);
 
         public IMongoCollection<SmsEventInfo> SmsEventsTransaction => Database.GetCollection<SmsEventInfo>(_settings.Value.CollectionSmsEvents);
+
+        public IMongoCollection<UserCertDocuments> Documents => Database.GetCollection<UserCertDocuments>(_settings.Value.CollectionDocuments);
+
+        public IMongoCollection<UserCertDocuments> DocumentsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserCertDocuments>(_settings.Value.CollectionDocuments);
+        }
 
         //public IMongoCollection<SignatureMaster> SignatureMasters
         //{
