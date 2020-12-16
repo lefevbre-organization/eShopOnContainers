@@ -109,7 +109,6 @@ services:
       - rabbitmq
       - account.api
       - lexon.api
-      - lexon.mysql.api
       - userutils.api
       - centinela.api
       - signature.api
@@ -123,15 +122,14 @@ services:
       - nosql.data
       - rabbitmq
 
-  lexon.mysql.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-dev}
+  googledrive.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/googledrive.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
+      dockerfile: src/Services/Google/GoogleDrive.API/Dockerfile    
     depends_on:
       - nosql.data
       - rabbitmq
-      - lexon.api
 
   weblexonapigw:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
@@ -143,7 +141,6 @@ services:
       - rabbitmq
       - account.api
       - lexon.api
-      - lexon.mysql.api
       - userutils.api
       - centinela.api
       
