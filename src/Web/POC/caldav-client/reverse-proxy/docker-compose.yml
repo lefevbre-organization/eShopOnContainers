@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx:/etc/nginx
+    ports:
+      - 8001:8001 # Expose http and https
