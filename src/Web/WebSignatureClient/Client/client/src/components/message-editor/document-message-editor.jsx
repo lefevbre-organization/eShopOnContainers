@@ -4,6 +4,7 @@ import { translate } from 'react-i18next';
 import { Col } from 'reactstrap';
 import Dropzone from "react-dropzone";
 import styles from './message-editor.scss';
+import ProgressBar from '../progress-bar/progress-bar';
 
 class DocumentMessageEditor extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class DocumentMessageEditor extends Component {
             const xhr = new XMLHttpRequest();
             xhr.upload.onprogress = event => {
              const percentage = parseInt((event.loaded / event.total) * 100);
+            //  <ProgressBar key={file.name} completed={percentage} />
              console.log(percentage); // Update progress here
             };
             xhr.onreadystatechange = () => {
@@ -64,14 +66,12 @@ class DocumentMessageEditor extends Component {
     console.log('document-message-editor', files);
     const thumbs = files.map(file => (
         <div key={file.name}>
-          <div className={styles['file-list']}>
-            {/* <img
-              src={file.preview}
-            /> */}
-            <span>{file.name}</span>
-            <span className="ml-5">{this.getSizeFile(file.size)}</span>
+          <div className={`${styles['file-list']} mb-3`}>
+            <span className="light-blue-text">{file.name}</span>
+            <span className="ml-5 light-blue-text">{this.getSizeFile(file.size)}</span>
             <a ><span className="lf-icon-close-round light-blue-text"></span></a>
           </div>
+          <ProgressBar key={file.name} completed={60} />
         </div>
       ));
 
@@ -80,7 +80,7 @@ class DocumentMessageEditor extends Component {
             <div className={styles['box-attach']}>
             <Dropzone
                 onDrop={this.onDrop.bind(this)}
-                accept="image/*,audio/*,video/*"
+                accept="/*,.pdf"
             >
           {({getRootProps, getInputProps}) => (
             <div {...getRootProps({ className: styles['dropzone'] })}>

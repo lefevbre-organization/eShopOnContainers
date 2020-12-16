@@ -446,6 +446,7 @@ $flag-size: 18px;
   .file-list {
     display: grid;
     grid-template-columns: max-content auto max-content;
+    margin-top: 10px;
   }
        
 }
