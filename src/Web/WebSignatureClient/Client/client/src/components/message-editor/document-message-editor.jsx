@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import { Col } from 'reactstrap';
 import Dropzone from "react-dropzone";
+import i18n from 'i18next';
 import styles from './message-editor.scss';
 import ProgressBar from '../progress-bar/progress-bar';
 
@@ -13,11 +14,6 @@ class DocumentMessageEditor extends Component {
         files: []
     }
 
-  }
-
-  componentWillUnmount() {
-    // Make sure to revoke the data uris to avoid memory leaks
-    this.state.files.forEach(file => URL.revokeObjectURL(file.preview))
   }
 
   onDrop(files) {
@@ -72,30 +68,46 @@ class DocumentMessageEditor extends Component {
             <a ><span className="lf-icon-close-round light-blue-text"></span></a>
           </div>
           <ProgressBar key={file.name} completed={60} />
+          <div className={`${styles['file-percentage']} mt-2`}>
+            <span className="light-blue-text">73% completado</span>
+            <span className="light-blue-text">96kb/sec</span>
+          </div>
         </div>
       ));
 
     return (
         <Col md="12" className={styles['document-message-editor']}>
-            <div className={styles['box-attach']}>
+          <div className={styles['box-attach']}>
             <Dropzone
                 onDrop={this.onDrop.bind(this)}
-                accept="/*,.pdf"
-            >
-          {({getRootProps, getInputProps}) => (
-            <div {...getRootProps({ className: styles['dropzone'] })}>
-              <input {...getInputProps()} />
-              <span className={`lf-icon-drag-drop ${styles['icon-drag-drop']}`}></span>
-              <p className={styles['drop-file']}>Arrastra tu archivo aquí</p>
-              <p className={styles['desktop-file']}>o cárgalo desde <a>tu equipo</a> </p>
+                accept="/*,.pdf" >
+              {({getRootProps, getInputProps}) => (
+                <div {...getRootProps({ className: styles['dropzone'] })}>
+                  <input {...getInputProps()} />
+                  <span className={`lf-icon-drag-drop ${styles['icon-drag-drop']}`}></span>
+                  <p className={styles['drop-file']}>{i18n.t('documentEditor.dragDrop')}</p>
+                  <p className={styles['desktop-file']}>
+                  {i18n.t('documentEditor.upload')} 
+                    <a className="ml-1">
+                      {i18n.t('documentEditor.computer')}
+                    </a> 
+                  </p>
+                </div>
+               )}
+            </Dropzone>
+              <h5 className="light-blue-text">{i18n.t('documentEditor.file')}</h5>
+            <aside>
+              {thumbs}
+            </aside>
+            <div className={`${styles['container-action']} mt-4`}>
+                <button className={`${styles['btn-action']} ${styles['btn-action-cancel']}`}>
+                  {i18n.t('documentEditor.cancelButton')}
+                </button>
+                <button className={`${styles['btn-action']} ${styles['btn-action-certification']}`}>
+                  {i18n.t('documentEditor.acceptButton')}
+                </button>
             </div>
-          )}
-        </Dropzone>
-        <h5 className="light-blue-text">Archivo</h5>
-        <aside>
-          {thumbs}
-        </aside>
-            </div>
+          </div>
         </Col> 
     );
   }

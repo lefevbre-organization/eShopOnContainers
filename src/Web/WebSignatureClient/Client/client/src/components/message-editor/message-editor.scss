@@ -448,7 +448,55 @@ $flag-size: 18px;
     grid-template-columns: max-content auto max-content;
     margin-top: 10px;
   }
-       
+    
+  .file-percentage {
+    display: grid;
+    grid-template-columns: auto max-content;
+  }
+
+  .container-action {
+    text-align: right;
+  }
+
+  .btn-action {
+    text-decoration: none;
+    letter-spacing: .5px;
+    font-size: 14px;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 12px 41px;
+    text-transform: uppercase;
+    border: 2px solid #001978;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  .btn-action-cancel {
+    background: #ffffff;
+    color: #001978;                   
+  }
+
+  .btn-action-certification {
+    background: #001978;
+    color: #FFFFFF;
+    margin-left: 9px;
+  }
+   
+  .btn-action-cancel:hover {
+     background: #ffffff;
+     color: #9a9a9a;
+     border: 2px solid #9a9a9a;
+  }
+  
+  .btn-action-certification:hover, 
+  .btn-action-certification:active, 
+  .btn-action-certification:focus {
+    background: #9a9a9a;
+    border: 2px solid #9a9a9a;
+    color: #FFF;
+  }
+
 }
 
 @media (max-width: 1300px) {

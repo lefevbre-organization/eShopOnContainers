@@ -428,6 +428,14 @@
     },
     "title": "DÉTAILS DE LA SIGNATURE"
   },
+   "documentEditor": {
+      "dragDrop": "Faites glisser votre fichier ici",
+      "upload": "ou téléchargez-le depuis",
+      "computer": "votre ordinateur",
+      "file": "Fichier",
+      "cancelButton": "ANULER",
+      "acceptButton": "CERTIFIER"
+  },
   "completedPage":{
     "title": "Le document a été signé avec succès.",
     "subtitle": "Nous avons envoyé une copie à votre adresse e-mail.",

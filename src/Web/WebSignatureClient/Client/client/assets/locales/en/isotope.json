@@ -410,6 +410,14 @@
     },
     "title": "SIGNATURE DETAILS"
   },
+  "documentEditor": {
+      "dragDrop": "Drag your file here",
+      "upload": "or upload it from",
+      "computer": "your computer",
+      "file": "File",
+      "cancelButton": "CANCEL",
+      "acceptButton": "CERTIFY"
+  },
   "completedPage":{
     "title": "Document has been processed successfully.",
     "subtitle": "A copy will be sent to your email account when the signing process ends.",
