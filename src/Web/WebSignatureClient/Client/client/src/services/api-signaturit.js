@@ -1576,7 +1576,7 @@ export const downloadCertfiedDocumentCopy = (id, fileName, auth) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/download/file/${id}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/download/${id}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);

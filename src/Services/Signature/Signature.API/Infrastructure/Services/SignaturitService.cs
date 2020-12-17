@@ -672,6 +672,25 @@ namespace Signature.API.Infrastructure.Services
             return response;
         }
 
+        public async Task<IRestResponse> DownloadCertifiedDocument(string id)
+        {
+            Console.WriteLine($"{_guid} - START DownloadCertifiedDocument");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files/{id}/download");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files/{id}/download");
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadCertifiedDocument");
+
+            return response;
+        }
+
         public async Task<IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo)
         {
             Console.WriteLine($"{_guid} - START CertifyDocumentSync");

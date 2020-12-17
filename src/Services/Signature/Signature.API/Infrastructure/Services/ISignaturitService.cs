@@ -44,6 +44,8 @@
 
         Task<RestSharp.IRestResponse> DownloadCertifiedDocumentAudit(string id);
 
+        Task<RestSharp.IRestResponse> DownloadCertifiedDocument(string id);
+
         Task<RestSharp.IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo);
     }
 }

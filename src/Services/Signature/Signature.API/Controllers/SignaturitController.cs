@@ -834,6 +834,47 @@
             }
         }
 
+        [HttpGet]
+        [Route("documentCertification/download/{id}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> DownloadCertifiedDocumentCopy([FromRoute] string id, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(id))
+                return BadRequest("A documentId must be provided.");
+
+            try
+            {
+
+                var response = await _signaturitService.DownloadCertifiedDocument(id);
+
+                var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+                string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+                return File(response.RawBytes, response.ContentType, fileName);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+
+            }
+        }
+
         [HttpPost]
         [Route("documentCertification/new/sync")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
