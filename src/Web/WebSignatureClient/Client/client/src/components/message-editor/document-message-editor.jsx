@@ -4,6 +4,7 @@ import { translate } from 'react-i18next';
 import { Col } from 'reactstrap';
 import Dropzone from "react-dropzone";
 import i18n from 'i18next';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
 import ACTIONS from '../../actions/lefebvre';
 import { editMessage, setTitle } from '../../actions/application';
@@ -19,9 +20,13 @@ class DocumentMessageEditor extends Component {
     super(props);
     this.state = {
         files: [],
-        percentage: 0
+        percentage: 0,
+        maxPercentage: 100,
+        maxSize: 15,
+        hideAlertDialog: false
     }
-
+    this.dialogOpen = this.dialogOpen.bind(this);
+    this.animationSettings = { effect: 'None' };
   }
 
   resetReceivedInfo() {
@@ -32,30 +37,36 @@ class DocumentMessageEditor extends Component {
   }
 
   onDrop(files) {
-    this.setState({
-      files: files.map(file => Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      }))
-    })
-    const uploaders = files.map(file => {
-      const formData = new FormData()
-      formData.append('file', file);
-
-            const xhr = new XMLHttpRequest();
-            xhr.upload.onprogress = event => {
-             const percentage = parseInt((event.loaded / event.total) * 100);
-            this.setState({percentage}); // Update progress here
-            };
-            xhr.onreadystatechange = () => {
-              if (xhr.readyState !== 4) return;
-              if (xhr.status !== 200) {
-               console.log('error'); // Handle error here
-              }
-               console.log('success'); // Handle success here
-            };
-            xhr.open('POST', 'https://httpbin.org/post', true);
-            xhr.send(formData);
-    })
+    const fileSize = Math.floor((files[0].size / Math.pow(1024, 2)))
+    if(fileSize <= this.state.maxSize) {
+      this.setState({
+        files: files.map(file => Object.assign(file, {
+          preview: URL.createObjectURL(file)
+        }))
+      })
+      const uploaders = files.map(file => {
+        const formData = new FormData()
+        formData.append('file', file);
+  
+              const xhr = new XMLHttpRequest();
+              xhr.upload.onprogress = event => {
+               const percentage = parseInt((event.loaded / event.total) * 100);
+              this.setState({percentage}); // Update progress here
+              };
+              xhr.onreadystatechange = () => {
+                if (xhr.readyState !== 4) return;
+                if (xhr.status !== 200) {
+                 console.log('error'); // Handle error here
+                }
+                 console.log('success'); // Handle success here
+              };
+              xhr.open('POST', 'https://httpbin.org/post', true);
+              xhr.send(formData);
+      })
+    } else {
+      this.setState({hideAlertDialog: true});
+    }
+   
   }
   
   getSizeFile(size) {
@@ -63,7 +74,7 @@ class DocumentMessageEditor extends Component {
 
     const kb = 1024;
 
-    const sizes = ['bytes', 'kb', 'mb', 'gb'];
+    const sizes = ['bytes', 'kb', 'mb'];
 
     const i = Math.floor(Math.log(size) / Math.log(kb));
 
@@ -90,9 +101,28 @@ class DocumentMessageEditor extends Component {
     createCertifiedDocument(this.props.lefebvre.userId, uuid(), this.state.files, this.props.lefebvre.token)
   }
 
+  dialogOpen(instance){
+    switch (instance) {
+        case "alertDialog":
+            (this.alertDialogInstance && this.alertDialogInstance.cssClass) ? this.alertDialogInstance.cssClass = 'e-fixed' : null;
+            break;
+        default:
+            break;
+    }
+}
+
+  dialogClose(){
+    this.setState({
+        hideAlertDialog: false
+    });
+  }
+
   render() {
 
-    const { files } = this.state;
+    const { 
+      files, 
+      maxPercentage 
+    } = this.state;
     const {
       application,
       lefebvre
@@ -104,7 +134,7 @@ class DocumentMessageEditor extends Component {
             <span className="light-blue-text">{file.name}</span>
             <span className="ml-5 light-blue-text">{this.getSizeFile(file.size)}</span>
             <a onClick={() => this.removeFile(file.name)}>
-             {this.state.percentage === 100 ? 
+             {this.state.percentage === maxPercentage ? 
              <span className="lf-icon-trash light-blue-text"></span> : 
              <span className="lf-icon-close-round light-blue-text"></span>
              } 
@@ -117,6 +147,14 @@ class DocumentMessageEditor extends Component {
           </div>
         </div>
       ));
+
+      const noAttachModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('bigFileModal.text')}
+      </div>`;
+
 
     return (
         <Col md="12" className={styles['document-message-editor']}>
@@ -151,14 +189,25 @@ class DocumentMessageEditor extends Component {
                   {i18n.t('documentEditor.cancelButton')}
                 </button>
                 <button className={`${styles['btn-action']} ${styles['btn-action-certification']}`} 
-                  disabled={this.state.percentage !== 100}
+                  disabled={this.state.percentage !== maxPercentage}
                   onClick={() => this.sendDocument()}
                 >
                   {i18n.t('documentEditor.acceptButton')}
                 </button>
             </div> : null}
           </div>
-        </Col> 
+          <DialogComponent 
+            id="infoDialogDocument" 
+            visible={this.state.hideAlertDialog} 
+            animationSettings={this.animationSettings} 
+            width='60%' 
+            content={noAttachModal}
+            ref={alertdialog => this.alertDialogInstance = alertdialog} 
+            open={this.dialogOpen("infoDialogDocument")} 
+            close={this.dialogClose}
+            showCloseIcon={true}
+        />   
+      </Col>
     );
   }
 

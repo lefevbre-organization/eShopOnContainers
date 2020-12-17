@@ -1495,3 +1495,24 @@ input[type='radio']:checked + label:after {
   font-family: MTTMilano, Lato, Arial, sans-serif;
   font-size: 0.7em !important;
 }
+
+#infoDialogDocument_dialog-header, 
+#infoDialogDocument_title, 
+#infoDialogDocument_dialog-content, 
+#infoDialogDocument.e-footer-content,
+#infoDialogDocument .e-footer-content {
+  background: #001970;
+  color: #fff;
+  display:flex;
+}
+#infoDialogDocument_dialog-header > button > span {
+  color: white;
+}   
+
+.e-dialog .e-dlg-header-content 
+.e-btn.e-dlg-closeicon-btn {
+  margin-right: 0;
+  margin-left: auto;
+  height: 15px;
+  background-color: transparent;
+}
