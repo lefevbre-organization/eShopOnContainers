@@ -289,7 +289,6 @@ class MessageList extends Component {
       }
 
       if (checked === true) {
-        debugger
         Promise.all(prs).then((msgs) => {
           for (let i = 0; i < msgs.length; i++) {
             const msg = msgs[i];
@@ -334,7 +333,6 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
-        debugger
         console.log('LoadingMessage: 5');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
         const rm = readMessageRaw(

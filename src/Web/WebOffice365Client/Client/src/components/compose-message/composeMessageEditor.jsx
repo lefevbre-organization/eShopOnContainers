@@ -213,6 +213,9 @@ const ComposeMessageEditor = props => {
         insertImageSettings={{ saveFormat: 'Base64' }}
         toolbarSettings={toolbarSettings}
         value={defaultValue}
+        blur={(content) => {
+          onChange && onChange(content.value);
+        }}
         change={content => {
           onChange && onChange(content.value);
         }}>

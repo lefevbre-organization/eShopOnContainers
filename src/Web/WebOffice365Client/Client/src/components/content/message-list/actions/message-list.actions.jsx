@@ -31,6 +31,7 @@ export const SET_OPEN_MESSAGE = 'SET_OPEN_MESSAGE';
 export const ADD_OPEN_MESSAGE_ATTACHMENT = 'ADD_OPEN_MESSAGE_ATTACHMENT';
 export const CLEAR_OPEN_MESSAGE_ATTACHMENT = 'CLEAR_OPEN_MESSAGE_ATTACHMENT';
 export const REMOVE_MESSAGE_FROM_LIST = 'REMOVE_MESSAGE_FROM_LIST';
+export const UPDATE_COMPOSER_DATA = 'UPDATE_COMPOSER_DATA';
 
 export const getLabelMessages = ({ labelIds, q = '', pageToken }) => (
   dispatch,
@@ -288,4 +289,11 @@ export const removeMessageFromList = (messageID) => (dispatch) => {
     type: REMOVE_MESSAGE_FROM_LIST,
     payload: messageID,
   });
+};
+
+export const updateComposerData = (data) => (dispatch) => {
+  dispatch({
+    type: UPDATE_COMPOSER_DATA,
+    payload: data
+  })
 };
