@@ -10,6 +10,8 @@ import { editMessage, setTitle } from '../../actions/application';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
 import ProgressBar from '../progress-bar/progress-bar';
+import { createCertifiedDocument } from '../../services/api-signaturit';
+import * as uuid from 'uuid/v4';
 
 
 class DocumentMessageEditor extends Component {
@@ -84,6 +86,10 @@ class DocumentMessageEditor extends Component {
     }
   }
 
+  sendDocument(){
+    createCertifiedDocument(this.props.lefebvre.userId, uuid(), 'webSignature')
+  }
+
   render() {
 
     const { files } = this.state;
@@ -140,11 +146,14 @@ class DocumentMessageEditor extends Component {
             {files.length > 0 ?
             <div className={`${styles['container-action']} mt-4`}>
                 <button className={`${styles['btn-action']} ${styles['btn-action-cancel']}`}
-                  onClick={() => this.removeDocumentMessageEditor(application)}>
+                  onClick={() => this.removeDocumentMessageEditor(application)}
+                >
                   {i18n.t('documentEditor.cancelButton')}
                 </button>
-                <button 
-                  className={`${styles['btn-action']} ${styles['btn-action-certification']}`} >
+                <button className={`${styles['btn-action']} ${styles['btn-action-certification']}`} 
+                  disabled={this.state.percentage !== 100}
+                  onClick={() => this.sendDocument()}
+                >
                   {i18n.t('documentEditor.acceptButton')}
                 </button>
             </div> : null}

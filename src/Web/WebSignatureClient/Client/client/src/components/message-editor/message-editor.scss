@@ -491,11 +491,18 @@ $flag-size: 18px;
   
   .btn-action-certification:hover, 
   .btn-action-certification:active, 
-  .btn-action-certification:focus {
+  .btn-action-certification:focus{
     background: #9a9a9a;
     border: 2px solid #9a9a9a;
     color: #FFF;
   }
+
+  .btn-action-certification:disabled{
+    background: #9a9a9a;
+    border: 2px solid #9a9a9a;
+    cursor: not-allowed;
+  }
+  
 
 }
 
