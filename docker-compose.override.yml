@@ -46,32 +46,34 @@ services:
       - HealthChecksUI__HealthChecks__6__Uri=http://webaccountapigw/hc
       - HealthChecksUI__HealthChecks__7__Name=Lexon API HTTP Check
       - HealthChecksUI__HealthChecks__7__Uri=http://lexon.api/hc
-      - HealthChecksUI__HealthChecks__8__Name=Google Drive API HTTP Check
-      - HealthChecksUI__HealthChecks__8__Uri=http://googledrive.api/hc
-      - HealthChecksUI__HealthChecks__9__Name=Lexon API GW HTTP Check
-      - HealthChecksUI__HealthChecks__9__Uri=http://weblexonapigw/hc
-      - HealthChecksUI__HealthChecks__10__Name=Centinela API HTTP Check
-      - HealthChecksUI__HealthChecks__10__Uri=http://centinela.api/hc
-      - HealthChecksUI__HealthChecks__11__Name=Centinela GW HTTP Check
-      - HealthChecksUI__HealthChecks__11__Uri=http://webcentinelaapigw/hc
-      - HealthChecksUI__HealthChecks__12__Name=UserUtils API HTTP Check
-      - HealthChecksUI__HealthChecks__12__Uri=http://userutils.api/hc
-      - HealthChecksUI__HealthChecks__13__Name=Signature API HTTP Check
-      - HealthChecksUI__HealthChecks__13__Uri=http://signature.api/hc
-      - HealthChecksUI__HealthChecks__14__Name=Signature API GW HTTP Check
-      - HealthChecksUI__HealthChecks__14__Uri=http://websignatureapigw/hc
-      - HealthChecksUI__HealthChecks__15__Name=Database API HTTP Check
-      - HealthChecksUI__HealthChecks__15__Uri=http://database.api/hc
-      - HealthChecksUI__HealthChecks__16__Name=Database API GW HTTP Check
-      - HealthChecksUI__HealthChecks__16__Uri=http://webdatabaseapigw/hc
-      - HealthChecksUI__HealthChecks__17__Name=WebSignatureClient HTTP Check
-      - HealthChecksUI__HealthChecks__17__Uri=http://websignatureclient/hc
-      - HealthChecksUI__HealthChecks__18__Name=WebCentinelaClient HTTP Check
-      - HealthChecksUI__HealthChecks__18__Uri=http://webcentinelaclient/hc
-      - HealthChecksUI__HealthChecks__19__Name=Addon Launcher Check
-      - HealthChecksUI__HealthChecks__19__Uri=http://webaddonlauncher/hc
-      - HealthChecksUI__HealthChecks__20__Name=Addon Office365 Check
-      - HealthChecksUI__HealthChecks__20__Uri=http://weboffice365addonlexon/hc
+      - HealthChecksUI__HealthChecks__8__Name=Google Account API HTTP Check
+      - HealthChecksUI__HealthChecks__8__Uri=http://googleaccount.api/hc
+      - HealthChecksUI__HealthChecks__9__Name=Google Drive API HTTP Check
+      - HealthChecksUI__HealthChecks__9__Uri=http://googledrive.api/hc
+      - HealthChecksUI__HealthChecks__10__Name=Lexon API GW HTTP Check
+      - HealthChecksUI__HealthChecks__10__Uri=http://weblexonapigw/hc
+      - HealthChecksUI__HealthChecks__11__Name=Centinela API HTTP Check
+      - HealthChecksUI__HealthChecks__11__Uri=http://centinela.api/hc
+      - HealthChecksUI__HealthChecks__12__Name=Centinela GW HTTP Check
+      - HealthChecksUI__HealthChecks__12__Uri=http://webcentinelaapigw/hc
+      - HealthChecksUI__HealthChecks__13__Name=UserUtils API HTTP Check
+      - HealthChecksUI__HealthChecks__13__Uri=http://userutils.api/hc
+      - HealthChecksUI__HealthChecks__14__Name=Signature API HTTP Check
+      - HealthChecksUI__HealthChecks__14__Uri=http://signature.api/hc
+      - HealthChecksUI__HealthChecks__15__Name=Signature API GW HTTP Check
+      - HealthChecksUI__HealthChecks__15__Uri=http://websignatureapigw/hc
+      - HealthChecksUI__HealthChecks__16__Name=Database API HTTP Check
+      - HealthChecksUI__HealthChecks__16__Uri=http://database.api/hc
+      - HealthChecksUI__HealthChecks__17__Name=Database API GW HTTP Check
+      - HealthChecksUI__HealthChecks__17__Uri=http://webdatabaseapigw/hc
+      - HealthChecksUI__HealthChecks__18__Name=WebSignatureClient HTTP Check
+      - HealthChecksUI__HealthChecks__18__Uri=http://websignatureclient/hc
+      - HealthChecksUI__HealthChecks__19__Name=WebCentinelaClient HTTP Check
+      - HealthChecksUI__HealthChecks__19__Uri=http://webcentinelaclient/hc
+      - HealthChecksUI__HealthChecks__20__Name=Addon Launcher Check
+      - HealthChecksUI__HealthChecks__20__Uri=http://webaddonlauncher/hc
+      - HealthChecksUI__HealthChecks__21__Name=Addon Office365 Check
+      - HealthChecksUI__HealthChecks__21__Uri=http://weboffice365addonlexon/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
@@ -149,7 +151,6 @@ services:
       - AccountApiUrlHC=http://account.api/hc
     ports:
       - "3007:80"
-
 
   weboffice365addoncentinela:
     environment:
@@ -259,7 +260,7 @@ services:
     ports:
       - "8084:80"   
 
-  googledrive.api:
+  googleaccount.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -272,6 +273,19 @@ services:
     ports:
       - "8085:80"   
 
+  googledrive.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}          
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+    ports:
+      - "8086:80" 
+
   weblexonapigw:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -282,7 +296,7 @@ services:
       - SignatureApiUrlHC=http://signature.api/hc
       - DatabaseApiUrlHC=http://database.api/hc
     ports:
-      - "8086:80"   
+      - "8087:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration} 
 
@@ -305,7 +319,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8087:80"  
+      - "8088:80"  
 
   userutils.api:
     environment:
@@ -337,7 +351,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8088:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes.
+      - "8089:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes.
 
   webcentinelaapigw:
     environment:
@@ -349,7 +363,7 @@ services:
       - SignatureApiUrlHC=http://signature.api/hc
       - DatabaseApiUrlHC=http://database.api/hc
     ports:
-      - "8089:80"   
+      - "8090:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Centinela/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
 
@@ -375,7 +389,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8090:80"
+      - "8091:80"
 
   websignatureapigw:
     environment:
@@ -387,7 +401,7 @@ services:
       - SignatureApiUrlHC=http://signature.api/hc
       - DatabaseApiUrlHC=http://database.api/hc
     ports:
-      - "8091:80"   
+      - "8092:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Signature/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
  
@@ -408,7 +422,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8092:80"  
+      - "8093:80"  
 
   webdatabaseapigw:
     environment:
@@ -420,7 +434,7 @@ services:
       - SignatureApiUrlHC=http://signature.api/hc
       - DatabaseApiUrlHC=http://database.api/hc
     ports:
-      - "8093:80"   
+      - "8094:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Database/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
 
@@ -449,4 +463,4 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8094:80" 
+      - "8095:80" 
