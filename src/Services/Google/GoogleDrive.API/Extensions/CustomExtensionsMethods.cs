@@ -148,7 +148,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
                 //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
                 //            Scopes = new Dictionary<string, string>()
                 //            {
-                //                { "ggogledrive", "Google Drive API" }
+                //                { "googledrive", "Google Drive API" }
                 //            }
                 //        }
                 //    }
@@ -185,6 +185,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
             }
 
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+            // if needed create events
             //services.AddTransient<AddFileToUserIntegrationEventHandler>();
 
             return services;

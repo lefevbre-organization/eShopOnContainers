@@ -35,9 +35,6 @@
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="IntegrationEvents\EventHandling\" />
-  </ItemGroup>
 
   <ItemGroup>
     <Content Update="appsettings.Development.json">

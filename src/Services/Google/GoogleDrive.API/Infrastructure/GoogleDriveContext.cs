@@ -51,7 +51,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
         public IMongoCollection<UserGoogleDrive> UserGoogleDrives => Database.GetCollection<UserGoogleDrive>(_settings.Value.Collection);
 
-        public IMongoCollection<UserGoogleDrive> AccountsTransaction(IClientSessionHandle session)
+        public IMongoCollection<UserGoogleDrive> UserGoogleDrivesTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserGoogleDrive>(_settings.Value.Collection);
         }
