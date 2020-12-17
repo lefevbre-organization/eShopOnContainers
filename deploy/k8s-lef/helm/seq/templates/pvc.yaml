@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: it-elefebvre-seq
+  labels:
+    app: it-elefebvre-seq
+    chart: "seq-2020.4.5070"
+    release: "it-elefebvre-seq"
+    heritage: "Helm"
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "8Gi"
