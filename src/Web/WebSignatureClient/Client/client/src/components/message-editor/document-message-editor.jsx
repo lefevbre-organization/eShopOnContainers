@@ -166,9 +166,12 @@ class DocumentMessageEditor extends Component {
               {({getRootProps, getInputProps}) => (
                 <div {...getRootProps({ className: styles['dropzone'] })}>
                   <input {...getInputProps()} />
-                  <span className={`lf-icon-drag-drop ${styles['icon-drag-drop']}`}></span>
-                  <p className={styles['drop-file']}>{i18n.t('documentEditor.dragDrop')}</p>
-                  <p className={styles['desktop-file']}>
+                  <span 
+                    className={`lf-icon-drag-drop light-blue-text 
+                    ${styles['icon-drag-drop']}`}>
+                  </span>
+                  <p className={`light-blue-text ${styles['drop-file']}`}>{i18n.t('documentEditor.dragDrop')}</p>
+                  <p className={`light-blue-text ${styles['desktop-file']}`}>
                   {i18n.t('documentEditor.upload')} 
                     <a className="ml-1">
                       {i18n.t('documentEditor.computer')}
