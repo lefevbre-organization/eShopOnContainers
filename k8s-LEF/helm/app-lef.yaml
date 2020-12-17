@@ -22,7 +22,7 @@ app:                                                  # app global settings
       accountapi: account-api                         # ingress entry for account api
       lexonapigw: lexonapigw                          # ingress entry for lexon api gw
       lexonapi: lexon-api                             # ingress entry for lexon api
-      lexonmysqlapi: lexonmysql-api                   # ingress entry for lexon mysql api
+#      lexonmysqlapi: lexonmysql-api                   # ingress entry for lexon mysql api
       centinelaapigw: centinelaapigw                  # ingress entry for centinela api gw
       centinelaapi: centinela-api                     # ingress entry for centinela api
       userutilsapi: userutils-api                     # ingress entry for userutils api
@@ -53,7 +53,7 @@ app:                                                  # app global settings
       accountapi: account-api                         # svc entry for marketing api
       lexonapigw: lexonapigw                          # svc entry for marketing api
       lexonapi: lexon-api                             # svc entry for lexon api
-      lexonmysqlapi: lexonmysql-api                   # svc entry for lexon mysql api
+  #    lexonmysqlapi: lexonmysql-api                   # svc entry for lexon mysql api
       centinelaapigw: centinelaapigw                  # ingress entry for centinela api gw
       centinelaapi: centinela-api                     # ingress entry for centinela api
       userutilsapi: userutils-api                     # ingress entry for userutils api
