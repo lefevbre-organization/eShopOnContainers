@@ -124,5 +124,12 @@
             public static readonly string Get = "GD02";
 
         }
+
+        public static class GoogleAccount
+        {
+            public static readonly string Create = "GA01";
+            public static readonly string Get = "GA02";
+
+        }
     }
 }
