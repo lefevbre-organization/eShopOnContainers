@@ -1504,40 +1504,47 @@ export const createCertifiedDocument = async (userId, guid, files, auth) => {
     var filesData = {};
 
     files.forEach(file => {
-      filesData.push({file: file.content, fileName: file.fileName})
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+    
+    reader.onload = function () {
+      console.log('createCertifiedDocument', reader.result)
+      filesData.push({file: reader.result, fileName: file.name});
+    };
+      
     })
 
-    jsonObject.user = userId;
-    jsonObject.guid = guid;
-    jsonObject.app = 'webSignature';
-    jsonObject.files = filesData;
+  //   jsonObject.user = userId;
+  //   jsonObject.guid = guid;
+  //   jsonObject.app = 'webSignature';
+  //   jsonObject.files = filesData;
 
-    var raw = JSON.stringify(jsonObject);
-    console.log('Raw::');
-    console.log(raw);
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
+  //   var raw = JSON.stringify(jsonObject);
+  //   console.log('Raw::');
+  //   console.log(raw);
+  //   var requestOptions = {
+  //     method: 'POST',
+  //     headers: myHeaders,
+  //     body: raw,
+  //     redirect: 'follow'
+  //   };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/newDocument/storeInDb`, requestOptions)
-      .then(response => {
-        if (response.ok){
-          return response.json();
-        } else {
-          throw `${response.text()}`;
-        }
-      })
-      .then(result => {
-        console.log(result)
-        resolve(result)
-      })
-      .catch(error => {
-        reject(error);
-        console.log('error', error)
-      });
+  //   fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/newDocument/storeInDb`, requestOptions)
+  //     .then(response => {
+  //       if (response.ok){
+  //         return response.json();
+  //       } else {
+  //         throw `${response.text()}`;
+  //       }
+  //     })
+  //     .then(result => {
+  //       console.log(result)
+  //       resolve(result)
+  //     })
+  //     .catch(error => {
+  //       reject(error);
+  //       console.log('error', error)
+  //     });
   })
 }
 
