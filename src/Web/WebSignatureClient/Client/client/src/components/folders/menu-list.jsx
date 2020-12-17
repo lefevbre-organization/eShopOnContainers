@@ -50,7 +50,7 @@ export class MenuListClass extends Component {
   }
 
   render() {
-    const { collapsed, lefebvre } = this.props;
+    const { collapsed, lefebvre, selectedService } = this.props;
     const selectedFilter = this.props.application.signaturesFilterKey;
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
@@ -85,6 +85,7 @@ export class MenuListClass extends Component {
         <div>
           <MenuItem 
            id={'signature'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenu')}
            icon="lf-icon-signature-certificate"
            onClick={this.onClick}
@@ -95,7 +96,8 @@ export class MenuListClass extends Component {
            true : false} /> 
           
           <MenuItem 
-           id={'email'}
+           id={'certifiedEmail'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenuEmail')}
            icon="lf-icon-certified-mail"
            onClick={this.onEmailClick}
@@ -106,7 +108,8 @@ export class MenuListClass extends Component {
            true : false} />
 
           <MenuItem 
-           id={'sms'}
+           id={'certifiedSms'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenuSms')}
            icon="lf-icon-certified-sms"
            onClick={this.onSmsClick}
@@ -117,7 +120,8 @@ export class MenuListClass extends Component {
            true : false} />     
 
           <MenuItem 
-           id={'document'}
+           id={'certifiedDocument'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenuDocument')}
            icon="lf-icon-certified-document"
            onClick={this.onDocumentClick}
@@ -300,7 +304,8 @@ const mapStateToProps = state => ({
   selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
   messages: state.messages,
-  lefebvre: state.lefebvre
+  lefebvre: state.lefebvre,
+  selectedService: state.application.selectedService
 });
 
 const mapDispatchToProps = dispatch => ({
