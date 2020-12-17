@@ -44,7 +44,8 @@ import {
   setGUID,
   setSign,
   setIdDocuments,
-  setUserApp
+  setUserApp,
+  setCenContacts
 } from '../actions/lefebvre';
 
 import { getSelectedFolder } from '../selectors/folders';
@@ -78,7 +79,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getUserCertifiedDocuments, preloadCertifiedDocuments } from "../services/api-signaturit";
+import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getContactsCentinela, getUserCertifiedDocuments, preloadCertifiedDocuments } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -916,10 +917,24 @@ class App extends Component {
                         this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts);
                       }
                       else {
-                        this.setState({hideAlertDialog: false});
-                        this.props.backendRequestCompleted();
-                        this.props.setIdDocuments(files.documentsInfo);
-                        this.props.newMessage('smsCertificate', dataMailContacts, dataAdminContacts, null, files.attachmentsList);
+                        getContactsCentinela(lefebvre.userId)
+                        .then( contacts => {
+                            var contactsInfo = []
+                            mailContacts.forEach(phone => {
+                                var contact = contacts.data.filter(c => c.phoneNumber1 === phone || c.phoneNumber2 === phone);
+                                if (contact.length > 0){
+                                    contactsInfo.push({address: `${phone}`, name: contact[0].fullName, email: contact[0].email, phone: `${phone}`})
+                                }
+                            });
+                            if (contactsInfo.length > 0){
+                                this.props.setCenContacts(contactsInfo);
+                            }
+
+                            this.setState({hideAlertDialog: false});
+                            this.props.backendRequestCompleted();
+                            this.props.setIdDocuments(files.documentsInfo);
+                            this.props.newMessage('smsCertificate', contactsInfo, dataAdminContacts, null, files.attachmentsList);
+                        })
                       }
                     })
                     .catch(err => {
@@ -1205,7 +1220,8 @@ const mapDispatchToProps = dispatch => ({
   backendRequestCompleted: () => dispatch(backendRequestCompleted()),
   setSelectedService: service => dispatch(setSelectedService(service)),
   setAppTitle: title => dispatch(setAppTitle(title)),
-  setTitle: title => dispatch(setTitle(title))
+  setTitle: title => dispatch(setTitle(title)),
+  setCenContacts: contacts => dispatch(setCenContacts(contacts))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -1243,7 +1259,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
     setSelectedService: service => dispatchProps.setSelectedService(service),
     setAppTitle: title => dispatchProps.setAppTitle(title),
-    setTitle: title => dispatchProps.setTitle(title)
+    setTitle: title => dispatchProps.setTitle(title),
+    setCenContacts: contacts => dispatchProps.setCenContacts(contacts)
   });
 
 

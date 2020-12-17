@@ -124,6 +124,7 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
+    "smsCharCounter": "Message SMS. Maximum #char caractères.",
     "grid": {
       "name": "Nom",
       "email": "Email",

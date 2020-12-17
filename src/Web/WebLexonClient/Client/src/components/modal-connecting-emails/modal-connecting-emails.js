@@ -265,7 +265,6 @@ class ModalConnectingEmails extends Component {
                 continue;
               }
 
-              debugger
               let rawAttach = base64js.fromByteArray(msg.attachments[j].Content);
               try {
                 const data = await uploadFile(

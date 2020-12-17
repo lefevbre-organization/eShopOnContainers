@@ -329,10 +329,12 @@ export class ComposeMessage extends PureComponent {
         });
        const newAttachments = attachments.filter((attachment, index, self) =>
         index === self.findIndex((x) => ( x.name === attachment.name ))
-       );
+       ); 
   
-        this.getAttachById(newAttachments);
-
+        if(newAttachments) {
+          this.getAttachById(newAttachments);
+        }
+       
         const subject = this.props.emailMessageResult.result.subject;
         const body = this.props.emailMessageResult.result.body.content
         this.setState({
@@ -397,11 +399,23 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      //this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
+
+      const findSelected = this.props.labelsResult.labels.find(x =>
+         x.displayName == "Drafts" && x.selected == true
+        );
+
+      const findByDraftId = this.props.labelsResult.labels.find(x =>
+          x.displayName == "Drafts" && this.state.draftId
+         );
+
       if (this.props.labelsResult.labelInbox === null) {
         getLabelInbox().then((label) =>
           this.props.history.push(`/${label.id}`)
         );
+      } else if(findSelected) {
+        this.props.history.push(`/${findSelected.id}`);
+      } else if(this.state.draftId) {
+        this.props.history.push(`/${findByDraftId.id}`);
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -433,8 +447,16 @@ export class ComposeMessage extends PureComponent {
       this.props.setMailContacts(null);
     }
     //this.resetFields();
-    deleteDraft({ draftId: this.state.draftId });
-    this.closeModal();
+    if(this.state.draftId) {
+      deleteDraft({ draftId: this.state.draftId }).then(() => {
+        this.closeModal();
+      });
+    } else {
+      this.closeModal();
+    } 
+    
+    
+    
   }
 
   sentEmail(email) {
@@ -564,7 +586,7 @@ export class ComposeMessage extends PureComponent {
       this.setState({ showEmptySubjectWarning: true });
       return;
     }
-    deleteDraft({ draftId: this.state.draftId });
+
     this._sendEmail();
   }
 
@@ -613,22 +635,20 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != '') {
-      setTimeout(() => {
-        createDraft({
-          data: email,
-          attachments: Fileattached,
-          draftId: this.state.draftId
-        }).then((draft) => {
-          this.setState({
-            draftTime: fullTime, 
-            draftId: draft.id, 
-            isDraftEdit: false
-          });
-        })
-        .catch((err) => {
-          console.log('Error sending email:' + err);
+      createDraft({
+        data: email,
+        attachments: Fileattached,
+        draftId: this.state.draftId
+      }).then((draft) => {
+        this.setState({
+          draftTime: fullTime, 
+          draftId: draft.id, 
+          isDraftEdit: false
         });
-      }, 5000);
+      })
+      .catch((err) => {
+        console.log('Error sending email:' + err);
+      });
     }
     
   }
@@ -673,7 +693,13 @@ export class ComposeMessage extends PureComponent {
         console.log(err);
       });
     this.resetFields();
-    this.closeModal();
+    if(this.state.draftId) {
+      deleteDraft({ draftId: this.state.draftId }).then(() => {
+        this.closeModal();
+      });
+    } else {
+      this.closeModal();
+    } 
   }
 
   resetFields() {

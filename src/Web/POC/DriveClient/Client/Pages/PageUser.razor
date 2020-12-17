@@ -1,0 +1,23 @@
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Lefebvre.Shared
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@code {
+
+    private ClaimsPrincipal AuthenticationStateProviderUser { get; set; }
+    public string sub {get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        AuthenticationState authenticationState;
+        authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        this.AuthenticationStateProviderUser = authenticationState.User;
+        foreach (var item in this.AuthenticationStateProviderUser.Claims)
+        {
+            if(item.Type == "sub")   sub = item.Value.ToString();
+        }
+         
+    }
+}

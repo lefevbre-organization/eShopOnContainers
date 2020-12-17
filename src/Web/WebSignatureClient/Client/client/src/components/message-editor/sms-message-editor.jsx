@@ -300,14 +300,7 @@ class SmsMessageEditor extends Component {
               isContacts={this.state.isContacts}
               sendingType={sendingType}
             />
-             {/* <div className={styles.subject}>
-              <input
-                type={'text'}
-                placeholder={t('messageEditor.subject')}
-                value={subject}
-                onChange={this.handleOnSubjectChange}
-              />
-            </div> */}
+            <label>{`${i18n.t('messageEditor.smsCharCounter').replace('#char', this.state.certificationType === 'delivery' ? 120 : 100)}`}</label>
           </form>
         </div>
         <div
@@ -318,6 +311,8 @@ class SmsMessageEditor extends Component {
               ref={(ref) => (this.editorRef = ref)}
               onChange={this.handleEditorChange}
               defaultValue={content}
+              caller={'sms'}
+              certType={this.state.certificationType}
             />
           </div>
           <div className={styles['side-container']}>
@@ -657,7 +652,7 @@ class SmsMessageEditor extends Component {
 
   strip(html){
     let doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || "";
+    return (doc.body.textContent === null || doc.body.textContent === 'null') ? "" : doc.body.textContent;
  }
 
   bigAttachments(){
