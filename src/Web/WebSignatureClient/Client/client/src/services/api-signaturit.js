@@ -1492,7 +1492,7 @@ export const downloadSmsCertificationDocument = (smsId, certificationId, fileNam
            |___/                                                                                                            
 */
 
-export const createCertifiedDocument = async (userId, guid, app, files) => {
+export const createCertifiedDocument = async (userId, guid, files, auth) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -1522,7 +1522,7 @@ export const createCertifiedDocument = async (userId, guid, app, files) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/new`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/newDocument/storeInDb`, requestOptions)
       .then(response => {
         if (response.ok){
           return response.json();

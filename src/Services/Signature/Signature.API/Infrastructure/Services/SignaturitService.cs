@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using Signature.API.Infrastructure.Repositories;
 using Newtonsoft.Json;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using MongoDB.Driver;
 
 namespace Signature.API.Infrastructure.Services
 {
@@ -596,13 +598,15 @@ namespace Signature.API.Infrastructure.Services
         #endregion
 
         #region DocumentCertification
-        public async Task<IRestResponse> CertifyDocument(CreateDocCertification docInfo)
+        public async Task<IRestResponse> CertifyDocument(CreateDocCertification docInfo, bool storeInDb = false)
         {
             Console.WriteLine($"{_guid} - START CertifyDocument");
             Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files.json");
 
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files.json");
             var i = 0;
+            var err = 0;
+
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
 
@@ -619,11 +623,28 @@ namespace Signature.API.Infrastructure.Services
             
             IRestResponse response = await client.ExecuteAsync(request);
 
+            if (storeInDb)
+            {
+                var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
+                var resultInsert = await insertInMongo(docInfo, jsonContent);
+
+                if (resultInsert.data != null)
+                {
+                    Console.WriteLine($"{_guid} - Added to MongoDb OK");
+                }
+                else
+                {
+                    Console.WriteLine($"{_guid} - Added to MongoDb ERROR");
+                    err = 1;
+                }
+            }
+
+
             //Console.WriteLine($"{_guid} - Response: {response.Content}");
             Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
             Console.WriteLine($"{_guid} - END CertifyDocument");
 
-            return response;
+            return (err == 1) ? throw new Exception("Error saving response in database") : response;
         }
 
         public async Task<IRestResponse> GetCertifiedDocuments(string id)
@@ -691,11 +712,12 @@ namespace Signature.API.Infrastructure.Services
             return response;
         }
 
-        public async Task<IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo)
+        public async Task<IRestResponse> CertifyDocumentAndAudit(CreateDocCertification docInfo)
         {
             Console.WriteLine($"{_guid} - START CertifyDocumentSync");
             Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files.json");
 
+            var err = 0;
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files.json");
             var i = 0;
             client.Timeout = _timeoutCreate;
@@ -713,33 +735,36 @@ namespace Signature.API.Infrastructure.Services
             }
 
             IRestResponse response = await client.ExecuteAsync(request);
-            //IRestResponse response;
 
             if (response.IsSuccessful)
             {
                 var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
-                response = await insertInMongo(docInfo, response);
+                var resultInsert = await insertInMongo(docInfo, jsonContent);
                 
-                //var jsonContent = JsonConvert.DeserializeObject<CertDocument>("{\r\n    \"id\": \"b89aec11-1f51-48ca-bf51-814928d84e71\",\r\n    \"crc\": \"ea0c6d39c6cfc4a74bc54766432dd9ec\",\r\n    \"created_at\": \"Fri, 27 Nov 2020 09:11:37 +0000\",\r\n    \"email\": \"firmadigital@lefebvre.es\",\r\n    \"name\": \"Acta notarial.pdf\",\r\n    \"size\": 71120\r\n}");
-                //response = await insertInMongo(docInfo, jsonContent);
-
+                if (resultInsert.data != null)
+                {
+                    Console.WriteLine($"{_guid} - Added to MongoDb OK");
+                    // Descargo el documento de auditoría:
+                    response = await DownloadCertifiedDocumentAudit(jsonContent.ExternalId);
+                } else
+                {
+                    Console.WriteLine($"{_guid} - Added to MongoDb ERROR");
+                    err = 1;
+                }
             }
 
             //Console.WriteLine($"{_guid} - Response: {response.Content}");
             Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
             Console.WriteLine($"{_guid} - END CertifyDocumentSync");
 
-            return response;
+            return (err == 1) ? throw new Exception("Error saving response in database") : response;
         }
         #endregion
 
         #region Mongo
-        public async Task<IRestResponse> insertInMongo(CreateDocCertification docInfo, IRestResponse response)
+        public async Task<Result<UserCertDocuments>> insertInMongo(CreateDocCertification docInfo, CertDocument jsonContent)
         {
             Console.WriteLine($"{_guid} - START insertInMongo");
-
-            var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
-            //var jsonContent = response;
 
             jsonContent.App = docInfo.app;
             jsonContent.Guid = docInfo.guid;
@@ -786,14 +811,9 @@ namespace Signature.API.Infrastructure.Services
 
             // Ver qué hago aquí con el result
 
-            // Descargo el documento de auditoría:
-            var fileResponse = await DownloadCertifiedDocumentAudit(jsonContent.ExternalId);
-
-            //Console.WriteLine($"{_guid} - Response: {response.Content}");
-            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
             Console.WriteLine($"{_guid} - END insertInMongo");
 
-            return fileResponse;
+            return (Result<UserCertDocuments>)result;
         }
         #endregion
     }

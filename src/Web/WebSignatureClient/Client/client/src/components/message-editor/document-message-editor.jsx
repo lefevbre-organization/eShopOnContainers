@@ -87,7 +87,7 @@ class DocumentMessageEditor extends Component {
   }
 
   sendDocument(){
-    createCertifiedDocument(this.props.lefebvre.userId, uuid(), 'webSignature')
+    createCertifiedDocument(this.props.lefebvre.userId, uuid(), this.state.files, this.props.lefebvre.token)
   }
 
   render() {

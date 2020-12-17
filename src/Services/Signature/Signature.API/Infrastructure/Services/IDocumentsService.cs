@@ -23,6 +23,6 @@ namespace Signature.API.Infrastructure.Services
 
         Task<Result<bool>> Remove(string user);
 
-        Task<Result<bool>> UpSertDocument(string user, CertDocument certDocumentIn);
+        Task<Result<UserCertDocuments>> UpSertDocument(string user, CertDocument certDocumentIn);
     }
 }

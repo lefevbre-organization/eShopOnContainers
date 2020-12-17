@@ -707,7 +707,7 @@
 
         #region DocumentCertification
         [HttpPost]
-        [Route("documentCertification/new")]
+        [Route("documentCertification/newDocument")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
@@ -727,7 +727,7 @@
 
             try
             {
-                var response = await _signaturitService.CertifyDocument(docInfo);
+                var response = await _signaturitService.CertifyDocument(docInfo, false);
                 if (response.IsSuccessful)
                 {
                     Console.WriteLine("Response IsSuccessful");
@@ -755,7 +755,109 @@
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
             }
+        }
 
+        [HttpPost]
+        [Route("documentCertification/newDocument/download/audit")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> CertifyDocumentAndAudit([FromBody] CreateDocCertification docInfo, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (Object.Equals(docInfo, null))
+                return BadRequest("Document information must be provided.");
+
+            try
+            {
+                var response = await _signaturitService.CertifyDocumentAndAudit(docInfo);
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Response IsSuccessful");
+                    return File(response.RawBytes, "application/pdf", $"audit-{docInfo.files[0].fileName}.pdf");
+                }
+                else
+                {
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    if (response.ErrorException != null)
+                    {
+                        throw new Exception($"Internal Exception: {response.ErrorException.Message} - Signaturit Response Content: {response.Content} - Signaturit Response StatusCode: {response.StatusCode}");
+                    }
+                    else
+                    {
+                        throw new Exception($"Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
+            }
+
+        }
+
+        [HttpPost]
+        [Route("documentCertification/newDocument/storeInDb")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> CertifyDocumentAndStore([FromBody] CreateDocCertification docInfo, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (Object.Equals(docInfo, null))
+                return BadRequest("Document information must be provided.");
+
+            try
+            {
+                var response = await _signaturitService.CertifyDocument(docInfo, true);
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("Response IsSuccessful");
+                    return Ok(response.Content);
+                }
+                else
+                {
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    if (response.ErrorException != null)
+                    {
+                        throw new Exception($"Internal Exception: {response.ErrorException.Message} - Signaturit Response Content: {response.Content} - Signaturit Response StatusCode: {response.StatusCode}");
+                    }
+                    else
+                    {
+                        throw new Exception($"Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
+            }
         }
 
         [HttpGet]
@@ -873,58 +975,6 @@
                 return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
 
             }
-        }
-
-        [HttpPost]
-        [Route("documentCertification/new/sync")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
-        public async Task<IActionResult> CertifyDocumentSync([FromBody] CreateDocCertification docInfo, [FromHeader] string Authorization)
-        {
-            HttpRequest httpRequest = HttpContext.Request;
-
-            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
-                return BadRequest("Access token not found");
-
-            if (!checkToken(httpRequest.Headers["Authorization"]))
-                return BadRequest("Access token invalid");
-
-            if (Object.Equals(docInfo, null))
-                return BadRequest("Document information must be provided.");
-
-            try
-            {
-                var response = await _signaturitService.CertifyDocumentSync(docInfo);
-                if (response.IsSuccessful)
-                {
-                    Console.WriteLine("Response IsSuccessful");
-                    return File(response.RawBytes, "application/pdf", $"audit-{docInfo.files[0].fileName}.pdf");
-                }
-                else
-                {
-                    Console.WriteLine("Response Error");
-                    Console.WriteLine(response.Content.ToString());
-                    if (response.ErrorException != null)
-                    {
-                        throw new Exception($"Internal Exception: {response.ErrorException.Message} - Signaturit Response Content: {response.Content} - Signaturit Response StatusCode: {response.StatusCode}");
-                    }
-                    else
-                    {
-                        throw new Exception($"Signaturit Response Content: {response.Content} - Signaturi Response StatusCode: {response.StatusCode}");
-                    }
-                }
-            }
-            catch (TimeoutException)
-            {
-                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message} - {ex.StackTrace}");
-            }
-
         }
 
         #endregion

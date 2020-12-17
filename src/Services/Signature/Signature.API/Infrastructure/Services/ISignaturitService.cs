@@ -38,7 +38,7 @@
 
         Task<RestSharp.IRestResponse> DownloadSmsCertification(string smsId, string certificationId);
 
-        Task<RestSharp.IRestResponse> CertifyDocument(CreateDocCertification docInfo);
+        Task<RestSharp.IRestResponse> CertifyDocument(CreateDocCertification docInfo, bool storeInDb);
 
         Task<RestSharp.IRestResponse> GetCertifiedDocuments(string id);
 
@@ -46,6 +46,6 @@
 
         Task<RestSharp.IRestResponse> DownloadCertifiedDocument(string id);
 
-        Task<RestSharp.IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo);
+        Task<RestSharp.IRestResponse> CertifyDocumentAndAudit(CreateDocCertification docInfo);
     }
 }
