@@ -512,7 +512,7 @@ class MessageList extends Component {
                 Documento: document.name, 
                 Fecha: date, 
                 Hora: date,
-                Origen: document.app
+                Origen: document.app.charAt(0).toUpperCase() + document.app.slice(1)
             });
         });
         return (res.length === 0 ? [] : res);
@@ -1250,7 +1250,7 @@ class MessageList extends Component {
                     {(this.props.selectedService && this.props.selectedService === 'certifiedDocument') 
                         ?
                             <ColumnsDirective>
-                                <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} width='30' />
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
                                 <ColumnDirective field='Hora' textAlign='Left' type="date" format={{ type: 'time', format: 'hh:MM:ss' }} headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
@@ -1258,7 +1258,7 @@ class MessageList extends Component {
                             </ColumnsDirective>
                         : 
                             <ColumnsDirective>
-                                <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} width='55' />
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                                 <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
