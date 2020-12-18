@@ -503,15 +503,18 @@ class MessageList extends Component {
         let res = [];
 
         documents.map(document => {
-            let date = new Date(document.created_at);
-            // let dateOnly = date.toLocaleDateString();
-            // let timeOnly = date.toLocaleTimeString();
-         
+
+            let date = new Date(document.created_at);     
+            const hour = new Date(document.created_at).getHours() ;
+            const time = new Date(document.created_at).getMinutes(); 
+            const second = new Date(document.created_at).getSeconds(); 
+            let fullTime = `${hour}:${time}:${second}`;
+
             res.push({
                 Id: document.externalId, 
                 Documento: document.name, 
                 Fecha: date, 
-                Hora: date,
+                Hora: fullTime,
                 Origen: document.app.charAt(0).toUpperCase() + document.app.slice(1)
             });
         });
@@ -1253,7 +1256,7 @@ class MessageList extends Component {
                                 <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
-                                <ColumnDirective field='Hora' textAlign='Left' type="date" format={{ type: 'time', format: 'hh:mm:ss' }} headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
+                                <ColumnDirective field='Hora' textAlign='Left'  headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
                                 <ColumnDirective field='Origen' textAlign='Left' headerText={i18n.t('signaturesGrid.columnOrigin')} width='115'/>
                             </ColumnsDirective>
                         : 
