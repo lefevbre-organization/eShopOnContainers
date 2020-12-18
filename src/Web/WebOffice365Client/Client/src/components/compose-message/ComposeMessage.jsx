@@ -418,7 +418,7 @@ export class ComposeMessage extends PureComponent {
           this.props.history.push(`/${label.id}`)
         );
       } else if(findSelected) {
-        this.props.history.push(`/${findSelected.id}`);
+        this.props.history.push('/' + findSelected.id);
       } else if(this.state.draftId) {
         this.props.history.push(`/${findByDraftId.id}`);
       } else {
