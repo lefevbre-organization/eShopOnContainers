@@ -399,7 +399,7 @@ export class ComposeMessage extends PureComponent {
       x.name == "DRAFT" && x.selected == true
      );
      if(findSelected) {
-      this.props.history.push(`/${findSelected.id}`);
+      this.props.history.push(`/draft`);
      } else if(this.state.draftId) {
       this.props.history.push('/draft');
      } else {
