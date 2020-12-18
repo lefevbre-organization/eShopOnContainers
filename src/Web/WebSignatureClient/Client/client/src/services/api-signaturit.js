@@ -1557,8 +1557,9 @@ export const downloadCertifiedDocumentAudit = (id, fileName, auth) => {
       console.log(blob);
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement('a');
+      const extension = fileName.split('.').pop();
       link.href = url;
-      link.setAttribute('download', 'audit-'+fileName);
+      link.setAttribute('download', `audit-${extension === 'pdf' ? fileName : fileName+'.pdf'}`);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);
