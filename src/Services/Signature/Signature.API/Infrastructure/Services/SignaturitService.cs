@@ -161,7 +161,7 @@ namespace Signature.API.Infrastructure.Services
             foreach (UserFile file in signatureInfo.files)
             {
                 Console.WriteLine($"{_guid} - Adding file_{i}");
-                request.AddFileBytes($"files[{i}]", file.file, file.fileName);
+                request.AddFileBytes($"files[{i}]", file.file, file.fileName, file.contentType);
                 i += 1;
             }
             i = 0;
@@ -402,7 +402,7 @@ namespace Signature.API.Infrastructure.Services
             foreach (UserFile file in emailInfo.files)
             {
                 Console.WriteLine($"{_guid} - Adding attachment_{i}");
-                request.AddFileBytes($"attachments[{i}]", file.file, file.fileName);
+                request.AddFileBytes($"attachments[{i}]", file.file, file.fileName, file.contentType);
                 i += 1;
             }
             i = 0;
@@ -524,7 +524,7 @@ namespace Signature.API.Infrastructure.Services
             foreach (UserFile file in sms.files)
             {
                 Console.WriteLine($"{_guid} - Adding attachment_{i}");
-                request.AddFileBytes($"attachments[{i}]", file.file, file.fileName);
+                request.AddFileBytes($"attachments[{i}]", file.file, file.fileName, file.contentType);
                 i += 1;
             }
             i = 0;
@@ -617,7 +617,7 @@ namespace Signature.API.Infrastructure.Services
             foreach (UserFile file in docInfo.files)
             {
                 Console.WriteLine($"Sending file_{i}");
-                request.AddFileBytes($"file", file.file, file.fileName);
+                request.AddFileBytes($"file", file.file, file.fileName, file.contentType);
                 i += 1;
             }
             
@@ -730,7 +730,7 @@ namespace Signature.API.Infrastructure.Services
             foreach (UserFile file in docInfo.files)
             {
                 Console.WriteLine($"Sending file_{i}");
-                request.AddFileBytes($"file", file.file, file.fileName);
+                request.AddFileBytes($"file", file.file, file.fileName, file.contentType);
                 i += 1;
             }
 

@@ -1253,7 +1253,7 @@ class MessageList extends Component {
                                 <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
-                                <ColumnDirective field='Hora' textAlign='Left' type="date" format={{ type: 'time', format: 'hh:MM:ss' }} headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
+                                <ColumnDirective field='Hora' textAlign='Left' type="date" format={{ type: 'time', format: 'hh:mm:ss' }} headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
                                 <ColumnDirective field='Origen' textAlign='Left' headerText={i18n.t('signaturesGrid.columnOrigin')} width='115'/>
                             </ColumnsDirective>
                         : 

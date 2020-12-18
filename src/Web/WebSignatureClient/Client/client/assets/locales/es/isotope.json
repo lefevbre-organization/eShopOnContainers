@@ -78,7 +78,7 @@
     "app": "FIRMA",
     "certifiedEmail": "EMAIL CERTIFICADO",
     "certifiedSms": "SMS CERTIFICADO",
-    "certifiedDocument": "CERTIFICACIÓN DOCUMENTO"
+    "certifiedDocument": "CERTIFICACIÓN DOCUMENTOS"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -267,6 +267,9 @@
   },
   "bigFileModal": {
     "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
+  },
+  "documentCertifiedModal": {
+    "text": "El fichero se ha certificado correctamente."
   },
   "attachNotFoundCentinela":{
     "text": "No se han podido descargar los documentos desde Centinela."

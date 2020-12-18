@@ -7,11 +7,11 @@ import i18n from 'i18next';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
 import ACTIONS from '../../actions/lefebvre';
-import { editMessage, setTitle } from '../../actions/application';
+import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
 import ProgressBar from '../progress-bar/progress-bar';
-import { createCertifiedDocument } from '../../services/api-signaturit';
+import { createCertifiedDocument, preloadCertifiedDocuments } from '../../services/api-signaturit';
 import * as uuid from 'uuid/v4';
 
 
@@ -23,7 +23,8 @@ class DocumentMessageEditor extends Component {
         percentage: 0,
         maxPercentage: 100,
         maxSize: 15,
-        hideAlertDialog: false
+        hideAlertDialog: false,
+        dialogType: ''
     }
     this.dialogOpen = this.dialogOpen.bind(this);
     this.animationSettings = { effect: 'None' };
@@ -31,42 +32,57 @@ class DocumentMessageEditor extends Component {
 
   resetReceivedInfo() {
     this.props.setUserApp('lefebvre');
-    this.props.setGuid(null);
-    this.props.setTitle('');
+    this.props.setTitle(i18n.t('topBar.certifiedDocument'));
     this.props.setIdDocuments(null);
+    this.props.setSelectedService('certifiedDocument'); 
+    this.props.setSignaturesFilterKey('Mostrar todas');
   }
 
   onDrop(files) {
     const fileSize = Math.floor((files[0].size / Math.pow(1024, 2)))
-    if(fileSize <= this.state.maxSize) {
+    if ( fileSize <= this.state.maxSize ) {
+      //this.props.editMessage(null);
+
       this.setState({
         files: files.map(file => Object.assign(file, {
           preview: URL.createObjectURL(file)
         }))
       })
-      const uploaders = files.map(file => {
-        const formData = new FormData()
-        formData.append('file', file);
-  
-              const xhr = new XMLHttpRequest();
-              xhr.upload.onprogress = event => {
-               const percentage = parseInt((event.loaded / event.total) * 100);
-              this.setState({percentage}); // Update progress here
-              };
-              xhr.onreadystatechange = () => {
-                if (xhr.readyState !== 4) return;
-                if (xhr.status !== 200) {
-                 console.log('error'); // Handle error here
-                }
-                 console.log('success'); // Handle success here
-              };
-              xhr.open('POST', 'https://httpbin.org/post', true);
-              xhr.send(formData);
-      })
+
+      const addAttachment = (file, dataUrl) => {
+        const newAttachment = {
+          fileName: file.name,
+          size: file.size,
+          contentType: file.type,
+          content: dataUrl.currentTarget.result.replace(
+              /^data:[^;]*;base64,/,
+              ''
+          ),
+          };
+
+          const updatedMessage = { ...this.props.editedMessage };
+          updatedMessage.attachments = [newAttachment];
+          this.props.editMessage(updatedMessage);
+      };
+
+      const updateProgressBar = (fileData) => {
+        if (fileData.lengthComputable) {                                            
+          var percentage = parseInt( ((fileData.loaded / fileData.total) * 100), 10 );
+          this.setState({percentage});
+        }
+      }
+      
+      Array.from(files).forEach((file) => {
+        const fileReader = new FileReader();
+        //fileReader.addEventListener('progress', handleEvent)
+        fileReader.onload = addAttachment.bind(this, file);
+        fileReader.onprogress = updateProgressBar.bind(file);
+        fileReader.readAsDataURL(file);
+        this.setState({isFileType: false});
+      });
     } else {
-      this.setState({hideAlertDialog: true});
+      this.setState({hideAlertDialog: true, dialogType: 'bigFile'});
     }
-   
   }
   
   getSizeFile(size) {
@@ -86,19 +102,20 @@ class DocumentMessageEditor extends Component {
     this.setState({files: newFiles});
   }
 
-  removeDocumentMessageEditor(aplication) {
+  removeDocumentMessageEditor(application) {
     const { close, lefebvre } = this.props;
-
-    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
-      this.setState({hideConfirmDialog: true});
-    } else {
-      this.resetReceivedInfo();
-      close(aplication);
-    }
+    this.resetReceivedInfo();
+    close(application);
   }
 
   sendDocument(){ 
-    createCertifiedDocument(this.props.lefebvre.userId, uuid(), this.state.files, this.props.lefebvre.token)
+    createCertifiedDocument(this.props.lefebvre.userId, uuid(), this.props.attachments, this.props.lefebvre.token)
+    .then(() => {
+      this.setState({hideAlertDialog: true, dialogType: 'completed'});
+      setTimeout(() => {
+        this.removeDocumentMessageEditor(this.props.application); 
+      }, 1500);
+    })
   }
 
   dialogOpen(instance){
@@ -113,7 +130,8 @@ class DocumentMessageEditor extends Component {
 
   dialogClose(){
     this.setState({
-        hideAlertDialog: false
+        hideAlertDialog: false,
+        dialogType: ''
     });
   }
 
@@ -121,7 +139,8 @@ class DocumentMessageEditor extends Component {
 
     const { 
       files, 
-      maxPercentage 
+      maxPercentage,
+      dialogType 
     } = this.state;
     const {
       application,
@@ -155,6 +174,12 @@ class DocumentMessageEditor extends Component {
         ${i18n.t('bigFileModal.text')}
       </div>`;
 
+      const certifiedModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('documentCertifiedModal.text')}
+      </div>`;
 
     return (
         <Col md="12" className={styles['document-message-editor']}>
@@ -204,7 +229,7 @@ class DocumentMessageEditor extends Component {
             visible={this.state.hideAlertDialog} 
             animationSettings={this.animationSettings} 
             width='60%' 
-            content={noAttachModal}
+            content={dialogType === 'bigFile' ? noAttachModal : dialogType === 'completed' ? certifiedModal : null}
             ref={alertdialog => this.alertDialogInstance = alertdialog} 
             open={this.dialogOpen("infoDialogDocument")} 
             close={this.dialogClose}
@@ -226,7 +251,9 @@ DocumentMessageEditor.defaultProps = {
 
 const mapStateToProps = (state) => ({
   application: state.application,
-  lefebvre: state.lefebvre
+  lefebvre: state.lefebvre,
+  editedMessage: state.application.newMessage,
+  attachments: state.application.newMessage.attachments
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -236,10 +263,16 @@ const mapDispatchToProps = (dispatch) => ({
     // noinspection JSIgnoredPromiseFromCall
     persistApplicationNewMessageContent(application, '');
   },
+  editMessage: (message) => {
+    dispatch(editMessage(message));
+  },
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setTitle: title => dispatch(setTitle(title)),
   setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
-  setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id))
+  setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
+  setSelectedService: selectService  => dispatch(setSelectedService(selectService)),
+  setSignaturesFilterKey: key => dispatch(setSignaturesFilterKey(key)),
+  preloadCertifiedDocuments: userId => dispatch(preloadCertifiedDocuments(userId))
 });
 
 export default connect(

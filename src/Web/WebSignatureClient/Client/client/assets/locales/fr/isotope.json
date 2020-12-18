@@ -267,6 +267,9 @@
   "bigFileModal": {
     "text": "La taille maximale des pièces jointes ne doit pas dépasser 15MB."
   },
+  "documentCertifiedModal": {
+    "text": "Le fichier a été certifié avec succès."
+  },
   "attachNotFoundCentinela":{
     "text": "Impossible de télécharger les documents."
   },

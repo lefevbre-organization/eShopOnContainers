@@ -620,10 +620,10 @@ export const getUserCertifiedDocuments = async (userId) => {
       redirect: 'follow'
     };
 
-    //fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/${userId}`, requestOptions)
-    fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/E1654569`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/${userId}`, requestOptions)
+    //fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/E1654569`, requestOptions)
       .then(response => response.json())
-      .then(result => resolve(result.data.documents))
+      .then(result => resolve(result.data.documents.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0))))
       .catch(error => {
         console.log('error', error);
         reject(error);
@@ -1501,50 +1501,43 @@ export const createCertifiedDocument = async (userId, guid, files, auth) => {
     myHeaders.append("Authorization", `${auth}`);
 
     var jsonObject = {};
-    var filesData = {};
-
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+    var filesData = [];
     
-    reader.onload = function () {
-      console.log('createCertifiedDocument', reader.result)
-      filesData.push({file: reader.result, fileName: file.name});
-    };
-      
+    files.forEach(file => {
+      filesData.push({file: file.content, fileName: file.fileName, contentType: file.contentType})
     })
 
-  //   jsonObject.user = userId;
-  //   jsonObject.guid = guid;
-  //   jsonObject.app = 'webSignature';
-  //   jsonObject.files = filesData;
+    jsonObject.user = userId;
+    jsonObject.guid = guid;
+    jsonObject.app = 'webSignature';
+    jsonObject.files = filesData;
 
-  //   var raw = JSON.stringify(jsonObject);
-  //   console.log('Raw::');
-  //   console.log(raw);
-  //   var requestOptions = {
-  //     method: 'POST',
-  //     headers: myHeaders,
-  //     body: raw,
-  //     redirect: 'follow'
-  //   };
+    var raw = JSON.stringify(jsonObject);
+    console.log('Raw::');
+    console.log(raw);
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
 
-  //   fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/newDocument/storeInDb`, requestOptions)
-  //     .then(response => {
-  //       if (response.ok){
-  //         return response.json();
-  //       } else {
-  //         throw `${response.text()}`;
-  //       }
-  //     })
-  //     .then(result => {
-  //       console.log(result)
-  //       resolve(result)
-  //     })
-  //     .catch(error => {
-  //       reject(error);
-  //       console.log('error', error)
-  //     });
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/newDocument/storeInDb`, requestOptions)
+      .then(response => {
+        if (response.ok){
+          return response.json();
+        } else {
+          throw `${response.text()}`;
+        }
+      })
+      .then(result => {
+        console.log(result)
+        resolve(result)
+      })
+      .catch(error => {
+        reject(error);
+        console.log('error', error)
+      });
   })
 }
 
