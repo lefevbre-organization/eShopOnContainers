@@ -1505,6 +1505,7 @@ input[type='radio']:checked + label:after {
   color: #fff;
   display:flex;
 }
+
 #infoDialogDocument_dialog-header > button > span {
   color: white;
 }   
@@ -1516,3 +1517,17 @@ input[type='radio']:checked + label:after {
   height: 15px;
   background-color: transparent;
 }
+
+#errorDialogDocument_dialog-header, 
+#errorDialogDocument_title, 
+#errorDialogDocument_dialog-content, 
+#errorDialogDocument.e-footer-content,
+#errorDialogDocumentt .e-footer-content {
+  background: #ce2b30;
+  color: #fff;
+  display:flex;
+}
+
+#errorDialogDocument_dialog-header > button > span {
+  color: white;
+}  

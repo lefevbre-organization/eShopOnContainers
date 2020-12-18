@@ -503,7 +503,10 @@ $flag-size: 18px;
     cursor: not-allowed;
   }
   
-
+  .lf-icon-remove {
+    cursor: pointer;
+  }
+  
 }
 
 @media (max-width: 1300px) {

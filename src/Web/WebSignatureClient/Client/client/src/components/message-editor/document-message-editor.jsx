@@ -115,7 +115,9 @@ class DocumentMessageEditor extends Component {
       setTimeout(() => {
         this.removeDocumentMessageEditor(this.props.application); 
       }, 1500);
-    })
+    }).catch((err) => {
+      this.setState({hideAlertDialog: true, dialogType: 'error'});         
+    });
   }
 
   dialogOpen(instance){
@@ -152,7 +154,7 @@ class DocumentMessageEditor extends Component {
           <div className={`${styles['file-list']} mb-3`}>
             <span className="light-blue-text">{file.name}</span>
             <span className="ml-5 light-blue-text">{this.getSizeFile(file.size)}</span>
-            <a onClick={() => this.removeFile(file.name)}>
+            <a onClick={() => this.removeFile(file.name)} className={styles['lf-icon-remove']}>
              {this.state.percentage === maxPercentage ? 
              <span className="lf-icon-trash light-blue-text"></span> : 
              <span className="lf-icon-close-round light-blue-text"></span>
@@ -181,12 +183,19 @@ class DocumentMessageEditor extends Component {
         ${i18n.t('documentCertifiedModal.text')}
       </div>`;
 
+      const errorModal = `
+      <span class="lf-icon-warning" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
+        ${i18n.t('documentErrorModal.text')}
+      </div>`;
+
     return (
         <Col md="12" className={styles['document-message-editor']}>
           <div className={styles['box-attach']}>
             <Dropzone
                 onDrop={this.onDrop.bind(this)}
-                accept="/*,.pdf" 
+                // accept="/*,.pdf" 
                 multiple={false} >
               {({getRootProps, getInputProps}) => (
                 <div {...getRootProps({ className: styles['dropzone'] })}>
@@ -225,11 +234,18 @@ class DocumentMessageEditor extends Component {
             </div> : null}
           </div>
           <DialogComponent 
-            id="infoDialogDocument" 
+            id={dialogType !== 'error' ? 'infoDialogDocument' : 'errorDialogDocument'} 
             visible={this.state.hideAlertDialog} 
             animationSettings={this.animationSettings} 
             width='60%' 
-            content={dialogType === 'bigFile' ? noAttachModal : dialogType === 'completed' ? certifiedModal : null}
+            content={
+              dialogType === 'bigFile' ? 
+              noAttachModal : 
+              dialogType === 'completed' ? 
+              certifiedModal : 
+              dialogType === 'error' ? 
+              errorModal : null 
+            }
             ref={alertdialog => this.alertDialogInstance = alertdialog} 
             open={this.dialogOpen("infoDialogDocument")} 
             close={this.dialogClose}

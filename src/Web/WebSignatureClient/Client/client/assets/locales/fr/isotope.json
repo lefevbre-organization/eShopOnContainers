@@ -270,6 +270,9 @@
   "documentCertifiedModal": {
     "text": "Le fichier a été certifié avec succès."
   },
+   "documentErrorModal": {
+    "text": "Le fichier n'a pas été certifié correctement."
+  },
   "attachNotFoundCentinela":{
     "text": "Impossible de télécharger les documents."
   },

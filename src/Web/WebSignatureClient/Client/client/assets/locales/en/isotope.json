@@ -252,6 +252,9 @@
   "documentCertifiedModal": {
     "text": "File has been certified correctly."
   },
+  "documentErrorModal": {
+    "text": "File has not been certified correctly."
+  },
   "attachNotFoundCentinela":{
     "text": "Document's couldn't be retrieved from Centinela."
   },

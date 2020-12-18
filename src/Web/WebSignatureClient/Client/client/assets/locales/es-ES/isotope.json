@@ -271,6 +271,9 @@
   "documentCertifiedModal": {
     "text": "El fichero se ha certificado correctamente."
   },
+  "documentErrorModal": {
+    "text": "El fichero no se ha certificado correctamente."
+  },
   "attachNotFoundCentinela":{
     "text": "No se han podido descargar los documentos desde Centinela."
   },
