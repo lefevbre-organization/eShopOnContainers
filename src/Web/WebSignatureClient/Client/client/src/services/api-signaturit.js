@@ -1724,7 +1724,7 @@ export const getContactsCentinela = async(user) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/contacts?idNavisionUser=${user}`, requestOptions)
+    fetch(`${window.API_GATEWAY_CEN}/api/v1/cen/smscontacts?idNavisionUser=${user}`, requestOptions)
     .then(response => {
       if (response.ok){
         return response.json();
