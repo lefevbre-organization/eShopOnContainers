@@ -9,6 +9,7 @@ Param(
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
         #  "database.api", 
         "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
+        "googledrive.api", "googleaccount.api",
         # "webdatabaseclient", 
         "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
@@ -20,6 +21,7 @@ Param(
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
         #  "database.api",
         "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
+        "googledrive.api", "googleaccount.api",
         # "webdatabaseclient", 
         "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
