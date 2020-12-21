@@ -96,7 +96,7 @@ class ListClassifications extends Component {
 }
 
 ListClassifications.propTypes = {
-  user: PropTypes.string.isRequired,
+  user: PropTypes.any.isRequired,
   toggleConfirmRemoveClassification: PropTypes.func.isRequired,
 };
 

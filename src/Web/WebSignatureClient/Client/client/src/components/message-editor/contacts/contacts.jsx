@@ -88,9 +88,9 @@ const Contacts = (props) => {
                   });
                   contact.id = `${contact.id}_${contact.idType}_${contact.entityType}_${company.bbdd}`
                   contact.checked = emailExists;
-                  if (contactsLexon.length < 350){
+                  //if (contactsLexon.length < 350){
                     contactsLexon.push(contact);
-                  }
+                  //}
                 }
               })
               setContactsLexon([...contactsLexon]);
@@ -313,6 +313,7 @@ const Contacts = (props) => {
            || contact.email.toLowerCase().includes(filter)
            || contact.name.toUpperCase().includes(filter)
            || contact.email.toUpperCase().includes(filter))
+           .slice(0, 100)
            .map((contact, i) => 
               <li className={style['container-list-contacts']} key={(selectedOption === 'centinela') ? i : `${i}_${contact.id}`}>
                 <div>

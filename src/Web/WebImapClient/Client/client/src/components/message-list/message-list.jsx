@@ -311,10 +311,11 @@ class MessageList extends Component {
                   account: this.props.all.login.formValues.user,
                   folder: this.props.selectedFolder.fullName,
                   provider: 'IMAP',
-                  raw: msg.raw,
+                  raw: null// msg.raw,
                 },
               })
             );
+            msg.raw = null;
             console.log(
               `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
             );
@@ -342,11 +343,11 @@ class MessageList extends Component {
           message
         ).then((response) => {
           // update redux message with raw data
-          this.props.messageSelected(
+/*          this.props.messageSelected(
             [{ ...message, raw: response.raw }],
             checked,
             this.props.selectedFolder.fullName
-          );
+          );*/
 
           // Send message to connectors
           window.dispatchEvent(
@@ -364,6 +365,7 @@ class MessageList extends Component {
               },
             })
           );
+          response = null;
           console.log(
             `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
           );

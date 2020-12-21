@@ -13,6 +13,7 @@
         public string CollectionEmailEvents { get; set; }
         public string CollectionSms { get; set; }
         public string CollectionSmsEvents { get; set; }
+        public string CollectionDocuments { get; set; }
 
         //public string CollectionMasters { get; set; }
 

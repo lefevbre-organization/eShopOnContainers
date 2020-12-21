@@ -82,6 +82,7 @@
             public static readonly string GetDocInstance = "CE08";
             public static readonly string CancelSignature = "CE09";
             public static readonly string CertificationPost = "CE10";
+            public static readonly string GetSmsContacts = "CE11";
 
         }
         public static class Areas

@@ -9,7 +9,7 @@ import {
   deleteDraft,
   getLabelInbox 
 } from '../../api_graph';
-import { getEmailMessage } from '../content/message-list/actions/message-list.actions';
+import { getEmailMessage, updateComposerData } from '../content/message-list/actions/message-list.actions';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -249,19 +249,24 @@ export class ComposeMessage extends PureComponent {
       }
     }, 500);
     this.state.defaultContent = this.state.content;
+    this.state = { ...this.state, ...this.props.composer };
   }
 
   componentDidMount() {
     const { lexon } = this.props;
 
-    if (lexon.sign && lexon.sign !== '') {
-      const { content } = this.state;
+    if(this.props.composer.content !== '') {
+      this.setState({...this.props.composer, defaultContent: this.props.composer.content});
+    } else {
+      if (lexon.sign && lexon.sign !== '') {
+        const {content} = this.state;
 
-      const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
-      this.setState({
-        defaultContent: dc,
-        content: dc,
-      });
+        const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
+        this.setState({
+          defaultContent: dc,
+          content: dc,
+        });
+      }
     }
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
@@ -329,10 +334,12 @@ export class ComposeMessage extends PureComponent {
         });
        const newAttachments = attachments.filter((attachment, index, self) =>
         index === self.findIndex((x) => ( x.name === attachment.name ))
-       );
+       ); 
   
-        this.getAttachById(newAttachments);
-
+        if(newAttachments) {
+          this.getAttachById(newAttachments);
+        }
+       
         const subject = this.props.emailMessageResult.result.subject;
         const body = this.props.emailMessageResult.result.body.content
         this.setState({
@@ -397,11 +404,23 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      //this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
+
+      const findSelected = this.props.labelsResult.labels.find(x =>
+         x.displayName == "Drafts" && x.selected == true
+        );
+
+      const findByDraftId = this.props.labelsResult.labels.find(x =>
+          x.displayName == "Drafts" && this.state.draftId
+         );
+
       if (this.props.labelsResult.labelInbox === null) {
         getLabelInbox().then((label) =>
           this.props.history.push(`/${label.id}`)
         );
+      } else if(findSelected) {
+        this.props.history.push('/' + findSelected.id);
+      } else if(this.state.draftId) {
+        this.props.history.push(`/${findByDraftId.id}`);
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -422,6 +441,8 @@ export class ComposeMessage extends PureComponent {
   }
 
   goBack() {
+    this.props.updateComposerData({});
+
     if (this.props.casefile !== null && this.props.casefile !== undefined) {
       window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
       this.props.setCaseFile({
@@ -433,11 +454,21 @@ export class ComposeMessage extends PureComponent {
       this.props.setMailContacts(null);
     }
     //this.resetFields();
-    deleteDraft({ draftId: this.state.draftId });
-    this.closeModal();
+    if(this.state.draftId) {
+      deleteDraft({ draftId: this.state.draftId }).then(() => {
+        this.closeModal();
+      });
+    } else {
+      this.closeModal();
+    } 
+    
+    
+    
   }
 
   sentEmail(email) {
+    this.props.updateComposerData({});
+
     const emailDate = new Date()
       .toISOString()
       .replace(/T/, ' ')
@@ -539,7 +570,11 @@ export class ComposeMessage extends PureComponent {
   }
 
   handleChange(value, delta, source, editor) {
-    this.setState({ content: value });
+    if(value) {
+      this.setState({content: value}, () => {
+        this.props.updateComposerData({...this.state, defaultContent: this.state.content});
+      });
+    }
   }
 
   onSendEmail() {
@@ -564,7 +599,7 @@ export class ComposeMessage extends PureComponent {
       this.setState({ showEmptySubjectWarning: true });
       return;
     }
-    deleteDraft({ draftId: this.state.draftId });
+
     this._sendEmail();
   }
 
@@ -613,22 +648,20 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != '') {
-      setTimeout(() => {
-        createDraft({
-          data: email,
-          attachments: Fileattached,
-          draftId: this.state.draftId
-        }).then((draft) => {
-          this.setState({
-            draftTime: fullTime, 
-            draftId: draft.id, 
-            isDraftEdit: false
-          });
-        })
-        .catch((err) => {
-          console.log('Error sending email:' + err);
+      createDraft({
+        data: email,
+        attachments: Fileattached,
+        draftId: this.state.draftId
+      }).then((draft) => {
+        this.setState({
+          draftTime: fullTime, 
+          draftId: draft.id, 
+          isDraftEdit: false
         });
-      }, 5000);
+      })
+      .catch((err) => {
+        console.log('Error sending email:' + err);
+      });
     }
     
   }
@@ -673,7 +706,13 @@ export class ComposeMessage extends PureComponent {
         console.log(err);
       });
     this.resetFields();
-    this.closeModal();
+    if(this.state.draftId) {
+      deleteDraft({ draftId: this.state.draftId }).then(() => {
+        this.closeModal();
+      });
+    } else {
+      this.closeModal();
+    } 
   }
 
   resetFields() {
@@ -693,7 +732,7 @@ export class ComposeMessage extends PureComponent {
     return (evt) => {
       this.setState({
         [field]: trimValue ? evt.target.value.trim() : evt.target.value,
-      });
+      }, ()=>{ this.props.updateComposerData(this.state); });
     };
   }
 
@@ -821,17 +860,17 @@ export class ComposeMessage extends PureComponent {
         const to2 = [...this.state.to2];
         to2.push(address);
         const to = to2.join(',');
-        this.setState({ to2, to });
+        this.setState({ to2, to }, ()=>{ this.props.updateComposerData(this.state); });
       } else if (id === 'cc') {
         const cc2 = [...this.state.cc2];
         cc2.push(address);
         const cc = cc2.join(',');
-        this.setState({ cc2, cc });
+        this.setState({ cc2, cc }, ()=>{ this.props.updateComposerData(this.state); });
       } else if (id === 'bcc2') {
         const bcc2 = [...this.state.bcc2];
         bcc2.push(address);
         const bcc = bcc2.join(',');
-        this.setState({ bcc2, bcc });
+        this.setState({ bcc2, bcc }, ()=>{ this.props.updateComposerData(this.state); });
       }
     }
   }
@@ -847,18 +886,18 @@ export class ComposeMessage extends PureComponent {
       const to2 = [...this.state.to2];
       to2.splice(to2.indexOf(address), 1);
       const to = to2.join(',');
-      this.setState({ to2, to });
+      this.setState({ to2, to }, ()=>{ this.props.updateComposerData(this.state); });
       this.props.setMailContacts(to);
     } else if (id === 'cc') {
       const cc2 = [...this.state.cc2];
       cc2.splice(cc2.indexOf(address), 1);
       const cc = cc2.join(',');
-      this.setState({ cc2, cc });
+      this.setState({ cc2, cc }, ()=>{ this.props.updateComposerData(this.state); });
     } else if (id === 'bcc2') {
       const bcc2 = [...this.state.bcc2];
       bcc2.splice(bcc2.indexOf(address), 1);
       const bcc = bcc2.join(',');
-      this.setState({ bcc2, bcc });
+      this.setState({ bcc2, bcc }, ()=>{ this.props.updateComposerData(this.state); });
     }
 
     // const updatedMessage = { ...this.props.editedMessage };
@@ -1213,7 +1252,8 @@ export class ComposeMessage extends PureComponent {
 const mapStateToProps = (state) => ({
   lexon: state.lexon,
   messagesResult: state.messagesResult,
-  emailMessageResult: state.emailMessageResult
+  emailMessageResult: state.emailMessageResult,
+  composer: state.composer
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -1222,6 +1262,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ACTIONS.setMailContacts(mailContacts)),
   getEmailMessage: (messageId) => 
     dispatch(getEmailMessage(messageId)),
+  updateComposerData: (data) => dispatch(updateComposerData(data))
 });
 
 export default compose(

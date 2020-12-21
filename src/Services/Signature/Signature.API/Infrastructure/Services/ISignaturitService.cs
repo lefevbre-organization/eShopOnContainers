@@ -38,5 +38,12 @@
 
         Task<RestSharp.IRestResponse> DownloadSmsCertification(string smsId, string certificationId);
 
+        Task<RestSharp.IRestResponse> CertifyDocument(CreateDocCertification docInfo);
+
+        Task<RestSharp.IRestResponse> GetCertifiedDocuments(string id);
+
+        Task<RestSharp.IRestResponse> DownloadCertifiedDocumentAudit(string id);
+
+        Task<RestSharp.IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo);
     }
 }

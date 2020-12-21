@@ -40,6 +40,13 @@
     <script src="%PUBLIC_URL%/config.js"></script>
     <title>Lefebvre Mail</title>
     <script src="https://svc.webspellchecker.net/spellcheck31/wscbundle/wscbundle.js"></script>
+    <script src="/assets/wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("/assets/mimeparser.wasm?v=0.4"), go.importObject).then((result) => {
+            go.run(result.instance);
+        });
+    </script>
 </head>
 
 <body class="vbox viewport">

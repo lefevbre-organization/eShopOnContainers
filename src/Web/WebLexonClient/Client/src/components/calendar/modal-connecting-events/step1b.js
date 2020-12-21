@@ -20,7 +20,7 @@ export class ConnectingEmailsStep1b extends React.Component {
     try {
       const response = await getActuationTypes(this.props.bbdd, this.props.user);
       if (response && response.data) {
-        this.setState({ types: response.data });
+        this.setState({ types: response.data.filter(t => t.id !== 'EMAIL' && t.id !== 'LEXN') });
       }
     } catch (err) {
       console.log(err);
@@ -50,7 +50,7 @@ export class ConnectingEmailsStep1b extends React.Component {
               <span>{i18n.t('classification-calendar.step1b.q1')}</span>
               <ul className='two-columns'>
                 {types.map(item => (
-                  <li key={item.id} onClick={()=>{console.log("SELECTED: " + item.id)
+                  <li key={item.id} onClick={()=>{
                     this.setState({ entity: item.id }, () => {
                       this.onChangeData();
                     });}}>
