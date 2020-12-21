@@ -118,5 +118,19 @@
             public static readonly string RoomGet = "CN25";
 
         }
+
+        public static class GoogleDrive
+        {
+            public static readonly string Create = "GD01";
+            public static readonly string Get = "GD02";
+
+        }
+
+        public static class GoogleAccount
+        {
+            public static readonly string Create = "GA01";
+            public static readonly string Get = "GA02";
+
+        }
     }
 }

@@ -31,20 +31,6 @@ kind: Service
 metadata:
   labels:
     app: elefebvre
-    component: lexonmysql
-  name: lexonmysql
-spec:
-  ports:
-  - port: 80
-  selector:
-    app: elefebvre
-    component: lexonmysql
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: elefebvre
     component: webstatus
   name: webstatus
 spec:

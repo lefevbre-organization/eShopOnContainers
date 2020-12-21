@@ -16,20 +16,6 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "lexon.mysql.api",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "Priority": 0
-    },
-    {
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
