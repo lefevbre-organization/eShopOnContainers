@@ -405,30 +405,24 @@ $flag-size: 18px;
 }
 
 @media (max-width: 1300px) {
-  // .editor-container {
-  //   height: 88% !important;
-  // }
   .action-buttons {
     margin-top: 8rem !important;
   }
 }
 
 @media (max-width: 980px) {
-  .editor-container {
-    height: 60% !important;
-  }
-  .action-buttons {
-    margin-top: 0 !important;
+  .message-editor {
+    height: fit-content;
+    .editor-wrapper {
+      overflow: hidden;
+    }
+    .editor-container {
+      height: 60% !important;
+    }
+    .action-buttons {
+      margin-top: 0 !important;
 
+    }
   }
 }
 
-@media (max-width: 780px) {
-  .editor-container {
-    height: max-content !important;
-  }
-  // .action-buttons {
-  //   margin-top: 0 !important;
-
-  // }
-}

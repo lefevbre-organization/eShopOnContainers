@@ -128,7 +128,15 @@ class TabConnectMessage extends Component {
 
     return (
       <Fragment>
-        { eventClassifications.length === 0 && <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}<span>{i18n.t('classification-calendar.new-classification')}</span></p> }
+        { eventClassifications.length === 0 && <p className={"empty-text"}>{i18n.t('classification-calendar.empty')}
+        <span onClick={()=>{
+        const btn = document.getElementsByClassName("add-more");
+          for(let i = 0; i < btn.length; i++) {
+            btn[i].click();
+          }
+        }
+        }>{i18n.t('classification-calendar.new-classification')}</span>
+        </p> }
         <ConfirmRemoveClassification
           user={user.idUser}
           initialModalState={showConfirmRemoveClassification}

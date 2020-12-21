@@ -9,7 +9,7 @@ Param(
     [parameter(Mandatory=$false)][string[]]$infras=(
         "nosql-data",
         "sql-data",
-         "rabbitmq"
+        "rabbitmq"
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(

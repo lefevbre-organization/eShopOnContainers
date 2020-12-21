@@ -136,7 +136,6 @@ export class MessageViewer extends Component {
       this.props.currentFolder,
       this.props.selectedMessage
     ).then((response) => {
-      debugger
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
           detail: {
@@ -186,7 +185,6 @@ export class MessageViewer extends Component {
       })
     );
 
-    debugger
     for (let i = 0; i < this.oldSelectedList.length; i++) {
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
