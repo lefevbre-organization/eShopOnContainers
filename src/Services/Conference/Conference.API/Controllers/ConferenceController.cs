@@ -63,26 +63,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors.Count > 0 ? (IActionResult)BadRequest(result.data) : Ok(result.data);
         }
 
-        [HttpPost("conference/qs")]
-        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ConferenceCreateQSAsync(
-            [FromQuery] string name,
-            [FromQuery] string start_time,
-            [FromQuery] string mail_owner
-            )
-        {
-            _log.LogError($"conference qs: {name} con {mail_owner}");
-            var reservation = new UserReservationRequest() { mail_owner = mail_owner, name = name, start_time = start_time };
-            //name=testroom1&start_time=2048-04-20T17%3A55%3A12.000Z&mail_owner=client1%40xmpp.com
-            if (string.IsNullOrEmpty(reservation.name))
-                return BadRequest("Must be a valid name");
-
-            var result = await _service.CreateReservationAsync(reservation);
-
-            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result.data) : Ok(result.data);
-        }
-
         [HttpPost("conference")]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserReservation), (int)HttpStatusCode.BadRequest)]
@@ -106,7 +86,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
                         reservation.name = param_values[1];
                     
                 }
-                //name=testroom1&start_time=2048-04-20T17%3A55%3A12.000Z&mail_owner=client1%40xmpp.com
             }
 
             var result = await _service.CreateReservationAsync(reservation);
@@ -213,6 +192,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+
         [HttpPost("user")]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
@@ -224,6 +204,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
                 return BadRequest("Must be a valid idUserNavision");
 
             Result<UserConference> result = await _service.PostUserAsync(user);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("{idNavision}/check")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CheckUserAsync(
+            [FromRoute] string idNavision = "E1621396",
+            short idApp = 1)
+        {
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("Must be a valid idUserNavision");
+
+            Result<bool> result = await _service.CheckUserAsync(idNavision, idApp);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
