@@ -24,5 +24,6 @@
 
         public bool AzureStorageEnabled { get; set; }
         public long IdAppNavision { get; set; }
+        public int IdAreaVideoConference { get; set; }
     }
 }

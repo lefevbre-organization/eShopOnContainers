@@ -42,23 +42,37 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         public async Task<Result<UserConference>> GetUserAsync(string idUser, short idApp)
         {
             var filter = GetFilterUser(idUser, idApp);
-            return await GetUserCommonAsync(filter);
+            return await GetUserCommonAsync(filter, idUser, idApp);
         }
 
         public async Task<Result<UserConference>> GetUserByRoomAsync(string roomNameOrId)
         {
-            var filter =  GetFilterUserByRoomId(roomNameOrId);
-            return await GetUserCommonAsync(filter);        
+            var filter = GetFilterUserByRoomId(roomNameOrId);
+            return await GetUserCommonAsync(filter, null, null);
         }
-        private async Task<Result<UserConference>> GetUserCommonAsync(FilterDefinition<UserConference> filter)
+
+        private async Task<Result<UserConference>> GetUserCommonAsync(FilterDefinition<UserConference> filter, string idUser, short? idApp)
         {
+            //todo: pensar si separo en los dos getuser dado que la gestión de creación no se si es correcta en todos los casos
             var result = new Result<UserConference>();
             try
             {
                 result.data = await _context.UserConferences.Find(filter).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceError(result.errors, new ConferenceDomainException($"No se encuentra ningún usuario"), Codes.Conferences.Get, Codes.Areas.Mongo);
+                {
+                    if (idUser != null && idApp != null)
+                    {
+                        TraceInfo(result.infos, $"Se crear un usuario nuevo para la entrada {idUser}", Codes.Conferences.Create);
+                        var resultUser = await PostUserAsync(new UserConference(idUser, (short)idApp));
+                        AddResultTrace(resultUser, result);
+                        result.data = resultUser.data;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new ConferenceDomainException($"No se encuentra ningún usuario"), Codes.Conferences.Get, Codes.Areas.Mongo);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -226,21 +240,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
         public async Task<Result<int>> DeleteRoom(string idRoom)
         {
-        
             var result = new Result<int>();
 
             var user = await GetUserByRoomAsync(idRoom);
             var rooms = user.data.rooms?.ToList();
             var deletedRooms = rooms.RemoveAll(x => x.id == idRoom || x.name == idRoom);
 
-
             if (deletedRooms > 0)
             {
                 TraceInfo(result.infos, $"Se eliminan {deletedRooms} room(s) con id {idRoom} del usuario {user.data.idNavision}", Codes.Conferences.RoomCreate);
             }
 
-
-           user.data.rooms = rooms.ToArray();
+            user.data.rooms = rooms.ToArray();
 
             var resultReplace = await _context.UserConferences.ReplaceOneAsync(GetFilterUser(user.data.idNavision, user.data.idApp), user.data, GetUpsertOptions());
 

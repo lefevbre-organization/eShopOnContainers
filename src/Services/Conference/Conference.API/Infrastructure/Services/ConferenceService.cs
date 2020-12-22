@@ -52,6 +52,46 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         public async Task<Result<UserConference>> GetUserAsync(string idNavisionUser, short idApp)
             => await _repo.GetUserAsync(idNavisionUser, idApp);
 
+        public async Task<Result<bool>> CheckUserAsync(string idNavision, short idApp)
+        {
+            //curl -X GET "https://localhost:44307/api/v1/UserUtils/user/areas?idNavisionUser=E1621396" -H "accept: text/plain"
+            var result = new Result<bool>(false);
+            try
+            {
+                var url = $"{_settings.Value.UserUtilsUrl}/user/areas?idNavisionUser={idNavision}";
+
+                using (var response = await _clientUserUtils.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultApps = (JsonConvert.DeserializeObject<Result<ServiceComArea[]>>(rawResult));
+                            bool encontrado = resultApps.data?.ToList().Count(i => i.idArea == _settings.Value.IdAreaVideoConference) > 0;
+                            if (encontrado)
+                                TraceInfo(result.infos, $"El usuario {idNavision} tiene permiso de videoconferencias", Codes.Conferences.CheckUser);
+                            else
+                                TraceInfo(result.infos, $"El usuario {idNavision} carece de permiso de videoconferencias", Codes.Conferences.CheckUser);
+
+                            result.data = encontrado;
+                        }
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new ConferenceDomainException($"Error when get data of user permissions ({url}) with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Conferences.CheckUser, Codes.Areas.InternalApi);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new ConferenceDomainException($"Error when get data of user permissions: {idNavision} in {_settings.Value.UserUtilsUrl}", ex), Codes.Conferences.CheckUser, Codes.Areas.InternalApi);
+            }
+            return result;
+
+        }
+
         public async Task<Result<UserConference>> PostUserAsync(UserConference user)
             => await _repo.PostUserAsync(user);
 
@@ -268,6 +308,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
             try
             {
+                var userCheck = await CheckUserAsync(idNavision, idApp);
+                if (userCheck.data == false)
+                {
+                    AddResultTrace(result, userCheck);
+                    TraceInfo(result.infos, $"No se permite crear la sala para el usuario  {idNavision} por carecer de permisos", Codes.Conferences.RoomCreate);
+                    return result;
+                }
+
                 var url = $"{_settings.Value.JitsiRoomUrl}/http-bind?room={name}";
                 var bodyXml = $"<body content='text/xml; charset=utf-8' hold='1' rid='{rid}' to='meet.jitsi' ver='1.6' wait='{wait}' xml:lang='{lang}' xmlns='http://jabber.org/protocol/httpbind' xmlns:xmpp='urn:xmpp:xbosh' xmpp:version='1.0' />";
 
@@ -478,5 +526,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
         {
             return await _repo.GetUserByRoomAsync(roomNameOrId);
         }
+
+
     }
 }
