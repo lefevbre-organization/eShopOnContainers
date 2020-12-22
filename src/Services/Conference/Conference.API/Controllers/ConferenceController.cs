@@ -120,7 +120,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             if (string.IsNullOrEmpty(idNavision))
                 return BadRequest("Must be a valid idUserNavision");
 
-            _log.LogError($"room: {name} con {idNavision}");
+           // _log.LogError($"room: {name} con {idNavision}");
 
             Result<UserConference> result = await _service.CreateRoomAsync(idNavision, name, idApp);
 

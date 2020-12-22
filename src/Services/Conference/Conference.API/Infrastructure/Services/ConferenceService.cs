@@ -68,8 +68,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
-                            var resultApps = (JsonConvert.DeserializeObject<Result<List<LefebvreApp>>>(rawResult));
-                            bool encontrado = resultApps.data?.ToList().Count(i => i.indAcceso > 0 && i.idHerramienta == _settings.Value.IdAreaVideoConference) > 1;
+                            var resultApps = (JsonConvert.DeserializeObject<Result<ServiceComArea[]>>(rawResult));
+                            bool encontrado = resultApps.data?.ToList().Count(i => i.idArea == _settings.Value.IdAreaVideoConference) > 0;
                             if (encontrado)
                                 TraceInfo(result.infos, $"El usuario {idNavision} tiene permiso de videoconferencias", Codes.Conferences.CheckUser);
                             else
