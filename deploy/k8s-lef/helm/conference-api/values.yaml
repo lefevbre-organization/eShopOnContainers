@@ -40,6 +40,8 @@ env:
       key: urls__IdentityUrl
     - name: IdentityUrlExternal
       key: urls__IdentityUrlExternal
+    - name: UserUtilsUrl
+      value: urls__UserUtilsApi
     - name: ConnectionString
       key: conference__ConnectionString
     - name: Database
