@@ -614,7 +614,6 @@ export const createDraft = async ({ data, attachments, draftId }) => {
     email += emailReadConfirmation();
   }
   email += emailEnd();
-  console.log('draftId', draftId)
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
@@ -628,7 +627,6 @@ export const createDraft = async ({ data, attachments, draftId }) => {
       .api('/me/messages')
       .post(email);
     }
-    console.log('response.id', response.id)
     await uploadFiles(response.id, data.uppyPreviews);
     return response;
   } catch (err) {
