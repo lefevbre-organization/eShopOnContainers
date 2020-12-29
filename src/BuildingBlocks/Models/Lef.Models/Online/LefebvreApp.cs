@@ -1,4 +1,4 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class LefebvreApp
     {
@@ -10,7 +10,8 @@
 
         public long Created { get; set; }
         public string Token { get; set; }
-        public string urlByPass {get; set;}
+        public string urlByPass { get; set; }
         //"indAcceso":1,"icono":"lf-icon-qmemento","idHerramienta":1,"descHerramienta":"Bases de datos","url":"https://herculesppd.lefebvre.es/webclient46/login.do?ei=f3NrcnZs"
     }
+
 }

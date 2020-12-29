@@ -13,6 +13,7 @@ import {
   pageTokens,
   searchQuery,
   messageList,
+  composer
 } from '../components/content/message-list/reducers/message-list.reducers';
 
 export default combineReducers({
@@ -28,4 +29,5 @@ export default combineReducers({
   pageTokens,
   searchQuery,
   messageList,
+  composer
 });

@@ -364,6 +364,42 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
+        public async Task<Result<List<CenContact>>> GetSmsContactsAsync(string idNavisionUser)
+        {
+            var result = new Result<List<CenContact>>(new List<CenContact>());
+            try
+            {
+                var url = $"{_settings.Value.CentinelaUrl}/sign/smsphones/{idNavisionUser}";
+
+                using var response = await _client.GetAsync(url);
+                var responseText = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    if (!string.IsNullOrEmpty(responseText))
+                    {
+                        var resultado = (JsonConvert.DeserializeObject<CenContact[]>(responseText));
+                        result.data = resultado?.ToList();
+                    }
+                }
+                else
+                {
+                    TraceError(result.errors,
+                               new CentinelaDomainException($"Response not ok: ({responseText}) from {url} when get contacts-> { (int)response.StatusCode } - { response.ReasonPhrase} "),
+                               Codes.Centinela.GetSmsContacts,
+                               Codes.Areas.Centinela);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new CentinelaDomainException($"Error when get contacts {_settings.Value.CentinelaUrl}", ex),
+                           Codes.Centinela.GetSmsContacts,
+                           Codes.Areas.Centinela);
+            }
+
+            return result;
+        }
+
         public async Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search)
         {
             var result = new Result<List<CenDocument>>(new List<CenDocument>());

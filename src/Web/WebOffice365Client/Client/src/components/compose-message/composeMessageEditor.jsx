@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect} from 'react';
+import React, { Fragment, useEffect } from 'react';
 import {
   RichTextEditorComponent,
   Toolbar,
@@ -188,7 +188,9 @@ const toolbarSettings = {
 };
 
 const ComposeMessageEditor = props => {
+
   const { onChange, defaultValue = '' } = props;
+
   useEffect(()=>{
     const instance1 = window.WEBSPELLCHECKER.init({
       container: document.getElementById("toolsRTE_2"),
@@ -213,6 +215,9 @@ const ComposeMessageEditor = props => {
         insertImageSettings={{ saveFormat: 'Base64' }}
         toolbarSettings={toolbarSettings}
         value={defaultValue}
+        blur={(content) => {
+          onChange && onChange(content.value);
+        }}
         change={content => {
           onChange && onChange(content.value);
         }}>
