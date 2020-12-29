@@ -39,6 +39,7 @@ class DocumentMessageEditor extends Component {
   }
 
   onDrop(files) {
+    this.setState({ percentage: 0 });
     const fileSize = Math.floor((files[0].size / Math.pow(1024, 2)))
     if ( fileSize <= this.state.maxSize ) {
       //this.props.editMessage(null);
@@ -66,9 +67,16 @@ class DocumentMessageEditor extends Component {
       };
 
       const updateProgressBar = (fileData) => {
-        if (fileData.lengthComputable) {                                            
-          var percentage = parseInt( ((fileData.loaded / fileData.total) * 100), 10 );
-          this.setState({percentage});
+        if (fileData.lengthComputable) {    
+          setInterval(() => {
+            this.setState({
+              percentage: this.state.percentage === 
+              this.state.maxPercentage ? 
+              this.state.maxPercentage : 
+              this.state.percentage + 10
+            });
+          }, 400);       
+         
         }
       }
       
