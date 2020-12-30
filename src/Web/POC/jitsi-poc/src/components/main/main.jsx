@@ -15,7 +15,7 @@ const Main = () => {
 
     return call ? (
         <Jutsu
-            domain='https://meet-test.lefebvre.es/'
+            domain="meet-test.lefebvre.es"
             containerStyles={{ width: '100%', height: '100vh' }}
             height='100%'
             roomName={room}
