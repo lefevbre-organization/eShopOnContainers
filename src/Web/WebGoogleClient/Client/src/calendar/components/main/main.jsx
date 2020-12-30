@@ -213,8 +213,7 @@ export class Main extends Component {
 
 
     onCloseDialog() {
-        console.log()
-        this.LoadCalendarList(false)
+        this.LoadCalendarList(true)
         const buttons = document.getElementsByClassName("e-footer-content");
         if(buttons) {
             for (let i = 0; i < buttons.length; i ++) {
