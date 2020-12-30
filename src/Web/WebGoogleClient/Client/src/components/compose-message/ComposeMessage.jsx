@@ -266,6 +266,9 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+
+    this.removeFields();
+
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailHeaderMessage(messageId);
@@ -314,11 +317,17 @@ export class ComposeMessage extends PureComponent {
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
+
             const attachments = this.props.emailMessageResult.attach;
+
             const messageId = this.props.emailMessageResult.result.id;
+
             const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
+
             const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
+
             const cc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Cc");
+            
             const bcc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Bcc");
 
             if(to) {
@@ -536,9 +545,11 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+
+    this.removeFields();
     
     this.props.setMailContacts(null);
-
+    
     this.uppy.close();
   }
 
@@ -598,7 +609,9 @@ export class ComposeMessage extends PureComponent {
   }
   
   saveDraft() {
+
     const validTo = getValidEmails(this.state.to);
+    
     const headers = {
       To: validTo.join(', '),
       Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
@@ -619,6 +632,7 @@ export class ComposeMessage extends PureComponent {
     const Fileattached = this.state.uppyPreviews;
 
     const fullTime = this.getTimeDraft();
+
     if(this.state.to != '' 
     || this.state.cc != ''
     || this.state.bcc != ''
@@ -718,6 +732,24 @@ export class ComposeMessage extends PureComponent {
       subject: this.props.subject || '',
       content: this.props.content || '',
       uppyPreviews: [],
+    });
+  }
+
+  removeFields() {
+    this.props.updateComposerData({});
+    this.setState({
+      content: '',
+      defaultContent: '',
+      to: '',
+      cc: '',
+      bcc: '',
+      subject: '',
+      draftId: '',
+      draftTime: '',
+      to2: [],
+      cc2: [],
+      bcc2: [],
+      uppyPreviews: []
     });
   }
 
