@@ -139,7 +139,9 @@ class ModalImportEvents extends Component {
     }
 
     cancelImportProcess() {
-        window.dispatchEvent(new CustomEvent('ExportEventsCancel'));
+        this.setState({progress: 0, errors: [], eventsImported: 0, selectedDatabase: '', selectedCalendar: ''}, ()=>{
+            window.dispatchEvent(new CustomEvent('ExportEventsCancel'));
+        })
     }
 
     renderButtons() {
