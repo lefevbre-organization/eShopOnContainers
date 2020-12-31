@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Jutsu } from 'react-jutsu'
+import { Jutsu } from 'react-jutsu';
 
+import './main.css';
 
 const Main = () => {
     const [room, setRoom] = useState('')
@@ -24,14 +25,21 @@ const Main = () => {
             loadingComponent={<p>loading ...</p>}
             errorComponent={<p>Oops, something went wrong...</p>} />
     ) : (
-            <form>
-                <input id='room' type='text' placeholder='Room' value={room} onChange={(e) => setRoom(e.target.value)} />
-                <input id='name' type='text' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)} />
-                <input id='password' type='text' placeholder='Password (optional)' value={password} onChange={(e) => setPassword(e.target.value)} />
-                <button onClick={handleClick} type='submit'>
-                    Start / Join
-                </button>
-            </form>
+        <div className="container-main flex-main">
+            <div className="box-main flex-main">
+                <form>
+                    <input id='room' type='text' placeholder='Sala' value={room} onChange={(e) => setRoom(e.target.value)} />
+                    <br />
+                    <input id='name' type='text' placeholder='Nombre' value={name} onChange={(e) => setName(e.target.value)} />
+                    <br />
+                    <input id='password' type='text' placeholder='Contraseña (opcional)' value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <br />
+                    <button onClick={handleClick} type='submit'>
+                        Iniciar
+                    </button>
+                </form>
+            </div> 
+        </div>
     )
 }
 
