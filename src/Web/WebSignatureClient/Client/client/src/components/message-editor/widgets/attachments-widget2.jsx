@@ -43,7 +43,8 @@ class AttachmentsWidget extends Component{
                     <button
                         className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['right']}`}
                         onClick={this.onAttachButton}
-                        disabled={this.props.fatherContainer === 'MessageEditor' && this.props.attachments.length > 0}
+                        disabled={(this.props.fatherContainer === 'MessageEditor' && this.props.attachments.length > 0) 
+                            || (this.props.fatherContainer === "SmsMessageEditor" && this.props.certificationType === "delivery")}
                     >
                         {i18n.t('attachmentsWidget.attachButton')}
                         <input

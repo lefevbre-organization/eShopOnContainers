@@ -261,6 +261,14 @@ class SmsMessageEditor extends Component {
       lefebvre
     } = this.props;
 
+    const {certificationType} = this.state; 
+
+    if (certificationType === "delivery" && application.newMessage.attachments.length > 0) {
+      const updatedMessage = { ...this.props.editedMessage };
+      updatedMessage.attachments = [];
+      this.props.editMessage(updatedMessage);
+    }
+
     console.log(content);
 
     return (
@@ -319,6 +327,7 @@ class SmsMessageEditor extends Component {
 
             <AttachmentsWidget 
               sendingType={sendingType}
+              certificationType={certificationType}
               onConfirmAttachRemoval={this.showCancelCenModal}
               isFileTypeDrop={this.state.isFileType}
               resetIsFileDrop={this.resetIsFileDrop}
