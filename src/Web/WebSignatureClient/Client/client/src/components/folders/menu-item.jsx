@@ -58,7 +58,7 @@ const MenuItem = props => {
             } 
           </a>
         </li> : null}
-        {id == 'sms' ? 
+        {/* {id == 'sms' ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-unsolved">
@@ -68,7 +68,7 @@ const MenuItem = props => {
              <span>{i18n.t('signaturesGrid.statusError')}</span>
             } 
           </a>
-        </li> : null}
+        </li> : null} */}
       </ul>
  
     ); 
