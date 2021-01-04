@@ -82,6 +82,7 @@
             public static readonly string GetDocInstance = "CE08";
             public static readonly string CancelSignature = "CE09";
             public static readonly string CertificationPost = "CE10";
+            public static readonly string GetSmsContacts = "CE11";
 
         }
         public static class Areas
@@ -106,6 +107,7 @@
             public static readonly string GetConferences = "CN03";
             public static readonly string Modify = "CN04";
             public static readonly string Remove = "CN05";
+            public static readonly string CheckUser = "CN06" ;
 
             public static readonly string GetStats = "CN10";
             
@@ -115,7 +117,6 @@
             public static readonly string RoomSecure = "CN23";
             public static readonly string RoomReservation = "CN24";
             public static readonly string RoomGet = "CN25";
-
         }
     }
 }

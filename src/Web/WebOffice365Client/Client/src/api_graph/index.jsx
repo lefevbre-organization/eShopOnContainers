@@ -591,7 +591,6 @@ export const deleteDraft = async ({ draftId }) => {
     if(draftId != '') {
       response =  await client
       .api(`/me/messages/${draftId}`)
-      .version('beta')
       .delete();  
     } 
     return response;
@@ -615,7 +614,6 @@ export const createDraft = async ({ data, attachments, draftId }) => {
     email += emailReadConfirmation();
   }
   email += emailEnd();
-
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
@@ -623,12 +621,10 @@ export const createDraft = async ({ data, attachments, draftId }) => {
     if(draftId != '') {
       response =  await client
       .api(`/me/messages/${draftId}`)
-      .version('beta')
       .update(email);  
     } else {
       response = await client
       .api('/me/messages')
-      .version('beta')
       .post(email);
     }
     await uploadFiles(response.id, data.uppyPreviews);

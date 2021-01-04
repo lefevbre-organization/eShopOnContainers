@@ -8,12 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using Signature.API.Infrastructure.Repositories;
+using Newtonsoft.Json;
 
 namespace Signature.API.Infrastructure.Services
 {
     public class SignaturitService : ISignaturitService
     {
 
+        public readonly IDocumentsRepository _documentsRepository;
         //private readonly IEventBus _eventBus;
         //private readonly IHttpClientFactory _clientFactory;
         //private readonly HttpClient _client;
@@ -22,6 +26,7 @@ namespace Signature.API.Infrastructure.Services
         private readonly IConfiguration _configuration;
         private readonly int _timeout;
         private readonly int _timeoutCreate;
+        private readonly Guid _guid;
 
         //public UsersService(
         //        IOptions<SignatureSettings> settings
@@ -45,26 +50,50 @@ namespace Signature.API.Infrastructure.Services
             _configuration = configuration;
             _timeout = 10000;
             _timeoutCreate = 90000;
+            _guid = Guid.NewGuid();
+        }
 
+        public SignaturitService(
+            IOptions<SignatureSettings> settings
+            , IConfiguration configuration
+            , IDocumentsRepository documentsRepository
+            )
+        {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _documentsRepository = documentsRepository ?? throw new ArgumentNullException(nameof(documentsRepository));
+            _configuration = configuration;
+            _timeout = 10000;
+            _timeoutCreate = 90000;
+            _guid = Guid.NewGuid();
         }
 
         #region Signatures
 
         public async Task<IRestResponse> GetSignatures(string user)
         {
+            //var guid = Guid.NewGuid();
+            Console.WriteLine($"{_guid} - START GetSignatures");
+            Console.WriteLine($"{_guid} - Call to:{_settings.Value.SignaturitApiUrl}/signatures.json?lefebvre_id={user}");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures.json?lefebvre_id={user}");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
 
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END GetSignatures: {_guid}");
 
             return response;
         }
 
         public async Task<IRestResponse> CancelSignature(string id)
         {
+            Console.WriteLine($"{_guid} - START GetSignatures");
+            Console.WriteLine($"{_guid} - Call to:{_settings.Value.SignaturitApiUrl}/signatures/{id}/cancel.json");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{id}/cancel.json");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.PATCH);
@@ -72,44 +101,47 @@ namespace Signature.API.Infrastructure.Services
             request.AlwaysMultipartFormData = true;
 
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END GetSignatures");
 
             return response;
         }
 
         public async Task<IRestResponse> CreateSignature(CreateSignaturit signatureInfo)
         {
-            Console.WriteLine("START CreateSignature");
-            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/signatures.json");
+            Console.WriteLine($"{_guid} - START CreateSignature");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/signatures.json");
 
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures.json");
             var i = 0;
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
 
-            Console.WriteLine($"Adding parameters");
+            Console.WriteLine($"{_guid} - Adding parameters");
 
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             foreach (Recipient recipient in signatureInfo.recipients)
             {
-                Console.WriteLine($"Adding recipient_{i}");
+                Console.WriteLine($"{_guid} - Adding recipient_{i}");
 
                 request.AddParameter($"recipients[{i}][name]", recipient.name);
                 request.AddParameter($"recipients[{i}][email]", recipient.email);
                 request.AddParameter($"recipients[{i}][type]", recipient.role);
                 if (recipient.signatureType == "certificate")
                 {
-                    Console.WriteLine($"Adding recipient_{i} - Certificate");
-                    request.AddParameter($"recipients[{i}][sign_with_digital_certificate_file]", 1);
+                    Console.WriteLine($"{_guid} - Adding recipient_{i} - Certificate");
+                    request.AddParameter($"{_guid} - recipients[{i}][sign_with_digital_certificate_file]", 1);
                 }
                 if (recipient.doubleAuthType == "photo")
                 {
-                    Console.WriteLine($"Adding recipient_{i} - Photo");
+                    Console.WriteLine($"{_guid} - Adding recipient_{i} - Photo");
                     request.AddParameter($"recipients[{i}][require_photo]", Convert.ToInt32(recipient.doubleAuthInfo));
                 }
                 else if (recipient.doubleAuthType == "sms")
                 {
-                    Console.WriteLine($"Adding recipient_{i} - SMS");
+                    Console.WriteLine($"{_guid} - Adding recipient_{i} - SMS");
                     request.AddParameter($"recipients[{i}][phone]", recipient.doubleAuthInfo);
                     request.AddParameter($"recipients[{i}][require_sms_validation]", 1);
                 }
@@ -118,7 +150,7 @@ namespace Signature.API.Infrastructure.Services
             i = 0;
             foreach (Recipient recipient in signatureInfo.cc)
             {
-                Console.WriteLine($"Adding cc_{i}");
+                Console.WriteLine($"{_guid} - Adding cc_{i}");
                 request.AddParameter($"cc[{i}][name]", recipient.name);
                 request.AddParameter($"cc[{i}][email]", recipient.email);
                 i += 1;
@@ -126,32 +158,32 @@ namespace Signature.API.Infrastructure.Services
             i = 0;
             foreach (UserFile file in signatureInfo.files)
             {
-                Console.WriteLine($"Adding file_{i}");
+                Console.WriteLine($"{_guid} - Adding file_{i}");
                 request.AddFileBytes($"files[{i}]", file.file, file.fileName);
                 i += 1;
             }
             i = 0;
             foreach (CustomField field in signatureInfo.customFields)
             {
-                Console.WriteLine($"Adding CustomField: {field.name} -  {field.value} ");
+                Console.WriteLine($"{_guid} - Adding CustomField: {field.name} -  {field.value} ");
                 request.AddParameter($"data[{field.name}]", field.value);
             }
 
-            Console.WriteLine($"Adding subject");
+            Console.WriteLine($"{_guid} - Adding subject");
             request.AddParameter("subject", signatureInfo.subject);
-            Console.WriteLine($"Adding body");
+            Console.WriteLine($"{_guid} - Adding body");
             request.AddParameter("body", signatureInfo.body);
-            Console.WriteLine($"Adding branding_id");
+            Console.WriteLine($"{_guid} - Adding branding_id");
             request.AddParameter("branding_id", signatureInfo.brandingId);
-            Console.WriteLine($"Adding notification url: {_settings.Value.SignatureNotificationUrl}");
+            Console.WriteLine($"{_guid} - Adding notification url: {_settings.Value.SignatureNotificationUrl}");
             request.AddParameter("events_url", _settings.Value.SignatureNotificationUrl);
 
             if (signatureInfo.reminders != null)
             {
-                Console.WriteLine($"Adding reminders");
+                Console.WriteLine($"{_guid} - Adding reminders");
                 if (signatureInfo.reminders.Length > 0)
                 {
-                    Console.WriteLine($"number: {signatureInfo.reminders.Length}");
+                    Console.WriteLine($"{_guid} - number: {signatureInfo.reminders.Length}");
                     foreach (var reminder in signatureInfo.reminders)
                     {
 
@@ -164,15 +196,15 @@ namespace Signature.API.Infrastructure.Services
 
             if (signatureInfo.expiration != null)
             {
-                Console.WriteLine($"Adding expiration");
+                Console.WriteLine($"{_guid} - Adding expiration");
                 request.AddParameter("expire_time", signatureInfo.expiration);
             }
 
-            Console.WriteLine($"Adding callback_url");
+            Console.WriteLine($"{_guid} - Adding callback_url");
             request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 
 
-            Console.WriteLine($"Adding coordinates: {signatureInfo.coordinates.Count()}");
+            Console.WriteLine($"{_guid} - Adding coordinates: {signatureInfo.coordinates.Count()}");
             foreach (Coordinate coordinate in signatureInfo.coordinates)
             {
                 request.AddParameter(coordinate.param, coordinate.value);
@@ -180,68 +212,92 @@ namespace Signature.API.Infrastructure.Services
 
             if (signatureInfo.coordinates.Count > 0 && signatureInfo.deliveryType != "")
             {
-                Console.WriteLine($"Adding delivery_type");
+                Console.WriteLine($"{_guid} - Adding delivery_type");
                 request.AddParameter("delivery_type", signatureInfo.deliveryType);
             }
 
-            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+            Console.WriteLine($"{_guid} - Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
 
             IRestResponse response = await client.ExecuteAsync(request);
 
-            Console.WriteLine($"Response: {response.Content.ToString()}");
-
-            Console.WriteLine("END CreateSignature");
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CreateSignature");
 
             return response;
         }
 
         public async Task<IRestResponse> DownloadDocument(string signatureId, string documentId)
         {
+            Console.WriteLine($"{_guid} - START DownloadDocument");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/signed");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/signed");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadDocument");
 
             return response;
         }
 
         public async Task<IRestResponse> DownloadTrail(string signatureId, string documentId)
         {
+            Console.WriteLine($"{_guid} - START DownloadTrail");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/audit_trail");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/audit_trail");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadTrail");
 
             return response;
         }
 
         public async Task<IRestResponse> DownloadAttachments(string signatureId, string documentId)
         {
+            Console.WriteLine($"{_guid} - START DownloadAttachments");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/attachments");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/attachments");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadAttachments");
 
             return response;
         }
 
         public async Task<IRestResponse> sendReminder(string signatureId)
         {
+            Console.WriteLine($"{_guid} - START sendReminder");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/reminder.json");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/reminder.json");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.POST);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END sendReminder");
 
             return response;
         }
@@ -250,6 +306,9 @@ namespace Signature.API.Infrastructure.Services
         #region Brandings
         public async Task<IRestResponse> CreateBranding(BrandingConfiguration brandingInfo)
         {
+            Console.WriteLine($"{_guid} - START CreateBranding");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/brandings.json");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/brandings.json");
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
@@ -279,7 +338,10 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("show_welcome_page", brandingInfo.show_welcome_page);
 
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CreateBranding");
 
             return response;
         }
@@ -288,33 +350,39 @@ namespace Signature.API.Infrastructure.Services
         #region CertifiedEmails
         public async Task<IRestResponse> GetEmails(string user)
         {
+            Console.WriteLine($"{_guid} - START GetEmails");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/emails.json?lefebvre_id={user}");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails.json?lefebvre_id={user}");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
 
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END GetEmails");
 
             return response;
         }
 
         public async Task<IRestResponse> CreateEmail(CreateEmail emailInfo)
         {
-            Console.WriteLine("START CreateEmail");
-            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/emails.json");
+            Console.WriteLine($"{_guid} - START CreateEmail");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/emails.json");
 
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails.json");
             var i = 0;
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
 
-            Console.WriteLine($"Adding parameters");
+            Console.WriteLine($"{_guid} - Adding parameters");
 
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             foreach (Recipient recipient in emailInfo.recipients)
             {
-                Console.WriteLine($"Adding recipient_{i}");
+                Console.WriteLine($"{_guid} - Adding recipient_{i}");
 
                 request.AddParameter($"recipients[to][{i}][name]", recipient.name);
                 request.AddParameter($"recipients[to][{i}][email]", recipient.email);
@@ -323,7 +391,7 @@ namespace Signature.API.Infrastructure.Services
             i = 0;
             foreach (Recipient recipient in emailInfo.cc)
             {
-                Console.WriteLine($"Adding cc_{i}");
+                Console.WriteLine($"{_guid} - Adding cc_{i}");
                 request.AddParameter($"recipients[cc][{i}][name]", recipient.name);
                 request.AddParameter($"recipients[cc][{i}][email]", recipient.email);
                 i += 1;
@@ -331,55 +399,64 @@ namespace Signature.API.Infrastructure.Services
             i = 0;
             foreach (UserFile file in emailInfo.files)
             {
-                Console.WriteLine($"Adding attachment_{i}");
+                Console.WriteLine($"{_guid} - Adding attachment_{i}");
                 request.AddFileBytes($"attachments[{i}]", file.file, file.fileName);
                 i += 1;
             }
             i = 0;
             foreach (CustomField field in emailInfo.customFields)
             {
-                Console.WriteLine($"Adding CustomField: {field.name} -  {field.value} ");
+                Console.WriteLine($"{_guid} - Adding CustomField: {field.name} -  {field.value} ");
                 request.AddParameter($"data[{field.name}]", field.value);
             }
 
-            Console.WriteLine($"Adding type: {emailInfo.certificationType}");
+            Console.WriteLine($"{_guid} - Adding type: {emailInfo.certificationType}");
             request.AddParameter($"type", emailInfo.certificationType);
 
-            Console.WriteLine($"Adding subject");
+            Console.WriteLine($"{_guid} - Adding subject");
             request.AddParameter("subject", emailInfo.subject);
-            Console.WriteLine($"Adding body");
+            Console.WriteLine($"{_guid} - Adding body");
             request.AddParameter("body", emailInfo.body);
-            Console.WriteLine($"Adding branding_id");
+            Console.WriteLine($"{_guid} - Adding branding_id");
             request.AddParameter("branding_id", emailInfo.brandingId);
-            Console.WriteLine($"Adding notification url: {_settings.Value.CertifiedEmailNotificationUrl}");
+            Console.WriteLine($"{_guid} - Adding notification url: {_settings.Value.CertifiedEmailNotificationUrl}");
             request.AddParameter("events_url", _settings.Value.CertifiedEmailNotificationUrl);
 
-            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+            Console.WriteLine($"{_guid} - Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
 
             IRestResponse response = await client.ExecuteAsync(request);
 
-            Console.WriteLine($"Response: {response.Content.ToString()}");
-
-            Console.WriteLine("END CreateSignature");
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CreateEmail");
 
             return response;
         }
 
         public async Task<IRestResponse> DownloadCertification(string emailId, string certificationId)
         {
+            Console.WriteLine($"{_guid} - START DownloadCertification");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/emails/{emailId}/certificates/{certificationId}/download/audit_trail");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails/{emailId}/certificates/{certificationId}/download/audit_trail");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadCertification");
 
             return response;
         }
 
         public BsonDocument DownloadCertificationFile(string emailId, string certificationId)
         {
+            Console.WriteLine($"{_guid} - START DownloadCertificationFile");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/emails/{emailId}/certificates/{certificationId}/download/audit_trail");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/emails/{emailId}/certificates/{certificationId}/download/audit_trail");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
@@ -390,7 +467,9 @@ namespace Signature.API.Infrastructure.Services
             var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
             string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
 
-            Console.WriteLine($"END GetFile");
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadCertificationFile");
 
             return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
 
@@ -401,87 +480,102 @@ namespace Signature.API.Infrastructure.Services
         #region CertifiedSms
         public async Task<IRestResponse> GetSms(string user)
         {
+            Console.WriteLine($"{_guid} - START GetSms");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/sms.json?lefebvre_id={user}");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms.json?lefebvre_id={user}");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
 
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END GetSms");
 
             return response;
         }
 
-        public async Task<IRestResponse> CreateSms(CreateSms emailSms)
+        public async Task<IRestResponse> CreateSms(CreateSms sms)
         {
-            Console.WriteLine("START CreateEmail");
-            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/sms.json");
+            Console.WriteLine($"{_guid} - START CreateSms");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/sms.json");
 
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms.json");
             var i = 0;
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
 
-            Console.WriteLine($"Adding parameters");
+            Console.WriteLine($"{_guid} - Adding parameters");
 
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-            foreach (SmsRecipient recipient in emailSms.recipients)
+            foreach (SmsRecipient recipient in sms.recipients)
             {
-                Console.WriteLine($"Adding recipient_{i}");
+                Console.WriteLine($"{_guid} - Adding recipient_{i}");
 
                 request.AddParameter($"recipients[{i}][name]", recipient.name);
                 request.AddParameter($"recipients[{i}][phone]", recipient.phone);
                 i += 1;
             }
             i = 0;
-            foreach (UserFile file in emailSms.files)
+            foreach (UserFile file in sms.files)
             {
-                Console.WriteLine($"Adding attachment_{i}");
+                Console.WriteLine($"{_guid} - Adding attachment_{i}");
                 request.AddFileBytes($"attachments[{i}]", file.file, file.fileName);
                 i += 1;
             }
             i = 0;
-            foreach (CustomField field in emailSms.customFields)
+            foreach (CustomField field in sms.customFields)
             {
-                Console.WriteLine($"Adding CustomField: {field.name} -  {field.value} ");
+                Console.WriteLine($"{_guid} - Adding CustomField: {field.name} -  {field.value} ");
                 request.AddParameter($"data[{field.name}]", field.value);
             }
 
-            Console.WriteLine($"Adding type: {emailSms.certificationType}");
-            request.AddParameter($"type", emailSms.certificationType);
+            Console.WriteLine($"{_guid} - Adding type: {sms.certificationType}");
+            request.AddParameter($"type", sms.certificationType);
 
-            Console.WriteLine($"Adding body");
-            request.AddParameter("body", emailSms.body);
-            Console.WriteLine($"Adding notification url: {_settings.Value.CertifiedSmsNotificationUrl}");
+            Console.WriteLine($"{_guid} - Adding body");
+            request.AddParameter("body", sms.body);
+            Console.WriteLine($"{_guid} - Adding notification url: {_settings.Value.CertifiedSmsNotificationUrl}");
             request.AddParameter("events_url", _settings.Value.CertifiedSmsNotificationUrl);
 
-            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+            Console.WriteLine($"{_guid} - Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
 
             IRestResponse response = await client.ExecuteAsync(request);
 
-            Console.WriteLine($"Response: {response.Content.ToString()}");
-
-            Console.WriteLine("END CreateSignature");
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CreateSms");
 
             return response;
         }
 
-        public async Task<IRestResponse> DownloadSmsCertification(string emailId, string certificationId)
+        public async Task<IRestResponse> DownloadSmsCertification(string smsId, string certificationId)
         {
-            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms/{emailId}/certificates/{certificationId}/download/audit_trail");
+            Console.WriteLine($"{_guid} - START DownloadSmsCertification");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/sms/{smsId}/certificates/{certificationId}/download/audit_trail");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms/{smsId}/certificates/{certificationId}/download/audit_trail");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadSmsCertification");
 
             return response;
         }
 
-        public BsonDocument DownloadSmsCertificationFile(string emailId, string certificationId)
+        public BsonDocument DownloadSmsCertificationFile(string smsId, string certificationId)
         {
-            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms/{emailId}/certificates/{certificationId}/download/audit_trail");
+            Console.WriteLine($"{_guid} - START DownloadSmsCertificationFile");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/sms/{smsId}/certificates/{certificationId}/download/audit_trail");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/sms/{smsId}/certificates/{certificationId}/download/audit_trail");
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
@@ -491,12 +585,197 @@ namespace Signature.API.Infrastructure.Services
             var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
             string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
 
-            Console.WriteLine($"END GetFile");
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadSmsCertificationFile");
 
             return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
 
         }
 
+        #endregion
+
+        #region DocumentCertification
+        public async Task<IRestResponse> CertifyDocument(CreateDocCertification docInfo)
+        {
+            Console.WriteLine($"{_guid} - START CertifyDocument");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files.json");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files.json");
+            var i = 0;
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Adding parameters");
+
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+
+            foreach (UserFile file in docInfo.files)
+            {
+                Console.WriteLine($"Sending file_{i}");
+                request.AddFileBytes($"file", file.file, file.fileName);
+                i += 1;
+            }
+            
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CertifyDocument");
+
+            return response;
+        }
+
+        public async Task<IRestResponse> GetCertifiedDocuments(string id)
+        {
+            Console.WriteLine($"{_guid} - START GetCertifiedDocuments");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files/{id}.json");
+            var url = "";
+
+            if (id.ToUpper() == "ALL")
+            {
+                url = $"{ _settings.Value.SignaturitApiUrl }/files.json";
+            } else
+            {
+                url = $"{ _settings.Value.SignaturitApiUrl }/files/{id}.json";
+            }
+
+            var client = new RestClient(url);
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END GetCertifiedDocuments");
+
+            return response;
+        }
+
+        public async Task<IRestResponse> DownloadCertifiedDocumentAudit(string id)
+        {
+            Console.WriteLine($"{_guid} - START DownloadCertifiedDocumentAudit");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files/{id}/download/audit_trail");
+            
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files/{id}/download/audit_trail");
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END DownloadCertifiedDocumentAudit");
+
+            return response;
+        }
+
+        public async Task<IRestResponse> CertifyDocumentSync(CreateDocCertification docInfo)
+        {
+            Console.WriteLine($"{_guid} - START CertifyDocumentSync");
+            Console.WriteLine($"{_guid} - Call to: {_settings.Value.SignaturitApiUrl}/files.json");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/files.json");
+            var i = 0;
+            client.Timeout = _timeoutCreate;
+            var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Adding parameters");
+
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+
+            foreach (UserFile file in docInfo.files)
+            {
+                Console.WriteLine($"Sending file_{i}");
+                request.AddFileBytes($"file", file.file, file.fileName);
+                i += 1;
+            }
+
+            IRestResponse response = await client.ExecuteAsync(request);
+            //IRestResponse response;
+
+            if (response.IsSuccessful)
+            {
+                var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
+                response = await insertInMongo(docInfo, response);
+                
+                //var jsonContent = JsonConvert.DeserializeObject<CertDocument>("{\r\n    \"id\": \"b89aec11-1f51-48ca-bf51-814928d84e71\",\r\n    \"crc\": \"ea0c6d39c6cfc4a74bc54766432dd9ec\",\r\n    \"created_at\": \"Fri, 27 Nov 2020 09:11:37 +0000\",\r\n    \"email\": \"firmadigital@lefebvre.es\",\r\n    \"name\": \"Acta notarial.pdf\",\r\n    \"size\": 71120\r\n}");
+                //response = await insertInMongo(docInfo, jsonContent);
+
+            }
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END CertifyDocumentSync");
+
+            return response;
+        }
+        #endregion
+
+        #region Mongo
+        public async Task<IRestResponse> insertInMongo(CreateDocCertification docInfo, IRestResponse response)
+        {
+            Console.WriteLine($"{_guid} - START insertInMongo");
+
+            var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
+            //var jsonContent = response;
+
+            jsonContent.App = docInfo.app;
+            jsonContent.Guid = docInfo.guid;
+
+            var user = await _documentsRepository.GetUser(docInfo.user);
+            object result;
+
+            if (user.data == null)
+            {
+                // Create new registry
+                result = await _documentsRepository.Create(
+                    new UserCertDocuments()
+                    {
+                        User = docInfo.user,
+                        Documents = new List<CertDocument>() {
+                            new CertDocument() {
+                                Guid = docInfo.guid,
+                                ExternalId = jsonContent.ExternalId,
+                                Crc = jsonContent.Crc,
+                                CreatedAt = jsonContent.CreatedAt,
+                                Email = jsonContent.Email,
+                                Name = jsonContent.Name,
+                                Size = jsonContent.Size,
+                                App = docInfo.app
+                            }
+                        }
+                    }
+               );
+            } else
+            {
+                // Upsert registry
+                result = await _documentsRepository.UpSertDocument(docInfo.user, 
+                    new CertDocument() {
+                        Guid = docInfo.guid,
+                        ExternalId = jsonContent.ExternalId,
+                        Crc = jsonContent.Crc,
+                        CreatedAt = jsonContent.CreatedAt,
+                        Email = jsonContent.Email,
+                        Name = jsonContent.Name,
+                        Size = jsonContent.Size,
+                        App = docInfo.app
+                    });
+            }
+
+            // Ver qué hago aquí con el result
+
+            // Descargo el documento de auditoría:
+            var fileResponse = await DownloadCertifiedDocumentAudit(jsonContent.ExternalId);
+
+            //Console.WriteLine($"{_guid} - Response: {response.Content}");
+            Console.WriteLine($"{_guid} - Response: {response.StatusCode}");
+            Console.WriteLine($"{_guid} - END insertInMongo");
+
+            return fileResponse;
+        }
         #endregion
     }
 }

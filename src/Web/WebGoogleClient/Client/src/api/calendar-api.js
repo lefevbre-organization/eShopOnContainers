@@ -124,8 +124,8 @@ export const deleteCalendar = (calendar) =>
 
 // Events Api
 
-export const getEventList = (idCalendar, selectedDate) =>
-    new Promise((resolve, reject) => {
+export const getEventList = (idCalendar, selectedDate) => {
+    return new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .list({
                 calendarId: idCalendar,
@@ -144,12 +144,13 @@ export const getEventList = (idCalendar, selectedDate) =>
                 reject(error);
             });
     });
+}
 
-export const addCalendarEvent = (calendar, event) =>
-    new Promise((resolve, reject) => {
+export const addCalendarEvent = (calendar, event) => {
+    return new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .insert({
-                calendarId: calendar ,
+                calendarId: calendar,
                 resource: event,
                 sendUpdates: 'all',
             })
@@ -162,6 +163,7 @@ export const addCalendarEvent = (calendar, event) =>
             });
 
     });
+}
 
 export const updateCalendarEvent = (calendar, eventId, event) => new Promise((resolve, reject) => {
     window.gapi.client.calendar.events

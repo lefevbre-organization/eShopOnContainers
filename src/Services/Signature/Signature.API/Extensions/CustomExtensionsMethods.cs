@@ -52,6 +52,8 @@ namespace Signature.API.Extensions
             services.AddTransient<IEmailsRepository, EmailsRepository>();
             services.AddTransient<ISmsService, SmsService>();
             services.AddTransient<ISmsRepository, SmsRepository>();
+            services.AddTransient<IDocumentsService, DocumentsService>();
+            services.AddTransient<IDocumentsRepository, DocumentsRepository>();
 
             return services;
         }

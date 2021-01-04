@@ -5,6 +5,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models
 {
     public class UserConference 
     {
+        public UserConference()
+        { }
+
+        public UserConference(string idNavisionUser, short idApplication)
+        {
+            idNavision = idNavisionUser;
+            idApp = idApplication;
+            rooms = new Room[] { };
+            conferences = new ConferenceModel[] { };
+            stats = new ConferenceStats[] { };
+        }
+
         [BsonId]
         [BsonIgnoreIfDefault]
         [BsonRepresentation(BsonType.ObjectId)]

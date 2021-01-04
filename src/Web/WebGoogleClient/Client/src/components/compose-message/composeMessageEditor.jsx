@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState, useRef} from 'react';
 import {
   RichTextEditorComponent,
   Toolbar,
@@ -191,20 +191,21 @@ const ComposeMessageEditor = (props) => {
   const { onChange, defaultValue = '' } = props;
   const [editorInstance, setEditorInstance ] = useState(null);
 
+
   return (
     <Fragment>
       <RichTextEditorComponent
         id='toolsRTE_2'
         showCharCount={false}
         locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
-        // enablePersistence={true}
+        //enablePersistence={true}
         enableTabKey={true}
         insertImageSettings={{ saveFormat: 'Base64' }}
         toolbarSettings={toolbarSettings}
         value={defaultValue}
         inline={true}
         blur={(content) => {
-          // onChange && onChange(content.value);
+          onChange && onChange(content.value);
         }}
         created={ () => {
           console.log(document.getElementById("toolsRTE_2"))

@@ -24,6 +24,7 @@ import {
   ADD_OPEN_MESSAGE_ATTACHMENT,
   CLEAR_OPEN_MESSAGE_ATTACHMENT,
   REMOVE_MESSAGE_FROM_LIST,
+    UPDATE_COMPOSER_DATA
 } from '../actions/message-list.actions';
 
 const defaultMessagesState = {
@@ -320,5 +321,17 @@ export function messageList(state = defaultMessageList, action) {
 
     default:
       return state;
+  }
+}
+
+export const composer = (
+    state = {},
+    action
+) => {
+  switch (action.type) {
+    case UPDATE_COMPOSER_DATA:
+      return action.payload
+    default:
+      return state
   }
 }

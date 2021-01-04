@@ -114,6 +114,7 @@ export class ConnectingEmailsStep1c extends React.Component {
                 }    
 
                 .step4-subtitle {
+                    font-weight: bold;
                     color: #333333 !important;
                     font-family: "MTTMilano-Medium";	
                     font-size: 14px;

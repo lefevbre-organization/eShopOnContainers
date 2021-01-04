@@ -209,6 +209,8 @@ class MessageList extends Component {
         this.dialogClose = this.dialogClose.bind(this);
         this.dialogOpen = this.dialogOpen.bind(this);
         this.toolbarClick = this.toolbarClick.bind(this);
+        this.excelExportComplete = this.excelExportComplete.bind(this);
+        this.pdfExportComplete = this.pdfExportComplete.bind(this);
         //Sin firmas 
         this.animationSettings = { effect: 'None' };
         // this.alertButtonRef = element => {
@@ -880,12 +882,9 @@ class MessageList extends Component {
             };
             this.grid.columns[0].visible = false;
             this.grid.pdfExport(exportProperties);
-            /* show columns after pdfExport */
-            this.grid.columns[0].visible = true; 
         } else if (this.grid && event.item.id.includes('excel')){
             this.grid.columns[0].visible = false;
-            this.grid.excelExport();
-            this.grid.columns[0].visible = true; 
+            this.grid.excelExport();   
         } else if (this.grid && event.item.id.includes('print')) {
             this.grid.print();
             const cols = this.grid.getColumns();
@@ -894,6 +893,20 @@ class MessageList extends Component {
                col.template = null;
             }
           }
+        }
+    }
+
+    pdfExportComplete() {
+        if(this.grid) {
+            /* show columns after pdfExport */
+           this.grid.columns[0].visible = true; 
+       }
+    }
+
+    excelExportComplete() {
+        if(this.grid) {
+             /* show columns after excelExport */
+            this.grid.columns[0].visible = true; 
         }
     }
 
@@ -1204,6 +1217,8 @@ class MessageList extends Component {
                     toolbar={this.toolbarOptions} 
                     locale={navigatorLanguage}
                     toolbarClick={this.toolbarClick}
+                    excelExportComplete={this.excelExportComplete}
+                    pdfExportComplete={this.pdfExportComplete}
                     ref={g => this.grid = g}
                     hierarchyPrintMode={'All'}
                     delayUpdate='true'

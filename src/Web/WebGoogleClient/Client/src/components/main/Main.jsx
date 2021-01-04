@@ -8,10 +8,6 @@ import CU_ACTIONS from '../../actions/user';
 import i18n from 'i18next';
 
 import {
-  diff,
-  addedDiff,
-  deletedDiff,
-  updatedDiff,
   detailedDiff,
 } from 'deep-object-diff';
 import Cookies from 'js-cookie';
@@ -260,6 +256,7 @@ export class Main extends Component {
     ) {
       return false;
     }
+
     if (
       difP.updated.messagesResult &&
       difP.updated.messagesResult.hasOwnProperty('openMessage')
@@ -755,6 +752,7 @@ export class Main extends Component {
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
                       googleUser={this.props.googleUser}
+                      labelsResult={this.props.labelsResult}
                     />
                   )}
                 />
@@ -784,6 +782,7 @@ export class Main extends Component {
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
                       googleUser={this.props.googleUser}
+                      labelsResult={this.props.labelsResult}
                     />
                   )}
                 />
@@ -853,31 +852,6 @@ export class Main extends Component {
                     </TooltipComponent>
                   </span>
                 )}
-              {/*<span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenCompliance(true)}> 
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-compliance.png"
-                  ></img>
-                </div>
-              </span>
-              <span className="productsbutton">
-                <button
-                  onClick={() => this.onSetSidebarDocked(false)}
-                  className="btn compose-btn"
-                >
-                  <img
-                    className=""
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-close-empty.png"
-                  ></img>
-                </button>
-              </span> 
-                        <span className="spaceproduct"></span>*/}
             </div>
           </section>
           <style jsx>{`

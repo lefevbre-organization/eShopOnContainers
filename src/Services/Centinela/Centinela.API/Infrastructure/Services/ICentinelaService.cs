@@ -25,6 +25,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
         Task<Result<List<CenConceptInstance>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept);
         Task<Result<List<CenContact>>> GetContactsAsync(string idNavisionUser);
 
+        Task<Result<List<CenContact>>> GetSmsContactsAsync(string idNavisionUser);
+
+
         Task<Result<bool>> CancelSignatureAsync(string guid);
 
         Task<Result<bool>> NotifySignatureAsync(string service, string guid, string documentId, List<CenRecipient> recipients);
