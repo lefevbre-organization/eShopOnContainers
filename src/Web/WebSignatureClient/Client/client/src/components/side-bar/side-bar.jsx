@@ -34,6 +34,7 @@ class SideBar extends Component {
     this.handleOnNewMessage = this.onNewMessage.bind(this);
     this.handleOnNewEmailCertificate = this.onNewEmailCertificate.bind(this);
     this.handleOnNewSmsCertificate = this.onNewSmsCertificate.bind(this);
+    this.handleOnNewDocumentCertificate = this.onNewDocumentCertificate.bind(this);
     this.handleOnNewSending = this.onNewSending.bind(this);
     this.dialogClose = this.dialogClose.bind(this);
     
@@ -176,9 +177,7 @@ class SideBar extends Component {
                 {t('sideBar.newRequest')}
               </span> : "" }
             </button>
-         
           </div>
-         
         </div>
         <PerfectScrollbar>
           <MenuContainer collapsed={collapsed} />
@@ -196,6 +195,7 @@ class SideBar extends Component {
             onNewMessage={this.handleOnNewMessage}
             onNewEmailCertificate={this.handleOnNewEmailCertificate}
             onNewSmsCertificate={this.handleOnNewSmsCertificate}
+            onNewDocumentCertificate={this.handleOnNewDocumentCertificate}
             lefebvre={lefebvre}
           />
         </DialogComponent>
@@ -210,7 +210,7 @@ class SideBar extends Component {
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose}
-        ></DialogComponent>
+        />
         <DialogComponent 
           id="confirmDialog" 
           header=' ' 
@@ -429,6 +429,13 @@ class SideBar extends Component {
     this.props.newMessage('smsCertificate', null);
     this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
     this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
+    this.sendTypeDialogClose();
+  }
+
+  onNewDocumentCertificate() {
+    this.props.newMessage('documentCertificate', null);
+    this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
+    this.props.setTitle(i18n.t('messageEditor.certifiedDocumentTitle'));
     this.sendTypeDialogClose();
   }
 

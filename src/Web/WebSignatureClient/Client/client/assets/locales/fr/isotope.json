@@ -44,6 +44,7 @@
     "filterMenu": "Signatures",
     "filterMenuEmail": "Email certifié",
     "filterMenuSms": "SMS certifié",
+    "filterMenuDocument": "CERTIFICATION",
     "filterAll": "Montrer toutes",
     "filterInProgress": "En progrés",
     "filterCompleted": "Complétées",
@@ -51,9 +52,11 @@
     "signature": "Signature avancée",
     "certifiedEmail": "Email certifié",
     "certifiedSms": "SMS certifié",
+    "certifiedDocument": "Document certification",
     "sendingTypeSignature": "Signature avec données biométriques",
     "sendingTypeEmail": "Certifiez vos communications",
-    "sendingTypeSms": "Certifiez vos SMS"
+    "sendingTypeSms": "Certifiez vos SMS",
+    "sendingTypeDocument": "Certifiez vos documents"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -73,7 +76,8 @@
     },
     "app": "SIGNATURE",
     "certifiedEmail": "EMAIL CERTIFIÉ",
-    "certifiedSms": "SMS CERTIFIÉ"
+    "certifiedSms": "SMS CERTIFIÉ",
+    "certifiedDocument": "CERTIFICATION DU DOCUMENT"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -142,7 +146,8 @@
     },
     "title": "CRÉER UNE SIGNATURE",
     "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
-    "certifiedSmsTitle": "CERTIFIED SMS"
+    "certifiedSmsTitle": "CERTIFIED SMS",
+    "certifiedDocumentTitle": "CERTIFICATION DU DOCUMENT"
   },
   "forwardAction": {
     "From": "De",
@@ -205,12 +210,16 @@
   "signaturesGrid": {
     "menuEdit": "Éditer",
     "menuCancel": "Anuler",
+    "menuAudit": "Télécharger l'audit",
+    "menuDocument": "Télécharger le document",
     "columnAction": "Actions",
     "columnDocument": "Document",
     "columnSubject": "Sujet",
     "columnSigners": "Destinataires",
     "columnDate": "Date",
     "columnStatus": "État",
+    "columnHour": "Temps",
+    "columnOrigin": "Origine",
     "statusCancelled": "Annulée",
     "statusCompleted": "Complétée",
     "statusExpired": "Périmé",
@@ -257,6 +266,12 @@
   },
   "bigFileModal": {
     "text": "La taille maximale des pièces jointes ne doit pas dépasser 15MB."
+  },
+  "documentCertifiedModal": {
+    "text": "Le fichier a été certifié avec succès."
+  },
+   "documentErrorModal": {
+    "text": "Le fichier n'a pas été certifié correctement."
   },
   "attachNotFoundCentinela":{
     "text": "Impossible de télécharger les documents."
@@ -423,6 +438,14 @@
       }
     },
     "title": "DÉTAILS DE LA SIGNATURE"
+  },
+   "documentEditor": {
+      "dragDrop": "Faites glisser votre fichier ici",
+      "upload": "ou téléchargez-le depuis",
+      "computer": "votre ordinateur",
+      "file": "Fichier",
+      "cancelButton": "ANULER",
+      "acceptButton": "CERTIFIER"
   },
   "completedPage":{
     "title": "Le document a été signé avec succès.",

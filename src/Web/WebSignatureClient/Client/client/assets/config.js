@@ -19,7 +19,7 @@ window.RELEASE = 'RC DEV';
 window.URL_MF_SIGNATURIT = "http://localhost:3020";
 
 // Bloque para probar arrancando el api sin el F5
-// window.API_SIGN_GATEWAY = "https://localhost:44375/api/v1";
+window.API_SIGN_GATEWAY = "https://localhost:44375/api/v1";
 // window.URL_SIGNATURES_API = "https://localhost:44375/api/v1/Signatures";
 // window.URL_BRANDINGS_API = "https://localhost:44375/api/v1/Brandings";
 // window.URL_SIGNATURIT_API = "https://localhost:44375/api/v1/Signaturit"
@@ -31,7 +31,7 @@ window.URL_MF_SIGNATURIT = "http://localhost:3020";
 // window.URL_SIGNATURIT_API = "http://localhost:8091/api/v1/signservice/Signaturit";
 
 // Bloque para probar contra pre
-window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
+// window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
 window.API_UTILS_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils";
 // window.API_UTILS_GATEWAY = "https://localhost:44307/api/v1/UserUtils"
 

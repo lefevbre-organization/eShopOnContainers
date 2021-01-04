@@ -39,12 +39,10 @@ export class MenuListClass extends Component {
       hideAlertDialog: false,
       isDisable: true
     }
-
   }
 
   componentDidMount() {
     this.props.setAppTitle(i18n.t('topBar.app'));
-    
   }
   
   getConfirm = () => {
@@ -52,7 +50,7 @@ export class MenuListClass extends Component {
   }
 
   render() {
-    const { collapsed, lefebvre } = this.props;
+    const { collapsed, lefebvre, selectedService } = this.props;
     const selectedFilter = this.props.application.signaturesFilterKey;
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
@@ -87,6 +85,7 @@ export class MenuListClass extends Component {
         <div>
           <MenuItem 
            id={'signature'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenu')}
            icon="lf-icon-signature-certificate"
            onClick={this.onClick}
@@ -97,7 +96,8 @@ export class MenuListClass extends Component {
            true : false} /> 
           
           <MenuItem 
-           id={'email'}
+           id={'certifiedEmail'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenuEmail')}
            icon="lf-icon-certified-mail"
            onClick={this.onEmailClick}
@@ -108,10 +108,23 @@ export class MenuListClass extends Component {
            true : false} />
 
           <MenuItem 
-           id={'sms'}
+           id={'certifiedSms'}
+           selectedService={selectedService}
            title={i18n.t('sideBar.filterMenuSms')}
            icon="lf-icon-certified-sms"
            onClick={this.onSmsClick}
+           getConfirm={this.getConfirm}
+           collapsed={collapsed}
+           disable={lefebvre.roles
+           && lefebvre.roles.includes('SMS Certificado') ?
+           true : false} />     
+
+          <MenuItem 
+           id={'certifiedDocument'}
+           selectedService={selectedService}
+           title={i18n.t('sideBar.filterMenuDocument')}
+           icon="lf-icon-certified-document"
+           onClick={this.onDocumentClick}
            getConfirm={this.getConfirm}
            collapsed={collapsed}
            disable={lefebvre.roles
@@ -214,6 +227,24 @@ export class MenuListClass extends Component {
     }
   }
 
+  onDocumentClick = (event, key) => {
+    const { close, lefebvre } = this.props;
+      event.stopPropagation();
+      this.props.signatureClicked(null);
+      this.props.emailClicked(null);
+      this.props.smsClicked(null);
+      this.props.setSignaturesFilterKey(key);
+      this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+      this.props.setUserApp('lefebvre');
+      this.props.setMailContacts(null);
+      this.props.setAdminContacts(null);
+      this.props.setGuid(null);
+      this.props.setIdDocuments(null);
+      this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
+      this.props.setSelectedService('certifiedDocument'); 
+      this.props.close(this.props.application);
+  };
+
   dialogClose(){
     this.setState({
         hideAlertDialog: false, 
@@ -257,7 +288,8 @@ const mapStateToProps = state => ({
   selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
   messages: state.messages,
-  lefebvre: state.lefebvre
+  lefebvre: state.lefebvre,
+  selectedService: state.application.selectedService
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -14,6 +14,7 @@ import SideBar from './side-bar/side-bar';
 import MessageEditor from './message-editor/message-editor';
 import EmailMessageEditor from './message-editor/email-message-editor';
 import SmsMessageEditor from './message-editor/sms-message-editor';
+import DocumentMessageEditor from './message-editor/document-message-editor'
 import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import EmailMessageViewer from './message-viewer/email-message-viewer';
@@ -78,7 +79,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getContactsCentinela } from "../services/api-signaturit";
+import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getContactsCentinela, getUserCertifiedDocuments, preloadCertifiedDocuments } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -496,6 +497,13 @@ class App extends Component {
       && application.newMessage.sendingType == 'smsCertificate'
     ) {
       return <SmsMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
+    } else if
+    (
+      application.newMessage &&
+      Object.keys(application.newMessage).length > 0
+      && application.newMessage.sendingType == 'documentCertificate'
+    ) {
+      return <DocumentMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
     } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {
@@ -697,6 +705,7 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );
         (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedEmail") {
       this.props.setSelectedService('certifiedEmail');
       this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
@@ -763,6 +772,7 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );        
         (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedSms") {
       this.props.setSelectedService('certifiedSms');
       this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
@@ -843,6 +853,16 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );
         (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
+    } else if (lefebvre.targetService === "certifiedDocument") {
+      this.props.setSelectedService('certifiedDocument');
+      this.props.setTitle(i18n.t('messageEditor.certifiedDocumentTitle'));
+      this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
+      this.props.preloadCertifiedDocuments(lefebvre.userId)
+      .catch(err => { throw new Error(err);} );
+      (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
+      (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+      (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
@@ -984,10 +1004,13 @@ class App extends Component {
           this.props.preloadEmails(lefebvre.userId);
         } else if (application.selectedService === 'certifiedSms') {
           this.props.preloadSms(lefebvre.userId);
+        } else if (application.selectedService === 'certifiedDocuments') {
+          this.props.preloadCertifiedDocuments(lefebvre.userId);
         } else {
-            this.props.preloadSignatures(lefebvre.userId);
-            this.props.preloadEmails(lefebvre.userId);
-            this.props.preloadSms(lefebvre.userId);
+          this.props.preloadSignatures(lefebvre.userId);
+          this.props.preloadEmails(lefebvre.userId);
+          this.props.preloadSms(lefebvre.userId);
+          this.props.preloadCertifiedDocuments(lefebvre.userId);
         }
         //this.props.backendRequestCompleted();
       } else {
@@ -1003,7 +1026,9 @@ class App extends Component {
           this.props.preloadSms(lefebvre.userId);
           let sms = application.smsList.find(s => s.id === application.selectedSms.id);
           this.props.smsClicked(sms);
-        }     
+        } else if (application.selectedService === 'certifiedDocuments') {
+          this.props.preloadCertifiedDocuments(lefebvre.userId);
+        }
       }  
   }
 
@@ -1077,6 +1102,7 @@ const mapDispatchToProps = dispatch => ({
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
   preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth),
+  preloadCertifiedDocuments: (userId) => preloadCertifiedDocuments(dispatch, userId),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   emailClicked: email => dispatch(selectEmail(email)),
   smsClicked: sms => dispatch(selectSms(sms)),
@@ -1115,6 +1141,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     preloadSignatures: (userId) => dispatchProps.preloadSignatures(userId, stateProps.application.user.credentials.encrypted),
     preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted),
     preloadSms: (userId) => dispatchProps.preloadSms(userId, stateProps.application.user.credentials.encrypted),
+    preloadCertifiedDocuments: (userId) => dispatchProps.preloadCertifiedDocuments(userId),
     signatureClicked: signature => dispatchProps.signatureClicked(signature),
     emailClicked: email => dispatchProps.emailClicked(email),
     smsClicked: sms => dispatchProps.smsClicked(sms),

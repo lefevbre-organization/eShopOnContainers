@@ -70,7 +70,7 @@ namespace Signature.API.Infrastructure
         private static void ClassMapping()
         {
             //if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(SignatureUser))) { BsonClassMap.RegisterClassMap<SignatureUser>(); }
+            //if (!BsonClassMap.IsClassMapRegistered(typeof(SignatureUser))) { BsonClassMap.RegisterClassMap6SignatureUser>(); }
             //if (!BsonClassMap.IsClassMapRegistered(typeof(LexUser))) { BsonClassMap.RegisterClassMap<LexUser>(); }
             //if (!BsonClassMap.IsClassMapRegistered(typeof(SignatureMaster))) { BsonClassMap.RegisterClassMap<SignatureMaster>(); }
             //if (!BsonClassMap.IsClassMapRegistered(typeof(Signatures))) { BsonClassMap.RegisterClassMap<Signatures>(); }

@@ -15,7 +15,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
-import { preloadSignatures, preloadSignatures2, cancelSignature2 } from "../../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, cancelSignature2, downloadCertifiedDocumentAudit, downloadCertfiedDocumentCopy } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
 import { 
   GridComponent, 
@@ -499,6 +499,28 @@ class MessageList extends Component {
         return (res.length === 0 ? [] : res);
     }
 
+    getCertDocuments(documents){
+        let res = [];
+
+        documents.map(document => {
+
+            let date = new Date(document.created_at);     
+            const hour = new Date(document.created_at).getHours() ;
+            const time = new Date(document.created_at).getMinutes(); 
+            const second = new Date(document.created_at).getSeconds(); 
+            let fullTime = `${hour}:${time}:${second}`;
+
+            res.push({
+                Id: document.externalId, 
+                Documento: document.name, 
+                Fecha: date, 
+                Hora: fullTime,
+                Origen: document.app.charAt(0).toUpperCase() + document.app.slice(1)
+            });
+        });
+        return (res.length === 0 ? [] : res);
+    }
+
     gridTemplate(props) {
         debugger;
         // //var src = 'src/grid/images/' + props.EmployeeID + '.png';
@@ -529,27 +551,21 @@ class MessageList extends Component {
     menuGridTemplate(props){
         let items = [];
 
-        if (props.Estado === i18n.t('signaturesGrid.statusInProgress') 
-        && this.props.selectedService == 'signature') {
+        if (this.props.selectedService === 'certifiedDocument'){
             items = [
-                {
-                    text: i18n.t('signaturesGrid.menuEdit'),
-                    iconCss: 'lf-icon-edit'
-                },
-                {   
-                    separator: true
-                },
-                {
-                    text: i18n.t('signaturesGrid.menuCancel'),
-                    iconCss: 'lf-icon-excel-software'
-                }
+                { text: i18n.t('signaturesGrid.menuDocument'), iconCss: 'lf-icon-download' },
+                { separator: true },
+                { text: i18n.t('signaturesGrid.menuAudit'), iconCss: 'lf-icon-audit-products' }
+            ]
+        } else if (props.Estado === i18n.t('signaturesGrid.statusInProgress') && this.props.selectedService == 'signature') {
+            items = [
+                { text: i18n.t('signaturesGrid.menuEdit'), iconCss: 'lf-icon-edit' },
+                { separator: true },
+                { text: i18n.t('signaturesGrid.menuCancel'), iconCss: 'lf-icon-excel-software' }
             ];
         } else {
             items = [
-                {
-                    text: i18n.t('signaturesGrid.menuEdit'),
-                    iconCss: 'lf-icon-edit'
-                }
+                { text: i18n.t('signaturesGrid.menuEdit'), iconCss: 'lf-icon-edit' }
             ];
         }
         
@@ -869,8 +885,7 @@ class MessageList extends Component {
                 var sms = this.props.smsList.find(s => s.id === event.data.Id);
                 this.props.smsClicked(sms);
                 this.props.setTitle(i18n.t('smsViewer.title'));
-            }
-            
+            } 
         }
     }
 
@@ -934,6 +949,16 @@ class MessageList extends Component {
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
             this.setState({ hideConfirmDialog: true, signatureId: id, auth: auth });
+        } else if (args.item.text === i18n.t('signaturesGrid.menuAudit')){
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const fileName = this.grid.getSelectedRecords()[0].Documento;
+            const auth = this.props.auth;
+            downloadCertifiedDocumentAudit(id, fileName, auth );
+        } else if (args.item.text === i18n.t('signaturesGrid.menuDocument')){
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const fileName = this.grid.getSelectedRecords()[0].Documento;
+            const auth = this.props.auth;
+            downloadCertfiedDocumentCopy(id, fileName, auth );
         }
     }
 
@@ -1157,15 +1182,15 @@ class MessageList extends Component {
             ignoreAccent:true, 
             operators: {
                 stringOperator: [
-                    { value: 'contains', text: i18n.t('signaturesGrid.filters.contains')},
-                    { value: 'startsWith', text: i18n.t('signaturesGrid.filters.startsWith')}
+                    { value: 'contains', text: i18n.t('signaturesGrid.filters.contains') },
+                    { value: 'startsWith', text: i18n.t('signaturesGrid.filters.startsWith') }
                 ],
                 dateOperator: [
-                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal')},
-                    { value: 'greaterthan', text: i18n.t('signaturesGrid.filters.greaterthan')},
-                    { value: 'greaterthanorequal', text: i18n.t('signaturesGrid.filters.greaterthanorequal')},
-                    { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan')},
-                    { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal')}
+                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal') },
+                    { value: 'greaterthan', text: i18n.t('signaturesGrid.filters.greaterthan') },
+                    { value: 'greaterthanorequal', text: i18n.t('signaturesGrid.filters.greaterthanorequal') },
+                    { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan') },
+                    { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal') }
                 ],
             } 
         };
@@ -1177,17 +1202,16 @@ class MessageList extends Component {
         var firmas = ( this.props.signatures && this.props.signatures.length > 0 ) ? this.getSignatures(this.props.signatures): [];
         var emails = ( this.props.emails && this.props.emails.length > 0 ) ? this.getEmails(this.props.emails) : [];
         var smsList = ( this.props.smsList && this.props.smsList.length > 0 ) ? this.getSmsList(this.props.smsList) : [];
+        var documents = ( this.props.documents && this.props.documents.length > 0 ) ? this.getCertDocuments(this.props.documents) : [];
         
         var selectedServices = 
             (this.props.selectedService && this.props.selectedService == 'signature') 
-                ? 
-                    firmas 
-                : 
-                    (this.props.selectedService && this.props.selectedService == 'certifiedEmail') 
-                        ? 
-                            emails
-                        :   
-                            smsList
+                ? firmas 
+                : (this.props.selectedService && this.props.selectedService == 'certifiedEmail') 
+                    ? emails
+                    : (this.props.selectedService && this.props.selectedService == 'certifiedSms')
+                        ? smsList
+                        : documents  
 
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
@@ -1223,14 +1247,25 @@ class MessageList extends Component {
                     hierarchyPrintMode={'All'}
                     delayUpdate='true'
                 >
-                    <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} width='55' />
-                        <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
-                        <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
-                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
-                        <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
-                        <ColumnDirective field='Estado' filter={filterCheckBox} textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
-                    </ColumnsDirective>
+                    {(this.props.selectedService && this.props.selectedService === 'certifiedDocument') 
+                        ?
+                            <ColumnsDirective>
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
+                                <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
+                                <ColumnDirective field='Hora' textAlign='Left'  headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
+                                <ColumnDirective field='Origen' textAlign='Left' headerText={i18n.t('signaturesGrid.columnOrigin')} width='115'/>
+                            </ColumnsDirective>
+                        : 
+                            <ColumnsDirective>
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
+                                <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
+                                <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
+                                <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
+                                <ColumnDirective field='Estado' filter={filterCheckBox} textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
+                            </ColumnsDirective>
+                    }
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
                 </GridComponent>
                 <DialogComponent 
@@ -1404,6 +1439,7 @@ const mapStateToProps = state => ({
     signatures: state.application.signatures,
     emails: state.application.emails,
     smsList: state.application.smsList,
+    documents: state.application.documents,
     selectedService: state.application.selectedService,
     signatureFilter: state.application.signaturesFilterKey,
     lefebvre: state.lefebvre,
