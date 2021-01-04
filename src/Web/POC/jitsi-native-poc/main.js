@@ -1,14 +1,13 @@
 function startMeet() {
     var domain = "meet.jit.si";
     var options = {
-        roomName: "JitsiMeetAPIExample",
+        roomName: document.getElementById("roomName").value,
         width: '100%',
         height: '100%',
-
         parentNode: undefined,
         configOverwrite: {},
         userInfo: {
-            displayName: 'Joel'
+            displayName: document.getElementById("name").value
         },
         interfaceConfigOverwrite: {}
     }
