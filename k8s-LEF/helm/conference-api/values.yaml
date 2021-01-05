@@ -52,3 +52,5 @@ env:
       value: Development
     - name: OrchestratorType
       value: 'K8S'
+    - name: UserUtilsUrl
+      value: 'http://userutils-api/api/v1/UserUtils'

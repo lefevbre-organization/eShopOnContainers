@@ -11,8 +11,10 @@ const HeaderList = props => {
             <span className={`${props.styles['certification-email']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}:</span>
             <span className={`${props.styles['certification-email']} ml-4`}>{name ? name : email} {props.signer.phone.replace('+34', '')}</span>
           </div>
-          <div className="text-center"> 
-            <span>
+          <div> 
+          <span className={`${props.styles['certification-visibility']}`}>{i18n.t('signatureViewer.signerCard.title.signer')}:</span>
+          <span className={`${props.styles['certification-visibility']} ml-4`}>{name ? name : email}</span>
+            <span className={`ml-2`}>
              {name ? email : ''}
            </span>
           </div>

@@ -186,10 +186,10 @@
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "CERRAR SESIÓN",
-    "signatures-summary": "RESUMEN CERTIFICACIONES",
-    "email-summary": "RESUMEN CERTIFICACIONES",
+    "signatures-summary": "CRÉDITOS CONTRATADOS",
+    "email-summary": "CRÉDITOS CONTRATADOS",
     "available": "Disponibles",
-    "consumed": "Consumidas",
+    "consumed": "Consumidos",
     "version": "Versión"
   },
   "msgNotFoundSnackbar": {

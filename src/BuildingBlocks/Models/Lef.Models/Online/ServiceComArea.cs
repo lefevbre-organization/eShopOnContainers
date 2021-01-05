@@ -1,4 +1,4 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class ServiceComArea
     {
@@ -8,4 +8,5 @@
         public int? idExterno { get; set; }
         public int? indAdmin { get; set; }
     }
+
 }

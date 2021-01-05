@@ -185,11 +185,11 @@
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "FERMER LA SESSION",
-    "signatures-summary": "RÉSUMÉ DES CERTIFICATIONS",
-    "email-summary": "RÉSUMÉ DES CERTIFICATIONS",
-    "available": "Available",
-    "consumed": "Consumed",
-    "version": "Versión"
+    "signatures-summary": "CRÉDITS CONTRACTÉS",
+    "email-summary": "CRÉDITS CONTRACTÉS",
+    "available": "Disponible",
+    "consumed": "Consomné",
+    "version": "Version"
   },
   "msgNotFoundSnackbar": {
     "error": "Mensaje no encontrado en el servidor"
