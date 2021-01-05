@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useState } from 'react';
 import { Jutsu } from 'react-jutsu';
 
@@ -11,7 +12,7 @@ const Main = () => {
 
     const handleClick = event => {
         event.preventDefault()
-        if (room && name) setCall(true)
+        if (room && name) setCall(true) 
     }
 
     return call ? (
@@ -28,11 +29,30 @@ const Main = () => {
         <div className="container-main flex-main">
             <div className="box-main flex-main">
                 <form>
-                    <input id='room' type='text' placeholder='Sala' value={room} onChange={(e) => setRoom(e.target.value)} />
+                    <input 
+                     id='room' 
+                     type='text'
+                     placeholder='Sala' 
+                     value={room} 
+                     onChange={(e) => 
+                     setRoom(e.target.value)} 
+                    />
                     <br />
-                    <input id='name' type='text' placeholder='Nombre' value={name} onChange={(e) => setName(e.target.value)} />
+                    <input 
+                     id='name' 
+                     type='text' 
+                     placeholder='Nombre' 
+                     value={name} 
+                     onChange={(e) => setName(e.target.value)} 
+                    />
                     <br />
-                    <input id='password' type='text' placeholder='Contraseña (opcional)' value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input 
+                     id='password' 
+                     type='password' 
+                     placeholder='Contraseña (opcional)' 
+                     value={password} 
+                     onChange={(e) => setPassword(e.target.value)} 
+                    />
                     <br />
                     <button onClick={handleClick} type='submit'>
                         Iniciar
