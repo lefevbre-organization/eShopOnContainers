@@ -157,5 +157,10 @@
     "500-title": "Server error",
     "500-info1": "Sorry, something went wrong. Refresh the page or try to access later.",
     "500-info2": ""
+  },
+  "calendar-sidebar": {
+    "newevent": "New Event",
+    "mycalendars": "My Calendars"
+
   }
 }

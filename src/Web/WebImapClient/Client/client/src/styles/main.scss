@@ -100,3 +100,30 @@
 .mdc-icon-button {
   outline: none !important;
 }
+
+.e-schedule .e-schedule-toolbar .e-toolbar-items.e-tbar-pos {
+    height: 63px;
+    min-height: 63px;
+}
+
+.e-schedule .e-month-view .e-current-date .e-date-header, .e-schedule .e-month-agenda-view .e-current-date .e-date-header {
+    background-color: #001978 !important;
+    border-radius: 50%;
+    color: #fff;
+    width: 20px;
+}
+
+.e-schedule .e-month-view .e-date-header-wrap table td.e-current-day, .e-schedule .e-month-agenda-view .e-date-header-wrap table td.e-current-day {
+    color: #001978 !important;
+}
+
+.e-calendar .e-content td.e-focused-date.e-today span.e-day, .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day {
+    background: #eee;
+    border: 1px solid #001978 !important;    
+    color: #001978 !important;
+    
+}
+
+.e-schedule .e-vertical-view .e-header-cells.e-current-day {
+    color: #001978 !important;
+}

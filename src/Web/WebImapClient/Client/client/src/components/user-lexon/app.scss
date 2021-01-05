@@ -31,7 +31,10 @@ body {
   /*opacity: 0.6;*/
 }
 
-
+.e-schedule .e-schedule-toolbar .e-toolbar-items.e-tbar-pos {
+    height: 62px !important;
+    min-height: 62px !important;
+}
 
 .app {
     display: flex;

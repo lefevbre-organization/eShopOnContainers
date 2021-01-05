@@ -3,6 +3,8 @@ import { Router, Route, Switch } from 'react-router-dom';
 import history from './history';
 import PrivateRoute from './private-route';
 import App from '../components/app';
+import Calendar from '../components/calendar';
+
 import UserLexon from '../components/user-lexon/UserLexon';
 import Login from '../components/login/login';
 import Settings from '../components/settings/settings';
@@ -41,6 +43,9 @@ class Routes extends Component {
           />
           <Route exact path='/user/:idUser/bbdd/:bbdd' component={UserLexon} />
           <Route exact path='/user/:idUser' component={UserLexon} />
+          <Route exact path='/calendar/user/:idUser' component={UserLexon} />
+          <Route exact path='/calendar/access/:token' component={UserLexon} />
+          <Route path='/calendar' component={Calendar} />
           <Route exact path='/login' render={() => <Login />} />
           <Route path='/error/:id' component={ErrorScreen} />
           <PrivateRoute exact path='/' component={App} />
