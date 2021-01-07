@@ -31,8 +31,8 @@ export function addressGroups(address) {
 }
 
 export const modalCancelOk = `
-  <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+  <span class="lf-icon-check-round modal-icon-content"></span>
+    <div class="modal-text-align-content">
       Petición cancelada correctamente.
     </div>
 `;
@@ -277,16 +277,14 @@ export class EmailMessageViewer extends Component {
     let status_style;
    
     const contenido = `
-    <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
+    <span class="lf-icon-check-round modal-icon-content"></span>
+    <div class="modal-text-content">
       ${i18n.t('cancelledSignatureModal.text')}
     </div>`;
 
     const contenido1 = `
-    <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
+    <span class="lf-icon-question modal-icon-content"></span>
+    <div class="modal-text-content">
       ${i18n.t('cancelConfirmationModal.text2')}
     </div>`;
 

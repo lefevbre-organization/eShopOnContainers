@@ -464,7 +464,7 @@ class App extends Component {
 
     const content = `  
       <div style='width: 100%;'>  
-        <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        <div class="modal-text-align-content">
           ${i18n.t('downloadindCentinelaModal.text')}
         </div>
         <div class='${styles['progress-line']}'/>

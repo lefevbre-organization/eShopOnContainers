@@ -186,55 +186,48 @@ class EmailMessageEditor extends Component {
   render() {
 
     const noSignersModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
     const noAttachModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noAttachmentsModal.text')}
       </div>`;
 
     const bigFileModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('bigFileModal.text')}
       </div>
     `;
 
     const attachNotFound = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('attachNotFoundCentinela.text')}
       </div>
     `;
 
     const confirmDiscard = `
-      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-question modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
 
     const onlyPdfModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('onlyPdfModal.text')}
       </div>
     `;
 
     const errCreatingRequest = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         Se ha producido un error al crear la solicitud. Inténtelo de nuevo.
       </div>
     `;

@@ -16,7 +16,7 @@ const SendingTypeSelector = props => {
 
   const contenido = `
     <img border='0' src='assets/images/icon-warning.png'></img>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+    <div class="modal-text-align-content">
       ${i18n.t("noServiceModal.text")}<br/>
       ${i18n.t("noServiceModal.text2")}
     </div>`;

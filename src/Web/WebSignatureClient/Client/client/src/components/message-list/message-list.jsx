@@ -1141,23 +1141,20 @@ class MessageList extends Component {
         console.log('MESSAGELIST.RENDER().props.guidNotFound: '+this.props.guidNotFound);
 
         const contenido = `
-            <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center;
-            font-size: 17.5px !important; padding-left: 20px;'>
-            ${i18n.t('cancelledSignatureModal.text')}
+            <span class="lf-icon-check-round modal-icon-content"></span>
+            <div class="modal-text-content">
+                ${i18n.t('cancelledSignatureModal.text')}
             </div>`;
 
         const contenido2 = `
-            <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-            font-size: 17.5px !important; padding-left: 20px;'>
+            <span class="lf-icon-question modal-icon-content"></span>
+            <div class="modal-text-content">
             ${i18n.t('cancelConfirmationModal.text')}
             </div>`;
         
         const contenido3 = `
-            <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center;
-            font-size: 17.5px !important; padding-left: 20px;'>
+            <span class="lf-icon-information modal-icon-content"></span>
+            <div class="modal-text-content>
             ${i18n.t('signatureNotFoundCentinela.text')}
             </div>`;
 

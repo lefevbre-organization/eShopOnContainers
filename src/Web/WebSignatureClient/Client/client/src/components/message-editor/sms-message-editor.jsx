@@ -225,9 +225,8 @@ class SmsMessageEditor extends Component {
   render() {
     
     const confirmDiscard = `
-      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-question modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
@@ -416,76 +415,66 @@ class SmsMessageEditor extends Component {
     const wrongPhone = this.validPhoneNumbers(this.props.to).desc;
 
     const noSignersModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
     const noAttachmentsModalCertification = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noAttachmentsModalCertification.text')}
       </div>`;
 
     const noAttachModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noAttachmentsModal.text')}
       </div>`;
 
     const maxCharacters = `
-    <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-      padding-left: 20px; font-size: 17.5px !important'>
+    <span class="lf-icon-information modal-icon-content"></span>
+    <div class="modal-text-content>
       ${i18n.t('maxCharactersModal.text')}
     </div>`;
 
     const maxCharactersFile = `
-    <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-      padding-left: 20px; font-size: 17.5px !important'>
+    <span class="lf-icon-information modal-icon-content"></span>
+    <div class="modal-text-content>
       ${i18n.t('maxCharactersModal.text2')}
     </div>`;
 
     const bigFileModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('bigFileModal.text')}
       </div>
     `;
 
     const attachNotFound = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('attachNotFoundCentinela.text')}
       </div>
     `;
 
     const onlyPdfModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('onlyPdfModal.text')}
       </div>
     `;
 
     const prefixModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('prefixModal.text')}
       </div>
     `;
 
     const numberModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('numberModal.text')}
       </div>
     `;

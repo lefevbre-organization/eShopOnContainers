@@ -91,15 +91,14 @@ class SideBar extends Component {
 
     const contenido = `
       <img border='0' src='assets/images/icon-warning.png'></img>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      <div class="modal-text-align-content">
         ${i18n.t('noCreditsModal.text')}
         ${i18n.t('noCreditsModal.text2')}
       </div>`;
 
     const confirmDiscard = `
-      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-question modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;

@@ -178,23 +178,20 @@ class DocumentMessageEditor extends Component {
       ));
 
       const noAttachModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('bigFileModal.text')}
       </div>`;
 
       const certifiedModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('documentCertifiedModal.text')}
       </div>`;
 
       const errorModal = `
-      <span class="lf-icon-warning" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-warning modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('documentErrorModal.text')}
       </div>`;
 
