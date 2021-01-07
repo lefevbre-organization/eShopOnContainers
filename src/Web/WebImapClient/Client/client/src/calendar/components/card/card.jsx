@@ -5,7 +5,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager } from '@syncfusion/ej2-data';
-import { getEventList } from '../../../api/calendar-api';
+//import { getEventList } from '../../../api/calendar-api';
 import moment from 'moment';
 
 
@@ -17,15 +17,15 @@ export class Card extends Component {
         this.dataManger = new DataManager(); 
         this.resourceCalendarData = [];  
 
-        getEventList('primary')
-            .then(result => {
-                this.dataManger = result.result;
-                this.onDataBinding(this.dataManger);               
-                this.scheduleObj.refreshEvents(); 
-            })
-            .catch(error => {
-                console.log('error ->', error);
-            });
+        //getEventList('primary')
+        //    .then(result => {
+        //        this.dataManger = result.result;
+        //        this.onDataBinding(this.dataManger);               
+        //        this.scheduleObj.refreshEvents(); 
+        //    })
+        //    .catch(error => {
+        //        console.log('error ->', error);
+        //    });
     }
 
     onDataBinding(e) {
@@ -104,7 +104,7 @@ export class Card extends Component {
     render() {
         return (
             <div className='schedule-control-section'>
-                <div className='col-lg-12 control-section'>
+                <div className=' control-section'>
                     <div className='control-wrapper'>
                         <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
                             height='650px' currentView="Day"

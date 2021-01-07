@@ -349,6 +349,23 @@ class App extends Component {
             </div>
 
             <div className={styles.productpanel}>
+             {window.SHOW_EXPERIMENTAL === '1' ? (
+              <span
+                className={styles.productsbutton}
+                isotip={t('productBar.calendar')}
+                isotip-position='bottom-end'
+                isotip-size='small'>
+                   <IconButton
+                      onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                        <img
+                          disabled
+                          border='0'
+                          alt='Base de datos'
+                          src='/assets/images/icon-cal.svg'></img>
+                   </IconButton>
+                 <div className={styles.btnselect}></div>
+              </span>
+              ) : null}
               <span
                 className={styles.productsbutton}
                 isotip={t('productBar.lexon')}
@@ -384,23 +401,25 @@ class App extends Component {
               }
 
               {this.hasProduct('databaseconnector') &&
-              window.SHOW_EXPERIMENTAL === '1' ? (
-                <span
-                  className={styles.productsbutton}
-                  isotip={t('productBar.database')}
-                  isotip-position='bottom-end'
-                  isotip-size='small'>
-                  <IconButton
-                    onClick={() => this.onSetSidebarOpenDatabase(true)}>
-                    <img
-                       disabled
-                       border='0'
-                       alt='Base de datos'
-                       src='/assets/images/icon-ne.svg'></img>
-                  </IconButton>
+                window.SHOW_EXPERIMENTAL === '1' ? (
+                <div>                   
+                    <span
+                      className={styles.productsbutton}
+                      isotip={t('productBar.database')}
+                      isotip-position='bottom-end'
+                      isotip-size='small'>
+                      <IconButton
+                        onClick={() => this.onSetSidebarOpenDatabase(true)}>
+                        <img
+                           disabled
+                           border='0'
+                           alt='Base de datos'
+                           src='/assets/images/icon-ne.svg'></img>
+                      </IconButton>
 
-                  <div className={styles.btnselect}></div>
-                </span>
+                      <div className={styles.btnselect}></div>
+                    </span>
+                </div>
               ) : null}
               {/* <span
                 className={styles.productsbutton}

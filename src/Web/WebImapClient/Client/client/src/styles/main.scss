@@ -127,3 +127,49 @@
 .e-schedule .e-vertical-view .e-header-cells.e-current-day {
     color: #001978 !important;
 }
+
+.e-day-date-header e-current-day, .e-schedule .e-agenda-view .e-day-date-header.e-current-day, .e-schedule .e-vertical-view .e-header-cells.e-current-day {
+    color: #fff !important;
+    background-color: #001978 !important;
+}
+
+
+element.style {
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td.e-header-cells {
+    border-bottom-width: 0;
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td.e-header-cells {
+    border-bottom-width: 0;
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td {
+    background-color: #fff;
+    border-color: rgba(0,0,0,.12);
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: rgba(0,0,0,.87);
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td {
+    background-color: #7f8cbb!important;
+}
+
+
+element.style {
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td.e-header-cells {
+    border-bottom-width: 0;
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td.e-header-cells {
+    border-bottom-width: 0;
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td {
+    background-color: #fff;
+    border-color: rgba(0,0,0,.12);
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: rgba(0,0,0,.87);
+}
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td {
+    background-color: #7f8cbb !important;
+}
+
