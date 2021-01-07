@@ -1,7 +1,7 @@
-/* eslint-disable no-undef */
 import React, { useState } from 'react';
-import { Jutsu } from 'react-jutsu';
+import Jitsi from 'react-jitsi'
 
+import Loader from '../loader/loader';
 import './main.css';
 
 const Main = () => {
@@ -16,15 +16,14 @@ const Main = () => {
     }
 
     return call ? (
-        <Jutsu
+        <Jitsi
             domain="meet-test.lefebvre.es"
-            containerStyles={{ width: '100%', height: '100vh' }}
-            height='100%'
+            containerStyle={{ width: '100%', height: '100vh' }}
             roomName={room}
             displayName={name}
+            loadingComponent={Loader}
             password={password}
-            loadingComponent={<p>loading ...</p>}
-            errorComponent={<p>Oops, something went wrong...</p>} />
+            />
     ) : (
         <div className="container-main flex-main">
             <div className="box-main flex-main">
