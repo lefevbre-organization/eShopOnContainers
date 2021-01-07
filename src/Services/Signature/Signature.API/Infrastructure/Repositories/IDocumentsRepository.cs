@@ -18,7 +18,7 @@
 
         Task<Result<bool>> Remove(string user);
 
-        Task<Result<bool>> UpSertDocument(string user, CertDocument documentIn);
+        Task<Result<UserCertDocuments>> UpSertDocument(string user, CertDocument documentIn);
 
         Task<Result<UserCertDocuments>> GetDocument(string documentId);
     }

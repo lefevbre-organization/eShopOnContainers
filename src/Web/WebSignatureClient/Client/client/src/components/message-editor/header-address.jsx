@@ -121,14 +121,6 @@ export class HeaderAddress extends Component {
           />
          
         </DialogComponent> : null}
-
-        <style jsx global>
-          {` 
-            #contactDialog {
-              top: 17% !important;
-            }
-          `}
-        </style>
         
       </div>
     );

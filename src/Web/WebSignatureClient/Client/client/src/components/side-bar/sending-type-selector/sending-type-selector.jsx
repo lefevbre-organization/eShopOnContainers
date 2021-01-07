@@ -16,7 +16,7 @@ const SendingTypeSelector = props => {
 
   const contenido = `
     <img border='0' src='assets/images/icon-warning.png'></img>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+    <div class="modal-text-align-content">
       ${i18n.t("noServiceModal.text")}<br/>
       ${i18n.t("noServiceModal.text2")}
     </div>`;
@@ -31,6 +31,7 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
                       && props.lefebvre.roles.includes('Firma Digital') ?
           true : false} />
+
       <SendingType
         title={i18n.t('sideBar.certifiedEmail')}
         subTitle={i18n.t('sideBar.sendingTypeEmail')}
@@ -39,6 +40,7 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
           && props.lefebvre.roles.includes('Email Certificado') ?
           true : false} />
+
       <SendingType
         title={i18n.t('sideBar.certifiedSms')}
         subTitle={i18n.t('sideBar.sendingTypeSms')}
@@ -47,15 +49,25 @@ const SendingTypeSelector = props => {
         disable={ props.lefebvre.roles
           && props.lefebvre.roles.includes('SMS certificado') ?
           false : true } />
-      <DialogComponent
-        id="noServiceDialog"
-        visible={hideAlertDialog}
-        width='50%'
-        showCloseIcon={true}
-        content={contenido}
-        close={dialogClose}
-      />
-    </>
+
+        <SendingType
+        title={i18n.t('sideBar.certifiedDocument')}
+        subTitle={i18n.t('sideBar.sendingTypeDocument')}
+        getConfirm={getConfirm}
+        onClick={props.onNewDocumentCertificate}
+        disable={ props.lefebvre.roles
+          && props.lefebvre.roles.includes('SMS certificado') ?
+          false : true } />
+
+        <DialogComponent
+          id="noServiceDialog"
+          visible={hideAlertDialog}
+          width='50%'
+          showCloseIcon={true}
+          content={contenido}
+          close={dialogClose}
+        />
+      </>
   );
 };
 

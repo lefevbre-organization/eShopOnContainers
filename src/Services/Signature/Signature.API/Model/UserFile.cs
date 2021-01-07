@@ -9,5 +9,6 @@ namespace Signature.API.Model
     {
         public byte[] file { get; set; }
         public string fileName { get; set; }
+        public string contentType { get; set; }
     }
 }
