@@ -610,14 +610,14 @@ class MessageList extends Component {
                     fileList.push(
                         {
                             text:  email.name,
-                            cssClass: styles['test']
+                            cssClass: 'test'
                         }
                     )  
                 } else {
                     fileList.push(
                         {
                             text: email.name,
-                            cssClass: styles['test']
+                            cssClass:'test'
                         },
                         {   
                             separator: true
@@ -637,7 +637,7 @@ class MessageList extends Component {
                 </div>     
                 {firstFiles != '' && fileList.length > 2 ? 
                  <div id='right' className={`bola-firmantes gray`} style={{float: 'right', width: '25%', height: '20px'}}>
-                 <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass={`e-caret-hide ${styles['test']}`} items={fileList}>{(emailsInfo && emailsInfo.length) ? emailsInfo.length : ''}</DropDownButtonComponent>
+                 <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass={`e-caret-hide test`} items={fileList}>{(emailsInfo && emailsInfo.length) ? emailsInfo.length : ''}</DropDownButtonComponent>
                  </div> : null}
             </div>
         )
@@ -692,61 +692,22 @@ class MessageList extends Component {
             recipientsInfo.forEach((signer, i) => {
                 //console.log(signer);
                 if (i === recipientsInfo.length -1 ){
-                    (this.props.selectedService === 'certifiedSms')
-                        ? 
-                            recipientsList.push(
-                                {
-                                    text: (signer.name.trim() === '') ? 'Desconocido' : signer.name,
-                                    cssClass: 'test'
-                                },
-                                {
-                                    text: (signer.phone.substring(0,3) === '+34') ? signer.phone.substring(3,12) : signer.phone
-                                },
-                                {
-                                    text: props.Emails && props.Emails[i] && props.Emails !== '|' ? props.Emails[i] : 'Desconocido'
-                                }
-                            )
-                        : 
-                            recipientsList.push(
-                                {
-                                    text: (signer.name.trim() === '') ? signer.email.split('@')[0] : signer.name,
-                                    cssClass: 'test'
-                                },
-                                {
-                                    text: signer.email
-                                }
-                            )
+                    var name = (signer.name !== undefined && signer.name !== null && signer.name.trim() === "") ? 'Desconocido' : signer.name;
+                    var phone = (signer.phone && signer.phone.substring(0,3) === '+34') ? signer.phone.substring(3,12) : (signer.phone !== '' && signer.phone !== undefined && signer.phone !== null) ? signer.phone : 'Desconocido';
+                    var email = props.Emails && props.Emails[i] && props.Emails !== '|' ? props.Emails[i] : (signer.email !== undefined) ? signer.email : 'Desconocido';
+
+                    (name !== 'Desconocido') ? recipientsList.push({text: name, cssClass: 'test'}) : null;
+                    (phone !== 'Desconocido') ? recipientsList.push({text: phone}) : null;
+                    (email !== 'Desconocido') ? recipientsList.push({text: email}) : null;
                 } else {
-                    (this.props.selectedService === 'certifiedSms')
-                        ? 
-                            recipientsList.push(
-                                {
-                                    text: (signer.name.trim() === '') ? 'Desconocido' : signer.name,
-                                    cssClass: 'test'
-                                },
-                                {
-                                    text: (signer.phone.substring(0,3) === '+34') ? signer.phone.substring(3,12) : signer.phone
-                                },
-                                {
-                                    text: props.Emails && props.Emails[i] && props.Emails !== '|' ? props.Emails[i] : 'Desconocido'
-                                },
-                                {   
-                                    separator: true
-                                }
-                            )
-                        :
-                            recipientsList.push(
-                                {
-                                    text: (signer.name.trim() === '') ? signer.email.split('@')[0] : signer.name,
-                                    cssClass: 'test'
-                                },
-                                {
-                                    text: signer.email
-                                },
-                                {   
-                                    separator: true
-                                }
-                            )
+                    var name = (signer.name !== undefined && signer.name !== null && signer.name.trim() === "") ? 'Desconocido' : signer.name;
+                    var phone = (signer.phone && signer.phone.substring(0,3) === '+34') ? signer.phone.substring(3,12) : (signer.phone !== '' && signer.phone !== undefined && signer.phone !== null) ? signer.phone : 'Desconocido';
+                    var email = props.Emails && props.Emails[i] && props.Emails !== '|' ? props.Emails[i] : (signer.email !== undefined) ? signer.email : 'Desconocido';
+
+                    (name !== 'Desconocido') ? recipientsList.push({text: name, cssClass: 'test'}) : null;
+                    (phone !== 'Desconocido') ? recipientsList.push({text: phone}) : null;
+                    (email !== 'Desconocido') ? recipientsList.push({text: email}) : null;
+                    recipientsList.push({ separator: true })
                 }
             });
         }
