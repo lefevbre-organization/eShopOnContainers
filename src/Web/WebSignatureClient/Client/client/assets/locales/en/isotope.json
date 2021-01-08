@@ -25,6 +25,7 @@
     "filterMenu": "SIGNATURES",
     "filterMenuEmail": "CERTIFIED EMAIL",
     "filterMenuSms": "CERTIFIED SMS",
+    "filterMenuDocument": "CERTIFICATION",
     "filterAll": "Show all",
     "filterInProgress": "In progress",
     "filterCompleted": "Completed",
@@ -32,9 +33,11 @@
     "signature": "Advanced signature",
     "certifiedEmail": "Certified email",
     "certifiedSms": "Certified SMS",
+    "certifiedDocument": "Document certification",
     "sendingTypeSignature": "Signature with biometric data",
     "sendingTypeEmail": "Certify your communications",
-    "sendingTypeSms": "Certify your SMS"
+    "sendingTypeSms": "Certify your SMS",
+    "sendingTypeDocument": "Certify your documents"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -55,7 +58,8 @@
     },
     "app": "SIGNATURE",
     "certifiedEmail": "CERTIFIED EMAIL",
-    "certifiedSms": "CERTIFIED SMS"
+    "certifiedSms": "CERTIFIED SMS",
+    "certifiedDocument": "DOCUMENT CERTIFICATION"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -124,7 +128,8 @@
     },
     "title": "CREATE NEW SIGNATURE",
     "certifiedEmailTitle": "CERTIFIED EMAIL REQUEST",
-    "certifiedSmsTitle": "CERTIFIED SMS"
+    "certifiedSmsTitle": "CERTIFIED SMS", 
+    "certifiedDocumentTitle": "DOCUMENT CERTIFICATION"
   },
   "forwardAction": {
     "From": "From",
@@ -187,12 +192,16 @@
   "signaturesGrid": {
     "menuEdit": "Edit",
     "menuCancel": "Cancel",
+    "menuAudit": "Download audit",
+    "menuDocument": "Download document",
     "columnAction": "Actions",
     "columnDocument": "Document",
     "columnSubject": "Subject",
     "columnSigners": "Recipients",
     "columnDate": "Date",
     "columnStatus": "Status",
+    "columnHour": "Hour",
+    "columnOrigin": "Source",
     "statusCancelled": "Cancelled",
     "statusCompleted": "Completed",
     "statusExpired": "Expired",
@@ -226,7 +235,7 @@
     "text": "Please confirm you want to cancel this Centinela Documents signature request"
   },
   "reminderSentModal": {
-    "text": "A reminder has been sent signer"
+    "text": "A reminder has been sent to recipient"
   },
   "noSignersModal": {
     "text": "At least one recipient must be specified in order to send the request."
@@ -239,6 +248,12 @@
   },
   "bigFileModal": {
     "text": "Max size of attached files must be lower than 15MB."
+  },
+  "documentCertifiedModal": {
+    "text": "File has been certified correctly."
+  },
+  "documentErrorModal": {
+    "text": "File has not been certified correctly."
   },
   "attachNotFoundCentinela":{
     "text": "Document's couldn't be retrieved from Centinela."
@@ -405,6 +420,14 @@
       }
     },
     "title": "SIGNATURE DETAILS"
+  },
+  "documentEditor": {
+      "dragDrop": "Drag your file here",
+      "upload": "or upload it from",
+      "computer": "your computer",
+      "file": "File",
+      "cancelButton": "CANCEL",
+      "acceptButton": "CERTIFY"
   },
   "completedPage":{
     "title": "Document has been processed successfully.",

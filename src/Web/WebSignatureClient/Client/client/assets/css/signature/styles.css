@@ -563,3 +563,9 @@ a {
       font-size: 14px;
       float: right;
       width: 70px; }
+
+.e-headercell {
+  background-color: #001978 !important;
+  color: white;  
+}
+

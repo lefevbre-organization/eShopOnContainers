@@ -1,4 +1,4 @@
-import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList } from '../actions/application';
+import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList, preDownloadDocuments } from '../actions/application';
 import { resolve } from 'path';
 
 // tenia 94 left y 5 width
@@ -597,6 +597,124 @@ export const addOrUpdateSms = async (userId, externalId, guid, app, createdAt, t
     })
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
+}
+
+/*
+   _____          _     _____               ____             _                  _ 
+  / ____|        | |   |  __ \             |  _ \           | |                | |
+ | |     ___ _ __| |_  | |  | | ___   ___  | |_) | __ _  ___| | _____ _ __   __| |
+ | |    / _ \ '__| __| | |  | |/ _ \ / __| |  _ < / _` |/ __| |/ / _ \ '_ \ / _` |
+ | |___|  __/ |  | |_  | |__| | (_) | (__  | |_) | (_| | (__|   <  __/ | | | (_| |
+  \_____\___|_|   \__| |_____/ \___/ \___| |____/ \__,_|\___|_|\_\___|_| |_|\__,_|
+                                                                                  
+*/ 
+
+export const getUserCertifiedDocuments = async (userId) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/${userId}`, requestOptions)
+    //fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/E1654569`, requestOptions)
+      .then(response => response.json())
+      .then(result => resolve(result.data.documents.sort((a,b) => (a.created_at > b.created_at) ? -1 : ((b.created_at > a.created_at) ? 1 : 0))))
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+export const createUserCertifiedDocument = async (userId, documents = []) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Accept", "text/plain");
+  myHeaders.append("Content-Type", "application/json-patch+json");
+  myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+  \n  "user\": \"${userId}\",
+  \n  \"documents\": ${JSON.stringify(documents)}
+  \n}`;
+
+  console.log("Este es el raw de createUserCertifiedDocument");
+  console.log(raw);
+  console.log({raw});
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/addUser`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.text();
+      } else {
+        throw `${response.text()}`;
+      }
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+// Adds or updates a certified document to a user collection
+export const addOrUpdateCertifiedDocument = async (userId, externalId, guid, app, createdAt, email, name, size, crc) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Accept", "text/plain");
+  myHeaders.append("Content-Type", "application/json-patch+json");
+  myHeaders.append("Content-Type", "text/plain");
+
+  var raw = `{
+    \n  \"guid\": \"${guid}\",
+    \n  \"externalId\": \"${externalId}\",
+    \n  \"crc\": \"${crc}\",
+    \n  \"created_at\": \"${createdAt}\",
+    \n  \"email\": \"${email}\",
+    \n  \"name\": \"${name}\",
+    \n  \"size\": \"${size}\",
+    \n  \"app\": \"${app}\",
+    \n}`;
+
+  var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/CertifiedDocuments/${userId}/document/addorupdate`, requestOptions)
+    .then(response => {
+      if (response.ok){
+        return response.text();
+      } else {
+        throw `${response.text()}`;
+      }
+    })
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
+export function preloadCertifiedDocuments (dispatch, userId) {
+  return new Promise((resolve, reject) => {
+    getUserCertifiedDocuments(userId)
+    .then(documents => {
+      console.log({documents});
+      dispatch(preDownloadDocuments(documents));
+      resolve(documents);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  }) 
 }
 
 // END OF LEFEBVRE SIGNATURE API CALLS
@@ -1356,6 +1474,117 @@ export const downloadSmsCertificationDocument = (smsId, certificationId, fileNam
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'audit-'+fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+    .catch(error => console.log('error', error));
+}
+
+/*
+   _____ _                   _              _ _               _____          _   _  __ _          _   _____                 
+  / ____(_)                 | |            (_) |             / ____|        | | (_)/ _(_)        | | |  __ \                
+ | (___  _  __ _ _ __   __ _| |_ _   _ _ __ _| |_   ______  | |     ___ _ __| |_ _| |_ _  ___  __| | | |  | | ___   ___ ___ 
+  \___ \| |/ _` | '_ \ / _` | __| | | | '__| | __| |______| | |    / _ \ '__| __| |  _| |/ _ \/ _` | | |  | |/ _ \ / __/ __|
+  ____) | | (_| | | | | (_| | |_| |_| | |  | | |_           | |___|  __/ |  | |_| | | | |  __/ (_| | | |__| | (_) | (__\__ \
+ |_____/|_|\__, |_| |_|\__,_|\__|\__,_|_|  |_|\__|           \_____\___|_|   \__|_|_| |_|\___|\__,_| |_____/ \___/ \___|___/
+            __/ |                                                                                                           
+           |___/                                                                                                            
+*/
+
+export const createCertifiedDocument = async (userId, guid, files, auth) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+    myHeaders.append("Content-Type", "text/plain");
+    myHeaders.append("Authorization", `${auth}`);
+
+    var jsonObject = {};
+    var filesData = [];
+    
+    files.forEach(file => {
+      filesData.push({file: file.content, fileName: file.fileName, contentType: file.contentType})
+    })
+
+    jsonObject.user = userId;
+    jsonObject.guid = guid;
+    jsonObject.app = 'webSignature';
+    jsonObject.files = filesData;
+
+    var raw = JSON.stringify(jsonObject);
+    console.log('Raw::');
+    console.log(raw);
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/newDocument/storeInDb`, requestOptions)
+      .then(response => {
+        if (response.ok){
+          return response.json();
+        } else {
+          throw `${response.text()}`;
+        }
+      })
+      .then(result => {
+        console.log(result)
+        resolve(result)
+      })
+      .catch(error => {
+        reject(error);
+        console.log('error', error)
+      });
+  })
+}
+
+export const downloadCertifiedDocumentAudit = (id, fileName, auth) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `${auth}`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/download/audit/${id}`, requestOptions)
+    .then(response => response.blob())
+    .then(blob => {
+      console.log(blob);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      const extension = fileName.split('.').pop();
+      link.href = url;
+      link.setAttribute('download', `audit-${extension === 'pdf' ? fileName : fileName+'.pdf'}`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+    .catch(error => console.log('error', error));
+}
+
+export const downloadCertfiedDocumentCopy = (id, fileName, auth) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `${auth}`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/documentCertification/download/${id}`, requestOptions)
+    .then(response => response.blob())
+    .then(blob => {
+      console.log(blob);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
       link.parentNode.removeChild(link);

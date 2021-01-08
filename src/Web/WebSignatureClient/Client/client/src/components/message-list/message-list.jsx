@@ -15,7 +15,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
-import { preloadSignatures, preloadSignatures2, cancelSignature2 } from "../../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, cancelSignature2, downloadCertifiedDocumentAudit, downloadCertfiedDocumentCopy } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
 import { 
   GridComponent, 
@@ -34,7 +34,7 @@ import {
   PdfExportProperties
 } from '@syncfusion/ej2-react-grids';
 import materialize from '../../styles/signature/materialize.scss';
-import { CalendarComponent} from '@syncfusion/ej2-react-calendars';
+import { CalendarComponent } from '@syncfusion/ej2-react-calendars';
 import { loadCldr, setCulture, L10n } from '@syncfusion/ej2-base';
 import { DataManager } from '@syncfusion/ej2-data';
 import { ClickEventArgs } from '@syncfusion/ej2-navigations';
@@ -499,6 +499,28 @@ class MessageList extends Component {
         return (res.length === 0 ? [] : res);
     }
 
+    getCertDocuments(documents){
+        let res = [];
+
+        documents.map(document => {
+
+            let date = new Date(document.created_at);     
+            const hour = new Date(document.created_at).getHours() ;
+            const time = new Date(document.created_at).getMinutes(); 
+            const second = new Date(document.created_at).getSeconds(); 
+            let fullTime = `${hour}:${time}:${second}`;
+
+            res.push({
+                Id: document.externalId, 
+                Documento: document.name, 
+                Fecha: date, 
+                Hora: fullTime,
+                Origen: document.app.charAt(0).toUpperCase() + document.app.slice(1)
+            });
+        });
+        return (res.length === 0 ? [] : res);
+    }
+
     gridTemplate(props) {
         debugger;
         // //var src = 'src/grid/images/' + props.EmployeeID + '.png';
@@ -529,27 +551,21 @@ class MessageList extends Component {
     menuGridTemplate(props){
         let items = [];
 
-        if (props.Estado === i18n.t('signaturesGrid.statusInProgress') 
-        && this.props.selectedService == 'signature') {
+        if (this.props.selectedService === 'certifiedDocument'){
             items = [
-                {
-                    text: i18n.t('signaturesGrid.menuEdit'),
-                    iconCss: 'lf-icon-edit'
-                },
-                {   
-                    separator: true
-                },
-                {
-                    text: i18n.t('signaturesGrid.menuCancel'),
-                    iconCss: 'lf-icon-excel-software'
-                }
+                { text: i18n.t('signaturesGrid.menuDocument'), iconCss: 'lf-icon-download' },
+                { separator: true },
+                { text: i18n.t('signaturesGrid.menuAudit'), iconCss: 'lf-icon-audit-products' }
+            ]
+        } else if (props.Estado === i18n.t('signaturesGrid.statusInProgress') && this.props.selectedService == 'signature') {
+            items = [
+                { text: i18n.t('signaturesGrid.menuEdit'), iconCss: 'lf-icon-edit' },
+                { separator: true },
+                { text: i18n.t('signaturesGrid.menuCancel'), iconCss: 'lf-icon-excel-software' }
             ];
         } else {
             items = [
-                {
-                    text: i18n.t('signaturesGrid.menuEdit'),
-                    iconCss: 'lf-icon-edit'
-                }
+                { text: i18n.t('signaturesGrid.menuEdit'), iconCss: 'lf-icon-edit' }
             ];
         }
         
@@ -558,9 +574,9 @@ class MessageList extends Component {
                 <div className='control-section'>
                     <div className='dropdownbutton-section'>
                         <div id='dropdownbutton-control'>
-                            <div className='row'>
+                            <div className={styles['row']}>
                                 <div className="col-xs-12">
-                                    <DropDownButtonComponent cssClass='e-caret-hide signature-poppup' items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
+                                    <DropDownButtonComponent cssClass={`e-caret-hide ${styles['signature-poppup']}`} items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
                                 </div>
                             </div>
                         </div>
@@ -594,14 +610,14 @@ class MessageList extends Component {
                     fileList.push(
                         {
                             text:  email.name,
-                            cssClass: 'test'
+                            cssClass: styles['test']
                         }
                     )  
                 } else {
                     fileList.push(
                         {
                             text: email.name,
-                            cssClass: 'test'
+                            cssClass: styles['test']
                         },
                         {   
                             separator: true
@@ -621,7 +637,7 @@ class MessageList extends Component {
                 </div>     
                 {firstFiles != '' && fileList.length > 2 ? 
                  <div id='right' className={`bola-firmantes gray`} style={{float: 'right', width: '25%', height: '20px'}}>
-                 <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={fileList}>{(emailsInfo && emailsInfo.length) ? emailsInfo.length : ''}</DropDownButtonComponent>
+                 <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass={`e-caret-hide ${styles['test']}`} items={fileList}>{(emailsInfo && emailsInfo.length) ? emailsInfo.length : ''}</DropDownButtonComponent>
                  </div> : null}
             </div>
         )
@@ -670,7 +686,7 @@ class MessageList extends Component {
         } else if (this.props.selectedService == 'certifiedSms'){
             data = this.props.smsList.find(s => s.id === props.Id);
         }
-
+        // styles['test']
         if (data){
             recipientsInfo = this.getRecipientsInfo(data);
             recipientsInfo.forEach((signer, i) => {
@@ -816,7 +832,7 @@ class MessageList extends Component {
             break;
         }
         return (
-            <span className={`resumen-firma ' ${status_style}`}><b>{status}</b></span>
+            <span className={`${styles['resumen-firma']} ${styles[status_style]}`}><b>{status}</b></span>
         )
     }
 
@@ -852,10 +868,10 @@ class MessageList extends Component {
     onRowSelected(event) {
         console.log(event);
         if (event.target.className !== "e-btn-icon lf-icon-kebab-menu" //Actions
-            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active" // Actions menu
-            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active e-focus" // Actions menu
-            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-focus" // Signers bubble
-            && event.target.className !== "e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus" // documents bubble
+            && event.target.className !== `e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active` // Actions menu
+            && event.target.className !== `e-control e-dropdown-btn e-lib e-btn e-caret-hide signature-poppup e-icon-btn e-active e-focus` // Actions menu
+            && event.target.className !== `e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-focus` // Signers bubble
+            && event.target.className !== `e-control e-dropdown-btn e-lib e-btn e-caret-hide test e-active e-focus` // documents bubble
             ){
             if (this.props.selectedService === 'signature'){
                 var signature = this.props.signatures.find(s => s.id === event.data.Id);
@@ -869,8 +885,7 @@ class MessageList extends Component {
                 var sms = this.props.smsList.find(s => s.id === event.data.Id);
                 this.props.smsClicked(sms);
                 this.props.setTitle(i18n.t('smsViewer.title'));
-            }
-            
+            } 
         }
     }
 
@@ -934,6 +949,16 @@ class MessageList extends Component {
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
             this.setState({ hideConfirmDialog: true, signatureId: id, auth: auth });
+        } else if (args.item.text === i18n.t('signaturesGrid.menuAudit')){
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const fileName = this.grid.getSelectedRecords()[0].Documento;
+            const auth = this.props.auth;
+            downloadCertifiedDocumentAudit(id, fileName, auth );
+        } else if (args.item.text === i18n.t('signaturesGrid.menuDocument')){
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const fileName = this.grid.getSelectedRecords()[0].Documento;
+            const auth = this.props.auth;
+            downloadCertfiedDocumentCopy(id, fileName, auth );
         }
     }
 
@@ -1116,23 +1141,20 @@ class MessageList extends Component {
         console.log('MESSAGELIST.RENDER().props.guidNotFound: '+this.props.guidNotFound);
 
         const contenido = `
-            <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center;
-            font-size: 17.5px !important; padding-left: 20px;'>
-            ${i18n.t('cancelledSignatureModal.text')}
+            <span class="lf-icon-check-round modal-icon-content"></span>
+            <div class="modal-text-content">
+                ${i18n.t('cancelledSignatureModal.text')}
             </div>`;
 
         const contenido2 = `
-            <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-            font-size: 17.5px !important; padding-left: 20px;'>
+            <span class="lf-icon-question modal-icon-content"></span>
+            <div class="modal-text-content">
             ${i18n.t('cancelConfirmationModal.text')}
             </div>`;
         
         const contenido3 = `
-            <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center;
-            font-size: 17.5px !important; padding-left: 20px;'>
+            <span class="lf-icon-information modal-icon-content"></span>
+            <div class="modal-text-content>
             ${i18n.t('signatureNotFoundCentinela.text')}
             </div>`;
 
@@ -1141,7 +1163,7 @@ class MessageList extends Component {
                 click: () => {
                 this.setState({ hideConfirmDialog: false });
                 },
-                buttonModel: {  content: i18n.t('confirmationModal.no'), cssClass: 'btn-modal-close' }
+                buttonModel: {  content: i18n.t('confirmationModal.no'), cssClass: styles['btn-modal-close'] }
             },
             {
                 click: () => {
@@ -1157,15 +1179,15 @@ class MessageList extends Component {
             ignoreAccent:true, 
             operators: {
                 stringOperator: [
-                    { value: 'contains', text: i18n.t('signaturesGrid.filters.contains')},
-                    { value: 'startsWith', text: i18n.t('signaturesGrid.filters.startsWith')}
+                    { value: 'contains', text: i18n.t('signaturesGrid.filters.contains') },
+                    { value: 'startsWith', text: i18n.t('signaturesGrid.filters.startsWith') }
                 ],
                 dateOperator: [
-                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal')},
-                    { value: 'greaterthan', text: i18n.t('signaturesGrid.filters.greaterthan')},
-                    { value: 'greaterthanorequal', text: i18n.t('signaturesGrid.filters.greaterthanorequal')},
-                    { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan')},
-                    { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal')}
+                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal') },
+                    { value: 'greaterthan', text: i18n.t('signaturesGrid.filters.greaterthan') },
+                    { value: 'greaterthanorequal', text: i18n.t('signaturesGrid.filters.greaterthanorequal') },
+                    { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan') },
+                    { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal') }
                 ],
             } 
         };
@@ -1173,23 +1195,20 @@ class MessageList extends Component {
         const filterCheckBox = {
             type: 'CheckBox'
         }
-        console.log('selectedService', this.props.selectedService);
-        //var firmas = this.props.signatures;
-
+    
         var firmas = ( this.props.signatures && this.props.signatures.length > 0 ) ? this.getSignatures(this.props.signatures): [];
         var emails = ( this.props.emails && this.props.emails.length > 0 ) ? this.getEmails(this.props.emails) : [];
         var smsList = ( this.props.smsList && this.props.smsList.length > 0 ) ? this.getSmsList(this.props.smsList) : [];
+        var documents = ( this.props.documents && this.props.documents.length > 0 ) ? this.getCertDocuments(this.props.documents) : [];
         
         var selectedServices = 
             (this.props.selectedService && this.props.selectedService == 'signature') 
-                ? 
-                    firmas 
-                : 
-                    (this.props.selectedService && this.props.selectedService == 'certifiedEmail') 
-                        ? 
-                            emails
-                        :   
-                            smsList
+                ? firmas 
+                : (this.props.selectedService && this.props.selectedService == 'certifiedEmail') 
+                    ? emails
+                    : (this.props.selectedService && this.props.selectedService == 'certifiedSms')
+                        ? smsList
+                        : documents  
 
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
@@ -1198,7 +1217,7 @@ class MessageList extends Component {
         const position = { X: 160, Y: 240 };
         
         return( 
-            <div className={styles['main-grid']}>
+            <div className={styles['main-grid']} id="message-list">
             <div>
                 <GridComponent 
                     dataSource={selectedServices}
@@ -1217,7 +1236,6 @@ class MessageList extends Component {
                     }}
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
-                    // locale={navigator.language}
                     locale={navigatorLanguage}
                     toolbarClick={this.toolbarClick}
                     excelExportComplete={this.excelExportComplete}
@@ -1226,31 +1244,37 @@ class MessageList extends Component {
                     hierarchyPrintMode={'All'}
                     delayUpdate='true'
                 >
-                    <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} width='55' />
-                        <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
-                        <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
-                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
-                        <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
-                        <ColumnDirective field='Estado' filter={filterCheckBox} textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
-                    </ColumnsDirective>
+                    {(this.props.selectedService && this.props.selectedService === 'certifiedDocument') 
+                        ?
+                            <ColumnsDirective>
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
+                                <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
+                                <ColumnDirective field='Hora' textAlign='Left'  headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
+                                <ColumnDirective field='Origen' textAlign='Left' headerText={i18n.t('signaturesGrid.columnOrigin')} width='115'/>
+                            </ColumnsDirective>
+                        : 
+                            <ColumnsDirective>
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
+                                <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
+                                <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
+                                <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
+                                <ColumnDirective field='Estado' filter={filterCheckBox} textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
+                            </ColumnsDirective>
+                    }
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
-                    {/* <Inject services={[Resize]}/> */}
                 </GridComponent>
                 <DialogComponent 
                     id="infoDialog" 
-                    //header=' ' 
                     visible={this.state.hideAlertDialog} 
                     animationSettings={this.animationSettings} 
                     width='60%' 
                     content={contenido}
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
-                    //target='#target' 
-                    //buttons={this.alertButtons} 
                     open={this.dialogOpen("infoDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
-                    //position={ this.position }
                 />
                 <DialogComponent 
                     id="confirmDialog" 
@@ -1261,594 +1285,25 @@ class MessageList extends Component {
                     width='60%' 
                     content={contenido2} 
                     ref={dialog => this.confirmDialogInstance = dialog} 
-                    //target='#target' 
                     buttons={confirmButtons} 
                     open={this.dialogOpen("confirmDialog")} 
                     close={this.dialogClose}
                 />
                 <DialogComponent 
                     id="infoDialog" 
-                    //header=' ' 
                     visible={this.props.guidNotFound} 
                     animationSettings={this.animationSettings} 
                     width='60%' 
                     content={contenido3}
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
-                    //target='#target' 
-                    //buttons={this.alertButtons} 
                     open={this.dialogOpen("alertDialog")} 
                     close={this.dialogClose}
                     showCloseIcon={true}
-                    //isModal={true}
-                    //position={ position }
                 />
             </div>
-            <style jsx global>
-                {`
-                    .e-headercell{
-                        background-color: #001978 !important;
-                        color: white;  
-                    }
-                    div.e-gridheader.e-lib.e-droppable > div > table > 
-                    thead > tr > th.e-headercell.e-defaultcursor {
-                        position: static;
-                        border-right: 1px solid;
-                    }
-                    .bola-firmantes.en-progreso .e-dropdown-btn.e-dropdown-btn.e-btn{
-                        border-radius: 20px;
-                        color: #FFF;
-                        padding: 3px 15px;
-                        cursor: pointer;
-                        background: #e9a128;
-                    }
-                    .bola-firmantes.completada .e-dropdown-btn.e-dropdown-btn.e-btn{
-                        border-radius: 20px;
-                        color: #FFF;
-                        padding: 3px 15px;
-                        cursor: pointer;
-                        background: #217e05;
-                    }
-                    .bola-firmantes.cancelada .e-dropdown-btn.e-dropdown-btn.e-btn{
-                        border-radius: 20px;
-                        color: #FFF;
-                        padding: 3px 15px;
-                        cursor: pointer;
-                        background: #c90223;
-                    }
-
-                    .bola-firmantes.gray .e-dropdown-btn.e-dropdown-btn.e-btn{
-                        border-radius: 100px;
-                        color: #434246;
-                        padding: 4px 9px;
-                        cursor: pointer;
-                        background: #CFCED3;
-                    }
-                
-                    .e-grid .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop) {
-                        color: #fff;
-                    
-                    }
-                    .resumen-firma.en-progreso {
-                        color: #e9a128;
-                    }
-                    .resumen-firma.completada {
-                        color: #217e05;
-                    }
-                    .resumen-firma.cancelada {
-                        color: #c90223;
-                    }
-                    .e-dropdownbase .e-list-item.e-active.e-hover {
-                        color: #001970;
-                    }
-                    .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
-                    .e-list-item.e-active.e-hover {
-                        background-color: #eee;
-                        border-color: #fff;
-                        color: #001970;
-                    }
-                    .e-checkboxfilter.e-popup.e-dialog {
-                        top: 15% !important;
-                    }
-                    .e-checkboxfilter .e-footer-content {
-                        background: #fff;
-                    }
-                    .e-dropdownbase .e-list-item.e-active.e-hover {
-                        color: #001970;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-item 
-                    .e-tbar-btn.e-btn.e-tbtn-txt .e-icons.e-btn-icon {
-                        padding: 0;
-                        color: #001970;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn-text {
-                        color: #001970;
-                    }
-                    .e-toolbar .e-input-group .e-search .e-input{
-                        height: 0rem;
-                        border-bottom: 0px solid #9e9e9e;
-                    }
-                    .row{
-                        margin-left:auto;
-                        margin-right: auto;
-                        margin-bottom: 0px;
-                        display: inherit;
-                    }
-
-                    [type="checkbox"] + span:not(.lever):before {
-                        top: 2px;
-                        left: -1px;
-                        border: none;
-                        margin-top: 2px;
-                    }
-                    
-                    .e-dropdown-popup ul .e-item .e-menu-icon {
-                        font-weight: bold;
-                        color: #001970;
-                    }
-                    
-                    .signature-poppup ul {
-                        min-width: 180px;
-                        border: 1px solid #001970 !important;
-                        padding: 1px 0;
-                    }
-                    .signature-poppup ul .e-item.e-separator{
-                        border-bottom: 1px solid #001970;
-                        margin: 6px 4px;
-                    
-                    }
-                    .e-dropdown-popup ul .e-item {
-                        font-weight: bold;
-                        color: #001970;
-                    }
-                    .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
-                    .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
-                    .e-input-group.e-float-icon-left:not(.e-float-input) 
-                    .e-input-in-wrap::before, 
-                    .e-input-group.e-float-icon-left:not(.e-float-input) 
-                    .e-input-in-wrap::after, 
-                    .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
-                    .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after, 
-                    .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) 
-                    .e-input-in-wrap::before, 
-                    .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) 
-                    .e-input-in-wrap::after {
-                        background: #001970;
-                    }
-
-                    .test{
-                        color: #fff;
-                    }
-                    input:not([type]), input[type=text]:not(.browser-default___2ZECf), 
-                    input[type=password]:not(.browser-default___2ZECf), 
-                    input[type=email]:not(.browser-default___2ZECf),
-                    input[type=url]:not(.browser-default___2ZECf), 
-                    input[type=time]:not(.browser-default___2ZECf), 
-                    input[type=date]:not(.browser-default___2ZECf), 
-                    input[type=datetime]:not(.browser-default___2ZECf), 
-                    input[type=datetime-local]:not(.browser-default___2ZECf), 
-                    input[type=tel]:not(.browser-default___2ZECf), 
-                    input[type=number]:not(.browser-default___2ZECf), 
-                    input[type=search]:not(.browser-default___2ZECf), 
-                    textarea.materialize-textarea___2dl8r {
-                        background-color: transparent;
-                        border: none;
-                        border-radius: 0;
-                        outline: none;
-                        height: 0rem;
-                        width: 100%;
-                        font-size: 16px;
-                        margin: 0 0 8px 0;
-                        padding: 0;
-                        box-shadow: none;
-                        box-sizing: content-box;
-                        transition: box-shadow .3s, border .3s;
-                        padding-top: 3px;
-                    }
-                    
-                    .e-input-group:not(.e-success):not(.e-warning):not(.e-error) input.e-input:focus {
-                    border-bottom: none;
-                    box-shadow: none;
-                    }
-
-                    .e-toolbar .e-toolbar-items {
-                        border-radius: 0 0 0 0;
-                        display: inline-block;
-                        height: 100%;
-                        min-height: 53px;
-                        vertical-align: middle;
-                    }
-                    
-                    #confirmDialog { 
-                    //top: -10px !important;
-                    }
-
-                    #infoDialog, #confirmDialog, #infoDialog2 {
-                        max-height: 927px;
-                        width: 300px;
-                        left: 770px;
-                        //top: 392.5px;
-                        z-index: 1001;
-                        //transform: translateY(+150%);
-                    }
-
-                    #confirmDialog_dialog-header, 
-                    #confirmDialog_title, 
-                    #confirmDialog_dialog-content, 
-                    .e-footer-content{
-                        background: #001970;
-                        color: #fff;
-                        display:flex;
-                        width: auto;
-                    }
-
-                    #infoDialog_dialog-header, #infoDialog_title, 
-                    #infoDialog_dialog-content, .e-footer-content{
-                        background: #001970;
-                        color: #fff;
-                        display:flex;
-                    }
-                    #infoDialog2_dialog-header, #infoDialog2_title, 
-                    #infoDialog2_dialog-content, .e-footer-content{
-                        background: #001970;
-                        color: #fff;
-                        display:flex;
-                    }
-                    #confirmDialog_dialog-header, #confirmDialog_title, 
-                    #confirmDialog_dialog-content, .e-footer-content{
-                        background: #001970;
-                        color: #fff;
-                        display:flex;
-                    }
-                    // .e-btn.e-flat.e-primary {
-                    //     color: #fff !important;
-                    // }
-                    .e-btn-icon .e-icon-dlg-close .e-icons{
-                        color: #fff;
-                    }
-                    .e-dialog .e-dlg-header-content 
-                    .e-btn.e-dlg-closeicon-btn {
-                        margin-right: 0;
-                        margin-left: auto;
-                        color: #fff;
-                        height: 15px;
-                        background-color: transparent;
-                    }
-                    #confirmDialog_dialog-header, .e-dialog 
-                    .e-icon-dlg-close::before {
-                        content: '\e7fc';
-                        position: relative;
-                        color: white;
-                        font-size: 15px;
-                    }
-
-                    #confirmDialog .e-btn.e-flat.e-primary {
-                        text-transform: uppercase;
-                        font-size: 13px;
-                        font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-                        letter-spacing: .7px;
-                        color: #001978 !important;
-                        padding: 10px;
-                        background-color: #fff;
-                        border-radius: 0 !important;
-                        border: 2px solid #fff !important;
-                        min-width: 80px;
-                    }
-                    
-                    #confirmDialog .e-btn.e-flat.e-primary:hover {
-                        background-color: #e5e8f1 !important;
-                        background: #e5e8f1 !important;
-                        color: #001978 !important;
-                    }
-                    
-                    #confirmDialog .e-btn.e-flat.e-primary:active {
-                        background-color: #e5e8f1 !important;
-                        background: #e5e8f1 !important;
-                        color: #001978 !important;
-                    }
-
-                    .btn-modal-close {
-                        text-transform: uppercase;
-                        font-size: 13px;
-                        font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-                        letter-spacing: .7px;
-                        color: #fff !important;
-                        padding: 10px;
-                        background-color: #001978 !important;
-                        min-width: 80px;
-                        border-radius: 0 !important;
-                        border: 2px solid #fff !important;
-                    }
-                    
-                    .btn-modal-close:hover {
-                    background-color: #e5e8f1 !important;
-                    background: #e5e8f1 !important;
-                    color: #001978 !important;
-                    }
-                
-                    .btn-modal-close:active {
-                    background-color: #e5e8f1 !important;
-                    background: #e5e8f1 !important;
-                    color: #001978 !important;
-                    }
-            
-                    .e-toolbar-right {
-                    right: 13% !important;
-                    display: table-column !important;
-                    }
-                    .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-left {
-                    left: auto;
-                    line-height: 47px !important;
-                    }
-                    .e-toolbar-left {
-                    right: 0 !important;
-                    background-color: #DDE0DF;
-                    height: 95% !important;
-                    top: 2px !important;
-                    border-top-left-radius: 23px;
-                    border-bottom-left-radius: 23px;
-                    }
-                    .e-tbar-btn-text {
-                    display: none !important;
-                    } 
-                    .e-toolbar .e-toolbar-items .e-toolbar-left 
-                    .e-toolbar-item:first-child {
-                    margin-left: 15px;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-left 
-                    .e-toolbar-item:nth-child(3) {
-                    margin-right: 15px;
-                    }
-                    .e-toolbar .e-tbar-btn {
-                    background: #001978;
-                    border-radius: 15px;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-item 
-                    .e-tbar-btn.e-btn.e-tbtn-txt 
-                    .e-icons.e-btn-icon {
-                    color: #fbfbfb;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn {
-                    height: calc(100% - 15px);
-                    padding: 0 3.5px;
-                    }
-                    .e-grid {
-                    border: 1px solid #001970;
-                    border-top: 6px solid #001970;
-                    }
-                    .e-grid .e-toolbar-items .e-toolbar-item.e-search-wrapper 
-                    .e-search .e-search-icon {
-                    min-width: 29px !important;
-                    border-left: 1px solid #001978 !important;
-                    font-size: 16px !important;
-                    }
-                    .e-search   {
-                    border: 1px solid #001970 !important;
-                    height: 32px;
-                    padding: 1px;
-                    padding-left: 4px;
-                    }
-                    .e-grid .e-content {
-                    overflow-y: hidden !important;
-                    }
-                    .e-toolbar .e-tbar-btn:hover {
-                    border-radius: 14px;
-                    }
-                    .e-toolbar .e-tbar-btn:focus {
-                    border-radius: 14px;
-                    }
-                    .e-toolbar .e-tbar-btn:active {
-                    border-radius: 14px;
-                    }
-                    .e-grid.e-default tr td:first-child {
-                    background-color: #6C77AF;
-                    }
-                    .e-btn.e-icon-btn {
-                      background-color: transparent !important;
-                      width: 100%;
-                      margin: auto;
-                      height: 47px;
-                      position: relative;
-                    }
-                    .e-grid .e-rowcell:first-child, .e-grid .e-summarycell:first-child {
-                        padding: 1px;
-                    }
-                    .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
-                    color: white;
-                    }
-                    .e-btn:active .e-btn-icon {
-                    color: #001978 !important;
-                    }
-                    .e-btn:focus .e-btn-icon {
-                    color: #001978 !important;
-                    }
-                    .e-btn:hover .e-btn-icon {
-                    color: #001978 !important;
-                    }
-                    .e-grid .e-gridheader tr th:first-child {
-                        padding: 0;
-                    }
-                    .e-grid.e-gridhover tr[role='row']:not(.e-editedrow):hover 
-                    .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell) 
-                    .e-btn-icon {
-                        color: #001978 !important;
-                    }
-
-                    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
-                        background: transparent;
-                        color: #001970;
-                        opacity: 1;
-                        border-bottom: 3px solid #001970;
-                        border-radius: 1px;
-                    }
-                    .e-pager .e-numericitem {
-                    line-height: 0.5;
-                    min-width: 16px;
-                    font-size: 14px;
-                    }
-                    .e-pager div.e-icons {
-                        color: #001970;
-                    }
-
-                    .e-input-group.e-control-wrapper.e-alldrop.e-ddl.e-lib.e-keyboard.e-valid-input {
-                        color: #001970;
-                        border-color: azure !important;
-                        width: 70% !important;
-                    }
-                    
-                    .e-input-group .e-input-group-icon:last-child {
-                        color: #001970;
-                    }
-                    .e-pager .e-pagerconstant {
-                        color: #001970; 
-                        margin: 0 0 8px 10px;
-                    }
-
-                    .e-pager div.e-parentmsgbar {
-                        color: #001970;
-                    }
-                    .e-grid .e-icon-filter::before {
-                        font-family: 'lf-font' !important;
-                        content: '\e95e';
-                        color: #fff;
-                        font-size: 12px;
-                    }
-                    .e-grid .e-filtered::before {
-                        content: '\eaa3';
-                    }
-                    .e-pager .e-pagerdropdown {
-                    margin-top: 0 !important; 
-                    vertical-align: sub !important;
-                    height: 35px !important;
-                    }
-                    input.e-input::selection, textarea.e-input::selection, 
-                    .e-input-group input.e-input::selection, 
-                    .e-input-group.e-control-wrapper input.e-input::selection, 
-                    .e-float-input input::selection, 
-                    .e-float-input.e-control-wrapper input::selection, 
-                    .e-input-group textarea.e-input::selection, 
-                    .e-input-group.e-control-wrapper textarea.e-input::selection, 
-                    .e-float-input textarea::selection, 
-                    .e-float-input.e-control-wrapper textarea::selection{
-                        //background: #6C77AF;
-                        //color: #fff;
-                        background: #F6CCD1;
-                        color: black;
-                    }
-                    .e-dropdown-btn:focus, .e-dropdown-btn.e-btn:focus{
-                        padding: 4px;
-                    }
-                    .e-grid .e-print::before {
-                        content: '\e9b9';
-                        font-family: 'lf-font' !important;
-                    }
-                    .e-grid .e-pdfexport::before {
-                        content: '\e94f';
-                        font-family: 'lf-font' !important;
-                    }
-                    .e-grid .e-excelexport::before {
-                        content: '\e955';
-                        font-family: 'lf-font' !important;
-                    }
-                    .e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active{
-                        color: #001970 !important;
-                    }
-                    .e-calendar .e-content td.e-focused-date.e-today span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day
-                    {
-                        background: #eee;
-                        border: 1px solid #001970;
-                        color: #001970;
-                    }
-                    .e-calendar .e-content td.e-today.e-selected span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-today.e-selected span.e-day 
-                    {
-                        background-color: #001970;
-                        border: 1px solid #001970;
-                        box-shadow: inset 0 0 0 2px #fff;
-                        color: #fff;
-                    }
-                    .e-calendar .e-content td.e-selected span.e-day,
-                    .e-bigger.e-small .e-calendar .e-content td.e-selected span.e-day
-                    {
-                        background-color: #001970;
-                        border: 1px solid #001970;
-                        box-shadow: inset 0 0 0 2px #fff;
-                        color: #fff;
-                    }
-                    .e-calendar .e-content td.e-today span.e-day, 
-                    .e-calendar .e-content td.e-focused-date.e-today span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-today span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day {
-                        background: none;
-                        border: 1px solid #001970;
-                        border-radius: 50%;
-                        color: #001970;
-                    }
-                    .e-calendar .e-content td.e-today.e-selected:hover span.e-day, 
-                    .e-calendar .e-content td.e-selected:hover span.e-day, 
-                    .e-calendar .e-content td.e-selected.e-focused-date span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-today.e-selected:hover span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-selected:hover span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-selected.e-focused-date span.e-day {
-                        background-color: #001970;
-                        color: #fff;
-                    }
-                    .e-calendar .e-content td.e-today:hover span.e-day, 
-                    .e-calendar .e-content td.e-focused-date.e-today:hover span.e-day, 
-                    .e-calendar .e-content td.e-focused-date.e-today:focus span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-today:hover span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today:hover span.e-day, 
-                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today:focus span.e-day {
-                        background-color: #eee;
-                        border: 1px solid #001970;
-                        color: #001970;
-                    }
-
-                    [type="checkbox"]:indeterminate+span:not(.lever___3ADj_):before {
-                        transform: rotate(1deg);
-                        top: 2px;
-                        left: 2px;
-                        border: none;
-                        margin-top: 2px;
-                    }
-
-                    [type="checkbox"]:checked+span:not(.lever___3ADj_):before {
-                        transform: rotate(6deg);
-                        top: 2px;
-                        left: -1px;
-                        border: none;
-                        margin-top: 2px;
-                    }
-                    .e-btn .e-btn-icon, .e-css.e-btn .e-btn-icon {
-                        margin-top: 2px;
-                        width: 100%;
-                        height: 18px;
-                    }
-                `}
-                </style>
             </div>
         )
     }
-
-    // componentDidMount() {
-
-    //     const { lefebvre } = this.props;
-    //     console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
-    
-    //     this.props.preloadSignatures(lefebvre.userId);
-
-    //     // window.addEventListener('resize', this.onresize.bind(this));
-    // }
-
-    // componentDidUpdate(prevProps, prevState) {
-    //     if (prevState.sign_ready === false){
-    //         if (this.props.signatures && this.props.signatures.length){
-    //             this.setState({sign_ready: true, rowCount: this.getCount()});
-    //         }
-    //     }
-    // }
-
-    
 
     isEmpty(obj) {
         for (var prop in obj) {
@@ -1981,6 +1436,7 @@ const mapStateToProps = state => ({
     signatures: state.application.signatures,
     emails: state.application.emails,
     smsList: state.application.smsList,
+    documents: state.application.documents,
     selectedService: state.application.selectedService,
     signatureFilter: state.application.signaturesFilterKey,
     lefebvre: state.lefebvre,

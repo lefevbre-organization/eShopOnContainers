@@ -186,55 +186,48 @@ class EmailMessageEditor extends Component {
   render() {
 
     const noSignersModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
     const noAttachModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('noAttachmentsModal.text')}
       </div>`;
 
     const bigFileModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('bigFileModal.text')}
       </div>
     `;
 
     const attachNotFound = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;
-        padding-left: 20px; font-size: 17.5px !important'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('attachNotFoundCentinela.text')}
       </div>
     `;
 
     const confirmDiscard = `
-      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-question modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
 
     const onlyPdfModal = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('onlyPdfModal.text')}
       </div>
     `;
 
     const errCreatingRequest = `
-      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
         Se ha producido un error al crear la solicitud. Inténtelo de nuevo.
       </div>
     `;
@@ -401,139 +394,6 @@ class EmailMessageEditor extends Component {
           open={() => this.dialogOpen} 
           close={() => this.dialogClose}
         />
-
-        <style jsx global>
-          {` 
-           .message-editor___1BSzC 
-           .header___2SVSM 
-           .address___2e6fn 
-           .chip___3gDJb {
-             border-color: #001970 !important;
-            }
-            .message-editor___1BSzC 
-            .header___2SVSM 
-            .address___2e6fn 
-            .chip___3gDJb i {
-              color: #001970;
-            }
-            #info2Dialog,
-            #confirmDialog {
-              max-height: 927px;
-              width: 60%;
-              left: 20% !important;
-              z-index: 1001;
-            }
-            #rolDialog {
-              top: 20% !important;
-            }
-            #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
-            #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {
-              background: #001970;
-              color: #fff;
-              display:flex;
-            }
-            .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
-              margin-right: 0;
-              margin-left: auto;
-              color: #fff
-            }
-            #confirmDialog .e-dlg-header{
-              width: 1%;
-            }
-            #rolDialog_title {
-              width: 40% !important;
-              color: #001970;
-              font-weight: bold;
-              font-size: 15px;
-            }
-            .e-btn.e-flat.e-primary {
-              color: #fff !important;
-            }
-            .e-btn-icon .e-icon-dlg-close .e-icons{
-                color: #fff;
-            }
-            .e-dialog .e-dlg-header-content 
-            .e-btn.e-dlg-closeicon-btn {
-              margin-right: 0;
-              margin-left: auto;
-              color: #fff;
-              height: 15px;
-              background-color: transparent;
-            }
-            .e-dialog .e-icon-dlg-close::before {
-              content: '\e7fc';
-              position: relative;
-              font-size: 15px;
-            }
-            #rolDialog_dialog-header > button {
-              margin-right: 10px;
-            }
-            #rolDialog_dialog-header > button > span {
-              color: #001978;
-            }
-            #confirmDialog_dialog-header > button > span {
-              color: white;
-            }
-            #info2Dialog_dialog-header > button > span {
-              color: white;
-            }
-            #noSignaturesDialog_dialog-header > button > span {
-              color: white;
-            }
-            #confirmDialog .e-btn.e-flat.e-primary {
-              text-transform: uppercase;
-              font-size: 13px;
-              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-              letter-spacing: .7px;
-              color: #001978 !important;
-              padding: 10px;
-              background-color: #fff;
-              border-radius: 0 !important;
-              border: 2px solid #fff !important;
-              min-width: 80px;
-            }
-            
-            #confirmDialog .e-btn.e-flat.e-primary:hover {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-            
-            #confirmDialog .e-btn.e-flat.e-primary:active {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-
-            .btn-modal-close {
-              text-transform: uppercase;
-              font-size: 13px;
-              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-              letter-spacing: .7px;
-              color: #fff !important;
-              padding: 10px;
-              background-color: #001978 !important;
-              min-width: 80px;
-              border-radius: 0 !important;
-              border: 2px solid #fff !important;
-            }
-            
-            .btn-modal-close:hover {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-          
-            .btn-modal-close:active {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-            #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
-              height: calc(100% - 20px) !important;
-            }
-          `}
-        </style>
       </div>
     );
   }

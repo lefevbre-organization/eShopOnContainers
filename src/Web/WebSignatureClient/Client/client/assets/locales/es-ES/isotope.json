@@ -44,6 +44,7 @@
     "filterMenu": "FIRMAS",
     "filterMenuEmail": "EMAIL CERTIFICADO",
     "filterMenuSms": "SMS CERTIFICADO",
+    "filterMenuDocument": "CERTIFICACIÓN",
     "filterAll": "Mostrar todas",
     "filterInProgress": "En progreso",
     "filterCompleted": "Completadas",
@@ -51,9 +52,11 @@
     "signature": "Firma avanzada",
     "certifiedEmail": "Email certificado",
     "certifiedSms": "SMS certificado",
+    "certifiedDocument": "Certificación de documentos",
     "sendingTypeSignature": "Firma con datos biométricos",
     "sendingTypeEmail": "Certifica tus comunicaciones",
-    "sendingTypeSms": "Certifica tus SMS"
+    "sendingTypeSms": "Certifica tus SMS",
+    "sendingTypeDocument": "Certifica tus documentos"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -74,7 +77,8 @@
     },
     "app": "FIRMA",
     "certifiedEmail": "EMAIL CERTIFICADO",
-    "certifiedSms": "SMS CERTIFICADO"
+    "certifiedSms": "SMS CERTIFICADO",
+    "certifiedDocument": "CERTIFICACIÓN DOCUMENTO"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -143,7 +147,8 @@
     },
     "title": "SOLICITUD DE FIRMA",
     "certifiedEmailTitle": "SOLICITUD DE EMAIL CERTIFICADO",
-    "certifiedSmsTitle": "SMS CERTIFICADO"
+    "certifiedSmsTitle": "SMS CERTIFICADO",
+    "certifiedDocumentTitle": "CERTIFICACIÓN DE DOCUMENTOS"
   },
   "forwardAction": {
     "From": "De",
@@ -206,12 +211,16 @@
   "signaturesGrid": {
     "menuEdit": "Editar",
     "menuCancel": "Cancelar",
+    "menuAudit": "Descargar auditoría",
+    "menuDocument": "Descargar documento",
     "columnAction": "Acciones",
     "columnDocument": "Documento",
     "columnSubject": "Asunto",
     "columnSigners": "Destinatarios",
     "columnDate": "Fecha",
     "columnStatus": "Estado",
+    "columnHour": "Hora",
+    "columnOrigin": "Origen",
     "statusCancelled": "Cancelado",
     "statusCompleted": "Completado",
     "statusExpired": "Expirado",
@@ -245,7 +254,7 @@
     "text": "¿Está seguro de que quiere cancelar el proceso de firma de documentos de Centinela?"
   },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio al Firmante"
+    "text": "Se acaba de enviar un recordatorio al destinatario"
   },
   "noSignersModal": {
     "text": "Debe especificar al menos un destinatario para poder enviar la solicitud."
@@ -258,6 +267,12 @@
   },
   "bigFileModal": {
     "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
+  },
+  "documentCertifiedModal": {
+    "text": "El fichero se ha certificado correctamente."
+  },
+  "documentErrorModal": {
+    "text": "El fichero no se ha certificado correctamente."
   },
   "attachNotFoundCentinela":{
     "text": "No se han podido descargar los documentos desde Centinela."
@@ -424,6 +439,14 @@
       }
     },
     "title": "DETALLES DE LA FIRMA"
+  },
+  "documentEditor": {
+      "dragDrop": "Arrastra tu archivo aquí",
+      "upload": "o cárgalo desde",
+      "computer": "tu equipo",
+      "file": "Archivo",
+      "cancelButton": "CANCELAR",
+      "acceptButton": "CERTIFICAR"
   },
   "completedPage":{
     "title": "El documento se ha procesado correctamente.",
