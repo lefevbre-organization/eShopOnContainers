@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { selectFolder } from '../../actions/application';
 import { clearSelectedMessage, getCredentials } from '../../services/application';
 import { getSelectedFolder } from '../../selectors/folders';
+import moment from 'moment'
 import mainCss from '../../styles/main.scss';
 import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
@@ -157,10 +158,7 @@ export class SmsMessageViewer extends Component {
       }
     })
     if (evDate !==''){
-      res = new Date(evDate).toLocaleString(navigator.language, {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
+      res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
   }
@@ -174,10 +172,7 @@ export class SmsMessageViewer extends Component {
     }
 
     if (evDate !==''){
-      res = new Date(evDate).toLocaleString(navigator.language, {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
+      res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
   }
