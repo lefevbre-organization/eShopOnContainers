@@ -21,7 +21,7 @@ Param(
         "ocelotapigw", 
         "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-37.2",
+    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-38",
     [parameter(Mandatory=$false)][string]$initialTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
