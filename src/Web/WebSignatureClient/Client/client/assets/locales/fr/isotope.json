@@ -253,7 +253,7 @@
     "text": "Voulez-vous vraiment annuler le processus de signature?"
   },
   "reminderSentModal": {
-    "text": "Rappel envoyé au signataire"
+    "text": "Rappel envoyé au destinataire"
   },
   "noSignersModal": {
     "text": "Vous devez spécifier au moins un destinataire pour envoyer la demande."

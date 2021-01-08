@@ -254,7 +254,7 @@
     "text": "¿Está seguro de que quiere cancelar el proceso de firma de documentos de Centinela?"
   },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio al Firmante"
+    "text": "Se acaba de enviar un recordatorio al destinatario"
   },
   "noSignersModal": {
     "text": "Debe especificar al menos un destinatario para poder enviar la solicitud."

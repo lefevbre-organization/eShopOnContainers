@@ -235,7 +235,7 @@
     "text": "Please confirm you want to cancel this Centinela Documents signature request"
   },
   "reminderSentModal": {
-    "text": "A reminder has been sent signer"
+    "text": "A reminder has been sent to recipient"
   },
   "noSignersModal": {
     "text": "At least one recipient must be specified in order to send the request."
