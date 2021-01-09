@@ -23,12 +23,10 @@ const SmsList = (props) => {
         || certificationType.value === 'download_document'
         || certificationType.value === 'download_every_document') 
           ? props.styles['separador-sms'] 
-          : props.styles['separador']}`}
-      >
+          : props.styles['separador']}`} >
         <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
         <div className={props.styles['container-certificate']}>
-
-          <div className={`${props.styles['seguimiento-certification-individual-sms']} ${((props.getEventStatus(props.signer, 'sms_processed') === false) ? props.styles['no-completado']: ``)}`}>
+            <div className={`${props.styles['seguimiento-certification-individual-sms']} ${((props.getEventStatus(props.signer, 'sms_processed') === false) ? props.styles['no-completado'] : '')}`}>
               <span className="lf-icon-mobile"></span>
                 <div className={props.styles['cont-check-seguimiento']}>
                   <span className={`${((props.getEventStatus(props.signer, 'sms_processed')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
@@ -42,8 +40,8 @@ const SmsList = (props) => {
                 </div>
               <div className={props.styles.clearfix}></div>
             </div>
-            <div className={`${props.styles['seguimiento-certification-individual-sms']} ${((props.getEventStatus(props.signer, 'sms_delivered') === false) ? props.styles['no-completado']: ``)}`}>
-              <span className={`lf-icon-sms`}></span>
+            <div className={`${props.styles['seguimiento-certification-individual-sms']} ${((props.getEventStatus(props.signer, 'sms_delivered') === false) ? props.styles['no-completado'] : '')}`}>
+              <span className={`${props.styles['lf-icon-sms']} lf-icon-sms`}></span>
               <div className={props.styles['cont-check-seguimiento']}>
                 <span className={`${((props.getEventStatus(props.signer, 'sms_delivered')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
                 <div className={props.styles.linea}></div>
@@ -62,14 +60,13 @@ const SmsList = (props) => {
               || certificationType.value === 'open_every_document'
               || certificationType.value === 'download_document'
               || certificationType.value === 'download_every_document') 
-                ? <div className={`
-                    ${props.styles['seguimiento-certification-individual-sms']} 
+                ? <div className={`${props.styles['seguimiento-certification-individual-sms']} 
                     ${(!certificationCompleted 
                       ? `${props.styles['no-completado']} ${props.styles['no-completado-doc']}` 
-                      : ``
+                      : ''
                       )}`}
                   >
-                    <span className="lf-icon-sms-open"></span>
+                    <span className={`${props.styles['lf-icon-sms-open']} lf-icon-sms-open`}></span>
                     <div className={props.styles['cont-check-seguimiento']}>
                       <span className={`
                         ${(certificationCompleted 
@@ -92,12 +89,9 @@ const SmsList = (props) => {
                     </div>
                   </div> 
                 : null}
-
-
-
         </div>
           <div className={props.styles.clearfix}></div>
-        </div>
+      </div>
         {
           (certificationType) 
           && (certificationType.value === 'open_document' 

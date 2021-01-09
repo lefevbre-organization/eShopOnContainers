@@ -13,6 +13,7 @@ import {
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
+import moment from 'moment'
 import EmailList from './certificate-list/email-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
@@ -174,10 +175,7 @@ export class EmailMessageViewer extends Component {
       }
     })
     if (evDate !==''){
-      res = new Date(evDate).toLocaleString(navigator.language, {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
+      res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
   }
@@ -191,10 +189,7 @@ export class EmailMessageViewer extends Component {
     }
 
     if (evDate !==''){
-      res = new Date(evDate).toLocaleString(navigator.language, {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
+      res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
   }

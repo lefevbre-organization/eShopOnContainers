@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import i18n from 'i18next';
+import moment from 'moment'
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 
 const Details = (props) => {
+  console.log('Details for date', moment(props.detail.created_at).locale(navigator.language).format('L LTS'));
  return (
     <table className={props.styles['resumen-firma']}>
         <tbody>
@@ -58,10 +60,7 @@ const Details = (props) => {
                   </span>
               </td>
                 <td>
-                  {new Date(props.detail.created_at).toLocaleString(navigator.language, {
-                  year: 'numeric', month: '2-digit', day: '2-digit',
-                  hour: '2-digit', minute: '2-digit', second: '2-digit'
-                  })}
+                  {moment(props.detail.created_at).locale(navigator.language).format('L LTS')}
                 </td>
               <td className={props.styles[props.status_style]}>{props.status}</td>
           </tr>
