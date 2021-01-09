@@ -16,11 +16,15 @@
 
   <ItemGroup>
     <Compile Remove="Client\build\**" />
+    <Compile Remove="Client\client\src\calendar\NewFolder\**" />
     <Content Remove="$(SpaRoot)**" />
     <Compile Remove="node_modules\**\*;Client\**\*" />
     <Content Remove="Client\build\**" />
+    <Content Remove="Client\client\src\calendar\NewFolder\**" />
     <EmbeddedResource Remove="Client\build\**" />
+    <EmbeddedResource Remove="Client\client\src\calendar\NewFolder\**" />
     <None Remove="Client\build\**" />
+    <None Remove="Client\client\src\calendar\NewFolder\**" />
 
     <Content Include="Setup\images.zip">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

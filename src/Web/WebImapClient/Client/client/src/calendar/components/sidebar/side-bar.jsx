@@ -32,19 +32,32 @@ import styles from './side-bar.scss';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
+import {
+    listCalendarList
+    
+} from '../../api/calendar-api';
+
 
 
 class SideBar extends Component {
   constructor(props) {
-    super(props);
-    this.state = {
-      dragOver: false,
-    };
-    this.handleOnDragOver = this.onDragOver.bind(this);
-    this.handleOnDragLeave = this.onDragLeave.bind(this);
-    this.handleOnDrop = this.onDrop.bind(this);
-    this.handleOnNewMessage = this.onNewMessage.bind(this);
-    }
+      super(props);
+
+      this.state = {
+          calendars: [],         
+      };
+
+      listCalendarList()
+          .then(result => {
+                this.setState(                    
+                    { calendars: result }
+                )
+            })
+            .catch(error => {
+                console.log('error ->', error);
+       });   
+
+    } 
 
     calendarChange(args) {
         this.props.onCalendarChange(args);
@@ -68,21 +81,15 @@ class SideBar extends Component {
         //  this.setState({ sideBarCollapsed:true })
     }
 
-
-
   render() {
-    const { t, collapsed } = this.props;
-    const { dragOver } = this.state;
+    const { t, collapsed } = this.props; 
     return (
       <aside
-        onDragOver={this.handleOnDragOver}
-        onDragLeave={this.handleOnDragLeave}
-        onDrop={this.handleOnDrop}
         className={`${styles['side-bar']}
           ${mainCss['mdc-drawer']}
           ${mainCss['mdc-drawer--dismissible']}
           ${SideBar.getCollapsedClassName(collapsed)}
-          ${dragOver ? styles.dropZone : ''}`}>
+          `}>
         <div
           className={`${mainCss['mdc-drawer__header']} ${styles['top-container']} ${styles['divheader']}`}>
           {/*{(location.protocol !== 'https:' &&
@@ -104,7 +111,8 @@ class SideBar extends Component {
             style={{ height: 48 }}
             className={`${mainCss['mdc-button']}
                     ${mainCss['mdc-button']} ${styles['compose']}`}
-            onClick={this.handleOnNewMessage}>
+                    //onClick={this.handleOnNewMessage}
+                >
             {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
             <img
               className={styles.plusbuttton}
@@ -124,9 +132,7 @@ class SideBar extends Component {
             </IconButton>
           </span>
         </div>
-        <PerfectScrollbar>
-                {/* <FolderContainer />*/}
-
+            <PerfectScrollbar>
                 <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
                     <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
                 </div> 
@@ -137,58 +143,24 @@ class SideBar extends Component {
                         <IconButton
                             className={`${styles.addButton}`} onClick={this.newCalendarClick}>
                             add_circle_outline
-                         </IconButton>
-                        {/* <ButtonComponent cssClass='newcalendar e-small e-round lf-icon-add-round' onClick={this.newCalendarClick} iconCss='e-btn-sb-icons '></ButtonComponent>*/}
+                         </IconButton>                       
                     </span>                   
                 </div>
+
+                {this.state.calendars.map((c) => (
+                    <div className={`${styles['calendaritem']}`}>{c.name}</div>
+                ))}
 
         </PerfectScrollbar>
       </aside>
     );
-  }
-
-  onNewMessage() {
-    const { lexon } = this.props;
-
-    this.props.newMessage(lexon.sign);
-  }
-
-  onDragOver(event) {
-    event.preventDefault();
-    if (
-      event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes('application/json')
-    ) {
-      this.setState({ dragOver: true });
     }
-  }
-
-  onDragLeave(event) {
-    event.preventDefault();
-    this.setState({ dragOver: false });
-  }
-
-  onDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.setState({ dragOver: false });
-    if (
-      event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes('application/json')
-    ) {
-      const payload = JSON.parse(
-        event.dataTransfer.getData('application/json')
-      );
-      if (payload.type === DroppablePayloadTypes.FOLDER) {
-        this.props.moveFolderToFirstLevel(payload.folder);
-      }
-    }
-  }
 
   static getCollapsedClassName(collapsed) {
     return collapsed ? '' : `${styles.open} ${mainCss['mdc-drawer--open']}`;
   }
 }
+
 
 SideBar.propTypes = {
   t: PropTypes.func.isRequired,
@@ -206,9 +178,9 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  moveFolderToFirstLevel: (user, folder) =>
-    moveFolder(dispatch, user, folder, null),
-  newMessage: (sign) => editNewMessage(dispatch, [], sign),
+  //moveFolderToFirstLevel: (user, folder) =>
+  //  moveFolder(dispatch, user, folder, null),
+  //newMessage: (sign) => editNewMessage(dispatch, [], sign),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
