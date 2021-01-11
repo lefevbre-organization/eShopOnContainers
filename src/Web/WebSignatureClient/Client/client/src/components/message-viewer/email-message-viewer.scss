@@ -377,6 +377,14 @@
     grid-template-columns: auto auto auto;
  }
 
+ .lf-icon-sms:before {
+    content: "\eac3";
+  }
+
+  .lf-icon-sms-open:before {
+    content: "\eac4";
+  }
+
  .seguimiento-certification-individual-sms {
       text-align:center;
       font-size:40px;
