@@ -4,6 +4,8 @@ import i18n from 'i18next';
 import { getContactsCentinela, getContactsLexon, getBBDDLexon } from '../../../services/api-signaturit';
 import style from './contacts.scss';
 import Checkbox from "../../form/checkbox/checkbox";
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
+
 
 const Contacts = (props) => {
   
@@ -20,6 +22,8 @@ const Contacts = (props) => {
   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
   const [selectContact, setSelectContact] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
 
   const prevAddress = usePrevious(props.addresses);
 
@@ -226,11 +230,21 @@ const Contacts = (props) => {
     contacts.forEach(contact => {
       if (selectedOption === 'lexon'){
         if (contact.id === contactId){
-          contact.checked = isCheck;
+          if (props.sendingType === 'smsCertificate' && (contact.mobilePhone === '' || contact.mobilePhone === null || contact.mobilePhone === undefined)){
+            contact.checked = false;
+            setShowModal(true);
+          } else {
+            contact.checked = isCheck;
+          }
         }
       } else if(selectedOption === 'centinela'){
         if(contact.contactId == contactId) {
-          contact.checked = isCheck;
+          if (props.sendingType === 'smsCertificate' && (contact.phoneNumber1 === '' || contact.phoneNumber1 === null || contact.phoneNumber1 === undefined)){
+            contact.checked = false;
+            setShowModal(true);
+          } else {
+            contact.checked = isCheck;
+          }
         }
       }
     });
@@ -278,6 +292,16 @@ const Contacts = (props) => {
     //setContactsLexon([]); 
     props.dialogClose();
   }
+
+  const modalClose = () => {
+    setShowModal(false);
+  }
+
+  const dialogContent = `
+    <span class="lf-icon-information modal-icon-content"></span>
+    <div class="modal-text-content">
+      ${i18n.t('noPhoneModal.text')}
+    </div>`
 
   return (
       <div id="main-contact" className={style['main-contact']}>
@@ -362,6 +386,14 @@ const Contacts = (props) => {
                  </div>
           </div>
           <div className="clearfix"></div>
+          <DialogComponent 
+            id="info2Dialog" 
+            header='' 
+            visible={showModal} 
+            showCloseIcon={true} 
+            content={dialogContent} 
+            close={modalClose}
+          />
       </div>
     )
 }
