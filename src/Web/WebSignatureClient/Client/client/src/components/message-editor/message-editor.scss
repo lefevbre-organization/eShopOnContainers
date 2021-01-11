@@ -431,16 +431,18 @@ $flag-size: 18px;
       margin-bottom: 50px;
   }
 
-  p {
-    // color: #7680B1;
-  }
-
   .drop-file {
     font-size: 1.563rem;
+    font-family: 'MTTMilano';
+    
   } 
 
+  .desktop-file {
+    font-family: 'MTTMilano';
+  }
+
   .desktop-file a {
-    // border-bottom: 1px solid #7680B1;
+    border-bottom: 1px solid #7680B1;
   }
 
   .file-list {
