@@ -298,6 +298,9 @@
     "text": "El número máximo de caracteres para un SMS es 120.",
     "text2": "El número máximo de caracteres para un SMS con ficheros adjuntos es 100."
   },
+  "noPhoneModal": {
+    "text": "El contacto que ha seleccionado no tiene teléfono móvil asociado"
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",

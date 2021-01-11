@@ -304,6 +304,9 @@
   "numberModal": {
     "text": "Los números de teléfono deben tener este formato: +34000000000"
   },
+  "noPhoneModal": {
+    "text": "El contacto que ha seleccionado no tiene teléfono móvil asociado"
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",

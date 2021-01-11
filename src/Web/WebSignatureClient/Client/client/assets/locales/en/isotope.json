@@ -279,6 +279,9 @@
     "text": "A SMS has a limit of 120 characters.",
     "text2": "A SMS with an attached file has a limit of 100 characters."
   },
+  "noPhoneModal": {
+    "text": "The selected contact does not have an associated mobile phone."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
