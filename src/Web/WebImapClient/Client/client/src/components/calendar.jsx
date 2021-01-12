@@ -88,8 +88,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../services/calendar-api';
+import { deleteCalendar/*, getEventList*/, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
+
+import { listEvents } from '../calendar/api/calendar-api'
 
 class Calendar extends Component {
   constructor(props) {
@@ -108,6 +110,12 @@ class Calendar extends Component {
         eventType: undefined,
         isVisibility: false,
         to2: [],
+        data: [{
+          Id: 2,
+          Subject: 'Paris',
+          StartTime: new Date(2021, 0, 15, 10, 0),
+          EndTime: new Date(2021, 0, 15, 12, 30),
+          }],
      
       isUpdatedDefaultAccount: false,
       };
@@ -206,6 +214,49 @@ class Calendar extends Component {
       ];
 
       this.TokensFlows();
+
+      //this.setState({
+      //    data: {
+      //        Id: 2,
+      //        Subject: 'Paris',
+      //        StartTime: new Date(2021, 0, 15, 10, 0),
+      //        EndTime: new Date(2021, 0, 15, 12, 30),
+      //    },
+      //});
+
+      //this.data = [{
+      //    Id: 2,
+      //    Subject: 'Paris',
+      //    StartTime: new Date(2021, 0, 15, 10, 0),
+      //    EndTime: new Date(2021, 0, 15, 12, 30),
+      //}];
+
+      var calendar = '/remote.php/dav/calendars/alberto/personal/'
+      var listData = [];
+      listEvents(calendar)
+          .then(result => {
+              let items = result.result.items; 
+                  if (items.length > 0) {
+                      for (let i = 0; i < items.length; i++) {
+                          console.log(items[i]);
+                          listData.push({
+                              Id: items[i].id,
+                              Subject: items[i].summary,
+                              StartTime: moment(items[i].start.dateTime).format('YYYY-MM-DD hh:mm:ss'),
+                              EndTime: moment(items[i].end.dateTime).format('YYYY-MM-DD hh:mm:ss'),
+                          })
+                      }
+                  }
+             
+              this.setState({
+                  data: listData 
+              })  
+          
+        })
+        .catch(error => {
+            console.log('error ->', error);
+        })    
+
    
     }
 
@@ -304,7 +355,12 @@ class Calendar extends Component {
                       <div className='schedule-control-section'>
                           <div className='control-section'>
                               <div className='control-wrapper'>
-                                  <ScheduleComponent
+
+                                  <ScheduleComponent  ref={schedule => this.scheduleObj = schedule} currentView="Month" height='550px'  eventSettings={{ dataSource: this.state.data }}>
+                                      <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
+                                  </ScheduleComponent>
+
+                                  {/*   <ScheduleComponent
                                       //delayUpdate='false'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
@@ -339,12 +395,12 @@ class Calendar extends Component {
                                           <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
                                           <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                       </ViewsDirective>
-                                      <ResourcesDirective>
-                                          {/*<ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}
+                                       <ResourcesDirective>
+                                          <ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
                                           <ResourceDirective ref={this.calendarObj} field='CalendarId' title={t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                       </ResourcesDirective>
                                       <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
-                                  </ScheduleComponent>
+                                  </ScheduleComponent>*/}
                               </div >
                           </div >
                       </div >

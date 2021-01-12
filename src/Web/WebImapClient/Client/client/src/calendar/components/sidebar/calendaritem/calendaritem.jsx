@@ -39,7 +39,7 @@ export class CalendarItem extends PureComponent {
       return (   
         <Fragment>
           <div>
-          <li
+          <div
             className={`text-truncate text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
             title={
               name 
@@ -68,7 +68,7 @@ export class CalendarItem extends PureComponent {
                       />   
               }
                              
-              </li> 
+              </div> 
 
           </div>
 

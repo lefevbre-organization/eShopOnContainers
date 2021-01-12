@@ -211,10 +211,10 @@ class DocumentMessageEditor extends Component {
                   </span>
                   <p className={`light-blue-text ${styles['drop-file']}`}>{i18n.t('documentEditor.dragDrop')}</p>
                   <p className={`light-blue-text ${styles['desktop-file']}`}>
-                  {i18n.t('documentEditor.upload')} 
+                    {i18n.t('documentEditor.upload')}
                     <a className="ml-1">
-                      {i18n.t('documentEditor.computer')}
-                    </a> 
+                     {i18n.t('documentEditor.computer')}
+                    </a>  
                   </p>
                 </div>
                )}
