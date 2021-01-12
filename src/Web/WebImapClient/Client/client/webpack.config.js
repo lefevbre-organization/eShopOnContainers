@@ -149,7 +149,8 @@ module.exports = {
   resolve: {
     extensions: ['*', '.js', '.jsx']
   },
-  plugins: [
+    plugins: [
+       
     new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: SRC_DIR + '/index.html',

@@ -178,7 +178,7 @@ export class RolSelector extends React.Component {
    : this.props.recipients;
     console.log('render', newRecipients);
     return (
-      <div className="container">
+      <div id="main-rol-selector" className="container">
           <div className={`${style['table-scrollbar']} mb-3`}>
               {/* <p className="title-modal">ROL DE LOS DESTINATARIOS</p> */}
               <table className={style['detail-rol']}>
@@ -337,52 +337,6 @@ export class RolSelector extends React.Component {
             onClick={this.gatherInfo.bind(this)}>{i18n.t('messageEditor.grid.finish')}
             </button>
           </div>
-          <style jsx global>
-          {` 
-            #rolDialog_dialog-content {
-             padding: 0px !important;
-             overflow: hidden;
-            } 
-            .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
-            .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
-            .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
-            .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
-            {
-              background: #001970;
-            }
-            .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
-              background: #ebedf4;
-              border: none;
-              height: 2.5rem;
-              padding: 5px;
-              font-weight: 700;
-            }
-            #rolDialog_dialog-content > div > div > table > tr > td:nth-child(4) > div > span {
-              width: 100% !important;
-              background: #ebedf4;
-              border: none;
-              height: 2.5rem;
-              padding: 5px;
-            }
-            .e-control.e-dropdownlist.e-lib.e-input {
-              color: #001978 !important;
-            }
-            .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-              color: #001978;
-            }
-            .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
-            .e-list-item.e-active.e-hover {
-              background-color: #eee;
-              border-color: #fff;
-              color: #001970;
-            }
-            .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-              content: '\e90b';
-              font-family: 'lf-font' !important;
-            }
-          
-          `}
-        </style>
       </div>
     );
   }

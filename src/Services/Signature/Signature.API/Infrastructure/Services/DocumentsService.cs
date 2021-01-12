@@ -73,7 +73,7 @@ namespace Signature.API.Infrastructure.Services
             return await _documentsRepository.Remove(user);
         }
 
-        public async Task<Result<bool>> UpSertDocument(string user, CertDocument certDocumentIn)
+        public async Task<Result<UserCertDocuments>> UpSertDocument(string user, CertDocument certDocumentIn)
         {
             return await _documentsRepository.UpSertDocument(user, certDocumentIn);
         }

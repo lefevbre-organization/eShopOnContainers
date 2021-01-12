@@ -13,6 +13,7 @@ import {
   cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
+import moment from 'moment'
 import EmailList from './certificate-list/email-list';
 import Details from './details/details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
@@ -31,8 +32,8 @@ export function addressGroups(address) {
 }
 
 export const modalCancelOk = `
-  <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+  <span class="lf-icon-check-round modal-icon-content"></span>
+    <div class="modal-text-align-content">
       Petición cancelada correctamente.
     </div>
 `;
@@ -174,10 +175,7 @@ export class EmailMessageViewer extends Component {
       }
     })
     if (evDate !==''){
-      res = new Date(evDate).toLocaleString(navigator.language, {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
+      res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
   }
@@ -191,10 +189,7 @@ export class EmailMessageViewer extends Component {
     }
 
     if (evDate !==''){
-      res = new Date(evDate).toLocaleString(navigator.language, {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit'
-      })
+      res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
   }
@@ -277,16 +272,14 @@ export class EmailMessageViewer extends Component {
     let status_style;
    
     const contenido = `
-    <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
+    <span class="lf-icon-check-round modal-icon-content"></span>
+    <div class="modal-text-content">
       ${i18n.t('cancelledSignatureModal.text')}
     </div>`;
 
     const contenido1 = `
-    <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-    <div style='text-align: justify; text-justify: inter-word; align-self: center;
-    padding-left: 20px;'>
+    <span class="lf-icon-question modal-icon-content"></span>
+    <div class="modal-text-content">
       ${i18n.t('cancelConfirmationModal.text2')}
     </div>`;
 
@@ -388,126 +381,6 @@ export class EmailMessageViewer extends Component {
           open={() => this.dialogOpen} 
           close={() => this.dialogClose}
         ></DialogComponent>
-        <style global jsx>
-          {`
-           #infoDialog, #confirmDialog{
-            max-height: 927px;
-            width: 300px;
-            left: 770px;
-            //top: 392.5px;
-            z-index: 1001;
-            //transform: translateY(+150%);
-            }
-            #confirmDialog_dialog-header, 
-            #confirmDialog_title, 
-            #confirmDialog_dialog-content, 
-            .e-footer-content{
-              background: #001970;
-              color: #fff;
-              display:flex;
-              width: auto;
-            }
-            #infoDialog_dialog-header, 
-            #infoDialog_title, #infoDialog_dialog-content, 
-            .e-footer-content{
-              background: #001970;
-              color: #fff;
-              display:flex;
-            }
-            #confirmDialog_dialog-header, 
-            #confirmDialog_title, 
-            #confirmDialog_dialog-content, 
-            .e-footer-content{
-              background: #001970;
-              color: #fff;
-              display:flex;
-            }
-            .e-btn.e-flat.e-primary {
-              color: #fff !important;
-            }
-            .e-btn-icon .e-icon-dlg-close .e-icons{
-              color: #fff;
-            }
-            .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
-              margin-right: 0;
-              margin-left: auto;
-              color: #fff
-            } 
-            .e-dialog .e-dlg-header-content 
-            .e-btn.e-dlg-closeicon-btn {
-                margin-right: 0;
-                margin-left: auto;
-                color: #fff;
-                height: 15px;
-                background-color: transparent;
-            } 
-            #confirmDialog_dialog-header, .e-dialog 
-            .e-icon-dlg-close::before {
-              content: '\e7fc';
-              position: relative;
-              color: white;
-              font-size: 15px;
-            }
-            #confirmDialog .e-btn.e-flat.e-primary {
-              text-transform: uppercase;
-              font-size: 13px;
-              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-              letter-spacing: .7px;
-              color: #001978 !important;
-              padding: 10px;
-              background-color: #fff;
-              border-radius: 0 !important;
-              border: 2px solid #fff !important;
-              min-width: 80px;
-            }
-            
-            #confirmDialog .e-btn.e-flat.e-primary:hover {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-            
-            #confirmDialog .e-btn.e-flat.e-primary:active {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-  
-            .btn-modal-close {
-              text-transform: uppercase;
-              font-size: 13px;
-              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-              letter-spacing: .7px;
-              color: #fff !important;
-              padding: 10px;
-              background-color: #001978 !important;
-              min-width: 80px;
-              border-radius: 0 !important;
-              border: 2px solid #fff !important;
-            }
-            
-            .btn-modal-close:hover {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-            
-            .btn-modal-close:active {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-
-            #infoDialog, .e-dialog .e-dlg-content {
-              font-size: 17.5px !important;
-            }
-
-            .e-btn .e-btn-icon.e-icon-right, .e-css.e-btn .e-btn-icon.e-icon-right {
-              display: none;
-           }
-          
-          `}
-        </style>
       </div>
       );
   }

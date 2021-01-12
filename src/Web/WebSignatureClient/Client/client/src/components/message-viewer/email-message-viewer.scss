@@ -259,6 +259,9 @@
     .certification-email {
       color:#001978;
     }
+    .certification-visibility {
+      visibility: hidden;
+    }
     .mt-n10 {
       margin-top: -10px;
     }
@@ -373,6 +376,14 @@
     display: grid;
     grid-template-columns: auto auto auto;
  }
+
+ .lf-icon-sms:before {
+    content: "\eac3";
+  }
+
+  .lf-icon-sms-open:before {
+    content: "\eac4";
+  }
 
  .seguimiento-certification-individual-sms {
       text-align:center;

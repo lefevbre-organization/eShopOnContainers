@@ -253,6 +253,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidMount() {
+    
     const { lexon } = this.props;
 
     if(this.props.composer.content !== '') {
@@ -275,6 +276,7 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    this.removeFields();
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailMessage(messageId);
@@ -311,16 +313,23 @@ export class ComposeMessage extends PureComponent {
 
   getById() {
     if(this.props.emailMessageResult.body != ''){
+
         const attachments = this.props.emailMessageResult.attach
+
         const id = this.props.emailMessageResult.result.id
+
         const toRecipients = this.props.emailMessageResult.result.toRecipients;
+
         const ccRecipients = this.props.emailMessageResult.result.ccRecipients;
+
         const bccRecipients = this.props.emailMessageResult.result.bccRecipients;
+
         toRecipients.forEach(toRecipient => {
           setTimeout(() => {
             this.addAddress('to', toRecipient.emailAddress.address);
           }, 100);
         });
+
         ccRecipients.forEach(ccRecipient => {
           setTimeout(() => {
             this.addAddress('cc', ccRecipient.emailAddress.address);
@@ -332,6 +341,7 @@ export class ComposeMessage extends PureComponent {
             this.addAddress('bcc2', bccRecipient.emailAddress.address);
           }, 100);
         });
+
        const newAttachments = attachments.filter((attachment, index, self) =>
         index === self.findIndex((x) => ( x.name === attachment.name ))
        ); 
@@ -341,15 +351,18 @@ export class ComposeMessage extends PureComponent {
         }
        
         const subject = this.props.emailMessageResult.result.subject;
-        const body = this.props.emailMessageResult.result.body.content
+
+        const body = this.props.emailMessageResult.body.content
+
         this.setState({
-          draftId: id,
           subject: subject, 
           defaultContent: body,
           content: body,
+          draftId: id,
           isDraftEdit: true
         });
     }
+    
   }
 
   handleGetUserFromLexonConnector() {
@@ -404,23 +417,22 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-
       const findSelected = this.props.labelsResult.labels.find(x =>
          x.displayName == "Drafts" && x.selected == true
-        );
+      );
 
       const findByDraftId = this.props.labelsResult.labels.find(x =>
           x.displayName == "Drafts" && this.state.draftId
-         );
+      );
 
       if (this.props.labelsResult.labelInbox === null) {
         getLabelInbox().then((label) =>
           this.props.history.push(`/${label.id}`)
         );
       } else if(findSelected) {
-        this.props.history.push('/' + findSelected.id);
+        this.props.history.push('/' + findSelected.id.toLowerCase());
       } else if(this.state.draftId) {
-        this.props.history.push(`/${findByDraftId.id}`);
+        this.props.history.push('/' + findByDraftId.id.toLowerCase());
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -461,9 +473,6 @@ export class ComposeMessage extends PureComponent {
     } else {
       this.closeModal();
     } 
-    
-    
-    
   }
 
   sentEmail(email) {
@@ -546,8 +555,15 @@ export class ComposeMessage extends PureComponent {
       && (!this.props.match.params.id)) {
       this.saveDraft();
     }
-    
-    if(this.props.match.params.id && this.state.isDraftEdit) {
+
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews
+      || prevState.isDraftEdit !== this.state.isDraftEdit) 
+      && this.props.match.params.id) {
       this.saveDraft();
     }
 
@@ -566,11 +582,12 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    this.removeFields();
     this.uppy.close();
   }
 
   handleChange(value, delta, source, editor) {
-    if(value) {
+    if(value || this.state.content) {
       this.setState({content: value}, () => {
         this.props.updateComposerData({...this.state, defaultContent: this.state.content});
       });
@@ -635,7 +652,7 @@ export class ComposeMessage extends PureComponent {
     }
 
     const Fileattached = this.state.uppyPreviews;
-    console.log(`<${uuid()}-${uuid()}@lefebvre.es>`);
+
     const email = Object.assign({}, this.state, {
       subject: this.state.subject,
       internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
@@ -648,22 +665,23 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != '') {
-      createDraft({
-        data: email,
-        attachments: Fileattached,
-        draftId: this.state.draftId
-      }).then((draft) => {
-        this.setState({
-          draftTime: fullTime, 
-          draftId: draft.id, 
-          isDraftEdit: false
+      setTimeout(() => {
+        createDraft({
+          data: email,
+          attachments: Fileattached,
+          draftId: this.state.draftId
+        }).then((draft) => {
+          this.setState({
+            draftTime: fullTime, 
+            draftId: draft.id, 
+            isDraftEdit: false
+          });
+        })
+        .catch((err) => {
+          console.log('Error sending email:' + err);
         });
-      })
-      .catch((err) => {
-        console.log('Error sending email:' + err);
-      });
+      }); 
     }
-    
   }
 
   _sendEmail() {
@@ -722,6 +740,26 @@ export class ComposeMessage extends PureComponent {
       bcc: this.props.bcc || '',
       subject: this.props.subject || '',
       content: this.props.content || '',
+      uppyPreviews: [],
+      readConfirmation: false,
+      isPriority: false,
+    });
+  }
+
+  removeFields() {
+    this.props.updateComposerData({});
+    this.setState({
+      content: '',
+      defaultContent: '',
+      to: '',
+      cc: '',
+      bcc: '',
+      subject: '',
+      draftId: '',
+      draftTime: '',
+      to2: [],
+      cc2: [],
+      bcc2: [],
       uppyPreviews: [],
       readConfirmation: false,
       isPriority: false,
@@ -985,6 +1023,7 @@ export class ComposeMessage extends PureComponent {
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
+
     const {
       showNotification,
       messageNotification,
@@ -992,12 +1031,15 @@ export class ComposeMessage extends PureComponent {
       errorNotification,
       isPriority,
       readConfirmation,
-      draftTime
+      draftTime,
+      defaultContent,
+      subject,
+      to2, 
+      cc2, 
+      bcc2
     } = this.state;
 
     const { to, cc, bcc } = this.props;
-
-    const { to2, cc2, bcc2 } = this.state;
 
     return (
       <React.Fragment>
@@ -1130,7 +1172,7 @@ export class ComposeMessage extends PureComponent {
                   </InputGroupAddon>
                   <Input
                     placeholder=''
-                    value={this.state.subject}
+                    value={subject}
                     onChange={this.setField('subject', false)}
                   />
                   {isPriority && (
@@ -1143,7 +1185,7 @@ export class ComposeMessage extends PureComponent {
               <div className='editor-wrapper'>
                 <ComposeMessageEditor
                   onChange={this.handleChange}
-                  defaultValue={this.state.defaultContent}
+                  defaultValue={defaultContent}
                 />
 
                 {/* <ReactQuill

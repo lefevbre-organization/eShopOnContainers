@@ -14,6 +14,7 @@ import SideBar from './side-bar/side-bar';
 import MessageEditor from './message-editor/message-editor';
 import EmailMessageEditor from './message-editor/email-message-editor';
 import SmsMessageEditor from './message-editor/sms-message-editor';
+import DocumentMessageEditor from './message-editor/document-message-editor'
 import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import EmailMessageViewer from './message-viewer/email-message-viewer';
@@ -78,7 +79,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getContactsCentinela } from "../services/api-signaturit";
+import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getContactsCentinela, getUserCertifiedDocuments, preloadCertifiedDocuments } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -463,7 +464,7 @@ class App extends Component {
 
     const content = `  
       <div style='width: 100%;'>  
-        <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        <div class="modal-text-align-content">
           ${i18n.t('downloadindCentinelaModal.text')}
         </div>
         <div class='${styles['progress-line']}'/>
@@ -496,6 +497,13 @@ class App extends Component {
       && application.newMessage.sendingType == 'smsCertificate'
     ) {
       return <SmsMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
+    } else if
+    (
+      application.newMessage &&
+      Object.keys(application.newMessage).length > 0
+      && application.newMessage.sendingType == 'documentCertificate'
+    ) {
+      return <DocumentMessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
     } else if (application.selectedEmail && Object.keys(application.selectedEmail).length > 0) {
@@ -546,113 +554,6 @@ class App extends Component {
             </button>
           ) : null}
         </div>*/}
-        <style jsx global>
-          {`
-            #info2Dialog
-            {
-              max-height: 927px;
-              width: 300px;
-              //left: 770px;
-              //top: 392.5px;
-              z-index: 1001;
-              //transform: translateY(+150%);
-              left: 35% !important;
-              position: absolute !important;
-            }
-            #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
-            .e-footer-content {
-              background: #001970;
-              color: #fff;
-              display:flex;
-            }
-            .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
-              margin-right: 0;
-              margin-left: auto;
-              color: #fff
-            }
-            #confirmDialog .e-dlg-header{
-              width: 1%;
-            }
-            .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
-              color: white;
-            }
-            // .e-btn.e-flat.e-primary {
-            //   color: #fff !important;
-            // }
-            .e-btn-icon .e-icon-dlg-close .e-icons{
-                color: #fff;
-            }
-            .e-dialog .e-dlg-header-content 
-            .e-btn.e-dlg-closeicon-btn {
-              margin-right: 0;
-              margin-left: auto;
-              color: #fff;
-              height: 15px;
-              background-color: transparent;
-            }
-            #confirmDialog_dialog-header, .e-dialog 
-            .e-icon-dlg-close::before {
-              content: '\e7fc';
-              position: relative;
-              color: white;
-              font-size: 15px;
-            }
-
-            #confirmDialog .e-btn.e-flat.e-primary {
-              text-transform: uppercase;
-              font-size: 13px;
-              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-              letter-spacing: .7px;
-              color: #001978 !important;
-              padding: 10px;
-              background-color: #fff;
-              border-radius: 0 !important;
-              border: 2px solid #fff !important;
-              min-width: 80px;
-            }
-            
-            #confirmDialog .e-btn.e-flat.e-primary:hover {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-            
-            #confirmDialog .e-btn.e-flat.e-primary:active {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-
-            .btn-modal-close {
-              text-transform: uppercase;
-              font-size: 13px;
-              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
-              letter-spacing: .7px;
-              color: #fff !important;
-              padding: 10px;
-              background-color: #001978 !important;
-              min-width: 80px;
-              border-radius: 0 !important;
-              border: 2px solid #fff !important;
-            }
-            
-            .btn-modal-close:hover {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-          
-            .btn-modal-close:active {
-              background-color: #e5e8f1 !important;
-              background: #e5e8f1 !important;
-              color: #001978 !important;
-            }
-            .e-control .e-btn .e-lib .e-flmenu-okbtn .e-primary .e-flat{
-              color: #001970 !important;
-            }
-            
-          `}
-        </style>
       </Fragment>
     );
   }
@@ -804,6 +705,7 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );
         (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedEmail") {
       this.props.setSelectedService('certifiedEmail');
       this.props.setTitle(i18n.t('messageEditor.certifiedEmailTitle'));
@@ -870,6 +772,7 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );        
         (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
     } else if (lefebvre.targetService === "certifiedSms") {
       this.props.setSelectedService('certifiedSms');
       this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
@@ -950,6 +853,16 @@ class App extends Component {
         .catch(err => { throw new Error(err);} );
         (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
         (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+        (lefebvre.roles.some(r => r === "Documentos Certificados")) ? this.props.preloadCertifiedDocuments(lefebvre.userId) : null;
+    } else if (lefebvre.targetService === "certifiedDocument") {
+      this.props.setSelectedService('certifiedDocument');
+      this.props.setTitle(i18n.t('messageEditor.certifiedDocumentTitle'));
+      this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
+      this.props.preloadCertifiedDocuments(lefebvre.userId)
+      .catch(err => { throw new Error(err);} );
+      (lefebvre.roles.some(r => r === "Firma Digital")) ? this.props.preloadSignatures(lefebvre.userId) : null;
+      (lefebvre.roles.some(r => r === "Email Certificado")) ? this.props.preloadEmails(lefebvre.userId) : null;
+      (lefebvre.roles.some(r => r === "SMS Certificado")) ? this.props.preloadSms(lefebvre.userId) : null;
     }
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
@@ -1091,10 +1004,13 @@ class App extends Component {
           this.props.preloadEmails(lefebvre.userId);
         } else if (application.selectedService === 'certifiedSms') {
           this.props.preloadSms(lefebvre.userId);
+        } else if (application.selectedService === 'certifiedDocuments') {
+          this.props.preloadCertifiedDocuments(lefebvre.userId);
         } else {
-            this.props.preloadSignatures(lefebvre.userId);
-            this.props.preloadEmails(lefebvre.userId);
-            this.props.preloadSms(lefebvre.userId);
+          this.props.preloadSignatures(lefebvre.userId);
+          this.props.preloadEmails(lefebvre.userId);
+          this.props.preloadSms(lefebvre.userId);
+          this.props.preloadCertifiedDocuments(lefebvre.userId);
         }
         //this.props.backendRequestCompleted();
       } else {
@@ -1110,7 +1026,9 @@ class App extends Component {
           this.props.preloadSms(lefebvre.userId);
           let sms = application.smsList.find(s => s.id === application.selectedSms.id);
           this.props.smsClicked(sms);
-        }     
+        } else if (application.selectedService === 'certifiedDocuments') {
+          this.props.preloadCertifiedDocuments(lefebvre.userId);
+        }
       }  
   }
 
@@ -1184,6 +1102,7 @@ const mapDispatchToProps = dispatch => ({
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   preloadEmails: (userId, auth) => preloadEmails(dispatch, userId, auth),
   preloadSms: (userId, auth) => preloadSms(dispatch, userId, auth),
+  preloadCertifiedDocuments: (userId) => preloadCertifiedDocuments(dispatch, userId),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   emailClicked: email => dispatch(selectEmail(email)),
   smsClicked: sms => dispatch(selectSms(sms)),
@@ -1222,6 +1141,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     preloadSignatures: (userId) => dispatchProps.preloadSignatures(userId, stateProps.application.user.credentials.encrypted),
     preloadEmails: (userId) => dispatchProps.preloadEmails(userId, stateProps.application.user.credentials.encrypted),
     preloadSms: (userId) => dispatchProps.preloadSms(userId, stateProps.application.user.credentials.encrypted),
+    preloadCertifiedDocuments: (userId) => dispatchProps.preloadCertifiedDocuments(userId),
     signatureClicked: signature => dispatchProps.signatureClicked(signature),
     emailClicked: email => dispatchProps.emailClicked(email),
     smsClicked: sms => dispatchProps.smsClicked(sms),

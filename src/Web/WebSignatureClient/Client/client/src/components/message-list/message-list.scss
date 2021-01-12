@@ -4,36 +4,23 @@ $row-height: 43px;
 $font-size: $font-size-body-2;
 $flag-size: 18px;
 
-// .e-headercell {
-//   .customcss{
-//     background-color: #001978;
-//     color: white;
-//     border-right: 1px solid #FFF;
-//     font-weight: 500;
-//   }
-// }
-
 .main-grid {
-  width: 100%
+  width: 100%; 
+
 }
 
-.e-grid .e-rowcell{
-  background-color: #ecedee;
-  font-family: 'Bell MT';
-  color: 'red';
-  font-size: '20px';
+.resumen-firma.en-progreso {
+  color: #e9a128;
 }
-
-.e-grid .e-headercell{
-  background-color: #2382c3;
-  color: white;
-  font-family: 'Bell MT';
-  font-size: '20px';
+.resumen-firma.completada {
+    color: #217e05;
+}
+.resumen-firma.cancelada {
+    color: #c90223;
 }
 
 .resumen-firma {
   border: 0;
-  border: 1px solid #001978;
   margin-bottom: 20px;
   width: 100%;
   th {
@@ -80,22 +67,6 @@ $flag-size: 18px;
 
     }
   }
-  .bola-firmantes {
-    border-radius: 20px;
-    color: #FFF;
-    padding: 3px 15px;
-    cursor: pointer;
-    &.en-progreso {
-      background: #e9a128;
-    }
-    &.completada {
-      background: #217e05;
-    }
-    &.cancelada {
-      background: #c90223;
-    }
-  }
-
 }
 
 .messageList {
@@ -217,4 +188,52 @@ $flag-size: 18px;
       width: 16px;
     }
   }
+}
+
+.test {
+  color: #fff;
+}
+
+.row {
+  margin-left:auto;
+  margin-right: auto;
+  margin-bottom: 0px;
+  display: inherit;
+}
+
+.signature-poppup ul {
+  min-width: 180px;
+  border: 1px solid #001970 !important;
+  padding: 1px 0;
+}
+
+.signature-poppup ul .e-item.e-separator{
+  border-bottom: 1px solid #001970;
+  margin: 6px 4px;
+
+}
+
+.btn-modal-close {
+  text-transform: uppercase;
+  font-size: 13px;
+  font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+  letter-spacing: .7px;
+  color: #fff !important;
+  padding: 10px;
+  background-color: #001978 !important;
+  min-width: 80px;
+  border-radius: 0 !important;
+  border: 2px solid #fff !important;
+}
+
+.btn-modal-close:hover {
+background-color: #e5e8f1 !important;
+background: #e5e8f1 !important;
+color: #001978 !important;
+}
+
+.btn-modal-close:active {
+background-color: #e5e8f1 !important;
+background: #e5e8f1 !important;
+color: #001978 !important;
 }

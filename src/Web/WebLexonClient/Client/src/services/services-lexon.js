@@ -119,7 +119,7 @@ export const addClassification = async (
 
     const result = await response.json();
     if (
-      result.errors.length > 0 ||
+        (result.errors && result.errors.length > 0) ||
       (result.errors !== null &&
         result.errors !== undefined &&
         (result.data === null || result.data === undefined))

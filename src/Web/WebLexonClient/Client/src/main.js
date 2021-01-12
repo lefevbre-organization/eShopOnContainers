@@ -206,7 +206,10 @@ class Main extends Component {
 
         dbStore.saveMessage({ id: event.detail.id, attachments });
         event.detail.raw = null;
-      })
+      }).catch(err => {
+         console.log(err);
+         debugger
+      });
     } else {
       this.props.deleteMessage(event.detail.extMessageId);
     }

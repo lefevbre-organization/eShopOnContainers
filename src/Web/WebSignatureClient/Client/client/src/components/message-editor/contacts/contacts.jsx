@@ -4,6 +4,8 @@ import i18n from 'i18next';
 import { getContactsCentinela, getContactsLexon, getBBDDLexon } from '../../../services/api-signaturit';
 import style from './contacts.scss';
 import Checkbox from "../../form/checkbox/checkbox";
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
+
 
 const Contacts = (props) => {
   
@@ -20,6 +22,8 @@ const Contacts = (props) => {
   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
   const [selectContact, setSelectContact] = useState([]);
+
+  const [showModal, setShowModal] = useState(false);
 
   const prevAddress = usePrevious(props.addresses);
 
@@ -226,11 +230,21 @@ const Contacts = (props) => {
     contacts.forEach(contact => {
       if (selectedOption === 'lexon'){
         if (contact.id === contactId){
-          contact.checked = isCheck;
+          if (props.sendingType === 'smsCertificate' && (contact.mobilePhone === '' || contact.mobilePhone === null || contact.mobilePhone === undefined)){
+            contact.checked = false;
+            setShowModal(true);
+          } else {
+            contact.checked = isCheck;
+          }
         }
       } else if(selectedOption === 'centinela'){
         if(contact.contactId == contactId) {
-          contact.checked = isCheck;
+          if (props.sendingType === 'smsCertificate' && (contact.phoneNumber1 === '' || contact.phoneNumber1 === null || contact.phoneNumber1 === undefined)){
+            contact.checked = false;
+            setShowModal(true);
+          } else {
+            contact.checked = isCheck;
+          }
         }
       }
     });
@@ -279,8 +293,18 @@ const Contacts = (props) => {
     props.dialogClose();
   }
 
+  const modalClose = () => {
+    setShowModal(false);
+  }
+
+  const dialogContent = `
+    <span class="lf-icon-information modal-icon-content"></span>
+    <div class="modal-text-content">
+      ${i18n.t('noPhoneModal.text')}
+    </div>`
+
   return (
-      <div className={style['main-contact']}>
+      <div id="main-contact" className={style['main-contact']}>
           <div className="contact row">
               <div className="input-field col s7 left">
                   <input 
@@ -290,9 +314,9 @@ const Contacts = (props) => {
                   className={style['serch-contacts']} 
                   onChange={filterContact}  
                    />
-                  <span className="lf-icon-search position-icon"></span>
+                  <span className={`${style['position-icon']} lf-icon-search`}></span>
               </div>
-              <div className="input-field col s5 right">
+              <div className={`${style['right']} input-field col s5`}>
               <DropDownListComponent 
                 id="select-contact"
                 className={style['select-contact']} 
@@ -347,7 +371,9 @@ const Contacts = (props) => {
            )}
           </ul>
           <div className="row cont-inf-seleccionados">
-           <div className="col s5 select-contacts">{numberCheckeds}/{contacts.length} {i18n.t('contacts.selected')}</div>
+            <div className={`${style['select-contact-length']} col s5 light-blue-text`}>
+                {numberCheckeds}/{contacts.length} {i18n.t('contacts.selected')}
+            </div>
                  <div className="col s7 right-align">
                       <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}
                       onClick={dialogClose} >
@@ -360,62 +386,14 @@ const Contacts = (props) => {
                  </div>
           </div>
           <div className="clearfix"></div>
-         <style jsx global>
-            {` 
-              #contactDialog_dialog-content {
-                padding: 0px !important;
-                overflow: hidden;
-              } 
-              .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
-             .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
-              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
-              .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
-              {
-                background: #001970;
-              }
-              .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
-                background: #ebedf4;
-                border: none;
-                height: 39px;
-                padding: 5px 20px 0px 16px !important;
-                font-weight: 700;
-                font-family: 'MTTMilano';
-                width: 76% !important;
-              }
-              .e-control.e-dropdownlist.e-lib.e-input {
-                color: #001978 !important;
-              }
-              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-                color: #001978;
-              }
-              .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
-              .e-list-item.e-active.e-hover {
-                background-color: #eee;
-                border-color: #fff;
-                color: #001970;
-              }
-              .position-icon {
-                position: absolute;
-                left: 20px;
-                top: 9px;
-                font-size: 19px;
-                color: #8A91B5;
-              }
-              .right {
-                text-align: right;  
-              }
-              .select-contacts {
-                font-size: 12px;
-                color: #001978;
-                margin-top: 15px;
-              }
-              .e-ddl.e-input-group.e-control-wrapper .e-ddl-icon::before {
-                content: '\e90b';
-                font-family: 'lf-font' !important;
-                font-size: 15px;
-              }
-           `}
-         </style>
+          <DialogComponent 
+            id="info2Dialog" 
+            header='' 
+            visible={showModal} 
+            showCloseIcon={true} 
+            content={dialogContent} 
+            close={modalClose}
+          />
       </div>
     )
 }

@@ -157,16 +157,17 @@
             return result;
         }
 
-        public async Task<Result<bool>> UpSertDocument(string user, CertDocument documentIn)
+        public async Task<Result<UserCertDocuments>> UpSertDocument(string user, CertDocument documentIn)
         {
-            var result = new Result<bool>();
+            var result = new Result<UserCertDocuments>();
             var filter = GetFilterUser(user);
+            UserCertDocuments userDb = null;
 
             try
             {
                 var userEmail = GetNewUserDocument(user, documentIn);
 
-                var userDb = await _context.Documents.Find(GetFilterUser(user)).SingleOrDefaultAsync();
+                userDb = await _context.Documents.Find(GetFilterUser(user)).SingleOrDefaultAsync();
                 if (userDb == null)
                 {
                     userDb = userEmail;
@@ -183,7 +184,7 @@
                 TraceError(result.errors, ex, "SG60");
             }
 
-            result.data = true;
+            result.data = userDb;
             return result;
         }
 
@@ -208,7 +209,6 @@
             return result;
         }
         #endregion
-
 
         #region Helpers
         private UserCertDocuments GetNewUserDocument(string user, CertDocument documentIn)
@@ -239,7 +239,7 @@
                 Documents = new List<CertDocument>()
             };
         }
-        private void OperateChanguesInUserCertDocuments(string user, CertDocument documentIn, Result<bool> result, UserCertDocuments userDb)
+        private void OperateChanguesInUserCertDocuments(string user, CertDocument documentIn, Result<UserCertDocuments> result, UserCertDocuments userDb)
         {
             //userDb.signatures.ForEach(x => x.defaultAccount = false);
             //var signatureDb = userDb.signatures.Find(GetFilterUserSignature(signatureIn.externalId, signatureIn.guid));
@@ -258,8 +258,6 @@
                 TraceInfo(result.infos, $"Se modifica el usuario {user} modificando el documento certificado {documentIn.ExternalId}-{documentDb.ExternalId}", "SG64");
             }
         }
-
-        
 
         private static void UpdateDocumentWithOther(CertDocument documentIn, CertDocument documentDb)
         {

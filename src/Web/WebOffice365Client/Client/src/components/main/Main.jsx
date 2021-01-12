@@ -487,13 +487,12 @@ export class Main extends Component {
       this.loadLabelMessages(labelInbox);
       this.notFoundModal = 2;
     } else {
-      var { labels } = this.props.labelsResult;
-      var { pathname } = this.props.location;
+      const { labels } = this.props.labelsResult;
+      const { pathname } = this.props.location;
       var selectedLabel = labels.find((el) => el.selected);
       var labelPathMatch = labels.find(
         (el) => el.id.toLowerCase() === pathname.slice(1)
       );
-
       if (!selectedLabel) {
         if (labelPathMatch && this.props.searchQuery === '') {
           this.props.selectLabel(labelPathMatch.id);

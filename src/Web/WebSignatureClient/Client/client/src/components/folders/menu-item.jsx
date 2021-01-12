@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import i18n from 'i18next';
@@ -8,6 +8,14 @@ import styles from './menu-list.scss';
 // import mainCss from '../../styles/main.scss';
 
 const MenuItem = props => {
+
+  const [isOpen, setOpen] = useState(false);
+
+  useEffect(() => {
+    if(props.id === props.selectedService) {
+      setOpen(true);
+    }
+  }, [props.selectedService]);
 
  const content = () => {
     const { collapsed, onClick, id } = props;
@@ -26,7 +34,8 @@ const MenuItem = props => {
              <span>{i18n.t('sideBar.filterAll')}</span>
              } 
           </a>
-        </li>
+        </li>  
+        {id != 'certifiedDocument' ? 
         <li className={`${styles['en-progreso']}`}>
           <a href="#" id={option1} onClick={event => onClick(event, option1)}>
             <span className="lf-icon-folder">
@@ -36,7 +45,8 @@ const MenuItem = props => {
              <span>{i18n.t('sideBar.filterInProgress')}</span>
             } 
           </a>
-        </li>
+        </li> : null}
+        {id != 'certifiedDocument' ?
         <li className={`${styles.completadas}`}>
           <a href="#" id={option2} onClick={event => onClick(event, option2)}>
             <span className="lf-icon-folder">
@@ -46,8 +56,8 @@ const MenuItem = props => {
              <span>{i18n.t('sideBar.filterCompleted')}</span>
             } 
           </a>
-        </li>
-        {id == 'signature' ? 
+        </li> : null}
+        {(id == 'signature' && id != 'certifiedDocument') ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-folder">
@@ -58,7 +68,7 @@ const MenuItem = props => {
             } 
           </a>
         </li> : null}
-        {id == 'sms' ? 
+        {/* {id == 'sms' ? 
         <li className={`${styles.canceladas}`}>
           <a href="#" id={option4} onClick={event => onClick(event, option4)}>
             <span className="lf-icon-unsolved">
@@ -68,7 +78,7 @@ const MenuItem = props => {
              <span>{i18n.t('signaturesGrid.statusError')}</span>
             } 
           </a>
-        </li> : null}
+        </li> : null} */}
       </ul>
  
     ); 
@@ -81,16 +91,26 @@ const MenuItem = props => {
         <>
            { 
          props.collapsed ?  
-            <div className={`${styles['title-nav-firmas']}`}>
+            <div className={`${styles['title-nav-firmas']}`}
+            onClick={() => setOpen(!isOpen)}>
              <span className={props.icon}>
              </span>
             </div> :  
-            <div className={`${styles['title-nav-firmas']}`}>
+            <div 
+            className={`${styles['title-nav-firmas']}`}
+            onClick={() => setOpen(!isOpen)} >
              <span className={props.icon}>
              </span>{props.title}
+             {!isOpen ? <span className={`lf-icon-angle-down ${styles['icon-angle']}`}></span> : <span className={`lf-icon-angle-up ${styles['icon-angle']}`}></span>}
+             
+             
             </div>
            }  
-            {content()}
+            <div className={`${styles['collapsed-item']} ${!isOpen ? styles['collapsed'] : ''}`}>
+              <div>
+                {content()}
+              </div>
+            </div>
         </> : 
           props.collapsed ?  
            <div 

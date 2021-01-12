@@ -404,6 +404,113 @@ $flag-size: 18px;
   }
 }
 
+.document-message-editor {
+  padding-left: 42px;
+  .box-attach {
+      background: #E8E8F1;
+      padding: 32px;
+      box-shadow: 1px 2px 5px grey;
+  }
+  .dropzone {
+      box-sizing: border-box;
+      height: auto;
+      background: #F0F0FD;
+      border: 1px dashed rgba(100,124,138,0.4);
+      border-radius: 4px;
+      padding: 100px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+  }
+
+  .icon-drag-drop {
+      // color: #7680B1;
+      font-size: 5rem;
+      margin-bottom: 50px;
+  }
+
+  .drop-file {
+    font-size: 1.563rem;
+    font-family: 'MTTMilano';
+    
+  } 
+
+  .desktop-file {
+    font-family: 'MTTMilano';
+  }
+
+  .desktop-file a {
+    border-bottom: 1px solid #7680B1;
+  }
+
+  .file-list {
+    display: grid;
+    grid-template-columns: max-content auto max-content;
+    margin-top: 10px;
+  }
+    
+  .file-percentage {
+    display: grid;
+    grid-template-columns: auto max-content;
+  }
+
+  .container-action {
+    text-align: right;
+  }
+
+  .btn-action {
+    text-decoration: none;
+    letter-spacing: .5px;
+    font-size: 14px;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 12px 41px;
+    text-transform: uppercase;
+    border: 2px solid #001978;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  .btn-action-cancel {
+    background: #ffffff;
+    color: #001978;                   
+  }
+
+  .btn-action-certification {
+    background: #001978;
+    color: #FFFFFF;
+    margin-left: 9px;
+  }
+   
+  .btn-action-cancel:hover {
+     background: #ffffff;
+     color: #9a9a9a;
+     border: 2px solid #9a9a9a;
+  }
+  
+  .btn-action-certification:hover, 
+  .btn-action-certification:active, 
+  .btn-action-certification:focus{
+    background: #9a9a9a;
+    border: 2px solid #9a9a9a;
+    color: #FFF;
+  }
+
+  .btn-action-certification:disabled{
+    background: #9a9a9a;
+    border: 2px solid #9a9a9a;
+    cursor: not-allowed;
+  }
+  
+  .lf-icon-remove {
+    cursor: pointer;
+  }
+  
+}
+
 @media (max-width: 1300px) {
   .action-buttons {
     margin-top: 8rem !important;

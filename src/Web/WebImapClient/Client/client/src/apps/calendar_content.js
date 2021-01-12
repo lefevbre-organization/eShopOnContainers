@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import MaterialTitlePanel from "./material_title_panel";
+import CalendarCard from "../calendar/components/card/card"
 
 const styles = {
   sidebar: {
@@ -39,11 +40,7 @@ const calendarContent = props => {
       sidebarDocked={sidebarDocked}
     >
       <div style={styles.content}>
-        <img
-          border="0"
-          alt="Lefebvre"
-          src="assets/images/calendar-fake.png"
-        ></img>
+         <CalendarCard />  
       </div>
     </MaterialTitlePanel>
   );

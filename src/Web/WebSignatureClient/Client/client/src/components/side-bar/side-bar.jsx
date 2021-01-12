@@ -34,6 +34,7 @@ class SideBar extends Component {
     this.handleOnNewMessage = this.onNewMessage.bind(this);
     this.handleOnNewEmailCertificate = this.onNewEmailCertificate.bind(this);
     this.handleOnNewSmsCertificate = this.onNewSmsCertificate.bind(this);
+    this.handleOnNewDocumentCertificate = this.onNewDocumentCertificate.bind(this);
     this.handleOnNewSending = this.onNewSending.bind(this);
     this.dialogClose = this.dialogClose.bind(this);
     
@@ -90,15 +91,14 @@ class SideBar extends Component {
 
     const contenido = `
       <img border='0' src='assets/images/icon-warning.png'></img>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      <div class="modal-text-align-content">
         ${i18n.t('noCreditsModal.text')}
         ${i18n.t('noCreditsModal.text2')}
       </div>`;
 
     const confirmDiscard = `
-      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-        font-size: 17.5px !important; padding-left: 20px;'>
+      <span class="lf-icon-question modal-icon-content"></span>
+      <div class="modal-text-content">
         ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
@@ -120,7 +120,6 @@ class SideBar extends Component {
     ];
 
     return (
-   
       <aside
         onDragOver={this.handleOnDragOver}
         onDragLeave={this.handleOnDragLeave}
@@ -135,21 +134,14 @@ class SideBar extends Component {
           ${styles['top-container']} 
           ${!collapsed ? styles['divheader'] : 
           styles['divheader-without-side-bar']}`}>
-          {/*{(location.protocol !== 'https:' &&
-            <span className='material-icons' isotip={t('sideBar.errors.noSSL')}
-              isotip-position='bottom-start' isotip-size='small'>
-            lock_open
-            </span>)}*/}
           {this.props.errors.diskQuotaExceeded && (
             <span
-              className='material-icons'
               isotip={t('sideBar.errors.diskQuotaExceeded')}
               isotip-position='bottom-start'
               isotip-size='small'>
               disc_full
             </span>
           )}
-          {/* <img className={styles.logo} border="0" alt="Lefebvre" src="assets/images/logo-elderecho.png"></img>*/}
           <div className={`${!collapsed ? styles['add-signature-toggle'] : ''}`}>
 
             { collapsed ?  
@@ -176,7 +168,6 @@ class SideBar extends Component {
               className={`${mainCss['mdc-button']}
                       ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
               onClick={this.handleOnNewSending}>
-              {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
               <img
                 className={styles.plusbuttton}
                 border='0'
@@ -185,9 +176,7 @@ class SideBar extends Component {
                 {t('sideBar.newRequest')}
               </span> : "" }
             </button>
-         
           </div>
-         
         </div>
         <PerfectScrollbar>
           <MenuContainer collapsed={collapsed} />
@@ -199,18 +188,18 @@ class SideBar extends Component {
           animationSettings={this.animationSettings} 
           width='40%' 
           showCloseIcon={true} 
-          // isModal={true}
           open={this.dialogOpen.bind(this)} 
           close={this.sendTypeDialogClose.bind(this)} >
           <SendingTypeSelector 
             onNewMessage={this.handleOnNewMessage}
             onNewEmailCertificate={this.handleOnNewEmailCertificate}
             onNewSmsCertificate={this.handleOnNewSmsCertificate}
+            onNewDocumentCertificate={this.handleOnNewDocumentCertificate}
             lefebvre={lefebvre}
           />
         </DialogComponent>
         <DialogComponent 
-          id="noSignaturesDialog" 
+          id='noSignaturesDialog'
           header=' ' 
           visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
@@ -218,102 +207,23 @@ class SideBar extends Component {
           showCloseIcon={true} 
           content={contenido}//'Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí' 
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
-          //target='#target' 
-          // buttons={this.alertButtons} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose}
-          //position={ this.position }
-        ></DialogComponent>
+        />
         <DialogComponent 
-              id="confirmDialog" 
-              header=' ' 
-              visible={this.state.hideConfirmDialog} 
-              showCloseIcon={true} 
-              animationSettings={this.animationSettings} 
-              width='60%' 
-              content={confirmDiscard} 
-              ref={dialog => this.confirmDialogInstance = dialog} 
-              //target='#target' 
-              buttons={confirmButtons} 
-              open={this.dialogOpen.bind(this)} 
-              close={this.dialogClose}
-            />
-        <style jsx global>
-          {`
-            #noSignaturesDialog{
-              max-height: 927px;
-              width: 300px;
-              left: 770px;
-              //top: 392.5px;
-              z-index: 1001;
-              //transform: translateY(+200%);
-            }
-
-            #sendingTypeDialog{
-              top: 17% !important;
-            }
-
-            #sendingTypeDialog .e-dlg-header{
-              width: 60% !important;
-            }
-
-            #noSignaturesDialog_dialog-header, #noSignaturesDialog_title, #noSignaturesDialog_dialog-content, .e-footer-content{
-              background: #c5343f;
-              color: #fff;
-              display:flex;
-            }
-
-            #sendingTypeDialog_dialog-header, #sendingTypeDialog_title {
-              background: #001978;
-              color: #fff;
-              font-size: 14px;
-              padding-left: 22px;
-            }
-
-            #sendingTypeDialog_dialog-header {
-              padding: 24px !important;
-            }
-
-            #sendingTypeDialog_dialog-content {
-              padding-top: 15px;
-              padding-bottom: 30px;
-            }
-
-            #confirmDialog_dialog-header > button > span {
-              color: white;
-              font-size: 12px;
-            }
-
-            #sendingTypeDialog_dialog-header > button > span {
-              color: white;
-              font-size: 12px;
-            }
-
-            .e-dlg-header {
-              width: 1% !important;
-            }
-
-            .e-dialog .e-icon-dlg-close::before {
-              content: '\e7fc';
-              position: relative;
-              font-size: 12px
-            }
-
-            noSignaturesDialog .e-btn.e-flat.e-primary {
-              color: #fff !important;
-            }
-
-            .material-icons {
-              font-size: 18px !important;
-              color: #001978 !important;
-            }
-
-            .right-icon {
-              position: absolute;
-              right: 0px;
-            }
-          `}
-        </style>
+          id="confirmDialog" 
+          header=' ' 
+          visible={this.state.hideConfirmDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='60%' 
+          content={confirmDiscard} 
+          ref={dialog => this.confirmDialogInstance = dialog} 
+          //target='#target' 
+          buttons={confirmButtons} 
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose}
+        />
       </aside>
     );
   }
@@ -518,6 +428,13 @@ class SideBar extends Component {
     this.props.newMessage('smsCertificate', null);
     this.props.setAppTitle(i18n.t('topBar.certifiedSms'));
     this.props.setTitle(i18n.t('messageEditor.certifiedSmsTitle'));
+    this.sendTypeDialogClose();
+  }
+
+  onNewDocumentCertificate() {
+    this.props.newMessage('documentCertificate', null);
+    this.props.setAppTitle(i18n.t('topBar.certifiedDocument'));
+    this.props.setTitle(i18n.t('messageEditor.certifiedDocumentTitle'));
     this.sendTypeDialogClose();
   }
 

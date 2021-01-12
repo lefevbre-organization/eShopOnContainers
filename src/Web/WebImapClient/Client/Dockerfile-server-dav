@@ -1,0 +1,9 @@
+FROM nextcloud
+
+MAINTAINER Alberto Valverde <a.valverde-ext@lefebvreelderecho.com>
+LABEL MAINTAINER "Alberto Valverde" <a.valverde-ext@lefebvreelderecho.com>
+
+EXPOSE 80
+
+#COPY ./server-dav/config/congi
+

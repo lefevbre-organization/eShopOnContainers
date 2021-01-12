@@ -7,7 +7,7 @@ class Checkbox extends Component {
     super(props);
     this.inputRef = React.createRef();
     this.handleOnChange = this.handleOnChange.bind(this);
-  }
+  }                                                                                               
 
   render() {
     return (
