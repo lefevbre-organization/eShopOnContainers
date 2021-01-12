@@ -2,6 +2,38 @@
 {
     public static class Codes
     {
+        public static class MailAccounts
+        {
+            public static readonly string UserCreate = "AC01";
+            public static readonly string UserUpsert = "AC02";
+            public static readonly string UserGet = "AC03";
+            public static readonly string UserStateChangue = "AC04";
+            public static readonly string UserConfigUpsert = "AC05";
+            public static readonly string UserRemove = "AC06";
+
+            public static readonly string AccountGet = "AC10";
+            public static readonly string AccountGetDefault = "AC11";
+            public static readonly string AccountRemove = "AC12";
+            public static readonly string AccountResetDefault = "AC13";
+            public static readonly string AccountUpsert = "AC14";
+            public static readonly string AccountConfigUpsert = "AC15";
+
+            public static readonly string RelationUpsert = "AC20";
+            public static readonly string RelationRemove = "AC21";
+            public static readonly string RelationGet = "AC22";
+
+            public static readonly string RawGet = "AC30";
+            public static readonly string RawCreate = "AC31";
+            public static readonly string RawRemove = "AC32";
+
+            public static readonly string EventTypeGet = "AC40";
+            public static readonly string EventTypeUpsert = "AC41";
+            public static readonly string EventTypeRemove = "AC42";
+            public static readonly string EventTypeAdd = "AC43";
+            public static readonly string EventTypeAccountRemove = "AC44";
+
+        }
+
         public static class LexonActuations
         {
             public static readonly string UpsertAppointment = "LX50";

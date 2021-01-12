@@ -57,7 +57,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException("Error when create user mail", ex), "AC01");
+                TraceError(result.errors,
+                           new AccountDomainException("Error when create user mail", ex),
+                           Codes.MailAccounts.UserCreate,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -68,17 +71,20 @@
             {
                 if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, msgModify, "AC02");
+                    TraceInfo(result.infos, msgModify, Codes.MailAccounts.UserUpsert);
                 }
                 else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
                 {
-                    TraceInfo(result.infos, msgInsert, "AC02");
+                    TraceInfo(result.infos, msgInsert, Codes.MailAccounts.UserUpsert);
                     return resultReplace.UpsertedId.ToString();
                 }
             }
             else
             {
-                TraceError(result.errors, new AccountDomainException("Error when upsert user mail"), "AC02");
+                TraceError(result.errors,
+                           new AccountDomainException("Error when upsert user mail"),
+                           Codes.MailAccounts.UserUpsert,
+                           Codes.Areas.Mongo);
             }
             return null;
         }
@@ -91,7 +97,12 @@
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user}"), "AC03");
+                {
+                    TraceError(result.errors,
+                               new AccountDomainException($"No se encuentra ningún usuario {user}"),
+                               Codes.MailAccounts.UserGet,
+                               Codes.Areas.Mongo);
+                }
                 else
                 {
                     var orderAccounts = result.data?.accounts.OrderByDescending(x => x.defaultAccount).ToList();
@@ -101,28 +112,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException("Error when get UserMail", ex), "AC03");
-            }
-            return result;
-        }
-
-        public async Task<Result<bool>> Remove(string user)
-        {
-            var result = new Result<bool>();
-            try
-            {
-                var resultRemove = await _context.Accounts.DeleteOneAsync(GetFilterUser(user, false));
-                result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
-                if (result.data)
-                {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}", "AC03");
-                    var eventAssoc = new RemoveUserMailIntegrationEvent(user);
-                    _eventBus.Publish(eventAssoc);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors, new AccountDomainException("Error when remove UserMail", ex), "AC03");
+                TraceError(result.errors,
+                           new AccountDomainException("Error when get UserMail", ex),
+                           Codes.MailAccounts.UserGet,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -137,7 +130,7 @@
                     Builders<UserMail>.Update.Set(x => x.state, state)
                  );
 
-                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate);
+                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate, Codes.MailAccounts.UserStateChangue);
 
                 if (result.data)
                 {
@@ -147,8 +140,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException("Error when changue state of UserMail", ex), "AC04");
-
+                TraceError(result.errors,
+                           new AccountDomainException("Error when changue state of UserMail", ex),
+                           Codes.MailAccounts.UserStateChangue,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -166,13 +161,40 @@
 
                 ManageUpdate($"Don´t insert or modify the user´s config",
                     $"Se modifica la configuración del usuario {user} con adjunction: {config.defaultAdjunction} - entity: {config.defaultEntity} - getContacts: {config.getContacts}",
-                    result, resultUpdate);
+                    result, resultUpdate, Codes.MailAccounts.UserConfigUpsert);
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException("Error when upsert config of UserMail", ex), "AC05");
+                TraceError(result.errors,
+                           new AccountDomainException("Error when upsert config of UserMail", ex),
+                           Codes.MailAccounts.UserConfigUpsert,
+                           Codes.Areas.Mongo);
             }
 
+            return result;
+        }
+
+        public async Task<Result<bool>> Remove(string user)
+        {
+            var result = new Result<bool>();
+            try
+            {
+                var resultRemove = await _context.Accounts.DeleteOneAsync(GetFilterUser(user, false));
+                result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
+                if (result.data)
+                {
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}", Codes.MailAccounts.UserRemove);
+                    var eventAssoc = new RemoveUserMailIntegrationEvent(user);
+                    _eventBus.Publish(eventAssoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new AccountDomainException("Error when remove UserMail", ex),
+                           Codes.MailAccounts.UserRemove,
+                           Codes.Areas.Mongo);
+            }
             return result;
         }
 
@@ -188,17 +210,25 @@
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (usuario == null)
-                    TraceError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta"), "AC10");
+                {
+                    TraceError(result.errors,
+                               new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta"),
+                               Codes.MailAccounts.AccountGet,
+                               Codes.Areas.Mongo);
+                }
                 else
                 {
                     result.data = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
                     if (result.data == null)
-                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}", "AC10");
+                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}", Codes.MailAccounts.AccountGet);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException("Error when get Account", ex), "AC10");
+                TraceError(result.errors,
+                           new AccountDomainException("Error when get Account", ex),
+                           Codes.MailAccounts.AccountGet,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -210,17 +240,25 @@
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
                 if (usuario == null)
-                    TraceError(result.errors, new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"), "AC11");
+                {
+                    TraceError(result.errors,
+                               new AccountDomainException($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"),
+                               Codes.MailAccounts.AccountGetDefault,
+                               Codes.Areas.Mongo);
+                }
                 else
                 {
                     result.data = usuario?.accounts.Find(x => x.defaultAccount == true);
                     if (result.data == null)
-                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}", "AC11");
+                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}", Codes.MailAccounts.AccountGetDefault);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error al obtener cuenta por defecto de {user}", ex), "AC11");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error al obtener cuenta por defecto de {user}", ex),
+                           Codes.MailAccounts.AccountGetDefault,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -241,19 +279,22 @@
 
                 if (userUpdate != null)
                 {
-                    TraceInfo(result.infos, $"Se ha removido la cuenta {provider}-{mail} del usuario {user}", "AC12");
+                    TraceInfo(result.infos, $"Se ha removido la cuenta {provider}-{mail} del usuario {user}", Codes.MailAccounts.AccountRemove);
                     result.data = userUpdate;
                     var eventAssoc = new RemoveAccountIntegrationEvent(user, provider, mail);
                     _eventBus.Publish(eventAssoc);
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider}-{mail}", "AC12");
+                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider}-{mail}", Codes.MailAccounts.AccountRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when remove account of {user}", ex), "AC12");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when remove account of {user}", ex),
+                           Codes.MailAccounts.AccountRemove,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -270,11 +311,14 @@
                         FindAccountsDefaultsInCollection()
                     );
 
-                ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate);
+                ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate, Codes.MailAccounts.AccountResetDefault);
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when reset defaut account of {user}", ex), "AC13");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when reset defaut account of {user}", ex),
+                           Codes.MailAccounts.AccountResetDefault,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -292,7 +336,7 @@
                 if (userDb == null)
                 {
                     userDb = userMail;
-                    TraceInfo(result.infos, $"Se inserta el usuario {userMail.User} al crear la cuenta {accountIn.email}", "AC14");
+                    TraceInfo(result.infos, $"Se inserta el usuario {userMail.User} al crear la cuenta {accountIn.email}", Codes.MailAccounts.AccountUpsert);
 
                     var eventAssoc = new UpsertAccountIntegrationEvent(userMail.User, accountIn.provider, accountIn.email, accountIn.defaultAccount, accountIn.configAccount, true);
                     _eventBus.Publish(eventAssoc);
@@ -311,7 +355,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when upsert account of {user}", ex), "AC14");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when upsert account of {user}", ex),
+                           Codes.MailAccounts.AccountUpsert,
+                           Codes.Areas.Mongo);
             }
 
             result.data = true;
@@ -326,12 +373,12 @@
             if (accountDb == null)
             {
                 userDb.accounts.Add(accountIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}", "AC14");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}", Codes.MailAccounts.AccountUpsert);
             }
             else
             {
                 UpdateAccountWithOther(accountIn, accountDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la cuenta para {accountIn.provider}-{accountIn.email}", "AC14");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la cuenta para {accountIn.provider}-{accountIn.email}", Codes.MailAccounts.AccountUpsert);
             }
         }
 
@@ -359,17 +406,25 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceError(result.errors, new AccountDomainException($"Don´t insert or modify the account config"), "AC15");
+                    TraceError(result.errors,
+                               new AccountDomainException($"Don´t insert or modify the account config"),
+                               Codes.MailAccounts.AccountConfigUpsert,
+                               Codes.Areas.Mongo);
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {user} creando o modificando la configuracion de cuenta {provider}-{mail} con imap: {config.imap} port: {config.imapPort} user: {config.imapUser}", "AC15");
+                    TraceInfo(result.infos,
+                              $"Se modifica el usuario {user} creando o modificando la configuracion de cuenta {provider}-{mail} con imap: {config.imap} port: {config.imapPort} user: {config.imapUser}",
+                              Codes.MailAccounts.AccountConfigUpsert);
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when upsert account config of {user}", ex), "AC15");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when upsert account config of {user}", ex),
+                           Codes.MailAccounts.AccountConfigUpsert,
+                           Codes.Areas.Mongo);
             }
 
             return result;
@@ -394,11 +449,14 @@
 
                 ManageUpdate($"Don´t insert or modify the relation in user {user}",
                     $"Se añade relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
-                    result, resultUpdate);
+                    result, resultUpdate, Codes.MailAccounts.RelationUpsert);
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when upsert relation of {user}", ex), "AC20");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when upsert relation of {user}", ex),
+                           Codes.MailAccounts.RelationUpsert,
+                           Codes.Areas.Mongo);
             }
 
             return result;
@@ -419,11 +477,14 @@
 
                 ManageUpdate($"Don´t remove the relation in user {user}",
                     $"Se elimina relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
-                    result, resultUpdate);
+                    result, resultUpdate, Codes.MailAccounts.RelationRemove);
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when remove relation of {user}", ex), "AC21");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when remove relation of {user}", ex),
+                           Codes.MailAccounts.RelationRemove,
+                           Codes.Areas.Mongo);
             }
 
             return result;
@@ -436,7 +497,12 @@
             {
                 var resultUser = await GetUser(user);
                 if (resultUser.data == null)
-                    TraceError(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "AC22");
+                {
+                    TraceError(result.errors,
+                               new Exception($"No se encuentra ningún usuario {user}"),
+                               Codes.MailAccounts.RelationGet,
+                               Codes.Areas.Mongo);
+                }
                 else
                 {
                     if (resultUser.data?.accounts?.Count > 0)
@@ -445,13 +511,16 @@
                         result.data = cuenta?.mails?.FindAll(c => c.uid == uid);
 
                         if (result.data == null)
-                            TraceInfo(result.infos, $"No se encuentra ningúna relación en la cuenta {provider} - {mail} del usuario {user}", "AC22");
+                            TraceInfo(result.infos, $"No se encuentra ningúna relación en la cuenta {provider} - {mail} del usuario {user}", Codes.MailAccounts.RelationGet);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when get relations of {user}", ex), "AC22");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when get relations of {user}", ex),
+                           Codes.MailAccounts.RelationGet,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -460,27 +529,27 @@
 
         #region Common
 
-        private void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate)
+        private void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate, string code)
         {
             if (resultUpdate.IsAcknowledged)
             {
                 if (resultUpdate.MatchedCount == 0)
                 {
-                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo", "AC06");
+                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo", code);
                 }
                 else if (resultUpdate.MatchedCount > 0)
                 {
                     if (resultUpdate.ModifiedCount == 0)
-                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", "AC06");
+                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", code);
                     else
-                        TraceInfo(result.infos, modifyMsg, "AC06");
+                        TraceInfo(result.infos, modifyMsg, code);
 
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
             else
             {
-                TraceError(result.errors, new AccountDomainException("Error when update UserMail"), "AC06");
+                TraceError(result.errors, new AccountDomainException(errorMsg), code, Codes.Areas.Mongo);
             }
         }
 
@@ -559,19 +628,6 @@
             return arrayFilters;
         }
 
-        //private static List<ArrayFilterDefinition> GetFilterFromAccountEventName(string nameEvent)
-        //{
-        //    var arrayFilters = new List<ArrayFilterDefinition>();
-        //    var dictionary = new Dictionary<string, string>
-        //    {
-        //        { "i.name", nameEvent },
-        //    };
-        //    var doc = new BsonDocument(dictionary);
-        //    var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
-        //    arrayFilters.Add(docarrayFilter);
-        //    return arrayFilters;
-        //}
-
         private static UpdateOptions FindAccountsDefaultsInCollection()
         {
             return new UpdateOptions
@@ -640,12 +696,19 @@
                 result.data = await _context.RawMessages.Find(GetFilterRawMessage(user, provider, account, messageId)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceError(result.errors, new AccountDomainException($"Don´t exist {user} to get the raw"), "AC30");
-
+                {
+                    TraceError(result.errors,
+                               new AccountDomainException($"Don´t exist {user} to get the raw"),
+                               Codes.MailAccounts.RawGet,
+                               Codes.Areas.Mongo);
+                }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when get raw of {user}", ex), "AC30");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when get raw of {user}", ex),
+                           Codes.MailAccounts.RawGet,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -674,7 +737,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when insert raw in {rawMessage.User}", ex), "AC31");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when insert raw in {rawMessage.User}", ex),
+                           Codes.MailAccounts.RawCreate,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -690,12 +756,15 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente el raw de {rawMessage.MessageId}", "AC32");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente el raw de {rawMessage.MessageId}", Codes.MailAccounts.RawRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when remove raw in {rawMessage.User}", ex), "AC32");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when remove raw in {rawMessage.User}", ex),
+                           Codes.MailAccounts.RawRemove,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -712,7 +781,7 @@
                 result.data = await _context.AccountEvents.Find(GetFilterAccountEvents(account)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún EventTypes para esa cuenta {account}", "AC40");
+                    TraceInfo(result.infos, $"No se encuentra ningún EventTypes para esa cuenta {account}", Codes.MailAccounts.EventTypeGet);
                 else
                 {
                     var orderEvents = result.data?.eventTypes.OrderByDescending(x => x.name).ToList();
@@ -722,7 +791,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when get EventTypes of {account}", ex), "AC40");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when get EventTypes of {account}", ex),
+                           Codes.MailAccounts.EventTypeGet,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -745,7 +817,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when upsert EventTypes of {accountIn.email}", ex), "AC41");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when upsert EventTypes of {accountIn.email}", ex),
+                           Codes.MailAccounts.EventTypeUpsert,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
@@ -768,18 +843,21 @@
 
                 if (userUpdate != null)
                 {
-                    TraceInfo(result.infos, $"Se ha removido el evento {idEvent} de la cuenta {email}", "AC42");
+                    TraceInfo(result.infos, $"Se ha removido el evento {idEvent} de la cuenta {email}", Codes.MailAccounts.EventTypeRemove);
                     resultAccount.data = userUpdate;
                     result.data = true;
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra la cuenta {email} para remover el evento {idEvent}", "AC42");
+                    TraceInfo(result.infos, $"No se encuentra la cuenta {email} para remover el evento {idEvent}", Codes.MailAccounts.EventTypeRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when remove EventTypes of {email}", ex), "AC42");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when remove EventTypes of {email}", ex),
+                           Codes.MailAccounts.EventTypeRemove,
+                           Codes.Areas.Mongo);
             }
 
             return result;
@@ -809,7 +887,7 @@
                         InsertEventType(account, eventType, result);
                     else
                         UpdateEventType(account, eventType, result);
-                    
+
                     await _context.AccountEvents.ReplaceOneAsync(c => c.Id == account.Id, account);
                 }
 
@@ -817,7 +895,10 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when add EventTypes of {email}", ex), "AC43");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when add EventTypes of {email}", ex),
+                           Codes.MailAccounts.EventTypeAdd,
+                           Codes.Areas.Mongo);
             }
 
             return result;
@@ -825,14 +906,17 @@
 
         private void InsertEventType(AccountEventTypes account, EventType eventType, Result<EventType> result)
         {
-            //TODO: cambiar "EventIdExist" 
+            //TODO: cambiar "EventIdExist"
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
                 var evByName = account.eventTypes.FirstOrDefault(s => s.name.ToUpperInvariant().Equals(eventType.name.ToUpperInvariant()));
                 if (evByName != null)
                 {
-                    TraceError(result.errors, new AccountDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), "AC43");
+                    TraceError(result.errors,
+                               new AccountDomainException($"Error, exist other eventType with same name {eventType.name}, review it"),
+                               Codes.MailAccounts.EventTypeAdd,
+                               Codes.Areas.Mongo);
                 }
                 else
                 {
@@ -840,12 +924,15 @@
 
                     listEvents.Add(eventType);
                     account.eventTypes = listEvents.ToArray();
-                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}", "AC43");
+                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}", Codes.MailAccounts.EventTypeAdd);
                 }
             }
             else
             {
-                TraceError(result.errors, new AccountDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), "AC43");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"),
+                           Codes.MailAccounts.EventTypeAdd,
+                           Codes.Areas.Mongo);
             }
         }
 
@@ -855,7 +942,10 @@
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
-                TraceError(result.errors, new AccountDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), "AC43");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"),
+                           Codes.MailAccounts.EventTypeAdd,
+                           Codes.Areas.Mongo);
             }
             else
             {
@@ -863,9 +953,9 @@
                 ev.color = eventType.color;
 
                 if (ev.name.ToUpperInvariant() == eventType.name?.ToUpperInvariant())
-                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color", "AC43");
+                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color", Codes.MailAccounts.EventTypeAdd);
                 else
-                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}", "AC43");
+                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}", Codes.MailAccounts.EventTypeAdd);
             }
         }
 
@@ -878,16 +968,19 @@
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}", "AC44");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}", Codes.MailAccounts.EventTypeRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when remove eventType of {email}", ex), "AC44");
+                TraceError(result.errors,
+                           new AccountDomainException($"Error when remove eventType of {email}", ex),
+                           Codes.MailAccounts.EventTypeRemove,
+                           Codes.Areas.Mongo);
             }
             return result;
         }
 
-        #endregion Events
+        #endregion EventTypes
     }
 }
