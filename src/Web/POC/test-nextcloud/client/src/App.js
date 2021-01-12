@@ -6,6 +6,7 @@ import {
   createCalendar,
   createEvent,
   deleteEvent,
+  createUser
 } from './calendar-api';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
 
   const handleListCalendars = async () => {
     const calendars = await listCalendarList();
+    
     setCalendars(calendars);
   };
 
@@ -28,6 +30,14 @@ function App() {
       description: 'New test calendar',
     });
     console.log(events);
+  };
+
+  const handleCreateUser = async () => {
+    const user = await createUser({
+      name: 'juan',
+      password: '123456',
+    });
+    console.log(user);
   };
 
   const handleCreateEvent = async () => {
@@ -53,6 +63,9 @@ function App() {
           <button onClick={handleGetEvents}>Get Events</button>
           <button onClick={handleCreateEvent}>Create Event</button>
           <button onClick={handleDeleteEvent}>Delete Event</button>
+        </div>
+        <div>
+        <button onClick={handleCreateUser}>Create user</button>
         </div>
       </header>
       <div style={{ display: 'flex' }}>
