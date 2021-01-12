@@ -220,7 +220,7 @@ class DocumentMessageEditor extends Component {
                )}
             </Dropzone>
             { files.length > 0 ? 
-            <h5 className="light-blue-text">{i18n.t('documentEditor.file')}</h5> 
+              <h5 className="light-blue-text">{i18n.t('documentEditor.file')}</h5> 
             : null }
             <aside>
               {thumbs}
