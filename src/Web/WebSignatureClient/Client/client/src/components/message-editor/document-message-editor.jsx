@@ -6,6 +6,7 @@ import Dropzone from "react-dropzone";
 import i18n from 'i18next';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
+import Spinner from "../spinner/spinner";
 import ACTIONS from '../../actions/lefebvre';
 import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -24,7 +25,8 @@ class DocumentMessageEditor extends Component {
         maxPercentage: 100,
         maxSize: 15,
         hideAlertDialog: false,
-        dialogType: ''
+        dialogType: '',
+        isLoading: false
     }
     this.dialogOpen = this.dialogOpen.bind(this);
     this.animationSettings = { effect: 'None' };
@@ -117,9 +119,10 @@ class DocumentMessageEditor extends Component {
   }
 
   sendDocument(){ 
+    this.setState({isLoading: true});
     createCertifiedDocument(this.props.lefebvre.userId, uuid(), this.props.attachments, this.props.lefebvre.token)
     .then(() => {
-      this.setState({hideAlertDialog: true, dialogType: 'completed'});
+      this.setState({hideAlertDialog: true, dialogType: 'completed', isLoading: false});
       setTimeout(() => {
         this.removeDocumentMessageEditor(this.props.application); 
       }, 1500);
@@ -150,8 +153,10 @@ class DocumentMessageEditor extends Component {
     const { 
       files, 
       maxPercentage,
-      dialogType 
+      dialogType ,
+      isLoading
     } = this.state;
+
     const {
       application,
       lefebvre
@@ -197,6 +202,12 @@ class DocumentMessageEditor extends Component {
 
     return (
         <Col md="12" className={styles['document-message-editor']}>
+        {isLoading ? 
+          <div className={styles['spinner-container']}> 
+           <div className={styles['spinner']}>
+            <Spinner /> 
+           </div>
+          </div> : ''}
           <div className={styles['box-attach']}>
             <Dropzone
                 onDrop={this.onDrop.bind(this)}
