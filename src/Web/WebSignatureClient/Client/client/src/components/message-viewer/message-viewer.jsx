@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { selectFolder } from '../../actions/application';
 import moment from 'moment'
 import { clearSelectedMessage, getCredentials } from '../../services/application';
-import { getSelectedFolder } from '../../selectors/folders';
 import mainCss from '../../styles/main.scss';
 import styles from './message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
@@ -468,7 +467,6 @@ MessageViewer.defaultProps = {
 const mapStateToProps = state => {
   return {
     refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
-    currentFolder: getSelectedFolder(state) || {},
     selectedMessage: state.application.selectedMessage,
     selectedMessages: state.messages.selectedMessages,
     lefebvre: state.lefebvre,

@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { selectFolder } from '../../actions/application';
 import { clearSelectedMessage, getCredentials } from '../../services/application';
-import { getSelectedFolder } from '../../selectors/folders';
-import mainCss from '../../styles/main.scss';
 import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
@@ -403,7 +401,6 @@ EmailMessageViewer.defaultProps = {
 const mapStateToProps = state => {
   return {
     refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
-    currentFolder: getSelectedFolder(state) || {},
     selectedMessage: state.application.selectedMessage,
     selectedMessages: state.messages.selectedMessages,
     lefebvre: state.lefebvre,
