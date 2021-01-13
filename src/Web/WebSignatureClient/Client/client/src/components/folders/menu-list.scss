@@ -26,12 +26,11 @@
   padding: 0;
 }
 
-.title-nav-firmas{
+.title-nav-firmas {
   background:#001978;
   color:#FFF;
   text-transform: uppercase;
-  //padding:15px;
-  padding: 8px 8px 15px 10px;
+  padding: 14px 11px 18px 16px;
   display: grid;
   grid-template-columns: max-content auto max-content;
   align-items: end;
@@ -40,7 +39,7 @@
     font-size: 28px;
     margin: 0 6px;
     position: relative;
-    top: 8px;
+    top: 2px;
   }
 }
 
@@ -48,7 +47,6 @@
   background:#001978;
   color:#FFF;
   text-transform: uppercase;
-  //padding:15px;
   padding: 15px 8px 15px 10px;
   span{
     font-size:18px;
@@ -194,6 +192,6 @@
 
 .icon-angle {
   font-size: 16px !important;
-  top: 0 !important;
+  top: -3px !important;
   margin: initial !important;
 }

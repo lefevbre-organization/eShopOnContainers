@@ -31,6 +31,7 @@ import styles from './side-bar.scss';
 //import { editNewMessage } from '../../services/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import randomColor from 'randomcolor';
 
 import {
     listCalendarList
@@ -147,9 +148,42 @@ class SideBar extends Component {
                     </span>                   
                 </div>
 
-                {this.state.calendars.map((c) => (
+                {/* {this.state.calendars.map((c) => (
                     <div className={`${styles['calendaritem']}`}>{c.name}</div>
-                ))}
+
+
+                ))} */}
+
+               
+
+                {this.state.calendars.map(el => {
+
+                    const color = randomColor.randomColor();
+
+                    const iconProps = {
+                        icon: faCalendar,
+                        color: "#001978",
+                        size: "lg"
+                    };
+
+                    return (
+                        <CalendarItem
+                            key={el.ctag + "_label"}
+                            onClick={this.navigateToList}
+                            name={el.name}
+                            id={el.ctag}
+                            color={color}
+                            accessRole={el.accessRole}
+                            iconProps={iconProps}
+                            selected={el.selected}
+                            primary={true}
+                            onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
+                            onCalendarDelete={this.props.onCalendarDelete}
+                            onCalendarColorModify={this.props.onCalendarColorModify}
+                        />
+                    );
+                })}
+
 
         </PerfectScrollbar>
       </aside>

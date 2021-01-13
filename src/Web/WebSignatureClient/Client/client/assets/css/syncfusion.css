@@ -7,6 +7,12 @@
     position: absolute !important;
 }
 
+.e-grid .e-table {
+    border-collapse: separate;
+    table-layout: fixed;
+    width: 1147px !important;
+}
+
 #info2Dialog #info2Dialog_dialog-header, 
 #info2Dialog_title, #info2Dialog_dialog-content, 
 #info2Dialog.e-footer-content,

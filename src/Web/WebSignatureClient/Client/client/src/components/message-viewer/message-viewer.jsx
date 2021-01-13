@@ -111,16 +111,14 @@ export class MessageViewer extends Component {
     const eventos = signer.events;
     let evDate = '';
     let res = '-';
-    eventos.some( (e) => {
-      if (e.type === ev){
+    eventos.forEach( (e, index) => {
+      if (e.type === ev && ev !== 'email_processed'){
+        evDate = e.created_at
+      } else if (ev === 'email_processed' && index === 0 ) {
         evDate = e.created_at
       }
-    })
-    if (evDate !==''){
-      // new Date(evDate).toLocaleString(navigator.language, {
-      //   year: 'numeric', month: '2-digit', day: '2-digit',
-      //   hour: '2-digit', minute: '2-digit', second: '2-digit'
-      // })
+    });
+    if (evDate !== ''){
       res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
@@ -244,7 +242,6 @@ export class MessageViewer extends Component {
 
 
   render() {
-    console.log('Entra en el message viewer');
     const signature = this.props.selectedSignature;
     let status;
     let status_style;

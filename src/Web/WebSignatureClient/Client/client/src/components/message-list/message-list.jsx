@@ -1180,7 +1180,7 @@ class MessageList extends Component {
                     {(this.props.selectedService && this.props.selectedService === 'certifiedDocument') 
                         ?
                             <ColumnsDirective>
-                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='60' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
                                 <ColumnDirective field='Hora' textAlign='Left'  headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
@@ -1188,7 +1188,7 @@ class MessageList extends Component {
                             </ColumnsDirective>
                         : 
                             <ColumnsDirective>
-                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='60' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                                 <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
