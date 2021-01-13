@@ -19,6 +19,12 @@
     padding: 8px 12px;
 }
 
+.e-grid .e-table {
+    border-collapse: separate;
+    table-layout: fixed;
+    width: 100% !important;
+}
+
 #info2Dialog #info2Dialog_dialog-header, 
 #info2Dialog_title, #info2Dialog_dialog-content, 
 #info2Dialog.e-footer-content,
