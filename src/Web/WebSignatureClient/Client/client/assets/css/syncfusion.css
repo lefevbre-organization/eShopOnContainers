@@ -7,10 +7,16 @@
     position: absolute !important;
 }
 
-.e-grid .e-table {
-    border-collapse: separate;
-    table-layout: fixed;
-    width: 1147px !important;
+.e-grid .e-rowcell:nth-child(4) {
+    padding: 8px 18px;
+}
+
+.e-grid .e-rowcell:nth-child(5) {
+    padding: 8px 13px;
+}
+
+.e-grid .e-rowcell:nth-child(6) {
+    padding: 8px 12px;
 }
 
 #info2Dialog #info2Dialog_dialog-header, 
