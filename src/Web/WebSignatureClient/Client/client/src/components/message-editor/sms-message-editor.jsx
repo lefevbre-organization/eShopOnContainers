@@ -297,7 +297,7 @@ class SmsMessageEditor extends Component {
               isContacts={this.state.isContacts}
               sendingType={sendingType}
             />
-            <label>{`${i18n.t('messageEditor.smsCharCounter').replace('#char', this.state.certificationType === 'delivery' ? 120 : 100)}`}</label>
+            <label>{`${i18n.t('messageEditor.smsCharCounter').replace('#char', this.state.certificationType === 'delivery' ? 100 : 100)}`}</label>
           </form>
         </div>
         <div
@@ -487,7 +487,7 @@ class SmsMessageEditor extends Component {
       return bigFileModal;
     } else if (onlyPdf){
       return onlyPdfModal;
-    } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
+    } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length === 0){
       return maxCharacters;
     } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length > 0){
       return maxCharactersFile;
@@ -563,7 +563,7 @@ class SmsMessageEditor extends Component {
       this.setState({ hideAlertDialog: true });
     } else if (!validPhoneNumbers.valid) {
       this.setState({ hideAlertDialog: true });
-    } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
+    } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length === 0){
       this.setState({ hideAlertDialog: true});
     } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length > 0) {
       this.setState({ hideAlertDialog: true});
