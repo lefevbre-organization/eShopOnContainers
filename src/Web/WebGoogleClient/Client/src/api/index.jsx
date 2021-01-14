@@ -423,7 +423,6 @@ function formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
 }
 
 const getDataEmail = ({ headers, body, attachments }) => {
-  debugger
   let message = new MimeBuilder();
 
   for(let h in headers) {

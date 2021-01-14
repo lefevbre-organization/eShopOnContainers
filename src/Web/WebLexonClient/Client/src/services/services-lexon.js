@@ -15,6 +15,11 @@ if (!global.TextDecoder) {
 }
 export const getCompanies = (user) => {
   return new Promise((resolve, reject) => {
+    debugger
+
+    window.API_GATEWAY = "https://lexbox-test-apigwlex.lefebvre.es";
+    window.currentEnv = "PRE";
+
     let url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idUser}`;
     if(window.currentEnv) {
       url += `&env=${window.currentEnv}`;
