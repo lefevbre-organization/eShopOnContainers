@@ -317,8 +317,7 @@ export class ComposeMessage extends PureComponent {
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
-
-
+            
             const content =  this.props.emailMessageResult.body === 'null'  
             ? 
             '' 
