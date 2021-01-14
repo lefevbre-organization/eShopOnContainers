@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux';
 import application from './application';
-import folders from './folders';
 import login from './login';
 import messages from './messages';
 import lefebvre from './lefebvre';
@@ -35,11 +34,6 @@ export const INITIAL_STATE = {
         smsList: {},
         documents: {},
         signaturesFilterKey: 'Mostrar todas'
-    },
-    folders: {
-        items: [],
-        explodedItems: {},
-        activeRequests: 0
     },
     login: {
         formValues: {}
@@ -93,7 +87,6 @@ export const INITIAL_STATE = {
 export default combineReducers({
     application,
     login,
-    folders: folders,
     messages: messages,
     lefebvre: lefebvre
 });

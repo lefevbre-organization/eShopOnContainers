@@ -1,21 +1,15 @@
-import React, { Component, Fragment } from "react";
+import React, { Component} from "react";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import PropTypes from "prop-types";
-import { AutoSizer, List, Grid } from "react-virtualized";
 import Checkbox from "../form/checkbox/checkbox";
-import Spinner from "../spinner/spinner";
 import { getCredentials } from "../../selectors/application";
-import { getSelectedFolder } from "../../selectors/folders";
-import { getSelectedFolderMessageList } from "../../selectors/messages";
 import { prettyDate } from "../../services/prettify";
 import { selectSignature, selectEmail, selectSms, setTitle, setSelectedService } from "../../actions/application";
-import { readMessageRaw } from "../../services/message-read";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
-import { preloadSignatures, preloadSignatures2, cancelSignature2, downloadCertifiedDocumentAudit, downloadCertfiedDocumentCopy } from "../../services/api-signaturit";
+import { preloadSignatures2, cancelSignature2, downloadCertifiedDocumentAudit, downloadCertfiedDocumentCopy } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
 import { 
   GridComponent, 
@@ -33,11 +27,7 @@ import {
   ExcelExport ,
   PdfExportProperties
 } from '@syncfusion/ej2-react-grids';
-import materialize from '../../styles/signature/materialize.scss';
-import { CalendarComponent } from '@syncfusion/ej2-react-calendars';
-import { loadCldr, setCulture, L10n } from '@syncfusion/ej2-base';
-import { DataManager } from '@syncfusion/ej2-data';
-import { ClickEventArgs } from '@syncfusion/ej2-navigations';
+import { L10n } from '@syncfusion/ej2-base';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import { detailedDiff } from 'deep-object-diff';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -1065,24 +1055,6 @@ class MessageList extends Component {
               }
         }
     
-        // if (difP && difP.updated !== undefined
-        //     && difP.updated.hasOwnProperty('preloadSignatures') 
-        //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
-        //     && difP.update.hasOwnProperty('signatureClicked') && difP.update.hasOwnProperty('setTitle')
-        //     && Object.keys(difP.updated).length === 5){
-        //         return false;
-        // } else {
-        //     if (
-        //         this.isEmpty(difP.updated) &&
-        //         this.isEmpty(difP.added) &&
-        //         this.isEmpty(difP.deleted) &&
-        //         this.isEmpty(difSt.updated) &&
-        //         this.isEmpty(difSt.added) &&
-        //         this.isEmpty(difSt.deleted)
-        //       ) {
-        //         return false;
-        //       }
-        // }
         console.log('MESSAGELIST.SHOULDCOMPONENTUPDATE().other: ' + true);
         return true;
     }
@@ -1208,7 +1180,7 @@ class MessageList extends Component {
                     {(this.props.selectedService && this.props.selectedService === 'certifiedDocument') 
                         ?
                             <ColumnsDirective>
-                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='60' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} />
                                 <ColumnDirective field='Hora' textAlign='Left'  headerText={i18n.t('signaturesGrid.columnHour')} width= '151' />
@@ -1216,7 +1188,7 @@ class MessageList extends Component {
                             </ColumnsDirective>
                         : 
                             <ColumnsDirective>
-                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='44' />
+                                <ColumnDirective headerTextAlign='Center' textAlign='Center' headerText={i18n.t('signaturesGrid.columnAction')}  template={this.menuTemplate} maxWidth='60' />
                                 <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')} template={this.filesTable.bind(this)} /> 
                                 <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                                 <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
@@ -1389,9 +1361,7 @@ MessageList.defaultProps = {
 
 const mapStateToProps = state => ({
     credentials: getCredentials(state),
-    selectedFolder: getSelectedFolder(state) || {},
     activeRequests: state.messages.activeRequests,
-    messages: getSelectedFolderMessageList(state),
     selectedMessages: state.messages.selected,
     downloadedMessages: state.application.downloadedMessages,
     signatures: state.application.signatures,

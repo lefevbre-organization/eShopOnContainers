@@ -6,7 +6,6 @@ import i18n from 'i18next';
 import MenuContainer from '../folders/menu-container';
 import { DroppablePayloadTypes } from '../folders/menu-list';
 import IconButton from '../buttons/icon-button';
-import { moveFolder } from '../../services/folder';
 import mainCss from '../../styles/main.scss';
 import styles from './side-bar.scss';
 import { editNewMessage } from '../../services/application';
@@ -28,9 +27,6 @@ class SideBar extends Component {
       hideSendingTypeDialog: false,
       hideConfirmDialog: false
     };
-    this.handleOnDragOver = this.onDragOver.bind(this);
-    this.handleOnDragLeave = this.onDragLeave.bind(this);
-    this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
     this.handleOnNewEmailCertificate = this.onNewEmailCertificate.bind(this);
     this.handleOnNewSmsCertificate = this.onNewSmsCertificate.bind(this);
@@ -438,38 +434,6 @@ class SideBar extends Component {
     this.sendTypeDialogClose();
   }
 
-  onDragOver(event) {
-    event.preventDefault();
-    if (
-      event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes('application/json')
-    ) {
-      this.setState({ dragOver: true });
-    }
-  }
-
-  onDragLeave(event) {
-    event.preventDefault();
-    this.setState({ dragOver: false });
-  }
-
-  onDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.setState({ dragOver: false });
-    if (
-      event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes('application/json')
-    ) {
-      const payload = JSON.parse(
-        event.dataTransfer.getData('application/json')
-      );
-      if (payload.type === DroppablePayloadTypes.FOLDER) {
-        this.props.moveFolderToFirstLevel(payload.folder);
-      }
-    }
-  }
-
   static getCollapsedClassName(collapsed) {
     return collapsed ? '' : `${styles.open} ${mainCss['mdc-drawer--open']}`;
   }
@@ -491,8 +455,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  moveFolderToFirstLevel: (user, folder) =>
-    moveFolder(dispatch, user, folder, null),
   newMessage: (sendingType, sign) => editNewMessage(dispatch, sendingType, [], [], sign),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
   setNumAvailableSignatures: num => dispatch(setNumAvailableSignatures(num)),
@@ -503,8 +465,6 @@ const mapDispatchToProps = dispatch => ({
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
-    moveFolderToFirstLevel: folder =>
-      dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder),
     setAvailableSignatures: num => dispatchProps.setAvailableSignatures(num),
     setNumAvailableSignatures: num => dispatchProps.setNumAvailableSignatures(num),
     setTitle: title => dispatchProps.setTitle(title),

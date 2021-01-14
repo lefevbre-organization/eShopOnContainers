@@ -17,13 +17,9 @@ import {
 
 import {clearSelected} from '../../actions/messages';
 import {clearSelectedMessage} from '../../services/application';
-import {resetFolderMessagesCache} from '../../services/message';
-import {getSelectedFolder} from '../../selectors/folders';
-import styles from './menu-list.scss';
-import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import lefebvre, { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
+import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
 import { cancelSignatureCen } from "../../services/api-signaturit";
 
 export const DroppablePayloadTypes = {
@@ -284,7 +280,6 @@ export class MenuListClass extends Component {
 
 const mapStateToProps = state => ({
   application: state.application,
-  selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
   messages: state.messages,
   lefebvre: state.lefebvre,
@@ -296,7 +291,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);
     dispatch(clearSelected());
-    resetFolderMessagesCache(dispatch, user, folder);
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
   signatureClicked: signature => dispatch(selectSignature(signature)),
