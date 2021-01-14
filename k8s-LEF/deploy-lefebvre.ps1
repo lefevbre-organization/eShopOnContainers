@@ -10,23 +10,23 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "conference.api"
+        "webaddonlauncher"
         # "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
         # "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         # "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
         # "webstatus"
          ),
-    [parameter(Mandatory=$false)][bool]$pushImages=$true,
+    [parameter(Mandatory=$false)][bool]$pushImages=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "conference.api"
+        "webaddonlauncher"
         # "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
         # "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-38.1",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-38",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
@@ -106,10 +106,16 @@ if ($buildImages) {
     }else{
 
         foreach ($service in $servicesToBuild) {
-            Write-Host "=====================================" -ForegroundColor DarkCyan
-            Write-Host "Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
-            Write-Host "=====================================" -ForegroundColor DarkCyan
+            $Start = (Get-Date).Millisecond
+            Write-Host "========================================================================" -ForegroundColor DarkCyan
+            Write-Host "Building Docker image '$service' tagged with '$imageTag' ===" -ForegroundColor DarkCyan
+            Write-Host "========================================================================" -ForegroundColor DarkCyan
+            # Write-Host $(docker-compose -p .. -f ../docker-compose.yml build $service)
             docker-compose -p .. -f ../docker-compose.yml build $service
+            $End = (Get-Date).Millisecond
+            Write-Host "========================================================================" -ForegroundColor DarkYellow
+            Write-Host "Created Docker image '$service' in '$($End - $Start)' Millisecond ========" -ForegroundColor DarkYellow
+            Write-Host "========================================================================" -ForegroundColor DarkYellow
         }
     }
 }
