@@ -128,7 +128,6 @@ export class MessageItem extends PureComponent {
       //   this.props.data.from.emailAddress.address;
     
       if (this.props.isSent === false) {
-        console.log('cae aqui', this.props.data.from)
         fromName = this.props.data.from 
         ?  this.props.data.from.emailAddress.name 
         : this.props.microsoftUser.displayName;
