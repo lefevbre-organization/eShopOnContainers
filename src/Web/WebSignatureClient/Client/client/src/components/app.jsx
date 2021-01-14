@@ -2,10 +2,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18next';
-
 import PropTypes from 'prop-types';
-import * as uuid from 'uuid/v4';
-import Cookies from 'js-cookie';
 import history from '../routes/history';
 import Spinner from './spinner/spinner';
 import TopBar from './top-bar/top-bar';
@@ -19,8 +16,6 @@ import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import EmailMessageViewer from './message-viewer/email-message-viewer';
 import SmsMessageViewer from './message-viewer/sms-message-viewer';
-import MessageSnackbar from './message-snackbar/message-snackbar';
-import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
 
 import {
   clearUserCredentials,
@@ -38,9 +33,6 @@ import {
 } from '../actions/application';
 import { clearSelected, setSelected } from '../actions/messages';
 import {
-  // setEmailShown,
-  // resetIdEmail,
-  // setCaseFile,
   setGUID,
   setSign,
   setIdDocuments,
@@ -48,54 +40,17 @@ import {
   setCenContacts
 } from '../actions/lefebvre';
 
-import { getSelectedFolder } from '../selectors/folders';
-
-import { AuthenticationException } from '../services/fetch';
 import { editNewMessage, clearSelectedMessage } from '../services/application';
-import { getFolders, findSentFolder } from '../services/folder';
-import { resetFolderMessagesCache } from '../services/message';
-import { readMessage } from '../services/message-read';
-import { persistApplicationNewMessageContent } from '../services/indexed-db';
-
-import {
-  addOrUpdateAccount,
-  getUser,
-  classifyEmail
-} from '../services/accounts';
-// import SplitPane from "react-split-pane";
 import styles from './app.scss';
-import IconButton from './buttons/icon-button';
 import { translate } from 'react-i18next';
-
-// import { start, registerApplication } from "single-spa";
-
-// import * as singleSpa from "single-spa";
-// import { registerLexonApp } from "../apps/lexonconn-app";
-// import { registerMainnavApp } from "../apps/mainnav-app";
-
 import Sidebar from 'react-sidebar';
 import LexonComponent from '../apps/lexon_content';
 import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
-import { PROVIDER } from '../constants';
-
 import { preloadEmails, preloadSignatures2, preloadSms, getAttachmentLex, getAttachmentCen, cancelSignatureCen, getContactsCentinela, getUserCertifiedDocuments, preloadCertifiedDocuments } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
-import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
+import { backendRequest, backendRequestCompleted } from '../actions/messages';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-
-const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
-
-// const activityFunction = location => location.pathname.startsWith('/lexon-connector');
-
-// registerApplication('lex-on-connector', () => import('../lex-on_connector/index.js'), activityFunction);
-// start();
-
-// const hashPrefix = prefix => location => location.hash.startsWith(`#${prefix}`)
-
-// registerApplication('lex-on-connector_debug', () => import('../lex-on_connector/index.js'), hashPrefix('/lexon-connector'))
-
-// start()
 
 class App extends Component {
   constructor(props) {
@@ -400,9 +355,6 @@ class App extends Component {
 
               <span className={styles.spaceproduct}></span>*/}
             </div>
-
-            <MessageSnackbar />
-            <NotFoundSnackbar />
           </div>
 
           {/*<div className={styles.connector}  style={{
@@ -970,14 +922,7 @@ class App extends Component {
     });
   }
 
-  renderNotFoundModal() {
-    this.props.setError('messageNotFound', 'No se encuentra el mensaje'); //tenia authentication
-    setTimeout(
-      () => this.props.setError('messageNotFound', null),
-      MESSAGENOTFOUND_SNACKBAR_DURATION
-    );
-    
-  }
+  
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -1047,8 +992,6 @@ App.propTypes = {
   application: PropTypes.object,
   outbox: PropTypes.object,
   folders: PropTypes.object,
-  reloadFolders: PropTypes.func,
-  reloadMessageCache: PropTypes.func,
   loadMessageByFolder: PropTypes.func,
   newMessage: PropTypes.func.isRequired //,
   // resetIdEmail: PropTypes.func
@@ -1059,7 +1002,6 @@ const mapStateToProps = state => ({
   auth: state.application.user.credentials.encrypted,
   outbox: state.application.outbox,
   folders: state.folders,
-  receivedFolder: getSelectedFolder(state) || {},
   messages: state.messages,
   lefebvre: state.lefebvre,
   email: state.login.formValues.user,
@@ -1067,19 +1009,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  reloadFolders: credentials => getFolders(dispatch, credentials, true),
-  reloadMessageCache: (user, folder) =>
-    resetFolderMessagesCache(dispatch, user, folder),
   newMessage: (sendingType, to, cc, sign, attachments) => editNewMessage(dispatch, sendingType, to, cc, sign, attachments),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);
     dispatch(clearSelected());
-    resetFolderMessagesCache(dispatch, user, folder);
   },
   messageClicked: (credentials, downloadedMessages, folder, message) => {
-    dispatch(selectMessage(message));
-    readMessage(dispatch, credentials, downloadedMessages, folder, message);
+    dispatch(selectMessage(message))
   },
   // setEmailShown: flag => dispatch(setEmailShown(flag)),
   outboxEventNotified: () => dispatch(outboxEventNotified()),
@@ -1119,10 +1056,6 @@ const mapDispatchToProps = dispatch => ({
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
-    reloadFolders: () =>
-      dispatchProps.reloadFolders(stateProps.application.user.credentials),
-    reloadMessageCache: folder =>
-      dispatchProps.reloadMessageCache(stateProps.application.user, folder),
     selectFolder: folder =>
       dispatchProps.selectFolder(folder, stateProps.application.user),
     messageClicked: message =>
