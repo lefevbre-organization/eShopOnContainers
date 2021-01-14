@@ -2,21 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { selectFolder } from '../../actions/application';
-import { clearSelectedMessage, getCredentials } from '../../services/application';
-import { getSelectedFolder } from '../../selectors/folders';
+import { clearSelectedMessage } from '../../services/application';
 import moment from 'moment'
-import mainCss from '../../styles/main.scss';
 import styles from './email-message-viewer.scss';
-import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
 import {  
   downloadSmsCertificationDocument,
-  cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
 import SmsList from './sms-list/sms-list';
 import Details from './details/details';
-import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
 
@@ -377,7 +372,6 @@ SmsMessageViewer.defaultProps = {
 const mapStateToProps = state => {
   return {
     refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
-    currentFolder: getSelectedFolder(state) || {},
     selectedMessage: state.application.selectedMessage,
     selectedMessages: state.messages.selectedMessages,
     lefebvre: state.lefebvre,

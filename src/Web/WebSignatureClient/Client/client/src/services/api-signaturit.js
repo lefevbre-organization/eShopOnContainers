@@ -1,5 +1,5 @@
-import { backendRequest, backendRequestCompleted, preDownloadSignatures, preDownloadEmails, preDownloadSmsList, preDownloadDocuments } from '../actions/application';
-import { resolve } from 'path';
+import { preDownloadSignatures, preDownloadEmails, preDownloadSmsList, preDownloadDocuments } from '../actions/application';
+import i18n from 'i18next';
 
 // tenia 94 left y 5 width
 // const coordinates = [
@@ -1509,7 +1509,7 @@ export const createCertifiedDocument = async (userId, guid, files, auth) => {
 
     jsonObject.user = userId;
     jsonObject.guid = guid;
-    jsonObject.app = 'webSignature';
+    jsonObject.app = i18n.t('signaturesGrid.origin');
     jsonObject.files = filesData;
 
     var raw = JSON.stringify(jsonObject);

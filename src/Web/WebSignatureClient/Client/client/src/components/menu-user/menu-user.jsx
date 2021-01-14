@@ -7,7 +7,6 @@ import i18n from 'i18next';
 import SignatureNumbers from './signature-numbers';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
-import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
 import { setSign, setAvailableSignatures, setNumAvailableSignatures, setNumAvailableEmails } from '../../actions/lefebvre';
 import Cookies from 'js-cookie';
 import { getAvailableSignatures, getNumAvailableSignatures } from '../../services/api-signaturit';
@@ -28,11 +27,9 @@ class MenuUser extends Component {
         this.buttonRef = null;
 
         this.toggle = this.toggle.bind(this);
-        this._handleOnClick = this._handleOnClick.bind(this);
         this.onSignClick = this.onSignClick.bind(this);
         this.onBack = this.onBack.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
-        this.onSaveSign = this.onSaveSign.bind(this);
         this.onSignChange = this.onSignChange.bind(this);
     }
 
@@ -122,22 +119,6 @@ class MenuUser extends Component {
         );
     }
 
-    _handleOnClick() {
-        const { userId, token } = this.props.lefebvre;
-        if (userId !== null) {
-            resetDefaultAccount(userId)
-            .then(() => {
-                this.routeLogout();
-                //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                window.open(urlRedirect, '_self');
-            })
-            .catch(error => {
-                console.log('error =>', error);
-            });
-        }
-    }
-
     onSignClick() {
         const { showSign } = this.state;
         this.setState({ showSign: !showSign });
@@ -153,23 +134,6 @@ class MenuUser extends Component {
         this.setState({ sign: content });
     }
 
-    async onSaveSign() {
-        const fullName = this.props.login.formValues.user;
-
-        const { lefebvre } = this.props;
-        const { sign } = this.state;
-        const newAccount = {
-            provider: 'IMAP',
-            email: fullName,
-            guid: lefebvre.guid,
-            sign
-        };
-
-        this.props.setSign(sign);
-        await addOrUpdateAccount(lefebvre.userId, newAccount);
-        this.onBack();
-    }
-
     routeLogout() {
         const { userId, token } = this.props.lefebvre;
         Cookies.remove(`Lefebvre.Signaturit.${userId}`);
@@ -177,8 +141,6 @@ class MenuUser extends Component {
         this.props.logout();
         window.location.reload();
     }
-
-
 
     render() {
         const { dropdownOpen, accounts } = this.state;

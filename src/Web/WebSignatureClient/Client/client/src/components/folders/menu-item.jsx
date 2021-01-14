@@ -3,9 +3,6 @@ import PropTypes from 'prop-types';
 
 import i18n from 'i18next';
 import styles from './menu-list.scss';
-// import {FolderTypes} from '../../services/folder';
-// import styles from './menu-item.scss';
-// import mainCss from '../../styles/main.scss';
 
 const MenuItem = props => {
 

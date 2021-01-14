@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from "prop-types";
 import i18n from 'i18next';
 import moment from 'moment'
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
@@ -21,7 +20,7 @@ const Details = (props) => {
           </tr>            
           <tr>
           {/* props.detail.certificates[0].file.name  */}
-              <td >
+              <td>
               {
                props.service == 'signature' ?  
                props.detail.documents[0].file.name
@@ -51,10 +50,6 @@ const Details = (props) => {
                 } 
               </td>
               <td>
-                  {/* <ul className={props.styles['tooltip-firmantes']}>
-                      <li>Maria cruces <span className={props.styles.email}>margia-cruces@gmail.com</span></li>
-                      <li>Maria cruces <span className={props.styles.email}>m.lopez@gsel.com</span></li>
-                  </ul> */}
                   <span>
                   <DropDownButtonComponent cssClass={`${props.styles['bola-firmantes']} ${props.styles[props.status_style]}`} items={props.getSigners(props.detail)}>{props.getSigners(props.detail).length}</DropDownButtonComponent>
                   </span>

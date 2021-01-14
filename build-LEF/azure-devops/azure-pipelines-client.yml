@@ -1,0 +1,7 @@
+# for PowerShell Core
+steps:
+- pwsh: ./k8s-LEF/deploy-pipeline-client.ps1 -execPath /home/vsts/work/1/s/ 
+# if helm3 version
+# steps:
+# - pwsh: ./deploy/k8s-lef/build-pipeline-client.ps1 -execPath /home/vsts/work/1/s/ 
+

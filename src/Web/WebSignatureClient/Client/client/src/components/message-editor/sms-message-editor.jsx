@@ -2,11 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
-import EDITOR_BUTTONS from './editor-buttons';
-import Button from '../buttons/button';
 import HeaderAddress from './header-address';
-import MceButton from './mce-button';
-import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
 import { editMessage, setTitle, setSelectedService, setSignaturesFilterKey } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
@@ -30,9 +26,7 @@ import {
   getNumAvailableSignatures,
   notifyCen
 } from '../../services/api-signaturit';
-import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
-import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
 import  AttachmentsWidget  from './widgets/attachments-widget2';
 import  CertificatesWidget  from './widgets/certificates-widget';
@@ -161,7 +155,6 @@ class SmsMessageEditor extends Component {
         (userBranding && userBranding.externalId) ? userBranding.externalId : ''
       );
     }
-      //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
   }
   
 
@@ -208,7 +201,6 @@ class SmsMessageEditor extends Component {
     }
     
     this.setState({isContacts: this.props.lefebvre.roles.some(e => e === 'Centinela')});
-    //createSignature();
   }
 
   removeMessageEditor(aplication) {
@@ -254,8 +246,6 @@ class SmsMessageEditor extends Component {
       application,
       sendingType,
       to,
-      subject,
-      attachments,
       content,
       lefebvre
     } = this.props;
@@ -307,7 +297,7 @@ class SmsMessageEditor extends Component {
               isContacts={this.state.isContacts}
               sendingType={sendingType}
             />
-            <label>{`${i18n.t('messageEditor.smsCharCounter').replace('#char', this.state.certificationType === 'delivery' ? 120 : 100)}`}</label>
+            <label>{`${i18n.t('messageEditor.smsCharCounter').replace('#char', this.state.certificationType === 'delivery' ? 100 : 100)}`}</label>
           </form>
         </div>
         <div
@@ -359,7 +349,7 @@ class SmsMessageEditor extends Component {
           //header=' ' 
           visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
-          width='60%' 
+          //width='60%' 
           //content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 && mustHaveAttachments ? noAttachmentsModalCertification : (this.state.bigAttachments ? bigFileModal : (onlyPdf) ? onlyPdfModal : (content && content.length > 120 && this.props.attachments.length === 0) ? maxCharacters : (content && content.length > 100 && this.props.attachments.length > 0) ? maxCharactersFile : noSignersModal)))}
           content={this.getModalContent()}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
@@ -443,13 +433,13 @@ class SmsMessageEditor extends Component {
 
     const maxCharacters = `
     <span class="lf-icon-information modal-icon-content"></span>
-    <div class="modal-text-content>
+    <div class="modal-text-content">
       ${i18n.t('maxCharactersModal.text')}
     </div>`;
 
     const maxCharactersFile = `
     <span class="lf-icon-information modal-icon-content"></span>
-    <div class="modal-text-content>
+    <div class="modal-text-content">
       ${i18n.t('maxCharactersModal.text2')}
     </div>`;
 
@@ -497,7 +487,7 @@ class SmsMessageEditor extends Component {
       return bigFileModal;
     } else if (onlyPdf){
       return onlyPdfModal;
-    } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
+    } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length === 0){
       return maxCharacters;
     } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length > 0){
       return maxCharactersFile;
@@ -573,7 +563,7 @@ class SmsMessageEditor extends Component {
       this.setState({ hideAlertDialog: true });
     } else if (!validPhoneNumbers.valid) {
       this.setState({ hideAlertDialog: true });
-    } else if (this.props.content && this.strip(this.props.content).length > 120 && this.props.attachments.length === 0){
+    } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length === 0){
       this.setState({ hideAlertDialog: true});
     } else if (this.props.content && this.strip(this.props.content).length > 100 && this.props.attachments.length > 0) {
       this.setState({ hideAlertDialog: true});

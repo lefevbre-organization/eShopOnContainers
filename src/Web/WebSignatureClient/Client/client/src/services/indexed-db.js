@@ -1,6 +1,5 @@
 import idb from 'idb';
 import sjcl from 'sjcl';
-import {processFolders} from './folder';
 import {setError} from '../actions/application';
 import SjclWorker from 'worker-loader?name=sjcl.worker.[hash].js&inline!./sjcl.worker.js';
 
@@ -119,12 +118,6 @@ export async function recoverState(userId, hash) {
   if (recoveredState.application.newMessage) {
     recoveredState.application.newMessage.content = await _recoverApplicationNewMessageContent(userId, hash);
   }
-  // Process folders
-  const mergeFolderItems = (folderTree, explodedFolders) =>
-    folderTree.map(folder =>
-      ({...explodedFolders[folder.folderId], children: mergeFolderItems(folder.children, explodedFolders)}));
-  recoveredState.folders.items = processFolders(
-    mergeFolderItems(recoveredState.folders.items, recoveredState.folders.explodedItems));
   // Recover message cache from other store
   recoveredState.messages.cache = await _recoverMessageCache(userId, hash);
   db.close();
@@ -143,7 +136,7 @@ export async function recoverState(userId, hash) {
 export async function persistState(dispatch, state) {
   // Only persist state if it contains a folder and message cache (don't overwrite previously stored state with this info)
   if (state.application.user.id && state.application.user.hash
-    && state.folders.items.length > 0 && Object.keys(state.messages.cache).length > 0) {
+   && Object.keys(state.messages.cache).length > 0) {
     // Create web-worker
     const worker = new SjclWorker();
     worker.onmessage = async encryptedStateMessage => {
@@ -181,9 +174,6 @@ export async function persistState(dispatch, state) {
       // Delete any application.newMessage.content entry in the database
       await _deleteApplicationNewMessageContent(state.application);
     }
-
-    newState.folders = {...state.folders};
-    newState.folders.items = [...state.folders.items];
 
     newState.login = {...state.login};
 

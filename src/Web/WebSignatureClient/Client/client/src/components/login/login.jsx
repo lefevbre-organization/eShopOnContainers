@@ -7,12 +7,9 @@ import Button from '../buttons/button';
 import LoginSnackbar from './login-snackbar';
 import TextField from '../form/text-field/text-field';
 import Spinner from '../spinner/spinner';
-import UserLexon from "../user-lefebvre/UserLefebvre";
 import mainCss from '../../styles/main.scss';
 import { validateEmail } from '../../services/validation';
 import styles from './login.scss';
-import { PROVIDER } from '../../constants';
-import { resetDefaultAccount } from '../../services/accounts';
 import Cookies from 'js-cookie';
 import { clearUserCredentials, setUserCredentials } from "../../actions/application";
 
