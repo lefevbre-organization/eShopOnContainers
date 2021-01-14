@@ -29,6 +29,7 @@ function App() {
       name: 'NewCalendar',
       description: 'New test calendar',
     });
+    handleListCalendars();
     console.log(events);
   };
 
@@ -42,14 +43,16 @@ function App() {
 
   const handleCreateEvent = async () => {
     const event = await createEvent(calendars[0].href);
+    handleGetEvents();
     console.log(event);
     //setEvents(events);
   };
 
   const handleDeleteEvent = async () => {
     const event = await deleteEvent(
-      calendars[0].href + '/unique-filename-for-this-event'
+      calendars[0].href + '/newEvent'
     );
+    handleGetEvents();
     console.log(event);
     //setEvents(events);
   };
