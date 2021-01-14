@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { selectFolder } from '../../actions/application';
-import { clearSelectedMessage, getCredentials } from '../../services/application';
+import { clearSelectedMessage } from '../../services/application';
 import styles from './email-message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
 import {  
   downloadCertificationDocument,
-  cancelSignature,
   cancelSignature2 
 } from "../../services/api-signaturit";
 import moment from 'moment'
 import EmailList from './certificate-list/email-list';
 import Details from './details/details';
-import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
 
