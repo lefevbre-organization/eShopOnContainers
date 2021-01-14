@@ -15,7 +15,7 @@ Param(
         "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela"
         ),
-    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-39",
+    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-38",
     [parameter(Mandatory=$false)][string]$initialTag="linux-dev",
     [parameter(Mandatory=$false)][string]$execPath=$null,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
