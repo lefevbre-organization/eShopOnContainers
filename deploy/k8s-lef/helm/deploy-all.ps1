@@ -6,7 +6,7 @@ Param(
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][string][ValidateSet('All', 'AllExceptInfra', 'OnlyClients', 'OnlyInfra', 'OnlyServices', 'OnlyGateways' , IgnoreCase=$false)]$deployType="All",
-    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
+    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][bool]$deployClients=$true,
     [parameter(Mandatory=$false)][bool]$deployServices=$true,
@@ -14,7 +14,8 @@ Param(
     [parameter(Mandatory=$false)][bool]$modeTest=$false,
     [parameter(Mandatory=$false)][bool]$modeDebug=$false,
     [parameter(Mandatory=$false)][string[]]$infras=(
-        "rabbitmq",
+        "rabbitmq", 
+        "seq",
         # "consul","vault",
         # "sql-data",
         "nosql-data"
