@@ -237,7 +237,8 @@
       "greaterthanorequal": "Igual o mayor que",
       "lessthan": "Menor que",
       "lessthanorequal": "Igual o menor que"
-    }
+    },
+    "origin": "Lefebvre Firma"
   },
   "confirmationModal": {
     "yes": "Si",
