@@ -6,7 +6,7 @@ Param(
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][string][ValidateSet('All', 'AllExceptInfra', 'OnlyClients', 'OnlyInfra', 'OnlyServices', 'OnlyGateways' , IgnoreCase=$false)]$deployType="All",
-    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
+    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][bool]$deployClients=$true,
     [parameter(Mandatory=$false)][bool]$deployServices=$true,

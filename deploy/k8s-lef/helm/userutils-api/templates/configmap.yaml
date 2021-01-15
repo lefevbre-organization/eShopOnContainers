@@ -30,7 +30,7 @@ data:
   userutils__TokenCaducity: {{ .Values.userutils.token.caducity | quote}}
   userutils__TokenKey: {{ .Values.userutils.token.key | quote}}
   all__Version: {{ .Chart.Version | quote }}
-  urls__HubUrlExternal: http://{{ .Values.svchub.url }}/Herramientas/get
+  urls__HubUrlExternal: https://{{ .Values.svchub.url }}/Herramientas/get
   urls__OnlineUrlExternal: http://{{ .Values.svconline.url }}/webcliente46/ws
   all__OnlineLogin: {{ .Values.svconline.login | quote }}
   all__OnlinePass: {{ .Values.svconline.pass | quote }}
