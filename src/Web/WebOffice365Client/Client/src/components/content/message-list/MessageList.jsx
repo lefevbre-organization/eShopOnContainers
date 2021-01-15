@@ -153,6 +153,7 @@ export class MessageList extends Component {
     }
     return (
         <MessageRow
+            microsoftUser={this.props.microsoftUser}
             data={msg}
             isSent={this.isSentFolder}
             key={msg.id}
@@ -169,7 +170,7 @@ export class MessageList extends Component {
   }
 
   renderMessages() {
-    const { t } = this.props;
+    const { t, microsoftUser } = this.props;
     const _this = this;
     const aux = [...this.props.messagesResult.messages.map( m => ({...m, selected: false }))]
     for(let i = 0; i < this.props.selectedMessages.length;i++) {
@@ -219,6 +220,7 @@ export class MessageList extends Component {
               onStop={this.onStop}
               data={el}
               isSent={this.isSentFolder}
+              microsoftUser={microsoftUser}
               key={el.id}
               onSelectionChange={this.onSelectionChange}
               onClick={()=> {
