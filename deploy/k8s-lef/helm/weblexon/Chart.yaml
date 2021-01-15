@@ -4,6 +4,6 @@ description: Lexon client for mail
 home: https://github.com/lefevbre-organization/eShopOnContainers
 icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
 keywords: ["lexon", "webclient"]
-version: 0.37.2
+version: 0.38
 sources:
   - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/web/WebLexonClient
