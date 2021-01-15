@@ -9,7 +9,7 @@ import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
 import { editMessage } from '../../actions/application';
-import { sendMessage } from '../../services/smtp';
+import { sendMessage, saveDraft } from '../../services/smtp';
 import { prettySize } from '../../services/prettify';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -42,6 +42,7 @@ class MessageEditor extends Component {
     this.headerFormRef = React.createRef();
     this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
+    this.handleDraft = this.saveDraft.bind(this);
     // Global events
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnDragOver = this.onDragOver.bind(this);
@@ -254,6 +255,12 @@ class MessageEditor extends Component {
             {t('messageEditor.send')}
           </button>
           <button
+            className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
+            onClick={this.handleDraft}>
+            {`Borrador`}
+          </button>
+          <button
             className={`${styles['action-button']} ${styles.attach}`}
             onClick={this.onAttachButton}>
             <div
@@ -331,6 +338,23 @@ class MessageEditor extends Component {
         content,
       });
       this.props.close(this.props.application);
+    }
+  }
+
+  saveDraft() {
+    if (this.headerFormRef.current.reportValidity()) {
+      // Get content directly from editor, state content may not contain latest changes
+      const content = this.getEditor().getContent();
+      const { credentials, to, cc, bcc, subject } = this.props;
+      this.props.saveDraft(credentials, {
+        ...this.props.editedMessage,
+        to,
+        cc,
+        bcc,
+        subject,
+        content,
+      });
+      //this.props.close(this.props.application);
     }
   }
   /**
@@ -564,6 +588,18 @@ const mapDispatchToProps = (dispatch) => ({
     { inReplyTo, references, to, cc, bcc, attachments, subject, content }
   ) =>
     sendMessage(dispatch, credentials, {
+      inReplyTo,
+      references,
+      to,
+      cc,
+      bcc,
+      attachments,
+      subject,
+      content,
+    }),
+  saveDraft: (credentials,
+    { inReplyTo, references, to, cc, bcc, attachments, subject, content }) => 
+    saveDraft(dispatch, credentials, {
       inReplyTo,
       references,
       to,

@@ -58,4 +58,13 @@ public class SmtpResource {
         String result = smtpServiceFactory.getObject().sendMessage(request, message);
         return ResponseEntity.ok(result.toString());
     }
+
+    @PostMapping(path= "/draft")
+    public ResponseEntity<String> storeDraft(
+        HttpServletRequest request, @Validated({Message.SmtpSend.class}) @RequestBody Message message)
+        {
+            log.debug("Storing Draft message");
+            String result = smtpServiceFactory.getObject().saveDraft(request, message);
+            return ResponseEntity.ok(result.toString());
+    }
 }

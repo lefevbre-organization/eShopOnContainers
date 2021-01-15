@@ -111,6 +111,7 @@ public class SmtpService {
     private Transport smtpTransport;
     public Credentials originalCredentials;
     public String sentFolderName = "";
+    public String draftFolderName = "";
 
     @Autowired
     public SmtpService(MailSSLSocketFactory mailSSLSocketFactory) {
@@ -164,13 +165,13 @@ public class SmtpService {
     // }
 
     private Boolean getSentMessage(final IMAPFolder folder, final String messageId, final String subject) throws MessagingException{
-        log.debug("getSentMessage");
+        log.info("getSentMessage");
         return (Boolean) folder.doCommand( new IMAPFolder.ProtocolCommand(){
             public Object doCommand(IMAPProtocol p)
             {
-                log.debug("FolderName--> getFullName:" + folder.getFullName() + "--> getName:" + folder.getName());
-                log.debug("Message-Id--> " + messageId);
-                log.debug("Subject--> " + subject);               
+                log.info("FolderName--> getFullName:" + folder.getFullName() + "--> getName:" + folder.getName());
+                log.info("Message-Id--> " + messageId);
+                log.info("Subject--> " + subject);               
 
                 Response[] r = p.command("UID SEARCH HEADER Message-ID " + messageId, null);
                 // Ejemplos de respuesta:
@@ -179,12 +180,12 @@ public class SmtpService {
                 // Encontrado Ionos: * SEARCH, * 52 EXISTS, * 1 RECENT, BQ10 OK UID SEARCH completed
                 // No encontrado: * SEARCH, P11 OK UID SEARCH completed
 
-                log.debug(Arrays.deepToString(r));
+                log.info(Arrays.deepToString(r));
 
                 List<Response> a = Arrays.asList(r);
                 if (a.size() > 0) {
                     for (int i = 0; i < a.size(); i++){
-                        log.debug(i + " " + a.get(i).toString());
+                        log.info(i + " " + a.get(i).toString());
                         String[] values;
                         if (a.get(i).toString().contains("* SEARCH")){
                             values = a.get(i).toString().split(" ");
@@ -261,6 +262,71 @@ public class SmtpService {
                 
                 if  (!getSentMessage(ifolder, msgs[0].getHeader("Message-Id")[0], msgs[0].getHeader("Subject")[0])){
                     log.debug("Copying message to sent folder");
+                    ifolder.appendMessages(msgs);
+                }
+                else {
+                    log.debug("Message automatically stored in sent folder by email provider");
+                }
+
+                ifolder.close(true);
+            }
+            
+            imapStore.close();
+        } catch (Exception e) {
+            //log.info("Error de los buenos");
+            throw new IsotopeException("Problem leaving a copy of the message in Sent Folder", e);
+        }
+    }
+
+    private void copyMsgToDraftFolder(MimeMessage msg){
+        //log.info("ImapStore:" + imapStore.toString());
+        try {
+            log.info("STORE DRAFT MESSAGE BEGINNING" );
+            final Session session;
+            IMAPStore imapStore;
+            Folder folder;
+            IMAPFolder ifolder;
+            
+            session = Session.getInstance(initMailPropertiesImap(originalCredentials, mailSSLSocketFactory), null);
+            imapStore = (IMAPStore) session.getStore(originalCredentials.getImapSsl() ? IMAPS_PROTOCOL : IMAP_PROTOCOL);
+            imapStore.connect(
+                originalCredentials.getServerHost(),
+                originalCredentials.getServerPort(),
+                originalCredentials.getUser(),
+                originalCredentials.getPassword());
+
+            folder = imapStore.getDefaultFolder();
+
+            //Get sentFolderName
+            processFolderElements(folder, false, "");
+            if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
+                Folder[] f = folder.list("%");
+                for (int i = 0; i < f.length; i++)
+                processFolderElements(f[i], true, "    ");
+            }
+
+            log.info("Draft folder Name: " + draftFolderName);
+            if (draftFolderName.isEmpty()){
+                searchDraftFolderByName(folder, true, "");
+            }
+
+            log.info("Draft folder Name: " + draftFolderName);
+
+            //folder = imapStore.getFolder(sentFolderName);
+            ifolder = (IMAPFolder) imapStore.getFolder(draftFolderName);
+
+            if (ifolder == null){
+                log.debug("Error obteniendo el folder");
+            } 
+            else {
+                ifolder.open(Folder.READ_WRITE);
+
+                javax.mail.Message[] msgs = new javax.mail.Message[1];
+                msgs[0] = msg;
+                //msgs[0].setFlag(Flags.Flag.SEEN, true);
+                
+                if  (!getSentMessage(ifolder, msgs[0].getHeader("Message-Id")[0], msgs[0].getHeader("Subject")[0])){
+                    log.debug("Copying message to DRAFT folder");
                     ifolder.appendMessages(msgs);
                 }
                 else {
@@ -394,6 +460,82 @@ public class SmtpService {
         }
     }
 
+    String saveDraft(HttpServletRequest request, Message message) {
+        try {
+            final Credentials credentials = getCredentials();
+            final Charset currentCharset = Charset.defaultCharset();
+            final MimeMessage mimeMessage = new MimeMessage(getSession(credentials));
+            //final Transport smtpTransport = getSmtpTransport(credentials); 
+            
+            mimeMessage.setSentDate(new Date());
+            if (credentials.getUser() != null && credentials.getUser().contains("@")) {
+                mimeMessage.setFrom(credentials.getUser());
+            } else {
+                mimeMessage.setFrom(String.format("%s@%s", credentials.getUser(), credentials.getServerHost()));
+            }
+            for (javax.mail.Message.RecipientType type : new javax.mail.Message.RecipientType[]{
+                    MimeMessage.RecipientType.TO, MimeMessage.RecipientType.CC, MimeMessage.RecipientType.BCC
+            }) {
+                mimeMessage.setRecipients(type, MessageUtils.getRecipientAddresses(message, type));
+            }
+            mimeMessage.setSubject(message.getSubject(), currentCharset.name());
+
+            if (message.getInReplyTo() != null) {
+                mimeMessage.setHeader(HEADER_IN_REPLY_TO, String.join(" ", message.getInReplyTo()));
+            }
+            if (message.getReferences() != null) {
+                mimeMessage.setHeader(HEADER_REFERENCES, String.join(" ", message.getReferences()));
+            }
+
+            final MimeMultipart multipart = new MimeMultipart();
+
+            // Extract data-uri images to inline attachments
+            final String originalContent = message.getContent();
+            String finalContent = originalContent;
+            final Matcher matcher = DATA_URI_IMAGE_PATTERN.matcher(originalContent);
+            while(matcher.find()) {
+                final String cid = UUID.randomUUID().toString().replace("-", "");
+                final String contentType = matcher.group(1);
+                final InternetHeaders headers = new InternetHeaders();
+                headers.addHeader("Content-Type", contentType);
+                headers.addHeader("Content-Transfer-Encoding", "base64");
+                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).getBytes());
+                multipart.addBodyPart(cidImagePart);
+                cidImagePart.setDisposition(MimeBodyPart.INLINE);
+                cidImagePart.setContentID(String.format("<%s>",cid));
+                cidImagePart.setFileName(String.format("%s.%s", cid, contentType.substring(contentType.indexOf('/') + 1)));
+                finalContent = finalContent.replace(matcher.group(), "\"cid:" +cid +"\"");
+            }
+
+            // Include attachments
+            if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+                for (Attachment attachment : message.getAttachments()) {
+                    multipart.addBodyPart(toBodyPart(request, attachment));
+                }
+            }
+
+            // Create body part
+            final MimeBodyPart body = new MimeBodyPart();
+            multipart.addBodyPart(body);
+            body.setContent(new String(String.format("<html><head><style>%1$s</style></head><body><div id='scoped'>"
+                            + "<style type='text/css' scoped>%1$s</style>%2$s</div></body></html>",
+                            STYLES, finalContent).getBytes(), currentCharset),
+                    String.format("%s; charset=\"%s\"", MediaType.TEXT_HTML_VALUE, currentCharset.name()));
+            mimeMessage.setContent(multipart);
+            mimeMessage.saveChanges();
+
+            String[] messageId = mimeMessage.getHeader("Message-Id");
+            
+            copyMsgToDraftFolder(mimeMessage);  
+
+            log.info("Draft Message: " + messageId[0].toString());
+                        
+            return messageId[0];
+        } catch(MessagingException | IOException ex) {
+            throw new IsotopeException("Problem sending message", ex);
+        }
+    }
+
     @PreDestroy
     public void destroy() {
         log.debug("SmtpService destroyed");
@@ -483,37 +625,41 @@ public class SmtpService {
 
     private void processFolderElements(Folder folder, boolean recurse, String tab)
 					throws Exception {
-        // Uncomment this section to debug:
-        // log.info(tab + "Name:      " + folder.getName());
-        // log.info(tab + "Full Name: " + folder.getFullName());
-        // log.info(tab + "URL:       " + folder.getURLName());
-        // if (!folder.isSubscribed())
-        // log.info(tab + "Not Subscribed");
-        // if ((folder.getType() & Folder.HOLDS_MESSAGES) != 0) {
-        //     if (folder.hasNewMessages())
-        //         log.info(tab + "Has New Messages");
-        //     log.info(tab + "Total Messages:  " + folder.getMessageCount());
-        //     log.info(tab + "New Messages:    " + folder.getNewMessageCount());
-        //     log.info(tab + "Unread Messages: " + folder.getUnreadMessageCount());
-        // }
-        // if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0)
-        //     log.info(tab + "Is Directory");
+        // //Uncomment this section to debug:
+        log.info(tab + "Name:      " + folder.getName());
+        log.info(tab + "Full Name: " + folder.getFullName());
+        log.info(tab + "URL:       " + folder.getURLName());
+        if (!folder.isSubscribed())
+        log.info(tab + "Not Subscribed");
+        if ((folder.getType() & Folder.HOLDS_MESSAGES) != 0) {
+            if (folder.hasNewMessages())
+                log.info(tab + "Has New Messages");
+            log.info(tab + "Total Messages:  " + folder.getMessageCount());
+            log.info(tab + "New Messages:    " + folder.getNewMessageCount());
+            log.info(tab + "Unread Messages: " + folder.getUnreadMessageCount());
+        }
+        if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0)
+            log.info(tab + "Is Directory");
 
         if (folder instanceof IMAPFolder) {
             IMAPFolder f = (IMAPFolder)folder;
             String[] attrs = f.getAttributes();
             if (attrs != null && attrs.length > 0) {
-                //log.info(tab + "IMAP Attributes:");
+                log.info(tab + "IMAP Attributes:");
                 for (int i = 0; i < attrs.length; i++){
-                    //log.info(tab + "    " + attrs[i]);
+                    log.info(tab + "    " + attrs[i]);
                     if ("\\Sent".equals(attrs[i])){
-                        //log.info("Localizado el folder de enviados ");
+                        log.info("Localizado el folder de enviados ");
                         sentFolderName = f.getFullName();
+                    }
+                    if ("\\Drafts".equals(attrs[i])){
+                        log.info("Localizado el folder de borradores");
+                        draftFolderName = f.getFullName();
                     }
                 }
             }
         }
-        //log.info("***");
+        log.info("***");
         if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
             if (recurse) {
             Folder[] f = folder.list();
@@ -526,11 +672,11 @@ public class SmtpService {
     private void searchSentFolderByName(Folder folder, boolean recurse, String tab)
 					throws Exception {
         // Uncomment this section to debug:
-        // log.info(tab + "Name:      " + folder.getName());
-        // log.info(tab + "Full Name: " + folder.getFullName());
-        // log.info(tab + "URL:       " + folder.getURLName());
-        // log.info(tab + "Name to lowerCase: " + folder.getFullName().toLowerCase());
-        // log.info(tab + (folder.getFullName().equalsIgnoreCase("sent")));
+        log.info(tab + "Name:      " + folder.getName());
+        log.info(tab + "Full Name: " + folder.getFullName());
+        log.info(tab + "URL:       " + folder.getURLName());
+        log.info(tab + "Name to lowerCase: " + folder.getFullName().toLowerCase());
+        log.info(tab + (folder.getFullName().equalsIgnoreCase("sent")));
 
         if (folder.getFullName().equalsIgnoreCase("sent") || 
             folder.getFullName().equalsIgnoreCase("sent items") || 
@@ -549,6 +695,38 @@ public class SmtpService {
                             break;
                         }
                         searchSentFolderByName(f[i], recurse, tab + "    ");
+                    }
+                }
+            }
+        }
+    }
+
+    private void searchDraftFolderByName(Folder folder, boolean recurse, String tab)
+					throws Exception {
+        // Uncomment this section to debug:
+        log.info(tab + "Name:      " + folder.getName());
+        log.info(tab + "Full Name: " + folder.getFullName());
+        log.info(tab + "URL:       " + folder.getURLName());
+        log.info(tab + "Name to lowerCase: " + folder.getFullName().toLowerCase());
+        log.info(tab + (folder.getFullName().equalsIgnoreCase("sent")));
+
+        if (folder.getFullName().equalsIgnoreCase("draft") || 
+            folder.getFullName().equalsIgnoreCase("drafts") || 
+            folder.getFullName().equalsIgnoreCase("borrador") || 
+            folder.getFullName().equalsIgnoreCase("borradores")){
+                log.info("folderFound");
+                draftFolderName = folder.getFullName();
+            }
+
+        if (draftFolderName.isEmpty()){
+            if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
+                if (recurse) {
+                    Folder[] f = folder.list();
+                    for (int i = 0; i < f.length; i++){
+                        if (!draftFolderName.isEmpty()){
+                            break;
+                        }
+                        searchDraftFolderByName(f[i], recurse, tab + "    ");
                     }
                 }
             }
