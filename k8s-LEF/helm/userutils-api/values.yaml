@@ -52,7 +52,7 @@ env:
     - name: DefaultEnvironment
       value: PRE
     - name: MinihubUrl
-      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
+      value: 'https://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
       value: 'https://herculesppd.lefebvre.es/webclient46/ws'
     - name: LoginUrl
@@ -72,7 +72,7 @@ env:
     - name: ByPassUrls__1__NameService
       value: Signature-Direct
     - name: ByPassUrls__1__UrlByPass
-      value: 'https://lexbox-test-websignature.lefebvre.es/access/{tokenSignature}'
+      value: 'https://firma.lefebvre.es/access/{tokenSignature}'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin
