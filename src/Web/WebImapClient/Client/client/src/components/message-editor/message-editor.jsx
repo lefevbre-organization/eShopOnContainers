@@ -35,6 +35,9 @@ class MessageEditor extends Component {
       messageNotification: '',
       errorNotification: '',
       showNotification: false,
+      draftTime: '',
+      draftId: '',
+      isDraftEdit: false
     };
 
     this.fileInput = null;
@@ -146,6 +149,8 @@ class MessageEditor extends Component {
       showNotification,
       messageNotification,
       errorNotification,
+      draftId,
+      draftTime
     } = this.state;
 
     return (
@@ -254,12 +259,9 @@ class MessageEditor extends Component {
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
-          <button
-            className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
-            ${styles['action-button']} ${styles.send}`}
-            onClick={this.handleDraft}>
-            {`Borrador`}
-          </button>
+          {draftId !== '' ? <button className={`${styles['discard-button']} ml-3`} onClick={this.handleDraft}>
+            {t('messageEditor.discard')}
+          </button> : null}
           <button
             className={`${styles['action-button']} ${styles.attach}`}
             onClick={this.onAttachButton}>
@@ -279,6 +281,14 @@ class MessageEditor extends Component {
               multiple='true'
             />
           </button>
+          <button
+            className={`ml-3 ${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
+            disabled={to.length + cc.length + bcc.length === 0}
+            onClick={this.handleDraft}>
+             {t('messageEditor.draft')}
+          </button>
+          { draftTime != '' ? <span className={styles['draft-time']}>{t('messageEditor.draft-save')} {draftTime}</span> : null}
           <button
             className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
             onClick={() => this.removeMessageEditor(application)}>
@@ -341,11 +351,25 @@ class MessageEditor extends Component {
     }
   }
 
+  getTimeDraft() {
+    const date = new Date();
+    const time = date.toLocaleString(
+      navigator.language, 
+      {
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: "2-digit"
+      });
+    const hour = time.slice(0, 2);
+    return hour >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
+  }
+  
   saveDraft() {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
       const content = this.getEditor().getContent();
       const { credentials, to, cc, bcc, subject } = this.props;
+      const fullTime = this.getTimeDraft();
       this.props.saveDraft(credentials, {
         ...this.props.editedMessage,
         to,
