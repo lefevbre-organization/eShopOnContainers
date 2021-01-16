@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import i18n from 'i18next';
 import HeaderList from './header-list';
 import FooterList from './footer-list';
-import {downloadAttachments2} from "../../../services/api-signaturit";
 
 const EmailList = (props) => {
 

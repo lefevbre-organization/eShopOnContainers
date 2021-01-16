@@ -1,11 +1,16 @@
 import React from 'react';
-import PropTypes from "prop-types";
 import i18n from 'i18next';
 import moment from 'moment'
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 
 const Details = (props) => {
-  console.log('Details for date', moment(props.detail.created_at).locale(navigator.language).format('L LTS'));
+  const content = (props.service === 'sms' 
+    ? (props.detail.data.find(x => x.key === "body")) 
+    ? props.detail.data.find(x => x.key === "body").value  
+    : "Sin asunto"
+    : (props.detail.data.find(x => x.key === "subject")) 
+    ? props.detail.data.find(x => x.key === "subject").value 
+    : "Sin asunto");
  return (
     <table className={props.styles['resumen-firma']}>
         <tbody>
@@ -21,7 +26,7 @@ const Details = (props) => {
           </tr>            
           <tr>
           {/* props.detail.certificates[0].file.name  */}
-              <td >
+              <td>
               {
                props.service == 'signature' ?  
                props.detail.documents[0].file.name
@@ -39,22 +44,15 @@ const Details = (props) => {
               
                 : ''
               }</td>
-              <td>
+              <td 
+                className={props.styles['body-content']}  
+                data-toggle="tooltip" 
+                title={content}>
                 {
-                  props.service === 'sms'
-                    ? (props.detail.data.find(x => x.key === "body"))
-                        ? props.detail.data.find(x => x.key === "body").value 
-                        : "Sin asunto"
-                    : (props.detail.data.find(x => x.key === "subject")) 
-                      ? props.detail.data.find(x => x.key === "subject").value 
-                      : "Sin asunto"
+                  content
                 } 
               </td>
               <td>
-                  {/* <ul className={props.styles['tooltip-firmantes']}>
-                      <li>Maria cruces <span className={props.styles.email}>margia-cruces@gmail.com</span></li>
-                      <li>Maria cruces <span className={props.styles.email}>m.lopez@gsel.com</span></li>
-                  </ul> */}
                   <span>
                   <DropDownButtonComponent cssClass={`${props.styles['bola-firmantes']} ${props.styles[props.status_style]}`} items={props.getSigners(props.detail)}>{props.getSigners(props.detail).length}</DropDownButtonComponent>
                   </span>

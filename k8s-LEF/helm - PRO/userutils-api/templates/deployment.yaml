@@ -29,8 +29,8 @@ spec:
       hostAliases:
       - ip: "192.168.131.44"
         hostnames:
-        - "led-servicecomtools-ntt.eu.els.local"
-        - "led-servicehub-ntt.eu.els.local"
+        - "led-servicecomtools_ntt.eu.els.local"
+        - "led-servicehub_ntt.eu.els.local"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"

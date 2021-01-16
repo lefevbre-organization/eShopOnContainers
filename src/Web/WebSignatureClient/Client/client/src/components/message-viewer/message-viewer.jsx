@@ -3,26 +3,18 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { selectFolder } from '../../actions/application';
 import moment from 'moment'
-import { clearSelectedMessage, getCredentials } from '../../services/application';
-import { getSelectedFolder } from '../../selectors/folders';
-import mainCss from '../../styles/main.scss';
+import { clearSelectedMessage } from '../../services/application';
 import styles from './message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
 import { 
-  downloadSignedDocument,  
   downloadSignedDocument2, 
-  downloadTrailDocument, 
   downloadTrailDocument2,
-  downloadAttachments2,
-  sendReminder, 
   sendReminder2, 
-  cancelSignature,
    cancelSignature2 
 } from "../../services/api-signaturit";
 import SignatureList from './signature-list/signature-list';
 import Details from './details/details';
-import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
 
@@ -112,16 +104,14 @@ export class MessageViewer extends Component {
     const eventos = signer.events;
     let evDate = '';
     let res = '-';
-    eventos.some( (e) => {
-      if (e.type === ev){
+    eventos.forEach( (e, index) => {
+      if (e.type === ev && ev !== 'email_processed'){
+        evDate = e.created_at
+      } else if (ev === 'email_processed' && index === 0 ) {
         evDate = e.created_at
       }
-    })
-    if (evDate !==''){
-      // new Date(evDate).toLocaleString(navigator.language, {
-      //   year: 'numeric', month: '2-digit', day: '2-digit',
-      //   hour: '2-digit', minute: '2-digit', second: '2-digit'
-      // })
+    });
+    if (evDate !== ''){
       res = moment(evDate).locale(navigator.language).format('L LTS');
     }
     return res;
@@ -245,7 +235,6 @@ export class MessageViewer extends Component {
 
 
   render() {
-    console.log('Entra en el message viewer');
     const signature = this.props.selectedSignature;
     let status;
     let status_style;
@@ -468,7 +457,6 @@ MessageViewer.defaultProps = {
 const mapStateToProps = state => {
   return {
     refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
-    currentFolder: getSelectedFolder(state) || {},
     selectedMessage: state.application.selectedMessage,
     selectedMessages: state.messages.selectedMessages,
     lefebvre: state.lefebvre,

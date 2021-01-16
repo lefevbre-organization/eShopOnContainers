@@ -431,7 +431,9 @@ const getDataEmail = ({ headers, body, attachments }) => {
     }
   }
 
-  message.addAlternative(body);
+  if(body !== '') {
+    message.addAlternative(body);
+  }
 
   for(let i = 0; i < attachments.length; i++) {
     message.addAttachment(attachments[i]);

@@ -21,12 +21,6 @@ class Routes extends Component {
             <Router basename="/" history={history}>
                 <Switch>
                     <Route exact path="/access/:token" component={UserLefebvre} />
-                    <Route exact path="/user/:idUser/folder/:idFolder/message/:idMessage/casefile/:idCaseFile/bbdd/:bbdd" component={UserLefebvre} />
-                    <Route exact path="/user/:idUser/folder/:idFolder/message/:idMessage/bbdd/:bbdd" component={UserLefebvre} />
-                    <Route exact path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd" component={UserLefebvre} />
-                    <Route exact path="/user/:idUser/contacts/:mailContacts/bbdd/:bbdd" component={UserLefebvre} />
-                    <Route exact path="/user/:idUser/bbdd/:bbdd" component={UserLefebvre} />
-                    <Route exact path="/user/:idUser" component={UserLefebvre} />
                     {/* <Route exact path="/login" render={() => <Login />} /> */}
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/unauthorized" component={Unauthorized} />

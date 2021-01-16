@@ -317,6 +317,11 @@ export class ComposeMessage extends PureComponent {
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
+            
+            const content =  this.props.emailMessageResult.body === 'null'  
+            ? 
+            '' 
+            : this.props.emailMessageResult.body; 
 
             const attachments = this.props.emailMessageResult.attach;
 
@@ -354,11 +359,11 @@ export class ComposeMessage extends PureComponent {
             if(attachments) {
               this.getAttachById(messageId, attachments);
             }
-         
+            
             this.setState({
               subject: subject.value, 
-              defaultContent: this.props.emailMessageResult.body,
-              content: this.props.emailMessageResult.body,
+              defaultContent: content,
+              content: content,
               draftId: data.result.drafts[0].id,
               isDraftEdit: true
             });
@@ -441,6 +446,8 @@ export class ComposeMessage extends PureComponent {
 
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+
+    debugger
     this.props.setMailContacts(null);
     this.props.updateComposerData({});
 
@@ -641,7 +648,7 @@ export class ComposeMessage extends PureComponent {
       setTimeout(() => {
         createDraft({
           headers,
-          body: this.state.content,
+          body: this.state.content ? this.state.content : 'null',
           attachments: Fileattached,
           draftId: this.state.draftId
         }).then((draft) => {

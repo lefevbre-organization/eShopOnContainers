@@ -431,7 +431,7 @@ export class ComposeMessage extends PureComponent {
         );
       } else if(findSelected) {
         this.props.history.push('/' + findSelected.id.toLowerCase());
-      } else if(this.state.draftId) {
+      } else if(this.state.draftId && findByDraftId) {
         this.props.history.push('/' + findByDraftId.id.toLowerCase());
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
@@ -587,10 +587,12 @@ export class ComposeMessage extends PureComponent {
   }
 
   handleChange(value, delta, source, editor) {
-    if(value || this.state.content) {
+    if(value) {
       this.setState({content: value}, () => {
         this.props.updateComposerData({...this.state, defaultContent: this.state.content});
       });
+    } else if(this.state.content) {
+      this.props.updateComposerData({...this.state, defaultContent: this.state.content});
     }
   }
 
