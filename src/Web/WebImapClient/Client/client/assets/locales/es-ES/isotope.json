@@ -110,8 +110,11 @@
   },
   "messageSnackbar": {
     "sendingMessage": "Envíando mensaje ({{progress}}%)",
+    "sendingDraft": "Guardando borrador ({{progress}}%)",
     "messageSent": "Mensaje enviado",
+    "draftSent": "Borrador guardado",
     "messageError": "Error enviando mensaje",
+    "draftError": "Error guardando borrador",
     "retry": "Reintentar"
   },
   "createFolderDialog": {

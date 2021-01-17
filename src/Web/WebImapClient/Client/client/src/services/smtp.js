@@ -6,8 +6,12 @@ import {
   outboxMessageProcessed,
   outboxSendMessage as sendMessageAction,
   outboxUpdateProgress,
+  draftUpdateProgress,
+  draftClean,
   outboxSetSent,
+  draftSetSent,
   outboxSetError,
+  draftSetError,
 } from '../actions/application';
 
 const SNACKBAR_DURATION = 4000;
@@ -67,6 +71,7 @@ export function sendMessage(
       } else {
         dispatch(outboxSetSent(true, '', false));
       }
+      dispatch(draftClean());
       setTimeout(() => dispatch(outboxMessageProcessed()), SNACKBAR_DURATION);
     } else {
       errorHandler();
@@ -120,25 +125,24 @@ export function saveDraft(
   );
   const upload = postMessageRequest.upload;
   upload.onprogress = (e) =>
-    dispatch(outboxUpdateProgress(round(e.loaded / e.total, 2)));
+    dispatch(draftUpdateProgress(round(e.loaded / e.total, 2)));
   const errorHandler = () => {
-    dispatch(outboxSetError(true));
+    dispatch(draftSetError(true));
   };
   postMessageRequest.onload = (event) => {
     if (isSuccessful(event.target.status)) {
       if (event && event.target && event.target.response) {
         //if (event.target.hasOwnProperty('response')){
-        dispatch(outboxSetSent(true, event.target.response, false));
+        dispatch(draftSetSent(true, event.target.response, false));
       } else {
-        dispatch(outboxSetSent(true, '', false));
+        dispatch(draftSetSent(true, '', false));
       }
-      setTimeout(() => dispatch(outboxMessageProcessed()), SNACKBAR_DURATION);
     } else {
       errorHandler();
     }
   };
   postMessageRequest.onerror = errorHandler;
-  dispatch(sendMessageAction(message));
+  // dispatch(sendMessageAction(message));
   postMessageRequest.send(JSON.stringify(message));
 }
 

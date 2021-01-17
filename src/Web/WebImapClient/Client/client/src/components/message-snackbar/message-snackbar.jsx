@@ -24,16 +24,22 @@ export class MessageSnackbar extends Component {
     } else {
       message = t('messageSnackbar.sendingMessage', {progress: outbox.progress * 100});
     }
+
     return (
       <Snackbar
-        show={outbox !== null} alignStart={true} message={message}
-        buttonAction={retry} buttonLabel={buttonLabel}/>
+        show={outbox !== null}
+        alignStart={true} 
+        message={message}
+        buttonAction={retry} 
+        buttonLabel={buttonLabel}
+      />
     );
   }
 }
 
 const mapStateToProps = state => ({
-  outbox: state.application.outbox
+  outbox: state.application.outbox,
+  draft: state.application.draft
 });
 
 const mapDispatchToProps = dispatch => ({

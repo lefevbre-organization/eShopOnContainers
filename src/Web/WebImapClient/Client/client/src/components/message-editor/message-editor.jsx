@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage } from '../../actions/application';
+import { editMessage, draftClean } from '../../actions/application';
 import { sendMessage, saveDraft } from '../../services/smtp';
 import { prettySize } from '../../services/prettify';
 import { getAddresses } from '../../services/message-addresses';
@@ -36,7 +36,6 @@ class MessageEditor extends Component {
       errorNotification: '',
       showNotification: false,
       draftTime: '',
-      draftId: '',
       isDraftEdit: false
     };
 
@@ -115,8 +114,8 @@ class MessageEditor extends Component {
   }
 
   removeMessageEditor(aplication) {
-    const { close, lexon } = this.props;
-
+    const { close, lexon, draftClean } = this.props;
+   
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
       window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
       this.props.setCaseFile({
@@ -129,7 +128,7 @@ class MessageEditor extends Component {
     if (lexon.mailContacts) {
       this.props.setMailContacts(null);
     }
-
+    draftClean();
     close(aplication);
   }
 
@@ -138,6 +137,7 @@ class MessageEditor extends Component {
       t,
       className,
       application,
+      draft,
       to,
       cc,
       bcc,
@@ -152,7 +152,7 @@ class MessageEditor extends Component {
       draftId,
       draftTime
     } = this.state;
-
+    console.log(application.draft);
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -259,9 +259,11 @@ class MessageEditor extends Component {
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
-          {draftId !== '' ? <button className={`${styles['discard-button']} ml-3`} onClick={this.handleDraft}>
+          {(draft !== null && draft.idMessage) ? 
+          <button className={`${styles['discard-button']} ml-3`} onClick={this.handleDraft}>
             {t('messageEditor.discard')}
-          </button> : null}
+          </button> 
+          : null}
           <button
             className={`${styles['action-button']} ${styles.attach}`}
             onClick={this.onAttachButton}>
@@ -288,7 +290,11 @@ class MessageEditor extends Component {
             onClick={this.handleDraft}>
              {t('messageEditor.draft')}
           </button>
-          { draftTime != '' ? <span className={styles['draft-time']}>{t('messageEditor.draft-save')} {draftTime}</span> : null}
+          { (draft !== null && draft.idMessage) ? 
+          <span className={`ml-3 ${styles['draft-time']}`}>{t('messageEditor.draft-save')} {
+            draftTime}
+          </span> 
+          : null}
           <button
             className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
             onClick={() => this.removeMessageEditor(application)}>
@@ -378,6 +384,7 @@ class MessageEditor extends Component {
         subject,
         content,
       });
+      this.setState({draftTime: fullTime});
       //this.props.close(this.props.application);
     }
   }
@@ -584,6 +591,7 @@ MessageEditor.defaultProps = {
 
 const mapStateToProps = (state) => ({
   application: state.application,
+  draft: state.application.draft,
   credentials: getCredentials(state),
   editedMessage: state.application.newMessage,
   to: state.application.newMessage.to,
@@ -606,6 +614,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   editMessage: (message) => {
     dispatch(editMessage(message));
+  },
+  draftClean: () => {
+    dispatch(draftClean());
   },
   sendMessage: (
     credentials,
