@@ -126,6 +126,11 @@ export class ConnectingEmailsStep1 extends React.Component {
         </div>
         <style jsx>
           {`
+            .file-list-wrapper {
+              overflow-y: auto;
+              max-height: 290px;
+            }
+            
             .step1-container {
               margin: 50px;
             }

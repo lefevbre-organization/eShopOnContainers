@@ -14,6 +14,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import {ConnectingEmailsStep1b} from "./step1b";
 import dbStore from "../../services/dbstore";
 const base64js = require('base64-js');
+const q = require('q-encoding');
+const utf8 = require('utf8');
 
 class ModalConnectingEmails extends Component {
   constructor() {
@@ -41,7 +43,6 @@ class ModalConnectingEmails extends Component {
   }
 
   componentDidMount() {
-
     const messages = [...this.props.selectedMessages];
     this.setState({ messages });
   }
@@ -52,6 +53,9 @@ class ModalConnectingEmails extends Component {
       JSON.stringify(this.props.selectedMessages)
     ) {
       const messages = [...this.props.selectedMessages];
+      for(let i = 0; i < messages.length; i++) {
+        messages[i].attachments = messages[i].attachments.map(a => ({ ...a, name: convertToUtf8(a.name) }) );
+      }
       this.setState({ messages });
     }
   }
@@ -1137,3 +1141,18 @@ export default connect(
 )(ModalConnectingEmails);
 
 
+function convertToUtf8(name) {
+  if(name.toLowerCase().startsWith('=?iso-8859-1')) {
+    const newName = utf8.decode(q.decode(name)).replace("=?iso-8859-1?Q?", "").replace("?=", "");
+    return newName;
+  } else if(name.toLowerCase().startsWith('=?ISO-8859-1')) {
+    const newName = utf8.decode(q.decode(name)).replace("=?ISO-8859-1?Q?", "").replace("?=", "");
+    return newName;
+  } else if(name.toLowerCase().startsWith('=?utf-8')) {
+    const newName = utf8.decode(q.decode(name)).replace("=?UTF-8?Q?", "").replace("?=", "");
+    return newName;
+  }
+  else {
+    return name;
+  }
+}
