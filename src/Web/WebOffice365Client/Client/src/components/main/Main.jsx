@@ -633,6 +633,7 @@ export class Main extends Component {
           return (
             <MessageList
               {...props}
+              microsoftUser={this.props.User}
               sideBarCollapsed={leftSideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
               getLabelMessages={this.getLabelMessages}

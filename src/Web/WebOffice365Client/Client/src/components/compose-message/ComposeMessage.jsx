@@ -587,7 +587,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   handleChange(value, delta, source, editor) {
-    debugger
     if(value) {
       this.setState({content: value}, () => {
         this.props.updateComposerData({...this.state, defaultContent: this.state.content});
@@ -688,7 +687,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   _sendEmail() {
-    debugger
     const { isPriority, readConfirmation } = this.state;
     const validTo = getValidEmails(this.state.to);
 
@@ -710,7 +708,6 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    debugger
     const email = Object.assign({}, this.state, {
       subject: this.state.subject,
       importance: isPriority ? 'High' : 'Normal',

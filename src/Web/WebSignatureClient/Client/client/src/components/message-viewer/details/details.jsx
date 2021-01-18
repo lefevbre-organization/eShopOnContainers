@@ -4,7 +4,13 @@ import moment from 'moment'
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 
 const Details = (props) => {
-  console.log('Details for date', moment(props.detail.created_at).locale(navigator.language).format('L LTS'));
+  const content = (props.service === 'sms' 
+    ? (props.detail.data.find(x => x.key === "body")) 
+    ? props.detail.data.find(x => x.key === "body").value  
+    : "Sin asunto"
+    : (props.detail.data.find(x => x.key === "subject")) 
+    ? props.detail.data.find(x => x.key === "subject").value 
+    : "Sin asunto");
  return (
     <table className={props.styles['resumen-firma']}>
         <tbody>
@@ -38,15 +44,12 @@ const Details = (props) => {
               
                 : ''
               }</td>
-              <td>
+              <td 
+                className={props.styles['body-content']}  
+                data-toggle="tooltip" 
+                title={content}>
                 {
-                  props.service === 'sms'
-                    ? (props.detail.data.find(x => x.key === "body"))
-                        ? props.detail.data.find(x => x.key === "body").value 
-                        : "Sin asunto"
-                    : (props.detail.data.find(x => x.key === "subject")) 
-                      ? props.detail.data.find(x => x.key === "subject").value 
-                      : "Sin asunto"
+                  content
                 } 
               </td>
               <td>
