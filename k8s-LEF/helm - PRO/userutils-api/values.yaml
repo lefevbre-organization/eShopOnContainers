@@ -52,7 +52,7 @@ env:
     - name: DefaultEnvironment
       value: PRO
     - name: MinihubUrl
-      value: 'https://led-servicehub_ntt.eu.els.local/Herramientas/Get'
+      value: 'http://led-servicehub_ntt.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
       value: 'https://online.elderecho.com/ws'
     - name: LoginUrl
