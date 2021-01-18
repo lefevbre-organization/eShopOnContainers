@@ -52,7 +52,7 @@ env:
     - name: DefaultEnvironment
       value: PRE
     - name: MinihubUrl
-      value: 'https://led-pre-servicehub.eu.els.local/Herramientas/Get'
+      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
       value: 'https://herculesppd.lefebvre.es/webclient46/ws'
     - name: LoginUrl
