@@ -27,7 +27,7 @@ spec:
       - name: {{ .Values.inf.registry.secretName }}
       {{- end }}
       hostAliases:
-      - ip: "10.38.6.5"
+      - ip: "10.38.6.248"
         hostnames:
         - "led-pre-servicecomtools.eu.els.local"
         - "led-pre-servicehub.eu.els.local"
