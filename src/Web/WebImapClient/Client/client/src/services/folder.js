@@ -163,28 +163,35 @@ export function explodeFolders(folderTree, explodedFolders = {}) {
  * @returns {Promise<*>}
  */
 export async function getFolders(dispatch, credentials, loadChildren) {
-  abortFetch(abortControllerWrappers.getFoldersAbortController);
-  abortControllerWrappers.getFoldersAbortController = new AbortController();
-  const signal = abortControllerWrappers.getFoldersAbortController.signal;
+  try {
 
-  const url = new URL(URLS.FOLDERS, window.location.origin);
-  if (loadChildren) {
-    url.search = new URLSearchParams({loadChildren: true}).toString();
+    abortFetch(abortControllerWrappers.getFoldersAbortController);
+    abortControllerWrappers.getFoldersAbortController = new AbortController();
+    const signal = abortControllerWrappers.getFoldersAbortController.signal;
+    const url = new URL(URLS.FOLDERS, window.location.origin);
+    if (loadChildren) {
+      url.search = new URLSearchParams({loadChildren: true}).toString();
+    }
+    dispatch(backendRequest());
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: credentialsHeaders(credentials),
+      signal: signal
+    });
+    await refreshCredentials(dispatch, response);
+    const folders = await toJson(response);
+    const foldersAction = setFolders(folders);
+    const inbox = Object.values(foldersAction.payload).find(f => f.type === FolderTypes.INBOX);
+    if (inbox && inbox.newMessageCount > 0) {
+      notifyNewMail();
+    }
+    return dispatch(foldersAction);
+  } catch(exception) {
+    if(exception.message === 'Unauthorized') {
+      //window.location.href = "/login";
+      return;
+    }
   }
-  dispatch(backendRequest());
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: credentialsHeaders(credentials),
-    signal: signal
-  });
-  await refreshCredentials(dispatch, response);
-  const folders = await toJson(response);
-  const foldersAction = setFolders(folders);
-  const inbox = Object.values(foldersAction.payload).find(f => f.type === FolderTypes.INBOX);
-  if (inbox && inbox.newMessageCount > 0) {
-    notifyNewMail();
-  }
-  return dispatch(foldersAction);
 }
 
 export function renameFolder(dispatch, user, folderToRename, newName) {

@@ -321,7 +321,7 @@ public class ImapService {
             imapMessage.writeTo(buffer);
             byte[] bytes = buffer.toByteArray();
             String encodedEmail = Base64.encodeBase64URLSafeString(bytes);
-            
+
             log.debug("Mensaje sin codificar: " + buffer.toString());
             log.debug("Mensaje codificado Base64URL: " + encodedEmail);
 
