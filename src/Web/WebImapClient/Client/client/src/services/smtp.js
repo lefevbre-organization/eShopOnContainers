@@ -10,6 +10,8 @@ import {
   outboxSetError,
 } from '../actions/application';
 
+import { clearUserCredentials } from '../actions/application';
+
 const SNACKBAR_DURATION = 4000;
 
 export function sendMessage(
@@ -69,6 +71,10 @@ export function sendMessage(
       }
       setTimeout(() => dispatch(outboxMessageProcessed()), SNACKBAR_DURATION);
     } else {
+      if(event.target.responseText.startsWith("Unauthorized")) {
+        dispatch(clearUserCredentials());
+        console.log("Clearing user credentials")
+      }
       errorHandler();
     }
   };

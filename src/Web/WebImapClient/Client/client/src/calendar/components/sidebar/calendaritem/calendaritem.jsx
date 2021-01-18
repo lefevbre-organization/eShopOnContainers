@@ -72,7 +72,7 @@ export class CalendarItem extends PureComponent {
 
           </div>
 
-          <style jsx>{`
+          <style>{`
                  .e-checkbox-wrapper.${this.state.css} .e-frame.e-check,
                     .e-checkbox-wrapper.${this.state.css} .e-checkbox:focus + .e-frame.e-check { /* csslint allow: adjoining-classes */
                       background-color: ${this.props.color} !important;

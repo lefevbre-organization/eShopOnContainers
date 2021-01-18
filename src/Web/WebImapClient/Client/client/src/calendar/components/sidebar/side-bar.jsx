@@ -168,12 +168,12 @@ class SideBar extends Component {
 
                     return (
                         <CalendarItem
-                            key={el.ctag + "_label"}
+                            key={el.href + "_label"}
                             onClick={this.navigateToList}
                             name={el.name}
-                            id={el.ctag}
+                            id={el.href}
                             color={color}
-                            accessRole={el.accessRole}
+                            accessRole={'owner'}
                             iconProps={iconProps}
                             selected={el.selected}
                             primary={true}
