@@ -72,7 +72,7 @@ env:
     - name: ByPassUrls__1__NameService
       value: Signature-Direct
     - name: ByPassUrls__1__UrlByPass
-      value: 'https://firma.lefebvre.es/access/{tokenSignature}'
+      value: 'https://lexbox-test-websignature.lefebvre.es/access/{tokenSignature}'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin
