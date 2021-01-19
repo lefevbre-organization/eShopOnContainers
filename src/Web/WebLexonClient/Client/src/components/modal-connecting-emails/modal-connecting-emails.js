@@ -234,7 +234,8 @@ class ModalConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < messages.length; i++) {
-          const raw = Base64.encode(messages[i].raw, false);
+          const msg = await  dbStore.getMessage(messages[i].id);
+          const raw = Base64.encode(msg.raw, false);
 
           const subject = messages[i].subject;
 
@@ -269,7 +270,7 @@ class ModalConnectingEmails extends Component {
                 continue;
               }
 
-              let rawAttach = base64js.fromByteArray(msg.attachments[j].Content);
+              let rawAttach = msg.attachments[j].Content;
               try {
                 const data = await uploadFile(
                   step1Data.actuation === false
@@ -1157,7 +1158,6 @@ function convertToUtf8(name) {
   try {
     newName = utf8.decode(newName);
   } catch(err) {
-    debugger
     console.log(err);
   }
 

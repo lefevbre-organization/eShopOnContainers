@@ -444,7 +444,6 @@ export class ComposeMessage extends PureComponent {
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
-    debugger
     this.props.setMailContacts(null);
     this.props.updateComposerData({});
 

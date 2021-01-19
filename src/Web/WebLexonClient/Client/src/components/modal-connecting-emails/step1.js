@@ -215,7 +215,8 @@ const MessageWithAttachments = ({msg, onChange}) => {
                     <span>{an}</span>
                   </li>
               ) : null;
-            })}
+            })
+            }
           </ul>
 
           <style jsx>{`
