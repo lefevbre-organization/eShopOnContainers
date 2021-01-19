@@ -5,9 +5,10 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebGoogleClient/Client .
-RUN npm install
-RUN npm run build
+COPY ["src/Web/WebGoogleClient/Client/package.json", "src/Web/WebGoogleClient/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--production", "--silent"]
+COPY ["src/Web/WebGoogleClient/Client/", "./"]
+RUN ["npm", "run", "build", "--silent"]
 # RUN ls -lha /web
 # RUN ls -lha /web/build
 

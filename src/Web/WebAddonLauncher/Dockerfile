@@ -5,13 +5,10 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-# COPY src/Web/WebAddonLauncher/Client .
 COPY ["src/Web/WebAddonLauncher/Client/package.json", "src/Web/WebAddonLauncher/Client/package-lock.json", "./"]
-#RUN ["npm", "install", "--production"]
 RUN ["npm", "install", "--production", "--silent"]
 #COPY ["src/Web/WebAddonLauncher/Client/src/", "src/Web/WebAddonLauncher/Client/public/", "src/Web/WebAddonLauncher/Client/scripts/", "src/Web/WebAddonLauncher/Client/config/", "./"]
 COPY ["src/Web/WebAddonLauncher/Client", "./"]
-#RUN ["npm", "run", "build"]
 RUN ["npm", "run", "build", "--silent"]
 # RUN ls -lha /web
 # RUN ls -lha /web/build

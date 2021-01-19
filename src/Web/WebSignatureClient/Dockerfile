@@ -5,12 +5,12 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebSignatureClient/Client/client .
-RUN npm install
-RUN npm run build
-#RUN echo $(ls -1 /web/build)
- #RUN ls -lha /web
- #RUN ls -lha /web/build
+COPY ["src/Web/WebSignatureClient/Client/package.json", "src/Web/WebSignatureClient/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--production", "--silent"]
+COPY ["src/Web/WebSignatureClient/Client/", "./"]
+RUN ["npm", "run", "build", "--silent"]
+# RUN ls -lha /web
+# RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src

@@ -5,9 +5,10 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebOffice365Client/Client .
-RUN npm install
-RUN npm run build
+COPY ["src/Web/WebOffice365Client/Client/package.json", "src/Web/WebOffice365Client/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--production", "--silent"]
+COPY ["src/Web/WebOffice365Client/Client/", "./"]
+RUN ["npm", "run", "build", "--silent"]
 # RUN ls -lha /web
 # RUN ls -lha /web/build
 

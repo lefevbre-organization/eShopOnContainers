@@ -5,10 +5,11 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/Client .
-RUN npm install
-RUN npm run build
-RUN ls -lha /web
+COPY ["src/Addon/Lexon/Office365/WebOffice365AddonCentinela/Client/package.json", "src/Lexon/Office365/WebOffice365AddonCentinela/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--production", "--silent"]
+COPY ["src/Addon/Lexon/Office365/WebOffice365AddonCentinela/Client/", "./"]
+RUN ["npm", "run", "build", "--silent"]
+# RUN ls -lha /web
 # RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
