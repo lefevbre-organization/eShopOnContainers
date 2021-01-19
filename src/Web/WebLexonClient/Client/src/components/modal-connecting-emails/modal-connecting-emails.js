@@ -1142,17 +1142,24 @@ export default connect(
 
 
 function convertToUtf8(name) {
-  if(name.toLowerCase().startsWith('=?iso-8859-1')) {
-    const newName = utf8.decode(q.decode(name)).replace("=?iso-8859-1?Q?", "").replace("?=", "");
-    return newName;
-  } else if(name.toLowerCase().startsWith('=?ISO-8859-1')) {
-    const newName = utf8.decode(q.decode(name)).replace("=?ISO-8859-1?Q?", "").replace("?=", "");
-    return newName;
-  } else if(name.toLowerCase().startsWith('=?utf-8')) {
-    const newName = utf8.decode(q.decode(name)).replace("=?UTF-8?Q?", "").replace("?=", "");
-    return newName;
+  console.log("Checking " + name);
+  let newName = '';
+  if(name.startsWith('=?iso-8859-1')) {
+    newName = q.decode(name).replace(/\=\?iso-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?ISO-8859-1')) {
+    newName = q.decode(name).replace(/\=\?ISO-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?UTF-8')) {
+    newName = q.decode(name).replace(/\=\?UTF-8\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?utf-8')) {
+    newName = q.decode(name).replace(/\=\?utf-8\?Q\?/g, "").replace(/\?\=/g, "")
   }
-  else {
-    return name;
+
+  try {
+    newName = utf8.decode(newName);
+  } catch(err) {
+    debugger
+    console.log(err);
   }
+
+  return newName;
 }
