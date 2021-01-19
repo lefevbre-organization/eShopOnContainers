@@ -1,0 +1,11 @@
+*/node_modules/
+*/build/
+*/.git/
+.gitignore
+Dockerfile
+.editorconfig
+
+Client/bin
+Client/docker
+Client/kubernetes
+Client/obj
