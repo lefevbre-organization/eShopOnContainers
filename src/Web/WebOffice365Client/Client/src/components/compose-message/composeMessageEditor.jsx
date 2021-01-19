@@ -184,7 +184,8 @@ L10n.load({
 
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
-  items: items
+  items: items,
+  type: 'MultiRow'
 };
 
 const ComposeMessageEditor = props => {
@@ -213,6 +214,7 @@ const ComposeMessageEditor = props => {
         showCharCount={false}
         locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
         insertImageSettings={{ saveFormat: 'Base64' }}
+        height={'80%'} 
         toolbarSettings={toolbarSettings}
         value={defaultValue}
         blur={(content) => {

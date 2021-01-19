@@ -159,8 +159,61 @@
     "500-info2": ""
   },
   "calendar-sidebar": {
-    "newevent": "New Event",
-    "mycalendars": "My Calendars"
+    "compose": "New event",
+    "mycalendars": "My calendars",
+    "othercalendars": "Other calendars",
+    "configandshare": "Config and Share",
+    "permission": "Calendar share and permissions",
+    "remove": "Remove"
+  },
+  "schedule": {
+    "eventtype": "Event Type",
+    "visibility": "Private",
+    "profesional-event": "Profesional Event",
+    "personal-event": "Personal Event",
+    "attendees": "Invite attendees and press enter",
+    "toast-processing": "Processing",
+    "toast-process-complete": "Process complete",
+    "toast-process-error": "Error",
+    "toast-process-error-exist": "An event type with the same name already exists",
+    "validator-required": "Field is required",
+    "notitle": "(no title)"
+  },
+  "calendar": {
+    "title": "Calendar Configuration",
+    "modify": "Modify",
+    "add": "Add Calendar",
+    "name": "Name",
+    "description": "Description",
+    "sharewithpeople": "Share with people"
+  },
+  "acl": {
+    "permissions": "Permissions",
+    "emailaddresses": "Mail address",
+    "freebusyreader": "freeBusyReader",
+    "reader": "reader",
+    "writer": "writer",
+    "owner": "owner"
+  },
+  "eventtype": {
+    "title": "Type of events",
+    "name": "Name",
+    "color": "Color",
+    "required-name": "Name is required",
+    "required-color": "Color is required",
+    "add": "Add",
+    "modify": "Modify",
+    "cancel": "Cancel",
+    "newevent": "Add typology"
+  },
+  "contactimport": {
+    "title": "Event Import"
+  },
 
+  "tooltips": {
+    "lexon": "Lex-on",
+    "calendar": "Calendar",
+    "centinela": "Centinela",
+    "database": "Database"
   }
 }

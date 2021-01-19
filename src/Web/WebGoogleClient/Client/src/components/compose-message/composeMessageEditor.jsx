@@ -185,6 +185,7 @@ L10n.load({
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
   items: items,
+  type: 'MultiRow'
 };
 
 const ComposeMessageEditor = (props) => {
@@ -202,6 +203,7 @@ const ComposeMessageEditor = (props) => {
         enableTabKey={true}
         insertImageSettings={{ saveFormat: 'Base64' }}
         toolbarSettings={toolbarSettings}
+        height={'80%'} 
         value={defaultValue}
         inline={true}
         blur={(content) => {
