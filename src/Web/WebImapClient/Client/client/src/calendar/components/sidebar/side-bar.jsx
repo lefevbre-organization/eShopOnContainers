@@ -120,7 +120,7 @@ class SideBar extends Component {
               border='0'
               src='assets/images/plus.png'></img>
             <span className='mdc-button__label' style={{ fontSize: 10.6 }}>
-              {t('calendar-sidebar.newevent')}
+              {t('calendar-sidebar.compose')}
             </span>
           </button>
           <span
@@ -168,12 +168,12 @@ class SideBar extends Component {
 
                     return (
                         <CalendarItem
-                            key={el.ctag + "_label"}
+                            key={el.href + "_label"}
                             onClick={this.navigateToList}
                             name={el.name}
-                            id={el.ctag}
+                            id={el.href}
                             color={color}
-                            accessRole={el.accessRole}
+                            accessRole={'owner'}
                             iconProps={iconProps}
                             selected={el.selected}
                             primary={true}

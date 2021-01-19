@@ -126,15 +126,17 @@ export class MessageItem extends PureComponent {
       //   this.props.data.from.emailAddress.name.toUpperCase() +
       //   " " +
       //   this.props.data.from.emailAddress.address;
+    
       if (this.props.isSent === false) {
-        fromName = this.props.data.from.emailAddress.name;
+        fromName = this.props.data.from 
+        ?  this.props.data.from.emailAddress.name 
+        : this.props.microsoftUser.displayName;
       } else {
         fromName = this.props.data.toRecipients[0].emailAddress.name;
       }
     } catch {
       // const fromHeader = "";
     }
-
     return (
         <div draggable="true"  className={`message-row-item d-flex table-row-wrapper${selected} chk-msg-row${sc?'-sc':''} ${this.state.dragging?'dragging':''}`}
              onDragStart={this.onDragStart}

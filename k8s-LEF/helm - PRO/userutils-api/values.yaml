@@ -69,6 +69,10 @@ env:
       value: Lex-On
     - name: ByPassUrls__0__UrlByPass
       value: 'https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+    - name: ByPassUrls__1__NameService
+      value: Signature-Direct
+    - name: ByPassUrls__1__UrlByPass
+      value: 'https://firma.lefebvre.es/access/{tokenSignature}'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin

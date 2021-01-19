@@ -65,4 +65,4 @@ configValues: |
   window.URL_REDIRECT='https://lexbox-test-webgraph.lefebvre.es'
   window.URL_LEXON ='http://localhost:8080'
   window.SHOW_EXPERIMENTAL='1'
-  window.RELEASE = 'RC 0.38'
+  window.RELEASE = 'RC 0.39'

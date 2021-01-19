@@ -498,7 +498,7 @@ class MessageList extends Component {
             const hour = new Date(document.created_at).getHours() ;
             const time = new Date(document.created_at).getMinutes(); 
             const second = new Date(document.created_at).getSeconds(); 
-            let fullTime = `${hour}:${time}:${second}`;
+            let fullTime = `${(hour < 10) ? `0${hour}` : hour }:${(time < 10) ? `0${time}` : time}:${(second < 10) ? `0${second}` : second}`;
 
             res.push({
                 Id: document.externalId, 

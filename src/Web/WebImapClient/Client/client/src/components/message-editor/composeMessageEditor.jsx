@@ -185,6 +185,7 @@ L10n.load({
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
   items: items,
+  type: 'MultiRow'
 };
 
 class ComposeMessageEditor extends React.Component {
@@ -235,6 +236,7 @@ class ComposeMessageEditor extends React.Component {
           locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
           insertImageSettings={{ saveFormat: 'Blob' }}
           toolbarSettings={toolbarSettings}
+          height={'80%'} 
           value={defaultValue}
           iframe={true}
           change={(content) => {
