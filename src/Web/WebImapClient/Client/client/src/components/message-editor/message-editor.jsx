@@ -259,7 +259,7 @@ class MessageEditor extends Component {
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
-          {(draft !== null && draft.idMessage) ? 
+          {(draft && draft !== null && draft.idMessage) ? 
           <button className={`${styles['discard-button']} ml-3`} onClick={this.handleDraft}>
             {t('messageEditor.discard')}
           </button> 
@@ -290,7 +290,7 @@ class MessageEditor extends Component {
             onClick={this.handleDraft}>
              {t('messageEditor.draft')}
           </button>
-          { (draft !== null && draft.idMessage) ? 
+          { (draft && draft !== null && draft.idMessage) ? 
           <span className={`ml-3 ${styles['draft-time']}`}>{t('messageEditor.draft-save')} {
             draftTime}
           </span> 
