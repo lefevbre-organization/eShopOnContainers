@@ -1143,8 +1143,7 @@ export default connect(
 
 
 function convertToUtf8(name) {
-  console.log("Checking " + name);
-  let newName = '';
+  let newName = name;
   if(name.startsWith('=?iso-8859-1')) {
     newName = q.decode(name).replace(/\=\?iso-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
   } else if(name.startsWith('=?ISO-8859-1')) {
