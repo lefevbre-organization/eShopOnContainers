@@ -651,7 +651,7 @@ export class ComposeMessage extends PureComponent {
         .catch((err) => {
           console.log('Error sending email:' + err);
         });
-      }, 100);
+      });
     }
     
   }
@@ -704,9 +704,9 @@ export class ComposeMessage extends PureComponent {
       });
     this.resetFields();
     if(this.state.draftId) {
-        deleteDraft({ draftId: this.state.draftId }).then(() => {
-          this.closeModal();
-        });
+      deleteDraft({ draftId: this.state.draftId }).then(() => {
+        this.closeModal();
+      });
     } else {
       this.closeModal();
     } 
