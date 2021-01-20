@@ -8,10 +8,11 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage, draftClean } from '../../actions/application';
+import { editMessage, draftClean, selectMessage } from '../../actions/application';
 import { sendMessage, saveDraft } from '../../services/smtp';
 import { prettySize } from '../../services/prettify';
 import { getAddresses } from '../../services/message-addresses';
+import { deleteMessages } from '../../services/message';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
 import mainCss from '../../styles/main.scss';
@@ -19,7 +20,7 @@ import i18n from 'i18next';
 import ACTIONS from '../../actions/lexon';
 import { Notification } from '../notification/';
 
-import ComposeMessageEditor from './composeMessageEditor.jsx';
+import ComposeMessageEditor from './composeMessageEditor';
 const MAX_TOTAL_ATTACHMENTS_SIZE = 20971520;
 
 class MessageEditor extends Component {
@@ -36,7 +37,9 @@ class MessageEditor extends Component {
       errorNotification: '',
       showNotification: false,
       draftTime: '',
-      isDraftEdit: false
+      isDraftEdit: false,
+      draftId: '',
+      defaultContent: '',
     };
 
     this.fileInput = null;
@@ -45,6 +48,7 @@ class MessageEditor extends Component {
     this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
     this.handleDraft = this.saveDraft.bind(this);
+    this.handleRemoveDraft = this.removeDraft.bind(this);
     // Global events
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnDragOver = this.onDragOver.bind(this);
@@ -69,13 +73,24 @@ class MessageEditor extends Component {
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
-
+   
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
     window.addEventListener(
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    if(this.props.application.selectedMessage 
+      && Object.keys(this.props.application.selectedMessage).length > 0) {
+      const selectedMessage = this.props.application.selectedMessage;
+      this.getMessageById(selectedMessage);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(this.props.selectedMessageEdit && this.props.selectedMessageEdit.content) {
+      this.getContentEdit(prevProps.selectedMessageEdit.content);
+    }
   }
 
   componentWillUnmount() {
@@ -89,6 +104,20 @@ class MessageEditor extends Component {
 
   handleGetUserFromLexonConnector() {
     window.dispatchEvent(new CustomEvent('OpenComposer'));
+  }
+
+  getContentEdit(value) {
+    const updatedMessage = { ...this.props.editedMessage };
+    console.log('getContentEdit', updatedMessage)
+    if(
+      updatedMessage.content === "<br/><br/><br/><br/>" 
+      || updatedMessage.content === "" 
+      || updatedMessage.content === null) {
+      this.props.editMessage({ ...updatedMessage, content: value });
+      this.setState({
+        defaultContent: value,
+      });
+    }
   }
 
   attachFromLexon(event) {
@@ -129,6 +158,7 @@ class MessageEditor extends Component {
       this.props.setMailContacts(null);
     }
     draftClean();
+    this.props.messageClean();
     close(aplication);
   }
 
@@ -144,15 +174,17 @@ class MessageEditor extends Component {
       attachments,
       subject,
       content,
+      selectedMessageEdit
     } = this.props;
     const {
       showNotification,
       messageNotification,
       errorNotification,
       draftId,
-      draftTime
+      draftTime,
+      defaultContent
     } = this.state;
-    console.log(application.draft);
+    console.log('defaultContent', defaultContent);
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -233,7 +265,7 @@ class MessageEditor extends Component {
             <ComposeMessageEditor
               ref={(ref) => (this.editorRef = ref)}
               onChange={this.handleEditorChange}
-              defaultValue={content}
+              defaultValue={defaultContent !== '' ? defaultContent : content}
             />
 
             <div className={styles.attachments}>
@@ -259,8 +291,9 @@ class MessageEditor extends Component {
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
-          {(draft && draft !== null && draft.idMessage) ? 
-          <button className={`${styles['discard-button']} ml-3`} onClick={this.handleDraft}>
+          {(selectedMessageEdit !== null 
+          && Object.keys(selectedMessageEdit).length > 0) ? 
+          <button className={`${styles['discard-button']} ml-3`} onClick={this.handleRemoveDraft}>
             {t('messageEditor.discard')}
           </button> 
           : null}
@@ -290,7 +323,7 @@ class MessageEditor extends Component {
             onClick={this.handleDraft}>
              {t('messageEditor.draft')}
           </button>
-          { (draft && draft !== null && draft.idMessage) ? 
+          { draftTime !== '' ? 
           <span className={`ml-3 ${styles['draft-time']}`}>{t('messageEditor.draft-save')} {
             draftTime}
           </span> 
@@ -340,6 +373,60 @@ class MessageEditor extends Component {
     );
   }
 
+  validateExistingData(recipient, recipients) {
+    const existingData = recipients.some(
+      x =>  { return( x === recipient.address)  } 
+     );
+     return existingData;
+  }
+
+  getMessageById(selectedMessage) {
+    const toRecipients = selectedMessage.recipients.filter(x => x.type === 'To');
+
+    const ccRecipients = selectedMessage.recipients.filter(x => x.type === 'Cc');
+
+    const bccRecipients = selectedMessage.recipients.filter(x => x.type === 'Bcc');
+
+    const subject = selectedMessage.subject;
+
+    const content = selectedMessage.content;
+
+    toRecipients.forEach(toRecipient => {
+     const existingData = this.validateExistingData(
+       toRecipient, this.props.editedMessage.to
+      );
+      if(!existingData) {
+        setTimeout(() => {
+          this.addAddress('to', toRecipient.address);
+        }, 100);
+      }
+    });
+
+    ccRecipients.forEach(ccRecipient => {
+       const existingData = this.validateExistingData(
+        ccRecipient, this.props.editedMessage.cc
+       );
+       if(!existingData) {
+        setTimeout(() => {
+          this.addAddress('cc', ccRecipient.address);
+        }, 100);
+      }
+    });
+
+    bccRecipients.forEach(bccRecipient => {
+      const existingData = this.validateExistingData(
+        bccRecipient, this.props.editedMessage.bcc
+       );
+       if(!existingData) {
+        setTimeout(() => {
+          this.addAddress('bcc', bccRecipient.address);
+        }, 100);
+      }
+    });
+    this.getSubjectEdit(subject);
+    this.setState({draftId: selectedMessage.messageId});
+  }
+
   submit() {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
@@ -369,24 +456,55 @@ class MessageEditor extends Component {
     const hour = time.slice(0, 2);
     return hour >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
   }
-  
+ 
   saveDraft() {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
       const content = this.getEditor().getContent();
-      const { credentials, to, cc, bcc, subject } = this.props;
+      const { credentials, to, cc, bcc, subject, selectedMessageEdit } = this.props;
       const fullTime = this.getTimeDraft();
-      this.props.saveDraft(credentials, {
-        ...this.props.editedMessage,
-        to,
-        cc,
-        bcc,
-        subject,
-        content,
-      });
+      if(this.state.draftId !== '') {
+        this.props.saveDraft(credentials, {
+          ...this.props.editedMessage,
+          to,
+          cc,
+          bcc,
+          subject,
+          content,
+        });
+        this.props.deleteMessage(
+          credentials, 
+          selectedMessageEdit.folder, 
+          selectedMessageEdit
+        );
+      } else {
+        this.props.saveDraft(credentials, {
+          ...this.props.editedMessage,
+          to,
+          cc,
+          bcc,
+          subject,
+          content,
+        });
+      }
       this.setState({draftTime: fullTime});
-      //this.props.close(this.props.application);
     }
+  }
+
+  removeDraft() { 
+    const { 
+      credentials, 
+      selectedMessageEdit, 
+      aplication 
+    } = this.props;
+    this.props.deleteMessage(
+      credentials, 
+      selectedMessageEdit.folder, 
+      selectedMessageEdit
+    );
+    this.props.draftClean();
+    this.props.messageClean();
+    this.props.close(aplication);
   }
   /**
    * Adds an address to the list matching the id.
@@ -401,7 +519,6 @@ class MessageEditor extends Component {
       this.props.editMessage(updatedMessage);
     }
   }
-
   /**
    * Removes the address from the under the field matching the id.
    *
@@ -414,7 +531,6 @@ class MessageEditor extends Component {
     updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
     this.props.editMessage(updatedMessage);
   }
-
   /**
    * Moves an address from the address list under the field matching the fromId to the address field
    * matching the toId.
@@ -430,6 +546,11 @@ class MessageEditor extends Component {
     // Add
     updatedMessage[toId] = [...updatedMessage[toId], address];
     this.props.editMessage(updatedMessage);
+  }
+
+  getSubjectEdit(value) {
+    const updatedMessage = { ...this.props.editedMessage };
+    this.props.editMessage({ ...updatedMessage, subject: value });
   }
 
   onSubjectChange(event) {
@@ -592,6 +713,7 @@ MessageEditor.defaultProps = {
 const mapStateToProps = (state) => ({
   application: state.application,
   draft: state.application.draft,
+  selectedMessageEdit: state.application.selectedMessage,
   credentials: getCredentials(state),
   editedMessage: state.application.newMessage,
   to: state.application.newMessage.to,
@@ -614,6 +736,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   editMessage: (message) => {
     dispatch(editMessage(message));
+  },
+  messageClean: () => {
+    dispatch(selectMessage({}));
   },
   draftClean: () => {
     dispatch(draftClean());
@@ -647,6 +772,11 @@ const mapDispatchToProps = (dispatch) => ({
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
+  deleteMessage: (credentials, selectedFolder, selectedMessage) => {
+    deleteMessages(dispatch, credentials, selectedFolder, [
+      selectedMessage,
+    ]);
+  },
 });
 
 export default connect(

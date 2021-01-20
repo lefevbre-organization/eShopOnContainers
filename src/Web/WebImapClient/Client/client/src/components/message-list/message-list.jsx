@@ -14,6 +14,7 @@ import { prettyDate, prettySize } from '../../services/prettify';
 import { selectMessage } from '../../actions/application';
 import { setSelected } from '../../actions/messages';
 import { preloadMessages, setMessageFlagged } from '../../services/message';
+import { editNewMessage } from '../../services/application';
 import { readMessage, readMessageRaw } from '../../services/message-read';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -138,7 +139,7 @@ class MessageList extends Component {
         />
         <span
           className={styles.itemDetails}
-          onClick={() => this.props.messageClicked(message)}
+          onClick={() =>  this.messageClicked(message) }
           draggable={true}
           onDragStart={(event) => this.onDragStart(event, folder, message)}>
           {folder.type.attribute !== '\\Sent' && (
@@ -401,6 +402,14 @@ class MessageList extends Component {
     }
   }
 
+  messageClicked(message) {
+    if(this.props.selectedFolder.name === 'Drafts') {
+      this.props.messageClicked(message);
+      this.props.newMessage('');
+    } else {
+      this.props.messageClicked(message);
+    }  
+  } 
   /**
    * Preloads latest received messages whenever <b>new</b> messages are loaded in the list
    */
@@ -485,6 +494,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(selectMessage(message));
     readMessage(dispatch, credentials, downloadedMessages, folder, message);
   },
+  newMessage: (sign) => editNewMessage(dispatch, [], sign),
   messageSelected: (messages, selected, folderName) =>
     dispatch(setSelected(messages, selected, folderName)),
   preloadMessages: (credentials, folder, messageUids) =>
