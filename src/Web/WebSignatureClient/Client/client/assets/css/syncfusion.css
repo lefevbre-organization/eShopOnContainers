@@ -1,4 +1,8 @@
 /* App.jsx */
+#sms-message-editor #toolsRTE_2_toolbar {
+    display: none;
+}
+
 #info2Dialog {
     max-height: 927px;
     width: 300px;
