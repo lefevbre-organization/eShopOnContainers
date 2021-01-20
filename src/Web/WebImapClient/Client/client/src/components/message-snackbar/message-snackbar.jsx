@@ -22,13 +22,17 @@ export class MessageSnackbar extends Component {
       message = t('messageSnackbar.messageError');
       buttonLabel = t('messageSnackbar.retry');
     } else {
-      message = t('messageSnackbar.sendingMessage', {progress: outbox.progress * 100});
+      if(isNaN(outbox.progress)) {
+        message = '';
+      } else {
+        message = t('messageSnackbar.sendingMessage', {progress: outbox.progress * 100});
+      }
     }
-    return (
-      <Snackbar
+    return message && message !== '' ?(
+       <Snackbar
         show={outbox !== null} alignStart={true} message={message}
         buttonAction={retry} buttonLabel={buttonLabel}/>
-    );
+    ): null;
   }
 }
 

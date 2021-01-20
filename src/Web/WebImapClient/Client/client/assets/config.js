@@ -1,9 +1,9 @@
 window.REACT_APP_ENVIRONMENT = 'LOCAL';
 window.URL_DELETE_ACCOUNT =
-  'https://lexbox-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider';
+  'https://lexbox-test-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider';
 window.URL_SELECT_ACCOUNT = 'http://localhost:3010';
 window.URL_GET_ACCOUNTS =
-  'https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail';
+  'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail';
 window.URL_MF_GOOGLE = 'http://localhost:3001/user';
 window.URL_MF_OUTLOOK = 'http://localhost:3002/user';
 window.URL_MF_IMAP = 'http://localhost:9000/user';
@@ -13,12 +13,12 @@ window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.URL_MF_DATABASE = 'http://localhost:3006/static/js/main.js';
 window.URL_MF_DATABASE_BSE = 'http://localhost:3006';
 
-//window.URL_MF_LEXON = "https://lexbox-dev-weblexon.lefebvre.es/static/js/main.js";
-//window.URL_MF_LEXON_BASE = "https://lexbox-dev-weblexon.lefebvre.es";
-window.API_GATEWAY = 'https://lexbox-apigwlex.lefebvre.es';
-window.API_ACC_GATEWAY = 'https://lexbox-apigwacc.lefebvre.es';
+//window.URL_MF_LEXON = "https://lexbox-test-dev-weblexon.lefebvre.es/static/js/main.js";
+//window.URL_MF_LEXON_BASE = "https://lexbox-test-dev-weblexon.lefebvre.es";
+window.API_GATEWAY = 'https://lexbox-test-apigwlex.lefebvre.es';
+window.API_ACC_GATEWAY = 'https://lexbox-test-apigwacc.lefebvre.es';
 window.API_CENTINELA_GATEWAY =
-  'https://lexbox-apigwcen.lefebvre.es/api/v1/cen';
+  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
 
 window.WEBSPELLCHECKER_CODE = '';
 

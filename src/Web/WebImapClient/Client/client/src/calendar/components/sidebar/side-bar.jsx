@@ -120,7 +120,7 @@ class SideBar extends Component {
               border='0'
               src='assets/images/plus.png'></img>
             <span className='mdc-button__label' style={{ fontSize: 10.6 }}>
-              {t('calendar-sidebar.newevent')}
+              {t('calendar-sidebar.compose')}
             </span>
           </button>
           <span

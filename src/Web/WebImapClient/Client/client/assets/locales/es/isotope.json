@@ -159,9 +159,61 @@
     "500-info2": ""
   },
   "calendar-sidebar": {
-    "newevent": "Nuevo evento",
-      "mycalendars": "Mis Calendarios"
-   
+    "compose": "Nuevo Evento",
+    "mycalendars": "Mis calendarios",
+    "othercalendars": "Otros calendarios",
+    "configandshare": "Configurar y Compartir",
+    "permission": "Uso compartido y permisos",
+    "remove": "Eliminar"
+  },
+  "schedule": {
+    "eventtype": "Tipo de evento",
+    "visibility": "Privado",
+    "profesional-event": "Evento profesional",
+    "personal-event": "Evento personal",
+    "attendees": "Invite a los asistentes",
+    "toast-processing": "Procesando",
+    "toast-process-complete": "Proceso completado",
+    "toast-process-error": "Error",
+    "toast-process-error-exist": "Ya existe un tipo de evento con el mismo nombre",
+    "validator-required": "Campo obligatorio",
+    "notitle": "(Sin título)"
+  },
+  "calendar": {
+    "title": "Configuración",
+    "modify": "Modificar",
+    "add": "Añadir calendario",
+    "name": "Nombre",
+    "description": "Descripción",
+    "sharewithpeople": "Compartir con determinadas personas"
+  },
+  "acl": {
+    "permissions": "Permisos",
+    "emailaddresses": "Dirección de correo electrónico",
+    "freebusyreader": "Ver solo libre/ocupado",
+    "reader": "Ver todos los detalles de los eventos",
+    "writer": "Hacer cambios en eventos",
+    "owner": "Hacer cambios y gestionar el uso"
+  },
+  "eventtype": {
+    "title": "Tipos de Eventos",
+    "name": "Nombre",
+    "color": "Color",
+    "required-name": "El nombre es obligatorio",
+    "required-color": "Es necesario seleccionar un color",
+    "add": "Añadir",
+    "modify": "Modificar",
+    "cancel": "Cancelar",
+    "newevent": "Añadir tipología"
+  },
+  "contactimport": {
+    "title": "Importar Eventos"
+  },
+  "tooltips": {
+    "lexon": "Lex-on",
+    "calendar": "Calendario",
+    "centinela": "Centinela",
+    "database": "Base de datos"
   }
 
 }
