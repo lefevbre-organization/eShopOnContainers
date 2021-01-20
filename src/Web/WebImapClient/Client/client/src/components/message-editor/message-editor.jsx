@@ -17,10 +17,12 @@ import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
 import mainCss from '../../styles/main.scss';
 import i18n from 'i18next';
-import ACTIONS from '../../actions/lexon';
-import { Notification } from '../notification/';
+import ACTIONS, { setEmailShown } from '../../actions/lexon';
+import { Notification, Confirmation } from '../notification/';
 
 import ComposeMessageEditor from './composeMessageEditor';
+import { Modal } from 'react-bootstrap';
+import { json } from 'sjcl';
 const MAX_TOTAL_ATTACHMENTS_SIZE = 20971520;
 
 class MessageEditor extends Component {
@@ -36,6 +38,8 @@ class MessageEditor extends Component {
       messageNotification: '',
       errorNotification: '',
       showNotification: false,
+      messageConfirmation: '',
+      showConfirmation: false,
       draftTime: '',
       isDraftEdit: false,
       draftId: '',
@@ -137,9 +141,25 @@ class MessageEditor extends Component {
     addAttachment(event.detail);
   }
 
-  removeMessageEditor(aplication) {
+  confirmRemoveMessageEditor(application){
+    const newMessage = application.newMessage;
+    const emptyMesage = { to: [], cc: [], bcc: [], attachments: [], subject: "", content: "<br/><br/><br/><br/>"}
+
+    if (JSON.stringify(newMessage) === JSON.stringify(emptyMesage)){
+      this.removeMessageEditor(application);
+    } else {
+      const { draftId } = this.state;
+      if (draftId !== ''){
+        this.setState({ showConfirmation: true, messageConfirmation: '¿Quiere borrar el borrador definitivamente?'});
+      } else {
+        this.setState({ showConfirmation: true, messageConfirmation: '¿Quiere descartar el mensaje actual?'});
+      }
+    }
+  }
+
+  removeMessageEditor(application) {
     const { close, lexon, draftClean } = this.props;
-   
+
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
       window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
       this.props.setCaseFile({
@@ -154,7 +174,25 @@ class MessageEditor extends Component {
     }
     draftClean();
     this.props.messageClean();
-    close(aplication);
+    close(application);
+    
+  }
+
+  acceptConfirmation(){
+    const { draftId } = this.state;
+    if (draftId !== ''){
+      this.handleRemoveDraft();
+    } 
+    this.setState({showConfirmation: false})
+    this.removeMessageEditor(this.props.application);
+  }
+
+  cancelConfirmation(){
+    const { draftId } = this.state;
+    this.setState({showConfirmation: false})
+    if (draftId !== ''){
+      this.removeMessageEditor(this.props)
+    }
   }
 
   render() {
@@ -175,6 +213,8 @@ class MessageEditor extends Component {
       showNotification,
       messageNotification,
       errorNotification,
+      showConfirmation,
+      messageConfirmation,
       draftId,
       draftTime
     } = this.state;
@@ -200,6 +240,12 @@ class MessageEditor extends Component {
             }}
             message={messageNotification}
             error={errorNotification}
+          />
+          <Confirmation
+            initialModalState={showConfirmation}
+            onAccept={() => {this.acceptConfirmation()}}
+            onCancel={() => {this.cancelConfirmation()}}
+            message={messageConfirmation}
           />
           <form ref={this.headerFormRef}>
             <HeaderAddress
@@ -284,12 +330,19 @@ class MessageEditor extends Component {
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
-          {(selectedMessageEdit !== null 
+          <button
+            className={`ml-3 ${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
+            disabled={to.length + cc.length + bcc.length === 0}
+            onClick={this.handleDraft}>
+             {t('messageEditor.draft')}
+          </button>
+          {/* {(selectedMessageEdit !== null 
           && Object.keys(selectedMessageEdit).length > 0) ? 
           <button className={`${styles['discard-button']} ml-3`} onClick={this.handleRemoveDraft}>
             {t('messageEditor.discard')}
           </button> 
-          : null}
+          : null} */}
           <button
             className={`${styles['action-button']} ${styles.attach}`}
             onClick={this.onAttachButton}>
@@ -309,13 +362,13 @@ class MessageEditor extends Component {
               multiple='true'
             />
           </button>
-          <button
+          {/* <button
             className={`ml-3 ${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
             ${styles['action-button']} ${styles.send}`}
             disabled={to.length + cc.length + bcc.length === 0}
             onClick={this.handleDraft}>
              {t('messageEditor.draft')}
-          </button>
+          </button> */}
           { draftTime !== '' ? 
           <span className={`ml-3 ${styles['draft-time']}`}>{t('messageEditor.draft-save')} {
             draftTime}
@@ -323,7 +376,7 @@ class MessageEditor extends Component {
           : null}
           <button
             className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
-            onClick={() => this.removeMessageEditor(application)}>
+            onClick={() => this.confirmRemoveMessageEditor(application)}>
             delete
           </button>
         </div>
