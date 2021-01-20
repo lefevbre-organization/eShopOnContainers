@@ -1001,7 +1001,7 @@ class Calendar extends Component {
                             )}
 
                         {props.IsAllDay ? (
-                            <span>todo el día</span>
+                            <span>todo el dï¿½a</span>
                         ) : (
 
                                 <span> {props.StartTime.toLocaleTimeString('es-ES')} - {props.EndTime.toLocaleTimeString('es-ES')}</span>
@@ -1519,7 +1519,6 @@ class Calendar extends Component {
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
-        debugger
 
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
@@ -1550,7 +1549,6 @@ class Calendar extends Component {
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
-                    debugger
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
@@ -1999,7 +1997,6 @@ class Calendar extends Component {
                 break;
 
             case 'eventChanged':
-                debugger
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -2200,7 +2197,6 @@ class Calendar extends Component {
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
-        debugger
         addCalendarEvent(CalendarId, event)
             .then(result => {
                 if (!hiddeMessage) {

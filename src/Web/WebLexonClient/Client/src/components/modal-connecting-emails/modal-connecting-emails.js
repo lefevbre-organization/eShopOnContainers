@@ -234,7 +234,8 @@ class ModalConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < messages.length; i++) {
-          const raw = Base64.encode(messages[i].raw, false);
+          const msg = await  dbStore.getMessage(messages[i].id);
+          const raw = Base64.encode(msg.raw, false);
 
           const subject = messages[i].subject;
 
@@ -269,7 +270,7 @@ class ModalConnectingEmails extends Component {
                 continue;
               }
 
-              let rawAttach = base64js.fromByteArray(msg.attachments[j].Content);
+              let rawAttach = msg.attachments[j].Content;
               try {
                 const data = await uploadFile(
                   step1Data.actuation === false
@@ -1142,17 +1143,22 @@ export default connect(
 
 
 function convertToUtf8(name) {
-  if(name.toLowerCase().startsWith('=?iso-8859-1')) {
-    const newName = utf8.decode(q.decode(name)).replace("=?iso-8859-1?Q?", "").replace("?=", "");
-    return newName;
-  } else if(name.toLowerCase().startsWith('=?ISO-8859-1')) {
-    const newName = utf8.decode(q.decode(name)).replace("=?ISO-8859-1?Q?", "").replace("?=", "");
-    return newName;
-  } else if(name.toLowerCase().startsWith('=?utf-8')) {
-    const newName = utf8.decode(q.decode(name)).replace("=?UTF-8?Q?", "").replace("?=", "");
-    return newName;
+  let newName = name;
+  if(name.startsWith('=?iso-8859-1')) {
+    newName = q.decode(name).replace(/\=\?iso-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?ISO-8859-1')) {
+    newName = q.decode(name).replace(/\=\?ISO-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?UTF-8')) {
+    newName = q.decode(name).replace(/\=\?UTF-8\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?utf-8')) {
+    newName = q.decode(name).replace(/\=\?utf-8\?Q\?/g, "").replace(/\?\=/g, "")
   }
-  else {
-    return name;
+
+  try {
+    newName = utf8.decode(newName);
+  } catch(err) {
+    console.log(err);
   }
+
+  return newName;
 }

@@ -265,7 +265,8 @@ class SmsMessageEditor extends Component {
         className={`${className} ${styles['message-editor']}`}
         onDrop={this.handleOnDrop}
         onDragOver={this.handleOnDragOver}
-        onDragLeave={this.handleOnDragLeave}>
+        onDragLeave={this.handleOnDragLeave}
+        id='sms-message-editor'>
          {this.state.isCallApis ? 
           <div className={styles['spinner-container']}> 
            <div className={styles['spinner']}>
@@ -390,13 +391,13 @@ class SmsMessageEditor extends Component {
           dialogClose={this.dialogClose.bind(this)}
           />
         </DialogComponent>
-        <style jsx global>
+        {/* <style jsx global>
           {` 
             #toolsRTE_2_toolbar {
               display: none;
             }          
           `}
-        </style>
+        </style> */}
       </div>
     );
   }

@@ -3,7 +3,7 @@
     public class DissociateMailFromEntityIntegrationEvent: LexonBaseIntegrationEvent
     {
 
-        public long AssociatedId { get; set; }
+        public long? AssociatedId { get; set; }
         public string AssociatedType { get; set; }
         public string MailAccount { get; set; }
         public string Provider { get; set; }
@@ -14,7 +14,7 @@
             long idAppNavision,
             string userId,
             string assocTypeEntity,
-            long assocEntity,
+            long? assocEntity,
             string provider,
             string mailAccount,
             string uidMail

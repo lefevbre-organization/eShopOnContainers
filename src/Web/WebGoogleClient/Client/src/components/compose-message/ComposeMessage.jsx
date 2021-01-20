@@ -410,16 +410,13 @@ export class ComposeMessage extends PureComponent {
 
   closeModal() {
     const findSelected = this.props.labelsResult.labels.find(x =>
-      x.name == "DRAFT" && x.selected == true
+      x.selected == true
      );
      if(findSelected) {
-      this.props.history.push(`/draft`);
-     } else if(this.state.draftId) {
-      this.props.history.push('/draft');
+      this.props.history.push(`/${findSelected.id.toLowerCase()}`);
      } else {
       this.props.history.push('/inbox');
      }
-    
   }
 
    goBack() {
@@ -447,7 +444,6 @@ export class ComposeMessage extends PureComponent {
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
-    debugger
     this.props.setMailContacts(null);
     this.props.updateComposerData({});
 
@@ -554,9 +550,7 @@ export class ComposeMessage extends PureComponent {
     );
 
     this.removeFields();
-    
     this.props.setMailContacts(null);
-    
     this.uppy.close();
   }
 
@@ -1182,7 +1176,7 @@ export class ComposeMessage extends PureComponent {
             display: flex;
             flex-direction: column;
           }
-
+          
           .attach-button,
           .attach-button:hover,
           .attach-button:focus,
@@ -1207,6 +1201,13 @@ export class ComposeMessage extends PureComponent {
             font-weight: 500;
             position: relative;
             top: 2px;
+          }
+
+          #toolsRTE_2rte-view {
+            border-bottom: 0 solid transparent !important;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-right: 0 solid transparent !important;
+            border-left: 0 solid transparent !important;
           }
 
         `}</style>

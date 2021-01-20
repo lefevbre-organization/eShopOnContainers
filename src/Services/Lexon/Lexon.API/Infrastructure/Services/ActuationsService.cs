@@ -361,7 +361,6 @@ namespace Lexon.Infrastructure.Services
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-
                             while (reader.Read())
                             {
                                 var rawJson = reader.GetValue(0).ToString();
@@ -371,7 +370,6 @@ namespace Lexon.Infrastructure.Services
                                     result.data = resultado;
                                 }
                             }
-
                         }
                     }
                 }
@@ -439,8 +437,11 @@ namespace Lexon.Infrastructure.Services
                                 while (reader.Read())
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
-                                    var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, contador, resultado);
+                                    if (!string.IsNullOrEmpty(rawJson))
+                                    {
+                                        var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson)).ToList();
+                                        result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, contador, resultado);
+                                    }
                                 }
                             }
                         }
@@ -493,8 +494,11 @@ namespace Lexon.Infrastructure.Services
                             while (reader.Read())
                             {
                                 var rawJson = reader.GetValue(0).ToString();
-                                var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
-                                result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                                if (!string.IsNullOrEmpty(rawJson))
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
+                                    result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                                }
                             }
                         }
                     }
@@ -549,14 +553,15 @@ namespace Lexon.Infrastructure.Services
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-
                             while (reader.Read())
                             {
                                 var rawJson = reader.GetValue(0).ToString();
-                                var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
-                                result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                                if (!string.IsNullOrEmpty(rawJson))
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
+                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
+                                }
                             }
-
                         }
                     }
                 }
@@ -576,6 +581,7 @@ namespace Lexon.Infrastructure.Services
 
             return result;
         }
+
         private string GetActuationSearchFilter(string idUser, string bbdd, string idType, int? idCategory, string filter)
         {
             return $"{{ " +
@@ -626,7 +632,6 @@ namespace Lexon.Infrastructure.Services
 
         private string GetAddActionFilter(string idUser, string bbdd, LexAction action)
         {
-  
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
                 GetTextFilter("idType", action.IdType) +
@@ -654,6 +659,7 @@ namespace Lexon.Infrastructure.Services
                 //GetTextFilter("idLexnet", action.IdLexnet) +
                 $" }}";
         }
+
         #endregion Actuations
     }
 }

@@ -204,7 +204,7 @@ const MessageWithAttachments = ({msg, onChange}) => {
             {msg.attachments && msg.attachments.map((at, index) => {
               const an = getAttachmentName(at);
               return an ? (
-                  <li key={'index' + index}>
+                  <li key={'index' + index} style={{ display: 'flex',  alignItems: 'center'}}>
                     <CheckBoxComponent
                         cssClass="e-small"
                         checked={at.checked}
@@ -215,7 +215,8 @@ const MessageWithAttachments = ({msg, onChange}) => {
                     <span>{an}</span>
                   </li>
               ) : null;
-            })}
+            })
+            }
           </ul>
 
           <style jsx>{`

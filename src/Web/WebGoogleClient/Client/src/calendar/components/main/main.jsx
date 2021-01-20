@@ -1062,7 +1062,6 @@ export class Main extends Component {
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
-        debugger
 
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
@@ -1093,7 +1092,6 @@ export class Main extends Component {
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
-                    debugger
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
@@ -1545,7 +1543,6 @@ export class Main extends Component {
                 break;
 
             case 'eventChanged':
-                debugger
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -1746,7 +1743,6 @@ export class Main extends Component {
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
-        debugger
         addCalendarEvent(CalendarId, event)
             .then(result => {
                 if (!hiddeMessage) {
