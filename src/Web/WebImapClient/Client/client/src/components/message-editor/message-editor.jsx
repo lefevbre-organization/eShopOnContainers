@@ -39,7 +39,6 @@ class MessageEditor extends Component {
       draftTime: '',
       isDraftEdit: false,
       draftId: '',
-      defaultContent: '',
     };
 
     this.fileInput = null;
@@ -108,15 +107,11 @@ class MessageEditor extends Component {
 
   getContentEdit(value) {
     const updatedMessage = { ...this.props.editedMessage };
-    console.log('getContentEdit', updatedMessage)
     if(
       updatedMessage.content === "<br/><br/><br/><br/>" 
       || updatedMessage.content === "" 
       || updatedMessage.content === null) {
       this.props.editMessage({ ...updatedMessage, content: value });
-      this.setState({
-        defaultContent: value,
-      });
     }
   }
 
@@ -181,10 +176,8 @@ class MessageEditor extends Component {
       messageNotification,
       errorNotification,
       draftId,
-      draftTime,
-      defaultContent
+      draftTime
     } = this.state;
-    console.log('defaultContent', defaultContent);
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -265,7 +258,7 @@ class MessageEditor extends Component {
             <ComposeMessageEditor
               ref={(ref) => (this.editorRef = ref)}
               onChange={this.handleEditorChange}
-              defaultValue={defaultContent !== '' ? defaultContent : content}
+              defaultValue={content}
             />
 
             <div className={styles.attachments}>
