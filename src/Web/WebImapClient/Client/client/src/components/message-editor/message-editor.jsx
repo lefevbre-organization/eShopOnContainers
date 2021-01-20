@@ -245,6 +245,8 @@ class MessageEditor extends Component {
             initialModalState={showConfirmation}
             onAccept={() => {this.acceptConfirmation()}}
             onCancel={() => {this.cancelConfirmation()}}
+            titleAccept="Aceptar"
+            titleCancel="Cancelar"
             message={messageConfirmation}
           />
           <form ref={this.headerFormRef}>
