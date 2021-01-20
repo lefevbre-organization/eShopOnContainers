@@ -11,16 +11,21 @@
     position: absolute !important;
 }
 
-.e-grid .e-rowcell:nth-child(4) {
-    padding: 8px 18px;
+.e-grid .e-rowcell:nth-child(2), 
+.e-grid .e-rowcell:nth-child(3)  {
+    padding: 8px 16px;
 }
 
-.e-grid .e-rowcell:nth-child(5) {
+.e-grid .e-rowcell:nth-child(4) {
     padding: 8px 13px;
+}
+    
+.e-grid .e-rowcell:nth-child(5) {
+    padding: 8px 10px;
 }
 
 .e-grid .e-rowcell:nth-child(6) {
-    padding: 8px 12px;
+    padding: 8px 7px;
 }
 
 .e-grid .e-table {
