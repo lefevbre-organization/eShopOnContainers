@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
 {
     #region Usings
-    
+
     using Account.API.ViewModel;
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
@@ -19,22 +13,22 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
     using System.Net;
     using System.Threading.Tasks;
 
-    #endregion
+    #endregion Usings
 
     [Route("api/v2/events")]
     [ApiController]
     public class EventController : Controller
     {
-        private readonly IAccountsService _service;
+        private readonly IEventsService _service;
         private readonly AccountSettings _settings;
         private readonly IEventBus _eventBus;
 
         public EventController(
-            IAccountsService accountsService,
+            IEventsService service,
             IOptionsSnapshot<AccountSettings> settings,
             IEventBus eventBus)
         {
-            _service = accountsService ?? throw new ArgumentNullException(nameof(accountsService));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             _settings = settings.Value;
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
@@ -50,7 +44,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
         {
             return Ok(new Result<bool>(true));
         }
-
 
         [HttpPost("get")]
         [ProducesResponseType(typeof(Result<AccountEventTypes>), (int)HttpStatusCode.NotFound)]
@@ -118,7 +111,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
         [ProducesResponseType(typeof(Result<EventType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<EventType>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAccountEvent(
-            [FromBody] AccountEventRequestAdd accountIn
+            [FromBody] AccountEventAddRequest accountIn
         )
         {
             if (string.IsNullOrEmpty(accountIn.Email) || accountIn.eventType == null)

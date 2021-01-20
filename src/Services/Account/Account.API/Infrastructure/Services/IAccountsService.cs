@@ -40,10 +40,7 @@
         Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId);
         Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage);
         Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage);
-        Task<Result<AccountEventTypes>> GetEventsByAccount(string account);
-        Task<Result<AccountEventTypes>> UpsertAccountEvents(AccountEventTypes accountIn);
-        Task<Result<bool>> RemoveEvent(string email, string idEvent);
-        Task<Result<EventType>> AddEvent(string email, EventType eventType);
-        Task<Result<bool>> RemoveAccountEvent(string email);
+
+       
     }
 }

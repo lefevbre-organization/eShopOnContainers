@@ -1,12 +1,14 @@
 ﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
     #region using
+
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    #endregion
+    #endregion using
+
     public interface IAccountsRepository
     {
         Task<Result<UserMail>> Create(UserMail account);
@@ -36,13 +38,11 @@
         Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail, ConfigImapAccount config);
 
         Task<Result<bool>> Remove(string user);
+
         Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId);
+
         Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage);
+
         Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage);
-        Task<Result<AccountEventTypes>> GetEventTypesByAccount(string account);
-        Task<Result<AccountEventTypes>> UpsertAccountEventTypes(AccountEventTypes accountIn);
-        Task<Result<bool>> RemoveEventType(string email, string idEvent);
-        Task<Result<EventType>> AddEventType(string email, EventType eventType);
-        Task<Result<bool>> RemoveAccountEventType(string email);
     }
 }
