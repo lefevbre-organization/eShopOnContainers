@@ -233,7 +233,7 @@ class ComposeMessageEditor extends React.Component {
           showCharCount={false}
           locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
           insertImageSettings={{ saveFormat: 'Blob' }}
-          height={'100%'}
+          height={'80%'}
           toolbarSettings={toolbarSettings}
           value={defaultValue}
           iframe={true}
