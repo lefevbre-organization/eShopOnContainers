@@ -14,6 +14,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import {ConnectingEmailsStep1b} from "./step1b";
 import dbStore from "../../services/dbstore";
 const base64js = require('base64-js');
+const q = require('q-encoding');
+const utf8 = require('utf8');
 
 class ModalConnectingEmails extends Component {
   constructor() {
@@ -41,7 +43,6 @@ class ModalConnectingEmails extends Component {
   }
 
   componentDidMount() {
-
     const messages = [...this.props.selectedMessages];
     this.setState({ messages });
   }
@@ -52,6 +53,9 @@ class ModalConnectingEmails extends Component {
       JSON.stringify(this.props.selectedMessages)
     ) {
       const messages = [...this.props.selectedMessages];
+      for(let i = 0; i < messages.length; i++) {
+        messages[i].attachments = messages[i].attachments.map(a => ({ ...a, name: convertToUtf8(a.name) }) );
+      }
       this.setState({ messages });
     }
   }
@@ -230,7 +234,8 @@ class ModalConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < messages.length; i++) {
-          const raw = Base64.encode(messages[i].raw, false);
+          const msg = await  dbStore.getMessage(messages[i].id);
+          const raw = Base64.encode(msg.raw, false);
 
           const subject = messages[i].subject;
 
@@ -265,7 +270,7 @@ class ModalConnectingEmails extends Component {
                 continue;
               }
 
-              let rawAttach = base64js.fromByteArray(msg.attachments[j].Content);
+              let rawAttach = msg.attachments[j].Content;
               try {
                 const data = await uploadFile(
                   step1Data.actuation === false
@@ -1137,3 +1142,23 @@ export default connect(
 )(ModalConnectingEmails);
 
 
+function convertToUtf8(name) {
+  let newName = name;
+  if(name.startsWith('=?iso-8859-1')) {
+    newName = q.decode(name).replace(/\=\?iso-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?ISO-8859-1')) {
+    newName = q.decode(name).replace(/\=\?ISO-8859-1\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?UTF-8')) {
+    newName = q.decode(name).replace(/\=\?UTF-8\?Q\?/g, "").replace(/\?\=/g, "")
+  } else if(name.startsWith('=?utf-8')) {
+    newName = q.decode(name).replace(/\=\?utf-8\?Q\?/g, "").replace(/\?\=/g, "")
+  }
+
+  try {
+    newName = utf8.decode(newName);
+  } catch(err) {
+    console.log(err);
+  }
+
+  return newName;
+}

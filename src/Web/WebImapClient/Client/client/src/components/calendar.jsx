@@ -93,6 +93,16 @@ import { deleteCalendar/*, getEventList*/, addCalendarEvent, deleteCalendarEvent
 
 import { listEvents } from '../calendar/api/calendar-api'
 
+//import Reminder from "./reminder/reminder"
+import { Popup } from '@syncfusion/ej2-popups';
+//import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+//import { Eventtype } from '../eventtypes/eventtype';
+//import { EventsImport } from '../events-import/events'
+//import { getEventTypes } from "../../../api/accounts";
+//import HeaderAddress from '../../../components/compose-message/header-address';
+//import AttendeeAddress from '../calendar/components/';
+import { Calendars } from '../calendar/components/calendars/calendars';
+
 class Calendar extends Component {
   constructor(props) {
     super(props);
@@ -141,6 +151,18 @@ class Calendar extends Component {
       this.layoutIframe = false;
       this.layoutIframeNewEventView = false;
       this.layoutIframeEditEventView = false;
+
+
+      this.openCalendarView = this.openCalendarView.bind(this);
+      this.deleteCalendar = this.deleteCalendar.bind(this);
+      this.calendarColorModify = this.calendarColorModify.bind(this);
+      this.onEventRendered = this.onEventRendered.bind(this);
+      this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
+      this.handleAddAddress = this.addAddress.bind(this);
+      this.handleRemoveAddress = this.removeAddress.bind(this);
+      this.onCloseDialog = this.onCloseDialog.bind(this);
+      this.onExportEvents = this.onExportEvents.bind(this);
+
 
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
@@ -330,14 +352,28 @@ class Calendar extends Component {
 
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
-              <div className={styles.app}>
-                 
+              <div id='target' className={styles.app}>                 
 
                   <SideBar
                       collapsed={sideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       bbdd={lexon.bbdd}
+
+                      sideBarCollapsed={false}
+                      sideBarToggle={this.toggleSideBar}
+                      getCalendarList={this.sidebarCalendarList}
+                      pathname={this.props.location.pathname}
+                      calendarResult={this.props.calendarsResult}
+                      onCalendarClick={this.loadCalendarEvents}
+                      onSidebarCloseClick={this.handleShowLeftSidebarClick}
+                      onCalendarChange={this.handleScheduleDate}
+                      onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
+                      onCalendarOpenCalnendarView={this.openCalendarView}
+                      onCalendarDelete={this.deleteCalendar}
+                      onCalendarColorModify={this.calendarColorModify}
+                      isIframeContainer={this.layoutIframe}
+                      ref={sidebar => this.sidebarCalendarObj = sidebar}
                   />
 
                  
@@ -433,8 +469,8 @@ class Calendar extends Component {
                  <section className='main hbox space-between'>
 
                     <article className='d-flex flex-column position-relative'>
-                        {/*  <div className="hidden">
-                            <AttendeeAddress
+                          <div className="hidden">
+                          {/*   <AttendeeAddress
                                 id='to'
                                 addresses={this.state.to2}
                                 onAddressAdd={this.handleAddAddress}
@@ -443,18 +479,18 @@ class Calendar extends Component {
                                 getAddresses={this.props.getAddresses}
                                 label={t('compose-message.to')}
                                 ref={tag => this.tagObjHead = tag}
-                            />
-                        </div>*/}
+                            />*/}
+                        </div>
 
 
-                        {/*  <div className="hidden">
-                            <Reminder
+                          <div className="hidden">
+                          {/*  <Reminder
                                 reminders={this.state.reminders}
                                 ref={rem => this.remObj = rem}
-                            />
-                        </div>>*/}
+                            />*/}
+                        </div>
 
-                        {/*  <div className="hidden">
+                         <div className="hidden">
                             <div className='buttons-wrapper' ref={but => this.buttonEventTypeObj = but}>
                                 <ButtonComponent
                                     cssClass='e-flat e-primary'
@@ -465,11 +501,11 @@ class Calendar extends Component {
                                     onClick={this.onImportContactsTypeClick.bind(this)}
                                 >Importar eventos</ButtonComponent>
                             </div>
-                        </div>*/}
+                        </div>
 
                      
 
-                        {/* <ToastComponent ref={(toast) => { this.toastObj = toast; }}
+                         <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                             id='toast_pos'
                             content='Action successfully completed.'
                             position={this.position}
@@ -480,7 +516,7 @@ class Calendar extends Component {
                             timeOut={2000}
                         >
                         </ToastComponent>
-                        <DialogComponent
+                       <DialogComponent
                             id='dialogDraggable'
                             isModal={true}
                             header={t("calendar.title")}
@@ -496,8 +532,8 @@ class Calendar extends Component {
                                 calendarId={this.state.calendarToEdit}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>
-                        <DialogComponent
+                      </DialogComponent>*/}
+                        {/* <DialogComponent
                             id='eventTypes'
                             isModal={true}
                             header={t("contactimport.title")}
@@ -965,7 +1001,7 @@ class Calendar extends Component {
                             )}
 
                         {props.IsAllDay ? (
-                            <span>todo el día</span>
+                            <span>todo el dï¿½a</span>
                         ) : (
 
                                 <span> {props.StartTime.toLocaleTimeString('es-ES')} - {props.EndTime.toLocaleTimeString('es-ES')}</span>
@@ -1483,7 +1519,6 @@ class Calendar extends Component {
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
-        debugger
 
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
@@ -1514,7 +1549,6 @@ class Calendar extends Component {
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
-                    debugger
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
@@ -1963,7 +1997,6 @@ class Calendar extends Component {
                 break;
 
             case 'eventChanged':
-                debugger
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -2164,7 +2197,6 @@ class Calendar extends Component {
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
-        debugger
         addCalendarEvent(CalendarId, event)
             .then(result => {
                 if (!hiddeMessage) {

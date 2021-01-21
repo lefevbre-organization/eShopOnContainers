@@ -126,6 +126,11 @@ export class ConnectingEmailsStep1 extends React.Component {
         </div>
         <style jsx>
           {`
+            .file-list-wrapper {
+              overflow-y: auto;
+              max-height: 290px;
+            }
+            
             .step1-container {
               margin: 50px;
             }
@@ -199,7 +204,7 @@ const MessageWithAttachments = ({msg, onChange}) => {
             {msg.attachments && msg.attachments.map((at, index) => {
               const an = getAttachmentName(at);
               return an ? (
-                  <li key={'index' + index}>
+                  <li key={'index' + index} style={{ display: 'flex',  alignItems: 'center'}}>
                     <CheckBoxComponent
                         cssClass="e-small"
                         checked={at.checked}
@@ -210,7 +215,8 @@ const MessageWithAttachments = ({msg, onChange}) => {
                     <span>{an}</span>
                   </li>
               ) : null;
-            })}
+            })
+            }
           </ul>
 
           <style jsx>{`

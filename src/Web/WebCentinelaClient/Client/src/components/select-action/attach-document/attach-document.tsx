@@ -45,12 +45,12 @@ class ArchiveDocument extends Component<Props> {
     const { selectedMessages } = this.props;
 
     return (
-      <a href='#/' className='add-more' onClick={this._handleOnClick}>
+      <div className='add-more' onClick={this._handleOnClick} style={{cursor: 'pointer'}}>
         <p className='add-more-container add-more'>
           <span className='lf-icon-add'></span>
           <strong>{i18n.t('modal-attach.save-copy')}</strong>
         </p>
-      </a>
+      </div>
     );
   }
 }

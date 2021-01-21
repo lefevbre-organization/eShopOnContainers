@@ -56,7 +56,12 @@ class SideBar extends Component {
             })
             .catch(error => {
                 console.log('error ->', error);
-       });   
+            });   
+
+      this.navigateToList = this.navigateToList.bind(this);
+      this.newEventClick = this.newEventClick.bind(this);
+      this.sidebarAction = this.sidebarAction.bind(this);
+      this.newCalendarClick = this.newCalendarClick.bind(this);
 
     } 
 
@@ -112,7 +117,7 @@ class SideBar extends Component {
             style={{ height: 48 }}
             className={`${mainCss['mdc-button']}
                     ${mainCss['mdc-button']} ${styles['compose']}`}
-                    //onClick={this.handleOnNewMessage}
+                    onClick={this.newCalendarClick}
                 >
             {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
             <img
@@ -120,7 +125,7 @@ class SideBar extends Component {
               border='0'
               src='assets/images/plus.png'></img>
             <span className='mdc-button__label' style={{ fontSize: 10.6 }}>
-              {t('calendar-sidebar.newevent')}
+              {t('calendar-sidebar.compose')}
             </span>
           </button>
           <span

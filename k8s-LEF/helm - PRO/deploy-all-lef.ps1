@@ -8,14 +8,14 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=(
         "nosql-data",
-        "sql-data"
+        "sql-data",
         "rabbitmq"
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
         "conference-api", "lexon-api", "account-api", "centinela-api", "userutils-api", "signature-api", "database-api", 
         "apigwlex", "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
-        "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
+        "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "webimapserver", 
         "webstatus"

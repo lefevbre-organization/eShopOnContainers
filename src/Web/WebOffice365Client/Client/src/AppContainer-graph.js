@@ -67,7 +67,6 @@ class AppContainerGraph extends Component {
       this.props.setCurrentUser(currentUser);
     }
 
-    //debugger;
     // if (this.props.location.search.indexOf('id') > -1) {
     //     let parametros = new URLSearchParams(this.props.location.search);
     //     window.open(`https://lexbox-test.lefebvre.es/user/${parametros.get('id')}/encrypt/0`, '_self');

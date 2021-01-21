@@ -105,7 +105,6 @@ export async function resetFolderMessagesCache(dispatch, user, folder) {
       // Store resolve function that will be called in _closeEventSource
       es.resolvePromise = resolve;
       es.onerror = ({status, message}) => {
-        debugger
         if (status === 401) {
           dispatch(clearUserCredentials());
 //          reject(new AuthenticationException(message));

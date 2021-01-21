@@ -418,11 +418,7 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === undefined
     ) {
       const findSelected = this.props.labelsResult.labels.find(x =>
-         x.displayName == "Drafts" && x.selected == true
-      );
-
-      const findByDraftId = this.props.labelsResult.labels.find(x =>
-          x.displayName == "Drafts" && this.state.draftId
+        x.selected == true
       );
 
       if (this.props.labelsResult.labelInbox === null) {
@@ -430,9 +426,7 @@ export class ComposeMessage extends PureComponent {
           this.props.history.push(`/${label.id}`)
         );
       } else if(findSelected) {
-        this.props.history.push('/' + findSelected.id.toLowerCase());
-      } else if(this.state.draftId && findByDraftId) {
-        this.props.history.push('/' + findByDraftId.id.toLowerCase());
+        this.props.history.push(`/${findSelected.id.toLowerCase()}`);
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -584,6 +578,7 @@ export class ComposeMessage extends PureComponent {
     );
     this.removeFields();
     this.uppy.close();
+    this.closeModal();
   }
 
   handleChange(value, delta, source, editor) {
@@ -1285,6 +1280,13 @@ export class ComposeMessage extends PureComponent {
             font-weight: 500;
             position: relative;
             top: 2px;
+          }
+
+          #toolsRTE_2rte-view {
+            border-bottom: 0 solid transparent !important;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-right: 0 solid transparent !important;
+            border-left: 0 solid transparent !important;
           }
 
         `}</style>

@@ -37,7 +37,6 @@ export class Login extends React.Component {
 
     // componentDidMount() {
     //     if (window.location.search.indexOf('redirect') > -1) {
-    //         debugger;
     //         if (typeof this.props.lexon !== 'undefined') {
     //             const { userId, token } = this.props.lexon;
     //             (token) 
