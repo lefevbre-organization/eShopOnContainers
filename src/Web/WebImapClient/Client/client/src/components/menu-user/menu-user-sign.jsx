@@ -184,7 +184,8 @@ L10n.load({
 
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
-  items: items
+  items: items,
+  type: 'MultiRow'
 };
 
 const UserSign = props => {
