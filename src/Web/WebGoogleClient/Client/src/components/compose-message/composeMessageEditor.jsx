@@ -192,7 +192,6 @@ const ComposeMessageEditor = (props) => {
   const { onChange, defaultValue = '' } = props;
   const [editorInstance, setEditorInstance ] = useState(null);
 
-
   return (
     <Fragment>
       <RichTextEditorComponent

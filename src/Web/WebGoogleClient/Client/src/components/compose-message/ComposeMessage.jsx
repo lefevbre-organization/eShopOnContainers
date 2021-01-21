@@ -240,25 +240,19 @@ export class ComposeMessage extends PureComponent {
       }
     }, 500);
 
+    if(this.props.composer.content && this.props.composer.content !== '') {
+      this.state.defaultContent = this.props.composer;
+    } else {
+      if (this.props.lexon.sign && this.props.lexon.sign !== '') {
+        this.state.content = `<br/><br/><p>${this.props.lexon.sign}</p>` + this.state.content;
+      }
+    }
+
     this.state.defaultContent = this.state.content;
     this.state = { ...this.state, ...this.props.composer };
   }
 
   componentDidMount(prevProps) {
-    const { lexon } = this.props;
-
-    if(this.props.composer.content !== '') {
-      this.setState({...this.props.composer, defaultContent: this.props.composer.content} );
-    } else {
-      if (lexon.sign && lexon.sign !== '') {
-        const {content} = this.state;
-        const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
-        this.setState({
-          defaultContent: dc,
-          content: dc,
-        });
-      }
-    }
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
@@ -273,6 +267,24 @@ export class ComposeMessage extends PureComponent {
     if(messageId){
       this.props.getEmailHeaderMessage(messageId);
       this.props.getEmailMessage(messageId);
+    }
+  }
+
+  addSignToContent() {
+    const { lexon } = this.props;
+    return
+
+    if(this.props.composer.content && this.props.composer.content !== '') {
+      this.setState({...this.props.composer, defaultContent: this.props.composer.content} );
+    } else {
+      if (lexon.sign && lexon.sign !== '') {
+        const {content} = this.state;
+        const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
+        this.setState({
+          defaultContent: dc,
+          content: dc,
+        });
+      }
     }
   }
 
@@ -359,7 +371,8 @@ export class ComposeMessage extends PureComponent {
             if(attachments) {
               this.getAttachById(messageId, attachments);
             }
-            
+
+            debugger
             this.setState({
               subject: subject.value, 
               defaultContent: content,
@@ -555,6 +568,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   handleChange(value, delta, source, editor) {
+    debugger
     if(value) {
       this.setState({content: value}, () => {
         this.props.updateComposerData( { ...this.state, defaultContent: this.state.content});
@@ -737,6 +751,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   removeFields() {
+
     this.props.updateComposerData({});
     this.setState({
       content: '',
