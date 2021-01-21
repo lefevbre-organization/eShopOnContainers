@@ -96,8 +96,8 @@ class UserLefebvre extends Component {
         } else {
             var signatureRole = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
             var emailRole = signatureRole; //payload.roles.some( e => e === 'Email Certificado');
-            var smsRole = (idUserApp === 51) ? true : false;//payload.roles.some( e => e === 'Sms Certificado');
-            var certDocumentRole = (idUserApp === 51) ? true : false;
+            var smsRole = signatureRole; //payload.roles.some( e => e === 'Sms Certificado');
+            var certDocumentRole = signatureRole; //(idUserApp === 51) ? true : false;
             var centinelaRole = payload.roles.some(e => e.toUpperCase() === 'CENTINELA');
             var lexonRole = payload.roles.some(e => e.toUpperCase() === 'LEX-ON');
 

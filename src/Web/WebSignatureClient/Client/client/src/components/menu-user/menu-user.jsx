@@ -162,6 +162,11 @@ class MenuUser extends Component {
           ? `${nameCut[0].slice(0, 1)} ${nameCut[1].slice(0, 1)}` 
           : `${nameCut[0].slice(0, 1)}`;
 
+        const numSignatures = (application.signatures && application.signatures.length) ? application.signatures.length : 0;
+        const numEmails = (application.emails && application.emails.length) ? application.emails.length : 0;
+        const numSms = (application.smsList && application.smsList.length) ? application.smsList.length : 0;
+        const numDocs = (application.documents && application.documents.length) ? application.documents.length : 0;
+
         return (
             <Fragment>
                 <div
@@ -217,7 +222,7 @@ class MenuUser extends Component {
                                              available={i18n.t('menu-user.available')}
                                              consumed={i18n.t('menu-user.consumed')}
                                              availablenumber={lefebvre.numAvailableSignatures}
-                                             signatureConsumed={application.signatures.length + application.emails.length + application.smsList.length} /> 
+                                             signatureConsumed={numSignatures + numEmails + numSms + numDocs} /> 
                                              : null }
                                             {/* { lefebvre.roles && lefebvre.roles.includes('Email Certificado') ? 
                                             <SignatureNumbers 
