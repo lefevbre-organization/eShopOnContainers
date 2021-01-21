@@ -195,7 +195,7 @@ const UserSign = props => {
       <div style={{ border: '1px solid rgba(0, 0, 0, 0.12)' }}>
         <RichTextEditorComponent
           id='toolsRTE'
-          height={250}
+          height={240}
           showCharCount={false}
           locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
           toolbarSettings={toolbarSettings}

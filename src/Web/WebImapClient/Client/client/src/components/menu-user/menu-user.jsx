@@ -236,7 +236,7 @@ class MenuUser extends Component {
                             }
                             ref={ref => (this.wrapperRef = ref)}>
                             <div className='content'>
-                                <div className='header' style={{ marginTop: 20 }}>
+                                <div className='header'>
                                     <span className='lf-icon-close' onClick={this.toggle}></span>
                                     <div className='menu-title'>
                                         <span>
@@ -408,6 +408,7 @@ class MenuUser extends Component {
 
           .user-image-and-name {
             padding: 24px;
+            margin-top: -29px;
           }
 
           .lf-icon-add-round {
