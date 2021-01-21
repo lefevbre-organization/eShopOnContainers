@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+
+  nosql.data:
+    image: mongo
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  googledrive.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/googledrive.api:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Services/Google/GoogleDrive.API/Dockerfile    
+    depends_on:
+      - nosql.data
+      - rabbitmq
+
+  googleaccount.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/googleaccount.api:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Services/Google/GoogleAccount.API/Dockerfile    
+    depends_on:
+      - nosql.data
+      - rabbitmq
+  
+ 
