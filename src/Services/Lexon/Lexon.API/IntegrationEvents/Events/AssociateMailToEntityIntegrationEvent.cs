@@ -12,7 +12,7 @@
             long idAppNavision,
             string userId,
             string assocTypeEntity,
-            long associatedId,
+            long? associatedId,
             string provider,
             string mailAccount,
             string uidMail,

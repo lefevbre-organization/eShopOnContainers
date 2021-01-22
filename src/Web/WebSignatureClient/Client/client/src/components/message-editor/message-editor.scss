@@ -533,3 +533,18 @@ $flag-size: 18px;
   }
 }
 
+@media (max-height: 640px) {
+  .message-editor {
+    height: fit-content;
+    .editor-wrapper {
+      overflow: hidden;
+    }
+    .editor-container {
+      height: 60% !important;
+    }
+    .action-buttons {
+      margin-top: 0 !important;
+    }
+  }
+}
+

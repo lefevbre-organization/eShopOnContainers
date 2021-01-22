@@ -83,7 +83,7 @@ namespace Lexon.API.Controllers
             [FromRoute] string idUser = "449",
             [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA",
-            [FromQuery] string filter = null,
+            [FromQuery] string search = null,
             [FromQuery] int? idCategory = null,
             [FromQuery] int pageSize = 10,
             [FromQuery] int pageIndex = 1
@@ -101,10 +101,21 @@ namespace Lexon.API.Controllers
                 idUser: idUser,
                 env: env,
                 bbdd: bbdd,
-                filter: filter,
+                filter: search,
                 pageSize,
                 pageIndex);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+            if (result.errors.Count() > 0 && result.data?.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && (result.data == null || result.data?.Count == 0))
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("{idUser}/{bbdd}/actions")]

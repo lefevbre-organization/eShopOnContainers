@@ -101,7 +101,7 @@ import { Popup } from '@syncfusion/ej2-popups';
 //import { getEventTypes } from "../../../api/accounts";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 //import AttendeeAddress from '../calendar/components/';
-
+import { Calendars } from '../calendar/components/calendars/calendars';
 
 class Calendar extends Component {
   constructor(props) {
@@ -352,8 +352,7 @@ class Calendar extends Component {
 
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
-              <div className={styles.app}>
-                 
+              <div id='target' className={styles.app}>                 
 
                   <SideBar
                       collapsed={sideBar.collapsed}
@@ -517,7 +516,7 @@ class Calendar extends Component {
                             timeOut={2000}
                         >
                         </ToastComponent>
-                      {/* <DialogComponent
+                       <DialogComponent
                             id='dialogDraggable'
                             isModal={true}
                             header={t("calendar.title")}
@@ -533,8 +532,8 @@ class Calendar extends Component {
                                 calendarId={this.state.calendarToEdit}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>
-                        <DialogComponent
+                      </DialogComponent>*/}
+                        {/* <DialogComponent
                             id='eventTypes'
                             isModal={true}
                             header={t("contactimport.title")}
