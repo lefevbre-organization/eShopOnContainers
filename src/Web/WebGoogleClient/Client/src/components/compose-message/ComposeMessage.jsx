@@ -567,7 +567,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   handleChange(value, delta, source, editor) {
-    debugger
     if(value) {
       this.setState({content: value}, () => {
         this.props.updateComposerData( { ...this.state, defaultContent: this.state.content});
