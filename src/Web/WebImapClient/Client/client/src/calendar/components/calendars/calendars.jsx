@@ -34,6 +34,10 @@ export class Calendars extends React.Component {
     onAddClick(args) {
         this.setState({ buttonDisabled: true })
 
+        //if (this.descriptionObj.value === undefined) {
+        //    this.descriptionObj.value = "";
+        //}
+
         let calendar = {
             "summary": this.nameObj.value,
             "description": this.descriptionObj.value
