@@ -264,7 +264,7 @@ export class ComposeMessage extends Component {
   componentDidMount() {
         const { lexon } = this.props;
 
-    if(this.props.composer.content !== '') {
+    if(this.props.composer && this.props.composer.content && this.props.composer.content !== '') {
       this.setState({...this.props.composer, defaultContent: this.props.composer.content});
     } else {
       if (lexon.sign && lexon.sign !== '') {
