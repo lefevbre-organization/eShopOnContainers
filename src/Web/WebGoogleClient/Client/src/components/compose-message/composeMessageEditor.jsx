@@ -248,7 +248,7 @@ const ComposeMessageEditor = (props) => {
           }}
           destroyed={ () => {
             if(editorInstance) {
-              editorInstance.destroy();
+              //editorInstance.destroy();
             }
           }}
           change={(content) => {

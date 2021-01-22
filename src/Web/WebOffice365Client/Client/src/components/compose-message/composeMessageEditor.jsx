@@ -213,7 +213,7 @@ const ComposeMessageEditor = props => {
     });
 
     return ()=>{
-      instance1.destroy();
+      //instance1.destroy();
     }
   }, [])
 
