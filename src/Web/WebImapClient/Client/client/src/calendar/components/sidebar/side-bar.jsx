@@ -34,8 +34,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import randomColor from 'randomcolor';
 
 import {
-    listCalendarList
-    
+    listCalendarList,
+    deleteCalendar
 } from '../../api/calendar-api';
 
 

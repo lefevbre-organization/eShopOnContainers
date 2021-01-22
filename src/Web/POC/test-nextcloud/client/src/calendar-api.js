@@ -4,8 +4,8 @@ import utf8 from 'utf8';
 import Caldav from './vendor/caldavjs-nextcloud';
 
 const settings = {
-  username: 'demo',
-  password: 'fHLYU874sMpN8uE',
+  username: 'Alberto',
+  password: 'Alberto1971.-',
   server: 'http://localhost:8080',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
@@ -26,7 +26,7 @@ export const createCalendar = async () => {
   const cal = await caldav.createCalendar({
     name: 'NewCalendar',
     timezone: 'Europe/Madrid', // only to override settings
-    filename: '/calendars/demo/NewCalendar',
+    filename: '/calendars/alberto/NewCalendar',
     description: 'Calendario de prueba',
     color: 'red',
   });
