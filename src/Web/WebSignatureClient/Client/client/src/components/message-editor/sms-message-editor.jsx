@@ -252,7 +252,7 @@ class SmsMessageEditor extends Component {
 
     const {certificationType} = this.state; 
 
-    if (certificationType === "delivery" && application.newMessage.attachments.length > 0) {
+    if (certificationType === "delivery" && application.newMessage.attachments.length > 0 && lefebvre.userApp !== 'centinela') {
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = [];
       this.props.editMessage(updatedMessage);

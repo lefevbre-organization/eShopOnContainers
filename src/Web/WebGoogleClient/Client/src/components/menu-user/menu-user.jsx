@@ -370,7 +370,7 @@ class MenuUser extends Component {
           }
 
           .user-image-and-name {
-            padding: 0 24px !important;
+            padding: 24px;
           }
 
           .lf-icon-add-round {
