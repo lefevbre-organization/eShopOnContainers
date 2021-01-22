@@ -586,7 +586,7 @@ export class ComposeMessage extends Component {
     );
     this.removeFields();
     this.uppy.close();
-    this.closeModal();
+    // this.closeModal();
   }
 
   handleChange(value, delta, source, editor) {
