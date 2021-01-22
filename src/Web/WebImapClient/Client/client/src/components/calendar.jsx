@@ -2373,7 +2373,7 @@ class Calendar extends Component {
     }
 
     sidebarCalendarList() {
-       this.props.getCalendars();
+      // this.props.getCalendars();
     }
 
     renderSpinner() {
