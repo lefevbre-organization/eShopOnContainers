@@ -20,14 +20,24 @@ export const listCalendarList = async () => {
 };
 
 // Create Calendar
-export const createCalendar = async (calendar) => {
+export const createCalendar = async (calendar) => {    
     const cal = await caldav.createCalendar({
-        name: 'NewCalendar',
+        name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: '/calendars/demo/NewCalendar',
-        description: 'Calendario de prueba',       
+        filename: `/calendars/alberto/${calendar.summary}`,
+        description: calendar.description        
+    });   
+    console.log(calendar)
+    return cal;
+};
+
+// Deelte Calendar
+
+export const deleteCalendar = async (calendar) => {
+    const cal = await caldav.createCalendar({       
+        filename: `/calendars/alberto/${calendar}`       
     });
-    console.log('doing')
+    console.log(calendar)
     return cal;
 };
 

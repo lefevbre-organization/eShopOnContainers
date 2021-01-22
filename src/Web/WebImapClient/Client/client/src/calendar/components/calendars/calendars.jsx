@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/ej2-react-buttons';
-import {createCalendar} from "../../api/calendar-api";
+import { createCalendar } from "../../api/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 //import { Acl } from './acl/acl';
 import i18n from 'i18next';
@@ -42,6 +42,7 @@ export class Calendars extends React.Component {
         this.toastObj.showProgressBar = true
         this.toastObj.timeOut = 10000;
         this.toastObj.show(this.toasts[0]);
+
         createCalendar(calendar)
             .then(result => {
               
