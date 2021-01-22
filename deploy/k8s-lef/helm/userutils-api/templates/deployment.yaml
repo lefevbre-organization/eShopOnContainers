@@ -28,15 +28,39 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.inf.registry.secretName }}
       {{- end }}
+      - name: regcred
+      volumes:
+      - name: ca-root-st
+        secret:
+          secretname: ca-root-secret 
       hostAliases:
       - ip: "10.38.6.5"
         hostnames:
-        - "led-pre-servicecomtools.eu.els.local"
-        - "led-pre-servicehub.eu.els.local"
+        - "led-pre-servicecomtools.eu.els.local"       
+      - ip: "10.38.6.248"
+        hostnames:
+        - "led-servicehub.eu.els.local"
+      - ip: "192.168.131.44"
+        hostnames:
+        - "led-servicecomtools-ntt.eu.els.local"
+        - "led-servicehub-ntt.eu.els.local"
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: ca-root-st
+        secret:
+          secretName: ca-root-secret
       containers:
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do echo $(date) >> /dev/null; sleep 60; update-ca-trust extract; done"]
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/pki/ca-trust/source/anchors
+            name: ca-root-st
+            readOnly: true
           env:
             - name: PATH_BASE
               value: {{ include "pathBase" . }}
