@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch} from 'react-router-dom';
 
-import FileManager from './containers/FileManager/FileManager';
+import FileManager from './containers/FileManager/FileManager.jsx';
 
 const AppRoute = () => {
   return ( 
