@@ -24,19 +24,18 @@ spec:
         app: {{ template "userutils-api.name" . }}
         release: {{ .Release.Name }}
     spec:
-      {{ if .Values.inf.registry -}}
-      imagePullSecrets:
-      - name: {{ .Values.inf.registry.secretName }}
-      {{- end }}
-      - name: regcred
       volumes:
       - name: ca-root-st
         secret:
-          secretname: ca-root-secret 
+          secretName: ca-root-secret
+      {{ if .Values.inf.registry -}}
+      imagePullSecrets:
+      - name: {{ .Values.inf.registry.secretName }}
+      {{- end }} 
       hostAliases:
       - ip: "10.38.6.5"
         hostnames:
-        - "led-pre-servicecomtools.eu.els.local"       
+        - "led-pre-servicecomtools.eu.els.local"
       - ip: "10.38.6.248"
         hostnames:
         - "led-servicehub.eu.els.local"
@@ -44,16 +43,11 @@ spec:
         hostnames:
         - "led-servicecomtools-ntt.eu.els.local"
         - "led-servicehub-ntt.eu.els.local"
-      terminationGracePeriodSeconds: 30
-      volumes:
-      - name: ca-root-st
-        secret:
-          secretName: ca-root-secret
       containers:
-          command: ["/bin/sh"]
-          args: ["-c", "while true; do echo $(date) >> /dev/null; sleep 60; update-ca-trust extract; done"]
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
+          command: ["/bin/sh"]
+          args: ["-c", "while true; do echo $(date) >> /dev/null; sleep 60; update-ca-trust extract; done"]
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
@@ -99,4 +93,3 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
-
