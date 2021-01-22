@@ -284,7 +284,7 @@ export class ComposeMessage extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-    this.removeFields();
+    //this.removeFields();
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailMessage(messageId);
