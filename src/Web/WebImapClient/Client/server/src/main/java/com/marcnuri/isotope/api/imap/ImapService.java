@@ -643,6 +643,10 @@ public class ImapService {
                 
                 }
             }
+            // Other files
+            else if (bp.getFileName() != null && bp.getContentType().toLowerCase().startsWith(("application/octet-stream"))){
+                attachments.add(new Attachment(null, MimeUtility.decodeText(bp.getFileName()), bp.getContentType(), bp.getSize()));
+            }
         }
         return attachments;
     }

@@ -232,6 +232,8 @@ public class MessageUtils {
                         && ((MimeMessage)bp.getContent()).getSubject().equals(id)) {
                     return bp;
                 }
+            } else if (bp.getFileName() != null && bp.getContentType().toLowerCase().startsWith(("application/octet-stream")) && id.equals(MimeUtility.decodeText(bp.getFileName()))){
+                return bp;
             }
         }  
 
