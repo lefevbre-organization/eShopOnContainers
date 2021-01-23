@@ -3,9 +3,9 @@ import React from "react";
 // import TopBarMessageList from "./top-bar-message-list";
 
 const Header = () => {
-    return (
-      <header className="" >
-        {/* <TopBarMessageList
+	return (
+		<header className="" >
+			{/* <TopBarMessageList
           title={title}
           collapsed={collapsed}
           sideBarToggle={sideBarToggle}
@@ -15,8 +15,8 @@ const Header = () => {
           onMarkReadClick={() => props.setMessagesSeen(true)}
           onMarkUnreadClick={() => props.setMessagesSeen(false)}
         /> */}
-      </header>
-    )
+		</header>
+	)
     
 }
 

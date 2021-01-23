@@ -4,9 +4,9 @@ import AppRoute from './App.route';
 import './App.scss';
 
 function App() {
-  return (
-    <AppRoute />
-  );
+	return (
+		<AppRoute />
+	);
 }
 
 export default App;

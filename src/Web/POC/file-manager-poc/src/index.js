@@ -9,14 +9,14 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <I18nextProvider>
-      <BrowserRouter i18n={i18n}>
-        <App />
-      </BrowserRouter>
-    </I18nextProvider>
-  </React.StrictMode>,
-  document.getElementById('root')
+	<React.StrictMode>
+		<I18nextProvider>
+			<BrowserRouter i18n={i18n}>
+				<App />
+			</BrowserRouter>
+		</I18nextProvider>
+	</React.StrictMode>,
+	document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function
