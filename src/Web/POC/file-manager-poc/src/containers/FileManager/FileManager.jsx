@@ -1,8 +1,10 @@
 import React from 'react';
 
+import './FileManager.scss';
+
 const FileManager = () => {
 	return (
-		<div>FileManager</div>
+		<div className="title">FileManager</div>
 	)
 }
 

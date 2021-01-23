@@ -1,0 +1,30 @@
+@import '../../App.scss';
+
+.main-header {
+    flex-wrap: wrap;
+    font-size: 16px;
+    position: relative;
+    z-index: 30;
+    justify-content: space-between;
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    margin-left: 0px;
+    height: 60px;
+    transition: margin 0ms,width 0ms;
+}
+.div-header {
+    background-color: $primary-color;
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+    
+    
+
+    
+       
+    
+

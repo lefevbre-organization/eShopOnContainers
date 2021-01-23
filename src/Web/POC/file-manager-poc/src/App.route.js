@@ -1,7 +1,9 @@
 import React from 'react';
 import { Route, Switch} from 'react-router-dom';
 
-import FileManager from './containers/FileManager/FileManager.jsx';
+import Layout from './containers/Layout/Layout';
+import FileManager from './containers/FileManager/FileManager';
+
 
 const AppRoute = () => {
 	return ( 
@@ -9,7 +11,12 @@ const AppRoute = () => {
 			<Route 
 				path="/" 
 				exact 
-				component={FileManager} 
+				render={props => 
+					(
+						<Layout {...props}>
+							<FileManager />
+						</Layout>
+					)} 
 			/>
 		</Switch>
 	);
