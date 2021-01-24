@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import React, { Component, Fragment } from 'react';
+import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as uuid from 'uuid/v4';
@@ -43,6 +44,8 @@ import { getFolders, findSentFolder, findSentFolderByName } from '../services/fo
 import { resetFolderMessagesCache } from '../services/message';
 import { readMessage } from '../services/message-read';
 import { persistApplicationNewMessageContent } from '../services/indexed-db';
+
+
 
 import {
   addOrUpdateAccount,
@@ -88,10 +91,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../services/calendar-api';
+import { addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { listEvents, deleteCalendar } from '../calendar/api/calendar-api'
+import { listEvents, getEventList, deleteCalendar, listCalendarList } from '../calendar/api/calendar-api'
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -102,6 +105,8 @@ import { Popup } from '@syncfusion/ej2-popups';
 //import HeaderAddress from '../../../components/compose-message/header-address';
 //import AttendeeAddress from '../calendar/components/';
 import { Calendars } from '../calendar/components/calendars/calendars';
+import AttendeeAddress from '../calendar/components/main/attendee/attendee-address';
+import './lefebvre-material.css';
 
 class Calendar extends Component {
   constructor(props) {
@@ -391,11 +396,12 @@ class Calendar extends Component {
                           <div className='control-section'>
                               <div className='control-wrapper'>
 
-                                  <ScheduleComponent  ref={schedule => this.scheduleObj = schedule} currentView="Month" height='550px'  eventSettings={{ dataSource: this.state.data }}>
+                                  
+                                  {/* <ScheduleComponent  ref={schedule => this.scheduleObj = schedule} currentView="Month" height='550px'  eventSettings={{ dataSource: this.state.data }}>
                                       <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
-                                  </ScheduleComponent>
+                                  </ScheduleComponent>*/}
 
-                                  {/*   <ScheduleComponent
+                                  <ScheduleComponent
                                       //delayUpdate='false'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
@@ -405,15 +411,16 @@ class Calendar extends Component {
                                       allowKeyboardInteraction={true}
                                       height='650px'
                                       //views={this.viewsCollections}
-                                      //actionComplete={this.onEventRendered.bind(this)}
-                                      //popupOpen={this.onPopupOpen.bind(this)}
-                                      //actionBegin={this.onActionBegin.bind(this)}
+                                      actionComplete={this.onEventRendered.bind(this)}
+                                      popupOpen={this.onPopupOpen.bind(this)}
+                                      actionBegin={this.onActionBegin.bind(this)}
                                       //actionComplete={this.onActionComplete.bind(this)}
                                       //allowVirtualScrolling = "true"
                                       cellDoubleClick={this.doubleOpen.bind(this)}
                                       eventSettings={
                                           {
-                                              dataSource: this.scheduleData,
+                                             // dataSource: this.scheduleData,
+                                              dataSource: this.state.data,
                                               fields: {
                                                   subject: { name: 'Subject', validation: { required: true } }
                                               }
@@ -431,11 +438,11 @@ class Calendar extends Component {
                                           <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                       </ViewsDirective>
                                        <ResourcesDirective>
-                                          <ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
+                                          <ResourceDirective field='eventType' title={t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
                                           <ResourceDirective ref={this.calendarObj} field='CalendarId' title={t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                       </ResourcesDirective>
                                       <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
-                                  </ScheduleComponent>*/}
+                                  </ScheduleComponent>
                               </div >
                           </div >
                       </div >
@@ -469,7 +476,7 @@ class Calendar extends Component {
 
                     <article className='d-flex flex-column position-relative'>
                           <div className="hidden">
-                          {/*   <AttendeeAddress
+                             <AttendeeAddress
                                 id='to'
                                 addresses={this.state.to2}
                                 onAddressAdd={this.handleAddAddress}
@@ -478,7 +485,7 @@ class Calendar extends Component {
                                 getAddresses={this.props.getAddresses}
                                 label={t('compose-message.to')}
                                 ref={tag => this.tagObjHead = tag}
-                            />*/}
+                            />
                         </div>
 
 
@@ -936,6 +943,7 @@ class Calendar extends Component {
     };
 
     eventTemplate(props) {
+        const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {
             colorExist = true
@@ -945,7 +953,7 @@ class Calendar extends Component {
             subjectStr = this.text_truncate(props.Subject, 15)
         }
         else {
-            subjectStr = i18n.t("schedule.notitle")
+            subjectStr = t("schedule.notitle")
         }
 
         return (
@@ -971,6 +979,7 @@ class Calendar extends Component {
     }
 
     eventTemplateAgendaView(props) {
+        const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {
             colorExist = true
@@ -980,7 +989,7 @@ class Calendar extends Component {
             props.Subject = this.text_truncate(props.Subject, 100)
         }
         else {
-            subjectStr = i18n.t("schedule.notitle")
+            subjectStr = t("schedule.notitle")
         }
 
         //var eventstart = new Date('August 19, 1975 23:15:30 GMT+00:00');
@@ -1295,7 +1304,7 @@ class Calendar extends Component {
 
             let obj = this;
             setTimeout(function () {
-               // obj.LoadCalendarList();
+                obj.LoadCalendarList();
                // obj.getlistEventTypes()
 
 
@@ -1590,6 +1599,8 @@ class Calendar extends Component {
     }
 
     onPopupOpen(args) {
+
+        const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
@@ -1714,7 +1725,7 @@ class Calendar extends Component {
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
                 var validator = (formElement).ej2_instances[0];
-                validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
+                validator.addRules('Subject', { required: [true, t("schedule.validator-required")] });
             }
 
         }
@@ -1770,7 +1781,7 @@ class Calendar extends Component {
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
                 var validator = (formElement).ej2_instances[0];
-                validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
+                validator.addRules('Subject', { required: [true, t("schedule.validator-required")] });
             }
 
             // Create required custom elements in initial time
@@ -1797,7 +1808,7 @@ class Calendar extends Component {
                     itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
                     dataSource: this.eventTypeDataSource,
                     value: this.state.eventType,
-                    floatLabelType: 'Always', placeholder: i18n.t("schedule.eventtype")
+                    floatLabelType: 'Always', placeholder: t("schedule.eventtype")
                 });
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
@@ -1813,7 +1824,7 @@ class Calendar extends Component {
 
                 this.drowDownListVisibility = new CheckBoxComponent({
                     value: this.state.isVisibility,
-                    label: i18n.t("schedule.visibility"),
+                    label: t("schedule.visibility"),
                     checked: this.state.isVisibility
                 });
 
@@ -1835,10 +1846,10 @@ class Calendar extends Component {
                 //containerTab.appendChild(nodeA);
 
                 // Adding reminder element
-                let containerRem = createElement('div', { className: 'custom-field-container' });
-                rowReminders.appendChild(containerRem);
-                var nodeR = ReactDOM.findDOMNode(this.remObj);
-                containerRem.appendChild(nodeR);
+                //let containerRem = createElement('div', { className: 'custom-field-container' });
+                //rowReminders.appendChild(containerRem);
+                //var nodeR = ReactDOM.findDOMNode(this.remObj);
+                //containerRem.appendChild(nodeR);
             }
 
             // if from iframe is requested a new event
@@ -2247,10 +2258,55 @@ class Calendar extends Component {
             })
     }
 
+    //loadCalendarEvents(calendar, checked) {
+    //    this.scheduleObj.showSpinner();
+
+    //    let predicate;
+
+    //    getEventList(calendar, this.scheduleObj.selectedDate)
+    //        .then(result => {
+    //            this.defaultCalendar = calendar;
+
+    //            //Set checkedCalendarResourceData calendar items as cheked
+    //            this.resourceCalendarData.find(x => x.id == calendar).checked = checked
+
+    //            // if calandar from left sidebar list is checked load the main event list
+    //            if (checked) {
+    //                this.dataManager = result.result;
+    //                this.onDataBinding(this.dataManager, calendar);
+    //            }
+    //            // if not remove from main event list
+    //            else {
+    //                this.scheduleData = this.scheduleData.filter(function (obj) {
+    //                    return obj.CalendarId !== calendar;
+    //                });
+    //            }
+
+    //            this.props.selectCalendar(calendar);
+
+    //            // Filter selected calendar to pass to the query
+    //            let calendars = groupBy(this.resourceCalendarData, "checked");
+
+    //            // Set the calendar field as default when only one calendar is checked
+    //            this.setDefaultCalendarField(calendars.true, calendar)
+
+    //            // Load selected calendar to pass to the query
+    //            this.predicateQueryEvents(calendars.true, predicate)
+
+    //        })
+    //        .catch(error => {
+    //            console.log('error ->', error);
+    //        })
+
+    //}
+
     loadCalendarEvents(calendar, checked) {
         this.scheduleObj.showSpinner();
 
         let predicate;
+
+
+
 
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
@@ -2373,6 +2429,7 @@ class Calendar extends Component {
     }
 
     sidebarCalendarList() {
+       // SideBar.getCalendars();
       // this.props.getCalendars();
     }
 

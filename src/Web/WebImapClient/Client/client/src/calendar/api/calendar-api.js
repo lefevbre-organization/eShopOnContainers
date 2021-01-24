@@ -41,13 +41,23 @@ export const deleteCalendar = async (calendar) => {
     return cal;
 };
 
-// Get events
+// Get events to deprecate
 export const listEvents = async (calendar) => {
   const events = await caldav.listEvents({
     filename: calendar.replace(settings.basePath, ''),
       start: '20200601T000000Z',
       end: "20240630T115959Z",
   });
+    return listEventsParser(events);
+};
+
+// Get events
+export const getEventList = async (calendar, selectedDate) => {
+    const events = await caldav.listEvents({
+        filename: calendar.replace(settings.basePath, ''),
+        start: '20200601T000000Z',
+        end: "20240630T115959Z",
+    });
     return listEventsParser(events);
 };
 

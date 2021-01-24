@@ -48,23 +48,42 @@ class SideBar extends Component {
           calendars: [],         
       };
 
-      listCalendarList()
-          .then(result => {
-                this.setState(                    
-                    { calendars: result }
-                )
-            })
-            .catch(error => {
-                console.log('error ->', error);
-            });   
+
+
+
+      //listCalendarList()
+      //    .then(result => {
+      //          this.setState(                    
+      //              { calendars: result }
+      //          )
+      //      })
+      //      .catch(error => {
+      //          console.log('error ->', error);
+      //      });   
 
       this.navigateToList = this.navigateToList.bind(this);
       this.newEventClick = this.newEventClick.bind(this);
       this.sidebarAction = this.sidebarAction.bind(this);
       this.newCalendarClick = this.newCalendarClick.bind(this);
 
+
+      this.getCalendars();
+
     } 
 
+   getCalendars() {
+    listCalendarList()
+        .then(result => {
+            this.setState(
+                { calendars: result }
+            )
+        })
+        .catch(error => {
+            console.log('error ->', error);
+        });
+   }
+
+    
     calendarChange(args) {
         this.props.onCalendarChange(args);
     }
