@@ -1,6 +1,18 @@
 ﻿import Caldav from 'caldavjs-nextcloud';
 import moment from 'moment';
 
+const CalendarColors = [
+    { value: 'lightBlue', color: '#0078d4', id: '0' },
+    { value: 'lightGreen', color: '#498205', id: '1' },
+    { value: 'lightOrange', color: '#da3b01', id: '2' },
+    { value: 'lightGray', color: '#69797e', id: '3' },
+    { value: 'lightYellow', color: '#ffff00', id: '4' },
+    { value: 'lightTeal', color: '#18a7b5', id: '5' },
+    { value: 'lightPink', color: '#e3008c', id: '6' },
+    { value: 'lightBrown', color: '#b5651d', id: '7' },
+    { value: 'lightRed', color: '#c50f1f', id: '8' }
+];
+
 const settings = {
   username: 'Alberto',
   password: 'Alberto1971.-',
@@ -15,8 +27,9 @@ export const caldav = new Caldav(settings);
 
 // Get calendars
 export const listCalendarList = async () => {
-  const calendars = await caldav.listCalendars({});
-  return calendars.filter((c) => c.ctag !== undefined);
+    const calendars = await caldav.listCalendars({});    
+   // calendars = calendars.filter((c) => c.ctag !== undefined);
+    return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
 
 // Create Calendar
@@ -164,6 +177,51 @@ function formatDate(date) {
         day = '0' + day;
 
     return [year, month, day].join('-');
+}
+
+function listCalendarParser(list) {
+    let listParse = [];
+
+    if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+
+            //let roll;
+            //if (list[i].canShare) {
+            //    roll = "owner";
+            //}
+
+            //let primary = false;
+            //if (list[i].canShare && !list[i].isRemovable) {
+            //    primary = true
+            //}
+            //else {
+            //    primary = undefined
+            //}
+            let primary = true;
+
+            let color = "#0693e3";
+           //if (list[i].color != "auto") {
+              //  color = CalendarColors.find(x => x.value == list[i].color).color
+           // }
+
+            listParse.push({
+               // accessRole: roll,
+                backgroundColor: color,
+                //colorId: "16",          
+                colorId: list[i].color,
+                defaultReminders: [],
+                id: list[i].href,
+                primary: primary,
+                selected: primary,
+                summary: list[i].name,
+                timeZone: "Europe/Madrid",
+            });
+        }
+    }
+
+    let items;
+    items = ({ items: listParse });
+    return items;
 }
 
 

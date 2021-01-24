@@ -368,7 +368,7 @@ class Calendar extends Component {
                       sideBarToggle={this.toggleSideBar}
                       getCalendarList={this.sidebarCalendarList}
                       pathname={this.props.location.pathname}
-                      calendarResult={this.props.calendarsResult}
+                      calendarResult={this.props.calendarsResult}                      
                       onCalendarClick={this.loadCalendarEvents}
                       onSidebarCloseClick={this.handleShowLeftSidebarClick}
                       onCalendarChange={this.handleScheduleDate}
@@ -419,8 +419,8 @@ class Calendar extends Component {
                                       cellDoubleClick={this.doubleOpen.bind(this)}
                                       eventSettings={
                                           {
-                                             // dataSource: this.scheduleData,
-                                              dataSource: this.state.data,
+                                              dataSource: this.scheduleData,
+                                              //dataSource: this.state.data,
                                               fields: {
                                                   subject: { name: 'Subject', validation: { required: true } }
                                               }
@@ -1214,7 +1214,7 @@ class Calendar extends Component {
             user,
             password,
         } = this.props.all.login.formValues;
-        const { email } = this.props;
+       // const { email } = this.props;
         if (userId !== null && email !== null) {
             const userAux = await getUser(userId);
 
@@ -1248,7 +1248,7 @@ class Calendar extends Component {
                 delete newAccount.configAccount;
             }
 
-
+        }
 
 
 
@@ -1331,7 +1331,7 @@ class Calendar extends Component {
             //        obj.handleScheduleOpenEditor()
             //    }, 1000);
             //}
-        }
+        
     }
 
     onDataBindingEventTypeList(items) {
@@ -1371,10 +1371,13 @@ class Calendar extends Component {
         this.resourceCalendarData = []
         listCalendarList()
             .then(result => {
-                this.resourceCalendarData = orderBy(result.items, "primary");
+                this.resourceCalendarData = orderBy(result.items, "primary")
+                //this.resourceCalendarData = result.items
+               // this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                    //this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
                     this.scheduleObj.refresh();
                 }
 
@@ -2307,7 +2310,7 @@ class Calendar extends Component {
 
 
 
-
+        const obj = this
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
                 this.defaultCalendar = calendar;
@@ -2327,7 +2330,9 @@ class Calendar extends Component {
                     });
                 }
 
-                this.props.selectCalendar(calendar);
+              
+                
+               // this.props.selectCalendar(calendar);
 
                 // Filter selected calendar to pass to the query
                 let calendars = groupBy(this.resourceCalendarData, "checked");
@@ -2560,12 +2565,18 @@ Calendar.propTypes = {
   //resetIdEmail: PropTypes.func,
 };
 
+//const mapStateToProps = state => ({
+//    calendarsResult: state.calendarsResult,
+//    lexon: state.lexon,
+//});
+
 const mapStateToProps = (state) => ({
   //application: state.application,
   //outbox: state.application.outbox,
   //folders: state.folders,
   //receivedFolder: getSelectedFolder(state) || {},
   //messages: state.messages,
+  calendarsResult: state.calendarsResult,
   lexon: state.lexon,
   //email: state.login.formValues.user,
   all: state,

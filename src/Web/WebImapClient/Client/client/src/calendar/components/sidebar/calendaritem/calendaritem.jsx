@@ -54,7 +54,7 @@ export class CalendarItem extends PureComponent {
                 checked={this.props.primary} 
               />
                 
-              {(this.props.accessRole === 'owner') && 
+              
                       <CalendarMenu
                           key={this.props.id}
                           onClick={this.navigateToList}
@@ -66,7 +66,7 @@ export class CalendarItem extends PureComponent {
                           onCalendarColorModify={this.props.onCalendarColorModify}     
                           isPrimary={this.props.primary}  
                       />   
-              }
+             
                              
               </div> 
 

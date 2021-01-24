@@ -75,7 +75,7 @@ class SideBar extends Component {
     listCalendarList()
         .then(result => {
             this.setState(
-                { calendars: result }
+                { calendars: result.items }
             )
         })
         .catch(error => {
@@ -192,10 +192,10 @@ class SideBar extends Component {
 
                     return (
                         <CalendarItem
-                            key={el.href + "_label"}
+                            key={el.id + "_label"}
                             onClick={this.navigateToList}
-                            name={el.name}
-                            id={el.href}
+                            name={el.summary}
+                            id={el.id}
                             color={color}
                             accessRole={'owner'}
                             iconProps={iconProps}
