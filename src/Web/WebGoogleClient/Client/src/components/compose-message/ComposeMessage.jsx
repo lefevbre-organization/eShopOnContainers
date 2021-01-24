@@ -89,6 +89,7 @@ const FORBIDDEN_EXTENSIONS = [
 export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       to:
         props.mailContacts && props.mailContacts !== null
@@ -253,7 +254,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidMount(prevProps) {
-
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
     window.addEventListener(
@@ -261,7 +261,7 @@ export class ComposeMessage extends PureComponent {
       this.handleGetUserFromLexonConnector
     );
 
-    this.removeFields();
+    //this.removeFields();
 
     const messageId = this.props.match.params.id;
     if(messageId){
@@ -372,7 +372,6 @@ export class ComposeMessage extends PureComponent {
               this.getAttachById(messageId, attachments);
             }
 
-            debugger
             this.setState({
               subject: subject.value, 
               defaultContent: content,
@@ -568,7 +567,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   handleChange(value, delta, source, editor) {
-    debugger
     if(value) {
       this.setState({content: value}, () => {
         this.props.updateComposerData( { ...this.state, defaultContent: this.state.content});
@@ -1223,8 +1221,9 @@ export class ComposeMessage extends PureComponent {
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-right: 0 solid transparent !important;
             border-left: 0 solid transparent !important;
+            margin-top: 76px !important;
           }
-
+          
         `}</style>
       </React.Fragment>
     );

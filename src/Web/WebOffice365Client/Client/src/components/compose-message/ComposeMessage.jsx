@@ -264,7 +264,7 @@ export class ComposeMessage extends Component {
   componentDidMount() {
         const { lexon } = this.props;
 
-    if(this.props.composer.content !== '') {
+    if(this.props.composer && this.props.composer.content && this.props.composer.content !== '') {
       this.setState({...this.props.composer, defaultContent: this.props.composer.content});
     } else {
       if (lexon.sign && lexon.sign !== '') {
@@ -284,7 +284,7 @@ export class ComposeMessage extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-    this.removeFields();
+    //this.removeFields();
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailMessage(messageId);
@@ -586,7 +586,7 @@ export class ComposeMessage extends Component {
     );
     this.removeFields();
     this.uppy.close();
-    this.closeModal();
+    // this.closeModal();
   }
 
   handleChange(value, delta, source, editor) {
@@ -1295,6 +1295,7 @@ export class ComposeMessage extends Component {
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-right: 0 solid transparent !important;
             border-left: 0 solid transparent !important;
+            margin-top: 76px !important;
           }
 
         `}</style>
