@@ -62,8 +62,11 @@ userutils:
       url: 'lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
     sig:
       id: 'Signature-Direct'
-      url: 'lexbox-websignature.lefebvre.es/access/{tokenSignature}'
+      url: 'firma.lefebvre.es/access/{tokenSignature}'
 
+conference:
+  jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
+  jitsiroom: 'https://meet.lefebvre.es'
 
 env:
   values:

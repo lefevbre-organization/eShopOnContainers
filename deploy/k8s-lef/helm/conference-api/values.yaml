@@ -48,5 +48,9 @@ env:
       key: conference__Database
     - name: DeployVersion
       key: all__Version
+    - name: JitsiUrl
+      key: urls__Jitsi
+    - name: JitsiRoomUrl
+      key: urls__JitsiRoom
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values: {}

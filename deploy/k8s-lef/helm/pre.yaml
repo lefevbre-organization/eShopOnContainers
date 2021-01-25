@@ -64,6 +64,9 @@ userutils:
       id: 'Signature-Direct'
       url: 'lexbox-pre-websignature.lefebvre.es/access/{tokenSignature}'
 
+conference:
+  jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
+  jitsiroom: 'https://meet-test.lefebvre.es'
 
 env:
   values:
