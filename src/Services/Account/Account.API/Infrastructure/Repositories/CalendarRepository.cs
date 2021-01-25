@@ -43,7 +43,7 @@
                 result.data = await _context.CalendarUsers.Find(GetFilterCalendarUser(idNavision, idNextCloud)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún EventTypes para esa cuenta {idNavision}", "AC50");
+                    TraceInfo(result.infos, $"No se encuentra ningún calendario para esa cuenta {idNavision}", "AC50");
                 else
                 {
                     var orderEvents = result.data?.calendars.OrderByDescending(x => x.titulo).ToList();
@@ -53,7 +53,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when get EventTypes of {idNavision}", ex), "AC50");
+                TraceError(result.errors, new AccountDomainException($"Error when get calendars of {idNavision}", ex), "AC50");
             }
             return result;
         }
@@ -77,7 +77,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when upsert EventTypes of {calendar.idNavision}", ex), "AC51");
+                TraceError(result.errors, new AccountDomainException($"Error when upsert celendar of {calendar.idNavision}", ex), "AC51");
             }
             return result;
         }
@@ -96,7 +96,7 @@
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new AccountDomainException($"Error when remove eventType of {idNavision}", ex), "AC54");
+                TraceError(result.errors, new AccountDomainException($"Error when remove calndar of {idNavision}", ex), "AC54");
             }
             return result;
         }
@@ -193,7 +193,7 @@
 
                     listEvents.Add(calendar);
                     calendarUser.calendars = listEvents.ToArray();
-                    TraceInfo(result.infos, $"insert new eventType {calendar.idCalendar}-{calendar.titulo}", "AC53");
+                    TraceInfo(result.infos, $"insert new calendar {calendar.idCalendar}-{calendar.titulo}", "AC53");
                 }
             }
             else
@@ -208,7 +208,7 @@
             var ev = calendarUser.calendars.FirstOrDefault(s => s.idCalendar == calendar.idCalendar);
             if (ev == null)
             {
-                TraceError(result.errors, new AccountDomainException($"Error, eventType id don´t exist, review {calendar.idCalendar}  or correct account"), "AC53");
+                TraceError(result.errors, new AccountDomainException($"Error, calendar id don´t exist, review {calendar.idCalendar}  or correct account"), "AC53");
             }
             else
             {
@@ -217,7 +217,7 @@
                 ev.color = calendar.color;
 
                 if (ev.titulo.ToUpperInvariant() == calendar.titulo?.ToUpperInvariant())
-                    TraceInfo(result.infos, $"Same titulo, modify eventType {ev.idCalendar} -> {ev.titulo} with new color", "AC53");
+                    TraceInfo(result.infos, $"Same titulo, modify calendar {ev.idCalendar} -> {ev.titulo} with new color", "AC53");
                 else
                     TraceInfo(result.infos, $"Modify calendar {ev.idCalendar} -> {ev.titulo} with {ev.color}", "AC53");
             }
@@ -255,7 +255,7 @@
         {
             return Builders<CalendarUser>.Filter.Or(
                 Builders<CalendarUser>.Filter.Eq(u => u.idNavision, idNavision.ToUpperInvariant()),
-                Builders<CalendarUser>.Filter.Eq(u => u.idNextCloud, idNextCloud.ToUpperInvariant())
+                Builders<CalendarUser>.Filter.Eq(u => u.idNextCloud, idNextCloud?.ToUpperInvariant())
                 );
         }
 
