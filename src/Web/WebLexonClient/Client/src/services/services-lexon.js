@@ -625,7 +625,10 @@ export const getActuations = async (
 ) => {
   const ps = pageSize || 100;
   const cp = page || 1;
-  const url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}&env=${window.currentEnv}`;
+  let url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}&env=${window.currentEnv}`;
+  if(search !== '') {
+    url = `${url}&search=${search}`;
+  }
 
   try {
     const response = await fetch(url, {
@@ -676,6 +679,7 @@ export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) =>
 export const createAppoinment = async (bbdd, user, event) => {
   const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/appointments?env=${window.currentEnv}`;
 
+  debugger
   try {
     const response = await fetch(url, {
       method: 'POST',

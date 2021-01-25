@@ -10,7 +10,7 @@ import {
 } from "@reach/menu-button";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import i18n from 'i18next';
-import "./calendarmenu.scss";
+import styles from "./calendarmenu.scss";
 
 
 export class CalendarMenu extends PureComponent {
@@ -42,10 +42,10 @@ export class CalendarMenu extends PureComponent {
     const iconProps = this.props.iconProps;
     let selected = this.props.selected ? " selected" : ""; 
       return (
-        <span className="closeb">
+          <span className={`${styles['closeb']}`}>
            <Menu>
-              <MenuButton className="menubutton">...</MenuButton>
-              <MenuList className="menupanel">
+                  <MenuButton className={`${styles['menubutton']}`}>...</MenuButton>
+                  <MenuList className={`${styles['menupanel']}`}>
                  <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist"  onClick={this.props.onCalendarOpenCalnendarView}>
                     <span >{i18n.t("calendar-sidebar.configandshare")}</span>                          
                  </MenuItem>

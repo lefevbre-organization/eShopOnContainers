@@ -19,7 +19,7 @@
 
     #endregion using
 
-    public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
+    public class AccountsRepository : AccountsBaseClass<AccountsRepository>, IAccountsRepository
     {
         private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
@@ -48,7 +48,7 @@
                 userMail.Id = ManageUpsert<UserMail>($"Don´t insert or modify the user {userMail.User}",
                     $"Se modifica el usuario {userMail.User}",
                     $"Se inserta el usuario {userMail.User} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                     result, resultReplace, "AC02");
 
                 result.data = userMail;
 
@@ -63,30 +63,6 @@
                            Codes.Areas.Mongo);
             }
             return result;
-        }
-
-        private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, msgModify, Codes.MailAccounts.UserUpsert);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert, Codes.MailAccounts.UserUpsert);
-                    return resultReplace.UpsertedId.ToString();
-                }
-            }
-            else
-            {
-                TraceError(result.errors,
-                           new AccountDomainException("Error when upsert user mail"),
-                           Codes.MailAccounts.UserUpsert,
-                           Codes.Areas.Mongo);
-            }
-            return null;
         }
 
         public async Task<Result<UserMail>> GetUser(string user)
@@ -529,29 +505,6 @@
 
         #region Common
 
-        private void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate, string code)
-        {
-            if (resultUpdate.IsAcknowledged)
-            {
-                if (resultUpdate.MatchedCount == 0)
-                {
-                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo", code);
-                }
-                else if (resultUpdate.MatchedCount > 0)
-                {
-                    if (resultUpdate.ModifiedCount == 0)
-                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", code);
-                    else
-                        TraceInfo(result.infos, modifyMsg, code);
-
-                    result.data = resultUpdate.ModifiedCount > 0;
-                }
-            }
-            else
-            {
-                TraceError(result.errors, new AccountDomainException(errorMsg), code, Codes.Areas.Mongo);
-            }
-        }
 
         private void ReviewUserMail(UserMail userMail)
         {
@@ -728,7 +681,7 @@
                 rawMessage.Id = ManageUpsert<RawMessageProvider>($"Don´t insert or modify the raw {rawMessage.User}",
                     $"Se modifica el usuario {rawMessage.User}",
                     $"Se inserta el usuario {rawMessage.User} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                     result, resultReplace, "AC31");
 
                 result.data = rawMessage;
 
@@ -811,7 +764,7 @@
                 accountIn.Id = ManageUpsert<AccountEventTypes>($"Don´t insert or modify the user {accountIn.email}",
                     $"Se modifica la cuenta {accountIn.email}",
                     $"Se inserta la cuenta {accountIn.email} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                     result, resultReplace, "AC41");
 
                 result.data = accountIn;
             }

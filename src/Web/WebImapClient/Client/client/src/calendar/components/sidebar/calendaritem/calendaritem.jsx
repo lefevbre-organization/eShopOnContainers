@@ -40,7 +40,7 @@ export class CalendarItem extends PureComponent {
         <Fragment>
           <div>
           <div
-            className={`text-truncate text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
+            className={`text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
             title={
               name 
             }           
@@ -54,7 +54,7 @@ export class CalendarItem extends PureComponent {
                 checked={this.props.primary} 
               />
                 
-              {(this.props.accessRole === 'owner') && 
+              
                       <CalendarMenu
                           key={this.props.id}
                           onClick={this.navigateToList}
@@ -66,7 +66,7 @@ export class CalendarItem extends PureComponent {
                           onCalendarColorModify={this.props.onCalendarColorModify}     
                           isPrimary={this.props.primary}  
                       />   
-              }
+             
                              
               </div> 
 

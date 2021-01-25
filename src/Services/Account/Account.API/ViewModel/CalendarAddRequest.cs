@@ -2,8 +2,9 @@
 namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.ViewModel
 {
     using Account.API.Model;
-    public class AccountEventAddRequest: AccountEventRequest
+
+    public class CalendarAddRequest : CalendarUserRequest
     {
-        public EventType eventType { get; set; }
+        public Calendar calendar { get; set; }
     }
 }

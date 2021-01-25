@@ -133,7 +133,7 @@ export class Sidebar extends PureComponent {
             <React.Fragment>
 
                 {!this.props.isIframeContainer ? (
-                    <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
+                    <div className='calendar-control-section' style={{ overflow: 'auto', innerWidth: '40%' , Height: '40%' }}>
                         <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
                     </div> 
 
