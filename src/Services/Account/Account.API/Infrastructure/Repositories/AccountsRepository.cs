@@ -19,7 +19,7 @@
 
     #endregion using
 
-    public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
+    public class AccountsRepository : AccountsBaseClass<AccountsRepository>, IAccountsRepository
     {
         private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
@@ -48,7 +48,7 @@
                 userMail.Id = ManageUpsert<UserMail>($"Don´t insert or modify the user {userMail.User}",
                     $"Se modifica el usuario {userMail.User}",
                     $"Se inserta el usuario {userMail.User} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                     result, resultReplace, "AC02");
 
                 result.data = userMail;
 
@@ -60,27 +60,6 @@
                 TraceError(result.errors, new AccountDomainException("Error when create user mail", ex), "AC01");
             }
             return result;
-        }
-
-        private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, msgModify, "AC02");
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert, "AC02");
-                    return resultReplace.UpsertedId.ToString();
-                }
-            }
-            else
-            {
-                TraceError(result.errors, new AccountDomainException("Error when upsert user mail"), "AC02");
-            }
-            return null;
         }
 
         public async Task<Result<UserMail>> GetUser(string user)
@@ -137,7 +116,7 @@
                     Builders<UserMail>.Update.Set(x => x.state, state)
                  );
 
-                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate);
+                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate, "AC04");
 
                 if (result.data)
                 {
@@ -166,7 +145,7 @@
 
                 ManageUpdate($"Don´t insert or modify the user´s config",
                     $"Se modifica la configuración del usuario {user} con adjunction: {config.defaultAdjunction} - entity: {config.defaultEntity} - getContacts: {config.getContacts}",
-                    result, resultUpdate);
+                    result, resultUpdate, "AC05");
             }
             catch (Exception ex)
             {
@@ -270,7 +249,7 @@
                         FindAccountsDefaultsInCollection()
                     );
 
-                ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate);
+                ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate, "AC13");
             }
             catch (Exception ex)
             {
@@ -394,7 +373,7 @@
 
                 ManageUpdate($"Don´t insert or modify the relation in user {user}",
                     $"Se añade relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
-                    result, resultUpdate);
+                    result, resultUpdate, "AC20");
             }
             catch (Exception ex)
             {
@@ -419,7 +398,7 @@
 
                 ManageUpdate($"Don´t remove the relation in user {user}",
                     $"Se elimina relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
-                    result, resultUpdate);
+                    result, resultUpdate, "AC21");
             }
             catch (Exception ex)
             {
@@ -460,29 +439,6 @@
 
         #region Common
 
-        private void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate)
-        {
-            if (resultUpdate.IsAcknowledged)
-            {
-                if (resultUpdate.MatchedCount == 0)
-                {
-                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo", "AC06");
-                }
-                else if (resultUpdate.MatchedCount > 0)
-                {
-                    if (resultUpdate.ModifiedCount == 0)
-                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", "AC06");
-                    else
-                        TraceInfo(result.infos, modifyMsg, "AC06");
-
-                    result.data = resultUpdate.ModifiedCount > 0;
-                }
-            }
-            else
-            {
-                TraceError(result.errors, new AccountDomainException("Error when update UserMail"), "AC06");
-            }
-        }
 
         private void ReviewUserMail(UserMail userMail)
         {
@@ -558,19 +514,6 @@
             arrayFilters.Add(docarrayFilter);
             return arrayFilters;
         }
-
-        //private static List<ArrayFilterDefinition> GetFilterFromAccountEventName(string nameEvent)
-        //{
-        //    var arrayFilters = new List<ArrayFilterDefinition>();
-        //    var dictionary = new Dictionary<string, string>
-        //    {
-        //        { "i.name", nameEvent },
-        //    };
-        //    var doc = new BsonDocument(dictionary);
-        //    var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
-        //    arrayFilters.Add(docarrayFilter);
-        //    return arrayFilters;
-        //}
 
         private static UpdateOptions FindAccountsDefaultsInCollection()
         {
@@ -665,7 +608,7 @@
                 rawMessage.Id = ManageUpsert<RawMessageProvider>($"Don´t insert or modify the raw {rawMessage.User}",
                     $"Se modifica el usuario {rawMessage.User}",
                     $"Se inserta el usuario {rawMessage.User} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                     result, resultReplace, "AC31");
 
                 result.data = rawMessage;
 
@@ -739,7 +682,7 @@
                 accountIn.Id = ManageUpsert<AccountEventTypes>($"Don´t insert or modify the user {accountIn.email}",
                     $"Se modifica la cuenta {accountIn.email}",
                     $"Se inserta la cuenta {accountIn.email} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                     result, resultReplace, "AC41");
 
                 result.data = accountIn;
             }

@@ -59,6 +59,9 @@
 
         public IMongoCollection<UserMail> Accounts => Database.GetCollection<UserMail>(_settings.Value.Collection);
         public IMongoCollection<AccountEventTypes> AccountEvents => Database.GetCollection<AccountEventTypes>(_settings.Value.CollectionCalendar);
+
+        public IMongoCollection<CalendarUser> CalendarUsers => Database.GetCollection<CalendarUser>(_settings.Value.CollectionCalendarUser);
+
         public IMongoCollection<RawMessageProvider> RawMessages => Database.GetCollection<RawMessageProvider>(_settings.Value.CollectionRaw);
 
         public IMongoCollection<UserMail> AccountsTransaction(IClientSessionHandle session)
@@ -69,6 +72,11 @@
         public IMongoCollection<AccountEventTypes> AccountEventsTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<AccountEventTypes>(_settings.Value.CollectionCalendar);
+        }
+
+        public IMongoCollection<CalendarUser> CalendarUserTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<CalendarUser>(_settings.Value.CollectionCalendarUser);
         }
 
         public IMongoCollection<RawMessageProvider> RawMessagesTransaction(IClientSessionHandle session)
