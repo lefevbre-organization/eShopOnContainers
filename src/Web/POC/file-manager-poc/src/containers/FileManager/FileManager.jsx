@@ -8,7 +8,7 @@ import {
 } from '@syncfusion/ej2-react-filemanager';
 import { Row, Col } from 'reactstrap';
 
-import './FileManager.scss';
+import './fileManager.scss';
 
 const FileManager = () => {
 	const [navigatorLanguage, setLanguage] = useState('');
