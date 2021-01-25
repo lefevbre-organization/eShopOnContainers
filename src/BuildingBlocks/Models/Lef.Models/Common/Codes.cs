@@ -26,13 +26,26 @@
             public static readonly string RawCreate = "AC31";
             public static readonly string RawRemove = "AC32";
 
+
+        }
+
+        public static class Calendar
+        {
             public static readonly string EventTypeGet = "AC40";
             public static readonly string EventTypeUpsert = "AC41";
             public static readonly string EventTypeRemove = "AC42";
             public static readonly string EventTypeAdd = "AC43";
             public static readonly string EventTypeAccountRemove = "AC44";
 
+            public static readonly string CalGet = "AC50";
+            public static readonly string CalUpsert = "AC51";
+            public static readonly string CalRemove = "AC52";
+            public static readonly string CalAdd = "AC53";
+            public static readonly string CalAccountRemove = "AC54";
+
         }
+
+
 
         public static class LexonActuations
         {
