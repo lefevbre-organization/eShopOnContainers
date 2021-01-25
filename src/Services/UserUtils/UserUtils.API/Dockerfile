@@ -74,9 +74,18 @@ FROM build AS publish
 
 FROM base AS final
 
+USER root
+RUN whoami
+RUN apt update && apt dist-upgrade -y
+
 RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
 RUN sed -i 's/TLSv1.3/TLSv1.0/g' /etc/ssl/openssl.cnf
 RUN sed -i 's/TLSv1.1/TLSv1.0/g' /etc/ssl/openssl.cnf
+RUN apt-get install ca-certificates
+#RUN apt-get update && apt-get install -y --no-install-recommends apt-utils gss-ntlmssp
+RUN update-ca-certificates
+
+
 
 WORKDIR /app
 COPY --from=publish /app .
