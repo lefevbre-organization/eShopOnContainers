@@ -182,7 +182,8 @@ class SideBar extends Component {
 
                 {this.state.calendars.map(el => {
 
-                    const color = randomColor.randomColor();
+                  //  const color = randomColor.randomColor();
+                    const color = '#0693e3';
 
                     const iconProps = {
                         icon: faCalendar,

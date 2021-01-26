@@ -190,6 +190,7 @@ function listCalendarParser(list) {
             //if (list[i].canShare) {
             //    roll = "owner";
             //}
+            let roll = "owner";
 
             //let primary = false;
             //if (list[i].canShare && !list[i].isRemovable) {
@@ -206,7 +207,7 @@ function listCalendarParser(list) {
            // }
 
             listParse.push({
-               // accessRole: roll,
+                accessRole: roll,
                 backgroundColor: color,
                 //colorId: "16",          
                 colorId: list[i].color,
