@@ -219,6 +219,10 @@ element.style {
 .e-icon-dlg-close {
     color: #fff;
 }
+.e-dialog.e-popup {
+    width: auto !important;
+}
+
 
 /*.e-btn.e-flat, .e-css.e-btn.e-flat {
     background-color: transparent;

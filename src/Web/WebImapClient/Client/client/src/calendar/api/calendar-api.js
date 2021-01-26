@@ -92,7 +92,7 @@ export const createEvent = async (calendar) => {
   return response;
 };
 
-export const deleteEvent = async (filename) => {
+export const deleteCalendarEvent = async (filename) => {
   const response = await caldav.deleteEvent({ filename });
   return response;
 };
