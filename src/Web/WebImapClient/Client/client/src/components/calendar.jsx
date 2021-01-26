@@ -27,14 +27,11 @@ import {
   setError,
 } from '../actions/application';
 import { clearSelected, setSelected } from '../actions/messages';
-//import {
-//  setEmailShown,
-//  resetIdEmail,
-//  setCaseFile,
-//  setGUID,
-//  setSign,
-//  setDataBase,
-//} from '../actions/lexon';
+import {
+ setGUID,
+ setSign,
+ setDataBase,
+} from '../actions/lexon';
 
 //import { getSelectedFolder } from '../selectors/folders';
 
@@ -107,6 +104,9 @@ import { Popup } from '@syncfusion/ej2-popups';
 import { Calendars } from '../calendar/components/calendars/calendars';
 import AttendeeAddress from '../calendar/components/main/attendee/attendee-address';
 import './lefebvre-material.css';
+import {getCalendars, selectCalendar} from "../calendar/components/sidebar/sidebar.actions";
+import {bindActionCreators} from "redux";
+import ACTIONS from "../actions/lexon";
 
 class Calendar extends Component {
   constructor(props) {
@@ -167,7 +167,7 @@ class Calendar extends Component {
       this.handleRemoveAddress = this.removeAddress.bind(this);
       this.onCloseDialog = this.onCloseDialog.bind(this);
       this.onExportEvents = this.onExportEvents.bind(this);
-
+      this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
 
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
@@ -282,9 +282,9 @@ class Calendar extends Component {
         })
         .catch(error => {
             console.log('error ->', error);
-        })    
+        })
 
-   
+
     }
 
 
@@ -341,7 +341,6 @@ class Calendar extends Component {
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
-
       return (
 
 
@@ -369,7 +368,7 @@ class Calendar extends Component {
                       getCalendarList={this.sidebarCalendarList}
                       pathname={this.props.location.pathname}
                       calendarResult={this.props.calendarsResult}                      
-                      onCalendarClick={this.loadCalendarEvents}
+                      onCalendarClick={this.loadCalendarEvents.bind(this)}
                       onSidebarCloseClick={this.handleShowLeftSidebarClick}
                       onCalendarChange={this.handleScheduleDate}
                       onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
@@ -380,8 +379,6 @@ class Calendar extends Component {
                       ref={sidebar => this.sidebarCalendarObj = sidebar}
                   />
 
-                 
-
                   <div
                       className={`${styles['content-wrapper']}
                                 ${sideBar.collapsed
@@ -390,18 +387,10 @@ class Calendar extends Component {
                           } ${styles['custom-padding-top']}`}>
 
 
-
-
                       <div className='schedule-control-section'>
                           <div className='control-section'>
                               <div className='control-wrapper'>
-
-                                  
-                                  {/* <ScheduleComponent  ref={schedule => this.scheduleObj = schedule} currentView="Month" height='550px'  eventSettings={{ dataSource: this.state.data }}>
-                                      <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
-                                  </ScheduleComponent>*/}
-
-                                  <ScheduleComponent
+                                <ScheduleComponent
                                       //delayUpdate='false'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
@@ -1187,7 +1176,6 @@ class Calendar extends Component {
     }
 
     async componentDidMount() {
-
         if (this.layoutIframe) {
             this.setState({ leftSideBar: { collapsed: true } })
         }
@@ -1214,115 +1202,37 @@ class Calendar extends Component {
             user,
             password,
         } = this.props.all.login.formValues;
-       // const { email } = this.props;
-        if (userId !== null && email !== null) {
-            const userAux = await getUser(userId);
+        const { email } = this.props;
+          console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
 
-            let sign = '';
-            const ac = userAux.data.accounts.filter((a) => a.email === email);
+         this.sidebarCalendarList();
 
-            if (ac.length >= 1) {
-                sign = ac[0].sign;
-            }
+        //Firefox load is slow and need to take into account wait more time to be ready
+        let value = 100;
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
+            value = 250;
+        }
+        let obj = this;
+        setTimeout(function () {
+        obj.LoadCalendarList();
+       // obj.getlistEventTypes()
 
-            const GUID = uuid();
-            const newAccount = {
-                provider: PROVIDER,
-                email: email,
-                guid: GUID,
-                defaultAccount: true,
-                sign,
-                configAccount: {
-                    imap: serverHost,
-                    imapPort: serverPort,
-                    imapUser: user,
-                    imapPass: password,
-                    imapSsl: imapSsl,
-                    smtp: smtpHost,
-                    smtpPort: smtpPort,
-                    smtpSsl: smtpSsl,
-                    smtpTls: smtpTls,
-                },
-            };
-            if (!newAccount.configAccount.imapPass) {
-                delete newAccount.configAccount;
-            }
 
+        // New event is called
+        if (obj.layoutIframeNewEventView) {
+            setTimeout(function () {
+                obj.handleScheduleOpenNewEventEditor()
+            }, 1000);
         }
 
-
-
-            console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
-
-            //window.addEventListener(
-            //    'EventClassified',
-            //    this.handleClassificatedEvent
-            //);
-
-            //window.addEventListener(
-            //    'RemoveSelectedEvent',
-            //    this.handleClassificatedEventRemoved
-            //);
-
-            //window.addEventListener(
-            //    'GetUserFromLexonConnector',
-            //    this.handleGetUserFromLexonConnector
-            //);
-            //window.addEventListener(
-            //    'GetUserFromCentinelaConnector',
-            //    this.handleGetUserFromCentinelaConnector
-            //);
-            //window.addEventListener('ExportEvents', this.onExportEvents)
-            //window.addEventListener('RemoveSelectedDocument', (event) => {
-            //    this.props.deleteMessage(event.detail.id);
-            //    dispatchEvent(
-            //        new CustomEvent('Checkclick', {
-            //            detail: {
-            //                id: event.detail.id,
-            //                extMessageId: event.detail.id,
-            //                name: event.detail.id,
-            //                subject: event.detail.subject,
-            //                sentDateTime: event.detail.sentDateTime,
-            //                folder: event.detail.folder,
-            //                provider: 'GOOGLE',
-            //                account: this.props.lexon.account,
-            //                chkselected: false,
-            //            },
-            //        })
-            //    );
-            //});
-
-
-
-            this.sidebarCalendarList();
-
-            //Firefox load is slow and need to take into account wait more time to be ready
-            let value = 100;
-            if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
-                value = 250;
-            }
-
-            let obj = this;
+        // Edit event is called
+        if (obj.layoutIframeEditEventView) {
             setTimeout(function () {
-                obj.LoadCalendarList();
-               // obj.getlistEventTypes()
+                obj.handleScheduleOpenEditEventEditor()
+            }, 1000);
+        }
 
-
-                // New event is called
-                if (obj.layoutIframeNewEventView) {
-                    setTimeout(function () {
-                        obj.handleScheduleOpenNewEventEditor()
-                    }, 1000);
-                }
-
-                // Edit event is called
-                if (obj.layoutIframeEditEventView) {
-                    setTimeout(function () {
-                        obj.handleScheduleOpenEditEventEditor()
-                    }, 1000);
-                }
-
-            }, value);
+    }, value);
 
 
 
@@ -1370,21 +1280,18 @@ class Calendar extends Component {
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
         listCalendarList()
-            .then(result => {
-                this.resourceCalendarData = orderBy(result.items, "primary")
-                //this.resourceCalendarData = result.items
-               // this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
-                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
-                if (!DisableloadSchedule) {
-                    this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
-                    //this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
-                    this.scheduleObj.refresh();
-                }
-
-            })
-            .catch(error => {
-                console.log('error ->', error);
-            });
+        .then(result => {
+            this.resourceCalendarData = orderBy(result.items, "primary")
+            this.props.getCalendars(this.resourceCalendarData);
+            this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
+            if (!DisableloadSchedule) {
+                this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                this.scheduleObj.refresh();
+            }
+        })
+        .catch(error => {
+            console.log('error ->', error);
+        });
     }
 
     componentWillUnmount() {
@@ -2261,60 +2168,16 @@ class Calendar extends Component {
             })
     }
 
-    //loadCalendarEvents(calendar, checked) {
-    //    this.scheduleObj.showSpinner();
-
-    //    let predicate;
-
-    //    getEventList(calendar, this.scheduleObj.selectedDate)
-    //        .then(result => {
-    //            this.defaultCalendar = calendar;
-
-    //            //Set checkedCalendarResourceData calendar items as cheked
-    //            this.resourceCalendarData.find(x => x.id == calendar).checked = checked
-
-    //            // if calandar from left sidebar list is checked load the main event list
-    //            if (checked) {
-    //                this.dataManager = result.result;
-    //                this.onDataBinding(this.dataManager, calendar);
-    //            }
-    //            // if not remove from main event list
-    //            else {
-    //                this.scheduleData = this.scheduleData.filter(function (obj) {
-    //                    return obj.CalendarId !== calendar;
-    //                });
-    //            }
-
-    //            this.props.selectCalendar(calendar);
-
-    //            // Filter selected calendar to pass to the query
-    //            let calendars = groupBy(this.resourceCalendarData, "checked");
-
-    //            // Set the calendar field as default when only one calendar is checked
-    //            this.setDefaultCalendarField(calendars.true, calendar)
-
-    //            // Load selected calendar to pass to the query
-    //            this.predicateQueryEvents(calendars.true, predicate)
-
-    //        })
-    //        .catch(error => {
-    //            console.log('error ->', error);
-    //        })
-
-    //}
-
     loadCalendarEvents(calendar, checked) {
-        this.scheduleObj.showSpinner();
-
+        if(this.scheduleObj) {
+            this.scheduleObj.showSpinner();
+        }
         let predicate;
 
-
-
         const obj = this
-        getEventList(calendar, this.scheduleObj.selectedDate)
+        getEventList(calendar, '')
             .then(result => {
                 this.defaultCalendar = calendar;
-
                 //Set checkedCalendarResourceData calendar items as cheked
                 this.resourceCalendarData.find(x => x.id == calendar).checked = checked
 
@@ -2332,7 +2195,7 @@ class Calendar extends Component {
 
               
                 
-               // this.props.selectCalendar(calendar);
+               this.props.selectCalendar(calendar);
 
                 // Filter selected calendar to pass to the query
                 let calendars = groupBy(this.resourceCalendarData, "checked");
@@ -2570,54 +2433,28 @@ Calendar.propTypes = {
 //    lexon: state.lexon,
 //});
 
-const mapStateToProps = (state) => ({
-  //application: state.application,
-  //outbox: state.application.outbox,
-  //folders: state.folders,
-  //receivedFolder: getSelectedFolder(state) || {},
-  //messages: state.messages,
-  calendarsResult: state.calendarsResult,
-  lexon: state.lexon,
-  //email: state.login.formValues.user,
-  all: state,
-  currentUser: state.currentUser,
-});
+const mapStateToProps = (state) => {
+    return {
+        calendarsResult: state.calendarsResult,
+        lexon: state.lexon,
+        //email: state.login.formValues.user,
+        all: state,
+        currentUser: state.currentUser,
+    }
+};
 
-const mapDispatchToProps = (dispatch) => ({
-  //reloadFolders: (credentials) => getFolders(dispatch, credentials, true),
-  //reloadMessageCache: (user, folder) =>
-  //  resetFolderMessagesCache(dispatch, user, folder),
-  //newMessage: (to, sign) => editNewMessage(dispatch, to, sign),
-  //selectFolder: (folder, user) => {
-  //  dispatch(selectFolder(folder));
-  //  clearSelectedMessage(dispatch);
-  //  dispatch(clearSelected());
-  //  resetFolderMessagesCache(dispatch, user, folder);
-  //},
-  //messageClicked: (credentials, downloadedMessages, folder, message) => {
-  //  dispatch(selectMessage(message));
-  //  readMessage(dispatch, credentials, downloadedMessages, folder, message);
-  //},
-  //setEmailShown: (flag) => dispatch(setEmailShown(flag)),
-  //outboxEventNotified: () => dispatch(outboxEventNotified()),
-  //logout: () => {
-  //  dispatch(clearUserCredentials());
-  //  history.push('/login');
-  //},
-  //close: (application) => {
-  //  dispatch(editMessage(null));
-  //  //persistApplicationNewMessageContent(application, "");
-  //},
-  //setError: (err, msg) => dispatch(setError(err, msg)),
-  //resetIdEmail: () => dispatch(resetIdEmail()),
-  //setCaseFile: (casefile) => dispatch(setCaseFile(casefile)),
-  //setSelected: (messages, selected, shiftKey) =>
-  //  dispatch(setSelected(messages, selected, shiftKey)),
-  setDataBase: (ddbb) => dispatch(setDataBase(ddbb)),
-  setGUID: (guid) => dispatch(setGUID(guid)),
-  setSign: (sign) => dispatch(setSign(sign)),
- 
-});
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators(
+        {
+            getCalendars,
+            selectCalendar,
+            setDataBase,
+            setGUID: setGUID,
+            setSign: setSign
+        },
+        dispatch
+    );
+}
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {

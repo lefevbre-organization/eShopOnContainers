@@ -48,7 +48,7 @@ export const createCalendar = async (calendar) => {
 
 export const deleteCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({       
-        filename: `/calendars/alberto/${calendar}`       
+        filename: `/calendars/alberto/${calendar}`
     });
     console.log(calendar)
     return cal;

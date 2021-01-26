@@ -107,7 +107,7 @@ class SideBar extends Component {
     }
 
   render() {
-    const { t, collapsed } = this.props; 
+    const { t, collapsed } = this.props;
     return (
       <aside
         className={`${styles['side-bar']}
@@ -158,7 +158,7 @@ class SideBar extends Component {
           </span>
         </div>
             <PerfectScrollbar>
-                <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
+                <div className='calendar-control-section' style={{ overflow: 'auto', innerWidth: '40%',Height: '40%' }}>
                     <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
                 </div> 
 
