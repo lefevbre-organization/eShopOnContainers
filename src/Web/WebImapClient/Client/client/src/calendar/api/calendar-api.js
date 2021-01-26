@@ -91,7 +91,7 @@ export const createEvent = async (calendar) => {
   return response;
 };
 
-export const deleteEvent = async (filename) => {
+export const deleteCalendarEvent = async (filename) => {
   const response = await caldav.deleteEvent({ filename });
   return response;
 };
@@ -189,6 +189,7 @@ function listCalendarParser(list) {
             //if (list[i].canShare) {
             //    roll = "owner";
             //}
+            let roll = "owner";
 
             //let primary = false;
             //if (list[i].canShare && !list[i].isRemovable) {
@@ -205,10 +206,9 @@ function listCalendarParser(list) {
            // }
 
             listParse.push({
-               // accessRole: roll,
-                backgroundColor: color,
-                //colorId: "16",          
-                colorId: list[i].color,
+                accessRole: roll,
+                backgroundColor: color,                         
+                colorId: color,
                 defaultReminders: [],
                 id: list[i].href,
                 primary: primary,

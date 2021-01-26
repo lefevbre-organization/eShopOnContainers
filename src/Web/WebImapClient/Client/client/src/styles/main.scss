@@ -173,10 +173,6 @@ element.style {
     background-color: #7f8cbb !important;
 }
 
-.e-schedule .e-month-view .e-appointment {
-    background: #001978 !important;
-}
-
 .e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
     background-color: #001978 !important;
 }
@@ -212,6 +208,8 @@ element.style {
     background: #001978 !important;
 }
 
+
+
 .e-dlg-header, .e-dlg-header * {
     color: #fff;
     font-size: 18px;
@@ -221,6 +219,10 @@ element.style {
 .e-icon-dlg-close {
     color: #fff;
 }
+.e-dialog.e-popup {
+    width: auto !important;
+}
+
 
 /*.e-btn.e-flat, .e-css.e-btn.e-flat {
     background-color: transparent;

@@ -88,10 +88,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
+import { addCalendarEvent, /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { listEvents, getEventList, deleteCalendar, listCalendarList } from '../calendar/api/calendar-api'
+import { listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -125,12 +125,12 @@ class Calendar extends Component {
         eventType: undefined,
         isVisibility: false,
         to2: [],
-        data: [{
-          Id: 2,
-          Subject: 'Paris',
-          StartTime: new Date(2021, 0, 15, 10, 0),
-          EndTime: new Date(2021, 0, 15, 12, 30),
-          }],
+        //data: [{
+        //  Id: 2,
+        //  Subject: 'Paris',
+        //  StartTime: new Date(2021, 0, 15, 10, 0),
+        //  EndTime: new Date(2021, 0, 15, 12, 30),
+        //  }],
      
       isUpdatedDefaultAccount: false,
       };
@@ -258,31 +258,31 @@ class Calendar extends Component {
       //    EndTime: new Date(2021, 0, 15, 12, 30),
       //}];
 
-      var calendar = '/remote.php/dav/calendars/alberto/personal/'
-      var listData = [];
-      listEvents(calendar)
-          .then(result => {
-              let items = result.result.items; 
-                  if (items.length > 0) {
-                      for (let i = 0; i < items.length; i++) {
-                          console.log(items[i]);
-                          listData.push({
-                              Id: items[i].id,
-                              Subject: items[i].summary,
-                              StartTime: moment(items[i].start.dateTime).format('YYYY-MM-DD hh:mm:ss'),
-                              EndTime: moment(items[i].end.dateTime).format('YYYY-MM-DD hh:mm:ss'),
-                          })
-                      }
-                  }
+      //var calendar = '/remote.php/dav/calendars/alberto/personal/'
+      //var listData = [];
+      //listEvents(calendar)
+      //    .then(result => {
+      //        let items = result.result.items; 
+      //            if (items.length > 0) {
+      //                for (let i = 0; i < items.length; i++) {
+      //                    console.log(items[i]);
+      //                    listData.push({
+      //                        Id: items[i].id,
+      //                        Subject: items[i].summary,
+      //                        StartTime: moment(items[i].start.dateTime).format('YYYY-MM-DD hh:mm:ss'),
+      //                        EndTime: moment(items[i].end.dateTime).format('YYYY-MM-DD hh:mm:ss'),
+      //                    })
+      //                }
+      //            }
              
-              this.setState({
-                  data: listData 
-              })  
+      //        this.setState({
+      //            data: listData 
+      //        })  
           
-        })
-        .catch(error => {
-            console.log('error ->', error);
-        })
+      //  })
+      //  .catch(error => {
+      //      console.log('error ->', error);
+      //  })
 
 
     }
@@ -2131,7 +2131,7 @@ class Calendar extends Component {
     }
 
     deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
-        deleteCalendarEvent(calendarId, item)
+        deleteCalendarEvent(item)
             .then(result => {
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
