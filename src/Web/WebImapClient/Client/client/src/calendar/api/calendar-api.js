@@ -208,9 +208,8 @@ function listCalendarParser(list) {
 
             listParse.push({
                 accessRole: roll,
-                backgroundColor: color,
-                //colorId: "16",          
-                colorId: list[i].color,
+                backgroundColor: color,                         
+                colorId: color,
                 defaultReminders: [],
                 id: list[i].href,
                 primary: primary,
