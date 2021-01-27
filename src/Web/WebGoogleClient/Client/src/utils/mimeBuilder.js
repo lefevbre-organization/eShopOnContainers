@@ -30,6 +30,7 @@ export class MimeBuilder {
     }
 
     buildHtmlPart(html) {
+        debugger
         const embeddedImagesList = getEmbeddedImages(html);
         const embeddedParts = [];
 
@@ -44,25 +45,28 @@ export class MimeBuilder {
 
         for (let i = 0; i < embeddedImagesList.length; i++) {
             const element = embeddedImagesList[i];
-            const { type, content } = getImageTypeAndContent(element)
-            const name = getContentName(element);
-            html = html.replace(
-                `${element}`,
-                `${element.replace('>', ' nosend="1">')}`
-            );
+            const { type = '', content = '' } = getImageTypeAndContent(element)
+            if(type !== '' && content !== '') {
+                const name = getContentName(element);
+                html = html.replace(
+                    `${element}`,
+                    `${element.replace('>', ' nosend="1">')}`
+                );
 
-            const inlinePart = mimemessage.factory({
-                contentType: `${type};name="${name}"`,
-                body: content
-            });
-            inlinePart.header('Content-Disposition', `inline; filename="${name}"`);
-            inlinePart.header('Content-Transfer-Encoding', 'base64');
-            inlinePart.header('X-Attachment-Id', embeddedImagesIds[i]);
-            inlinePart.header('Content-ID', `<${embeddedImagesIds[i]}>`);
+                const inlinePart = mimemessage.factory({
+                    contentType: `${type};name="${name}"`,
+                    body: content
+                });
+                inlinePart.header('Content-Disposition', `inline; filename="${name}"`);
+                inlinePart.header('Content-Transfer-Encoding', 'base64');
+                inlinePart.header('X-Attachment-Id', embeddedImagesIds[i]);
+                inlinePart.header('Content-ID', `<${embeddedImagesIds[i]}>`);
 
-            embeddedParts.push(inlinePart);
+                embeddedParts.push(inlinePart);
+            }
         }
 
+        debugger
         html = formatBodyImages(
             html,
             embeddedImagesList,
@@ -117,6 +121,7 @@ function removeHtmlTags(body, imgList) {
         const img = imgList[index];
         body = body.replace(img, `\r\n[image: ${getContentName(img)}]`);
     }
+
     const temp = document.createElement('div');
     temp.innerHTML = body;
     return temp.textContent || temp.innerText || '';
@@ -129,11 +134,22 @@ function getContentName(imageTag) {
 }
 
 function getImageTypeAndContent(imageTag) {
+    debugger
     const src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
-    const srcSplitted = src.split(';');
-    const type = srcSplitted[0].replace('data:', '');
-    const content = srcSplitted[1].replace('base64,', '')
-    return { type, content };
+    if(src.startsWith("data:")) {
+        const srcSplitted = src.split(';');
+        const type = srcSplitted[0].replace('data:', '');
+        const content = srcSplitted[1].replace('base64,', '')
+        return {type, content};
+    } else if(src.startsWith("cid:")) {
+        const srcSplitted = src.split(':');
+        const type = srcSplitted[0];
+        const content = srcSplitted[1];
+        return { type: '', content: ''}
+    }
+    else {
+        return { type: '', content: ''}
+    }
 }
 
 function getEmbeddedImages(body) {
@@ -163,6 +179,9 @@ function genEmbedImgIds(images) {
 function formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
     for (let index = 0; index < embedddedImagesList.length; index++) {
         const element = embedddedImagesList[index];
+        if(element.indexOf("cid:") > 0) {
+            continue;
+        }
         const src = element.replace(/.*src="([^"]*)".*/, '$1');
         body = body.replace(src, `cid:${embeddedImagesIds[index]}`);
     }

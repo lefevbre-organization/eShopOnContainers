@@ -10,6 +10,8 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+window.currentEnv = 'PRE';
+
 ReactDOM.render(
   <Provider store={configureStore}>
     <I18nextProvider i18n={i18n}>
