@@ -51,7 +51,7 @@ export class CalendarItem extends PureComponent {
                 id={this.props.id}
                 label={name}                
                 change={this.onClick}
-                checked={this.props.primary} 
+                checked={this.props.selected} 
               />
                 
               

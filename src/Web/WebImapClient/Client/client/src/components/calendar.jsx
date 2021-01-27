@@ -2131,6 +2131,7 @@ class Calendar extends Component {
     }
 
     deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
+        
         deleteCalendarEvent(item)
             .then(result => {
                 if (!hiddeMessage) {
