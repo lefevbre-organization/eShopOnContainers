@@ -25,7 +25,7 @@ Param(
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-39.4",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-39.5",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
