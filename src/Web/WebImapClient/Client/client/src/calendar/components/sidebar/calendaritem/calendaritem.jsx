@@ -32,14 +32,15 @@ export class CalendarItem extends PureComponent {
   render() {
     const {name, messagesUnread} = this.props;
     const iconProps = this.props.iconProps;
-
     let selected = this.props.selected ? " selected" : "";
-    console.log(this.props.selected)
-   // const messagesUnreadLocale = messagesUnread.toLocaleString();
+  
       return (   
         <Fragment>
           <li
-            className={`${Styles['container-selected']} text-dark pl-4 py-2 border-0 ${selected}`}
+            className={` 
+            text-dark pl-4 border-0 
+            ${Styles['container-selected']} 
+            ${selected}`}
             title={name}>
               <CheckBoxComponent 
                 cssClass={this.state.css}  
@@ -72,6 +73,7 @@ export class CalendarItem extends PureComponent {
               .e-checkbox-wrapper.${this.state.css}:hover .e-frame.e-check { /* csslint allow: adjoining-classes */
                 background-color: ${this.props.color} !important;
               }
+            
             `}
           </style>
         </Fragment>

@@ -66,7 +66,7 @@ class SideBar extends Component {
    getCalendars() {
     listCalendarList()
         .then(result => {
-          console.log(result);
+          console.log('listCalendarList', result);
             this.setState(
                 { calendars: result.items }
             )
