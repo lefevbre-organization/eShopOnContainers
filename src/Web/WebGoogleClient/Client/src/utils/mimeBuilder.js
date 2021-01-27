@@ -45,6 +45,12 @@ export class MimeBuilder {
 
         for (let i = 0; i < embeddedImagesList.length; i++) {
             const element = embeddedImagesList[i];
+
+            if(element.indexOf("cid:") > -1) {
+                html = html.replace(`${element}`, '');
+                continue;
+            }
+
             const { type, content } = this.getImageTypeAndContent(element)
             const name = this.getContentName(element);
             html = html.replace(
