@@ -38,8 +38,6 @@ import {
     deleteCalendar
 } from '../../api/calendar-api';
 
-
-
 class SideBar extends Component {
   constructor(props) {
       super(props);
@@ -47,10 +45,6 @@ class SideBar extends Component {
       this.state = {
           calendars: [],         
       };
-
-
-
-
       //listCalendarList()
       //    .then(result => {
       //          this.setState(                    
@@ -66,14 +60,13 @@ class SideBar extends Component {
       this.sidebarAction = this.sidebarAction.bind(this);
       this.newCalendarClick = this.newCalendarClick.bind(this);
 
-
       this.getCalendars();
-
     } 
 
    getCalendars() {
     listCalendarList()
         .then(result => {
+          console.log(result);
             this.setState(
                 { calendars: result.items }
             )
@@ -165,32 +158,27 @@ class SideBar extends Component {
                 <div className={`${styles['calendartitle']}`}>
                     <span className={`${styles['name']}`} >  {t('calendar-sidebar.mycalendars')}</span>
                     <span className={`${styles['button']}`}>
-                        <IconButton
+                        {/* <IconButton
                             className={`${styles.addButton}`} onClick={this.newCalendarClick}>
                             add_circle_outline
-                         </IconButton>                       
+                         </IconButton>                        */}
+                         <ButtonComponent 
+                         cssClass={`${styles['newcalendar']} e-small e-round`} 
+                         onClick={this.newCalendarClick} 
+                         iconCss={`${styles['e-btn-sb-icons']} lf-icon-sum ${styles['lf-icon-sum']}`}>
+                        </ButtonComponent>
                     </span>                   
                 </div>
-
                 {/* {this.state.calendars.map((c) => (
                     <div className={`${styles['calendaritem']}`}>{c.name}</div>
-
-
                 ))} */}
-
-               
-
                 {this.state.calendars.map(el => {
-
-                  //  const color = randomColor.randomColor();
                     const color = '#0693e3';
-
                     const iconProps = {
                         icon: faCalendar,
                         color: "#001978",
                         size: "lg"
                     };
-
                     return (
                         <CalendarItem
                             key={el.id + "_label"}

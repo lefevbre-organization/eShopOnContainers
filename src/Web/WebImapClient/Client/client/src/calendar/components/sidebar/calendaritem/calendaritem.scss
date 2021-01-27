@@ -3,3 +3,8 @@
     border-color: red !important;
     color: #fff;
 }*/
+.container-selected {
+    display: grid;
+    grid-template-columns: auto max-content;
+    width: 230px;
+}
