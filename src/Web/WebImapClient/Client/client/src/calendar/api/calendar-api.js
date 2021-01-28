@@ -92,8 +92,11 @@ export const createEvent = async (calendar) => {
   return response;
 };
 
-export const deleteCalendarEvent = async (filename) => {    
-    const response = await caldav.deleteEvent(filename);    
+export const deleteCalendarEvent = async (filename) => {   
+    console.log(filename);
+    const response = await caldav.deleteEvent({
+        "filename": filename
+    });    
     return response;
 };
 
@@ -124,7 +127,7 @@ function listEventsParser(list) {
             listParse.push({
                 id: list[i].href,
                 summary: list[i].summary,
-                location: list[i].location,
+                location: list[i].location,               
                 description: list[i].description,
                 start: { dateTime: moment(list[i].start), timeZone: 'Europe/Madrid' },
                 end: { dateTime: moment(list[i].end), timeZone: 'Europe/Madrid' },

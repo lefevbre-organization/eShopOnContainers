@@ -947,7 +947,7 @@ class Calendar extends Component {
         }
 
         return (
-            <div Style="width: 98%;">
+            <div /*style="width: 98%;"*/>
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
@@ -1098,7 +1098,7 @@ class Calendar extends Component {
 
                 this.scheduleData.push({
                     Id: event.id,
-                    CalendarId: calendarId,
+                    CalendarId: calendarId,                   
                     Subject: event.summary,
                     Location: event.location,
                     Description: event.description,
@@ -2131,28 +2131,18 @@ class Calendar extends Component {
     }
 
     deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
-        
-        deleteCalendarEvent(item)
+        let filename = item;
+        deleteCalendarEvent(filename)
             .then(result => {
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }
             })
             .catch(error => {
-                if (error.result.error.errors[0] != undefined) {
-                    if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
-                        error.result.error.errors[0].reason == "forbidden") {
-                        this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
-                        this.scheduleObj.refreshEvents();
-                        this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                        console.log('error ->', error);
-                        return;
-                    }
-                }
-                else {
+                
                     this.toastObj.show(this.toasts[2]);
                     console.log('error ->', error);
-                }
+                
             })
     }
 
