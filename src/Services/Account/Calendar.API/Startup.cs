@@ -76,8 +76,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IGoogleDriveRepository, GoogleDriveRepository>();
-            services.AddTransient<IGoogleDriveService, GoogleDriveService>();
             services.AddTransient<IEventsService, EventsService>();
             services.AddTransient<ICalendarService, CalendarService>();
             services.AddTransient<IEventsRepository, EventsRepository>();
