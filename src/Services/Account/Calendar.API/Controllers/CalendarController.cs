@@ -50,7 +50,7 @@
         [ProducesResponseType(typeof(Result<CalendarUser>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Result<CalendarUser>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetCalendarUser(
-            [FromBody] CalendarUserRequest calendarUser)
+             [FromBody] CalendarUserRequest calendarUser)
         {
             if (string.IsNullOrEmpty(calendarUser.idNavision) && string.IsNullOrEmpty(calendarUser.idNextCloud))
                 return BadRequest("Must be a valid idNavision or idNextCloud to search the events");

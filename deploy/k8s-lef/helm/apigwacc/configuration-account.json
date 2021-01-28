@@ -72,7 +72,7 @@
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
-          "Host": "account-api",
+          "Host": "calendar-api",
           "Port": 80
         }
       ],
@@ -84,7 +84,7 @@
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
-          "Host": "account-api",
+          "Host": "calendar-api",
           "Port": 80
         }
       ],
