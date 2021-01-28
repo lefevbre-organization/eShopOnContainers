@@ -31,6 +31,20 @@ kind: Service
 metadata:
   labels:
     app: elefebvre
+    component: calendar
+  name: caendar
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: calendar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
     component: lexonmysql
   name: lexonmysql
 spec:

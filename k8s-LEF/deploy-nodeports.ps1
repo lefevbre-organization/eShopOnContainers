@@ -1,4 +1,5 @@
 kubectl apply -f .\nodeports\account-api.yaml
+kubectl apply -f .\nodeports\calendar-api.yaml
 kubectl apply -f .\nodeports\apigwacc.yaml
 kubectl apply -f .\nodeports\apigwcen.yaml
 kubectl apply -f .\nodeports\apigwlex.yaml

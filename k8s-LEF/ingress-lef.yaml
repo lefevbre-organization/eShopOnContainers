@@ -75,6 +75,10 @@ spec:
         backend:
           serviceName: account.api
           servicePort: 80                      
+      - path: /calendar.api
+        backend:
+          serviceName: calendar.api
+          servicePort: 80   
       - path: /signature.api
         backend:
           serviceName: signature.api
