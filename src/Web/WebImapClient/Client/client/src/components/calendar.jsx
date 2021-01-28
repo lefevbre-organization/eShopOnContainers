@@ -88,10 +88,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { addCalendarEvent, /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
+import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -1116,7 +1116,8 @@ class Calendar extends Component {
             }
         }
         e.result = this.scheduleData;
-    }
+    }  
+
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -1315,91 +1316,96 @@ class Calendar extends Component {
         //window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
 
+    CreateGuid() {
+        function _p8(s) {
+            var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+            return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+        }
+        return _p8() + _p8(true) + _p8(true) + _p8();
+    }  
+
     buildEventoGoogle(values) {
+        //caldav.createEvent({
+        //    "allDay": false,
+        //    "start": "ISODateString",
+        //    "end": "ISODateString",
+        //    "summary": "title",
+        //    "filename": "/calendars/admin/calendar-name-at-end-of-private-link/unique-filename-for-this-event",
+        //    "location": "wherever",
+        //    "description": "tell them about it",
+        //    "timezone": "America/Chicago", //only to override settings
+        //    "color": "green",
+        //    "categories": [
+        //        { "name": "awesome" },
+        //        { "name": "tags" },
+        //        { "name": "go" },
+        //        { "name": "here" }
+        //    ],
+        //    "attendees": [
+        //        {
+        //            "name": "name",
+        //            "email": "test@example.com",
+        //            "mailto": "test@example.com", //to override email
+        //            "type": "one of: individual, group, room, resource, unknown"
+        //        }
+        //    ],
+        //    "organizer":
+        //    {
+        //        "name": "name",
+        //        "email": "test@example.com",
+        //        "mailto": "test@example.com", //to override email
+        //    }
+        //})
+
+
         //Event basic data
         var event = {
+            'allDay': values.IsAllDay,
             'summary': values.Subject,
             'location': values.Location,
             'description': values.Description,
-
-            'start': {
-                'dateTime': values.StartTime,
-                'timeZone': 'Europe/Madrid',
-            },
-            'end': {
-                'dateTime': values.EndTime,
-                'timeZone': 'Europe/Madrid',
-            },
-            'visibility': values.Visibility ? 'private' : 'default'
+            'start': moment(values.StartTime),
+            'end': moment(values.EndTime),
+            'timezone': 'Europe/Madrid',
+            'filename': values.CalendarId + this.CreateGuid(),           
+            //'color': 'green'
         }
 
-        //event Type
-        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
-            let item;
-            if (values.EventType.name != undefined) {
-                item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
-            }
-            else {
-                item = this.eventTypeDataSource.find(x => x.text == values.EventType)
-            }
-            event.extendedProperties = {
-                'private': {
-                    'eventTypeName': item.text,
-                    'eventTypeId': item.id,
-                    'eventTypeColor': item.backgroundColor,
-                },
-            }
-        }
+        
 
-        if (values.LexonClassification != undefined) {
-            const properties = {
-                ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
-                'lexonClassification': '' + values.LexonClassification
-            }
+        //if (values.LexonClassification != undefined) {
+        //    const properties = {
+        //        ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
+        //        'lexonClassification': '' + values.LexonClassification
+        //    }
 
-            event.extendedProperties = {
-                ...event.extendedProperties,
-                private: properties
-            }
-        }
+        //    event.extendedProperties = {
+        //        ...event.extendedProperties,
+        //        private: properties
+        //    }
+        //}
 
 
-        //"extendedProperties": {
-        //    "private": {
-        //        'eventType': '1'
-        //    },
-        //},
 
         //Recurrence
-        if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+        //if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
 
         //Atendees
         let arr = this.state.to2
         let ateendeeObj = [];
         if (arr.length > 0) {
             Object.keys(arr).forEach(function (key) {
-                ateendeeObj.push({ 'email': arr[key] });
-            });
-        }
-        event.attendees = ateendeeObj;
-
-        //Reminders
-
-        let reminders = []
-        let arrR = this.remObj.listviewInstance.dataSource;
-        if (arrR.length > 0) {
-
-            event.reminders = {
-                'useDefault': false,
-                'overrides': [],
-            }
-            Object.keys(arrR).forEach(function (key) {
-                event.reminders.overrides.push({
-                    method: arrR[key].title,
-                    minutes: arrR[key].minutesvalue,
+                ateendeeObj.push({
+                    "name": arr[key], 
+                    'email': arr[key],
+                    'mailto': arr[key],
                 });
             });
         }
+        if (ateendeeObj > 0) {
+            event.attendees = ateendeeObj;  
+        }
+       
 
         return event
     }
@@ -2040,53 +2046,34 @@ class Calendar extends Component {
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
 
-
-
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = result.id;
+                        args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] })
 
-                        args.data[0].Reminders = result.reminders.overrides;
+                       // args.data[0].Reminders = result.reminders.overrides;
 
                         //Convert dropdown eventType in eventtype object to paint into schedule event
-                        if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
-                            let item;
-                            item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                            // create EventType with structure
-                            let eventType = [];
-                            if (item != undefined) {
-                                eventType.name = item.text;
-                                eventType.id = item.id;
-                                eventType.color = item.backgroundColor;
-                                args.data[0].EventType = eventType;
-                            }
-                        }
+                        //if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                        //    let item;
+                        //    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                        //    // create EventType with structure
+                        //    let eventType = [];
+                        //    if (item != undefined) {
+                        //        eventType.name = item.text;
+                        //        eventType.id = item.id;
+                        //        eventType.color = item.backgroundColor;
+                        //        args.data[0].EventType = eventType;
+                        //    }
+                        //}
 
                         this.toastObj.show(this.toasts[1]);
                     })
-                    .catch(error => {
-                        if (error.result != undefined) {
-                            if (error.result.error.errors[0] != undefined) {
-                                if (error.result.error.errors[0].reason == "requiredAccessLevel") {
-                                    this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                                    console.log('error ->', error);
-                                    delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
-                                    this.scheduleObj.refreshEvents();
-                                    return;
-                                }
-                            }
-                            else {
-                                this.toastObj.show(this.toasts[2]);
-                                console.log('error ->', error);
-                            }
-                        }
-                        else {
-                            this.toastObj.show(this.toasts[2]);
-                            console.log('error ->', error);
-                        }
+                    .catch(error => {                       
+                         this.toastObj.show(this.toasts[2]);
+                         console.log('error ->', error); 
                     })
 
                 break;
@@ -2138,11 +2125,9 @@ class Calendar extends Component {
                     this.toastObj.show(this.toasts[1]);
                 }
             })
-            .catch(error => {
-                
-                    this.toastObj.show(this.toasts[2]);
-                    console.log('error ->', error);
-                
+            .catch(error => {                
+                this.toastObj.show(this.toasts[2]);
+                console.log('error ->', error);                
             })
     }
 

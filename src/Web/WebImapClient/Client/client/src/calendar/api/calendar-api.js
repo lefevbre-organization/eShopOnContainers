@@ -76,19 +76,8 @@ export const getEventList = async (calendar, selectedDate) => {
 };
 
 // Create event
-export const createEvent = async (calendar) => {
-  const response = await caldav.createEvent({
-    allDay: true,
-    start: '2021-01-05',
-    end: '2021-01-06',
-    summary: 'title',
-    filename: calendar + '/unique-filename-for-this-event',
-    location: 'wherever',
-    description: 'tell them about it',
-    timezone: 'Europe/Madrid', //only to override settings
-    color: 'green',
-  });
-
+export const addCalendarEvent = async (calendar, event) => {   
+    const response = await caldav.createEvent(event); 
   return response;
 };
 
