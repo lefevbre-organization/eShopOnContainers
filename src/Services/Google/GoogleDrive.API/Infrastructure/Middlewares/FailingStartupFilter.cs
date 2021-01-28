@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares
 {
     public class FailingStartupFilter : IStartupFilter
     {

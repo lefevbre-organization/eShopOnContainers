@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares;
+using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Extensions
 {
     public static class CustomExtensionsMethods
     {

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Models
+namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Models
 {
     public class UserGoogleDrive 
     {

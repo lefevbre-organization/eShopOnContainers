@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares
 {
     public class AuthorizeCheckOperationFilter : IOperationFilter
     {

@@ -1,6 +1,6 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Services
 {
     public class GoogleDriveService : BaseClass<GoogleDriveService>, IGoogleDriveService
     {
