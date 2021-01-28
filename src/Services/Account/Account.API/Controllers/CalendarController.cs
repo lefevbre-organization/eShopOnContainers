@@ -62,7 +62,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("post")]
+        [HttpPost()]
         [ProducesResponseType(typeof(Result<CalendarUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<CalendarUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostCalendarUser(
@@ -92,7 +92,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("calendar/delete")]
+        [HttpDelete("item")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteCalendar(
@@ -107,7 +107,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("calendar/add")]
+        [HttpPost("item")]
         [ProducesResponseType(typeof(Result<Calendar>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<Calendar>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAccountEvent(

@@ -7,7 +7,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-         "userutils.api"
+         "account.api"
         # "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", #  "database.api", 
         # "googledrive.api", "googleaccount.api",        
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", # "webdatabaseclient", 
@@ -17,7 +17,7 @@ Param(
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "userutils.api"
+        "account.api"
         # "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",        #  "database.api",
         # "googledrive.api", "googleaccount.api",
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient",         # "webdatabaseclient", 
@@ -25,7 +25,7 @@ Param(
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-39.5",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-39.6",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )

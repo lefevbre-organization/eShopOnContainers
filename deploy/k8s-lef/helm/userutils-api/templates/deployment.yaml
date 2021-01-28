@@ -46,8 +46,6 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
-          command: ["/bin/sh"]
-          args: ["-c", "while true; do echo $(date) >> /dev/null; sleep 60; update-ca-certificates extract; done"]
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File

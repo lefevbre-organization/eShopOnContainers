@@ -70,7 +70,7 @@
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
-          "Host": "account.api",
+          "Host": "account-api",
           "Port": 80
         }
       ],
