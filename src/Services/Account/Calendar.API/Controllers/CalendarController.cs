@@ -1,8 +1,8 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Controllers
 {
     #region Usings
 
-    using Account.API.ViewModel;
+    using ViewModel;
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -20,12 +20,12 @@
     public class CalendarController : Controller
     {
         private readonly ICalendarService _service;
-        private readonly AccountSettings _settings;
+        private readonly CalendarSettings _settings;
         private readonly IEventBus _eventBus;
 
         public CalendarController(
             ICalendarService calendarService,
-            IOptionsSnapshot<AccountSettings> settings,
+            IOptionsSnapshot<CalendarSettings> settings,
             IEventBus eventBus)
         {
             _service = calendarService ?? throw new ArgumentNullException(nameof(calendarService));
