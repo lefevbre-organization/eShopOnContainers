@@ -99,6 +99,15 @@ services:
       - nosql.data
       - rabbitmq
 
+  calendar.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/calendar.api:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Services/Account/Calendar.API/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+
   webaccountapigw:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
     build:
@@ -122,6 +131,15 @@ services:
       - nosql.data
       - rabbitmq
 
+#  lexon.mysql.api:
+#    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-dev}
+#    build:
+#      context: .
+#      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
+#    depends_on:
+#      - nosql.data
+#      - rabbitmq
+#      - lexon.api
   googledrive.api:
     image: ${REGISTRY:-elefebvreoncontainers}/googledrive.api:${PLATFORM:-linux}-${TAG:-dev}
     build:

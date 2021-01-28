@@ -12,6 +12,8 @@ data:
 #  lexonmysql__hc: http://lexon.mysql.api/hc
   account: http://account.api
   account__hc: http://account.api/hc
+  calendar: http://calendar.api
+  calendar__hc: http://calendar.api/hc
   signature: http://signature.api
   signature__hc: http://signature.api/hc  
   userutils: http://userutils.api

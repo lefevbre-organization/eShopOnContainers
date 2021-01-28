@@ -1,6 +1,7 @@
 ﻿import Caldav from 'caldavjs-nextcloud';
 import moment from 'moment';
 
+
 const CalendarColors = [
     { value: 'lightBlue', color: '#0078d4', id: '0' },
     { value: 'lightGreen', color: '#498205', id: '1' },
@@ -91,9 +92,9 @@ export const createEvent = async (calendar) => {
   return response;
 };
 
-export const deleteEvent = async (filename) => {
-  const response = await caldav.deleteEvent({ filename });
-  return response;
+export const deleteCalendarEvent = async (filename) => {    
+    const response = await caldav.deleteEvent(filename);    
+    return response;
 };
 
 
@@ -121,7 +122,7 @@ function listEventsParser(list) {
 
         for (let i = 0; i < list.length; i++) {   
             listParse.push({
-                id: list[i].etag,
+                id: list[i].href,
                 summary: list[i].summary,
                 location: list[i].location,
                 description: list[i].description,
@@ -189,6 +190,7 @@ function listCalendarParser(list) {
             //if (list[i].canShare) {
             //    roll = "owner";
             //}
+            let roll = "owner";
 
             //let primary = false;
             //if (list[i].canShare && !list[i].isRemovable) {
@@ -197,22 +199,27 @@ function listCalendarParser(list) {
             //else {
             //    primary = undefined
             //}
-            let primary = true;
+            let primary = false;
 
             let color = "#0693e3";
+            let selected = true
+            if (i > 0) {
+                selected = false
+            }
+               
+           
            //if (list[i].color != "auto") {
               //  color = CalendarColors.find(x => x.value == list[i].color).color
            // }
 
             listParse.push({
-               // accessRole: roll,
-                backgroundColor: color,
-                //colorId: "16",          
-                colorId: list[i].color,
+                accessRole: roll,
+                backgroundColor: color,                         
+                colorId: color,
                 defaultReminders: [],
                 id: list[i].href,
                 primary: primary,
-                selected: primary,
+                selected:selected,
                 summary: list[i].name,
                 timeZone: "Europe/Madrid",
             });

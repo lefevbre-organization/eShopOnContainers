@@ -13,7 +13,7 @@ Param(
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
-        "conference-api", "lexon-api", "account-api", "centinela-api", "userutils-api", "signature-api", "database-api", 
+        "calendar-api", "conference-api", "lexon-api", "lexonmysql-api", "account-api", "centinela-api", "userutils-api", "signature-api", 
         "apigwlex", "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
         "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 

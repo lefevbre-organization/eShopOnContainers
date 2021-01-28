@@ -18,6 +18,8 @@ inf:
       database: UserUtilsDb
     account:
       database: LocationsDb #MailAccounts
+    calendar:
+      database: CalendarsDb
     lexon:
       database: LexonApiDb
     centinela:
@@ -42,8 +44,8 @@ inf:
     useAzureStorage: false  # If catalog api uses azure storage or not
   version:
     major: 0
-    minor: 34
-    complete: RC 00.39
+    minor: 40
+    complete: RC 00.40
 #  registry:                # Uncomment "registry" to specify registry secret
 #    secretName:            # secretName is the name of the secret inside k8s   
 #    server:                # Registry login server

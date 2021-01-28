@@ -28,17 +28,15 @@ COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Custo
 
 # Lefebvre projects
 COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/
-# Lefebvre Apis
 COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
-COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Centinela/Centinela.API/
-COPY src/Services/Conference/Conference.API/Conference.API.csproj src/Services/Conference/Conference.API/
-COPY src/Services/Database/Database.API/Database.API.csproj src/Services/Database/Database.API/
-COPY src/Services/Google/GoogleAccount.API/GoogleAccount.API.csproj src/Services/Google/GoogleAccount.API/
-COPY src/Services/Google/GoogleDrive.API/GoogleDrive.API.csproj src/Services/Google/GoogleDrive.API/
+COPY src/Services/Account/Calendar.API/Calendar.API.csproj src/Services/Account/Calendar.API/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
-COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
+COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
 COPY src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj src/Services/UserUtils/UserUtils.API/
-# Lefebvre Clients
+COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Centinela/Centinela.API/
+COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
+COPY src/Services/Database/Database.API/Database.API.csproj src/Services/Database/Database.API/
+COPY src/Services/Conference/Conference.API/Conference.API.csproj src/Services/Conference/Conference.API/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebAddonLauncher/WebAddonLauncher.csproj src/Web/WebAddonLauncher/
@@ -49,10 +47,8 @@ COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
 COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
 COPY src/Web/WebDatabaseClient/WebDatabaseClient.csproj src/Web/WebDatabaseClient/
-# Lefebvre Addons
 COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/WebOffice365AddonLexon.csproj src/Addon/Lexon/Office365/WebOffice365AddonLexon/
 COPY src/Addon/Centinela/Office365/WebOffice365AddonCentinela/WebOffice365AddonCentinela.csproj src/Addon/Centinela/Office365/WebOffice365AddonCentinela/
-
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 COPY "NuGet.config" "NuGet.config"

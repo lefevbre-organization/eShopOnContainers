@@ -38,7 +38,7 @@ async function init() {
   const previousState = await loadState();
   let enhancer;
   if (
-    process.env.NODE_ENV === 'development' &&
+    process.env.NODE_ENV !== 'production' &&
     window.__REDUX_DEVTOOLS_EXTENSION__
   ) {
     enhancer = window.__REDUX_DEVTOOLS_EXTENSION__();

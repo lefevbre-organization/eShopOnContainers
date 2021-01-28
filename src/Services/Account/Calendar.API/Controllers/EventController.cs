@@ -1,8 +1,8 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Controllers
 {
     #region Usings
 
-    using Account.API.ViewModel;
+    using ViewModel;
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -20,12 +20,12 @@
     public class EventController : Controller
     {
         private readonly IEventsService _service;
-        private readonly AccountSettings _settings;
+        private readonly CalendarSettings _settings;
         private readonly IEventBus _eventBus;
 
         public EventController(
             IEventsService service,
-            IOptionsSnapshot<AccountSettings> settings,
+            IOptionsSnapshot<CalendarSettings> settings,
             IEventBus eventBus)
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
@@ -38,11 +38,12 @@
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            return Ok(new Result<bool>(true));
+            var data = $"Calendar.Api -> Events v.{ _settings.Version}";
+            return Ok(new Result<string>(data));
         }
 
         [HttpPost("get")]

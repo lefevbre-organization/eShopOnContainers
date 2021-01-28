@@ -69,6 +69,30 @@
     .scroll-style {
         /*overflow: hidden;*/
     }
+
+    .lf-icon-sum:before {
+        content: "\e9e2";
+        font-size: 1rem;
+    }
+
+    .newcalendar {  
+        position: relative;
+        right: 10px;
+        cursor: pointer;
+        top: 8px;
+    }
+
+    .e-btn-sb-icons {
+        color:#001978;
+        line-height: 1;
+        font-style: normal;
+        font-weight: normal;
+        font-variant: normal;
+        text-transform: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
 }
 
 @media screen and (max-width: 600px) {
@@ -91,6 +115,7 @@
 
 .calendartitle {    
     padding: 10px;
+    margin-bottom: 50px;
 }
 .calendartitle .name {
     float: left;

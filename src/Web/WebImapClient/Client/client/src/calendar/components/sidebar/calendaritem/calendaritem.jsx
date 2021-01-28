@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import CalendarMenu from '../calendarmenu/calendarmenu';
 import "@reach/menu-button/styles.css";
-import "./calendaritem.scss";
+import Styles from "./calendaritem.scss";
 
 export class CalendarItem extends PureComponent {
 
@@ -32,56 +32,50 @@ export class CalendarItem extends PureComponent {
   render() {
     const {name, messagesUnread} = this.props;
     const iconProps = this.props.iconProps;
-
     let selected = this.props.selected ? " selected" : "";
-
-   // const messagesUnreadLocale = messagesUnread.toLocaleString();
+  
       return (   
         <Fragment>
-          <div>
-          <div
-            className={`text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
-            title={
-              name 
-            }           
-              >
-                 
-              <CheckBoxComponent cssClass={this.state.css}  ref={checkboxObj => this.ownerObj = checkboxObj}
+          <li
+            className={` 
+            text-dark pl-4 border-0 
+            ${Styles['container-selected']} 
+            ${selected}`}
+            title={name}>
+              <CheckBoxComponent 
+                cssClass={this.state.css}  
+                ref={checkboxObj => this.ownerObj = checkboxObj}
                 value={this.props.id}
                 id={this.props.id}
                 label={name}                
                 change={this.onClick}
-                checked={this.props.primary} 
+                checked={this.props.selected} 
               />
-                
-              
-                      <CalendarMenu
-                          key={this.props.id}
-                          onClick={this.navigateToList}
-                          name={this.props.summary}
-                          id={this.props.id}
-                          color={this.props.color}
-                          onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
-                          onCalendarDelete={this.props.onCalendarDelete}
-                          onCalendarColorModify={this.props.onCalendarColorModify}     
-                          isPrimary={this.props.primary}  
-                      />   
-             
-                             
-              </div> 
-
-          </div>
-
-          <style>{`
-                 .e-checkbox-wrapper.${this.state.css} .e-frame.e-check,
-                    .e-checkbox-wrapper.${this.state.css} .e-checkbox:focus + .e-frame.e-check { /* csslint allow: adjoining-classes */
-                      background-color: ${this.props.color} !important;
-                    }
-
-                    .e-checkbox-wrapper.${this.state.css}:hover .e-frame.e-check { /* csslint allow: adjoining-classes */
-                          background-color: ${this.props.color} !important;
-}
-                `}</style>
+        
+              <CalendarMenu
+                  key={this.props.id}
+                  onClick={this.navigateToList}
+                  name={this.props.summary}
+                  id={this.props.id}
+                  color={this.props.color}
+                  onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
+                  onCalendarDelete={this.props.onCalendarDelete}
+                  onCalendarColorModify={this.props.onCalendarColorModify}     
+                  isPrimary={this.props.primary}  
+              />              
+          </li> 
+          <style>
+            {`
+              .e-checkbox-wrapper.${this.state.css} .e-frame.e-check,
+              .e-checkbox-wrapper.${this.state.css} .e-checkbox:focus + .e-frame.e-check { /* csslint allow: adjoining-classes */
+                background-color: ${this.props.color} !important;
+              }
+              .e-checkbox-wrapper.${this.state.css}:hover .e-frame.e-check { /* csslint allow: adjoining-classes */
+                background-color: ${this.props.color} !important;
+              }
+            
+            `}
+          </style>
         </Fragment>
     );
   }
