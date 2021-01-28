@@ -18,6 +18,8 @@ inf:
       database: UserUtilsDb
     account:
       database: LocationsDb #MailAccounts
+    calendar:
+      database: CalendarsDb
     lexon:
       database: LexonApiDb
     centinela:
