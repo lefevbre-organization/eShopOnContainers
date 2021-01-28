@@ -31,6 +31,7 @@ COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Custo
 # Lefebvre projects
 COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/
 COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
+COPY src/Services/Account/Calendar.API/Calendar.API.csproj src/Services/Account/Calendar.API/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
 COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
 COPY src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj src/Services/UserUtils/UserUtils.API/
