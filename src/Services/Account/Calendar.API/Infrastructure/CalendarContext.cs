@@ -52,18 +52,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure
             if (!BsonClassMap.IsClassMapRegistered(typeof(CalendarUser))) { BsonClassMap.RegisterClassMap<CalendarUser>(); }
         }
 
-        public IMongoCollection<AccountEventTypes> AccountEvents => Database.GetCollection<AccountEventTypes>(_settings.Value.CollectionCalendar);
+        public IMongoCollection<AccountEventTypes> AccountEvents => Database.GetCollection<AccountEventTypes>(_settings.Value.Collection);
 
-        public IMongoCollection<CalendarUser> CalendarUsers => Database.GetCollection<CalendarUser>(_settings.Value.CollectionCalendarUser);
+        public IMongoCollection<CalendarUser> CalendarUsers => Database.GetCollection<CalendarUser>(_settings.Value.CollectionCalendar);
 
         public IMongoCollection<AccountEventTypes> AccountEventsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<AccountEventTypes>(_settings.Value.CollectionCalendar);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<AccountEventTypes>(_settings.Value.Collection);
         }
 
         public IMongoCollection<CalendarUser> CalendarUserTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<CalendarUser>(_settings.Value.CollectionCalendarUser);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<CalendarUser>(_settings.Value.CollectionCalendar);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
