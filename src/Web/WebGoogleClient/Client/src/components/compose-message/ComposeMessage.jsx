@@ -8,7 +8,8 @@ import {
   getDraftListWithRFC,
   getAttachments,
   dataUrlToFile,
-  deleteDraft
+  deleteDraft,
+  getEmbeddedImages
 } from '../../api';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
@@ -289,7 +290,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   getAttachById(messageId, attachments) {
-
     const addAttachment = (attach) => {
       getAttachments({messageId, attachmentId: attach.body.attachmentId})
       .then((attachment) => {
@@ -322,6 +322,56 @@ export class ComposeMessage extends PureComponent {
    
   }
 
+  getAddressesById() {
+    const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
+
+    const cc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Cc");
+            
+    const bcc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Bcc");
+    if(to) {
+      const toEmails = to.value.split(',');
+      toEmails.forEach(toEmail => {
+        this.addAddress('to', toEmail);
+      });
+    }
+
+    if(cc) {
+      const ccEmails = cc.value.split(',');
+      ccEmails.forEach(ccEmail => {
+        this.addAddress('cc', ccEmail);
+      });
+    }
+    
+    if (bcc) {
+      const bccEmails = bcc.value.split(',');
+      bccEmails.forEach(bccEmail => {
+        this.addAddress('bcc2', bccEmail);
+      });
+    }
+  }
+
+  formatBodyImages(messageId, attachments, embedddedImages) {
+    const addImages = async (attach, image) => {
+      const attachment = await getAttachments({messageId, attachmentId: attach.body.attachmentId});
+      const dataUrl = attachment.data
+         .replace(/-/g, "+")
+         .replace(/_/g, "/");
+          const src = image.replace(/.*src="([^"]*)".*/, '$1');
+          const body = this.props.emailMessageResult.body.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+          this.setState({
+           defaultContent: body,
+           content: body
+       });
+    }
+  
+    attachments[0].parts[1].parts.forEach((file, index) => {
+        if(file.filename != '') {
+            const image = embedddedImages[index - 1];
+            addImages(file, image);
+      }
+    });
+  }
+
   getById() {
     if(this.props.emailMessageResult.body != ''){
       const messageId = this.props.emailMessageResult.result.messageHeaders.find(x => 
@@ -329,49 +379,27 @@ export class ComposeMessage extends PureComponent {
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
-            
+            const messageId = this.props.emailMessageResult.result.id;
+
+            const attachments = this.props.emailMessageResult.attach;
+      
+            const embeddedImages = getEmbeddedImages(this.props.emailMessageResult.body);
+
+            this.formatBodyImages(messageId, attachments, embeddedImages);
+         
+            this.getAddressesById();
+
+            const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
+
             const content =  this.props.emailMessageResult.body === 'null'  
             ? 
             '' 
             : this.props.emailMessageResult.body; 
 
-            const attachments = this.props.emailMessageResult.attach;
-
-            const messageId = this.props.emailMessageResult.result.id;
-
-            const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
-
-            const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
-
-            const cc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Cc");
-            
-            const bcc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Bcc");
-
-            if(to) {
-              const toEmails = to.value.split(',');
-              toEmails.forEach(toEmail => {
-                this.addAddress('to', toEmail);
-              });
-            }
-          
-            if(cc) {
-              const ccEmails = cc.value.split(',');
-              ccEmails.forEach(ccEmail => {
-                this.addAddress('cc', ccEmail);
-              });
-            }
-           
-            if (bcc) {
-              const bccEmails = bcc.value.split(',');
-              bccEmails.forEach(bccEmail => {
-                this.addAddress('bcc2', bccEmail);
-              });
-            }
-
             if(attachments) {
               this.getAttachById(messageId, attachments);
             }
-
+            
             this.setState({
               subject: subject.value, 
               defaultContent: content,
@@ -645,6 +673,8 @@ export class ComposeMessage extends PureComponent {
     const Fileattached = this.state.uppyPreviews;
 
     const fullTime = this.getTimeDraft();
+
+    console.log('saveDraft', this.state.content)
 
     if(this.state.to != '' 
     || this.state.cc != ''
