@@ -31,7 +31,7 @@ COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogM
 COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
 COPY src/Services/Account/Calendar.API/Calendar.API.csproj src/Services/Account/Calendar.API/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
-COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
+COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
 COPY src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj src/Services/UserUtils/UserUtils.API/
 COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Centinela/Centinela.API/
 COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
@@ -51,7 +51,6 @@ COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaCl
 COPY src/Web/WebDatabaseClient/WebDatabaseClient.csproj src/Web/WebDatabaseClient/
 COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/WebOffice365AddonLexon.csproj src/Addon/Lexon/Office365/WebOffice365AddonLexon/
 COPY src/Addon/Centinela/Office365/WebOffice365AddonCentinela/WebOffice365AddonCentinela.csproj src/Addon/Centinela/Office365/WebOffice365AddonCentinela/
-
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 COPY "NuGet.config" "NuGet.config"

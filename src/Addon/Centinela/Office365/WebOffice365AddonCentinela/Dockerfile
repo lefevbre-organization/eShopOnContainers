@@ -16,6 +16,7 @@ WORKDIR /src
 
 COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"
 
+# Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
 COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
 COPY src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj src/BuildingBlocks/Devspaces.Support/
 COPY src/BuildingBlocks/Models/Lef.Models/Lef.Models.csproj src/BuildingBlocks/Models/Lef.Models/
@@ -28,7 +29,6 @@ COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Custo
 
 # Lefebvre projects
 COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/
-# Lefebvre Apis
 COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
 COPY src/Services/Account/Calendar.API/Calendar.API.csproj src/Services/Account/Calendar.API/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
@@ -52,9 +52,6 @@ COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaCl
 COPY src/Web/WebDatabaseClient/WebDatabaseClient.csproj src/Web/WebDatabaseClient/
 COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/WebOffice365AddonLexon.csproj src/Addon/Lexon/Office365/WebOffice365AddonLexon/
 COPY src/Addon/Centinela/Office365/WebOffice365AddonCentinela/WebOffice365AddonCentinela.csproj src/Addon/Centinela/Office365/WebOffice365AddonCentinela/
-
-RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
-
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 COPY "NuGet.config" "NuGet.config"

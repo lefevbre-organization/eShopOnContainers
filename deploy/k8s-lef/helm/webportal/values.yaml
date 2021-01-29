@@ -40,4 +40,4 @@ env:
     - name: PortalUrlHC
       key: internalurls__portal__hc
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values: {}
+#  values: {}

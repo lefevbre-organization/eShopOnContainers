@@ -113,7 +113,23 @@ env:
       key: name__signatureapigw__hc
     - name: HealthChecksUI__HealthChecks__19__Uri
       key: internalurls__signatureapigw__hc
+    - name: HealthChecksUI__HealthChecks__20__Name
+      key: name__calendarapi__hc
+    - name: HealthChecksUI__HealthChecks__20__Uri
+      key: internalurls__calendarapi__hc
+    - name: HealthChecksUI__HealthChecks__21__Name
+      key: name__googledriveapi__hc
+    - name: HealthChecksUI__HealthChecks__21__Uri
+      key: internalurls__googledriveapi__hc
+    - name: HealthChecksUI__HealthChecks__22__Name
+      key: name__databaseapi__hc
+    - name: HealthChecksUI__HealthChecks__22__Uri
+      key: internalurls__databaseapi__hc
+    - name: HealthChecksUI__HealthChecks__23__Name
+      key: name__databaseapigw__hc
+    - name: HealthChecksUI__HealthChecks__23__Uri
+      key: internalurls__databaseapigw__hc
     - name: DeployVersion
       key: all__Version
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values: {}
+#  values: {}

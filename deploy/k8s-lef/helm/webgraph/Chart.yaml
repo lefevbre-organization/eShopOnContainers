@@ -4,6 +4,6 @@ description: Outlook client
 home: https://github.com/lefevbre-organization/eShopOnContainers
 icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
 keywords: ["outlook", "lexon", "centinela", "webclient"]
-version: 0.38
+version: 0.39
 sources:
   - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/web/WebOffice365Client
