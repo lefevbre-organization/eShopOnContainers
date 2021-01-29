@@ -37,6 +37,8 @@ COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Cent
 COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
 COPY src/Services/Database/Database.API/Database.API.csproj src/Services/Database/Database.API/
 COPY src/Services/Conference/Conference.API/Conference.API.csproj src/Services/Conference/Conference.API/
+COPY src/Services/Google/GoogleAccount.API/GoogleAccount.API.csproj src/Services/Google/GoogleAccount.API/
+COPY src/Services/Google/GoogleDrive.API/GoogleDrive.API.csproj src/Services/Google/GoogleDrive.API/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebAddonLauncher/WebAddonLauncher.csproj src/Web/WebAddonLauncher/

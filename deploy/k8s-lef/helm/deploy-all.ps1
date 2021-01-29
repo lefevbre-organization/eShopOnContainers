@@ -27,7 +27,7 @@ Param(
         ),
     [parameter(Mandatory=$false)][string[]]$services=(
         # "account-api" # "database-api",
-        "account-api", "centinela-api", "conference-api", "lexon-api", "signature-api", "userutils-api",
+        "account-api", "calendar-api", "centinela-api", "conference-api", "lexon-api", "signature-api", "userutils-api",
         "webimapserver",
         "webstatus"
          ),
