@@ -61,14 +61,14 @@ COPY "NuGet.config" "NuGet.config"
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-WORKDIR /src/src/Services/Conference/Conference.API
+WORKDIR /src/src/Services/Account/Calendar.API
 RUN dotnet publish --no-restore -c Release -o /app
 
 #FROM build as unittest
-#WORKDIR /src/src/Services/Conference/Conference.UnitTests
+#WORKDIR /src/src/Services/Account/Calendar.API.UnitTests
 
 #FROM build as functionaltest
-#WORKDIR /src/src/Services/Conference/Conference.FunctionalTests
+#WORKDIR /src/src/Services/Account/Calendar.API.FunctionalTests
 #
 FROM build AS publish
 
@@ -89,4 +89,4 @@ RUN update-ca-certificates
 WORKDIR /app
 COPY --from=publish /app .
 #RUN ls -lha /app
-ENTRYPOINT ["dotnet", "Conference.API.dll"]
+ENTRYPOINT ["dotnet", "Calendar.API.dll"]
