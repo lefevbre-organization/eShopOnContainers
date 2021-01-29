@@ -19,8 +19,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Produces("application/json")]
-    [Consumes("application/json")]
     public class CredentialController : Controller
     {
         private readonly ApplicationDbContext context;

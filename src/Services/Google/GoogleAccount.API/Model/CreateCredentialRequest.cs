@@ -1,6 +1,5 @@
-using Google.Models.Enumerators;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Models
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
     public class CreateCredentialRequest
     {

@@ -16,9 +16,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
     [ApiController]
-    [Route("api/v1/Credential")]
-    [Produces("application/json")]
-    [Consumes("application/json")]
+    [Route("api/v1/[controller]")]
     public class AuthController : Controller
     {
         private readonly ApplicationDbContext context;
@@ -106,25 +104,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
                 return BadRequest(error);
             }
         }
-
-        [HttpGet]
-        [Route("Calendar/Success")]
-        public async Task<ActionResult> GetCalendar([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope)
-        {
-            User user = await context.Users.FirstOrDefaultAsync(x => x.Id == Guid.Parse(state));
-
-            return Ok("El usuario fue autenticado con éxito!");
-        }
-
-        [HttpGet]
-        [Route("Mail/Success")]
-        public async Task<ActionResult> GetMail([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope)
-        {
-            User user = await context.Users.FirstOrDefaultAsync(x => x.Id == Guid.Parse(state));
-
-            return Ok("El usuario fue autenticado con éxito!");
-        }
-        
 
     }
 }

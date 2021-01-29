@@ -11,8 +11,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 
     [ApiController]
     [Route("api/v1/Credential")]
-    [Produces("application/json")]
-    [Consumes("application/json")]
     public class RevokeController : Controller
     {
         private readonly ApplicationDbContext context;
