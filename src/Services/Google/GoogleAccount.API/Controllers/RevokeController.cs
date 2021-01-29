@@ -1,13 +1,13 @@
 using System.Linq;
 using System.Threading.Tasks;
-using Google.Credentials.Context;
-using Google.Models;
-using Google.Models.Enumerators;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
+
+    using Context;
+    using Model;
 
     [ApiController]
     [Route("api/v1/Credential")]

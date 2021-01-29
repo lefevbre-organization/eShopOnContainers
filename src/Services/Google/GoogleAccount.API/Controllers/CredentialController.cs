@@ -2,21 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Google.Credentials.Context;
-using Google.Credentials.Models;
-using Google.Models;
-using Google.Models.Enumerators;
-using Google.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
+
+    using Context;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Model;
+    using Newtonsoft.Json;
+    using System.Net;
+
     [ApiController]
     [Route("api/v1/[controller]")]
     public class CredentialController : Controller
@@ -46,7 +48,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.Nocontent)]
+        //[ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.Nocontent)]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<UserResponse>> GetUserCredentail([FromQuery] Guid LefebvreCredential)
         {
@@ -54,7 +56,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 
             if(user == null)
             {
-                return NoContent(new Result<UserResponse>(user));
+                return BadRequest(new Result<User>(user));
             }
             
             List<UserCredentialResponse> list = new List<UserCredentialResponse>();
@@ -118,12 +120,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
 
             if(user == null)
-                return NoContent(new Result<OAuth2TokenModel>(null));
+                return BadRequest(new Result<OAuth2TokenModel>(null));
 
             var credential = user.Credentials.SingleOrDefault(x => x.Product == Product);
 
             if(credential == null)
-                return NoContent(new Result<OAuth2TokenModel>(null));
+                return BadRequest(new Result<OAuth2TokenModel>(null));
 
 
             if (credential.TokenExpire)
@@ -138,19 +140,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
                     grant_type = "refresh_token"
                 };
 
-                var refresh = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(JsonSerializer.Serialize(request) , Encoding.UTF8, "application/json"));
+                var refresh = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(JsonConvert.SerializeObject(request) , Encoding.UTF8, "application/json"));
                 
-                Console.WriteLine(JsonSerializer.Serialize(refresh));
-                Console.WriteLine(JsonSerializer.Serialize(await refresh.Content.ReadAsStringAsync()));
+                Console.WriteLine(JsonConvert.SerializeObject(refresh));
+                Console.WriteLine(JsonConvert.SerializeObject(await refresh.Content.ReadAsStringAsync()));
 
                 if(refresh.IsSuccessStatusCode)
                 {
-                    return await refresh.Content.ReadFromJsonAsync<OAuth2TokenModel>();
+                    return JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
+
+                    //return await refresh.Content.ReadFromJsonAsync<OAuth2TokenModel>();
                 }else{
-                    return NoContent(new Result<OAuth2TokenModel>(null)); ;
+                    return BadRequest(new Result<OAuth2TokenModel>(null)); ;
                 }
             }else{
-                return NoContent(new Result<OAuth2TokenModel>(new OAuth2TokenModel(){
+                return BadRequest(new Result<OAuth2TokenModel>(new OAuth2TokenModel(){
                     access_token = credential.Access_Token,
                     refresh_token = credential.Refresh_Token,
                     expires_in = credential.Duration,
@@ -188,14 +192,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 
         [HttpPost]
         [Route("{LefebvreCredential}/[action]")]
-        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CreateCredential(string LefebvreCredential, [FromBody] CreateCredentialRequest request)
         {
+            var result = new Result<string>("Abner");
             User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
 
             if(user == null)
-                return NoContent(new Result<string>(""));
+                return BadRequest(result);
 
             Credential _credential = user.Credentials.SingleOrDefault
             (
@@ -205,7 +210,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             );
 
             if(_credential != null)
-                return BadRequest(new Result<string>(""));
+                return BadRequest(result);
 
             Credential credential = new Credential()
             {
@@ -220,7 +225,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             await context.Credentials.AddAsync(credential);
             await context.SaveChangesAsync();
 
-            return Ok(new Result());
+            return Ok(result);
         }
 
         [HttpGet]

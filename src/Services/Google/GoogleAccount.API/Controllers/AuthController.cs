@@ -1,19 +1,18 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
-using Google.Credentials.Context;
-using Google.Models;
-using Google.Models.Enumerators;
-using Google.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
+
+    using Context;
+    using Model;
+    using Newtonsoft.Json;
 
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -89,7 +88,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 
                 if(response.IsSuccessStatusCode)
                 {
-                    var token = await response.Content.ReadFromJsonAsync<OAuth2TokenModel>();
+                    var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await response.Content.ReadAsStringAsync());
+                    //var token = await response.Content.ReadFromJsonAsync<OAuth2TokenModel>();
 
                     credential.Access_Token = token.access_token;
                     credential.Refresh_Token = token.refresh_token;
@@ -103,6 +103,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             }else{
                 return BadRequest(error);
             }
+
+
         }
 
     }

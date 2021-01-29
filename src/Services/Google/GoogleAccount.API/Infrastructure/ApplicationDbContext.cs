@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context
 {
+    using Model;
     public class ApplicationDbContext : DbContext
     {
 
