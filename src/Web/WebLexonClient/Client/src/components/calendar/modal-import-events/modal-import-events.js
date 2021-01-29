@@ -63,11 +63,6 @@ class ModalImportEvents extends Component {
     }
 
     closeDialog() {
-        if (this.state.step === 2) {
-            this.setState({step: 1})
-            return;
-        }
-
         const buttons = document.getElementsByClassName("e-dlg-closeicon-btn");
         if(buttons && buttons.length > 0) {
             for(let i = 0;i < buttons.length; i++) {
@@ -191,6 +186,7 @@ class ModalImportEvents extends Component {
                         disabled={progress < 100}
                         bsPrefix='btn btn-primary'
                         onClick={() => {
+                            debugger
                             this.closeDialog();
                         }}>
                         FINALIZAR
