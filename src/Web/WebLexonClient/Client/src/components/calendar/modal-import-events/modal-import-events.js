@@ -123,6 +123,7 @@ class ModalImportEvents extends Component {
 
 
         const events = await getEvents(selectedDatabase, user, fromDate, toDate);
+        debugger
         this.setState({ events: events, numEvents: events.length, progress }, async () => {
             window.addEventListener('ExportEventsProgress', this.exportEventsProgress)
             window.dispatchEvent( new CustomEvent('ExportEvents', { detail: { calendar: selectedCalendar, events }}));
