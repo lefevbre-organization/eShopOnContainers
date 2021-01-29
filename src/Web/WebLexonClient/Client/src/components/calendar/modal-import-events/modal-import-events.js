@@ -135,6 +135,7 @@ class ModalImportEvents extends Component {
     }
 
     cancelImportProcess() {
+        debugger
         this.setState({progress: 0, errors: [], eventsImported: 0, selectedDatabase: '', selectedCalendar: ''}, ()=>{
             window.dispatchEvent(new CustomEvent('ExportEventsCancel'));
         })
@@ -186,7 +187,6 @@ class ModalImportEvents extends Component {
                         disabled={progress < 100}
                         bsPrefix='btn btn-primary'
                         onClick={() => {
-                            debugger
                             this.closeDialog();
                         }}>
                         FINALIZAR

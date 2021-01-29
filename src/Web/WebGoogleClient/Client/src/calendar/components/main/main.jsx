@@ -86,6 +86,7 @@ export class Main extends Component {
 
         this.cancel = false;
         this.currentClassification = null;
+        this.cancelExportEvents = false;
 
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;
@@ -424,10 +425,19 @@ export class Main extends Component {
         let errors = [];
         let progress  = 0;
         let eventsImported = 0;
+        let cancelExportEvents = false;
 
-        debugger
+        window.addEventListener('ExportEventsCancel', ()=>{
+            cancelExportEvents = true;
+        });
 
         for(let i = 0; i < events.length; i++) {
+            if(cancelExportEvents) {
+                dispatchEvent(new CustomEvent('ExportEventsProgress', { detail: { completed: true, progress: 100, errors,
+                        eventsImported }}));
+                return;
+            }
+
             let sd = '';
             let ed = '';
             const isAllDay = this.isAllDay(events[i]);
@@ -828,7 +838,7 @@ export class Main extends Component {
             this.handleGetUserFromCentinelaConnector
         );
 
-        window.addEventListener('ExportEvents', this.onExportEvents)
+        window.addEventListener('ExportEvents', this.onExportEvents);
 
         window.addEventListener('RemoveSelectedDocument', (event) => {
             this.props.deleteMessage(event.detail.id);
