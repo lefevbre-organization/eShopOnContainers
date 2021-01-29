@@ -3,10 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initialmigrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Scopes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Url = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Product = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Scopes", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -30,6 +44,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Migrations
                     ClientId = table.Column<string>(type: "TEXT", nullable: true),
                     Secret = table.Column<string>(type: "TEXT", nullable: true),
                     Code = table.Column<string>(type: "TEXT", nullable: true),
+                    TokenCreate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    Duration = table.Column<int>(type: "INTEGER", nullable: false),
+                    Scope = table.Column<string>(type: "TEXT", nullable: true),
+                    Token_Type = table.Column<string>(type: "TEXT", nullable: true),
                     Access_Token = table.Column<string>(type: "TEXT", nullable: true),
                     Refresh_Token = table.Column<string>(type: "TEXT", nullable: true),
                     Active = table.Column<bool>(type: "INTEGER", nullable: false)
@@ -55,6 +73,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Credentials");
+
+            migrationBuilder.DropTable(
+                name: "Scopes");
 
             migrationBuilder.DropTable(
                 name: "Users");
