@@ -14,7 +14,7 @@ import { prettyDate, prettySize } from '../../services/prettify';
 import { selectMessage } from '../../actions/application';
 import { setSelected } from '../../actions/messages';
 import { preloadMessages, setMessageFlagged } from '../../services/message';
-import { editNewMessage } from '../../services/application';
+import { editNewMessage, draftMessage } from '../../services/application';
 import { readMessage, readMessageRaw } from '../../services/message-read';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -123,6 +123,9 @@ class MessageList extends Component {
         this.props.downloadedMessages[message.messageId].attachments.length > 0;
     }
     return (
+      // (message.deleted) ?
+      // null
+      // :
       <li
         key={key}
         style={style}
@@ -406,6 +409,13 @@ class MessageList extends Component {
     if(this.props.selectedFolder.name === 'Drafts') {
       this.props.messageClicked(message);
       this.props.newMessage('');
+      // setTimeout(() => {
+      //   this.props.newMessage('');
+      // }, 3000);
+      // setTimeout(() => {
+      //   this.props.draftMessage(this.props.selectedMessage);
+      // }, 2000);
+      
     } else {
       this.props.messageClicked(message);
     }  
@@ -484,8 +494,10 @@ const mapStateToProps = (state) => ({
   selectedFolder: getSelectedFolder(state) || {},
   activeRequests: state.messages.activeRequests,
   messages: getSelectedFolderMessageList(state),
+  selectedMessage: state.application.selectedMessage,
   selectedMessages: state.messages.selected,
   downloadedMessages: state.application.downloadedMessages,
+  sign: state.lexon.sign,
   all: state,
 });
 
@@ -495,6 +507,8 @@ const mapDispatchToProps = (dispatch) => ({
     readMessage(dispatch, credentials, downloadedMessages, folder, message);
   },
   newMessage: (sign) => editNewMessage(dispatch, [], sign),
+  draftMessage: (selectedMessage, sign) =>
+    draftMessage(dispatch, selectedMessage, sign),
   messageSelected: (messages, selected, folderName) =>
     dispatch(setSelected(messages, selected, folderName)),
   preloadMessages: (credentials, folder, messageUids) =>
@@ -510,7 +524,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         stateProps.credentials,
         stateProps.downloadedMessages,
         stateProps.selectedFolder,
-        message
+        message,
+        stateProps.sign,
+        stateProps.selectedMessage
       ),
     preloadMessages: (folder, messageUids) =>
       dispatchProps.preloadMessages(
@@ -524,6 +540,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         stateProps.selectedFolder,
         message
       ),
+    draftMessage: (message) =>
+      dispatchProps.draftMessage(message, stateProps.sign),
   });
 
 export default connect(

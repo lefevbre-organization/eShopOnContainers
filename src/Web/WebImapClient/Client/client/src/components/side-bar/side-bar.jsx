@@ -9,6 +9,7 @@ import { moveFolder } from '../../services/folder';
 import mainCss from '../../styles/main.scss';
 import styles from './side-bar.scss';
 import { editNewMessage } from '../../services/application';
+import { selectMessage } from '../../actions/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
@@ -87,7 +88,7 @@ class SideBar extends Component {
 
   onNewMessage() {
     const { lexon } = this.props;
-
+    this.props.messageClicked(null);
     this.props.newMessage(lexon.sign);
   }
 
@@ -147,12 +148,18 @@ const mapDispatchToProps = (dispatch) => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
   newMessage: (sign) => editNewMessage(dispatch, [], sign),
+  messageClicked: (message) =>
+    dispatch(selectMessage(message)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
     moveFolderToFirstLevel: (folder) =>
       dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder),
+    messageClicked: (message) =>
+      dispatchProps.messageClicked(
+        message
+      ),
   });
 
 export default connect(
