@@ -148,10 +148,11 @@ export const getEventList = (idCalendar, selectedDate) => {
 
 export const addCalendarEvent = (calendar, event) => {
     return new Promise((resolve, reject) => {
+        debugger
         window.gapi.client.calendar.events
             .insert({
                 calendarId: calendar,
-                resource: event,
+                resource: { ...event, description: event.notes || '' },
                 sendUpdates: 'all',
             })
 
