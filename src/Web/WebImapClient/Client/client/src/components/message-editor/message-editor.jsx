@@ -606,6 +606,7 @@ class MessageEditor extends Component {
         subject,
         content,
       });
+      this.props.close(this.props.application);
     }
   }
 
