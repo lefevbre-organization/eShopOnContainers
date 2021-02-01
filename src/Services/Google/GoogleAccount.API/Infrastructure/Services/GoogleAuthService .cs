@@ -113,7 +113,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 HttpClient client = new HttpClient();
 
-                var response = await client.PostAsync(GetGoogleTokenUrl(credential.ClientId, credential.Secret, credential.Code, configuration["RedirectSuccessDriveUrl"]), null);
+                var response = await client.PostAsync(GetGoogleTokenUrl(credential.ClientId, credential.Secret, credential.Code, _settings.Value.RedirectSuccessDriveUrl), null);
 
                 if (response.IsSuccessStatusCode)
                 {

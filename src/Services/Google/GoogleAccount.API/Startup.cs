@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 {
@@ -61,6 +62,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 
             //services.AddRedis();
 
+            services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>();
+
+
             services.AddIntegrationServices(Configuration);
 
             services.RegisterEventBus(Configuration);
@@ -78,6 +82,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IGoogleAccountRepository, GoogleAccountRepository>();
             services.AddTransient<IGoogleAccountService, GoogleAccountService>();
+            services.AddTransient<IGoogleAuthService, GoogleAuthService>();
+
+
             //services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();
