@@ -76,24 +76,16 @@ export const getEventList = async (calendar, selectedDate) => {
 };
 
 // Create event
-export const createEvent = async (calendar) => {
-  const response = await caldav.createEvent({
-    allDay: true,
-    start: '2021-01-05',
-    end: '2021-01-06',
-    summary: 'title',
-    filename: calendar + '/unique-filename-for-this-event',
-    location: 'wherever',
-    description: 'tell them about it',
-    timezone: 'Europe/Madrid', //only to override settings
-    color: 'green',
-  });
-
+export const addCalendarEvent = async (calendar, event) => {   
+    const response = await caldav.createEvent(event); 
   return response;
 };
 
-export const deleteCalendarEvent = async (filename) => {    
-    const response = await caldav.deleteEvent(filename);    
+export const deleteCalendarEvent = async (filename) => {   
+    console.log(filename);
+    const response = await caldav.deleteEvent({
+        "filename": filename
+    });    
     return response;
 };
 
@@ -124,7 +116,7 @@ function listEventsParser(list) {
             listParse.push({
                 id: list[i].href,
                 summary: list[i].summary,
-                location: list[i].location,
+                location: list[i].location,               
                 description: list[i].description,
                 start: { dateTime: moment(list[i].start), timeZone: 'Europe/Madrid' },
                 end: { dateTime: moment(list[i].end), timeZone: 'Europe/Madrid' },

@@ -22,12 +22,16 @@ class MessageHeader extends Component {
   }
 
   getHeader(name) {
-    const { headers } = this.props.emailHeaderMessageResult;
-
-    if (Array.isArray(headers)) {
-      for (var i = 0; i < headers.length; i++) {
-        if (headers[i].name === name) {
-          return headers[i].value;
+    const { headers } = this.props.emailHeaderMessageResult; 
+    if (headers) {
+      if(name === 'Cc' && headers.ccRecipients.length > 0) {
+        for (var i = 0; i < headers.ccRecipients.length; i++) {
+            return headers.ccRecipients[i].emailAddress.address;
+        }
+      }
+      if(name === 'Bcc' && headers.bccRecipients.length > 0) {
+        for (var i = 0; i < headers.bccRecipients.length; i++) {
+            return headers.bccRecipients[i].emailAddress.address;
         }
       }
     } else {
@@ -71,6 +75,8 @@ class MessageHeader extends Component {
             <div className="from">
               <span className="fromName">{from.name}</span>
               <span className="email">{from.address}</span>
+              <span className="email">{this.getHeader("Cc")}</span>
+              <span className="email">{this.getHeader("Bcc")}</span>
             </div>
             <div className="date">
               {new Date((headers !== null ? headers.sentDateTime : null)).toLocaleString(

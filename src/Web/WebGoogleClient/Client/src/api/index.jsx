@@ -349,7 +349,7 @@ function removeHtmlTags(body, imgList) {
 }
 
 // Gets all the <img src> tags of the email
-function getEmbeddedImages(body) {
+export function getEmbeddedImages(body) {
   let res = [];
   let images = body.match(/<img [^>]*src="[^"]*"[^>]*>/gm);
   for (let i = 0; i < images.length; i++) {
@@ -498,7 +498,6 @@ export const deleteDraft = async ({ draftId }) => {
 export const createDraft = async ({ headers, body, attachments, draftId }) => {
  
   let email = getDataEmail({ headers, body, attachments });
-
   return new Promise((resolve, reject) => {
     const base64EncodedEmail = Base64.encodeURI(email);
     let draft = null;

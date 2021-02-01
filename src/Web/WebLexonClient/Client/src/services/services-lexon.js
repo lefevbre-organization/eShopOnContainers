@@ -807,7 +807,7 @@ export const getEvents = async (bbdd, user, fromDate, toDate) => {
       }
     });
     const result = await response.json();
-    return result.data;
+    return result.data.map( i => ({ ...i, allDay: i.endDate === i.startDate }));
   } catch (err) {
     throw err;
   }

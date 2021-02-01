@@ -455,6 +455,9 @@ class Main extends Component {
           )}
         </Fragment>
         <style jsx global>{`
+          ul {
+            list-style: none !important;
+          }
           .container {
             max-width: unset;
           }

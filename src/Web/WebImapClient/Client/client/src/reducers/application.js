@@ -125,9 +125,19 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
       newState.outbox = {...newState.outbox, progress: action.payload};
       return newState;
     }
+    case ActionTypes.APPLICATION_DRAFT_UPDATE_PROGRESS: {
+      const newState = {...state};
+      newState.draft = {...newState.draft, progress: action.payload};
+      return newState;
+    }
     case ActionTypes.APPLICATION_OUTBOX_SET_SENT: {
       const newState = {...state};
       newState.outbox = {...newState.outbox, sent: action.payload.sent, idMessage: action.payload.idMessage, eventNotified: action.payload.eventNotified};
+      return newState;
+    }
+    case ActionTypes.APPLICATION_DRAFT_SET_SENT: {
+      const newState = {...state};
+      newState.draft = {...newState.draft, sent: action.payload.sent, idMessage: action.payload.idMessage, eventNotified: action.payload.eventNotified};
       return newState;
     }
     case ActionTypes.APPLICATION_OUTBOX_SET_ERROR: {
@@ -135,9 +145,19 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
       newState.outbox = {...newState.outbox, error: action.payload};
       return newState;
     }
+    case ActionTypes.APPLICATION_DRAFT_SET_ERROR: {
+      const newState = {...state};
+      newState.draft = {...newState.draft, error: action.payload};
+      return newState;
+    }
     case ActionTypes.APPLICATION_OUTBOX_MESSAGE_PROCESSED: {
       const newState = {...state};
       newState.outbox = null;
+      return newState;
+    }
+    case ActionTypes.APPLICATION_DRAFT_CLEAN: {
+      const newState = {...state};
+      newState.draft = null;
       return newState;
     }
     case ActionTypes.APPLICATION_OUTBOX_EVENT_NOTIFIED: {
