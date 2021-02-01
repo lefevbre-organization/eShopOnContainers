@@ -455,10 +455,12 @@ class Main extends Component {
           )}
         </Fragment>
         <style jsx global>{`
+          ul {
+            list-style: none !important;
+          }
           .container {
             max-width: unset;
           }
-          
           .imgproduct {
             width: 24px;
             height: 24px;

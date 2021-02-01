@@ -37,7 +37,8 @@ export class MessageSnackbar extends Component {
 }
 
 const mapStateToProps = state => ({
-  outbox: state.application.outbox
+  outbox: state.application.outbox,
+  draft: state.application.draft
 });
 
 const mapDispatchToProps = dispatch => ({

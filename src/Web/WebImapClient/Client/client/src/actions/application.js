@@ -31,8 +31,12 @@ export const editMessage = message => ({type: ActionTypes.APPLICATION_MESSAGE_ED
 
 export const outboxSendMessage = message => ({type: ActionTypes.APPLICATION_OUTBOX_SEND, payload: message});
 export const outboxUpdateProgress = progress => ({type: ActionTypes.APPLICATION_OUTBOX_UPDATE_PROGRESS, payload: progress});
+export const draftUpdateProgress = progress => ({type: ActionTypes.APPLICATION_DRAFT_UPDATE_PROGRESS, payload: progress});
 export const outboxSetSent = (sent, idMessage, eventNotified) => ({type: ActionTypes.APPLICATION_OUTBOX_SET_SENT, payload: {sent, idMessage, eventNotified}});
+export const draftSetSent = (sent, idMessage, eventNotified) => ({type: ActionTypes.APPLICATION_DRAFT_SET_SENT, payload: {sent, idMessage, eventNotified}});
 export const outboxSetError = error => ({type: ActionTypes.APPLICATION_OUTBOX_SET_ERROR, payload: error});
+export const draftSetError = error => ({type: ActionTypes.APPLICATION_DRAFT_SET_ERROR, payload: error});
 export const outboxMessageProcessed = () => ({type: ActionTypes.APPLICATION_OUTBOX_MESSAGE_PROCESSED});
+export const draftClean = () => ({type: ActionTypes.APPLICATION_DRAFT_CLEAN});
 export const outboxEventNotified = () => ({type: ActionTypes.APPLICATION_OUTBOX_EVENT_NOTIFIED})
 export const setUserLexon = user => ({type: ActionTypes.APPLICATION_USERLEXON, payload: user});

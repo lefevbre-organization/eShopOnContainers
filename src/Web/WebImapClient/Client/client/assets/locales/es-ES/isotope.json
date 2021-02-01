@@ -84,6 +84,9 @@
     "bcc": "bcc",
     "subject": "Asunto",
     "send": "Enviar",
+    "discard": "Descartar borrador",
+    "draft": "Guardar borrador",
+    "draft-save": "Borrador guardado",
     "dropZoneMessage": "Deposita aquí ficheros",
     "max-file-size": "El tamaño total de los adjuntos debe ser menor que 20MB para este proveedor.",
     "attach": "ADJUNTAR",
@@ -107,8 +110,11 @@
   },
   "messageSnackbar": {
     "sendingMessage": "Envíando mensaje ({{progress}}%)",
+    "sendingDraft": "Guardando borrador ({{progress}}%)",
     "messageSent": "Mensaje enviado",
+    "draftSent": "Borrador guardado",
     "messageError": "Error enviando mensaje",
+    "draftError": "Error guardando borrador",
     "retry": "Reintentar"
   },
   "createFolderDialog": {

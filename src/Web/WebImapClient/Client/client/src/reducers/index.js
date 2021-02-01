@@ -20,6 +20,7 @@ export const INITIAL_STATE = {
     selectedMessage: null,
     downloadedMessages: {},
     outbox: null,
+    draft: null,
     pollInterval: 15000,
     errors: {
       diskQuotaExceeded: false,

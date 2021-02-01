@@ -286,6 +286,7 @@ export async function deleteAllFolderMessages(dispatch, credentials, folder) {
 }
 
 export function deleteMessages(dispatch, credentials, folder, messages) {
+  console.log('deleteMessages', dispatch, credentials, folder, messages);
   if (messages.length === 0) {
     return;
   }

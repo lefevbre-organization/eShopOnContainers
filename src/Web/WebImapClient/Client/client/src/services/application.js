@@ -284,6 +284,23 @@ export function forwardMessage(dispatch, originalMessage, sign = '') {
   );
 }
 
+export function draftMessage(dispatch, originalMessage, sign = '') {
+  const attachments = originalMessage.attachments
+    ? [...originalMessage.attachments]
+    : [];
+  const subject = originalMessage.subject;
+  const recipients = [...originalMessage.recipients];
+  const recipientMapper = r => r.address;
+  const to = recipients.filter(r => r.type === 'To').map(recipientMapper);
+  const cc = recipients.filter(r => r.type === 'Cc').map(recipientMapper);
+  const bcc = recipients.filter(r => r.type === 'Bcc').map(recipientMapper);
+
+  let content = sanitize.sanitize(originalMessage.content);
+  dispatch(
+    editMessage({ to: to, cc: cc, bcc: bcc, attachments, subject, content })
+  );
+}
+
 /**
  * Aborts any active request to read a message from the BE.
  *

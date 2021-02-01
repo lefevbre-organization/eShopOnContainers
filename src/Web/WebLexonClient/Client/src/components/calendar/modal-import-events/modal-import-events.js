@@ -63,11 +63,6 @@ class ModalImportEvents extends Component {
     }
 
     closeDialog() {
-        if (this.state.step === 2) {
-            this.setState({step: 1})
-            return;
-        }
-
         const buttons = document.getElementsByClassName("e-dlg-closeicon-btn");
         if(buttons && buttons.length > 0) {
             for(let i = 0;i < buttons.length; i++) {
@@ -123,6 +118,7 @@ class ModalImportEvents extends Component {
 
 
         const events = await getEvents(selectedDatabase, user, fromDate, toDate);
+        debugger
         this.setState({ events: events, numEvents: events.length, progress }, async () => {
             window.addEventListener('ExportEventsProgress', this.exportEventsProgress)
             window.dispatchEvent( new CustomEvent('ExportEvents', { detail: { calendar: selectedCalendar, events }}));
@@ -139,6 +135,7 @@ class ModalImportEvents extends Component {
     }
 
     cancelImportProcess() {
+        debugger
         this.setState({progress: 0, errors: [], eventsImported: 0, selectedDatabase: '', selectedCalendar: ''}, ()=>{
             window.dispatchEvent(new CustomEvent('ExportEventsCancel'));
         })

@@ -86,6 +86,7 @@ export class Main extends Component {
 
         this.cancel = false;
         this.currentClassification = null;
+        this.cancelExportEvents = false;
 
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;
@@ -424,20 +425,54 @@ export class Main extends Component {
         let errors = [];
         let progress  = 0;
         let eventsImported = 0;
+        let cancelExportEvents = false;
+
+        window.addEventListener('ExportEventsCancel', ()=>{
+            cancelExportEvents = true;
+        });
 
         for(let i = 0; i < events.length; i++) {
-            const sd = moment(events[i].startDate).toISOString();
-            const ed = moment(events[i].endDate).toISOString();
+            if(cancelExportEvents) {
+                dispatchEvent(new CustomEvent('ExportEventsProgress', { detail: { completed: true, progress: 100, errors,
+                        eventsImported }}));
+                return;
+            }
 
-            const lefEvent = {
-                start: {
+            let sd = '';
+            let ed = '';
+            const isAllDay = this.isAllDay(events[i]);
+            let start = {};
+            let end = {};
+
+            if(isAllDay) {
+                sd = moment(events[i].startDate).format('YYYY-MM-DD');
+                ed = moment(events[i].endDate).format('YYYY-MM-DD');
+                start = {
+                    date: sd,
+                    timeZone: 'Europe/Madrid'
+                };
+                end = {
+                    date: ed,
+                    timeZone: 'Europe/Madrid'
+                };
+            } else {
+                sd = moment(events[i].startDate).toISOString();
+                ed = moment(events[i].endDate).toISOString();
+
+                start = {
                     dateTime: sd,
                     timeZone: 'Europe/Madrid'
-                },
-                end: { dateTime: ed,
+                };
+                end = {
+                    dateTime: ed,
                     timeZone: 'Europe/Madrid'
-                },
-                isAllDay: this.isAllDay(events[i]),
+                };
+            }
+
+            const lefEvent = {
+                start,
+                end,
+                isAllDay,
                 summary: events[i].subject,
                 attendees: []
             };
@@ -473,10 +508,10 @@ export class Main extends Component {
     }
 
     isAllDay(event) {
-        if(event.startDate.endsWith("00:00:00.000000") && event.endDate.endsWith("00:00:00.000000") && event.startDate === event.endDate) {
-            return true;
+        if(event.allDay === true) {
+            debugger
         }
-        return false;
+        return event.allDay;
     }
 
     toastCusAnimation = {
@@ -803,7 +838,7 @@ export class Main extends Component {
             this.handleGetUserFromCentinelaConnector
         );
 
-        window.addEventListener('ExportEvents', this.onExportEvents)
+        window.addEventListener('ExportEvents', this.onExportEvents);
 
         window.addEventListener('RemoveSelectedDocument', (event) => {
             this.props.deleteMessage(event.detail.id);
