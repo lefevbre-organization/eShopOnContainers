@@ -86,6 +86,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             System.Diagnostics.Trace.WriteLine(msg);
         }
 
+        public void WriteInfo(string msg)
+        {
+            log.LogInformation(msg);
+            //System.Diagnostics.Trace.WriteLine(msg);
+        }
+
         public void TraceLog(
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",

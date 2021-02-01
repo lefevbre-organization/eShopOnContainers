@@ -31,7 +31,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private readonly HttpClient _clientLexonApi;
         private readonly HttpClient _clientClaves;
         private readonly IOptions<UserUtilsSettings> _settings;
-        internal readonly ILogger<UserUtilsService> _logger;
+       // internal readonly ILogger<UserUtilsService> _logger;
 
         public UserUtilsService(
                 IOptions<UserUtilsSettings> settings
@@ -45,7 +45,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             _repository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+           // _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _clientMinihub = _clientFactory.CreateClient();
             _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
@@ -374,11 +374,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
             var result = new Result<string>(null);
+            WriteInfo($"get user {idUser} for service {nameService}");
             var user = await GetUserAsync(idUser);
             AddResultTrace(user, result);
             if (user.errors?.Count == 0)
             {
                 var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
+                WriteInfo($"Find app -> {app}");
+
                 Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
                 AddResultTrace(temporalLinkResult, user);
                 result.data = temporalLinkResult?.data;
@@ -427,14 +430,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 using (var response = await _clientMinihub.GetAsync(newUrl))
                 {
+                    WriteInfo($"Get data from minihub {newUrl}");
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
+                        WriteInfo($"Response from minihub {rawResult}");
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
                             var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
                             result.data = resultado.url;
+                            WriteInfo($"The final url -> {result.data}");
+
                         }
                     }
                     else

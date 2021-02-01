@@ -149,6 +149,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             try
             {
                 result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
+                WriteInfo($"get user from repository {idNavision} with apps {result.data?.name}");
 
                 if (result.data == null)
                     TraceError(result.errors, new UserUtilsDomainException($"Don´t recover the user {idNavision} with the list of bypass urls"), "UU04", "MONGO");

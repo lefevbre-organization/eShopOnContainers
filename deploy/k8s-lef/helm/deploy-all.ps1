@@ -6,7 +6,7 @@ Param(
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][string][ValidateSet('All', 'AllExceptInfra', 'OnlyClients', 'OnlyInfra', 'OnlyServices', 'OnlyGateways' , IgnoreCase=$false)]$deployType="All",
-    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
+    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][bool]$deployClients=$true,
     [parameter(Mandatory=$false)][bool]$deployServices=$true,
@@ -16,7 +16,7 @@ Param(
     [parameter(Mandatory=$false)][string[]]$infras=(
         "rabbitmq", 
         "seq",
-        # "consul","vault",
+        "consul","vault",
         # "sql-data",
         "nosql-data"
         ),
@@ -192,14 +192,14 @@ if ($useLocalk8s -and $sslEnabled) {
 }
 
 if ($clean) {
-    $listOfReleases=$(helm ls --filter $appName -q)
+    $listOfReleases=$(helm ls --filter  "^$appName" -q)
     if ([string]::IsNullOrEmpty($listOfReleases)) {
         Write-Host "No exist Releases to uninstall" -ForegroundColor Yellow
     }else{
         Uninstall-Chart $listOfReleases
     }
     if ($deployInfrastructure){
-        $listOfInfras=$(helm ls --filter "it-$appName" -q)
+        $listOfInfras=$(helm ls --filter "^it-$appName" -q)
         if ([string]::IsNullOrEmpty($listOfInfras)) {
             Write-Host "No exist Infras to uninstall" -ForegroundColor Yellow
         }else{
