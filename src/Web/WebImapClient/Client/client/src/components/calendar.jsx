@@ -948,7 +948,7 @@ class Calendar extends Component {
         }
 
         return (
-            <div /*style="width: 98%;"*/>
+            <div>
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
@@ -956,7 +956,7 @@ class Calendar extends Component {
                         {props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} />}
                         {subjectStr}
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot floatleft'></span>
                         ) : (
                                 ''
                             )}
@@ -994,9 +994,9 @@ class Calendar extends Component {
                     <span className='eventicon truncate'>
                         <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot dotagenda'></span>
                         ) : (
-                                <span Style={`background-color: ${'#FFFFFF'} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                                <span style={{backgroundColor: '#FFFFFF', marginTop: '3px'}} className='dot dotagenda'></span>
                             )}
 
                         {props.IsAllDay ? (
@@ -1539,7 +1539,10 @@ class Calendar extends Component {
     eventTypeTemplate(data) {
         return (
             <div className="typeitem">
-                <span> <span Style={`background-color: ${data.backgroundColor}`} className='dot'></span>  <span className='name'>{data.text}</span></span>
+                <span> 
+                    <span style={{backgroundColor: data.backgroundColor}} className='dot'></span>  
+                    <span className='name'>{data.text}</span>
+                </span>
             </div>
         );
     }
