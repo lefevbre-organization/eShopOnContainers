@@ -1,7 +1,7 @@
 ﻿
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 {
-    public class GoogleDriveSettings
+    public class GoogleAccountSettings
     {
         
         public string ConnectionString { get; set; }

@@ -27,12 +27,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         private readonly IConfiguration configuration;
 
         private readonly IGoogleAuthService _service;
-        private readonly GoogleDriveSettings _settings;
+        private readonly GoogleAccountSettings _settings;
         private readonly IEventBus _eventBus;
 
         public AuthController(
             IGoogleAuthService authsService,
-            IOptionsSnapshot<GoogleDriveSettings> settings,
+            IOptionsSnapshot<GoogleAccountSettings> settings,
             IEventBus eventBus,
             ApplicationDbContext context, 
             IConfiguration configuration
@@ -45,6 +45,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("test")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
@@ -53,7 +57,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(new Result<bool>(true));
         }
 
-        
+
 
         [HttpGet("Drive/Success")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
@@ -61,23 +65,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         public async Task<ActionResult> GetDrive([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope, [FromQuery] string error = "")
         {
 
-            
-
             if (!string.IsNullOrEmpty(error))
                 return BadRequest(error);
 
             var result = await _service.SaveCode(state, code);
 
-
-
             if (result.errors.Count == 0 && result.data == null)
                 return BadRequest(result);
 
-
             return Redirect(configuration["InternalRedirection"]);
-            
-
-
         }
 
     }

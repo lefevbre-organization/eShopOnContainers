@@ -7,9 +7,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 {
     public interface IGoogleAccountService
     {
-        Task<Result<UserGoogleAccount>> GetUserAsync(string idNavisionUser, short idApp);
-
-        Task<Result<UserGoogleAccount>> PostUserAsync(UserGoogleAccount user);
+        
 
     }
 }

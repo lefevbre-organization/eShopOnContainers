@@ -48,7 +48,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.Nocontent)]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<UserResponse>> GetUserCredentail([FromQuery] Guid LefebvreCredential)
         {

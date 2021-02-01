@@ -26,10 +26,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientUserUtils;
-        private readonly IOptions<GoogleDriveSettings> _settings;
+        private readonly IOptions<GoogleAccountSettings> _settings;
 
         public GoogleAccountService(
-                IOptions<GoogleDriveSettings> settings
+                IOptions<GoogleAccountSettings> settings
                 , IGoogleAccountRepository databaseRepository
                 , IEventBus eventBus
                 , IHttpClientFactory clientFactory
@@ -48,11 +48,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        public async Task<Result<UserGoogleAccount>> GetUserAsync(string idNavisionUser, short idApp)
-            => await _repo.GetUserAsync(idNavisionUser, idApp);
+        //public async Task<Result<UserGoogleAccount>> GetUserAsync(string idNavisionUser, short idApp)
+        //    => await _repo.GetUserAsync(idNavisionUser, idApp);
 
-        public async Task<Result<UserGoogleAccount>> PostUserAsync(UserGoogleAccount user)
-            => await _repo.PostUserAsync(user);
+        //public async Task<Result<UserGoogleAccount>> PostUserAsync(UserGoogleAccount user)
+        //    => await _repo.PostUserAsync(user);
 
     }
 }

@@ -71,7 +71,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<GoogleDriveSettings>(configuration);
+            services.Configure<GoogleAccountSettings>(configuration);
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -104,7 +104,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
             {
                 services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
                 {
-                    var settings = sp.GetRequiredService<IOptions<GoogleDriveSettings>>().Value;
+                    var settings = sp.GetRequiredService<IOptions<GoogleAccountSettings>>().Value;
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {

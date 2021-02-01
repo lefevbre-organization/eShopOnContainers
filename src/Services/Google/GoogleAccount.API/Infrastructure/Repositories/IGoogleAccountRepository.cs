@@ -7,10 +7,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 {
     public interface IGoogleAccountRepository
     {
-
-        Task<Result<UserGoogleAccount>> GetUserAsync(string idUser, short idApp);
-
-        Task<Result<UserGoogleAccount>> PostUserAsync(UserGoogleAccount user);
-
+        Task<User> GetUserAsync(string LefebvreCredential);
+        Task<Credential> GetCredentialUserAsync(string userId, GoogleProduct drive, bool active);
+        Task<bool> RevokeCredentialAsync(string UserId, string CredentialId);
     }
 }

@@ -57,7 +57,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 
             services.AddCustomHealthCheck(Configuration);
 
-            services.Configure<GoogleDriveSettings>(Configuration);
+            services.Configure<GoogleAccountSettings>(Configuration);
 
             //services.AddRedis();
 
@@ -77,7 +77,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IGoogleAccountRepository, GoogleAccountRepository>();
+
+
+            // Services
             services.AddTransient<IGoogleAccountService, GoogleAccountService>();
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ICredentialService, CredentialService>();
+            services.AddTransient<IRevokeService, RevokeService>();
             //services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();

@@ -22,10 +22,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IMongoClient _client = null;
         private readonly List<Type> _eventTypes;
         private readonly IEventBus _eventBus;
-        private readonly IOptions<GoogleDriveSettings> _settings;
+        private readonly IOptions<GoogleAccountSettings> _settings;
 
         public GoogleAccountContext(
-            IOptions<GoogleDriveSettings> settings,
+            IOptions<GoogleAccountSettings> settings,
               IEventBus eventBus
             )
         {

@@ -8,6 +8,7 @@
     <RootNamespace>Lefebvre.eLefebvreOnContainers.Services.Google.Account.API</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'GoogleAccount.API' " />
   <ItemGroup>
     <Compile Remove="Models\**" />
     <Content Remove="Models\**" />
