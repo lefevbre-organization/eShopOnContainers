@@ -23,7 +23,7 @@ import mainCss from '../../styles/main.scss';
 import i18n from 'i18next';
 import ACTIONS, { setEmailShown } from '../../actions/lexon';
 import { Notification, Confirmation } from '../notification/';
-//import { detailedDiff } from 'deep-object-diff';
+
 
 import ComposeMessageEditor from './composeMessageEditor';
 import { Modal } from 'react-bootstrap';
@@ -90,37 +90,24 @@ class MessageEditor extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-    // if(this.props.application.selectedMessage 
-    //   && Object.keys(this.props.application.selectedMessage).length > 0
-    //   && this.props.application.selectedMessage
-    //   && this.props.application.selectedMessage.folder
-    //   && this.props.application.selectedMessage.folder.name
-    //   && this.props.application.selectedMessage.folder.name === 'Drafts') {
-    //   console.log('Clicked message in Draft folder:')
-    //   const selectedMessage = this.props.application.selectedMessage;
-    //   this.getMessageById(selectedMessage);
-    // }
     if (this.props.application.selectedMessage && Object.keys(this.props.application.selectedMessage).length > 0)
       this.getMessageById(this.props.application.selectedMessage)
     console.log('ComponentDidMount end');
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    // if (JSON.stringify(prevProps.selectedMessageEdit) !== JSON.stringify(this.props.selectedMessageEdit)){
-      
-    // }
-
-    console.log('*******************************************************************************************************');
-    console.log('prevProps.draft:');
-    console.log(prevProps.draft);
-    console.log('this.props.draft');
-    console.log(this.props.draft);
-    console.log('*******************************************************************************************************');
+    // console.log('*******************************************************************************************************');
+    // console.log('prevProps.draft:');
+    // console.log(prevProps.draft);
+    // console.log('this.props.draft');
+    // console.log(this.props.draft);
+    // console.log('*******************************************************************************************************');
 
     if (this.props.application.outbox !== prevProps.application.outbox){
       //A message has been sent
-      const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
+      const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts' || folder.name === "Borradores");
       if (this.props.application.outbox && this.props.application.outbox.sent === true && (this.props.draft !== null || this.props.application.selectedFolderId === draftFolder.folderId)){
+        //Sent message was a draft. Manually deleting message from draft folder.
         console.log('Borrando el mensaje...');
         this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
         this.props.editMessage(null);
@@ -132,81 +119,31 @@ class MessageEditor extends Component {
 
     if (prevProps.draft !== this.props.draft){
       if (this.props.draft && this.props.draft.sent === true){
+        // Draft has been sent
         console.log('DraftSent')
-        const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
-        
-        
+        const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts' || folder.name === "Borradores");
 
         if(this.state.draftId !== ''){
-          //this.props.selectedMessageEdit.folder
           this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
           this.setState({ showNotification: true, messageNotification: 'Borrador actualizado.', closeButton: true});
-          const folderPromise = this.props.reloadFolders(this.props.credentials);
-          //const selectedFolder =draftFolder || {};
-          const messagePromise = this.props.reloadMessageCache(this.props.application.user, draftFolder);
-          await Promise.all([folderPromise, messagePromise]);
-          //await Promise.all([messagePromise]);
-          const {draft} = this.props;
-          const {msgCache} = this.props;
-          const createdMessage = Array.from(msgCache[draftFolder.folderId], ([key, value]) => ({key, value})).find(f => f.value.messageId === draft.idMessage);
-          this.setState({ showNotification: false, messageNotification: ''});
-          this.props.selectMessage(createdMessage.value);
-          this.updateAttachmentLinks(createdMessage.key);
-          
-          //this.props.editMessage(createdMessage.value);
-          this.props.draftClean();
-          //this.props.messageClean();
-          //this.props.editMessage(createdMessage.value);
-          // this.props.close(this.props.application);
         } else {
           this.setState({ showNotification: true, messageNotification: 'Borrador guardado.', closeButton: true});
-          const folderPromise = this.props.reloadFolders(this.props.credentials);
-          //const selectedFolder =draftFolder || {};
-          const messagePromise = this.props.reloadMessageCache(this.props.application.user, draftFolder);
-          await Promise.all([folderPromise, messagePromise]);
-          const {draft} = this.props;
-          const {msgCache} = this.props;
-          const createdMessage = Array.from(msgCache[draftFolder.folderId], ([key, value]) => ({key, value})).find(f => f.value.messageId === draft.idMessage);
-          this.setState({ showNotification: false, messageNotification: ''});
-          this.props.selectMessage(createdMessage.value);
-          this.updateAttachmentLinks(createdMessage.key);
-
-          //this.props.editMessage(createdMessage.value);
-          //this.getAttachmentsEdit(createdMessage.attachments);
-          this.props.draftClean();
-          //this.props.messageClean();
-          // this.props.close(this.props.application);
         }
+
+        const folderPromise = this.props.reloadFolders(this.props.credentials);
+        const messagePromise = this.props.reloadMessageCache(this.props.application.user, draftFolder);
+        await Promise.all([folderPromise, messagePromise]);
         
-
-        
-        // const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
-
-        // this.props.reloadFolders(this.props.credentials)
-        // .then( () => {
-        //   this.props.reloadMessageCache(draftFolder)
-        //   .then( () => {
-        //     this.props.draftClean();
-        //     this.props.messageClean();
-        //     this.props.close(this.props.application);
-        //   })
-        // })
-
-        // const folderPromise = this.props.reloadFolders(this.props.credentials);
-        // const selectedFolder =
-        //   draftFolder || {};
-        // const messagePromise = this.props.reloadMessageCache(selectedFolder);
-        // await Promise.all([folderPromise, messagePromise]);
-        // this.setState({ showNotification: false, messageConfirmation: ''});
-        // this.props.draftClean();
-        // this.props.messageClean();
-        // this.props.close(this.props.application);
-
+        const {draft} = this.props;
+        const {msgCache} = this.props;
+        const createdMessage = Array.from(msgCache[draftFolder.folderId], ([key, value]) => ({key, value})).find(f => f.value.messageId === draft.idMessage);
+        this.setState({ showNotification: false, messageNotification: ''});
+        this.props.selectMessage(createdMessage.value);
+        this.updateAttachmentLinks(createdMessage.key);
+        this.props.draftClean();
       }
     }
     
-
-
     if(this.props.selectedMessageEdit && this.props.selectedMessageEdit.content) {
       this.getContentEdit(prevProps.selectedMessageEdit.content);
     }
@@ -218,48 +155,15 @@ class MessageEditor extends Component {
     // console.log('*******************************************************************************************************');
 
 
-    //Esto no me acuerdo para qué lo había puesto, antes estaba sin el doNothing
+    // This is to load attachment links when they're ready
     if (this.props.selectedMessageEdit && this.props.selectedMessageEdit.attachments !== prevProps.selectedMessageEdit.attachments){
       // Si pasa de null a un valor -> lo debo actualizar porque se están recibiendo datos de un draft que se ha abierto
       // Si pasa de datos a null -> lo tengo que dejar como está porque se ha creado un draft nuevo y no se ha podido obtener aún el array de links de adjuntos
-
       // El mensaje editado no tiene adjuntos y los adjuntos del mensaje seleccionado han cambiado
       if (this.props.editMessage && (this.props.editedMessage.attachments === null || this.props.editedMessage.attachments === undefined || this.props.editedMessage.attachments.length === 0) ){
         this.getAttachmentsEdit(this.props.selectedMessageEdit.attachments);
       }
-
-      // if (this.props.selectedMessageEdit.attachments === null && prevProps.selectedMessageEdit.attachments !== null){
-        
-      // }
-
-      // if ((this.props.selectedMessageEdit.attachments === undefined || this.props.selectedMessageEdit.attachments === null) && prevProps.selectedMessageEdit.attachments !== null){
-      //   this.getAttachmentsEdit(this.props.selectedMessageEdit.attachments);
-      // } else {
-      //   // No hago nada
-      // }
     }
-
-    // This is to load the attachments with the new Id in the url when they are ready.
-    // if (this.props.selectedMessageEdit && this.props.selectedMessageEdit.attachments !== prevProps.selectedMessageEdit.attachments){
-    //   if (this.props.editedMessage && this.props.editedMessage.attachments && this.props.selectedMessageEdit && this.props.selectedMessageEdit.attachments && this.props.editedMessage.attachments !== this.props.selectedMessageEdit.attachments){
-    //     this.getAttachmentsEdit(this.props.selectedMessageEdit.attachments);
-    //   }
-    // }
-
-    
-    // const difP = detailedDiff(this.props, nextProps);
-    // const difSt = detailedDiff(this.state, nextState);
-
-    // if (
-    //   isEmpty(difP.updated) &&
-    //   isEmpty(difP.added) &&
-    //   isEmpty(difP.deleted) &&
-    //   isEmpty(difSt.updated) &&
-    //   isEmpty(difSt.added) &&
-    //   isEmpty(difSt.deleted)
-    // ) {
-    //   return false;
-    // }
   }
 
   componentWillUnmount() {
@@ -735,30 +639,7 @@ class MessageEditor extends Component {
           bcc,
           subject,
           content,
-        });
-        
-        // setTimeout(() => {
-        //   this.props.deleteMessage(
-        //     credentials, 
-        //     selectedMessageEdit.folder, 
-        //     selectedMessageEdit
-        //   );
-        // }, 5000);
-
-        // this.props.reloadFolders(this.props.credentials)
-        // .then( () => {
-        //   this.props.reloadMessageCache(draftFolder)
-        //   .then( () => {
-        //     this.props.draftClean();
-        //     this.props.messageClean();
-        //     this.props.close(this.props.application);
-        //   })
-        // })
-
-        // this.props.draftClean();
-        // this.props.messageClean();
-        // this.props.close(this.props.application);
-      
+        });      
       } else {
         this.props.saveDraft(draftFolder, user, credentials, {
           ...this.props.editedMessage,
@@ -768,20 +649,6 @@ class MessageEditor extends Component {
           subject,
           content,
         });
-
-        // this.props.reloadFolders(this.props.credentials)
-        // .then( () => {
-        //   this.props.reloadMessageCache(draftFolder)
-        //   .then( () => {
-        //     this.props.draftClean();
-        //     this.props.messageClean();
-        //     this.props.close(this.props.application);
-        //   })
-        // })
-
-        // this.props.draftClean();
-        // this.props.messageClean();
-        // this.props.close(this.props.application);
       }
       this.setState({draftTime: fullTime, showNotification: true, messageNotification: 'Guardando borrador...', closeButton: false});
     }
@@ -1102,11 +969,6 @@ const mapDispatchToProps = (dispatch) => ({
         subject,
         content,
       });
-      // dispatch(selectFolder(draftFolder));
-      // clearSelectedMessage(dispatch);
-      // dispatch(clearSelected());
-      // resetFolderMessagesCache(dispatch, user, draftFolder);
-      //resetFolderMessagesCache(dispatch, user, draftFolder);
     },
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>

@@ -507,14 +507,6 @@ class App extends Component {
     ) {
       return <MessageEditor className={styles['message-viewer']} />;
     } 
-    // else if (
-    //   application.selectedMessage 
-    //   && application.selectedMessage.folder 
-    //   && application.selectedMessage.folder.name == 'Drafts'
-    // ) {
-    //   return <MessageEditor 
-    //   className={styles['message-viewer']} />;
-    // } 
     else if (
       application.selectedMessage &&
       Object.keys(application.selectedMessage).length > 0

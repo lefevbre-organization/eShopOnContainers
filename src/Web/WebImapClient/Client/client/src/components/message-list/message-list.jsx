@@ -406,16 +406,9 @@ class MessageList extends Component {
   }
 
   messageClicked(message) {
-    if(this.props.selectedFolder.name === 'Drafts') {
+    if(this.props.selectedFolder.name === 'Drafts' || this.props.selectedFolder.name === 'Borradores') {
       this.props.messageClicked(message);
-      this.props.newMessage('');
-      // setTimeout(() => {
-      //   this.props.newMessage('');
-      // }, 3000);
-      // setTimeout(() => {
-      //   this.props.draftMessage(this.props.selectedMessage);
-      // }, 2000);
-      
+      this.props.newMessage('');      
     } else {
       this.props.messageClicked(message);
     }  
