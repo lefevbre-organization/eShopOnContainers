@@ -589,26 +589,6 @@ class Calendar extends Component {
     });
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     onCloseDialog() {
         console.log()
         this.LoadCalendarList(false)
@@ -1096,10 +1076,11 @@ class Calendar extends Component {
                 if (event.reminders != undefined) {
                     reminders = event.reminders.overrides;
                 }
-
+                console.log('onDataBinding --->', event)
                 this.scheduleData.push({
                     Id: event.id,
-                    CalendarId: calendarId,                   
+                    CalendarId: calendarId,  
+                    filename: event.id,                
                     Subject: event.summary,
                     Location: event.location,
                     Description: event.description,
@@ -1412,7 +1393,7 @@ class Calendar extends Component {
             //'color': 'green'
         }
 
-        console.log(event);
+        console.log('buildEventoGoogle -->', event);
 
         //if (values.LexonClassification != undefined) {
         //    const properties = {
