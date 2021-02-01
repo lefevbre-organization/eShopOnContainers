@@ -15,7 +15,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     using Model;
 
     [ApiController]
-    [Route("api/v1/Credential")]
+    [Route("api/v1/[controller]")]
     public class RevokeController : Controller
     {
         private readonly IRevokeService _service;
