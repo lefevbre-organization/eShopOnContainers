@@ -8,7 +8,8 @@ import {
   getDraftListWithRFC,
   getAttachments,
   dataUrlToFile,
-  deleteDraft
+  deleteDraft,
+  getEmbeddedImages
 } from '../../api';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
@@ -89,6 +90,7 @@ const FORBIDDEN_EXTENSIONS = [
 export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       to:
         props.mailContacts && props.mailContacts !== null
@@ -240,14 +242,40 @@ export class ComposeMessage extends PureComponent {
       }
     }, 500);
 
+    if(this.props.composer.content && this.props.composer.content !== '') {
+      this.state.defaultContent = this.props.composer;
+    } else {
+      if (this.props.lexon.sign && this.props.lexon.sign !== '') {
+        this.state.content = `<br/><br/><p>${this.props.lexon.sign}</p>` + this.state.content;
+      }
+    }
+
     this.state.defaultContent = this.state.content;
     this.state = { ...this.state, ...this.props.composer };
   }
 
   componentDidMount(prevProps) {
-    const { lexon } = this.props;
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
+    window.addEventListener('AttachDocument', this.attachFromLexon);
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
 
-    if(this.props.composer.content !== '') {
+    //this.removeFields();
+
+    const messageId = this.props.match.params.id;
+    if(messageId){
+      this.props.getEmailHeaderMessage(messageId);
+      this.props.getEmailMessage(messageId);
+    }
+  }
+
+  addSignToContent() {
+    const { lexon } = this.props;
+    return
+
+    if(this.props.composer.content && this.props.composer.content !== '') {
       this.setState({...this.props.composer, defaultContent: this.props.composer.content} );
     } else {
       if (lexon.sign && lexon.sign !== '') {
@@ -259,25 +287,9 @@ export class ComposeMessage extends PureComponent {
         });
       }
     }
-
-    window.dispatchEvent(new CustomEvent('OpenComposer'));
-    window.addEventListener('AttachDocument', this.attachFromLexon);
-    window.addEventListener(
-      'GetUserFromCentinelaConnector',
-      this.handleGetUserFromLexonConnector
-    );
-
-    this.removeFields();
-
-    const messageId = this.props.match.params.id;
-    if(messageId){
-      this.props.getEmailHeaderMessage(messageId);
-      this.props.getEmailMessage(messageId);
-    }
   }
 
   getAttachById(messageId, attachments) {
-
     const addAttachment = (attach) => {
       getAttachments({messageId, attachmentId: attach.body.attachmentId})
       .then((attachment) => {
@@ -310,6 +322,56 @@ export class ComposeMessage extends PureComponent {
    
   }
 
+  getAddressesById() {
+    const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
+
+    const cc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Cc");
+            
+    const bcc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Bcc");
+    if(to) {
+      const toEmails = to.value.split(',');
+      toEmails.forEach(toEmail => {
+        this.addAddress('to', toEmail);
+      });
+    }
+
+    if(cc) {
+      const ccEmails = cc.value.split(',');
+      ccEmails.forEach(ccEmail => {
+        this.addAddress('cc', ccEmail);
+      });
+    }
+    
+    if (bcc) {
+      const bccEmails = bcc.value.split(',');
+      bccEmails.forEach(bccEmail => {
+        this.addAddress('bcc2', bccEmail);
+      });
+    }
+  }
+
+  formatBodyImages(messageId, attachments, embedddedImages) {
+    const addImages = async (attach, image) => {
+      const attachment = await getAttachments({messageId, attachmentId: attach.body.attachmentId});
+      const dataUrl = attachment.data
+         .replace(/-/g, "+")
+         .replace(/_/g, "/");
+          const src = image.replace(/.*src="([^"]*)".*/, '$1');
+          const body = this.props.emailMessageResult.body.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+          this.setState({
+           defaultContent: body,
+           content: body
+       });
+    }
+  
+    attachments[0].parts[1].parts.forEach((file, index) => {
+        if(file.filename != '') {
+            const image = embedddedImages[index - 1];
+            addImages(file, image);
+      }
+    });
+  }
+
   getById() {
     if(this.props.emailMessageResult.body != ''){
       const messageId = this.props.emailMessageResult.result.messageHeaders.find(x => 
@@ -317,44 +379,22 @@ export class ComposeMessage extends PureComponent {
         getDraftListWithRFC(
           messageId.value
           ).then((data) => {
-            
+            const messageId = this.props.emailMessageResult.result.id;
+
+            const attachments = this.props.emailMessageResult.attach;
+      
+            const embeddedImages = getEmbeddedImages(this.props.emailMessageResult.body);
+
+            this.formatBodyImages(messageId, attachments, embeddedImages);
+         
+            this.getAddressesById();
+
+            const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
+
             const content =  this.props.emailMessageResult.body === 'null'  
             ? 
             '' 
             : this.props.emailMessageResult.body; 
-
-            const attachments = this.props.emailMessageResult.attach;
-
-            const messageId = this.props.emailMessageResult.result.id;
-
-            const subject = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Subject");
-
-            const to = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "To");
-
-            const cc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Cc");
-            
-            const bcc = this.props.emailMessageResult.result.messageHeaders.find(x => x.name == "Bcc");
-
-            if(to) {
-              const toEmails = to.value.split(',');
-              toEmails.forEach(toEmail => {
-                this.addAddress('to', toEmail);
-              });
-            }
-          
-            if(cc) {
-              const ccEmails = cc.value.split(',');
-              ccEmails.forEach(ccEmail => {
-                this.addAddress('cc', ccEmail);
-              });
-            }
-           
-            if (bcc) {
-              const bccEmails = bcc.value.split(',');
-              bccEmails.forEach(bccEmail => {
-                this.addAddress('bcc2', bccEmail);
-              });
-            }
 
             if(attachments) {
               this.getAttachById(messageId, attachments);
@@ -410,16 +450,13 @@ export class ComposeMessage extends PureComponent {
 
   closeModal() {
     const findSelected = this.props.labelsResult.labels.find(x =>
-      x.name == "DRAFT" && x.selected == true
+      x.selected == true
      );
      if(findSelected) {
-      this.props.history.push(`/draft`);
-     } else if(this.state.draftId) {
-      this.props.history.push('/draft');
+      this.props.history.push(`/${findSelected.id.toLowerCase()}`);
      } else {
       this.props.history.push('/inbox');
      }
-    
   }
 
    goBack() {
@@ -447,7 +484,6 @@ export class ComposeMessage extends PureComponent {
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
-    debugger
     this.props.setMailContacts(null);
     this.props.updateComposerData({});
 
@@ -554,9 +590,7 @@ export class ComposeMessage extends PureComponent {
     );
 
     this.removeFields();
-    
     this.props.setMailContacts(null);
-    
     this.uppy.close();
   }
 
@@ -640,6 +674,8 @@ export class ComposeMessage extends PureComponent {
 
     const fullTime = this.getTimeDraft();
 
+    console.log('saveDraft', this.state.content)
+
     if(this.state.to != '' 
     || this.state.cc != ''
     || this.state.bcc != ''
@@ -657,7 +693,7 @@ export class ComposeMessage extends PureComponent {
         .catch((err) => {
           console.log('Error sending email:' + err);
         });
-      }, 100);
+      });
     }
     
   }
@@ -710,9 +746,9 @@ export class ComposeMessage extends PureComponent {
       });
     this.resetFields();
     if(this.state.draftId) {
-        deleteDraft({ draftId: this.state.draftId }).then(() => {
-          this.closeModal();
-        });
+      deleteDraft({ draftId: this.state.draftId }).then(() => {
+        this.closeModal();
+      });
     } else {
       this.closeModal();
     } 
@@ -743,6 +779,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   removeFields() {
+
     this.props.updateComposerData({});
     this.setState({
       content: '',
@@ -1182,7 +1219,7 @@ export class ComposeMessage extends PureComponent {
             display: flex;
             flex-direction: column;
           }
-
+          
           .attach-button,
           .attach-button:hover,
           .attach-button:focus,
@@ -1209,6 +1246,14 @@ export class ComposeMessage extends PureComponent {
             top: 2px;
           }
 
+          #toolsRTE_2rte-view {
+            border-bottom: 0 solid transparent !important;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-right: 0 solid transparent !important;
+            border-left: 0 solid transparent !important;
+            margin-top: 76px !important;
+          }
+          
         `}</style>
       </React.Fragment>
     );

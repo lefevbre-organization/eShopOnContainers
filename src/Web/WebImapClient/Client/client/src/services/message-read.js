@@ -98,7 +98,11 @@ function _readMessageRawRequest(dispatch, credentials, folder, message) {
         return response;
       })
       .then(toText)
-      .catch(() => {
+      .catch((exception) => {
+          if(exception.message === 'Unauthorized') {
+              window.location.href = "/login";
+              return;
+          }
         throw Error();
       });
   };

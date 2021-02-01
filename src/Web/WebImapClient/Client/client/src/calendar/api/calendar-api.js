@@ -1,6 +1,19 @@
 ﻿import Caldav from 'caldavjs-nextcloud';
 import moment from 'moment';
 
+
+const CalendarColors = [
+    { value: 'lightBlue', color: '#0078d4', id: '0' },
+    { value: 'lightGreen', color: '#498205', id: '1' },
+    { value: 'lightOrange', color: '#da3b01', id: '2' },
+    { value: 'lightGray', color: '#69797e', id: '3' },
+    { value: 'lightYellow', color: '#ffff00', id: '4' },
+    { value: 'lightTeal', color: '#18a7b5', id: '5' },
+    { value: 'lightPink', color: '#e3008c', id: '6' },
+    { value: 'lightBrown', color: '#b5651d', id: '7' },
+    { value: 'lightRed', color: '#c50f1f', id: '8' }
+];
+
 const settings = {
   username: 'Alberto',
   password: 'Alberto1971.-',
@@ -15,23 +28,34 @@ export const caldav = new Caldav(settings);
 
 // Get calendars
 export const listCalendarList = async () => {
-  const calendars = await caldav.listCalendars({});
-  return calendars.filter((c) => c.ctag !== undefined);
+    const calendars = await caldav.listCalendars({});    
+   // calendars = calendars.filter((c) => c.ctag !== undefined);
+    return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
 
 // Create Calendar
-export const createCalendar = async () => {
-  const cal = await caldav.createCalendar({
-    name: 'NewCalendar',
-    timezone: 'Europe/Madrid', // only to override settings
-    filename: 'NewCalendar.ics',
-    description: 'Calendario de prueba',
-  });
-
-  return cal;
+export const createCalendar = async (calendar) => {    
+    const cal = await caldav.createCalendar({
+        name: calendar.summary,
+        timezone: 'Europe/Madrid', // only to override settings
+        filename: `/calendars/alberto/${calendar.summary}`,
+        description: calendar.description        
+    });   
+    console.log(calendar)
+    return cal;
 };
 
-// Get events
+// Deelte Calendar
+
+export const deleteCalendar = async (calendar) => {
+    const cal = await caldav.deleteCalendar({       
+        filename: calendar     
+    });
+    console.log(calendar)
+    return cal;
+};
+
+// Get events to deprecate
 export const listEvents = async (calendar) => {
   const events = await caldav.listEvents({
     filename: calendar.replace(settings.basePath, ''),
@@ -41,26 +65,28 @@ export const listEvents = async (calendar) => {
     return listEventsParser(events);
 };
 
-// Create event
-export const createEvent = async (calendar) => {
-  const response = await caldav.createEvent({
-    allDay: true,
-    start: '2021-01-05',
-    end: '2021-01-06',
-    summary: 'title',
-    filename: calendar + '/unique-filename-for-this-event',
-    location: 'wherever',
-    description: 'tell them about it',
-    timezone: 'Europe/Madrid', //only to override settings
-    color: 'green',
-  });
+// Get events
+export const getEventList = async (calendar, selectedDate) => {
+    const events = await caldav.listEvents({
+        filename: calendar.replace(settings.basePath, ''),
+        start: '20200601T000000Z',
+        end: "20240630T115959Z",
+    });
+    return listEventsParser(events);
+};
 
+// Create event
+export const addCalendarEvent = async (calendar, event) => {   
+    const response = await caldav.createEvent(event); 
   return response;
 };
 
-export const deleteEvent = async (filename) => {
-  const response = await caldav.deleteEvent({ filename });
-  return response;
+export const deleteCalendarEvent = async (filename) => {   
+    console.log(filename);
+    const response = await caldav.deleteEvent({
+        "filename": filename
+    });    
+    return response;
 };
 
 
@@ -88,9 +114,9 @@ function listEventsParser(list) {
 
         for (let i = 0; i < list.length; i++) {   
             listParse.push({
-                id: list[i].etag,
+                id: list[i].href,
                 summary: list[i].summary,
-                location: list[i].location,
+                location: list[i].location,               
                 description: list[i].description,
                 start: { dateTime: moment(list[i].start), timeZone: 'Europe/Madrid' },
                 end: { dateTime: moment(list[i].end), timeZone: 'Europe/Madrid' },
@@ -144,6 +170,57 @@ function formatDate(date) {
         day = '0' + day;
 
     return [year, month, day].join('-');
+}
+
+function listCalendarParser(list) {
+    let listParse = [];
+
+    if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+
+            //let roll;
+            //if (list[i].canShare) {
+            //    roll = "owner";
+            //}
+            let roll = "owner";
+
+            //let primary = false;
+            //if (list[i].canShare && !list[i].isRemovable) {
+            //    primary = true
+            //}
+            //else {
+            //    primary = undefined
+            //}
+            let primary = false;
+
+            let color = "#0693e3";
+            let selected = true
+            if (i > 0) {
+                selected = false
+            }
+               
+           
+           //if (list[i].color != "auto") {
+              //  color = CalendarColors.find(x => x.value == list[i].color).color
+           // }
+
+            listParse.push({
+                accessRole: roll,
+                backgroundColor: color,                         
+                colorId: color,
+                defaultReminders: [],
+                id: list[i].href,
+                primary: primary,
+                selected:selected,
+                summary: list[i].name,
+                timeZone: "Europe/Madrid",
+            });
+        }
+    }
+
+    let items;
+    items = ({ items: listParse });
+    return items;
 }
 
 

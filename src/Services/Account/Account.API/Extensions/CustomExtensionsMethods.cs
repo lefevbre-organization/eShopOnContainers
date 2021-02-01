@@ -47,10 +47,13 @@
                     .AllowCredentials());
             });
 
-            //TODO: implement of services
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<IEventsService, EventsService>();
+            services.AddTransient<ICalendarService, CalendarService>();
             services.AddTransient<IAccountsRepository, AccountsRepository>();
+            services.AddTransient<IEventsRepository, EventsRepository>();
+            services.AddTransient<ICalendarRepository, CalendarRepository>();
             return services;
         }
 

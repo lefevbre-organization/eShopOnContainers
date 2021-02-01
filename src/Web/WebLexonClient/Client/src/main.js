@@ -191,7 +191,9 @@ class Main extends Component {
     console.log('HandleEvent Client -> Lexon - Checkclick');
 
     if(event.detail.chkselected) {
-       global.mimeParserAsync(event.detail.raw).then(  mime => {
+      let raw = event.detail.raw;
+
+      global.mimeParserAsync(event.detail.raw).then(  mime => {
         const attachments = findAttachments(JSON.parse(mime));
 
         this.props.addMessage({
@@ -204,11 +206,11 @@ class Main extends Component {
           attachments: attachments.map( a => ({  name: a.Filename, checked: a.checked }) )
         });
 
-        dbStore.saveMessage({ id: event.detail.id, attachments });
+        dbStore.saveMessage({ id: event.detail.extMessageId, attachments, raw: raw });
+        raw = null;
         event.detail.raw = null;
       }).catch(err => {
          console.log(err);
-         debugger
       });
     } else {
       this.props.deleteMessage(event.detail.extMessageId);
@@ -453,6 +455,9 @@ class Main extends Component {
           )}
         </Fragment>
         <style jsx global>{`
+          ul {
+            list-style: none !important;
+          }
           .container {
             max-width: unset;
           }

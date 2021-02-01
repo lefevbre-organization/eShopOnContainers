@@ -1,21 +1,21 @@
 Param(
-    [parameter(Mandatory=$false)][string]$registry,
-    [parameter(Mandatory=$false)][string]$dockerUser,
-    [parameter(Mandatory=$false)][string]$dockerPassword,
+    [parameter(Mandatory=$false)][string]$registry="index.docker.io",
+    [parameter(Mandatory=$false)][string]$dockerUser="freyeslefebvre",
+    [parameter(Mandatory=$false)][string]$dockerPassword="NetEb9221",
     [parameter(Mandatory=$false)][string]$externalDns,
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=(
         "nosql-data",
-        "sql-data"
+        "sql-data",
         "rabbitmq"
         ),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=(
-        "conference-api", "lexon-api", "lexonmysql-api", "account-api", "centinela-api", "userutils-api", "signature-api", "database-api", 
+        "conference-api", "lexon-api", "lexonmysql-api", "account-api", "centinela-api", "userutils-api", "signature-api", 
         "apigwlex", "apigwacc", "apigwcen", "apigwsig", "apigwdat", 
-        "webdatabase", "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
+        "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "webimapserver", 
         "webstatus"

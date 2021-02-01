@@ -146,6 +146,7 @@ export class ConnectingEmailsStep3 extends React.Component {
   }
 
   onRowSelected(event) {
+    debugger
     this.setState(
       { rowSelected: event.data.idRelated + '_' + event.data.idActuation },
       () => {
@@ -337,7 +338,7 @@ export class ConnectingEmailsStep3 extends React.Component {
               border: 1px solid #001978 !important;
             }
             .e-content {
-              overflow-y: hidden !important;
+              overflow: hidden !important;
             }
             .e-primary.list {
               margin-top: -25px !important;

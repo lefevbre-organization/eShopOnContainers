@@ -8,7 +8,7 @@
 
         public string name { get; set; }
 
-        public long idRelated { get; set; }
+        public long? idRelated { get; set; }
 
         public short entityIdType { get; set; }
 

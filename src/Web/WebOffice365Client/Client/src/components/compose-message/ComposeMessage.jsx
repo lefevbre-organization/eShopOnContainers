@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import * as uuid from 'uuid/v4';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'redux';
@@ -81,7 +81,7 @@ const FORBIDDEN_EXTENSIONS = [
   'wsh',
 ];
 
-export class ComposeMessage extends PureComponent {
+export class ComposeMessage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -227,6 +227,7 @@ export class ComposeMessage extends PureComponent {
     this.handleRemoveAddress = this.removeAddress.bind(this);
     this.handleMoveAddress = this.moveAddress.bind(this);
 
+
     setTimeout(() => {
       // If forwarding, add original attachments files
       if (this.state.isForward) {
@@ -248,15 +249,22 @@ export class ComposeMessage extends PureComponent {
         // call  to addFileToState
       }
     }, 500);
+
+    if(this.props.composer.content && this.props.composer.content !== '') {
+      this.state.defaultContent = this.props.composer;
+    } else {
+      if (this.props.lexon.sign && this.props.lexon.sign !== '') {
+        this.state.content = `<br/><br/><p>${this.props.lexon.sign}</p>` + this.state.content;
+      }
+    }
     this.state.defaultContent = this.state.content;
     this.state = { ...this.state, ...this.props.composer };
   }
 
   componentDidMount() {
-    
-    const { lexon } = this.props;
+        const { lexon } = this.props;
 
-    if(this.props.composer.content !== '') {
+    if(this.props.composer && this.props.composer.content && this.props.composer.content !== '') {
       this.setState({...this.props.composer, defaultContent: this.props.composer.content});
     } else {
       if (lexon.sign && lexon.sign !== '') {
@@ -276,7 +284,7 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-    this.removeFields();
+    //this.removeFields();
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailMessage(messageId);
@@ -418,11 +426,7 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === undefined
     ) {
       const findSelected = this.props.labelsResult.labels.find(x =>
-         x.displayName == "Drafts" && x.selected == true
-      );
-
-      const findByDraftId = this.props.labelsResult.labels.find(x =>
-          x.displayName == "Drafts" && this.state.draftId
+        x.selected == true
       );
 
       if (this.props.labelsResult.labelInbox === null) {
@@ -430,9 +434,7 @@ export class ComposeMessage extends PureComponent {
           this.props.history.push(`/${label.id}`)
         );
       } else if(findSelected) {
-        this.props.history.push('/' + findSelected.id.toLowerCase());
-      } else if(this.state.draftId && findByDraftId) {
-        this.props.history.push('/' + findByDraftId.id.toLowerCase());
+        this.props.history.push(`/${findSelected.id.toLowerCase()}`);
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -584,6 +586,7 @@ export class ComposeMessage extends PureComponent {
     );
     this.removeFields();
     this.uppy.close();
+    // this.closeModal();
   }
 
   handleChange(value, delta, source, editor) {
@@ -1285,6 +1288,14 @@ export class ComposeMessage extends PureComponent {
             font-weight: 500;
             position: relative;
             top: 2px;
+          }
+
+          #toolsRTE_2rte-view {
+            border-bottom: 0 solid transparent !important;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-right: 0 solid transparent !important;
+            border-left: 0 solid transparent !important;
+            margin-top: 76px !important;
           }
 
         `}</style>

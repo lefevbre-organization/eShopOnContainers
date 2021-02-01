@@ -290,7 +290,6 @@ export class MessageToolbar extends PureComponent {
   //       })
   //       .catch((err) => {
   //         console.log(err);
-  //         debugger;
   //       });
   //   }
 }

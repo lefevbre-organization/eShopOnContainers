@@ -4,12 +4,9 @@
 .menubutton {
     cursor: pointer;
     border: none;
-    background: none;
+    background: transparent;
     outline: none;
     border: 0;
-    padding-right: 10px;
-    //color: transparent;
-    /*float: right;*/
     font-size: 18px;
 }
 
@@ -29,17 +26,15 @@
 }
 
 .closeb {
-    position: absolute;
-    top: 50%;
-    right: 0%;
-    padding: 0 5px;
-    transform: translate(0%, -50%);
-   
+    transform: translate(0%, -34%);
+    position: relative;
+    padding: 0 6px;
+    padding-bottom: 5px;
 }
 
 .closeb:hover {
     //cursor: pointer;
-    background: rgba(255,255,255,0.7);
+    background: rgba(234,227,227,0.7);
 }
 
 /* Circle palette customization */

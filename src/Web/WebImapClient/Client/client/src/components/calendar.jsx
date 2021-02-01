@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import React, { Component, Fragment } from 'react';
+import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as uuid from 'uuid/v4';
@@ -26,14 +27,11 @@ import {
   setError,
 } from '../actions/application';
 import { clearSelected, setSelected } from '../actions/messages';
-//import {
-//  setEmailShown,
-//  resetIdEmail,
-//  setCaseFile,
-//  setGUID,
-//  setSign,
-//  setDataBase,
-//} from '../actions/lexon';
+import {
+ setGUID,
+ setSign,
+ setDataBase,
+} from '../actions/lexon';
 
 //import { getSelectedFolder } from '../selectors/folders';
 
@@ -43,6 +41,8 @@ import { getFolders, findSentFolder, findSentFolderByName } from '../services/fo
 import { resetFolderMessagesCache } from '../services/message';
 import { readMessage } from '../services/message-read';
 import { persistApplicationNewMessageContent } from '../services/indexed-db';
+
+
 
 import {
   addOrUpdateAccount,
@@ -88,10 +88,25 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { deleteCalendar/*, getEventList*/, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../services/calendar-api';
+import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { listEvents } from '../calendar/api/calendar-api'
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
+
+//import Reminder from "./reminder/reminder"
+import { Popup } from '@syncfusion/ej2-popups';
+//import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+//import { Eventtype } from '../eventtypes/eventtype';
+//import { EventsImport } from '../events-import/events'
+//import { getEventTypes } from "../../../api/accounts";
+//import HeaderAddress from '../../../components/compose-message/header-address';
+//import AttendeeAddress from '../calendar/components/';
+import { Calendars } from '../calendar/components/calendars/calendars';
+import AttendeeAddress from '../calendar/components/main/attendee/attendee-address';
+import './lefebvre-material.css';
+import {getCalendars, selectCalendar} from "../calendar/components/sidebar/sidebar.actions";
+import {bindActionCreators} from "redux";
+import ACTIONS from "../actions/lexon";
 
 class Calendar extends Component {
   constructor(props) {
@@ -110,12 +125,12 @@ class Calendar extends Component {
         eventType: undefined,
         isVisibility: false,
         to2: [],
-        data: [{
-          Id: 2,
-          Subject: 'Paris',
-          StartTime: new Date(2021, 0, 15, 10, 0),
-          EndTime: new Date(2021, 0, 15, 12, 30),
-          }],
+        //data: [{
+        //  Id: 2,
+        //  Subject: 'Paris',
+        //  StartTime: new Date(2021, 0, 15, 10, 0),
+        //  EndTime: new Date(2021, 0, 15, 12, 30),
+        //  }],
      
       isUpdatedDefaultAccount: false,
       };
@@ -141,6 +156,18 @@ class Calendar extends Component {
       this.layoutIframe = false;
       this.layoutIframeNewEventView = false;
       this.layoutIframeEditEventView = false;
+
+
+      this.openCalendarView = this.openCalendarView.bind(this);
+      this.deleteCalendar = this.deleteCalendar.bind(this);
+      this.calendarColorModify = this.calendarColorModify.bind(this);
+      this.onEventRendered = this.onEventRendered.bind(this);
+      this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
+      this.handleAddAddress = this.addAddress.bind(this);
+      this.handleRemoveAddress = this.removeAddress.bind(this);
+      this.onCloseDialog = this.onCloseDialog.bind(this);
+      this.onExportEvents = this.onExportEvents.bind(this);
+      this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
 
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
@@ -231,33 +258,33 @@ class Calendar extends Component {
       //    EndTime: new Date(2021, 0, 15, 12, 30),
       //}];
 
-      var calendar = '/remote.php/dav/calendars/alberto/personal/'
-      var listData = [];
-      listEvents(calendar)
-          .then(result => {
-              let items = result.result.items; 
-                  if (items.length > 0) {
-                      for (let i = 0; i < items.length; i++) {
-                          console.log(items[i]);
-                          listData.push({
-                              Id: items[i].id,
-                              Subject: items[i].summary,
-                              StartTime: moment(items[i].start.dateTime).format('YYYY-MM-DD hh:mm:ss'),
-                              EndTime: moment(items[i].end.dateTime).format('YYYY-MM-DD hh:mm:ss'),
-                          })
-                      }
-                  }
+      //var calendar = '/remote.php/dav/calendars/alberto/personal/'
+      //var listData = [];
+      //listEvents(calendar)
+      //    .then(result => {
+      //        let items = result.result.items; 
+      //            if (items.length > 0) {
+      //                for (let i = 0; i < items.length; i++) {
+      //                    console.log(items[i]);
+      //                    listData.push({
+      //                        Id: items[i].id,
+      //                        Subject: items[i].summary,
+      //                        StartTime: moment(items[i].start.dateTime).format('YYYY-MM-DD hh:mm:ss'),
+      //                        EndTime: moment(items[i].end.dateTime).format('YYYY-MM-DD hh:mm:ss'),
+      //                    })
+      //                }
+      //            }
              
-              this.setState({
-                  data: listData 
-              })  
+      //        this.setState({
+      //            data: listData 
+      //        })  
           
-        })
-        .catch(error => {
-            console.log('error ->', error);
-        })    
+      //  })
+      //  .catch(error => {
+      //      console.log('error ->', error);
+      //  })
 
-   
+
     }
 
 
@@ -314,7 +341,6 @@ class Calendar extends Component {
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
-
       return (
 
 
@@ -330,17 +356,28 @@ class Calendar extends Component {
 
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
-              <div className={styles.app}>
-                 
+              <div id='target' className={styles.app}>                 
 
                   <SideBar
                       collapsed={sideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       bbdd={lexon.bbdd}
+                      sideBarCollapsed={false}
+                      sideBarToggle={this.toggleSideBar}
+                      getCalendarList={this.sidebarCalendarList}
+                      pathname={this.props.location.pathname}
+                      calendarResult={this.props.calendarsResult}                      
+                      onCalendarClick={this.loadCalendarEvents.bind(this)}
+                      onSidebarCloseClick={this.handleShowLeftSidebarClick}
+                      onCalendarChange={this.handleScheduleDate}
+                      onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
+                      onCalendarOpenCalnendarView={this.openCalendarView}
+                      onCalendarDelete={this.deleteCalendar}
+                      onCalendarColorModify={this.calendarColorModify}
+                      isIframeContainer={this.layoutIframe}
+                      ref={sidebar => this.sidebarCalendarObj = sidebar}
                   />
-
-                 
 
                   <div
                       className={`${styles['content-wrapper']}
@@ -350,17 +387,10 @@ class Calendar extends Component {
                           } ${styles['custom-padding-top']}`}>
 
 
-
-
                       <div className='schedule-control-section'>
                           <div className='control-section'>
                               <div className='control-wrapper'>
-
-                                  <ScheduleComponent  ref={schedule => this.scheduleObj = schedule} currentView="Month" height='550px'  eventSettings={{ dataSource: this.state.data }}>
-                                      <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
-                                  </ScheduleComponent>
-
-                                  {/*   <ScheduleComponent
+                                <ScheduleComponent
                                       //delayUpdate='false'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
@@ -370,15 +400,16 @@ class Calendar extends Component {
                                       allowKeyboardInteraction={true}
                                       height='650px'
                                       //views={this.viewsCollections}
-                                      //actionComplete={this.onEventRendered.bind(this)}
-                                      //popupOpen={this.onPopupOpen.bind(this)}
-                                      //actionBegin={this.onActionBegin.bind(this)}
+                                      actionComplete={this.onEventRendered.bind(this)}
+                                      popupOpen={this.onPopupOpen.bind(this)}
+                                      actionBegin={this.onActionBegin.bind(this)}
                                       //actionComplete={this.onActionComplete.bind(this)}
                                       //allowVirtualScrolling = "true"
                                       cellDoubleClick={this.doubleOpen.bind(this)}
                                       eventSettings={
                                           {
                                               dataSource: this.scheduleData,
+                                              //dataSource: this.state.data,
                                               fields: {
                                                   subject: { name: 'Subject', validation: { required: true } }
                                               }
@@ -396,11 +427,11 @@ class Calendar extends Component {
                                           <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                       </ViewsDirective>
                                        <ResourcesDirective>
-                                          <ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
+                                          <ResourceDirective field='eventType' title={t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
                                           <ResourceDirective ref={this.calendarObj} field='CalendarId' title={t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                       </ResourcesDirective>
                                       <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
-                                  </ScheduleComponent>*/}
+                                  </ScheduleComponent>
                               </div >
                           </div >
                       </div >
@@ -433,8 +464,8 @@ class Calendar extends Component {
                  <section className='main hbox space-between'>
 
                     <article className='d-flex flex-column position-relative'>
-                        {/*  <div className="hidden">
-                            <AttendeeAddress
+                          <div className="hidden">
+                             <AttendeeAddress
                                 id='to'
                                 addresses={this.state.to2}
                                 onAddressAdd={this.handleAddAddress}
@@ -444,17 +475,17 @@ class Calendar extends Component {
                                 label={t('compose-message.to')}
                                 ref={tag => this.tagObjHead = tag}
                             />
-                        </div>*/}
+                        </div>
 
 
-                        {/*  <div className="hidden">
-                            <Reminder
+                          <div className="hidden">
+                          {/*  <Reminder
                                 reminders={this.state.reminders}
                                 ref={rem => this.remObj = rem}
-                            />
-                        </div>>*/}
+                            />*/}
+                        </div>
 
-                        {/*  <div className="hidden">
+                         <div className="hidden">
                             <div className='buttons-wrapper' ref={but => this.buttonEventTypeObj = but}>
                                 <ButtonComponent
                                     cssClass='e-flat e-primary'
@@ -465,11 +496,11 @@ class Calendar extends Component {
                                     onClick={this.onImportContactsTypeClick.bind(this)}
                                 >Importar eventos</ButtonComponent>
                             </div>
-                        </div>*/}
+                        </div>
 
                      
 
-                        {/* <ToastComponent ref={(toast) => { this.toastObj = toast; }}
+                         <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                             id='toast_pos'
                             content='Action successfully completed.'
                             position={this.position}
@@ -480,7 +511,7 @@ class Calendar extends Component {
                             timeOut={2000}
                         >
                         </ToastComponent>
-                        <DialogComponent
+                       <DialogComponent
                             id='dialogDraggable'
                             isModal={true}
                             header={t("calendar.title")}
@@ -496,8 +527,8 @@ class Calendar extends Component {
                                 calendarId={this.state.calendarToEdit}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>
-                        <DialogComponent
+                      </DialogComponent>
+                        {/* <DialogComponent
                             id='eventTypes'
                             isModal={true}
                             header={t("contactimport.title")}
@@ -679,6 +710,7 @@ class Calendar extends Component {
 
         this.toastObj.show(this.toasts[0]);
         const calendarid = args.currentTarget.id
+
 
         deleteCalendar(args.currentTarget.id)
             .then(result => {
@@ -901,6 +933,7 @@ class Calendar extends Component {
     };
 
     eventTemplate(props) {
+        const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {
             colorExist = true
@@ -910,11 +943,11 @@ class Calendar extends Component {
             subjectStr = this.text_truncate(props.Subject, 15)
         }
         else {
-            subjectStr = i18n.t("schedule.notitle")
+            subjectStr = t("schedule.notitle")
         }
 
         return (
-            <div Style="width: 98%;">
+            <div /*style="width: 98%;"*/>
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
@@ -936,6 +969,7 @@ class Calendar extends Component {
     }
 
     eventTemplateAgendaView(props) {
+        const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {
             colorExist = true
@@ -945,7 +979,7 @@ class Calendar extends Component {
             props.Subject = this.text_truncate(props.Subject, 100)
         }
         else {
-            subjectStr = i18n.t("schedule.notitle")
+            subjectStr = t("schedule.notitle")
         }
 
         //var eventstart = new Date('August 19, 1975 23:15:30 GMT+00:00');
@@ -965,7 +999,7 @@ class Calendar extends Component {
                             )}
 
                         {props.IsAllDay ? (
-                            <span>todo el día</span>
+                            <span>todo el dï¿½a</span>
                         ) : (
 
                                 <span> {props.StartTime.toLocaleTimeString('es-ES')} - {props.EndTime.toLocaleTimeString('es-ES')}</span>
@@ -1064,7 +1098,7 @@ class Calendar extends Component {
 
                 this.scheduleData.push({
                     Id: event.id,
-                    CalendarId: calendarId,
+                    CalendarId: calendarId,                   
                     Subject: event.summary,
                     Location: event.location,
                     Description: event.description,
@@ -1082,7 +1116,8 @@ class Calendar extends Component {
             }
         }
         e.result = this.scheduleData;
-    }
+    }  
+
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -1143,7 +1178,6 @@ class Calendar extends Component {
     }
 
     async componentDidMount() {
-
         if (this.layoutIframe) {
             this.setState({ leftSideBar: { collapsed: true } })
         }
@@ -1171,114 +1205,36 @@ class Calendar extends Component {
             password,
         } = this.props.all.login.formValues;
         const { email } = this.props;
-        if (userId !== null && email !== null) {
-            const userAux = await getUser(userId);
+          console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
 
-            let sign = '';
-            const ac = userAux.data.accounts.filter((a) => a.email === email);
+         this.sidebarCalendarList();
 
-            if (ac.length >= 1) {
-                sign = ac[0].sign;
-            }
-
-            const GUID = uuid();
-            const newAccount = {
-                provider: PROVIDER,
-                email: email,
-                guid: GUID,
-                defaultAccount: true,
-                sign,
-                configAccount: {
-                    imap: serverHost,
-                    imapPort: serverPort,
-                    imapUser: user,
-                    imapPass: password,
-                    imapSsl: imapSsl,
-                    smtp: smtpHost,
-                    smtpPort: smtpPort,
-                    smtpSsl: smtpSsl,
-                    smtpTls: smtpTls,
-                },
-            };
-            if (!newAccount.configAccount.imapPass) {
-                delete newAccount.configAccount;
-            }
+        //Firefox load is slow and need to take into account wait more time to be ready
+        let value = 100;
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
+            value = 250;
+        }
+        let obj = this;
+        setTimeout(function () {
+        obj.LoadCalendarList();
+       // obj.getlistEventTypes()
 
 
-
-
-
-            console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
-
-            //window.addEventListener(
-            //    'EventClassified',
-            //    this.handleClassificatedEvent
-            //);
-
-            //window.addEventListener(
-            //    'RemoveSelectedEvent',
-            //    this.handleClassificatedEventRemoved
-            //);
-
-            //window.addEventListener(
-            //    'GetUserFromLexonConnector',
-            //    this.handleGetUserFromLexonConnector
-            //);
-            //window.addEventListener(
-            //    'GetUserFromCentinelaConnector',
-            //    this.handleGetUserFromCentinelaConnector
-            //);
-            //window.addEventListener('ExportEvents', this.onExportEvents)
-            //window.addEventListener('RemoveSelectedDocument', (event) => {
-            //    this.props.deleteMessage(event.detail.id);
-            //    dispatchEvent(
-            //        new CustomEvent('Checkclick', {
-            //            detail: {
-            //                id: event.detail.id,
-            //                extMessageId: event.detail.id,
-            //                name: event.detail.id,
-            //                subject: event.detail.subject,
-            //                sentDateTime: event.detail.sentDateTime,
-            //                folder: event.detail.folder,
-            //                provider: 'GOOGLE',
-            //                account: this.props.lexon.account,
-            //                chkselected: false,
-            //            },
-            //        })
-            //    );
-            //});
-
-
-
-            this.sidebarCalendarList();
-
-            //Firefox load is slow and need to take into account wait more time to be ready
-            let value = 100;
-            if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
-                value = 250;
-            }
-
-            let obj = this;
+        // New event is called
+        if (obj.layoutIframeNewEventView) {
             setTimeout(function () {
-               // obj.LoadCalendarList();
-               // obj.getlistEventTypes()
+                obj.handleScheduleOpenNewEventEditor()
+            }, 1000);
+        }
 
+        // Edit event is called
+        if (obj.layoutIframeEditEventView) {
+            setTimeout(function () {
+                obj.handleScheduleOpenEditEventEditor()
+            }, 1000);
+        }
 
-                // New event is called
-                if (obj.layoutIframeNewEventView) {
-                    setTimeout(function () {
-                        obj.handleScheduleOpenNewEventEditor()
-                    }, 1000);
-                }
-
-                // Edit event is called
-                if (obj.layoutIframeEditEventView) {
-                    setTimeout(function () {
-                        obj.handleScheduleOpenEditEventEditor()
-                    }, 1000);
-                }
-
-            }, value);
+    }, value);
 
 
 
@@ -1287,7 +1243,7 @@ class Calendar extends Component {
             //        obj.handleScheduleOpenEditor()
             //    }, 1000);
             //}
-        }
+        
     }
 
     onDataBindingEventTypeList(items) {
@@ -1326,18 +1282,18 @@ class Calendar extends Component {
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
         listCalendarList()
-            .then(result => {
-                this.resourceCalendarData = orderBy(result.items, "primary");
-                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
-                if (!DisableloadSchedule) {
-                    this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
-                    this.scheduleObj.refresh();
-                }
-
-            })
-            .catch(error => {
-                console.log('error ->', error);
-            });
+        .then(result => {
+            this.resourceCalendarData = orderBy(result.items, "primary")
+            this.props.getCalendars(this.resourceCalendarData);
+            this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
+            if (!DisableloadSchedule) {
+                this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                this.scheduleObj.refresh();
+            }
+        })
+        .catch(error => {
+            console.log('error ->', error);
+        });
     }
 
     componentWillUnmount() {
@@ -1360,91 +1316,96 @@ class Calendar extends Component {
         //window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
 
+    CreateGuid() {
+        function _p8(s) {
+            var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+            return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+        }
+        return _p8() + _p8(true) + _p8(true) + _p8();
+    }  
+
     buildEventoGoogle(values) {
+        //caldav.createEvent({
+        //    "allDay": false,
+        //    "start": "ISODateString",
+        //    "end": "ISODateString",
+        //    "summary": "title",
+        //    "filename": "/calendars/admin/calendar-name-at-end-of-private-link/unique-filename-for-this-event",
+        //    "location": "wherever",
+        //    "description": "tell them about it",
+        //    "timezone": "America/Chicago", //only to override settings
+        //    "color": "green",
+        //    "categories": [
+        //        { "name": "awesome" },
+        //        { "name": "tags" },
+        //        { "name": "go" },
+        //        { "name": "here" }
+        //    ],
+        //    "attendees": [
+        //        {
+        //            "name": "name",
+        //            "email": "test@example.com",
+        //            "mailto": "test@example.com", //to override email
+        //            "type": "one of: individual, group, room, resource, unknown"
+        //        }
+        //    ],
+        //    "organizer":
+        //    {
+        //        "name": "name",
+        //        "email": "test@example.com",
+        //        "mailto": "test@example.com", //to override email
+        //    }
+        //})
+
+
         //Event basic data
         var event = {
+            'allDay': values.IsAllDay,
             'summary': values.Subject,
             'location': values.Location,
             'description': values.Description,
-
-            'start': {
-                'dateTime': values.StartTime,
-                'timeZone': 'Europe/Madrid',
-            },
-            'end': {
-                'dateTime': values.EndTime,
-                'timeZone': 'Europe/Madrid',
-            },
-            'visibility': values.Visibility ? 'private' : 'default'
+            'start': moment(values.StartTime),
+            'end': moment(values.EndTime),
+            'timezone': 'Europe/Madrid',
+            'filename': values.CalendarId + this.CreateGuid(),           
+            //'color': 'green'
         }
 
-        //event Type
-        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
-            let item;
-            if (values.EventType.name != undefined) {
-                item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
-            }
-            else {
-                item = this.eventTypeDataSource.find(x => x.text == values.EventType)
-            }
-            event.extendedProperties = {
-                'private': {
-                    'eventTypeName': item.text,
-                    'eventTypeId': item.id,
-                    'eventTypeColor': item.backgroundColor,
-                },
-            }
-        }
+        
 
-        if (values.LexonClassification != undefined) {
-            const properties = {
-                ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
-                'lexonClassification': '' + values.LexonClassification
-            }
+        //if (values.LexonClassification != undefined) {
+        //    const properties = {
+        //        ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
+        //        'lexonClassification': '' + values.LexonClassification
+        //    }
 
-            event.extendedProperties = {
-                ...event.extendedProperties,
-                private: properties
-            }
-        }
+        //    event.extendedProperties = {
+        //        ...event.extendedProperties,
+        //        private: properties
+        //    }
+        //}
 
 
-        //"extendedProperties": {
-        //    "private": {
-        //        'eventType': '1'
-        //    },
-        //},
 
         //Recurrence
-        if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+        //if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
 
         //Atendees
         let arr = this.state.to2
         let ateendeeObj = [];
         if (arr.length > 0) {
             Object.keys(arr).forEach(function (key) {
-                ateendeeObj.push({ 'email': arr[key] });
-            });
-        }
-        event.attendees = ateendeeObj;
-
-        //Reminders
-
-        let reminders = []
-        let arrR = this.remObj.listviewInstance.dataSource;
-        if (arrR.length > 0) {
-
-            event.reminders = {
-                'useDefault': false,
-                'overrides': [],
-            }
-            Object.keys(arrR).forEach(function (key) {
-                event.reminders.overrides.push({
-                    method: arrR[key].title,
-                    minutes: arrR[key].minutesvalue,
+                ateendeeObj.push({
+                    "name": arr[key], 
+                    'email': arr[key],
+                    'mailto': arr[key],
                 });
             });
         }
+        if (ateendeeObj > 0) {
+            event.attendees = ateendeeObj;  
+        }
+       
 
         return event
     }
@@ -1483,7 +1444,6 @@ class Calendar extends Component {
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
-        debugger
 
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
@@ -1514,7 +1474,6 @@ class Calendar extends Component {
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
-                    debugger
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
@@ -1557,6 +1516,8 @@ class Calendar extends Component {
     }
 
     onPopupOpen(args) {
+
+        const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;
         //}
@@ -1681,7 +1642,7 @@ class Calendar extends Component {
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
                 var validator = (formElement).ej2_instances[0];
-                validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
+                validator.addRules('Subject', { required: [true, t("schedule.validator-required")] });
             }
 
         }
@@ -1737,7 +1698,7 @@ class Calendar extends Component {
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
                 var validator = (formElement).ej2_instances[0];
-                validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
+                validator.addRules('Subject', { required: [true, t("schedule.validator-required")] });
             }
 
             // Create required custom elements in initial time
@@ -1764,7 +1725,7 @@ class Calendar extends Component {
                     itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
                     dataSource: this.eventTypeDataSource,
                     value: this.state.eventType,
-                    floatLabelType: 'Always', placeholder: i18n.t("schedule.eventtype")
+                    floatLabelType: 'Always', placeholder: t("schedule.eventtype")
                 });
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
@@ -1780,7 +1741,7 @@ class Calendar extends Component {
 
                 this.drowDownListVisibility = new CheckBoxComponent({
                     value: this.state.isVisibility,
-                    label: i18n.t("schedule.visibility"),
+                    label: t("schedule.visibility"),
                     checked: this.state.isVisibility
                 });
 
@@ -1802,10 +1763,10 @@ class Calendar extends Component {
                 //containerTab.appendChild(nodeA);
 
                 // Adding reminder element
-                let containerRem = createElement('div', { className: 'custom-field-container' });
-                rowReminders.appendChild(containerRem);
-                var nodeR = ReactDOM.findDOMNode(this.remObj);
-                containerRem.appendChild(nodeR);
+                //let containerRem = createElement('div', { className: 'custom-field-container' });
+                //rowReminders.appendChild(containerRem);
+                //var nodeR = ReactDOM.findDOMNode(this.remObj);
+                //containerRem.appendChild(nodeR);
             }
 
             // if from iframe is requested a new event
@@ -1963,7 +1924,6 @@ class Calendar extends Component {
                 break;
 
             case 'eventChanged':
-                debugger
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -2086,53 +2046,34 @@ class Calendar extends Component {
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
 
-
-
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = result.id;
+                        args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] })
 
-                        args.data[0].Reminders = result.reminders.overrides;
+                       // args.data[0].Reminders = result.reminders.overrides;
 
                         //Convert dropdown eventType in eventtype object to paint into schedule event
-                        if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
-                            let item;
-                            item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                            // create EventType with structure
-                            let eventType = [];
-                            if (item != undefined) {
-                                eventType.name = item.text;
-                                eventType.id = item.id;
-                                eventType.color = item.backgroundColor;
-                                args.data[0].EventType = eventType;
-                            }
-                        }
+                        //if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                        //    let item;
+                        //    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                        //    // create EventType with structure
+                        //    let eventType = [];
+                        //    if (item != undefined) {
+                        //        eventType.name = item.text;
+                        //        eventType.id = item.id;
+                        //        eventType.color = item.backgroundColor;
+                        //        args.data[0].EventType = eventType;
+                        //    }
+                        //}
 
                         this.toastObj.show(this.toasts[1]);
                     })
-                    .catch(error => {
-                        if (error.result != undefined) {
-                            if (error.result.error.errors[0] != undefined) {
-                                if (error.result.error.errors[0].reason == "requiredAccessLevel") {
-                                    this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                                    console.log('error ->', error);
-                                    delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
-                                    this.scheduleObj.refreshEvents();
-                                    return;
-                                }
-                            }
-                            else {
-                                this.toastObj.show(this.toasts[2]);
-                                console.log('error ->', error);
-                            }
-                        }
-                        else {
-                            this.toastObj.show(this.toasts[2]);
-                            console.log('error ->', error);
-                        }
+                    .catch(error => {                       
+                         this.toastObj.show(this.toasts[2]);
+                         console.log('error ->', error); 
                     })
 
                 break;
@@ -2164,7 +2105,6 @@ class Calendar extends Component {
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
-        debugger
         addCalendarEvent(CalendarId, event)
             .then(result => {
                 if (!hiddeMessage) {
@@ -2178,27 +2118,16 @@ class Calendar extends Component {
     }
 
     deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
-        deleteCalendarEvent(calendarId, item)
+        let filename = item;
+        deleteCalendarEvent(filename)
             .then(result => {
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }
             })
-            .catch(error => {
-                if (error.result.error.errors[0] != undefined) {
-                    if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
-                        error.result.error.errors[0].reason == "forbidden") {
-                        this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
-                        this.scheduleObj.refreshEvents();
-                        this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                        console.log('error ->', error);
-                        return;
-                    }
-                }
-                else {
-                    this.toastObj.show(this.toasts[2]);
-                    console.log('error ->', error);
-                }
+            .catch(error => {                
+                this.toastObj.show(this.toasts[2]);
+                console.log('error ->', error);                
             })
     }
 
@@ -2217,14 +2146,15 @@ class Calendar extends Component {
     }
 
     loadCalendarEvents(calendar, checked) {
-        this.scheduleObj.showSpinner();
-
+        if(this.scheduleObj) {
+            this.scheduleObj.showSpinner();
+        }
         let predicate;
 
-        getEventList(calendar, this.scheduleObj.selectedDate)
+        const obj = this
+        getEventList(calendar, '')
             .then(result => {
                 this.defaultCalendar = calendar;
-
                 //Set checkedCalendarResourceData calendar items as cheked
                 this.resourceCalendarData.find(x => x.id == calendar).checked = checked
 
@@ -2240,7 +2170,9 @@ class Calendar extends Component {
                     });
                 }
 
-                this.props.selectCalendar(calendar);
+              
+                
+               this.props.selectCalendar(calendar);
 
                 // Filter selected calendar to pass to the query
                 let calendars = groupBy(this.resourceCalendarData, "checked");
@@ -2342,7 +2274,8 @@ class Calendar extends Component {
     }
 
     sidebarCalendarList() {
-      //  this.props.getCalendars();
+       // SideBar.getCalendars();
+      // this.props.getCalendars();
     }
 
     renderSpinner() {
@@ -2472,53 +2405,33 @@ Calendar.propTypes = {
   //resetIdEmail: PropTypes.func,
 };
 
-const mapStateToProps = (state) => ({
-  //application: state.application,
-  //outbox: state.application.outbox,
-  //folders: state.folders,
-  //receivedFolder: getSelectedFolder(state) || {},
-  //messages: state.messages,
-  lexon: state.lexon,
-  //email: state.login.formValues.user,
-  all: state,
-  currentUser: state.currentUser,
-});
+//const mapStateToProps = state => ({
+//    calendarsResult: state.calendarsResult,
+//    lexon: state.lexon,
+//});
 
-const mapDispatchToProps = (dispatch) => ({
-  //reloadFolders: (credentials) => getFolders(dispatch, credentials, true),
-  //reloadMessageCache: (user, folder) =>
-  //  resetFolderMessagesCache(dispatch, user, folder),
-  //newMessage: (to, sign) => editNewMessage(dispatch, to, sign),
-  //selectFolder: (folder, user) => {
-  //  dispatch(selectFolder(folder));
-  //  clearSelectedMessage(dispatch);
-  //  dispatch(clearSelected());
-  //  resetFolderMessagesCache(dispatch, user, folder);
-  //},
-  //messageClicked: (credentials, downloadedMessages, folder, message) => {
-  //  dispatch(selectMessage(message));
-  //  readMessage(dispatch, credentials, downloadedMessages, folder, message);
-  //},
-  //setEmailShown: (flag) => dispatch(setEmailShown(flag)),
-  //outboxEventNotified: () => dispatch(outboxEventNotified()),
-  //logout: () => {
-  //  dispatch(clearUserCredentials());
-  //  history.push('/login');
-  //},
-  //close: (application) => {
-  //  dispatch(editMessage(null));
-  //  //persistApplicationNewMessageContent(application, "");
-  //},
-  //setError: (err, msg) => dispatch(setError(err, msg)),
-  //resetIdEmail: () => dispatch(resetIdEmail()),
-  //setCaseFile: (casefile) => dispatch(setCaseFile(casefile)),
-  //setSelected: (messages, selected, shiftKey) =>
-  //  dispatch(setSelected(messages, selected, shiftKey)),
-  setDataBase: (ddbb) => dispatch(setDataBase(ddbb)),
-  setGUID: (guid) => dispatch(setGUID(guid)),
-  setSign: (sign) => dispatch(setSign(sign)),
- 
-});
+const mapStateToProps = (state) => {
+    return {
+        calendarsResult: state.calendarsResult,
+        lexon: state.lexon,
+        //email: state.login.formValues.user,
+        all: state,
+        currentUser: state.currentUser,
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators(
+        {
+            getCalendars,
+            selectCalendar,
+            setDataBase,
+            setGUID: setGUID,
+            setSign: setSign
+        },
+        dispatch
+    );
+}
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {

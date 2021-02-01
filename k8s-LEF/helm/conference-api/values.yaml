@@ -54,3 +54,7 @@ env:
       value: 'K8S'
     - name: UserUtilsUrl
       value: 'http://userutils-api/api/v1/UserUtils'
+    - name: JitsiUrl
+      value: "http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com"
+    - name: JitsiRoomUrl
+      value: "https://meet-test.lefebvre.es"

@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
- 
+
     public class AccountEventTypes
     {
         [BsonId]

@@ -1,6 +1,6 @@
 import {
   backendRequest as applicationBackendRequest,
-  backendRequestCompleted as applicationBackendRequestCompleted,
+  backendRequestCompleted as applicationBackendRequestCompleted, clearUserCredentials,
   preDownloadMessages
 } from '../actions/application';
 import {
@@ -106,7 +106,8 @@ export async function resetFolderMessagesCache(dispatch, user, folder) {
       es.resolvePromise = resolve;
       es.onerror = ({status, message}) => {
         if (status === 401) {
-          reject(new AuthenticationException(message));
+          dispatch(clearUserCredentials());
+//          reject(new AuthenticationException(message));
         }
       };
     });

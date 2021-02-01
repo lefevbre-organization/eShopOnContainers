@@ -2,6 +2,7 @@ import mimemessage from 'mimemessage';
 
 export class MimeBuilder {
     constructor() {
+        this.currentImage = 0;
         this.root = mimemessage.factory({
             contentType: 'multipart/mixed',
             body: []
@@ -19,7 +20,7 @@ export class MimeBuilder {
         });
 
         const textPart = mimemessage.factory({
-            body: removeHtmlTags(html, [])
+            body: this.removeHtmlTags(html, [])
         });
 
         const htmlPart = this.buildHtmlPart(html);
@@ -30,7 +31,7 @@ export class MimeBuilder {
     }
 
     buildHtmlPart(html) {
-        const embeddedImagesList = getEmbeddedImages(html);
+        const embeddedImagesList = this.getEmbeddedImages(html);
         const embeddedParts = [];
 
         if(embeddedImagesList.length === 0) {
@@ -40,12 +41,18 @@ export class MimeBuilder {
             });
         }
 
-        const embeddedImagesIds = genEmbedImgIds(embeddedImagesList);
+        const embeddedImagesIds = this.genEmbedImgIds(embeddedImagesList);
 
         for (let i = 0; i < embeddedImagesList.length; i++) {
             const element = embeddedImagesList[i];
-            const { type, content } = getImageTypeAndContent(element)
-            const name = getContentName(element);
+
+            if(element.indexOf("cid:") > -1) {
+                html = html.replace(`${element}`, '');
+                continue;
+            }
+
+            const { type, content } = this.getImageTypeAndContent(element)
+            const name = this.getContentName(element);
             html = html.replace(
                 `${element}`,
                 `${element.replace('>', ' nosend="1">')}`
@@ -63,7 +70,7 @@ export class MimeBuilder {
             embeddedParts.push(inlinePart);
         }
 
-        html = formatBodyImages(
+        html = this.formatBodyImages(
             html,
             embeddedImagesList,
             embeddedImagesIds
@@ -101,79 +108,83 @@ export class MimeBuilder {
     toString() {
         return this.root.toString();
     }
-}
 
-function removeHtmlTags(body, imgList) {
-    // var rex = /(<([^>]+)>)/ig;
-    // return body.replace(rex, "");
-    body = body
-        .replace(`<br>`, `\r\n`)
-        .replace(`</br>`, ``)
-        .replace(`<p>`, `\r\n`)
-        .replace(`</p>`, ``)
-        .replace(`<strong>`, `*`)
-        .replace(`</strong>`, `*`);
-    for (let index = 0; index < imgList.length; index++) {
-        const img = imgList[index];
-        body = body.replace(img, `\r\n[image: ${getContentName(img)}]`);
-    }
-    const temp = document.createElement('div');
-    temp.innerHTML = body;
-    return temp.textContent || temp.innerText || '';
-}
-
-function getContentName(imageTag) {
-    let contentName;
-    contentName = imageTag.replace(/.*alt="([^"]*)".*/, '$1');
-    return contentName;
-}
-
-function getImageTypeAndContent(imageTag) {
-    const src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
-    const srcSplitted = src.split(';');
-    const type = srcSplitted[0].replace('data:', '');
-    const content = srcSplitted[1].replace('base64,', '')
-    return { type, content };
-}
-
-function getEmbeddedImages(body) {
-    let res = [];
-    let images = body.match(/<img [^>]*src="[^"]*"[^>]*>/gm) || [];
-    for (let i = 0; i < images.length; i++) {
-        const image = images[i];
-        if (!image.match(/src="http[^>]*/g)) {
-            res.push(image);
+    getContentName(imageTag) {
+        let contentName;
+        contentName = imageTag.replace(/.*alt="([^"]*)".*/, '$1');
+        if(imageTag === contentName) {
+            contentName = `image-${this.currentImage}`;
         }
+        return contentName;
     }
 
-    return res;
-}
 
-function genEmbedImgIds(images) {
-    let ids = [];
-    for (let index = 0; index < images.length; index++) {
-        const element = images[index];
-        const name = getContentName(element);
-        const random = uuidv4().slice(0, 8);
-        ids.push(`${name.replace('.', '')}__${random}`);
+    removeHtmlTags(body, imgList) {
+        // var rex = /(<([^>]+)>)/ig;
+        // return body.replace(rex, "");
+        body = body
+            .replace(`<br>`, `\r\n`)
+            .replace(`</br>`, ``)
+            .replace(`<p>`, `\r\n`)
+            .replace(`</p>`, ``)
+            .replace(`<strong>`, `*`)
+            .replace(`</strong>`, `*`);
+        for (let index = 0; index < imgList.length; index++) {
+            const img = imgList[index];
+            body = body.replace(img, `\r\n[image: ${this.getContentName(img)}]`);
+        }
+        const temp = document.createElement('div');
+        temp.innerHTML = body;
+        return temp.textContent || temp.innerText || '';
     }
-    return ids;
-}
 
-function formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
-    for (let index = 0; index < embedddedImagesList.length; index++) {
-        const element = embedddedImagesList[index];
-        const src = element.replace(/.*src="([^"]*)".*/, '$1');
-        body = body.replace(src, `cid:${embeddedImagesIds[index]}`);
+    getImageTypeAndContent(imageTag) {
+        const src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
+        const srcSplitted = src.split(';');
+        const type = srcSplitted[0].replace('data:', '');
+        const content = srcSplitted[1].replace('base64,', '')
+        return { type, content };
     }
-    return body;
-}
 
-function uuidv4() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
-        (
-            c ^
-            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-        ).toString(16)
-    );
+    getEmbeddedImages(body) {
+        let res = [];
+        let images = body.match(/<img [^>]*src="[^"]*"[^>]*>/gm) || [];
+        for (let i = 0; i < images.length; i++) {
+            const image = images[i];
+            if (!image.match(/src="http[^>]*/g)) {
+                res.push(image);
+            }
+        }
+
+        return res;
+    }
+
+    genEmbedImgIds(images) {
+        let ids = [];
+        for (let index = 0; index < images.length; index++) {
+            const element = images[index];
+            const name = this.getContentName(element);
+            const random = this.uuidv4().slice(0, 8);
+            ids.push(`${name.replace('.', '')}__${random}`);
+        }
+        return ids;
+    }
+
+    formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
+        for (let index = 0; index < embedddedImagesList.length; index++) {
+            const element = embedddedImagesList[index];
+            const src = element.replace(/.*src="([^"]*)".*/, '$1');
+            body = body.replace(src, `cid:${embeddedImagesIds[index]}`);
+        }
+        return body;
+    }
+
+    uuidv4() {
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+            (
+                c ^
+                (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+            ).toString(16)
+        );
+    }
 }

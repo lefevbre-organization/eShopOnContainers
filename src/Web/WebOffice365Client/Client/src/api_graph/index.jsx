@@ -637,7 +637,6 @@ export const createDraft = async ({ data, attachments, draftId }) => {
 };
 
 export const sendMessage = async ({ data, attachments }) => {
-  debugger
   let email = '';
   email = emailBody(data);
   email += emailToRecipients(data);

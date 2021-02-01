@@ -5,6 +5,7 @@ import login from './login';
 import messages from './messages';
 import lexon from './lexon';
 import { currentUser } from './user';
+import {calendarsResult} from "../calendar/components/sidebar/sidebarCalendar.reducers";
 
 export const INITIAL_STATE = {
   application: {
@@ -76,4 +77,5 @@ export default combineReducers({
   messages: messages,
   currentUser: currentUser,
   lexon: lexon,
+  calendarsResult
 });

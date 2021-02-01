@@ -13,6 +13,7 @@ import {
 } from '@syncfusion/ej2-react-richtexteditor';
 import i18n from 'i18next';
 import { L10n } from '@syncfusion/ej2-base';
+import useComponentSize from '@rehooks/component-size'
 
 // RichTextEditor items list
 const items = [
@@ -185,61 +186,95 @@ L10n.load({
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
   items: items,
+  type: 'MultiRow',
+  enableFloating: false
 };
 
 const ComposeMessageEditor = (props) => {
+  const ref = useRef(null);
+  let size = useComponentSize(ref);
   const { onChange, defaultValue = '' } = props;
   const [editorInstance, setEditorInstance ] = useState(null);
 
+  useEffect(()=>{
+    const toolbar = document.getElementById('toolsRTE_2_toolbar');
+    if(toolbar) {
+      toolbar.style.width = size.width+'px';
+    }
+  }, [size])
+
+  useEffect(()=>{
+    const instance1 = window.WEBSPELLCHECKER.init({
+      container: document.getElementById("toolsRTE_2"),
+      lang: 'es_ES',
+      detectLocalizationLanguage: true,
+      serviceId: window.WEBSPELLCHECKER_CODE,
+      enableGrammar: true,
+      enableBadgeButton: true
+    });
+
+    return ()=>{
+      instance1.destroy();
+    }
+  }, [])
 
   return (
     <Fragment>
-      <RichTextEditorComponent
-        id='toolsRTE_2'
-        showCharCount={false}
-        locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
-        //enablePersistence={true}
-        enableTabKey={true}
-        insertImageSettings={{ saveFormat: 'Base64' }}
-        toolbarSettings={toolbarSettings}
-        value={defaultValue}
-        inline={true}
-        blur={(content) => {
-          onChange && onChange(content.value);
-        }}
-        created={ () => {
-          console.log(document.getElementById("toolsRTE_2"))
-          const editorInstance = window.WEBSPELLCHECKER.init({
-            container: document.getElementById("toolsRTE_2"),
-            lang: 'es_ES',
-            detectLocalizationLanguage: true,
-            serviceId: window.WEBSPELLCHECKER_CODE,
-            enableGrammar: true,
-            enableBadgeButton: true
-          });
-          setEditorInstance(editorInstance);
-        }}
-        destroyed={ () => {
-          if(editorInstance) {
-            editorInstance.destroy();
-          }
-        }}
-        change={(content) => {
-          onChange && onChange(content.value);
-        }}>
-        <Inject
-          services={[
-            Toolbar,
-            Image,
-            Link,
-            HtmlEditor,
-            Count,
-            QuickToolbar,
-            Table,
-          ]}
-        />
-      </RichTextEditorComponent>
+      <div ref={ref}>
+        <RichTextEditorComponent
+          id='toolsRTE_2'
+          showCharCount={false}
+          locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
+          //enablePersistence={true}
+          enableTabKey={true}
+          insertImageSettings={{ saveFormat: 'Base64' }}
+          toolbarSettings={toolbarSettings}
+          value={defaultValue}
+          inline={true}
+          blur={(content) => {
+            onChange && onChange(content.value);
+          }}
+          created={ () => {
+            console.log(document.getElementById("toolsRTE_2"))
+            const editorInstance = window.WEBSPELLCHECKER.init({
+              container: document.getElementById("toolsRTE_2"),
+              lang: 'es_ES',
+              detectLocalizationLanguage: true,
+              serviceId: window.WEBSPELLCHECKER_CODE,
+              enableGrammar: true,
+              enableBadgeButton: true
+            });
+            setEditorInstance(editorInstance);
+          }}
+          destroyed={ () => {
+            if(editorInstance) {
+              //editorInstance.destroy();
+            }
+          }}
+          change={(content) => {
+            onChange && onChange(content.value);
+          }}>
+          <Inject
+            services={[
+              Toolbar,
+              Image,
+              Link,
+              HtmlEditor,
+              Count,
+              QuickToolbar,
+              Table,
+            ]}
+          />
+        </RichTextEditorComponent>
+      </div>
       <style jsx>{`
+        .e-rte-toolbar.e-toolbar {
+          height: auto;
+          position: fixed;
+        }
+        .e-content.e-lib.e-keyboard {
+          overflow-y: hidden;
+        }
         .e-richtexteditor.e-rte-tb-expand {
           border: none;
         }

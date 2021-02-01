@@ -303,8 +303,13 @@ export class Main extends Component {
       return false;
     }
 
+    if (nextProps.messagesResult.openMessage === '')
+      return false;
+
     if (
+      nextProps.messagesResult.openMessage &&
       nextProps.messagesResult.openMessage !== null &&
+      nextProps.messagesResult.openMessage !== "" &&
       nextProps.messagesResult.openMessage ===
         this.props.messagesResult.openMessage
     ) {
@@ -315,7 +320,6 @@ export class Main extends Component {
         if (nextState.sidebarDocked !== this.state.sidebarDocked) {
           return true;
         }
-
         return false;
       } else {
         return true;
@@ -588,9 +592,7 @@ export class Main extends Component {
         return;
       }
     }
-    if (!mailContacts && this.props.history.location.pathname !== '/compose') {
-      this.props.history.push(`/${label.id.toLowerCase()}`);
-    }
+    this.props.history.push(`/${label.id.toLowerCase()}`);
   }
 
   getLabelList() {

@@ -235,6 +235,7 @@ class ComposeMessageEditor extends React.Component {
           insertImageSettings={{ saveFormat: 'Base64' }}
           height={'80%'}
           toolbarSettings={toolbarSettings}
+          height={'80%'} 
           value={defaultValue}
           iframe={true}
           change={(content) => {

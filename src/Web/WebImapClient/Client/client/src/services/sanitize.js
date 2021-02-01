@@ -3,6 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import {renderSpinner} from '../components/spinner/spinner';
 
 sanitize.addHook('afterSanitizeAttributes', node => {
+  console.log('afterSanitizeAttributes', node.nodeName === 'DIV')
   // set all elements owning target to target=_blank -> Open URLS in new tab
   if ('target' in node) {
     node.setAttribute('target', '_blank');
@@ -29,6 +30,11 @@ sanitize.addHook('afterSanitizeAttributes', node => {
   if (node.nodeName === 'HR' && node.width) {
     node.removeAttribute('width');
   }
+
+  if(node.nodeName === 'DIV') {
+    node.style.height = 'auto';
+  }
+  
 });
 
 const ISOTOPE_WHITELISTED_URL = '#IsotopeEmbedded';

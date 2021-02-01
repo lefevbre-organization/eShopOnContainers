@@ -8,6 +8,11 @@ import Routes from './routes/routes';
 import rootReducer from './reducers';
 import { loadState, saveState } from './services/state';
 import debounce from './services/debounce';
+import _JSXStyle from 'styled-jsx/style';
+
+if (typeof global !== 'undefined') {
+  Object.assign(global, { _JSXStyle })
+}
 
 //import { start, registerApplication } from 'single-spa'
 
@@ -33,7 +38,7 @@ async function init() {
   const previousState = await loadState();
   let enhancer;
   if (
-    process.env.NODE_ENV === 'development' &&
+    process.env.NODE_ENV !== 'production' &&
     window.__REDUX_DEVTOOLS_EXTENSION__
   ) {
     enhancer = window.__REDUX_DEVTOOLS_EXTENSION__();

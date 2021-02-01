@@ -1,9 +1,9 @@
 import * as React from "react";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/ej2-react-buttons';
-import { getCalendar, addCalendar, updateCalendar } from "../../../api/calendar-api";
+import { createCalendar } from "../../api/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
-import { Acl } from './acl/acl';
+//import { Acl } from './acl/acl';
 import i18n from 'i18next';
 
 
@@ -34,6 +34,10 @@ export class Calendars extends React.Component {
     onAddClick(args) {
         this.setState({ buttonDisabled: true })
 
+        //if (this.descriptionObj.value === undefined) {
+        //    this.descriptionObj.value = "";
+        //}
+
         let calendar = {
             "summary": this.nameObj.value,
             "description": this.descriptionObj.value
@@ -42,7 +46,8 @@ export class Calendars extends React.Component {
         this.toastObj.showProgressBar = true
         this.toastObj.timeOut = 10000;
         this.toastObj.show(this.toasts[0]);
-        addCalendar(calendar)
+
+        createCalendar(calendar)
             .then(result => {
               
                 this.toastObj.hide('All');
@@ -96,31 +101,31 @@ export class Calendars extends React.Component {
 
     componentDidMount() {
 
-        if (this.props.calendarId != "") {
-            this.setState({ hideAddCalendarButton: true });
-            getCalendar(this.props.calendarId)
-                .then(result => {
-                    this.nameObj.value = result.summary;
-                    if (result.description !== undefined) {
-                        this.descriptionObj.value = result.description;
-                    }
-                })
-                .catch(error => {
-                    console.log('error ->', error);
-                });           
-        }
+        //if (this.props.calendarId != "") {
+        //    this.setState({ hideAddCalendarButton: true });
+        //    getCalendar(this.props.calendarId)
+        //        .then(result => {
+        //            this.nameObj.value = result.summary;
+        //            if (result.description !== undefined) {
+        //                this.descriptionObj.value = result.description;
+        //            }
+        //        })
+        //        .catch(error => {
+        //            console.log('error ->', error);
+        //        });           
+        //}
     }
 
     render() {
         var ObjClick;
         var ObjText;
         if (this.props.calendarId != '') {
-            ObjClick = this.onModifyClick
+            ObjClick = this.onModifyClick          
             ObjText = i18n.t("calendar.modify")            
         }
         else {
-            ObjClick = this.onAddClick
-            ObjText = i18n.t("calendar.add")
+            ObjClick = this.onAddClick;
+            ObjText = i18n.t("calendar.add")             
         }
 
         return (
@@ -133,7 +138,7 @@ export class Calendars extends React.Component {
                                     <div className="e-float-input">
                                         <TextBoxComponent
                                             id='name'
-                                            placeholder={i18n.t("calendar.name")}
+                                            placeholder={i18n.t("calendar.name")}                                           
                                             floatLabelType="Always"
                                             ref={(scope) => { this.nameObj = scope }}
                                         />
@@ -147,7 +152,7 @@ export class Calendars extends React.Component {
                                             row="3"
                                             multiline={true}
                                             floatLabelType="Always"
-                                            placeholder={i18n.t("calendar.description")}
+                                            placeholder={i18n.t("calendar.description")} 
                                             ref={(scope) => { this.descriptionObj = scope }}
                                         />
                                     </div>
@@ -177,8 +182,9 @@ export class Calendars extends React.Component {
 
                                 <div >                                 
 
-                                    <h4 className="e-dlg-header">{i18n.t("calendar.sharewithpeople")}</h4>
-                                    <Acl calendarId={this.state.calendarid} />                                   
+                                    <h4 className="e-dlg-header">header</h4>
+                                    {/*  <h4 className="e-dlg-header">{i18n.t("calendar.sharewithpeople")}</h4>*/}
+                                    {/*<Acl calendarId={this.state.calendarid} />*/}                                   
 
                                 </div >
                             ) : (

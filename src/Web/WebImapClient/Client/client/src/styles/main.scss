@@ -173,7 +173,70 @@ element.style {
     background-color: #7f8cbb !important;
 }
 
-.e-schedule .e-month-view .e-appointment {
+.e-tab .e-tab-header:not(.e-vertical) .e-toolbar-item.e-active {
+    background-color: #001978 !important;
+}
+
+.e-tab .e-tab-header .e-toolbar-item.e-active.e-ileft .e-tab-text, .e-tab .e-tab-header .e-toolbar-item.e-active.e-iright .e-tab-text {
+    color: #fff !important;
+}
+
+.e-tab .e-tab-header .e-indicator {
+    background: #fff !important;
+}
+
+.e-tooltip-wrap.e-schedule-error .e-tip-content, .e-tooltip-wrap.e-schedule-error .e-tip-content label {
+    color: #f44336 !important;
+}
+
+.e-tooltip-wrap.e-schedule-error {
+    background-color: #fcdbe4 !important;
+    border-color: #fcdbe4 !important;
+    z-index: 1000 !important;
+}
+
+.e-dialog .e-dlg-header-content {
+    background-color: #001978 !important;
+    color: #fff !important;
+}
+
+.e-dialog .e-dlg-header-content + .e-dlg-content {
+    padding-top: 10px !important;
+}
+
+.e-tab.e-background.e-accent .e-tab-header .e-indicator {
     background: #001978 !important;
 }
+
+
+
+.e-dlg-header, .e-dlg-header * {
+    color: #fff;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.e-icon-dlg-close {
+    color: #fff;
+}
+.e-dialog.e-popup {
+    width: auto;
+}
+
+
+/*.e-btn.e-flat, .e-css.e-btn.e-flat {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    color: #fff;
+}*/
+
+/*.e-error {
+    color: #001978 !important;
+    font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif", "-apple-system", "BlinkMacSystemFont";
+    font-size: 12px;
+    font-weight: normal;
+}
+*/
+
 
