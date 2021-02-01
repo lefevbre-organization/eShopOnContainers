@@ -193,6 +193,9 @@ class ComposeMessageEditor extends React.Component {
     super(props);
     this.refEditor = null;
     this.spellCheckerInstance = null;
+    this.state = {
+      defaultContent: ''
+    }
   }
 
   getContent() {
@@ -201,10 +204,6 @@ class ComposeMessageEditor extends React.Component {
     }
 
     return '';
-  }
-
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return false;
   }
 
   componentDidMount() {
@@ -226,7 +225,6 @@ class ComposeMessageEditor extends React.Component {
 
   render() {
     const { onChange, defaultValue = '' } = this.props;
-
     return (
       <Fragment>
         <RichTextEditorComponent
@@ -234,7 +232,8 @@ class ComposeMessageEditor extends React.Component {
           ref={(ref) => (this.refEditor = ref)}
           showCharCount={false}
           locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
-          insertImageSettings={{ saveFormat: 'Blob' }}
+          insertImageSettings={{ saveFormat: 'Base64' }}
+          height={'80%'}
           toolbarSettings={toolbarSettings}
           height={'80%'} 
           value={defaultValue}

@@ -506,7 +506,8 @@ class App extends Component {
       Object.keys(application.newMessage).length > 0
     ) {
       return <MessageEditor className={styles['message-viewer']} />;
-    } else if (
+    } 
+    else if (
       application.selectedMessage &&
       Object.keys(application.selectedMessage).length > 0
     ) {

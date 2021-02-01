@@ -296,6 +296,9 @@ public class Message extends IsotopeResource implements Serializable {
                         if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
                             ret.setHasAttachments(true);
                             break;
+                        } else if ((part.getFileName() != null && part.getContentType().toLowerCase().startsWith(("application/octet-stream")))){
+                            ret.setHasAttachments(true);
+                            break;
                         }
                     }
                 }

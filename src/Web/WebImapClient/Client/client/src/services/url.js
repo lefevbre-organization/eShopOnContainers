@@ -9,5 +9,6 @@
 export const URLS = {
   LOGIN: `/api/v1/application/login`,
   FOLDERS: `/api/v1/folders`,
-  SMTP: `/api/v1/smtp`
+  SMTP: `/api/v1/smtp`,
+  DRAFT: `/api/v1/smtp/draft`
 };

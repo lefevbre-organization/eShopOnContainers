@@ -8,18 +8,26 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage } from '../../actions/application';
-import { sendMessage } from '../../services/smtp';
+import { editMessage, draftClean, selectMessage, selectFolder } from '../../actions/application';
+import {clearSelected} from '../../actions/messages';
+import {clearSelectedMessage} from '../../services/application';
+import { getFolders } from '../../services/folder';
+
+import { sendMessage, saveDraft } from '../../services/smtp';
 import { prettySize } from '../../services/prettify';
 import { getAddresses } from '../../services/message-addresses';
+import { deleteMessages, resetFolderMessagesCache } from '../../services/message';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
 import mainCss from '../../styles/main.scss';
 import i18n from 'i18next';
-import ACTIONS from '../../actions/lexon';
-import { Notification } from '../notification/';
+import ACTIONS, { setEmailShown } from '../../actions/lexon';
+import { Notification, Confirmation } from '../notification/';
 
-import ComposeMessageEditor from './composeMessageEditor.jsx';
+
+import ComposeMessageEditor from './composeMessageEditor';
+import { Modal } from 'react-bootstrap';
+import { json } from 'sjcl';
 const MAX_TOTAL_ATTACHMENTS_SIZE = 20971520;
 
 class MessageEditor extends Component {
@@ -35,6 +43,12 @@ class MessageEditor extends Component {
       messageNotification: '',
       errorNotification: '',
       showNotification: false,
+      messageConfirmation: '',
+      showConfirmation: false,
+      draftTime: '',
+      isDraftEdit: false,
+      draftId: '',
+      closeButton: true
     };
 
     this.fileInput = null;
@@ -42,6 +56,8 @@ class MessageEditor extends Component {
     this.headerFormRef = React.createRef();
     this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
+    this.handleDraft = this.saveDraft.bind(this);
+    this.handleRemoveDraft = this.removeDraft.bind(this);
     // Global events
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnDragOver = this.onDragOver.bind(this);
@@ -63,16 +79,91 @@ class MessageEditor extends Component {
   }
 
   componentDidMount() {
+    console.log('ComponentDidMount init');
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
-
+   
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
     window.addEventListener(
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
+    if (this.props.application.selectedMessage && Object.keys(this.props.application.selectedMessage).length > 0)
+      this.getMessageById(this.props.application.selectedMessage)
+    console.log('ComponentDidMount end');
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    // console.log('*******************************************************************************************************');
+    // console.log('prevProps.draft:');
+    // console.log(prevProps.draft);
+    // console.log('this.props.draft');
+    // console.log(this.props.draft);
+    // console.log('*******************************************************************************************************');
+
+    if (this.props.application.outbox !== prevProps.application.outbox){
+      //A message has been sent
+      const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts' || folder.name === "Borradores");
+      if (this.props.application.outbox && this.props.application.outbox.sent === true && (this.props.draft !== null || this.props.application.selectedFolderId === draftFolder.folderId)){
+        //Sent message was a draft. Manually deleting message from draft folder.
+        console.log('Borrando el mensaje...');
+        this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
+        this.props.editMessage(null);
+        this.props.messageClean();
+        this.props.close(this.props.application);
+      }
+    }
+
+
+    if (prevProps.draft !== this.props.draft){
+      if (this.props.draft && this.props.draft.sent === true){
+        // Draft has been sent
+        console.log('DraftSent')
+        const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts' || folder.name === "Borradores");
+
+        if(this.state.draftId !== ''){
+          this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
+          this.setState({ showNotification: true, messageNotification: 'Borrador actualizado.', closeButton: true});
+        } else {
+          this.setState({ showNotification: true, messageNotification: 'Borrador guardado.', closeButton: true});
+        }
+
+        const folderPromise = this.props.reloadFolders(this.props.credentials);
+        const messagePromise = this.props.reloadMessageCache(this.props.application.user, draftFolder);
+        await Promise.all([folderPromise, messagePromise]);
+        
+        const {draft} = this.props;
+        const {msgCache} = this.props;
+        const createdMessage = Array.from(msgCache[draftFolder.folderId], ([key, value]) => ({key, value})).find(f => f.value.messageId === draft.idMessage);
+        this.setState({ showNotification: false, messageNotification: ''});
+        this.props.selectMessage(createdMessage.value);
+        this.updateAttachmentLinks(createdMessage.key);
+        this.props.draftClean();
+      }
+    }
+    
+    if(this.props.selectedMessageEdit && this.props.selectedMessageEdit.content) {
+      this.getContentEdit(prevProps.selectedMessageEdit.content);
+    }
+    // console.log('*******************************************************************************************************');
+    // console.log('prevProps.selectedMessage.attachments:');
+    // console.log((prevProps.selectedMessageEdit && prevProps.selectedMessageEdit.attachments) ? prevProps.selectedMessageEdit.attachments.length : 'null' );
+    // console.log('this.props.selectedMessage.attachments:');
+    // console.log((this.props.selectedMessageEdit && this.props.selectedMessageEdit.attachments) ? this.props.selectedMessageEdit.attachments.length : 'null');
+    // console.log('*******************************************************************************************************');
+
+
+    // This is to load attachment links when they're ready
+    if (this.props.selectedMessageEdit && this.props.selectedMessageEdit.attachments !== prevProps.selectedMessageEdit.attachments){
+      // Si pasa de null a un valor -> lo debo actualizar porque se están recibiendo datos de un draft que se ha abierto
+      // Si pasa de datos a null -> lo tengo que dejar como está porque se ha creado un draft nuevo y no se ha podido obtener aún el array de links de adjuntos
+      // El mensaje editado no tiene adjuntos y los adjuntos del mensaje seleccionado han cambiado
+      if (this.props.editMessage && (this.props.editedMessage.attachments === null || this.props.editedMessage.attachments === undefined || this.props.editedMessage.attachments.length === 0) ){
+        this.getAttachmentsEdit(this.props.selectedMessageEdit.attachments);
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -88,7 +179,32 @@ class MessageEditor extends Component {
     window.dispatchEvent(new CustomEvent('OpenComposer'));
   }
 
+  getContentEdit(value) {
+    console.log('GetContentEdit')
+    const updatedMessage = { ...this.props.editedMessage };
+    if(
+      updatedMessage.content === "<br/><br/><br/><br/>" 
+      || updatedMessage.content === "" 
+      || updatedMessage.content === null) {
+      this.props.editMessage({ ...updatedMessage, content: value });
+    }
+  }
+
+  getAttachmentsEdit(value){
+    console.log(this.getAttachmentsEdit);
+    var updatedMessage = { ...this.props.editedMessage };
+    console.log('Ha entrado en getAttachments');
+    console.log(value);
+    console.log(updatedMessage);
+    //updatedMessage.attachments = value;
+    console.log('Actualizado:');
+    console.log(updatedMessage);
+    //this.props.editMessage(updatedMessage);
+    this.props.editMessage({ ...updatedMessage, attachments: value });
+  }
+
   attachFromLexon(event) {
+    console.log('attachFromLexon');
     const { detail } = event;
     console.log('attachFromLexon');
     console.log(event.detail);
@@ -110,8 +226,24 @@ class MessageEditor extends Component {
     addAttachment(event.detail);
   }
 
-  removeMessageEditor(aplication) {
-    const { close, lexon } = this.props;
+  confirmRemoveMessageEditor(application){
+    const newMessage = application.newMessage;
+    const emptyMesage = { to: [], cc: [], bcc: [], attachments: [], subject: "", content: "<br/><br/><br/><br/>"}
+
+    if (JSON.stringify(newMessage) === JSON.stringify(emptyMesage)){
+      this.removeMessageEditor(application);
+    } else {
+      const { draftId } = this.state;
+      if (draftId !== ''){
+        this.setState({ showConfirmation: true, messageConfirmation: '¿Quiere eliminar el borrador definitivamente?'});
+      } else {
+        this.setState({ showConfirmation: true, messageConfirmation: '¿Quiere descartar el mensaje actual?'});
+      }
+    }
+  }
+
+  removeMessageEditor(application) {
+    const { close, lexon, draftClean } = this.props;
 
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
       window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
@@ -125,8 +257,27 @@ class MessageEditor extends Component {
     if (lexon.mailContacts) {
       this.props.setMailContacts(null);
     }
+    draftClean();
+    this.props.messageClean();
+    close(application);
+    
+  }
 
-    close(aplication);
+  acceptConfirmation(){
+    const { draftId } = this.state;
+    if (draftId !== ''){
+      this.handleRemoveDraft();
+    } 
+    this.setState({showConfirmation: false})
+    this.removeMessageEditor(this.props.application);
+  }
+
+  cancelConfirmation(){
+    const { draftId } = this.state;
+    this.setState({showConfirmation: false})
+    if (draftId !== ''){
+      this.removeMessageEditor(this.props)
+    }
   }
 
   render() {
@@ -134,19 +285,25 @@ class MessageEditor extends Component {
       t,
       className,
       application,
+      draft,
       to,
       cc,
       bcc,
       attachments,
       subject,
       content,
+      selectedMessageEdit
     } = this.props;
     const {
       showNotification,
       messageNotification,
       errorNotification,
+      showConfirmation,
+      messageConfirmation,
+      draftId,
+      draftTime,
+      closeButton
     } = this.state;
-
     return (
       <div
         className={`${className} ${styles['message-editor']}`}
@@ -169,6 +326,15 @@ class MessageEditor extends Component {
             }}
             message={messageNotification}
             error={errorNotification}
+            closeButton={closeButton}
+          />
+          <Confirmation
+            initialModalState={showConfirmation}
+            onAccept={() => {this.acceptConfirmation()}}
+            onCancel={() => {this.cancelConfirmation()}}
+            titleAccept="Aceptar"
+            titleCancel="Cancelar"
+            message={messageConfirmation}
           />
           <form ref={this.headerFormRef}>
             <HeaderAddress
@@ -254,6 +420,19 @@ class MessageEditor extends Component {
             {t('messageEditor.send')}
           </button>
           <button
+            className={`ml-3 ${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
+            disabled={to.length + cc.length + bcc.length === 0}
+            onClick={this.handleDraft}>
+             {t('messageEditor.draft')}
+          </button>
+          {/* {(selectedMessageEdit !== null 
+          && Object.keys(selectedMessageEdit).length > 0) ? 
+          <button className={`${styles['discard-button']} ml-3`} onClick={this.handleRemoveDraft}>
+            {t('messageEditor.discard')}
+          </button> 
+          : null} */}
+          <button
             className={`${styles['action-button']} ${styles.attach}`}
             onClick={this.onAttachButton}>
             <div
@@ -272,9 +451,21 @@ class MessageEditor extends Component {
               multiple='true'
             />
           </button>
+          {/* <button
+            className={`ml-3 ${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
+            disabled={to.length + cc.length + bcc.length === 0}
+            onClick={this.handleDraft}>
+             {t('messageEditor.draft')}
+          </button> */}
+          { draftTime !== '' ? 
+          <span className={`ml-3 ${styles['draft-time']}`}>{t('messageEditor.draft-save')} {
+            draftTime}
+          </span> 
+          : null}
           <button
             className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
-            onClick={() => this.removeMessageEditor(application)}>
+            onClick={() => this.confirmRemoveMessageEditor(application)}>
             delete
           </button>
         </div>
@@ -317,11 +508,96 @@ class MessageEditor extends Component {
     );
   }
 
+  validateExistingData(recipient, recipients) {
+    const existingData = recipients.some(
+      x =>  { return( x === recipient.address)  } 
+     );
+     return existingData;
+  }
+
+  getMessageById(selectedMessage) {
+    console.log('getMessageById init');
+    const toRecipients = selectedMessage.recipients.filter(x => x.type === 'To');
+
+    const ccRecipients = selectedMessage.recipients.filter(x => x.type === 'Cc');
+
+    const bccRecipients = selectedMessage.recipients.filter(x => x.type === 'Bcc');
+
+    const editedMessageTo = (this.props.editedMessage && this.props.editedMessage.to) ? this.props.editedMessage.to : [];
+    const editedMessageCc = (this.props.editedMessage && this.props.editedMessage.cc) ? this.props.editedMessage.cc : [];
+    const editedMessageBcc = (this.props.editedMessage && this.props.editedMessage.bcc) ? this.props.editedMessage.bcc : [];
+
+    const subject = selectedMessage.subject;
+
+    const content = selectedMessage.content;
+
+    const attachments = selectedMessage.attachments;
+
+    toRecipients.forEach(toRecipient => {
+     const existingData = this.validateExistingData(
+       toRecipient, editedMessageTo
+      );
+      console.log('ExistingData:'+ existingData);
+      if(!existingData) {
+        console.log('Ha entrado');
+        setTimeout(() => {
+          this.addAddress('to', toRecipient.address);
+        }, 100);
+      }
+    });
+
+    ccRecipients.forEach(ccRecipient => {
+       const existingData = this.validateExistingData(
+        ccRecipient, editedMessageCc
+       );
+       console.log('ExistingData:'+ existingData);
+       if(!existingData) {
+        console.log('Ha entrado');
+        setTimeout(() => {
+          this.addAddress('cc', ccRecipient.address);
+        }, 100);
+      }
+    });
+
+    bccRecipients.forEach(bccRecipient => {
+      const existingData = this.validateExistingData(
+        bccRecipient, editedMessageBcc
+       );
+       console.log('ExistingData:'+ existingData);
+       if(!existingData) {
+        console.log('Ha entrado');
+        setTimeout(() => {
+          this.addAddress('bcc', bccRecipient.address);
+        }, 100);
+      }
+    });
+
+
+    
+    this.getSubjectEdit(subject);
+    //this.addAttachments(attachments);
+    this.setState({draftId: selectedMessage.messageId});
+  }
+
+  eliminateRTEtags(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    var elements = div.getElementsByClassName('e-content');
+    var innerElements = elements[elements.length-1].children;
+    var finalString = "";
+    for (let i = 0; i < innerElements.length; i++) {
+      finalString += innerElements[i].outerHTML
+    };
+    return finalString;
+  }
+
   submit() {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
-      const content = this.getEditor().getContent();
+      const content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
       const { credentials, to, cc, bcc, subject } = this.props;
+      //const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
+
       this.props.sendMessage(credentials, {
         ...this.props.editedMessage,
         to,
@@ -330,8 +606,70 @@ class MessageEditor extends Component {
         subject,
         content,
       });
-      this.props.close(this.props.application);
     }
+  }
+
+  getTimeDraft() {
+    const date = new Date();
+    const time = date.toLocaleString(
+      navigator.language, 
+      {
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: "2-digit"
+      });
+    const hour = time.slice(0, 2);
+    return hour >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
+  }
+ 
+  saveDraft() {
+    if (this.headerFormRef.current.reportValidity()) {
+      
+      // Get content directly from editor, state content may not contain latest changes
+      const content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
+      const { user, credentials, to, cc, bcc, subject, selectedMessageEdit } = this.props;
+      const fullTime = this.getTimeDraft();
+      const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
+
+      if(this.state.draftId !== '') {
+        this.props.saveDraft(draftFolder, user, credentials, {
+          ...this.props.editedMessage,
+          to,
+          cc,
+          bcc,
+          subject,
+          content,
+        });      
+      } else {
+        this.props.saveDraft(draftFolder, user, credentials, {
+          ...this.props.editedMessage,
+          to,
+          cc,
+          bcc,
+          subject,
+          content,
+        });
+      }
+      this.setState({draftTime: fullTime, showNotification: true, messageNotification: 'Guardando borrador...', closeButton: false});
+    }
+  }
+
+  removeDraft() { 
+    const { 
+      credentials, 
+      selectedMessageEdit, 
+      application,
+      draftFolder
+    } = this.props;
+
+    this.props.deleteMessage(
+      credentials, 
+      draftFolder, 
+      selectedMessageEdit
+    );
+    this.props.draftClean();
+    this.props.messageClean();
+    this.props.close(application);
   }
   /**
    * Adds an address to the list matching the id.
@@ -340,13 +678,14 @@ class MessageEditor extends Component {
    * @param address
    */
   addAddress(id, address) {
+    console.log('addAddress');
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage[id] = [...updatedMessage[id], address];
+      console.log('Adding address:'+id+'-'+address);
       this.props.editMessage(updatedMessage);
     }
   }
-
   /**
    * Removes the address from the under the field matching the id.
    *
@@ -354,12 +693,12 @@ class MessageEditor extends Component {
    * @param address
    */
   removeAddress(id, address) {
+    console.log('removeAddress');
     const updatedMessage = { ...this.props.editedMessage };
     updatedMessage[id] = [...updatedMessage[id]];
     updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
     this.props.editMessage(updatedMessage);
   }
-
   /**
    * Moves an address from the address list under the field matching the fromId to the address field
    * matching the toId.
@@ -369,6 +708,7 @@ class MessageEditor extends Component {
    * @param address
    */
   moveAddress(fromId, toId, address) {
+    console.log('moveAddress');
     const updatedMessage = { ...this.props.editedMessage };
     // Remove
     updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
@@ -377,7 +717,34 @@ class MessageEditor extends Component {
     this.props.editMessage(updatedMessage);
   }
 
+  getSubjectEdit(value) {
+    console.log('getSubjectEdit');
+    console.log('Subject:'+value);
+    const updatedMessage = { ...this.props.editedMessage };
+    this.props.editMessage({ ...updatedMessage, subject: value });
+  }
+
+  addAttachments(attachments){
+    console.log('addAttachments');
+    const updatedMessage = { ...this.props.editedMessage };
+    this.props.editMessage({ ...updatedMessage, attachments: attachments });
+  }
+
+  updateAttachmentLinks(id){
+    console.log('updateAttachmentLinks');
+    const updatedMessage = { ...this.props.editedMessage };
+    let newAttachments = [];
+    updatedMessage.attachments.forEach((attachment, i) => {
+      const link = attachment._links.download.href.replace(/(\/messages\/\d+\/attachments\/)/gm, `/messages/${id}/attachments/`);
+      updatedMessage.attachments[i]._links.download.href = link;
+      
+    });
+    this.props.editMessage({...updatedMessage});
+  }
+
+
   onSubjectChange(event) {
+    console.log('onSubjectChange');
     const target = event.target;
     const updatedMessage = { ...this.props.editedMessage };
     this.props.editMessage({ ...updatedMessage, subject: target.value });
@@ -397,6 +764,7 @@ class MessageEditor extends Component {
   }
 
   onDrop(event) {
+    console.log('onDrop');
     event.preventDefault();
     event.stopPropagation();
     this.setState({ dropZoneActive: false });
@@ -450,6 +818,7 @@ class MessageEditor extends Component {
   }
 
   removeAttachment(attachment) {
+    console.log('removeAttachment');
     const updatedMessage = { ...this.props.editedMessage };
     if (updatedMessage.attachments && updatedMessage.attachments.length) {
       updatedMessage.attachments = updatedMessage.attachments.filter(
@@ -464,6 +833,7 @@ class MessageEditor extends Component {
   }
 
   onAttachSelected(event) {
+    console.log('onAttachSelected');
     event.preventDefault();
     event.stopPropagation();
     this.setState({ dropZoneActive: false });
@@ -520,6 +890,7 @@ class MessageEditor extends Component {
    * @param content
    */
   editorChange(content) {
+    console.log('editorChange');
     this.props.editMessage({ ...this.props.editedMessage, content });
     persistApplicationNewMessageContent(this.props.application, content);
   }
@@ -536,17 +907,24 @@ MessageEditor.defaultProps = {
 
 const mapStateToProps = (state) => ({
   application: state.application,
+  folders: state.folders,
+  draft: state.application.draft,
+  selectedMessageEdit: state.application.selectedMessage,
   credentials: getCredentials(state),
   editedMessage: state.application.newMessage,
-  to: state.application.newMessage.to,
-  cc: state.application.newMessage.cc,
-  bcc: state.application.newMessage.bcc,
-  attachments: state.application.newMessage.attachments,
-  subject: state.application.newMessage.subject,
-  editor: state.application.newMessage.editor,
-  content: state.application.newMessage.content,
+  to: (state.application.newMessage && state.application.newMessage.to) ? state.application.newMessage.to : [],
+  cc: (state.application.newMessage && state.application.newMessage.cc) ? state.application.newMessage.cc : [],
+  bcc: (state.application.newMessage && state.application.newMessage.bcc) ? state.application.newMessage.bcc : [],
+  attachments: (state.application.newMessage && state.application.newMessage.attachments) ? state.application.newMessage.attachments : [],
+  subject: (state.application.newMessage && state.application.newMessage.subject) ? state.application.newMessage.subject : '',
+  editor: (state.application.newMessage && state.application.newMessage.editor) ? state.application.newMessage.editor : null,
+  content: (state.application.newMessage && state.application.newMessage.content) ? state.application.newMessage.content : null,
   getAddresses: (value) => getAddresses(value, state.messages.cache),
   lexon: state.lexon,
+  user: state.application.user,
+  msgCache: state.messages.cache,
+  draftFolder: Object.values(state.folders.explodedItems).find(folder => folder.name === 'Drafts')
+
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -558,6 +936,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   editMessage: (message) => {
     dispatch(editMessage(message));
+  },
+  messageClean: () => {
+    dispatch(selectMessage({}));
+  },
+  draftClean: () => {
+    dispatch(draftClean());
   },
   sendMessage: (
     credentials,
@@ -573,9 +957,33 @@ const mapDispatchToProps = (dispatch) => ({
       subject,
       content,
     }),
+  saveDraft: (draftFolder, user, credentials,
+    { inReplyTo, references, to, cc, bcc, attachments, subject, content }) => {
+      saveDraft(dispatch, credentials, {
+        inReplyTo,
+        references,
+        to,
+        cc,
+        bcc,
+        attachments,
+        subject,
+        content,
+      });
+    },
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
+  deleteMessage: (credentials, selectedFolder, selectedMessage) => {
+    deleteMessages(dispatch, credentials, selectedFolder, [
+      selectedMessage,
+    ]);
+  },
+  reloadFolders: (credentials) => getFolders(dispatch, credentials, true),
+  reloadMessageCache: (user, folder) => resetFolderMessagesCache(dispatch, user, folder),
+  selectMessage: (message) => {
+    dispatch(selectMessage(message));
+  },
+
 });
 
 export default connect(
