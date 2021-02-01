@@ -1,4 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.IntegrationsEvents.Events

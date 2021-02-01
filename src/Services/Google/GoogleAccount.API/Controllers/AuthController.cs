@@ -11,8 +11,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
     using Context;
+    using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Microsoft.Extensions.Options;
     using Model;
     using Newtonsoft.Json;
+    using System.Net;
 
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -21,88 +26,56 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         private readonly ApplicationDbContext context;
         private readonly IConfiguration configuration;
 
-        public AuthController(ApplicationDbContext context, IConfiguration configuration)
+        private readonly IGoogleAuthService _service;
+        private readonly GoogleDriveSettings _settings;
+        private readonly IEventBus _eventBus;
+
+        public AuthController(
+            IGoogleAuthService authsService,
+            IOptionsSnapshot<GoogleDriveSettings> settings,
+            IEventBus eventBus,
+            ApplicationDbContext context, 
+            IConfiguration configuration
+            )
         {
+            _service = authsService ?? throw new ArgumentNullException(nameof(authsService));
+            _settings = settings.Value;
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             this.context = context;
             this.configuration = configuration;
         }
 
-        private string GetGoogleTokenUrl(string clientid, string secret, string code, string url)
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
         {
-
-            StringBuilder googletoken = new StringBuilder();
-
-            googletoken.Append("https://oauth2.googleapis.com/token?");
-            googletoken.Append("client_id=");
-            googletoken.Append(clientid);
-            googletoken.Append("&client_secret=");
-            googletoken.Append(secret);
-            googletoken.Append("&code=");
-            googletoken.Append(code);
-            googletoken.Append("&grant_type=authorization_code");
-            googletoken.Append("&redirect_uri=");
-            googletoken.Append(url);
-
-            return googletoken.ToString();
-
+            return Ok(new Result<bool>(true));
         }
 
-        [HttpGet]
-        [Route("Drive/Success")]
+        
+
+        [HttpGet("Drive/Success")]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetDrive([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope, [FromQuery] string error = "")
         {
 
-            if(string.IsNullOrEmpty(error))
-            {
-                User user = await context.Users.Include(x => x.Credentials).FirstOrDefaultAsync(x => x.Id == Guid.Parse(state));
+            
 
-                if(user == null)
-                    return BadRequest();
-
-                Credential credential = user.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
-
-                if(credential == null)
-                    return NoContent();
-
-                credential.Code = code;
-
-                context.Credentials.Update(credential);
-                await context.SaveChangesAsync();
-
-                StringBuilder googletoken = new StringBuilder();
-
-                googletoken.Append("https://oauth2.googleapis.com/token?");
-                googletoken.Append("client_id=");
-                googletoken.Append(credential.ClientId);
-                googletoken.Append("&client_secret=");
-                googletoken.Append(credential.Secret);
-                googletoken.Append("&code=");
-                googletoken.Append(credential.Code);
-                googletoken.Append("&grant_type=authorization_code");
-                googletoken.Append("&redirect_uri=");
-                googletoken.Append(configuration["RedirectAuthSuccessDriveUrl"]);
-
-                HttpClient client = new HttpClient();
-                
-                var response = await client.PostAsync(GetGoogleTokenUrl(credential.ClientId, credential.Secret, credential.Code, configuration["RedirectSuccessDriveUrl"]), null);
-
-                if(response.IsSuccessStatusCode)
-                {
-                    var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await response.Content.ReadAsStringAsync());
-                    //var token = await response.Content.ReadFromJsonAsync<OAuth2TokenModel>();
-
-                    credential.Access_Token = token.access_token;
-                    credential.Refresh_Token = token.refresh_token;
-                    credential.Scope = token.scope;
-                    credential.Token_Type = token.token_type;
-                    
-                }else{
-                    return BadRequest();
-                }
-                return Redirect(configuration["InternalRedirection"]);
-            }else{
+            if (!string.IsNullOrEmpty(error))
                 return BadRequest(error);
-            }
+
+            var result = await _service.SaveCode(state, code);
+
+
+
+            if (result.errors.Count == 0 && result.data == null)
+                return BadRequest(result);
+
+
+            return Redirect(configuration["InternalRedirection"]);
+            
 
 
         }

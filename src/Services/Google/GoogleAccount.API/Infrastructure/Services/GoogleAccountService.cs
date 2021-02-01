@@ -1,6 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -16,6 +16,10 @@ using System.Xml.Linq;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
+
+
+    /// Aquí va toda la logica 
+    
     public class GoogleAccountService : BaseClass<GoogleAccountService>, IGoogleAccountService
     {
         public readonly IGoogleAccountRepository _repo;

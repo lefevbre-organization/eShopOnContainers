@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using Google.Credentials.Enumerators;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {

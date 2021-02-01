@@ -29,6 +29,8 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
+      - RedirectSuccessDriveUrl=https://googledrive.api/api/v1/auth/drive/success
+      - InternalRedirection=https://googledrive.api
     ports:
       - "8085:80"   
 

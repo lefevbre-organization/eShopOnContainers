@@ -46,9 +46,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 options.Filters.Add(typeof(ValidateModelStateFilter));
             }) // Added for functional tests
-            .AddApplicationPart(typeof(AccountController).Assembly)
-            .AddNewtonsoftJson()
-                ;
+            .AddApplicationPart(typeof(AuthController).Assembly)
+            .AddApplicationPart(typeof(CredentialController).Assembly)
+            .AddApplicationPart(typeof(RevokeController).Assembly)
+            .AddNewtonsoftJson();
 
             services.AddSwagger(Configuration);
 

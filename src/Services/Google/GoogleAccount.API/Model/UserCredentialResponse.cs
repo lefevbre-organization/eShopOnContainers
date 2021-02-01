@@ -1,6 +1,3 @@
-
-using Google.Credentials.Enumerators;
-
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
     public class UserCredentialResponse

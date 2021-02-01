@@ -1,6 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.IntegrationsEvents.Events;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
