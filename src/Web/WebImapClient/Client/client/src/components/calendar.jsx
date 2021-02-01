@@ -1390,12 +1390,12 @@ class Calendar extends Component {
         //important to update event
         let filename = ""
         if (values.filename == undefined) {
-            // Modify event
-            filename = values.Id;
+            // New Event
+            filename = values.CalendarId + this.CreateGuid();
         }
         else {
-           // New event
-            filename = values.CalendarId + this.CreateGuid();
+           // Edit event           
+            filename = values.Id;
         }
 
 
