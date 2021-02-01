@@ -356,12 +356,17 @@ export class ComposeMessage extends PureComponent {
       const dataUrl = attachment.data
          .replace(/-/g, "+")
          .replace(/_/g, "/");
-          const src = image.replace(/.*src="([^"]*)".*/, '$1');
-          const body = this.props.emailMessageResult.body.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
-          this.setState({
-           defaultContent: body,
-           content: body
-       });
+      const src = image.replace(/.*src="([^"]*)".*/, '$1');
+      let body = '';
+      if(this.state.defaultContent) {
+        body = this.state.defaultContent.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+      } else {
+        body = this.props.emailMessageResult.body.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+      }
+      this.setState({
+       defaultContent: body,
+       content: body
+      });
     }
   
     attachments[0].parts[1].parts.forEach((file, index) => {
