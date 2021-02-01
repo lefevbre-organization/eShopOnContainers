@@ -1398,6 +1398,7 @@ class Calendar extends Component {
             filename = values.CalendarId + this.CreateGuid();
         }
 
+
         //Event basic data
         var event = {
             'allDay': values.IsAllDay,
