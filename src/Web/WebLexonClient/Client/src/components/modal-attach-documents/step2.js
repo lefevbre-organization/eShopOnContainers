@@ -209,7 +209,7 @@ export class AttachDocumentsStep2 extends React.Component {
                     />
                     <ColumnDirective
                       field='code'
-                      headerText='Código'
+                      headerText='Expediente'
                       width='100'></ColumnDirective>
                     <ColumnDirective
                       field='intervening'
