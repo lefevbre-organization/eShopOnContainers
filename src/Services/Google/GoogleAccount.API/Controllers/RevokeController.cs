@@ -19,17 +19,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     public class RevokeController : Controller
     {
         private readonly IRevokeService _service;
-        private readonly GoogleAccountSettings _settings;
+        private readonly IOptions<GoogleAccountSettings> settings;
         private readonly IEventBus _eventBus;
 
         public RevokeController(
             IRevokeService revokeService,
-            IOptionsSnapshot<GoogleAccountSettings> settings,
+            IOptions<GoogleAccountSettings> settings,
             IEventBus eventBus
             )
         {
             _service = revokeService ?? throw new ArgumentNullException(nameof(revokeService));
-            _settings = settings.Value;
+            this.settings = settings;
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
@@ -52,19 +52,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         /// </summary>
         /// <param name="LefebvreCredential"></param>
         /// <returns></returns>
-        [HttpGet("{LefebvreCredential}/Drive/Revoke")]
+        [HttpGet("Drive/Revoke")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<Result<bool>>> GetDrive(string LefebvreCredential)
+        public async Task<ActionResult<Result<bool>>> GetDrive([FromQuery] string LefebvreCredential)
         {
 
-            if(string.IsNullOrEmpty(LefebvreCredential))
+            var result = await _service.GetRevokingDriveCredentialAsync(LefebvreCredential);
+
+            if (!result.data)
                 return BadRequest();
-
-            var result = await _service.GetRevokingCredentialAsync(LefebvreCredential);
-
-            if (result.errors.Count == 0 && result.data == false)
-                return BadRequest(result);
 
             return Ok(result);
         }

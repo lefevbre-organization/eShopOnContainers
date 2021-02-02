@@ -5,6 +5,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 {
     public interface IRevokeService
     {
-        Task<Result<bool>> GetRevokingCredentialAsync(string LefebvreCredential);
+        Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential);
     }
 }
