@@ -10,9 +10,13 @@
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'GoogleAccount.API' " />
   <ItemGroup>
+    <Compile Remove="Migrations\**" />
     <Compile Remove="Models\**" />
+    <Content Remove="Migrations\**" />
     <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Migrations\**" />
     <EmbeddedResource Remove="Models\**" />
+    <None Remove="Migrations\**" />
     <None Remove="Models\**" />
   </ItemGroup>
 
@@ -74,10 +78,6 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\IntegrationEventLogMongoDB\IntegrationEventLogMongoDB.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Models\Lef.Models\Lef.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

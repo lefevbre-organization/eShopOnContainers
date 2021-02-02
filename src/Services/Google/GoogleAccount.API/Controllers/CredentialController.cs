@@ -13,8 +13,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
     using Context;
+    using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Microsoft.Extensions.Options;
     using Model;
     using Newtonsoft.Json;
     using System.Net;
@@ -23,18 +25,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     [Route("api/v1/[controller]")]
     public class CredentialController : Controller
     {
-        private readonly ApplicationDbContext context;
-        private readonly IConfiguration configuration;
+        private readonly ICredentialService _service;
+        private readonly GoogleAccountSettings _settings;
         private readonly IEventBus _eventBus;
 
         public CredentialController(
-            ApplicationDbContext context, 
-            IConfiguration configuration,
+            ICredentialService service,
+            IOptionsSnapshot<GoogleAccountSettings> settings,
             IEventBus eventBus
             )
         {
-            this.context = context;
-            this.configuration = configuration;
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _settings = settings.Value;
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
         [HttpGet("test")]
@@ -45,240 +48,62 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(new Result<bool>(true));
         }
 
-        [HttpGet]
-        [Route("[action]")]
+        [HttpGet("{LefebvreCredential}/[action]")]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<UserResponse>> GetUserCredentail([FromQuery] Guid LefebvreCredential)
+        public async Task<ActionResult<UserResponse>> GetUserCredentail([FromQuery] string LefebvreCredential)
         {
-            User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.Id == LefebvreCredential);
-
-            if(user == null)
-            {
-                return BadRequest(new Result<User>(user));
-            }
-            
-            List<UserCredentialResponse> list = new List<UserCredentialResponse>();
-
-            foreach (Credential credential in user.Credentials)
-            {
-                list.Add(new UserCredentialResponse(){
-                    ClientId = credential.ClientId,
-                    GoogleMailAccount = credential.GoogleMailAccount,
-                    Product = credential.Product,
-                    Secret = credential.Secret
-                });
-            }
-
-            return Ok(new Result<UserResponse>(new UserResponse(){
-                Id = user.Id,
-                LefebvreCredential = user.LefebvreCredential,
-            }));
+            return Ok(await _service.GetUserCredential(LefebvreCredential));
         }
 
-        [HttpGet]
-        [Route("{LefebvreCredential}/[action]")]
-        [ProducesResponseType(typeof(Result<IEnumerable<UserCredentialResponse>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<UserCredentialResponse>>), (int)HttpStatusCode.NoContent)]
-        public async Task<ActionResult<IEnumerable<UserCredentialResponse>>> GetCredentialsUser(Guid LefebvreCredential)
+        [HttpGet("{LefebvreCredential}/[action]")]]
+        [ProducesResponseType(typeof(Result<List<UserCredentialResponse>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<UserCredentialResponse>>), (int)HttpStatusCode.NoContent)]
+        public async Task<ActionResult<List<UserCredentialResponse>>> GetCredentialsUser([FromQuery] string LefebvreCredential)
         {
-            User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.Id == LefebvreCredential);
-            if(user == null)
-            {
-                return NoContent();
-            }
-
-            if(user.Credentials == null)
-            {
-                return NoContent();
-            }
-
-            List<UserCredentialResponse> list = new List<UserCredentialResponse>();
-
-            foreach (Credential credential in user.Credentials)
-            {
-                list.Add(new UserCredentialResponse(){
-                    ClientId = credential.ClientId,
-                    GoogleMailAccount = credential.GoogleMailAccount,
-                    Product = credential.Product,
-                    Secret = credential.Secret
-                });
-            }
-
-
-            return Ok( new Result<IEnumerable<UserCredentialResponse>>(list));
-
+            return Ok(await _service.GetUserCredential(LefebvreCredential));
         }
 
-        [HttpGet]
-        [Route("{LefebvreCredential}/[action]/{Product}")]
+        [HttpGet("{LefebvreCredential}/[action]/{Product}")]
         [ProducesResponseType(typeof(Result<OAuth2TokenModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<OAuth2TokenModel>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<OAuth2TokenModel>> GetToken(string LefebvreCredential, GoogleProduct Product)
+        public async Task<ActionResult<OAuth2TokenModel>> GetToken([FromQuery] string LefebvreCredential, [FromQuery] GoogleProduct Product)
         {
-            User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
-
-            if(user == null)
-                return BadRequest(new Result<OAuth2TokenModel>(null));
-
-            var credential = user.Credentials.SingleOrDefault(x => x.Product == Product);
-
-            if(credential == null)
-                return BadRequest(new Result<OAuth2TokenModel>(null));
-
-
-            if (credential.TokenExpire)
-            {
-                HttpClient client = new HttpClient();
-
-                OAuth2RefreshToken request = new OAuth2RefreshToken()
-                {
-                    client_id = credential.ClientId,
-                    client_secret = credential.Secret,
-                    refresh_token = credential.Refresh_Token,
-                    grant_type = "refresh_token"
-                };
-
-                var refresh = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(JsonConvert.SerializeObject(request) , Encoding.UTF8, "application/json"));
-                
-                Console.WriteLine(JsonConvert.SerializeObject(refresh));
-                Console.WriteLine(JsonConvert.SerializeObject(await refresh.Content.ReadAsStringAsync()));
-
-                if(refresh.IsSuccessStatusCode)
-                {
-                    return JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
-
-                    //return await refresh.Content.ReadFromJsonAsync<OAuth2TokenModel>();
-                }else{
-                    return BadRequest(new Result<OAuth2TokenModel>(null)); ;
-                }
-            }else{
-                return BadRequest(new Result<OAuth2TokenModel>(new OAuth2TokenModel(){
-                    access_token = credential.Access_Token,
-                    refresh_token = credential.Refresh_Token,
-                    expires_in = credential.Duration,
-                    scope = credential.Scope,
-                    token_type = credential.Token_Type
-                }));
-            }
-
+            return Ok(await _service.GetToken(LefebvreCredential, Product));
         }
 
-        [HttpPost]
-        [Route("[action]")]
-        [ProducesResponseType(typeof(Result<User>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<User>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<User>> CreateUserCredential([FromBody] string LefebvreCredential )
+        [HttpPost("[action]")]
+        [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<UserResponse>> CreateUserCredential([FromBody] string LefebvreCredential)
         {
-            
-            User user = await context.Users.SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
 
-            if(user != null)
-            {
-                return BadRequest(new Result<User>(null));
-            }
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest();
 
-            user = new User(){
-                Id = Guid.NewGuid(),
-                LefebvreCredential = LefebvreCredential
-            };
-
-            await context.Users.AddAsync(user);
-            await context.SaveChangesAsync();
-
-            return Ok(new Result<User>(user));
+            return Ok(await _service.CreateUserCredential(LefebvreCredential));
         }
 
-        [HttpPost]
-        [Route("{LefebvreCredential}/[action]")]
+        [HttpPost("{LefebvreCredential}/[action]")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> CreateCredential(string LefebvreCredential, [FromBody] CreateCredentialRequest request)
+        public async Task<ActionResult> CreateCredential([FromQuery] string LefebvreCredential, [FromBody] CreateCredentialRequest request)
         {
-            var result = new Result<string>("Abner");
-            User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+            if (request == null)
+                return BadRequest();
 
-            if(user == null)
-                return BadRequest(result);
+            if (string.IsNullOrEmpty(request.ClientId) || string.IsNullOrEmpty(request.Secret) || string.IsNullOrEmpty(request.GoogleMailAccount))
+                return BadRequest();
 
-            Credential _credential = user.Credentials.SingleOrDefault
-            (
-                x => x.GoogleMailAccount == request.GoogleMailAccount && 
-                x.Product == request.Product && 
-                x.Active == true
-            );
-
-            if(_credential != null)
-                return BadRequest(result);
-
-            Credential credential = new Credential()
-            {
-                ClientId = request.ClientId,
-                GoogleMailAccount = request.GoogleMailAccount,
-                Product = request.Product,
-                Secret = request.Secret,
-                UserId = user.Id,
-                Active = true
-            };
-
-            await context.Credentials.AddAsync(credential);
-            await context.SaveChangesAsync();
-
-            return Ok(result);
+            return Ok(await _service.CreateCredential(LefebvreCredential, request));
         }
 
-        [HttpGet]
-        [Route("{LefebvreCredential}/[action]/Product/{product}")]
+        [HttpGet("{LefebvreCredential}/[action]/Product/{product}")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<string>> GetAuthorizationLink(string LefebvreCredential, GoogleProduct product)
+        public async Task<ActionResult<string>> GetAuthorizationLink([FromQuery] string LefebvreCredential, [FromQuery] GoogleProduct product)
         {
-            User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
-
-            if(user == null)
-                return NoContent();
-
-            if(user.Credentials == null)
-                return NoContent();
-
-            Credential credential = user.Credentials.SingleOrDefault(x => x.Product == product && x.Active == true);
-
-            if(credential == null)
-                return NoContent();
-
-            
-            StringBuilder _scopes = new StringBuilder();
-
-
-            List<Scope> scopes = await context.Scopes.Where(x => x.Product == product).ToListAsync();
-
-            if(scopes == null)
-                return NoContent();
-
-            for (int i = 0; i < scopes.Count - 1; i++)
-            {
-                if(i != 0)
-                {
-                    _scopes.Append(" ");
-                }
-                _scopes.Append(scopes[i].Url);
-            }
-
-            string url = "https://accounts.google.com/o/oauth2/v2/auth?";    
-            url += "access_type=offline";
-            url += "&response_type=code";
-            url += "&client_id=";
-            url += credential.ClientId;
-            url += "&state=";
-            url += user.Id;
-            url += "&redirect_uri=";
-            url += configuration["RedirectSuccessDriveUrl"];
-            url += "/success";
-            url += $"&scope={_scopes.ToString()}";
-            url += "&include_granted_scopes=true";
-            
-            return Ok(new Result<string>(url));
-
+            return Ok(await _service.GetAuthorizationLink(LefebvreCredential, product));
         }
 
 

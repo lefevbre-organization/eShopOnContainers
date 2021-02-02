@@ -3,9 +3,9 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
-    public interface ICredentialService
+    public interface ICredentialRepository
     {
         Task<Result<UserCredentialResponse>> CreateCredential(string LefebvreCredential, CreateCredentialRequest request);
         Task<Result<UserResponse>> CreateUserCredential(string LefebvreCredential);
