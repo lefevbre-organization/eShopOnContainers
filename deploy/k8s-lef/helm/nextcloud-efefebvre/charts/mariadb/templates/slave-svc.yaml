@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ printf "%s-%s" .Release.Name "mariadb-slave"  }}
+  namespace: default
+  labels:
+    app: "mariadb"
+    chart: "mariadb-7.10.2"
+    component: "slave"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+  selector:
+    app: "mariadb"
+    component: "slave"
+    release: "elefebvre-nextcloud"

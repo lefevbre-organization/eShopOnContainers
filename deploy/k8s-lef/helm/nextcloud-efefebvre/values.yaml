@@ -225,7 +225,7 @@ mariadb:
     password: elefebvre_1234
 
   replication:
-    enabled: true
+    enabled: false
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
