@@ -43,6 +43,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             //        .AddNegotiate();
 
+            services.AddDbContext<ApplicationDbContext>(options => {
+                options.UseSqlite("Data Source=DB/app.db");
+            });
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
@@ -90,9 +94,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             services.AddTransient<IRevokeService, RevokeService>();
             //services.AddTransient<IIdentityService, IdentityService>();
 
-            services.AddDbContext<ApplicationDbContext>(options => {
-                options.UseSqlite("Data Source=./DB/app.db");
-            });
+            
 
             services.AddOptions();
             services.AddHttpClient();

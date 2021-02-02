@@ -134,10 +134,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
 
                 if (user == null)
+                {
                     TraceError(result.errors, new GoogleAccountDomainException("User not found."));
                     return result;
+                }
 
-                var credential = user.Credentials.SingleOrDefault(x => x.Product == Product);
+                Credential credential = user.Credentials.SingleOrDefault(x => x.Product == Product);
 
                 if (credential == null)
                     return result;
@@ -214,8 +216,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 result.data = new UserResponse()
                 {
                     Id = user.Id,
-                    LefebvreCredential = user.LefebvreCredential,
-                    Credentials = new List<UserCredentialResponse>()
+                    LefebvreCredential = user.LefebvreCredential
                 };
             }
             catch (Exception ex)
@@ -267,6 +268,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 await context.Credentials.AddAsync(credential);
                 await context.SaveChangesAsync();
+
+                TraceInfo(result.infos, "Credential create");
 
                 result.data = new UserCredentialResponse()
                 {

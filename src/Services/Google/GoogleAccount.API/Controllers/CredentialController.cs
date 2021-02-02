@@ -48,7 +48,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(new Result<bool>(true));
         }
 
-        [HttpGet("{LefebvreCredential}/[action]")]
+        [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<UserResponse>> GetUserCredentail([FromQuery] string LefebvreCredential)
@@ -56,7 +56,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(await _service.GetUserCredential(LefebvreCredential));
         }
 
-        [HttpGet("{LefebvreCredential}/[action]")]]
+        [HttpGet]
+        [Route("[action]")]
         [ProducesResponseType(typeof(Result<List<UserCredentialResponse>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<UserCredentialResponse>>), (int)HttpStatusCode.NoContent)]
         public async Task<ActionResult<List<UserCredentialResponse>>> GetCredentialsUser([FromQuery] string LefebvreCredential)
@@ -64,7 +65,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(await _service.GetUserCredential(LefebvreCredential));
         }
 
-        [HttpGet("{LefebvreCredential}/[action]/{Product}")]
+        [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<OAuth2TokenModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<OAuth2TokenModel>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<OAuth2TokenModel>> GetToken([FromQuery] string LefebvreCredential, [FromQuery] GoogleProduct Product)
@@ -72,19 +73,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(await _service.GetToken(LefebvreCredential, Product));
         }
 
-        [HttpPost("[action]")]
+        [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserResponse>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<UserResponse>> CreateUserCredential([FromBody] string LefebvreCredential)
+        public async Task<ActionResult<UserResponse>> CreateUserCredential([FromQuery] string LefebvreCredential)
         {
-
-            if (string.IsNullOrEmpty(LefebvreCredential))
-                return BadRequest();
 
             return Ok(await _service.CreateUserCredential(LefebvreCredential));
         }
 
-        [HttpPost("{LefebvreCredential}/[action]")]
+        [HttpPost("[action]")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CreateCredential([FromQuery] string LefebvreCredential, [FromBody] CreateCredentialRequest request)
@@ -98,10 +96,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(await _service.CreateCredential(LefebvreCredential, request));
         }
 
-        [HttpGet("{LefebvreCredential}/[action]/Product/{product}")]
+        [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<string>> GetAuthorizationLink([FromQuery] string LefebvreCredential, [FromQuery] GoogleProduct product)
+        public async Task<ActionResult<string>> GetAuthorizationLink([FromQuery]string LefebvreCredential, [FromQuery] GoogleProduct product)
         {
             return Ok(await _service.GetAuthorizationLink(LefebvreCredential, product));
         }
