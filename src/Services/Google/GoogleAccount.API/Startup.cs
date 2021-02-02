@@ -82,19 +82,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IGoogleAccountRepository, GoogleAccountRepository>();
+            
 
             // Repositories
             services.AddTransient<ICredentialRepository, CredentialRepository>();
             services.AddTransient<IAuthRepository, AuthRepository>();
+            services.AddTransient<IRevokeRepository, RevokeRepository>();
 
             // Services
-            services.AddTransient<IGoogleAccountService, GoogleAccountService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<ICredentialService, CredentialService>();
             services.AddTransient<IRevokeService, RevokeService>();
-            //services.AddTransient<IIdentityService, IdentityService>();
-
             
 
             services.AddOptions();
