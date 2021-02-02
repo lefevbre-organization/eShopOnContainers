@@ -1076,11 +1076,10 @@ class Calendar extends Component {
                 if (event.reminders != undefined) {
                     reminders = event.reminders.overrides;
                 }
-                console.log('onDataBinding --->', event)
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,  
-                    filename: event.id,                
+                    filename: event.filename,                
                     Subject: event.summary,
                     Location: event.location,
                     Description: event.description,
@@ -1392,8 +1391,6 @@ class Calendar extends Component {
             'filename': filename,           
             //'color': 'green'
         }
-
-        console.log('buildEventoGoogle -->', event);
 
         //if (values.LexonClassification != undefined) {
         //    const properties = {
