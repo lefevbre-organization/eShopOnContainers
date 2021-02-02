@@ -59,9 +59,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [HttpGet("Drive/Success")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetDrive([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope, [FromQuery] string error = "")
+        public async Task<ActionResult> GetDriveSuccess([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope, [FromQuery] string error = "")
         {
-            await _service.Success(GoogleProduct.Drive, state, code, scope, error);
+            var result = await _service.Success(GoogleProduct.Drive, state, code, scope, error);
+
+            if (!result.data)
+                return BadRequest();
+
             return Redirect(settings.Value.InternalRedirection);
         }
 
