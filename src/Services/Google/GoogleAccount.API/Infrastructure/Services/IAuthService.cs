@@ -5,11 +5,8 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
-    public interface IGoogleAuthService
+    public interface IAuthService
     {
-        Task<Result<UserGoogleAccount>> GetUserAsync(string idNavisionUser, short idApp);
-
-        Task<Result<UserGoogleAccount>> PostUserAsync(UserGoogleAccount user);
-        Task<Result<string>> SaveCode(string state, string code);
+        Task<Result<bool>> Success(GoogleProduct product, string UserId, string code, string scope, string error = "");
     }
 }

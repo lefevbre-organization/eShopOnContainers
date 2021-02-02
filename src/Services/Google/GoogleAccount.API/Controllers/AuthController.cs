@@ -26,23 +26,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         private readonly ApplicationDbContext context;
         private readonly IConfiguration configuration;
 
-        private readonly IGoogleAuthService _service;
-        private readonly GoogleAccountSettings _settings;
+        private readonly IAuthService _service;
+        private readonly IOptions<GoogleAccountSettings> settings;
         private readonly IEventBus _eventBus;
 
         public AuthController(
-            IGoogleAuthService authsService,
-            IOptionsSnapshot<GoogleAccountSettings> settings,
-            IEventBus eventBus,
-            ApplicationDbContext context, 
-            IConfiguration configuration
+            IAuthService authsService,
+            IOptions<GoogleAccountSettings> settings,
+            IEventBus eventBus
             )
         {
             _service = authsService ?? throw new ArgumentNullException(nameof(authsService));
-            _settings = settings.Value;
+            this.settings = settings;
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            this.context = context;
-            this.configuration = configuration;
+
         }
 
         /// <summary>
@@ -64,16 +61,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetDrive([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope, [FromQuery] string error = "")
         {
-
-            if (!string.IsNullOrEmpty(error))
-                return BadRequest(error);
-
-            var result = await _service.SaveCode(state, code);
-
-            if (result.errors.Count == 0 && result.data == null)
-                return BadRequest(result);
-
-            return Redirect(configuration["InternalRedirection"]);
+            await _service.Success(GoogleProduct.Drive, state, code, scope, error);
+            return Redirect(settings.Value.InternalRedirection);
         }
 
     }
