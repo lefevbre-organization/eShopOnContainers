@@ -79,6 +79,9 @@ export const getEventList = async (calendar, selectedDate) => {
 
 // Create and update event
 export const addCalendarEvent = async (calendar, event) => {  
+    const date = moment(event.start).add(1, 'days');
+    event.start = date._d;
+    console.log('addCalendarEvent --> ', event)
     const response = await caldav.createEvent(event);    
     return response;    
 };
