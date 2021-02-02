@@ -1,12 +1,13 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
@@ -32,10 +33,46 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             this.clientFactory = clientFactory;
         }
 
+        public async Task<Result<bool>> Success(GoogleProduct product, string UserId, string code, string scope, string error = "")
+        {
+            Result<bool> result = new Result<bool>();
 
-        public async Task<Result<bool>> Success(GoogleProduct product, string UserId, string code, string scope, string error = "") =>
-            await repository.Success(product, UserId, code, scope, error);
+            var resultCredential = await repository.GetGredentials(product, UserId, code, scope, error);
 
+            StringBuilder googletoken = new StringBuilder();
 
+            googletoken.Append("https://oauth2.googleapis.com/token?");
+            googletoken.Append("client_id=");
+            googletoken.Append(resultCredential.data.ClientId);
+            googletoken.Append("&client_secret=");
+            googletoken.Append(resultCredential.data.Secret);
+            googletoken.Append("&code=");
+            googletoken.Append(resultCredential.data.Code);
+            googletoken.Append("&grant_type=authorization_code");
+            googletoken.Append("&redirect_uri=");
+            googletoken.Append(settings.Value.RedirectSuccessDriveUrl);
+
+            using (HttpClient client = new HttpClient())
+            {
+                var response = await client.PostAsync(googletoken.ToString(), null);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await response.Content.ReadAsStringAsync());
+
+                    resultCredential.data.Access_Token = token.access_token;
+                    resultCredential.data.Refresh_Token = token.refresh_token;
+                    resultCredential.data.Scope = token.scope;
+                    resultCredential.data.Token_Type = token.token_type;
+
+                    result = await repository.UpdateCredentialsSuccess(resultCredential.data);
+                }
+                else
+                {
+                    //TraceError(result.errors, new )
+                }
+            }
+            return result;
+        }
     }
 }

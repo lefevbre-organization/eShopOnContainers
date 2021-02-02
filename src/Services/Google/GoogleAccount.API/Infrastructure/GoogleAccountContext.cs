@@ -46,14 +46,22 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(UserGoogleAccount))) { BsonClassMap.RegisterClassMap<UserGoogleAccount>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GoogleAccountUser))) { BsonClassMap.RegisterClassMap<GoogleAccountUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Scope))) { BsonClassMap.RegisterClassMap<Scope>(); }
         }
 
-        public IMongoCollection<UserGoogleAccount> UserGoogleAccounts => Database.GetCollection<UserGoogleAccount>(_settings.Value.Collection);
+        public IMongoCollection<GoogleAccountUser> UserGoogleAccounts => Database.GetCollection<GoogleAccountUser>(_settings.Value.Collection);
 
-        public IMongoCollection<UserGoogleAccount> UserGoogleAccountsTransaction(IClientSessionHandle session)
+        public IMongoCollection<GoogleAccountUser> UserGoogleAccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserGoogleAccount>(_settings.Value.Collection);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<GoogleAccountUser>(_settings.Value.Collection);
+        }
+
+        public IMongoCollection<Scope> Scopes => Database.GetCollection<Scope>(_settings.Value.CollectionScope);
+
+        public IMongoCollection<Scope> ScopesTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Scope>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
