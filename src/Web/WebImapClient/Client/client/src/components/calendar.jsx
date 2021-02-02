@@ -66,7 +66,7 @@ import { PROVIDER } from '../constants';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
-    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
+    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, timezoneData, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
@@ -88,10 +88,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { addCalendarEvent, /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
+import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -392,6 +392,7 @@ class Calendar extends Component {
                               <div className='control-wrapper'>
                                 <ScheduleComponent
                                       //delayUpdate='false'
+                                      timezone='Europe/Madrid'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
@@ -587,26 +588,6 @@ class Calendar extends Component {
       },
     });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     onCloseDialog() {
         console.log()
@@ -947,7 +928,7 @@ class Calendar extends Component {
         }
 
         return (
-            <div Style="width: 98%;">
+            <div>
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className='eventicon'>
@@ -955,7 +936,7 @@ class Calendar extends Component {
                         {props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} />}
                         {subjectStr}
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot floatleft'></span>
                         ) : (
                                 ''
                             )}
@@ -993,9 +974,9 @@ class Calendar extends Component {
                     <span className='eventicon truncate'>
                         <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot dotagenda'></span>
                         ) : (
-                                <span Style={`background-color: ${'#FFFFFF'} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                                <span style={{backgroundColor: '#FFFFFF', marginTop: '3px'}} className='dot dotagenda'></span>
                             )}
 
                         {props.IsAllDay ? (
@@ -1045,25 +1026,25 @@ class Calendar extends Component {
                 }
 
                 //managing all day from googe calendar issues
-                if (event.end.date) {
-                    let date1 = new Date(event.start.date);
-                    let date2 = new Date(event.end.date);
-                    const diffTime = Math.abs(date1 - date2);
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    if (diffDays == 1) {
-                        date2.setDate(date2.getDate() - 1)
-                        event.end.date = date2.toISOString();
-                    }
-                }
+                //if (event.end.date) {
+                //    let date1 = new Date(event.start.date);
+                //    let date2 = new Date(event.end.date);
+                //    const diffTime = Math.abs(date1 - date2);
+                //    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                //    if (diffDays == 1) {
+                //        date2.setDate(date2.getDate() - 1)
+                //        event.end.date = date2.toISOString();
+                //    }
+                //}
 
-                let when = event.start.dateTime;
+               // let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
-                if (!when) {
-                    when = event.start.date;
-                    start = event.start.date;
-                    end = event.end.date;
-                }
+                //if (!when) {
+                //    when = event.start.date;
+                //    start = event.start.date;
+                //    end = event.end.date;
+                //}
 
 
                 // Recurrence
@@ -1095,10 +1076,10 @@ class Calendar extends Component {
                 if (event.reminders != undefined) {
                     reminders = event.reminders.overrides;
                 }
-
                 this.scheduleData.push({
                     Id: event.id,
-                    CalendarId: calendarId,
+                    CalendarId: calendarId,  
+                    filename: event.filename,                
                     Subject: event.summary,
                     Location: event.location,
                     Description: event.description,
@@ -1116,7 +1097,8 @@ class Calendar extends Component {
             }
         }
         e.result = this.scheduleData;
-    }
+    }  
+
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -1315,91 +1297,143 @@ class Calendar extends Component {
         //window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
 
+    CreateGuid() {
+        function _p8(s) {
+            var p = (Math.random().toString(16) + "000000000").substr(2, 8);
+            return s ? "-" + p.substr(0, 4) + "-" + p.substr(4, 4) : p;
+        }
+        return _p8() + _p8(true) + _p8(true) + _p8();
+    }  
+
+    convertTZ(date, tzString) {
+        return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
+    }
+
     buildEventoGoogle(values) {
+        //caldav.createEvent({
+        //    "allDay": false,
+        //    "start": "ISODateString",
+        //    "end": "ISODateString",
+        //    "summary": "title",
+        //    "filename": "/calendars/admin/calendar-name-at-end-of-private-link/unique-filename-for-this-event",
+        //    "location": "wherever",
+        //    "description": "tell them about it",
+        //    "timezone": "America/Chicago", //only to override settings
+        //    "color": "green",
+        //    "categories": [
+        //        { "name": "awesome" },
+        //        { "name": "tags" },
+        //        { "name": "go" },
+        //        { "name": "here" }
+        //    ],
+        //    "attendees": [
+        //        {
+        //            "name": "name",
+        //            "email": "test@example.com",
+        //            "mailto": "test@example.com", //to override email
+        //            "type": "one of: individual, group, room, resource, unknown"
+        //        }
+        //    ],
+        //    "organizer":
+        //    {
+        //        "name": "name",
+        //        "email": "test@example.com",
+        //        "mailto": "test@example.com", //to override email
+        //    }
+        //})
+
+        //let timezone = new Timezone();
+        
+        //let convertedStartDate = this.convertTZ(values.StartTime, "Europe/Madrid");
+        //let convertedEndDate = this.convertTZ(values.EndTime, "Europe/Madrid");
+        
+
+        //let convertedEndDate = timezone.add(values.EndTime, "Europe/Madrid");
+        //console.log(convertedEndDate); 
+
+        let timezoneEnd = 'Europe/Madrid'
+        if (values.EndTimezone != undefined) {
+            timezoneEnd = values.EndTimezone
+        }
+
+        let timezoneStart = 'Europe/Madrid'
+        if (values.StartTimezone != undefined) {
+            timezoneStart = values.StartTimezone
+        }
+
+        //var s = new Date(values.StartTime);
+        //var dateString = s.getUTCFullYear() + "/" + (s.getUTCMonth() + 1) + "/" + s.getUTCDate() + " " + s.getUTCHours() + ":" + s.getUTCMinutes() + ":" + s.getUTCSeconds();
+
+        //var e = new Date(values.EndTime);
+        //var dateString = e.getUTCFullYear() + "/" + (e.getUTCMonth() + 1) + "/" + e.getUTCDate() + " " + e.getUTCHours() + ":" + e.getUTCMinutes() + ":" + e.getUTCSeconds();
+
+        //important to update event
+        let filename = ""
+        if (values.filename == undefined) {
+            // New Event
+            filename = values.CalendarId + this.CreateGuid();
+        }
+        else {
+           // Edit event           
+            filename = values.Id;
+        }
+
+
         //Event basic data
         var event = {
+            'allDay': values.IsAllDay,
             'summary': values.Subject,
             'location': values.Location,
             'description': values.Description,
-
-            'start': {
-                'dateTime': values.StartTime,
-                'timeZone': 'Europe/Madrid',
-            },
-            'end': {
-                'dateTime': values.EndTime,
-                'timeZone': 'Europe/Madrid',
-            },
-            'visibility': values.Visibility ? 'private' : 'default'
+            'start': moment(values.StartTime),
+            'end': moment(values.EndTime),          
+            'timezone': 'Europe/Madrid',
+            'filename': filename,           
+            //'color': 'green'
         }
 
-        //event Type
-        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
-            let item;
-            if (values.EventType.name != undefined) {
-                item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
-            }
-            else {
-                item = this.eventTypeDataSource.find(x => x.text == values.EventType)
-            }
-            event.extendedProperties = {
-                'private': {
-                    'eventTypeName': item.text,
-                    'eventTypeId': item.id,
-                    'eventTypeColor': item.backgroundColor,
-                },
-            }
-        }
+        //if (values.LexonClassification != undefined) {
+        //    const properties = {
+        //        ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
+        //        'lexonClassification': '' + values.LexonClassification
+        //    }
 
-        if (values.LexonClassification != undefined) {
-            const properties = {
-                ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
-                'lexonClassification': '' + values.LexonClassification
-            }
-
-            event.extendedProperties = {
-                ...event.extendedProperties,
-                private: properties
-            }
-        }
+        //    event.extendedProperties = {
+        //        ...event.extendedProperties,
+        //        private: properties
+        //    }
+        //}
 
 
-        //"extendedProperties": {
-        //    "private": {
-        //        'eventType': '1'
-        //    },
-        //},
 
         //Recurrence
-        if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+        //if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
 
         //Atendees
         let arr = this.state.to2
         let ateendeeObj = [];
         if (arr.length > 0) {
             Object.keys(arr).forEach(function (key) {
-                ateendeeObj.push({ 'email': arr[key] });
-            });
-        }
-        event.attendees = ateendeeObj;
-
-        //Reminders
-
-        let reminders = []
-        let arrR = this.remObj.listviewInstance.dataSource;
-        if (arrR.length > 0) {
-
-            event.reminders = {
-                'useDefault': false,
-                'overrides': [],
-            }
-            Object.keys(arrR).forEach(function (key) {
-                event.reminders.overrides.push({
-                    method: arrR[key].title,
-                    minutes: arrR[key].minutesvalue,
+                ateendeeObj.push({
+                    "name": arr[key], 
+                    'email': arr[key],
+                    'mailto': arr[key],
+                    'type':'individual'
                 });
             });
         }
+       
+        event.attendees = ateendeeObj;  
+
+        let organizerData = {
+            "name": "Alberto",
+            "email": "alberto.valverde.escribano@gmail.com",
+            "mailto": "alberto.valverde.escribano@gmail.com", //to override email
+        }
+            
+    
+        event.organizer = organizerData;  
+       
 
         return event
     }
@@ -1483,7 +1517,10 @@ class Calendar extends Component {
     eventTypeTemplate(data) {
         return (
             <div className="typeitem">
-                <span> <span Style={`background-color: ${data.backgroundColor}`} className='dot'></span>  <span className='name'>{data.text}</span></span>
+                <span> 
+                    <span style={{backgroundColor: data.backgroundColor}} className='dot'></span>  
+                    <span className='name'>{data.text}</span>
+                </span>
             </div>
         );
     }
@@ -1932,20 +1969,20 @@ class Calendar extends Component {
 
                 if (desc) {
 
-                    //reset reminders
-                    desc.Reminders = [];
+                    ////reset reminders
+                    //desc.Reminders = [];
 
-                    //Update Reminders
-                    let arrR = this.remObj.listviewInstance.dataSource;
-                    if (arrR.length > 0) {
-                        Object.keys(arrR).forEach(function (key) {
-                            desc.Reminders.push({
-                                method: arrR[key].title,
-                                minutes: arrR[key].value,
-                            });
+                    ////Update Reminders
+                    //let arrR = this.remObj.listviewInstance.dataSource;
+                    //if (arrR.length > 0) {
+                    //    Object.keys(arrR).forEach(function (key) {
+                    //        desc.Reminders.push({
+                    //            method: arrR[key].title,
+                    //            minutes: arrR[key].value,
+                    //        });
 
-                        });
-                    }
+                    //    });
+                    //}
 
                     //reset attendess
                     desc.Attendees = [];
@@ -1960,18 +1997,18 @@ class Calendar extends Component {
 
                     //update eventType
                     //Convert dropdown eventType in eventtype object to paint into schedule event
-                    if (desc.EventType != undefined && desc.EventType != null) {
-                        let item;
-                        item = this.eventTypeDataSource.find(x => x.text == desc.EventType)
-                        // create EventType with structure
-                        let eventType = [];
-                        if (item != undefined) {
-                            eventType.name = item.text;
-                            eventType.id = item.id;
-                            eventType.color = item.backgroundColor;
-                            desc.EventType = eventType;
-                        }
-                    }
+                    //if (desc.EventType != undefined && desc.EventType != null) {
+                    //    let item;
+                    //    item = this.eventTypeDataSource.find(x => x.text == desc.EventType)
+                    //    // create EventType with structure
+                    //    let eventType = [];
+                    //    if (item != undefined) {
+                    //        eventType.name = item.text;
+                    //        eventType.id = item.id;
+                    //        eventType.color = item.backgroundColor;
+                    //        desc.EventType = eventType;
+                    //    }
+                    //}
 
                     desc.LexonClassification = this.currentClassification;
                 }
@@ -2040,53 +2077,34 @@ class Calendar extends Component {
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
 
-
-
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = result.id;
+                        args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] })
 
-                        args.data[0].Reminders = result.reminders.overrides;
+                       // args.data[0].Reminders = result.reminders.overrides;
 
                         //Convert dropdown eventType in eventtype object to paint into schedule event
-                        if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
-                            let item;
-                            item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                            // create EventType with structure
-                            let eventType = [];
-                            if (item != undefined) {
-                                eventType.name = item.text;
-                                eventType.id = item.id;
-                                eventType.color = item.backgroundColor;
-                                args.data[0].EventType = eventType;
-                            }
-                        }
+                        //if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                        //    let item;
+                        //    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                        //    // create EventType with structure
+                        //    let eventType = [];
+                        //    if (item != undefined) {
+                        //        eventType.name = item.text;
+                        //        eventType.id = item.id;
+                        //        eventType.color = item.backgroundColor;
+                        //        args.data[0].EventType = eventType;
+                        //    }
+                        //}
 
                         this.toastObj.show(this.toasts[1]);
                     })
-                    .catch(error => {
-                        if (error.result != undefined) {
-                            if (error.result.error.errors[0] != undefined) {
-                                if (error.result.error.errors[0].reason == "requiredAccessLevel") {
-                                    this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                                    console.log('error ->', error);
-                                    delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
-                                    this.scheduleObj.refreshEvents();
-                                    return;
-                                }
-                            }
-                            else {
-                                this.toastObj.show(this.toasts[2]);
-                                console.log('error ->', error);
-                            }
-                        }
-                        else {
-                            this.toastObj.show(this.toasts[2]);
-                            console.log('error ->', error);
-                        }
+                    .catch(error => {                       
+                         this.toastObj.show(this.toasts[2]);
+                         console.log('error ->', error); 
                     })
 
                 break;
@@ -2131,35 +2149,23 @@ class Calendar extends Component {
     }
 
     deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
-        
-        deleteCalendarEvent(item)
+        let filename = item;
+        deleteCalendarEvent(filename)
             .then(result => {
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }
             })
-            .catch(error => {
-                if (error.result.error.errors[0] != undefined) {
-                    if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
-                        error.result.error.errors[0].reason == "forbidden") {
-                        this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
-                        this.scheduleObj.refreshEvents();
-                        this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
-                        console.log('error ->', error);
-                        return;
-                    }
-                }
-                else {
-                    this.toastObj.show(this.toasts[2]);
-                    console.log('error ->', error);
-                }
+            .catch(error => {                
+                this.toastObj.show(this.toasts[2]);
+                console.log('error ->', error);                
             })
     }
 
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
-        updateCalendarEvent(calendarId, item, event)
+        addCalendarEvent(calendarId,  event)
             .then(result => {
-                this.loadCalendarEvents(calendarId, true);
+                this.loadCalendarEvents(calendarId,event);
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }

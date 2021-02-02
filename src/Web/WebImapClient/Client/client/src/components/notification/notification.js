@@ -9,7 +9,8 @@ export class Notification extends Component {
       initialModalState,
       toggleNotification,
       message,
-      error = false
+      error = false,
+      closeButton = true
     } = this.props;
 
     return (
@@ -21,7 +22,7 @@ export class Notification extends Component {
         centered
         dialogClassName={`modal notification ${error ? 'error' : ''}`}
         animation={false}>
-        <Modal.Header className='align-items-center' closeButton>
+        <Modal.Header className='align-items-center' closeButton={closeButton}>
           <Modal.Title>
             <div className='modal-title h4'>
               <h5

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./confirmation.css";
+import Styles from "./confirmation.scss";
 import i18n from "i18next";
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
@@ -7,7 +7,14 @@ import { Button } from 'reactstrap';
 
 export class Confirmation extends Component {
   render() {
-    const { initialModalState, onAccept, onCancel, message } = this.props;
+    const { 
+      initialModalState, 
+      onAccept, 
+      onCancel, 
+      message, 
+      titleAccept, 
+      titleCancel 
+    } = this.props;
 
     return (
       <Modal
@@ -20,9 +27,9 @@ export class Confirmation extends Component {
         centered
         dialogClassName="modal"
         animation={false}>
-          <Modal.Header closeButton>
+          <Modal.Header closeButton className={Styles['modal-header']}>
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body className={Styles['modal-body']}>
             <div className="container-fluid content">
               <div className="row d-flex justify-content-center">
                 <div className="col col-12">
@@ -41,22 +48,22 @@ export class Confirmation extends Component {
               </div>
             </div>
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer className={Styles['modal-footer']}>
           <Button
-              className="modal-primary"
+              className={Styles['modal-primary']}
               onClick={() => {
                 this.props.onCancel && this.props.onCancel();  
               }}
           >
-                {i18n.t("confirmation.cancel")}
+                {titleCancel}
             </Button>
             <Button
-              className="modal-secondary"
+              className={Styles['modal-secondary']}
               onClick={() => {
                 this.props.onAccept && this.props.onAccept();  
               }}
           >
-                {i18n.t("confirmation.ok")}
+                {titleAccept}
             </Button>
             
           </Modal.Footer>

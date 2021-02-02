@@ -24,6 +24,8 @@ const settings = {
   parserLogging: true,
 };
 
+let newEmails = [];
+
 export const caldav = new Caldav(settings);
 
 // Get calendars
@@ -38,7 +40,7 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/alberto/${calendar.summary}`,
+        filename: `/calendars/joel/${calendar.summary}`,
         description: calendar.description        
     });   
     console.log(calendar)
@@ -75,32 +77,27 @@ export const getEventList = async (calendar, selectedDate) => {
     return listEventsParser(events);
 };
 
-// Create event
-export const createEvent = async (calendar) => {
-  const response = await caldav.createEvent({
-    allDay: true,
-    start: '2021-01-05',
-    end: '2021-01-06',
-    summary: 'title',
-    filename: calendar + '/unique-filename-for-this-event',
-    location: 'wherever',
-    description: 'tell them about it',
-    timezone: 'Europe/Madrid', //only to override settings
-    color: 'green',
-  });
-
-  return response;
+// Create and update event
+export const addCalendarEvent = async (calendar, event) => {  
+    const date = moment(event.start).add(1, 'days');
+    event.start = date._d;
+    console.log('addCalendarEvent --> ', event)
+    const response = await caldav.createEvent(event);    
+    return response;    
 };
 
-export const deleteCalendarEvent = async (filename) => {    
-    const response = await caldav.deleteEvent(filename);    
+
+
+export const deleteCalendarEvent = async (filename) => {   
+    console.log(filename);
+    const response = await caldav.deleteEvent({
+        "filename": filename
+    });    
     return response;
 };
 
 
 function listEventsParser(list) {
-
-
     //allDay: true
     //calendarData: "BEGIN:VCALENDAR↵PRODID:-//IDN nextcloud.com//Calendar app 2.1.3//EN↵CALSCALE:GREGORIAN↵VERSION:2.0↵BEGIN:VEVENT↵CREATED:20210108T155756Z↵DTSTAMP:20210108T155801Z↵LAST-MODIFIED:20210108T155801Z↵SEQUENCE:2↵UID:eed9b1c1-4b37-41e5-a460-de783317d4bc↵DTSTART;VALUE=DATE:20210108↵DTEND;VALUE=DATE:20210109↵SUMMARY:prueba↵END:VEVENT↵END:VCALENDAR"
     //categories: undefined
@@ -114,17 +111,16 @@ function listEventsParser(list) {
     //start: "20210108"
     //summary: "prueba"
     //__proto__: Object
-
-
     let listParse = [];
-
     if (list.length > 0) {
-
         for (let i = 0; i < list.length; i++) {   
+          newEmails = [];
+          getAttendees(list[i].json, newEmails);
             listParse.push({
                 id: list[i].href,
+                filename: list[i].href,
                 summary: list[i].summary,
-                location: list[i].location,
+                location: list[i].location,               
                 description: list[i].description,
                 start: { dateTime: moment(list[i].start), timeZone: 'Europe/Madrid' },
                 end: { dateTime: moment(list[i].end), timeZone: 'Europe/Madrid' },
@@ -136,7 +132,7 @@ function listEventsParser(list) {
                 //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
                // recurrence: recurrenceRule,
                 ImageName: "lefebvre",
-                //attendees: attendees,
+                attendees: newEmails,
                // extendedProperties: category,
             });
         }
@@ -150,7 +146,28 @@ function listEventsParser(list) {
     return result
 }
 
+function getAttendees(json, newEmails) {
+    for (const key in json) {
+        if (json.hasOwnProperty(key)) {
+            const attende = json[key];
+            if (attende != undefined) {
+                const emails = attende.split(':')
+                if (emails.length === 3) {
+                    getEmails(emails[2], newEmails);
+                }
+            }
+           
+        }
+    }
+}
 
+function getEmails(email, newEmails) {
+    newEmails.push({
+        email: email,
+        responseStatus: "needsAction"
+    });
+    return newEmails
+}
 
 function convertUTCDateToLocalDate(date, isAllDay) {
     var newDate = date

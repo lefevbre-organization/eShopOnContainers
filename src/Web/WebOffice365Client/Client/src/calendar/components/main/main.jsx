@@ -1994,8 +1994,19 @@ export class Main extends Component {
         let errors = [];
         let progress = 0;
         let eventsImported = 0;
+        let cancelExportEvents = false;
+
+        window.addEventListener('ExportEventsCancel', ()=>{
+            cancelExportEvents = true;
+        });
 
         for (let i = 0; i < events.length; i++) {
+            if(cancelExportEvents) {
+                dispatchEvent(new CustomEvent('ExportEventsProgress', { detail: { completed: true, progress: 100, errors,
+                        eventsImported }}));
+                return;
+            }
+
             const lefEvent = {
                 start: {
                     dateTime: events[i].startDate,

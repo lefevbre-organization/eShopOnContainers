@@ -2,14 +2,16 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import FolderItem from './folder-item';
-import {createFolder as createFolderAction, renameFolder, selectFolder} from '../../actions/application';
+import {createFolder as createFolderAction, renameFolder, selectFolder, editMessage, draftClean, selectMessage} from '../../actions/application';
 import {clearSelected} from '../../actions/messages';
 import {clearSelectedMessage} from '../../services/application';
 import {deleteFolder, findTrashFolder, FolderTypes, moveFolder} from '../../services/folder';
 import {moveMessages, resetFolderMessagesCache} from '../../services/message';
 import {getSelectedFolder} from '../../selectors/folders';
+import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './folder-list.scss';
 import mainCss from '../../styles/main.scss';
+import ACTIONS from '../../actions/lexon';
 
 export const DroppablePayloadTypes = {
   FOLDER: 'FOLDER',
@@ -50,6 +52,26 @@ export class FolderListClass extends Component {
   onClick(event, folder) {
     event.stopPropagation();
     this.props.selectFolder(folder);
+    const { application } = this.props;
+    if (application.newMessage !== null){
+      const { close, lexon, draftClean } = this.props;
+   
+      if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
+        window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+        this.props.setCaseFile({
+         casefile: null,
+          bbdd: null,
+          company: null,
+        });
+      }
+
+      if (lexon.mailContacts) {
+        this.props.setMailContacts(null);
+      }
+      draftClean();
+      this.props.messageClean();
+      close(application);
+    }
     window.dispatchEvent(new CustomEvent("ResetList"));
   }
 
@@ -121,10 +143,21 @@ const mapStateToProps = state => ({
   application: state.application,
   selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
-  messages: state.messages
+  messages: state.messages,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch => ({
+  close: (application) => {
+    dispatch(editMessage(null));
+    // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
+    // noinspection JSIgnoredPromiseFromCall
+    persistApplicationNewMessageContent(application, '');
+  },
+  draftClean: () => {
+    dispatch(draftClean());
+  },
+  setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);
@@ -137,6 +170,11 @@ const mapDispatchToProps = dispatch => ({
   deleteFolder: (user, folder) => deleteFolder(dispatch, user, folder),
   moveMessages: (credentials, fromFolder, toFolder, messages) => {
     moveMessages(dispatch, credentials, fromFolder, toFolder, messages);
+  },
+  setMailContacts: (mailContacts) =>
+  dispatch(ACTIONS.setMailContacts(mailContacts)),
+  messageClean: () => {
+    dispatch(selectMessage({}));
   }
 });
 

@@ -29,12 +29,12 @@ class MessageHeader extends Component {
   }
 
   getHeader(name) {
-    const { headers } = this.props.emailHeaderMessageResult;
-
-    if (Array.isArray(headers)) {
-      for (var i = 0; i < headers.length; i++) {
-        if (headers[i].name === name) {
-          return headers[i].value;
+    const { messageHeaders } = this.props.emailMessageResult.result;
+    console.log('getHeader', messageHeaders)
+    if (Array.isArray(messageHeaders)) {
+      for (var i = 0; i < messageHeaders.length; i++) {
+        if (messageHeaders[i].name === name) {
+          return messageHeaders[i].value;
         }
       }
     } else {
@@ -86,6 +86,8 @@ class MessageHeader extends Component {
             <div className="from">
               <span className="fromName">{this.getHeader("From")}</span>
               <span className="email">{this.getHeader("To")}</span>
+              <span className="email">{this.getHeader("Cc")}</span>
+              <span className="email">{this.getHeader("Bcc")}</span>
             </div>
             <div className="date">
               {new Date(this.getHeader("Date")).toLocaleString(
@@ -109,6 +111,7 @@ class MessageHeader extends Component {
 
 const mapStateToProps = state => ({
   emailHeaderMessageResult: state.emailHeaderMessageResult,
+  emailMessageResult: state.emailMessageResult,
   labelsResult: state.labelsResult
 });
 
