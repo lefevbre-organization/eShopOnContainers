@@ -101,6 +101,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<string>> GetAuthorizationLink([FromQuery]string LefebvreCredential, [FromQuery] GoogleProduct product)
         {
+
             return Ok(await _service.GetAuthorizationLink(LefebvreCredential, product));
         }
 

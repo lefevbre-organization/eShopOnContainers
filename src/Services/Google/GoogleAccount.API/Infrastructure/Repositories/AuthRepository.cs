@@ -43,13 +43,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             {
                 if (error != "")
                 {
-                    TraceError(result.errors, new GoogleAccountDomainException($"Autorization Error {error}"));
+                    TraceError(result.errors, new GoogleAccountDomainException($"Autorization Error {error}"), "GA02", "SQLLITE");
                 }
 
                 User user = await context.Users.Include(x => x.Credentials).FirstOrDefaultAsync(x => x.Id == Guid.Parse(UserId));
 
                 if (user == null)
+                {
+                    TraceInfo(result.infos, "no encuentro ningún credencial con esos datos", "GA01");
                     return result;
+                }
 
                 Credential credential = user.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
 
@@ -100,7 +103,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex));
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA02","SQLLITE");
             }
 
             return result;            
