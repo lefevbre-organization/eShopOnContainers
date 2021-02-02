@@ -1,29 +1,32 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
-    public class AuthService : BaseClass<AuthService>, IAuthService
+    public class ScopeService: BaseClass<ScopeService>, IScopeService
     {
+
         private readonly IOptions<GoogleAccountSettings> settings;
-        private readonly IAuthRepository repository;
+        private readonly IScopeRepository repository;
         private readonly IEventBus eventBus;
         private readonly IHttpClientFactory clientFactory;
-        private readonly ILogger<AuthService> logger;
+        private readonly ILogger<ScopeService> logger;
 
-        public AuthService(
+        public ScopeService(
             IOptions<GoogleAccountSettings> settings
-            , IAuthRepository repository
+            , IScopeRepository repository
             , IEventBus eventBus
             , IHttpClientFactory clientFactory
-            , ILogger<AuthService> logger
+            , ILogger<ScopeService> logger
             ) : base(logger)
         {
             this.settings = settings;
@@ -32,10 +35,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             this.clientFactory = clientFactory;
         }
 
+        public async Task<Result<Scope>> CreateScope(Scope scope) =>
+            await repository.CreateScope(scope);
 
-        public async Task<Result<bool>> Success(GoogleProduct product, string UserId, string code, string scope, string error = "") =>
-            await repository.Success(product, UserId, code, scope, error);
+        public async Task<Result<bool>> DeleteScope(string ScopeId) =>
+            await repository.DeleteScope(ScopeId);
 
-
+        public async Task<Result<List<Scope>>> GetScopes(GoogleProduct product) =>
+            await repository.GetScopes(product);
     }
 }
