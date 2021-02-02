@@ -15,8 +15,8 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'joel',
-  password: 'joel1991.-',
+  username: 'Alberto',
+  password: 'Alberto1971.-',
   server: 'http://localhost:8080',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
@@ -147,10 +147,13 @@ function getAttendees(json, newEmails) {
     for (const key in json) {
         if (json.hasOwnProperty(key)) {
             const attende = json[key];
-            const emails = attende.split(':')
-            if(emails.length === 3) {
-                getEmails(emails[2], newEmails);
+            if (attende != undefined) {
+                const emails = attende.split(':')
+                if (emails.length === 3) {
+                    getEmails(emails[2], newEmails);
+                }
             }
+           
         }
     }
 }
