@@ -1388,9 +1388,14 @@ class Calendar extends Component {
             'start': moment(values.StartTime),
             'end': moment(values.EndTime),          
             'timezone': 'Europe/Madrid',
-            'filename': filename,           
+            'filename': filename, 
             //'color': 'green'
         }
+
+        //event.json = ({
+        //    'RRULE': "FREQ=DAILY",
+        //    'SEQUENCE': "1",
+        //})
 
         //if (values.LexonClassification != undefined) {
         //    const properties = {
@@ -2165,7 +2170,7 @@ class Calendar extends Component {
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
         addCalendarEvent(calendarId,  event)
             .then(result => {
-                this.loadCalendarEvents(calendarId,event);
+                this.loadCalendarEvents(calendarId,true);
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }

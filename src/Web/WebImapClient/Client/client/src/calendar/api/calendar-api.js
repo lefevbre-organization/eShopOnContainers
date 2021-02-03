@@ -40,7 +40,7 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/joel/${calendar.summary}`,
+        filename: `/calendars/alberto/${calendar.summary}`,
         description: calendar.description        
     });   
     console.log(calendar)
