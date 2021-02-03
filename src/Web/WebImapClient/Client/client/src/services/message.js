@@ -10,7 +10,7 @@ import {
   setSelected, unlockMessages,
   updateCache, updateCacheIfExist
 } from '../actions/messages';
-import {updateFolder} from '../actions/folders';
+import {updateFolder, updateParentFolder} from '../actions/folders';
 import {abortControllerWrappers, abortFetch, AuthenticationException, credentialsHeaders, toJson} from './fetch';
 import {persistMessageCache} from './indexed-db';
 import {notifyNewMail} from './notification';
@@ -178,17 +178,24 @@ export function moveMessages(dispatch, credentials, fromFolder, toFolder, messag
   const fromFolderUpdated = {
     ...fromFolder
   };
+  const toFolderUpdated = {
+    ...toFolder
+  }
   messages.forEach(m => {
     dispatch(setSelected([m], false));
     // Calculate new fromFolder values
     fromFolderUpdated.messageCount -= 1;
     fromFolderUpdated.unreadMessageCount -= (m.seen ? 0 : 1);
     fromFolderUpdated.newMessageCount -= (m.recent ? 1 : 0);
+    toFolderUpdated.messageCount += 1;
+    toFolderUpdated.unreadMessageCount += (m.seen ? 0 : 1);
+    toFolderUpdated.newMessageCount += (m.recent ? 1 : 0);
   });
 
   // Update state with expected response from server
   dispatch(deleteFromCache(fromFolder, messages));
-  dispatch(updateFolder(fromFolderUpdated));
+  //dispatch(updateFolder(fromFolderUpdated));
+  dispatch(updateParentFolder(fromFolderUpdated));
   dispatch(lockMessages(messages));
   fetch(fromFolder._links['message.move.bulk'].href.replace('{toFolderId}', toFolder.folderId), {
     method: 'PUT',
@@ -201,14 +208,16 @@ export function moveMessages(dispatch, credentials, fromFolder, toFolder, messag
       if (Array.isArray(newMessages)) {
         dispatch(updateCache(toFolder, newMessages));
         // Update folder info with the last message (contains the most recent information)
-        dispatch(updateFolder(newMessages[newMessages.length - 1].folder));
+        //dispatch(updateFolder(newMessages[newMessages.length - 1].folder));
+        dispatch(updateParentFolder(toFolderUpdated));
       }
     })
     .catch(() => {
       dispatch(unlockMessages(messages));
       // Rollback state from dispatched expected responses
       dispatch(updateCache(fromFolder, messages));
-      dispatch(updateFolder(fromFolder));
+      //dispatch(updateFolder(fromFolder));
+      dispatch(updateParentFolder(fromFolder));
     });
 }
 

@@ -45,6 +45,20 @@ const folders = (state = INITIAL_STATE.folders, action = {}) => {
         activeRequests: state.activeRequests - 1
       };
     }
+    case ActionTypes.FOLDERS_UPDATE_PARENT_ONLY: {
+      const newUpdateState = {...state};
+      newUpdateState.items = removeAttributesFromFolders(_updateFolder(action.payload, newUpdateState.items));
+      // Update changed folders
+      newUpdateState.explodedItems = {...newUpdateState.explodedItems};
+      newUpdateState.explodedItems[action.payload.folderId] = action.payload;
+
+      // Remove any deleted folder
+      const remainingFolderIds = Object.keys(explodeFolders(newUpdateState.items));
+      Object.keys(newUpdateState.explodedItems)
+        .filter(key => !remainingFolderIds.includes(key))
+        .forEach(key => delete newUpdateState.explodedItems[key]);
+      return newUpdateState;
+    }
     case ActionTypes.FOLDERS_UPDATE: {
       const newUpdateState = {...state};
       newUpdateState.items = removeAttributesFromFolders(_updateFolder(action.payload, newUpdateState.items));
