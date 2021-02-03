@@ -275,5 +275,53 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             resultOut.errors.AddRange(resultIn.errors);
             resultOut.infos.AddRange(resultIn.infos);
         }
+
+        public string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace, string codeError)
+        {
+            if (resultReplace.IsAcknowledged)
+            {
+                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, msgModify, Codes.MailAccounts.UserUpsert);
+                }
+                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                {
+                    TraceInfo(result.infos, msgInsert, Codes.MailAccounts.UserUpsert);
+                    return resultReplace.UpsertedId.ToString();
+                }
+            }
+            else
+            {
+                TraceError(result.errors,
+                           new BaseDomainException(msgError),
+                           codeError,
+                           Codes.Areas.Mongo);
+            }
+            return null;
+        }
+
+        public void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate, string code)
+        {
+            if (resultUpdate.IsAcknowledged)
+            {
+                if (resultUpdate.MatchedCount == 0)
+                {
+                    TraceInfo(result.infos, "No se encuentran datos, asegurese que existe el elemento", code);
+                }
+                else if (resultUpdate.MatchedCount > 0)
+                {
+                    if (resultUpdate.ModifiedCount == 0)
+                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", code);
+                    else
+                        TraceInfo(result.infos, modifyMsg, code);
+
+                    result.data = resultUpdate.ModifiedCount > 0;
+                }
+            }
+            else
+            {
+                TraceError(result.errors, new BaseDomainException(errorMsg), code, Codes.Areas.Mongo);
+            }
+        }
     }
 }

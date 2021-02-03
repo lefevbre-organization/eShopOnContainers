@@ -1,4 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
@@ -22,10 +22,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IMongoClient _client = null;
         private readonly List<Type> _eventTypes;
         private readonly IEventBus _eventBus;
-        private readonly IOptions<GoogleDriveSettings> _settings;
+        private readonly IOptions<GoogleAccountSettings> _settings;
 
         public GoogleAccountContext(
-            IOptions<GoogleDriveSettings> settings,
+            IOptions<GoogleAccountSettings> settings,
               IEventBus eventBus
             )
         {
@@ -46,14 +46,25 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(UserGoogleAccount))) { BsonClassMap.RegisterClassMap<UserGoogleAccount>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GoogleAccountUser))) { BsonClassMap.RegisterClassMap<GoogleAccountUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Scope))) { BsonClassMap.RegisterClassMap<Scope>(); }
         }
 
-        public IMongoCollection<UserGoogleAccount> UserGoogleAccounts => Database.GetCollection<UserGoogleAccount>(_settings.Value.Collection);
+        public IMongoCollection<GoogleAccountUser> UserGoogleAccounts => Database.GetCollection<GoogleAccountUser>(_settings.Value.Collection);
 
-        public IMongoCollection<UserGoogleAccount> UserGoogleAccountsTransaction(IClientSessionHandle session)
+        public IMongoCollection<GoogleAccountUser> UserGoogleAccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserGoogleAccount>(_settings.Value.Collection);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<GoogleAccountUser>(_settings.Value.Collection);
+        }
+
+
+        // Se paso a googleAccountScope
+
+        public IMongoCollection<GoogleAccountScope> ScopeGoogleAccounts => Database.GetCollection<GoogleAccountScope>(_settings.Value.CollectionScope);
+        
+        public IMongoCollection<GoogleAccountScope> ScopesTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<GoogleAccountScope>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs

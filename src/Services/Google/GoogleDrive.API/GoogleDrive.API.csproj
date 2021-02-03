@@ -5,7 +5,7 @@
     <UserSecretsId>7778074f-025a-435c-bd16-9eea68bf12df</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..\..</DockerfileContext>
-    <RootNamespace>Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API</RootNamespace>
+    <RootNamespace>Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

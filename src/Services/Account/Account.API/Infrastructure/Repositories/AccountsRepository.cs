@@ -48,7 +48,7 @@
                 userMail.Id = ManageUpsert<UserMail>($"Don´t insert or modify the user {userMail.User}",
                     $"Se modifica el usuario {userMail.User}",
                     $"Se inserta el usuario {userMail.User} con {resultReplace.UpsertedId}",
-                     result, resultReplace, "AC02");
+                     result, resultReplace, Codes.MailAccounts.UserCreate);
 
                 result.data = userMail;
 
@@ -64,6 +64,30 @@
             }
             return result;
         }
+
+        //private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
+        //{
+        //    if (resultReplace.IsAcknowledged)
+        //    {
+        //        if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+        //        {
+        //            TraceInfo(result.infos, msgModify, Codes.MailAccounts.UserUpsert);
+        //        }
+        //        else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+        //        {
+        //            TraceInfo(result.infos, msgInsert, Codes.MailAccounts.UserUpsert);
+        //            return resultReplace.UpsertedId.ToString();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TraceError(result.errors,
+        //                   new AccountDomainException("Error when upsert user mail"),
+        //                   Codes.MailAccounts.UserUpsert,
+        //                   Codes.Areas.Mongo);
+        //    }
+        //    return null;
+        //}
 
         public async Task<Result<UserMail>> GetUser(string user)
         {
@@ -505,6 +529,7 @@
 
         #region Common
 
+
         private void ReviewUserMail(UserMail userMail)
         {
             userMail.User = userMail.User.ToUpperInvariant();
@@ -653,7 +678,7 @@
                 rawMessage.Id = ManageUpsert<RawMessageProvider>($"Don´t insert or modify the raw {rawMessage.User}",
                     $"Se modifica el usuario {rawMessage.User}",
                     $"Se inserta el usuario {rawMessage.User} con {resultReplace.UpsertedId}",
-                     result, resultReplace, "AC31");
+                     result, resultReplace, Codes.MailAccounts.RawCreate);
 
                 result.data = rawMessage;
 

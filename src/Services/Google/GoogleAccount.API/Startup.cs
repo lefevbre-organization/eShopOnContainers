@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 {
@@ -41,14 +43,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             //        .AddNegotiate();
 
+            services.AddDbContext<ApplicationDbContext>(options => {
+                options.UseSqlite("Data Source=DB/app.db");
+            });
+
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(HttpGlobalExceptionFilter));
                 options.Filters.Add(typeof(ValidateModelStateFilter));
             }) // Added for functional tests
-            .AddApplicationPart(typeof(AccountController).Assembly)
-            .AddNewtonsoftJson()
-                ;
+            .AddApplicationPart(typeof(AuthController).Assembly)
+            .AddApplicationPart(typeof(CredentialController).Assembly)
+            .AddApplicationPart(typeof(RevokeController).Assembly)
+            .AddNewtonsoftJson();
 
             services.AddSwagger(Configuration);
 
@@ -56,7 +63,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
 
             services.AddCustomHealthCheck(Configuration);
 
-            services.Configure<GoogleDriveSettings>(Configuration);
+            services.Configure<GoogleAccountSettings>(Configuration);
 
             //services.AddRedis();
 
@@ -75,9 +82,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IGoogleAccountRepository, GoogleAccountRepository>();
-            services.AddTransient<IGoogleAccountService, GoogleAccountService>();
-            //services.AddTransient<IIdentityService, IdentityService>();
+            
+
+            // Repositories
+            services.AddTransient<ICredentialRepository, CredentialRepository>();
+            services.AddTransient<IAuthRepository, AuthRepository>();
+            services.AddTransient<IRevokeRepository, RevokeRepository>();
+            services.AddTransient<IScopeRepository, ScopeRepository>();
+
+            // Services
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ICredentialService, CredentialService>();
+            services.AddTransient<IRevokeService, RevokeService>();
+            services.AddTransient<IScopeService, ScopeService>();
+            
 
             services.AddOptions();
             services.AddHttpClient();
