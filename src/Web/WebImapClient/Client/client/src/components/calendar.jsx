@@ -1368,16 +1368,18 @@ class Calendar extends Component {
         //var dateString = e.getUTCFullYear() + "/" + (e.getUTCMonth() + 1) + "/" + e.getUTCDate() + " " + e.getUTCHours() + ":" + e.getUTCMinutes() + ":" + e.getUTCSeconds();
 
         //important to update event
-        let filename = ""
+        let filename = "";
+        let saveType = "";
         if (values.filename == undefined) {
             // New Event
             filename = values.CalendarId + this.CreateGuid();
+            saveType = 'new'
         }
         else {
            // Edit event           
             filename = values.Id;
+            saveType = 'update'
         }
-
 
         //Event basic data
         var event = {
@@ -1389,6 +1391,7 @@ class Calendar extends Component {
             'end': moment(values.EndTime),          
             'timezone': 'Europe/Madrid',
             'filename': filename, 
+            'saveType': saveType,
             //'color': 'green'
         }
 
@@ -2066,7 +2069,7 @@ class Calendar extends Component {
                                     this.LoadCalendarList(false)
                                     return;
                                 }*/
-
+                
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
