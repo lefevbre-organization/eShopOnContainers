@@ -55,7 +55,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [HttpPost("[action]")]
         [ProducesResponseType(typeof(Result<Scope>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<Scope>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> CreateScope([FromBody] Scope scope)
+        public async Task<ActionResult> CreateScope([FromBody] GoogleAccountScope scope)
         {
             return Ok(await _service.CreateScope(scope));
         }

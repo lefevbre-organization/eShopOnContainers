@@ -7,8 +7,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 {
     public interface IScopeService
     {
-        Task<Result<Scope>> CreateScope(Scope scope);
+        Task<Result<GoogleAccountScope>> CreateScope(GoogleAccountScope scope);
         Task<Result<bool>> DeleteScope(string ScopeId);
-        Task<Result<List<Scope>>> GetScopes(GoogleProduct product);
+        Task<Result<List<GoogleAccountScope>>> GetScopes(GoogleProduct product);
     }
 }

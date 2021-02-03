@@ -35,13 +35,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             this.clientFactory = clientFactory;
         }
 
-        public async Task<Result<Scope>> CreateScope(Scope scope) =>
+        public async Task<Result<GoogleAccountScope>> CreateScope(GoogleAccountScope scope) =>
             await repository.CreateScope(scope);
 
         public async Task<Result<bool>> DeleteScope(string ScopeId) =>
             await repository.DeleteScope(ScopeId);
 
-        public async Task<Result<List<Scope>>> GetScopes(GoogleProduct product) =>
+        public async Task<Result<List<GoogleAccountScope>>> GetScopes(GoogleProduct product) =>
             await repository.GetScopes(product);
     }
 }
