@@ -10,6 +10,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
@@ -33,15 +34,48 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
-
-        public async Task<Result<Scope>> CreateScope(Scope scope)
+        private async Task<GoogleAccountScope> GetScopeForId(string scopeId)
         {
-            Result<Scope> result = new Result<Scope>();
+            return await _context.ScopeGoogleAccounts.Find(GetFilterScopeForId(scopeId)).FirstOrDefaultAsync();
+        }
+
+        private async Task<List<GoogleAccountScope>> GetScopesForProduct(GoogleProduct product)
+        {
+            return await _context.ScopeGoogleAccounts.Find(GetFilterScopeForProduct(product)).ToListAsync();
+        }
+
+        private static FilterDefinition<GoogleAccountScope> GetFilterScopeForId(string scopeId, bool onlyValid = true)
+        {
+            if (onlyValid)
+            {
+                return Builders<GoogleAccountScope>.Filter.And(
+                Builders<GoogleAccountScope>.Filter.Eq(u => u.Id, scopeId.ToUpperInvariant()),
+                Builders<GoogleAccountScope>.Filter.Eq(u => u.state, true));
+
+            }
+            return Builders<GoogleAccountScope>.Filter.Eq(u => u.Id, scopeId.ToUpperInvariant());
+        }
+
+        private static FilterDefinition<GoogleAccountScope> GetFilterScopeForProduct(GoogleProduct product, bool onlyValid = true)
+        {
+            if (onlyValid)
+            {
+                return Builders<GoogleAccountScope>.Filter.And(
+                Builders<GoogleAccountScope>.Filter.Eq(u => u.Product, product),
+                Builders<GoogleAccountScope>.Filter.Eq(u => u.state, true));
+
+            }
+            return Builders<GoogleAccountScope>.Filter.Eq(u => u.Product, product);
+        }
+
+        public async Task<Result<GoogleAccountScope>> CreateScope(GoogleAccountScope scope)
+        {
+            Result<GoogleAccountScope> result = new Result<GoogleAccountScope>();
 
             try
             {
-                await context.Scopes.AddAsync(scope);
-                await context.SaveChangesAsync();
+                // TODO Guardar Scope
+
                 result.data = scope;
             }
             catch (Exception ex)
@@ -59,15 +93,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             try
             {
 
-                Scope scope = await context.Scopes.FirstOrDefaultAsync(x => x.Id == Guid.Parse(ScopeId));
+                GoogleAccountScope scope = await GetScopeForId(ScopeId);
 
                 if(scope == null)
                 {
                     return result;
                 }
 
-                context.Scopes.Remove(scope);
-                await context.SaveChangesAsync();
+                // TODO Remover Scope
 
                 result.data = true;
 
@@ -80,13 +113,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return result;
         }
 
-        public async Task<Result<List<Scope>>> GetScopes(GoogleProduct product)
+        public async Task<Result<List<GoogleAccountScope>>> GetScopes(GoogleProduct product)
         {
-            Result<List<Scope>> result = new Result<List<Scope>>();
+            Result<List<GoogleAccountScope>> result = new Result<List<GoogleAccountScope>>();
 
             try
             {
-                List<Scope> scopes = await context.Scopes.Where(x => x.Product == product).ToListAsync();
+                List<GoogleAccountScope> scopes = await GetScopesForProduct(product);
                 result.data = scopes;
             }
             catch (Exception ex)

@@ -57,11 +57,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<GoogleAccountUser>(_settings.Value.Collection);
         }
 
-        public IMongoCollection<Scope> Scopes => Database.GetCollection<Scope>(_settings.Value.CollectionScope);
 
-        public IMongoCollection<Scope> ScopesTransaction(IClientSessionHandle session)
+        // Se paso a googleAccountScope
+
+        public IMongoCollection<GoogleAccountScope> ScopeGoogleAccounts => Database.GetCollection<GoogleAccountScope>(_settings.Value.CollectionScope);
+        
+        public IMongoCollection<GoogleAccountScope> ScopesTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Scope>(_settings.Value.Collection);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<GoogleAccountScope>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs

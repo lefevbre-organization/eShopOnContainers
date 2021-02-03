@@ -9,6 +9,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
@@ -32,12 +33,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
+        private async Task<GoogleAccountUser> GetUser(string LefebvreCredential)
+        {
+            return await _context.UserGoogleAccounts.Find(GetFilterUser(LefebvreCredential)).FirstOrDefaultAsync();
+        }
+
+        private static FilterDefinition<GoogleAccountUser> GetFilterUser(string LefebvreCredential, bool onlyValid = true)
+        {
+            if (onlyValid)
+            {
+                return Builders<GoogleAccountUser>.Filter.And(
+                Builders<GoogleAccountUser>.Filter.Eq(u => u.LefebvreCredential, LefebvreCredential.ToUpperInvariant()),
+                Builders<GoogleAccountUser>.Filter.Eq(u => u.state, true));
+            }
+
+            return Builders<GoogleAccountUser>.Filter.Eq(u => u.Id, LefebvreCredential.ToUpperInvariant());
+        }
+
         public async Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential)
         {
             Result<bool> result = new Result<bool>();
             try
             {
-                User user = await context.Users.Include(x => x.Credentials).FirstOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
 
                 if (user == null)
                 {
@@ -57,8 +75,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 credential.Refresh_Token = "";
                 credential.Code = "";
 
-                context.Credentials.Update(credential);
-                await context.SaveChangesAsync();
+                // TODO Remover la credencial del objeto
 
                 result.data = true;
 

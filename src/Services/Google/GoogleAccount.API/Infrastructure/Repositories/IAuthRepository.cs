@@ -6,7 +6,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 {
     public interface IAuthRepository
     {
-        //Task<Result<bool>> Success(GoogleProduct product, string UserId, string code, string scope, string error = "");
         Task<Result<Credential>> GetGredentials(GoogleProduct product, string UserId, string code, string scope, string error = "");
         Task<Result<bool>> UpdateCredentialsSuccess(Credential data);
     }

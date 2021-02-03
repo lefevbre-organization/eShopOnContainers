@@ -9,7 +9,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
     {
         Task<Result<UserCredentialResponse>> CreateCredential(string LefebvreCredential, CreateCredentialRequest request);
         Task<Result<UserResponse>> CreateUserCredential(string LefebvreCredential);
-        Task<Result<string>> GetAuthorizationLink(string LefebvreCredential, GoogleProduct product);
+        Task<Result<Credential>> GetCredentialUserForProduct(string LefebvreCredential, GoogleProduct product);
         Task<Result<List<UserCredentialResponse>>> GetCredentials(string LefebvreCredential);
         Task<Result<OAuth2TokenModel>> GetToken(string LefebvreCredential, GoogleProduct Product);
         Task<Result<UserResponse>> GetUserCredential(string LefebvreCredential);

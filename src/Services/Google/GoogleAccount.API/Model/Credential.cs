@@ -9,8 +9,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 
         public Guid Id { get; set; }
 
-        [ForeignKey("User")]
-        public Guid UserId { get; set; }
+        public String UserId { get; set; }
         public virtual User User { get; set; }
         public GoogleProduct Product { get; set; }
         public string GoogleMailAccount { get; set; }
@@ -44,4 +43,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
         public string Refresh_Token { get; set; }
         public bool Active { get; set; }
     }
+
 }

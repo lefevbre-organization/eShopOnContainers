@@ -38,7 +38,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 
         public Guid myId { get; set; }
         public string LefebvreCredential { get; set; }
-        public IEnumerable<Credential> Credentials { get; set; }
+        public List<Credential> Credentials { get; set; }
 
         /// <summary>
         /// Lista de cuentas asociadas a un usuario

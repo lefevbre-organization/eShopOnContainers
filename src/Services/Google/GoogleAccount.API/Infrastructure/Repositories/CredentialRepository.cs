@@ -12,6 +12,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
@@ -37,6 +38,41 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         }
 
 
+        private async Task<GoogleAccountUser> GetUser(string LefebvreCredential)
+        {
+            return await _context.UserGoogleAccounts.Find(GetFilterUser(LefebvreCredential)).FirstOrDefaultAsync();
+        }
+
+        private async Task<List<GoogleAccountScope>> GetScopes(GoogleProduct product)
+        {
+            return await _context.ScopeGoogleAccounts.Find(GetFilterScope(product)).ToListAsync();
+        }
+
+        private static FilterDefinition<GoogleAccountUser> GetFilterUser(string LefebvreCredential, bool onlyValid = true)
+        {
+            if (onlyValid)
+            {
+                return Builders<GoogleAccountUser>.Filter.And(
+                Builders<GoogleAccountUser>.Filter.Eq(u => u.LefebvreCredential, LefebvreCredential.ToUpperInvariant()),
+                Builders<GoogleAccountUser>.Filter.Eq(u => u.state, true));
+            }
+
+            return Builders<GoogleAccountUser>.Filter.Eq(u => u.Id, LefebvreCredential.ToUpperInvariant());
+        }
+
+        private static FilterDefinition<GoogleAccountScope> GetFilterScope(GoogleProduct product, bool onlyValid = true)
+        {
+            if(onlyValid)
+            {
+                return Builders<GoogleAccountScope>.Filter.And(
+                Builders<GoogleAccountScope>.Filter.Eq(u => u.Product, product),
+                Builders<GoogleAccountScope>.Filter.Eq(u => u.state, true));
+                    
+            }
+            return Builders<GoogleAccountScope>.Filter.Eq(u => u.Product, product);
+        }
+
+
         public async Task<Result<UserResponse>> GetUserCredential(string LefebvreCredential)
         {
 
@@ -44,7 +80,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
             try
             {
-                User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
                 if (user == null)
                 { 
                     TraceError(result.errors, new GoogleAccountDomainException("User not found."));
@@ -88,8 +124,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
             try
             {
-                User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
-            
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
+
                 if (user == null)
                 {
                     TraceError(result.errors, new GoogleAccountDomainException("User not found."));
@@ -131,7 +167,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
             try
             {
-                User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
 
                 if (user == null)
                 {
@@ -199,18 +235,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             try
             {
 
-                User user = await context.Users.SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
 
                 if (user == null)
                 {
-                    user = new User()
-                    {
-                        Id = Guid.NewGuid(),
-                        LefebvreCredential = LefebvreCredential
-                    };
+                    user.LefebvreCredential = LefebvreCredential;
+                    user.Credentials = new List<Credential>();
 
-                    await context.Users.AddAsync(user);
-                    await context.SaveChangesAsync();
+                    // TODO COMO GUARDAR DATOS
                 }
 
                 result.data = new UserResponse()
@@ -235,7 +267,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             try
             {
 
-                User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
 
                 if (user == null)
                 {
@@ -258,6 +290,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 Credential credential = new Credential()
                 {
+                    Id = Guid.NewGuid(),
                     ClientId = request.ClientId,
                     GoogleMailAccount = request.GoogleMailAccount,
                     Product = request.Product,
@@ -266,8 +299,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     Active = true
                 };
 
-                await context.Credentials.AddAsync(credential);
-                await context.SaveChangesAsync();
+                user.Credentials.Add(credential);
+
+                // TODO Guardar Registro
 
                 TraceInfo(result.infos, "Credential create");
 
@@ -288,15 +322,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return result;
         }
 
-        public async Task<Result<string>> GetAuthorizationLink(string LefebvreCredential, GoogleProduct product)
+        public async Task<Result<Credential>> GetCredentialUserForProduct(string LefebvreCredential, GoogleProduct product)
         {
 
-            Result<string> result = new Result<string>();
+            Result<Credential> result = new Result<Credential>();
 
 
             try
             {
-                User user = await context.Users.Include(x => x.Credentials).SingleOrDefaultAsync(x => x.LefebvreCredential == LefebvreCredential);
+                GoogleAccountUser user = await GetUser(LefebvreCredential);
 
                 if (user == null)
                 {
@@ -316,46 +350,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 {
                     TraceError(result.errors, new GoogleAccountDomainException("Credential not found."));
                     return result;
-                }
+                }          
 
-
-                List<Scope> scopes = await context.Scopes.Where(x => x.Product == product).ToListAsync();
-
-                StringBuilder _scopes = new StringBuilder();
-
-                if (scopes == null)
-                {
-                    TraceError(result.errors, new GoogleAccountDomainException("There are no scopes registered for this product."));
-                    return result;
-                }
-
-                for (int i = 0; i < scopes.Count - 1; i++)
-                {
-                    if (i != 0)
-                    {
-                        _scopes.Append(" ");
-                    }
-                    _scopes.Append(scopes[i].Url);
-                }
-
-                string url = "https://accounts.google.com/o/oauth2/v2/auth?";
-                url += "access_type=offline";
-                url += "&response_type=code";
-                url += "&client_id=";
-                url += credential.ClientId;
-                url += "&state=";
-                url += user.Id;
-                url += "&redirect_uri=";
-                url += _settings.Value.RedirectSuccessDriveUrl;
-                url += "/success";
-                url += $"&scope={_scopes.ToString()}";
-                url += "&include_granted_scopes=true";
-
-                result.data = url;
+                result.data = credential;
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex));
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA01");
             }
 
             return result;
