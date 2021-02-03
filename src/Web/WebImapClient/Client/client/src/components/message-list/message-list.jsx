@@ -145,10 +145,10 @@ class MessageList extends Component {
           onClick={() =>  this.messageClicked(message) }
           draggable={true}
           onDragStart={(event) => this.onDragStart(event, folder, message)}>
-          {folder.type.attribute !== '\\Sent' && (
+          {folder && folder.type && folder.type.attribute !== '\\Sent' && (
             <span className={styles.from}>{parseFrom(message.from)}</span>
           )}
-          {folder.type.attribute === '\\Sent' && (
+          {folder && folder.type && folder.type.attribute === '\\Sent' && (
             <span className={styles.from}>{parseTo(message.recipients)}</span>
           )}
           <span
