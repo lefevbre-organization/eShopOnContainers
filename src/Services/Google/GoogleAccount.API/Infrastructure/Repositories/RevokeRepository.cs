@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
@@ -9,6 +10,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
@@ -18,18 +20,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
-        private readonly ApplicationDbContext context;
 
         public RevokeRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<RevokeRepository> logger
-            , ApplicationDbContext context
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
-            this.context = context;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
@@ -50,11 +49,33 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return Builders<GoogleAccountUser>.Filter.Eq(u => u.Id, LefebvreCredential.ToUpperInvariant());
         }
 
-        public async Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential)
+
+        private static List<ArrayFilterDefinition> GetFilterFromCredentials(int product)
+        {
+            var arrayFilters = new List<ArrayFilterDefinition>();
+            var dictionary = new Dictionary<string, int>
+            {
+                { "i.product", product }
+            };
+            var doc = new BsonDocument(dictionary);
+            var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
+            arrayFilters.Add(docarrayFilter);
+            return arrayFilters;
+        }
+
+        public async Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential )
         {
             Result<bool> result = new Result<bool>();
+            //var arrayFilters = GetFilterFromCredentials(provider, mail);
+
             try
             {
+
+                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                //    GetFilterUser(LefebvreCredential),
+                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                //    new UpdateOptions { ArrayFilters = arrayFilters }
+                //);
                 GoogleAccountUser user = await GetUser(LefebvreCredential);
 
                 if (user == null)
@@ -64,6 +85,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 }
 
                 Credential credential = user.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
+
 
                 if (credential == null)
                 {

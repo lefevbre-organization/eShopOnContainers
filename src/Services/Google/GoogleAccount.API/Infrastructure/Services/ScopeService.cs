@@ -4,17 +4,14 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
-    public class ScopeService: BaseClass<ScopeService>, IScopeService
+    public class ScopeService : BaseClass<ScopeService>, IScopeService
     {
-
         private readonly IOptions<GoogleAccountSettings> settings;
         private readonly IScopeRepository repository;
         private readonly IEventBus eventBus;
