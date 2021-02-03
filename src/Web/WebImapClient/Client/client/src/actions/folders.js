@@ -9,3 +9,8 @@ export const updateFolder = folder => {
   folder = processFolders([folder])[0];
   return ({type: ActionTypes.FOLDERS_UPDATE, payload: folder});
 };
+
+export const updateParentFolder = folder => {
+  folder = processFolders([folder])[0];
+  return ({type: ActionTypes.FOLDERS_UPDATE_PARENT_ONLY, payload: folder})
+}

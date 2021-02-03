@@ -24,6 +24,8 @@ const settings = {
   parserLogging: true,
 };
 
+let newEmails = [];
+
 export const caldav = new Caldav(settings);
 
 // Get calendars
@@ -75,10 +77,14 @@ export const getEventList = async (calendar, selectedDate) => {
     return listEventsParser(events);
 };
 
-// Create event
-export const addCalendarEvent = async (calendar, event) => {   
-    const response = await caldav.createEvent(event); 
-  return response;
+// Create and update event
+export const addCalendarEvent = async (calendar, event) => { 
+    if(event.saveType === 'new')  {
+        const date = moment(event.start).add(1, 'days');
+        event.start = date._d;
+    }
+    const response = await caldav.createEvent(event);    
+    return response;    
 };
 
 export const deleteCalendarEvent = async (filename) => {   
@@ -89,10 +95,7 @@ export const deleteCalendarEvent = async (filename) => {
     return response;
 };
 
-
 function listEventsParser(list) {
-
-
     //allDay: true
     //calendarData: "BEGIN:VCALENDAR↵PRODID:-//IDN nextcloud.com//Calendar app 2.1.3//EN↵CALSCALE:GREGORIAN↵VERSION:2.0↵BEGIN:VEVENT↵CREATED:20210108T155756Z↵DTSTAMP:20210108T155801Z↵LAST-MODIFIED:20210108T155801Z↵SEQUENCE:2↵UID:eed9b1c1-4b37-41e5-a460-de783317d4bc↵DTSTART;VALUE=DATE:20210108↵DTEND;VALUE=DATE:20210109↵SUMMARY:prueba↵END:VEVENT↵END:VCALENDAR"
     //categories: undefined
@@ -106,15 +109,14 @@ function listEventsParser(list) {
     //start: "20210108"
     //summary: "prueba"
     //__proto__: Object
-
-
     let listParse = [];
-
     if (list.length > 0) {
-
         for (let i = 0; i < list.length; i++) {   
+          newEmails = [];
+          getAttendees(list[i].json, newEmails);
             listParse.push({
                 id: list[i].href,
+                filename: list[i].href,
                 summary: list[i].summary,
                 location: list[i].location,               
                 description: list[i].description,
@@ -128,7 +130,7 @@ function listEventsParser(list) {
                 //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
                // recurrence: recurrenceRule,
                 ImageName: "lefebvre",
-                //attendees: attendees,
+                attendees: newEmails,
                // extendedProperties: category,
             });
         }
@@ -142,7 +144,28 @@ function listEventsParser(list) {
     return result
 }
 
+function getAttendees(json, newEmails) {
+    for (const key in json) {
+        if (json.hasOwnProperty(key)) {
+            const attende = json[key];
+            if (attende != undefined) {
+                const emails = attende.split(':')
+                if (emails.length === 3) {
+                    getEmails(emails[2], newEmails);
+                }
+            }
+           
+        }
+    }
+}
 
+function getEmails(email, newEmails) {
+    newEmails.push({
+        email: email,
+        responseStatus: "needsAction"
+    });
+    return newEmails
+}
 
 function convertUTCDateToLocalDate(date, isAllDay) {
     var newDate = date
