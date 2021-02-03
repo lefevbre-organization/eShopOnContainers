@@ -7,7 +7,8 @@ import TopBarMessageViewer from './top-bar-message-viewer';
 import TopBarMessageEditor from './top-bar-message-editor';
 import { getSelectedFolder } from '../../selectors/folders';
 import { getCredentials } from '../../selectors/application';
-import { findTrashFolder, FolderTypes } from '../../services/folder';
+import { getFolders, findTrashFolder, FolderTypes } from '../../services/folder';
+
 import {
   forwardMessage,
   replyMessage,
@@ -227,6 +228,7 @@ const mapDispatchToProps = (dispatch) => ({
           trashFolder,
           selectedMessages
         );
+        //getFolders(dispatch, credentials, true)
       }
     }
   },
@@ -262,7 +264,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         stateProps.selectedFolder,
         stateProps.selectedMessage
       ),
-    deleteMessages: () =>
+    deleteMessages: () => 
       dispatchProps.deleteMessages(
         stateProps.credentials,
         stateProps.folders,
