@@ -124,6 +124,7 @@ class Calendar extends Component {
         reminders: [],
         eventType: undefined,
         isVisibility: false,
+        calendars: [],
         to2: [],
         //data: [{
         //  Id: 2,
@@ -336,8 +337,7 @@ class Calendar extends Component {
 
   render() {
         const { t, lexon } = this.props;
-        const { sideBar } = this.state;
-
+        const { sideBar, calendars } = this.state;
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
@@ -377,6 +377,7 @@ class Calendar extends Component {
                       onCalendarColorModify={this.calendarColorModify}
                       isIframeContainer={this.layoutIframe}
                       ref={sidebar => this.sidebarCalendarObj = sidebar}
+                      calendars={calendars}
                   />
 
                   <div
@@ -1264,6 +1265,8 @@ class Calendar extends Component {
         this.resourceCalendarData = []
         listCalendarList()
         .then(result => {
+            console.log('get calendars in sidebar', result.items)
+            this.setState({ calendars: result.items });
             this.resourceCalendarData = orderBy(result.items, "primary")
             this.props.getCalendars(this.resourceCalendarData);
             this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;

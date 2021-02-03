@@ -45,15 +45,6 @@ class SideBar extends Component {
       this.state = {
           calendars: [],         
       };
-      //listCalendarList()
-      //    .then(result => {
-      //          this.setState(                    
-      //              { calendars: result }
-      //          )
-      //      })
-      //      .catch(error => {
-      //          console.log('error ->', error);
-      //      });   
 
       this.navigateToList = this.navigateToList.bind(this);
       this.newEventClick = this.newEventClick.bind(this);
@@ -66,7 +57,6 @@ class SideBar extends Component {
    getCalendars() {
     listCalendarList()
         .then(result => {
-          console.log('listCalendarList', result);
             this.setState(
                 { calendars: result.items }
             )
@@ -100,7 +90,7 @@ class SideBar extends Component {
     }
 
   render() {
-    const { t, collapsed } = this.props;
+    const { t, collapsed, calendars } = this.props;
     return (
       <aside
         className={`${styles['side-bar']}
@@ -172,7 +162,8 @@ class SideBar extends Component {
                 {/* {this.state.calendars.map((c) => (
                     <div className={`${styles['calendaritem']}`}>{c.name}</div>
                 ))} */}
-                {this.state.calendars.map(el => {
+                { calendars.length > 0 ?
+                calendars.map(el => {
                     const color = '#0693e3';
                     const iconProps = {
                         icon: faCalendar,
@@ -195,7 +186,7 @@ class SideBar extends Component {
                             onCalendarColorModify={this.props.onCalendarColorModify}
                         />
                     );
-                })}
+                }) : null} 
 
 
         </PerfectScrollbar>
