@@ -23,7 +23,6 @@ app:                                                       # app global settings
       calendarapi: calendar-api                             # ingress entry for calendar api
       lexonapigw: lexonapigw                                # ingress entry for lexon gateway
       lexonapi: lexon-api                                   # ingress entry for lexon api
-      lexonmysqlapi: lexonmysql-api                         # XXXXXXXXXXXXXXX ingress entry for lexon mysql api
       centinelaapigw: centinelaapigw                        # ingress entry for centinela gateway
       centinelaapi: centinela-api                           # ingress entry for centinela api
       userutilsapi: userutils-api                           # ingress entry for userutils api
@@ -33,10 +32,14 @@ app:                                                       # app global settings
       databaseapi: database-api                             # ingress entry for database api     
       database: webdatabase                                 # ingress entry for database client
       conferenceapi: conference-api                         # ingress entry for conference api
+      googledriveapi: googledrive-api                       # ingress entry for google drive api
+      googleaccountapi: googleaccount-api                   # ingress entry for google account api
       addonlauncher: webaddonlauncher                       # ingress entry for launcher addon
       office365addonlexon: weboffice365addonlexon           # ingress entry for outlook addon lexon
       office365addoncentinela: weboffice365addoncentinela   # ingress entry for outlook addon centinela
       nextcloud: nextcloud                                  # ingress entry for infraestructure of nextcloud
+      vault: vault                                          # ingress entry for infraestructure of vault
+      seq: seq                                              # ingress entry for infraestructure of seq
       
   svc:                                                      # === services related settings ====
       identity: identity                                    # svc entry for identity api
@@ -56,7 +59,6 @@ app:                                                       # app global settings
       calendarapi: calendar-api                             # svc entry for calendar api
       lexonapigw: lexonapigw                                # svc entry for lexon gateway
       lexonapi: lexon-api                                   # svc entry for lexon api
-      lexonmysqlapi: lexonmysql-api                         # XXXXXXXXXXXXXXXXXXXXXXXX svc entry for lexon mysql api
       centinelaapigw: centinelaapigw                        # svc entry for centinela gateway
       centinelaapi: centinela-api                           # svc entry for centinela api
       userutilsapi: userutils-api                           # svc entry for userutils api
@@ -66,7 +68,11 @@ app:                                                       # app global settings
       databaseapi: database-api                             # svc entry for database api
       database: webdatabase                                 # svc entry for database client
       conferenceapi: conference-api                         # svc entry for conference api
+      googledriveapi: googledrive-api                       # svc entry for google drive api
+      googleaccountapi: googleaccount-api                   # svc entry for google account api
       addonlauncher: webaddonlauncher                       # svc entry for launcher addon
       office365addonlexon: weboffice365addonlexon           # svc entry for outlook addon lexon
       office365addoncentinela: weboffice365addoncentinela   # svc entry for outlook addon centinela
       nextcloud: nextcloud                                  # svc entry for infraestructure of nextcloud
+      vault: vault                                          # svc entry for infraestructure of vault
+      seq: seq                                              # svc entry for infraestructure of seq

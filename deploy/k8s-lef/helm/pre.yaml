@@ -68,6 +68,17 @@ conference:
   jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
   jitsiroom: 'https://meet-test.lefebvre.es'
 
+nextcloud:
+  host: lexbox-pre-nextcloud.lefebvre.es
+  username: admin
+  password: admin_pre
+
+mariadb:
+  enabled: true
+  db:
+    name: nextcloud_pre
+    user: nextcloud_pre
+    password: elefebvre_pre_1234
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default

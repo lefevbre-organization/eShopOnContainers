@@ -34,7 +34,9 @@ inf:
     database:
       database: DatabaseApiDb
     conference:
-      database: ConferenceApiDb    
+      database: ConferenceApiDb
+    googledrive:
+      database: GoogleAccountApiDB    
 
   eventbus:
     svc: rabbitmq           # Name of k8s svc for rabbitmq
