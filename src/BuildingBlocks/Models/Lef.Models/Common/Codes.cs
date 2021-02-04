@@ -175,7 +175,8 @@
         {
             public static readonly string Create = "GA01";
             public static readonly string Get = "GA02";
-
+            public static readonly string GetCredentials ="GA03";
+            public static readonly string UpdateCredentials = "GA04";
         }
     }
 }

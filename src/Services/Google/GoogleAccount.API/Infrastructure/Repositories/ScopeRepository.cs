@@ -30,13 +30,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
-
-
-        private async Task<List<GoogleAccountScope>> GetScopesForProduct(GoogleProduct product)
-        {
-            return await _context.ScopeGoogleAccounts.Find(GetFilterScopeForProduct(product)).ToListAsync();
-        }
-
         private static FilterDefinition<GoogleAccountScope> GetFilterScopeForId(string scopeId, bool onlyValid = true)
         {
             if (onlyValid)
@@ -66,15 +59,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             try
             {
 
-                var resultReplace = await _context.ScopeGoogleAccounts.ReplaceOneAsync(
-                    GetFilterScopeForProduct(scope.Product, false),
-                    scope,
-                    GetUpsertOptions());
+                await _context.ScopeGoogleAccounts.InsertOneAsync(scope);
 
-                scope.Id = ManageUpsert<GoogleAccountScope>($"Don´t insert or modify the scope {scope.Product}",
-                    $"Se modifica el scope {scope.Product}",
-                    $"Se inserta el scope {scope.Product} con {resultReplace.UpsertedId}",
-                     result, resultReplace, "GA03");
+                TraceInfo(result.infos, "Create Scope Success!");
 
                 result.data = scope;
             }

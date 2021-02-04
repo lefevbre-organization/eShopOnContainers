@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.EntityFrameworkCore;
@@ -21,18 +18,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
-        private readonly ApplicationDbContext context;
 
         public AuthRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<AuthRepository> logger
-            , ApplicationDbContext context
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
-            this.context = context;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
@@ -56,49 +50,90 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             {
                 if (error != "")
                 {
-                    TraceInfo(result.infos, "Hay un error en la au....r {error}", "GA02");
+                    TraceError(result.errors,
+                               new GoogleAccountDomainException($"Error de Autorización de google {error}"),
+                               Codes.GoogleAccount.GetCredentials,
+                               Codes.Areas.Mongo);
                 }
                 var resultUser = await _context.UserGoogleAccounts.Find(GetFilterUser(UserId)).FirstOrDefaultAsync();
-               // User user = await context.Users.Include(x => x.Credentials).FirstOrDefaultAsync(x => x.Id == Guid.Parse(UserId));
 
                 if (resultUser == null)
                 {
-                    TraceInfo(result.infos, "no encuentro ningún credencial con esos datos", "GA01");
+                    TraceInfo(result.infos, "no encuentro ningún credencial con esos datos", Codes.GoogleAccount.GetCredentials);
                     return result;
                 }
 
-                Credential credential = resultUser.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
+                //Credential credential = resultUser.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
+                Credential credential = resultUser.Credentials.SingleOrDefault(x => x.Product == product && x.Active == true);
 
                 if (credential == null)
                 {
-                    TraceInfo(result.infos, "No se obtiene credential activo parta drive", "GA02");
+                    TraceInfo(result.infos, "No se obtiene credential activo parta drive", Codes.GoogleAccount.GetCredentials);
                     return result;
                 }
 
                 credential.Code = code;
 
-                context.Credentials.Update(credential);
-                await context.SaveChangesAsync();
+                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                //    GetFilterUser(LefebvreCredential),
+                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                //    new UpdateOptions { ArrayFilters = arrayFilters }
+                //);
 
                 result.data = credential;
 
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA02", "SQLLITE");
+                TraceError(result.errors,
+                           new GoogleAccountDomainException("Error", ex),
+                           Codes.GoogleAccount.GetCredentials,
+                           Codes.Areas.Mongo);
             }
 
             return result;
         }
 
-        public async Task<Result<bool>> UpdateCredentialsSuccess(Credential data)
+        public async Task<Result<bool>> UpdateCredentialsSuccess(Credential data, string GooogleAccountUserId)
         {
             Result<bool> result = new Result<bool>();
 
-            context.Credentials.Update(data);
-            await context.SaveChangesAsync();
+            try
+            {
+                //var resultUser = await _context.UserGoogleAccounts.Find(GetFilterUser(GooogleAccountUserId)).FirstOrDefaultAsync();
 
-            result.data = true;
+                //var _credential = resultUser.Credentials.Where(x => x.Id == data.Id).SingleOrDefault();
+                //resultUser.Credentials.Remove(_credential);
+                //resultUser.Credentials.Add(data);
+
+                var update = Builders<GoogleAccountUser>.Update
+                    .Set("Credentials.$.Access_Token", data.Access_Token)
+                    .Set("Credentials.$.Refresh_Token", data.Refresh_Token)
+                    .Set("Credentials.$.Code", data.Code);
+
+                var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                        Builders<GoogleAccountUser>.Filter.And(
+                          Builders<GoogleAccountUser>.Filter.Eq(u => u.Id, GooogleAccountUserId),
+                          Builders<GoogleAccountUser>.Filter.Eq(u => u.state, true),
+                          Builders<GoogleAccountUser>.Filter.ElemMatch(u => u.Credentials, Builders<Credential>.Filter.Eq(c => c.Id, data.Id))
+                        ),
+                        update
+                );
+
+                result.data = ManageUpdate($"Don´t change de Credential of {GooogleAccountUserId}",
+                    $"Credential update for {GooogleAccountUserId}",
+                    result, resultUpdate, Codes.GoogleAccount.UpdateCredentials);
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors,
+                           new GoogleAccountDomainException("Error", ex),
+                           Codes.GoogleAccount.UpdateCredentials,
+                           Codes.Areas.Mongo);
+            }
+
+          //  result.data = true;
             return result;
 
 

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
-    using Context;
+    
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -23,7 +23,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     [Route("api/v1/[controller]")]
     public class AuthController : Controller
     {
-        private readonly ApplicationDbContext context;
+        
         private readonly IConfiguration configuration;
 
         private readonly IAuthService _service;

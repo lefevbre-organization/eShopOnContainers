@@ -16,7 +16,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
@@ -43,9 +42,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
             //        .AddNegotiate();
 
-            services.AddDbContext<ApplicationDbContext>(options => {
-                options.UseSqlite("Data Source=DB/app.db");
-            });
 
             services.AddControllers(options =>
             {

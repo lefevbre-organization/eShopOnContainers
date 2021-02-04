@@ -130,7 +130,7 @@
                     Builders<UserMail>.Update.Set(x => x.state, state)
                  );
 
-                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate, Codes.MailAccounts.UserStateChangue);
+                result.data = ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate, Codes.MailAccounts.UserStateChangue);
 
                 if (result.data)
                 {
@@ -159,7 +159,7 @@
                     Builders<UserMail>.Update.Set($"configUser", config)
                 );
 
-                ManageUpdate($"Don´t insert or modify the user´s config",
+               result.data = ManageUpdate($"Don´t insert or modify the user´s config",
                     $"Se modifica la configuración del usuario {user} con adjunction: {config.defaultAdjunction} - entity: {config.defaultEntity} - getContacts: {config.getContacts}",
                     result, resultUpdate, Codes.MailAccounts.UserConfigUpsert);
             }
@@ -311,7 +311,7 @@
                         FindAccountsDefaultsInCollection()
                     );
 
-                ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate, Codes.MailAccounts.AccountResetDefault);
+               result.data= ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate, Codes.MailAccounts.AccountResetDefault);
             }
             catch (Exception ex)
             {
@@ -447,7 +447,7 @@
                     new UpdateOptions { ArrayFilters = arrayFilters }
                 );
 
-                ManageUpdate($"Don´t insert or modify the relation in user {user}",
+                result.data = ManageUpdate($"Don´t insert or modify the relation in user {user}",
                     $"Se añade relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
                     result, resultUpdate, Codes.MailAccounts.RelationUpsert);
             }
@@ -475,7 +475,7 @@
                     new UpdateOptions { ArrayFilters = arrayFilters }
                 );
 
-                ManageUpdate($"Don´t remove the relation in user {user}",
+                result.data = ManageUpdate($"Don´t remove the relation in user {user}",
                     $"Se elimina relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
                     result, resultUpdate, Codes.MailAccounts.RelationRemove);
             }

@@ -276,7 +276,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             resultOut.infos.AddRange(resultIn.infos);
         }
 
-        public string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace, string codeError)
+        public string ManageUpsert<U>(string msgError, string msgModify, string msgInsert, Result<U> result, ReplaceOneResult resultReplace, string codeError)
         {
             if (resultReplace.IsAcknowledged)
             {
@@ -300,7 +300,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return null;
         }
 
-        public void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate, string code)
+        public bool ManageUpdate<U>(string errorMsg, string modifyMsg, Result<U> result, UpdateResult resultUpdate, string code)
         {
             if (resultUpdate.IsAcknowledged)
             {
@@ -315,13 +315,14 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                     else
                         TraceInfo(result.infos, modifyMsg, code);
 
-                    result.data = resultUpdate.ModifiedCount > 0;
+                    return resultUpdate.ModifiedCount > 0;
                 }
             }
             else
             {
                 TraceError(result.errors, new BaseDomainException(errorMsg), code, Codes.Areas.Mongo);
             }
+            return false;
         }
     }
 }
