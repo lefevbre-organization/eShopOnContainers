@@ -124,6 +124,7 @@ class Calendar extends Component {
         reminders: [],
         eventType: undefined,
         isVisibility: false,
+        calendars: [],
         to2: [],
         //data: [{
         //  Id: 2,
@@ -336,8 +337,7 @@ class Calendar extends Component {
 
   render() {
         const { t, lexon } = this.props;
-        const { sideBar } = this.state;
-
+        const { sideBar, calendars } = this.state;
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
@@ -377,6 +377,7 @@ class Calendar extends Component {
                       onCalendarColorModify={this.calendarColorModify}
                       isIframeContainer={this.layoutIframe}
                       ref={sidebar => this.sidebarCalendarObj = sidebar}
+                      calendars={calendars}
                   />
 
                   <div
@@ -1264,6 +1265,8 @@ class Calendar extends Component {
         this.resourceCalendarData = []
         listCalendarList()
         .then(result => {
+            console.log('get calendars in sidebar', result.items)
+            this.setState({ calendars: result.items });
             this.resourceCalendarData = orderBy(result.items, "primary")
             this.props.getCalendars(this.resourceCalendarData);
             this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
@@ -1368,16 +1371,18 @@ class Calendar extends Component {
         //var dateString = e.getUTCFullYear() + "/" + (e.getUTCMonth() + 1) + "/" + e.getUTCDate() + " " + e.getUTCHours() + ":" + e.getUTCMinutes() + ":" + e.getUTCSeconds();
 
         //important to update event
-        let filename = ""
+        let filename = "";
+        let saveType = "";
         if (values.filename == undefined) {
             // New Event
             filename = values.CalendarId + this.CreateGuid();
+            saveType = 'new'
         }
         else {
            // Edit event           
             filename = values.Id;
+            saveType = 'update'
         }
-
 
         //Event basic data
         var event = {
@@ -1388,9 +1393,15 @@ class Calendar extends Component {
             'start': moment(values.StartTime),
             'end': moment(values.EndTime),          
             'timezone': 'Europe/Madrid',
-            'filename': filename,           
+            'filename': filename, 
+            'saveType': saveType,
             //'color': 'green'
         }
+
+        //event.json = ({
+        //    'RRULE': "FREQ=DAILY",
+        //    'SEQUENCE': "1",
+        //})
 
         //if (values.LexonClassification != undefined) {
         //    const properties = {
@@ -2061,7 +2072,7 @@ class Calendar extends Component {
                                     this.LoadCalendarList(false)
                                     return;
                                 }*/
-
+                
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
@@ -2165,7 +2176,7 @@ class Calendar extends Component {
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
         addCalendarEvent(calendarId,  event)
             .then(result => {
-                this.loadCalendarEvents(calendarId,event);
+                this.loadCalendarEvents(calendarId,true);
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }

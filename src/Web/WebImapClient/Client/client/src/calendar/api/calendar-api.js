@@ -40,7 +40,7 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/joel/${calendar.summary}`,
+        filename: `/calendars/alberto/${calendar.summary}`,
         description: calendar.description        
     });   
     console.log(calendar)
@@ -78,15 +78,14 @@ export const getEventList = async (calendar, selectedDate) => {
 };
 
 // Create and update event
-export const addCalendarEvent = async (calendar, event) => {  
-    const date = moment(event.start).add(1, 'days');
-    event.start = date._d;
-    console.log('addCalendarEvent --> ', event)
+export const addCalendarEvent = async (calendar, event) => { 
+    if(event.saveType === 'new')  {
+        const date = moment(event.start).add(1, 'days');
+        event.start = date._d;
+    }
     const response = await caldav.createEvent(event);    
     return response;    
 };
-
-
 
 export const deleteCalendarEvent = async (filename) => {   
     console.log(filename);
@@ -95,7 +94,6 @@ export const deleteCalendarEvent = async (filename) => {
     });    
     return response;
 };
-
 
 function listEventsParser(list) {
     //allDay: true
