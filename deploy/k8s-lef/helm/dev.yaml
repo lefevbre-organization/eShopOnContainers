@@ -82,7 +82,7 @@ mariadb:
     password: elefebvre_dev_1234
 
   replication:
-    enabled: true
+    enabled: false
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default

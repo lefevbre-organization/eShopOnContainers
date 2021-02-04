@@ -96,7 +96,7 @@ nextcloud:
   # Default confgurations can be found here: https://github.com/nextcloud/docker/tree/master/16.0/apache/config
   defaultConfigs:
     # To protect /var/www/html/config
-    .htaccess: true
+    .htaccess: false
     # Redis default configuration
     redis.config.php: true
     # Apache configuration for rewrite urls
@@ -225,7 +225,7 @@ mariadb:
     password: elefebvre_1234
 
   replication:
-    enabled: true
+    enabled: false
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
