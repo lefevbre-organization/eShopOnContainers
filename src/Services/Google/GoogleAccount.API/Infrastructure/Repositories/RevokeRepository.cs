@@ -63,45 +63,65 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return arrayFilters;
         }
 
-        public async Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential )
+        public async Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential, GoogleProduct idProduct = GoogleProduct.Drive)
         {
             Result<bool> result = new Result<bool>();
-            //var arrayFilters = GetFilterFromCredentials(provider, mail);
+            //var arrayFilters = GetFilterFromCredentials((int)idProduct);
+
+            // TODO esta es la revocacion de credenciales, revisalo y mira si funciona
 
             try
             {
 
-                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
-                //    GetFilterUser(LefebvreCredential),
-                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
-                //    new UpdateOptions { ArrayFilters = arrayFilters }
-                //);
-                GoogleAccountUser user = await GetUser(LefebvreCredential);
+                var update = Builders<GoogleAccountUser>.Update
+                    .Set("Credentials.$.Access_Token", "")
+                    .Set("Credentials.$.Refresh_Token", "")
+                    .Set("Credentials.$.Code", ""); 
+                
+                var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                        Builders<GoogleAccountUser>.Filter.And(
+                          Builders<GoogleAccountUser>.Filter.Eq(u => u.LefebvreCredential, LefebvreCredential),
+                          Builders<GoogleAccountUser>.Filter.Eq(u => u.state, true),
+                          Builders<GoogleAccountUser>.Filter.ElemMatch(u => u.Credentials, Builders<Credential>.Filter.Eq(c=> c.Product, idProduct))
+                        ),
+                        update
+                );
 
-                if (user == null)
-                {
-                    TraceError(result.errors, new GoogleAccountDomainException("User not Found"));
-                    return result;
-                }
+                result.data = ManageUpdate($"Don´t change de Credential in {LefebvreCredential}",
+                    $"Credential revoke in {LefebvreCredential}",
+                    result, resultUpdate, "GA10");
 
-                Credential credential = user.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
+                ////var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                ////    GetFilterUser(LefebvreCredential),
+                ////    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                ////    new UpdateOptions { ArrayFilters = arrayFilters }
+                ////);
+                //GoogleAccountUser user = await GetUser(LefebvreCredential);
+
+                //if (user == null)
+                //{
+                //    TraceError(result.errors, new GoogleAccountDomainException("User not Found"));
+                //    return result;
+                //}
+
+                //Credential credential = user.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
 
 
-                if (credential == null)
-                {
-                    TraceError(result.errors, new GoogleAccountDomainException("User Credential not Found."));
-                    return result;
-                }
+                //if (credential == null)
+                //{
+                //    TraceError(result.errors, new GoogleAccountDomainException("User Credential not Found."));
+                //    return result;
+                //}
 
-                credential.Access_Token = "";
-                credential.Refresh_Token = "";
-                credential.Code = "";
+                //credential.Access_Token = "";
+                //credential.Refresh_Token = "";
+                //credential.Code = "";
 
-                // TODO Remover la credencial del objeto
+               
 
-                result.data = true;
+                //result.data = true;
 
-                TraceInfo(result.infos, "Credential revoke.");
+               // TraceInfo(result.infos, "Credential revoke.");
             }
             catch (Exception ex)
             {

@@ -22,18 +22,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
-        private readonly ApplicationDbContext context;
+        //private readonly ApplicationDbContext context;
 
         public CredentialRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<CredentialRepository> logger
-            , ApplicationDbContext context
+            //, ApplicationDbContext context
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
-            this.context = context;
+            //this.context = context;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
@@ -231,29 +231,46 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         public async Task<Result<UserResponse>> CreateUserCredential(string LefebvreCredential)
         {
             Result<UserResponse> result = new Result<UserResponse>();
+            Result<GoogleAccountUser> resultUser = new Result<GoogleAccountUser>();
+            // TODO No entiendo si esta creando una entidad nueva o puede modificrse una que esxista
+            // si es asi seria replaceone o updateone
+            // en caso de que estes creando y no hay duda 
+            // yo creo que puedes devolver el user creado entero en vez de un response
 
             try
             {
 
-                GoogleAccountUser user = await GetUser(LefebvreCredential);
+                //GoogleAccountUser user = await GetUser(LefebvreCredential);
 
-                if (user == null)
+                var user = new GoogleAccountUser() { LefebvreCredential = LefebvreCredential, state = true, accounts = new List<Credential>() };
+
+                //await _context.UserGoogleAccounts.InsertOneAsync(user);
+
+
+                var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                    GetFilterUser(LefebvreCredential, false),
+                    Builders<GoogleAccountUser>.Update.Set($"LefebvreCredential", LefebvreCredential)
+
+                );
+
+                var ok = ManageUpdate($"Don´t insert or modify the LefebvreCredential",
+                     $"Se modifica el LefebvreCredential {LefebvreCredential}",
+                     resultUser, resultUpdate, "GA07");
+
+                if (ok)
                 {
-                    user.LefebvreCredential = LefebvreCredential;
-                    user.Credentials = new List<Credential>();
-
-                    // TODO COMO GUARDAR DATOS
+                    result.data = new UserResponse()
+                    {
+                        Id = user.Id,
+                        LefebvreCredential = user.LefebvreCredential
+                    };
+                    resultUser.data = user;
                 }
-
-                result.data = new UserResponse()
-                {
-                    Id = user.Id,
-                    LefebvreCredential = user.LefebvreCredential
-                };
+   
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex));
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA07");
             }
 
 
@@ -288,35 +305,62 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     return result;
                 }
 
-                Credential credential = new Credential()
+                //Credential credential = new Credential()
+                //{
+                //    Id = Guid.NewGuid(),
+                //    ClientId = request.ClientId,
+                //    GoogleMailAccount = request.GoogleMailAccount,
+                //    Product = request.Product,
+                //    Secret = request.Secret,
+                //    UserId = user.Id,
+                //    Active = true
+                //};
+
+                //user.Credentials.Add(credential);
+
+                var builder = Builders<GoogleAccountUser>.Filter;
+                var filter = GetFilterUser(LefebvreCredential);
+                var update = Builders<GoogleAccountUser>.Update
+                    .AddToSet(x => x.Credentials, new Credential
+                    {
+                        Id = Guid.NewGuid(),
+                        ClientId = request.ClientId,
+                        GoogleMailAccount = request.GoogleMailAccount,
+                        Product = request.Product,
+                        Secret = request.Secret,
+                        UserId = user.Id,
+                        Active = true
+                    });
+                var updateResult = await _context.UserGoogleAccounts.UpdateOneAsync(filter, update);
+
+               var ok = ManageUpdate($"Error -> Don´t changue the GoogleAccountUser {LefebvreCredential}", 
+                             $"Add the credential for user {request.Product} to GoogleAccountuser {LefebvreCredential}",
+                             result,
+                             updateResult,
+                             "GA05");
+
+
+                // TODO Abner, se hace como te he puesto, los chequeos los dejamos , pero podemos optimizarlo en el futuro, no se porque devuelves este objeto y no devuelves la credencial, x ejemplo
+                if (ok){
+                    TraceInfo(result.infos, "Credential create", "GA05");
+                    result.data = new UserCredentialResponse()
+                    {
+                        ClientId = request.ClientId,
+                        GoogleMailAccount = request.GoogleMailAccount,
+                        Product = request.Product,
+                        Secret = request.Secret
+                    };
+                }
+                else
                 {
-                    Id = Guid.NewGuid(),
-                    ClientId = request.ClientId,
-                    GoogleMailAccount = request.GoogleMailAccount,
-                    Product = request.Product,
-                    Secret = request.Secret,
-                    UserId = user.Id,
-                    Active = true
-                };
+                    TraceError(result.errors, new GoogleAccountDomainException("Don´t update GoogleAccountUser"), "GA05");
 
-                user.Credentials.Add(credential);
-
-                // TODO Guardar Registro
-
-                TraceInfo(result.infos, "Credential create");
-
-                result.data = new UserCredentialResponse()
-                {
-                    ClientId = credential.ClientId,
-                    GoogleMailAccount = credential.GoogleMailAccount,
-                    Product = credential.Product,
-                    Secret = credential.Secret
-                };
+                }
 
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex));
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA05");
             }
 
             return result;
