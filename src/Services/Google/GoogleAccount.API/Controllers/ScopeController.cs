@@ -47,9 +47,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<List<Scope>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<Scope>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult> GetAllForProduct([FromQuery] GoogleProduct product)
+        public async Task<ActionResult> GetAllForProduct([FromQuery] GoogleProduct? product)
         {
-            return Ok(await _service.GetScopes(product));
+
+            if (product == null)
+                return BadRequest("Debe tener un valor válido para Producto (0 Drive).");
+
+            return Ok(await _service.GetScopes(product.Value));
         }
 
         [HttpPost("[action]")]
@@ -57,6 +61,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [ProducesResponseType(typeof(Result<Scope>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CreateScope([FromBody] GoogleAccountScope scope)
         {
+            if (scope == null)
+                return BadRequest("Necesita ingresar un modelo válido");
+
+            if (string.IsNullOrEmpty(scope.Url))
+                return BadRequest("Un Scope necesita como mínimo una url válida");
+
             return Ok(await _service.CreateScope(scope));
         }
 
@@ -65,6 +75,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> DeleteScope([FromQuery] string ScopeId)
         {
+
+            if (string.IsNullOrEmpty(ScopeId))
+                return BadRequest("Necesita un Id válido para eliminar su Scope");
+
             return Ok(await _service.DeleteScope(ScopeId));
         }
 

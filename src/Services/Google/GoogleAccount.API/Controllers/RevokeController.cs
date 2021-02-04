@@ -58,6 +58,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         public async Task<ActionResult<Result<bool>>> GetDrive([FromQuery] string LefebvreCredential)
         {
 
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La credencial es requerida.");
+
             var result = await _service.GetRevokingDriveCredentialAsync(LefebvreCredential);
 
             if (!result.data)
