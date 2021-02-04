@@ -1,19 +1,9 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
-    public class Scope
-    {
-        public Guid Id { get; set; }
-        public string Url { get; set; }
-        public string Name { get; set; }
-        public GoogleProduct Product { get; set; }
-    }
-
     public class GoogleAccountScope : MongoModel
     {
         [BsonId]

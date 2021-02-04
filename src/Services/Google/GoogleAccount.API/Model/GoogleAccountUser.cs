@@ -1,5 +1,4 @@
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
@@ -10,23 +9,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
     using MongoDB.Bson.Serialization.Attributes;
     using System.Collections.Generic;
 
-    #endregion Using
-
-    public class User
-    {
-
-        public User()
-        {
-            Credentials = new HashSet<Credential>();
-        }
-
-        public Guid Id { get; set; }
-        public string LefebvreCredential { get; set; }
-        public IEnumerable<Credential> Credentials { get; set; }
-        
-    }
-
- 
     [BsonIgnoreExtraElements]
     public class GoogleAccountUser : MongoModel
     {

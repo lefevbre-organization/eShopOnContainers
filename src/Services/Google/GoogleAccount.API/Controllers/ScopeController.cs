@@ -44,8 +44,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<List<Scope>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<Scope>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<GoogleAccountScope>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<GoogleAccountScope>>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> GetAllForProduct([FromQuery] GoogleProduct? product)
         {
 
@@ -56,8 +56,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         }
 
         [HttpPost("[action]")]
-        [ProducesResponseType(typeof(Result<Scope>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<Scope>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<GoogleAccountScope>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<GoogleAccountScope>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CreateScope([FromBody] GoogleAccountScope scope)
         {
             if (scope == null)

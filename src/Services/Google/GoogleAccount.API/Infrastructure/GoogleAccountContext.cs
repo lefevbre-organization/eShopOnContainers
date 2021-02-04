@@ -47,7 +47,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(GoogleAccountUser))) { BsonClassMap.RegisterClassMap<GoogleAccountUser>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Scope))) { BsonClassMap.RegisterClassMap<Scope>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GoogleAccountScope))) { BsonClassMap.RegisterClassMap<GoogleAccountScope>(); }
         }
 
         public IMongoCollection<GoogleAccountUser> UserGoogleAccounts => Database.GetCollection<GoogleAccountUser>(_settings.Value.Collection);
