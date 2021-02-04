@@ -1,6 +1,6 @@
-﻿import Caldav from 'caldavjs-nextcloud';
+﻿import Caldav from '../../services/caldavjs-nextcloud';
 import moment from 'moment';
-
+// import Caldav from 'caldavjs-nextcloud';
 
 const CalendarColors = [
     { value: 'lightBlue', color: '#0078d4', id: '0' },
@@ -15,8 +15,8 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'Alberto',
-  password: 'Alberto1971.-',
+  username: 'joel',
+  password: 'joel1991.-',
   server: 'http://localhost:8080',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
@@ -24,7 +24,7 @@ const settings = {
   parserLogging: true,
 };
 
-let newEmails = [];
+let attendees = [];
 
 export const caldav = new Caldav(settings);
 
@@ -40,7 +40,7 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/alberto/${calendar.summary}`,
+        filename: `/calendars/joel/${calendar.summary}`,
         description: calendar.description        
     });   
     console.log(calendar)
@@ -69,6 +69,7 @@ export const listEvents = async (calendar) => {
 
 // Get events
 export const getEventList = async (calendar, selectedDate) => {
+    console.log('listEventsParser', calendar, selectedDate)
     const events = await caldav.listEvents({
         filename: calendar.replace(settings.basePath, ''),
         start: '20200601T000000Z',
@@ -79,6 +80,7 @@ export const getEventList = async (calendar, selectedDate) => {
 
 // Create and update event
 export const addCalendarEvent = async (calendar, event) => { 
+    console.log('addCalendarEvent --->', event)
     if(event.saveType === 'new')  {
         const date = moment(event.start).add(1, 'days');
         event.start = date._d;
@@ -109,11 +111,41 @@ function listEventsParser(list) {
     //start: "20210108"
     //summary: "prueba"
     //__proto__: Object
+    console.log('listEventsParser', list)
     let listParse = [];
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {   
-          newEmails = [];
-          getAttendees(list[i].json, newEmails);
+        
+         let recurrenceRule = [] ;   
+         attendees = [];
+        console.log('listEventsParser', list[i])
+        if(list[i].json.RRULE != undefined ) {
+          let str;
+          let KeyPattern = 'FREQ';
+          let byDay = "BYDAY"; 
+          let ValueDay = ''
+          const type = list[i].json.RRULE.split('=')[1];
+          const key = type.split(';')[0];
+          switch (key) {
+              case 'DAILY':
+                  let strv = "MO,TU,WE,TH,FR,ST,SU";
+                  console.log(strv)
+                  ValueDay = strv
+                  break;
+              case 'MONTHLY':
+                  console.log('tomando MENSUAL')
+                  break;
+              default:
+                  break;
+          }
+          str = KeyPattern + "=" + key + ";" + byDay + "=" + ValueDay + ";";
+        //   FREQ=weekly;interval=1;month=0;dayOfMonth=0;BYDAY=MO,TU,WE,TH,FR;firstDayOfWeek=sunday;index=first;
+          console.log(str)
+        } else {
+          recurrenceRule = null;
+        }
+         
+          getAttendees(list[i].json, attendees);
             listParse.push({
                 id: list[i].href,
                 filename: list[i].href,
@@ -128,9 +160,9 @@ function listEventsParser(list) {
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].allDay,
                 //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
-               // recurrence: recurrenceRule,
+                // recurrence: list[i].json.RRULE,
                 ImageName: "lefebvre",
-                attendees: newEmails,
+                attendees: attendees,
                // extendedProperties: category,
             });
         }
@@ -144,14 +176,14 @@ function listEventsParser(list) {
     return result
 }
 
-function getAttendees(json, newEmails) {
+function getAttendees(json, attendees) {
     for (const key in json) {
         if (json.hasOwnProperty(key)) {
             const attende = json[key];
             if (attende != undefined) {
                 const emails = attende.split(':')
                 if (emails.length === 3) {
-                    getEmails(emails[2], newEmails);
+                    getEmails(emails[2], attendees);
                 }
             }
            
@@ -159,12 +191,12 @@ function getAttendees(json, newEmails) {
     }
 }
 
-function getEmails(email, newEmails) {
-    newEmails.push({
+function getEmails(email, attendees) {
+    attendees.push({
         email: email,
         responseStatus: "needsAction"
     });
-    return newEmails
+    return attendees
 }
 
 function convertUTCDateToLocalDate(date, isAllDay) {
