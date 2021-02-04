@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -65,11 +66,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     resultCredential.data.Scope = token.scope;
                     resultCredential.data.Token_Type = token.token_type;
 
-                    result = await repository.UpdateCredentialsSuccess(resultCredential.data);
+                    result = await repository.UpdateCredentialsSuccess(resultCredential.data, UserId);
                 }
                 else
                 {
-                    //TraceError(result.errors, new )
+                    TraceError(result.errors, new GoogleAccountDomainException($"Error la llamda a la autorhización de Google, StatusCode: {response.StatusCode}"), "GA02", "MONGO");
                 }
             }
             return result;

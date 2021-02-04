@@ -7,7 +7,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
     using System;
     using System.Net;
-    using Context;
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -57,6 +56,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult<Result<bool>>> GetDrive([FromQuery] string LefebvreCredential)
         {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La credencial es requerida.");
 
             var result = await _service.GetRevokingDriveCredentialAsync(LefebvreCredential);
 

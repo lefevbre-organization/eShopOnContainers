@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.EntityFrameworkCore;
@@ -22,18 +21,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
-        //private readonly ApplicationDbContext context;
 
         public CredentialRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<CredentialRepository> logger
-            //, ApplicationDbContext context
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
-            //this.context = context;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
@@ -128,15 +124,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 if (user == null)
                 {
-                    TraceError(result.errors, new GoogleAccountDomainException("User not found."));
+                    TraceError(result.errors, new GoogleAccountDomainException("User not found."), "GA04");
                     return result;
                 }
 
                 if (user.Credentials == null)
+                {
+                    TraceError(result.errors, new GoogleAccountDomainException("El Usuario no tiene credenciales"), "GA04");
                     return result;
+                }
 
                 if (user.Credentials.Count() == 0)
+                {
+                    TraceError(result.errors, new GoogleAccountDomainException("El usuario no tiene credenciales"), "GA04");
                     return result;
+                }
 
                 List<UserCredentialResponse> list = new List<UserCredentialResponse>();
 
@@ -171,7 +173,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 if (user == null)
                 {
-                    TraceError(result.errors, new GoogleAccountDomainException("User not found."));
+                    TraceError(result.errors, new GoogleAccountDomainException("User not found."), "GA04");
                     return result;
                 }
 
@@ -273,7 +275,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA07");
             }
 
-
             return result;
         }
 
@@ -301,7 +302,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 if (_credential != null)
                 {
-                    TraceError(result.errors, new GoogleAccountDomainException("The credential already exists."));
+                    TraceError(result.errors, new GoogleAccountDomainException("The credential already exists."), "GA04");
                     return result;
                 }
 
