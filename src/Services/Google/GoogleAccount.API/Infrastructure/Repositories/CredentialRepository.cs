@@ -259,6 +259,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                      $"Se modifica el LefebvreCredential {LefebvreCredential}",
                      resultUser, resultUpdate, "GA07");
 
+                AddResultTrace(resultUser, result);
+
                 if (ok)
                 {
                     result.data = new UserResponse()
@@ -266,7 +268,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                         Id = user.Id,
                         LefebvreCredential = user.LefebvreCredential
                     };
-                    resultUser.data = user;
+                    //resultUser.data = user;
                 }
    
             }
