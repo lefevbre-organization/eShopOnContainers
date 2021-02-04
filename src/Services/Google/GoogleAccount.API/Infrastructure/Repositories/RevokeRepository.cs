@@ -96,7 +96,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 credential.Refresh_Token = "";
                 credential.Code = "";
 
-                // TODO Remover la credencial del objeto
+                user.Credentials.Remove(credential);
+
+                user.Credentials.Add(credential);
 
                 result.data = true;
 

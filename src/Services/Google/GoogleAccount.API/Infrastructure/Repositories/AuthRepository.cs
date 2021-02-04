@@ -70,7 +70,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 credential.Code = code;
 
-                // _context.UserGoogleAccounts.UpdateOneAsync(GetFilterUser(UserId, false), )
+                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                //    GetFilterUser(LefebvreCredential),
+                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                //    new UpdateOptions { ArrayFilters = arrayFilters }
+                //);
 
                 result.data = credential;
 
@@ -96,7 +100,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 resultUser.Credentials.Add(data);
 
                 // Ayuda con la implementación de UpdateOneAsync
-                // _context.UserGoogleAccounts.UpdateOneAsync(GetFilterUser(UserId, false), )
+                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                //    GetFilterUser(LefebvreCredential),
+                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                //    new UpdateOptions { ArrayFilters = arrayFilters }
+                //);
 
             }
             catch (Exception ex)

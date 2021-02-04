@@ -306,7 +306,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 // UpdateDefinition<GoogleAccountUser> update = user;
 
                 // TODO este método me está dando problemas, no se que poner en Definition<GoogleAccountUser>()
-                // _context.UserGoogleAccounts.UpdateOneAsync(GetFilterUser(LefebvreCredential, true), user);
+                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                //    GetFilterUser(LefebvreCredential),
+                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                //    new UpdateOptions { ArrayFilters = arrayFilters }
+                //);
 
                 TraceInfo(result.infos, "Credential create");
 
