@@ -22,18 +22,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
-        private readonly ApplicationDbContext context;
 
         public CredentialRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<CredentialRepository> logger
-            , ApplicationDbContext context
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
-            this.context = context;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 

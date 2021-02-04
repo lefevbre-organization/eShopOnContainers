@@ -9,6 +9,7 @@
     <RootNamespace>Lefebvre.eLefebvreOnContainers.Services.Centinela.API</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Centinela.API' " />
   <ItemGroup>
     <_ContentIncludedByDefault Remove="appsettings.Staging.json" />
   </ItemGroup>
