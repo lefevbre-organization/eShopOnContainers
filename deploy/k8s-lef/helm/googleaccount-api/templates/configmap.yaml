@@ -21,5 +21,5 @@ data:
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   googleaccount__ConnectionString: mongodb://{{ $mongo }}
-  googleaccount__Database: {{ .Values.inf.mongo.centinela.database }}
+  googleaccount__Database: {{ .Values.inf.mongo.googleaccount.database }}
   all__Version: {{ .Chart.Version | quote }}

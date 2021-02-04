@@ -9,7 +9,7 @@ Param(
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
         # "userutils.api"
         # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", #  "database.api", 
-        "googledrive.api", "googleaccount.api",        
+        "googledrive.api", "googleaccount.api"        
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", # "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         # "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", # "webdatabaseapigw", 
@@ -19,13 +19,13 @@ Param(
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
         # "userutils.api"
         # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",        #  "database.api",
-        "googledrive.api", "googleaccount.api",
+        "googledrive.api", "googleaccount.api"
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient",         # "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-40.1",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-40",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
