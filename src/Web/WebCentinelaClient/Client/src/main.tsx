@@ -317,6 +317,11 @@ class Main extends Component<Props, State> {
             z-index: 1;
           }
         `}</style>
+        <style jsx global>{`
+          ul {
+          list-style: none;
+          }
+        `}</style>
       </Fragment>
     );
   }
