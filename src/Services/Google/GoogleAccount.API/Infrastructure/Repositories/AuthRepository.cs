@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Context;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
 using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.EntityFrameworkCore;
@@ -53,10 +50,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             {
                 if (error != "")
                 {
-                    TraceInfo(result.infos, "Hay un error en la au....r {error}", "GA02");
+                    TraceError(result.errors, new GoogleAccountDomainException("Error de Autorización de google"), $"Hay un error en la au....r {error}", "GA02");
                 }
                 var resultUser = await _context.UserGoogleAccounts.Find(GetFilterUser(UserId)).FirstOrDefaultAsync();
-               // User user = await context.Users.Include(x => x.Credentials).FirstOrDefaultAsync(x => x.Id == Guid.Parse(UserId));
 
                 if (resultUser == null)
                 {
@@ -74,26 +70,39 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 credential.Code = code;
 
-                context.Credentials.Update(credential);
-                await context.SaveChangesAsync();
+                // _context.UserGoogleAccounts.UpdateOneAsync(GetFilterUser(UserId, false), )
 
                 result.data = credential;
 
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA02", "SQLLITE");
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA02", "MONGO");
             }
 
             return result;
         }
 
-        public async Task<Result<bool>> UpdateCredentialsSuccess(Credential data)
+        public async Task<Result<bool>> UpdateCredentialsSuccess(Credential data, string UserId)
         {
             Result<bool> result = new Result<bool>();
 
-            context.Credentials.Update(data);
-            await context.SaveChangesAsync();
+            try
+            {
+                var resultUser = await _context.UserGoogleAccounts.Find(GetFilterUser(UserId)).FirstOrDefaultAsync();
+
+                var _credential = resultUser.Credentials.Where(x => x.Id == data.Id).SingleOrDefault();
+                resultUser.Credentials.Remove(_credential);
+                resultUser.Credentials.Add(data);
+
+                // Ayuda con la implementación de UpdateOneAsync
+                // _context.UserGoogleAccounts.UpdateOneAsync(GetFilterUser(UserId, false), )
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA02", "MONGO");
+            }
 
             result.data = true;
             return result;
