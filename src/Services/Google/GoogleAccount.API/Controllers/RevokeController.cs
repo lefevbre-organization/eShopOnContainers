@@ -7,7 +7,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
     using System;
     using System.Net;
-    using Context;
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;

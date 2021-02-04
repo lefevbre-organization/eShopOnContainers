@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
-    using Context;
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;

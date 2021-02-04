@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
-    using Context;
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -119,16 +118,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<string>> GetAuthorizationLink([FromQuery]string LefebvreCredential, [FromQuery] GoogleProduct product)
+        public async Task<ActionResult<string>> GetAuthorizationLink([FromQuery]string LefebvreCredential, [FromQuery] GoogleProduct? product)
         {
 
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La credencial es requerida.");
 
-            if (Product == null)
+            if (product == null)
                 return BadRequest("Debe tener un valor válido para Producto (0 Drive).");
 
-            return Ok(await _service.GetAuthorizationLink(LefebvreCredential, product));
+            return Ok(await _service.GetAuthorizationLink(LefebvreCredential, product.Value));
         }
 
 

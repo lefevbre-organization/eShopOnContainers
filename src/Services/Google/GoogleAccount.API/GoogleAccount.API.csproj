@@ -80,7 +80,4 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\Models\Lef.Models\Lef.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DB\" />
-  </ItemGroup>
 </Project>
