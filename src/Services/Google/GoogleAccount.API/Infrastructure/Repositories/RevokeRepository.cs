@@ -100,6 +100,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 user.Credentials.Add(credential);
 
+                //var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                //    GetFilterUser(LefebvreCredential),
+                //    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
+                //    new UpdateOptions { ArrayFilters = arrayFilters }
+                //);
+
                 result.data = true;
 
                 TraceInfo(result.infos, "Credential revoke.");
