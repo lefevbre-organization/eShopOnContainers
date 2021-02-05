@@ -228,12 +228,17 @@ class Routing extends Component {
             onClick={() => {
               this.changePage(PAGE_CONFIGURATION);
             }}>
-            <a href='#/' className='lex-on-configuration-trigger'>
+            <span className='lex-on-configuration-trigger'>
               <strong className='sr-only sr-only-focusable'>
                 Opciones de configuración
               </strong>
               <span className='lf-icon-configuration'></span>
-            </a>
+            </span>
+            <style jsx>{`
+              .lex-on-configuration-trigger {
+                cursor: pointer;
+              }  
+            `}</style>
           </div>
         )}
         {this.renderPage()}
