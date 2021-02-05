@@ -115,10 +115,12 @@ class MessageEditor extends Component {
           this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
           this.props.editMessage(null);
           this.props.messageClean();
+          this.props.draftClean();
           this.props.close(this.props.application);
         } else {
           this.props.editMessage(null);
           this.props.messageClean();
+          this.props.draftClean();
           this.props.close(this.props.application);
         }
       }
@@ -146,13 +148,14 @@ class MessageEditor extends Component {
         this.setState({ showNotification: false, messageNotification: ''});
         this.props.selectMessage(createdMessage.value);
         this.updateAttachmentLinks(createdMessage.key);
-        this.props.draftClean();
+        
 
         if(this.state.draftId !== ''){
-          this.setState({ showNotification: true, messageNotification: 'Borrador actualizado.', closeButton: true});
+          this.setState({ showNotification: true, messageNotification: 'Borrador actualizado.', closeButton: true, draftId: this.props.draft.idMessage});
         } else {
-          this.setState({ showNotification: true, messageNotification: 'Borrador guardado.', closeButton: true});
+          this.setState({ showNotification: true, messageNotification: 'Borrador guardado.', closeButton: true, draftId: this.props.draft.idMessage});
         }
+        this.props.draftClean();
 
       }
     }
