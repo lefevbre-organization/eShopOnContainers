@@ -22,10 +22,10 @@ class NewClassification extends Component {
     return (
       <React.Fragment>
         <p className="add-more-container">
-          <a href="#/" className="add-more" onClick={this._handleOnClick}>
+          <span style={{cursor: 'pointer'}} className="add-more" onClick={this._handleOnClick}>
             <span className="lf-icon-add-round"></span>
             <strong>{i18n.t("new-classification.new-classification")}</strong>
-          </a>
+          </span>
         </p>
         <style jsx>{`
           .add-more-container {

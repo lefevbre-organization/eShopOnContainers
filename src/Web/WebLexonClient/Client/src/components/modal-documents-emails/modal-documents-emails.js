@@ -91,10 +91,10 @@ class ModalDocumentsEmails extends Component {
                     </div>
                     <ul className="lexon-documentation-breadcrumb">
                       <li>
-                        <a href="#/">Documentación</a>
+                        <span style={{cursor: 'pointer'}}>Documentación</span>
                       </li>
                       <li>
-                        <a href="#/">Contactos</a>
+                        <span style={{cursor: 'pointer'}}>Contactos</span>
                       </li>
                       <li>Abogados contrarios</li>
                     </ul>
@@ -103,8 +103,8 @@ class ModalDocumentsEmails extends Component {
                         <p>
                           TOTAL RESULTADOS: <strong>320</strong>
                         </p>
-                        <a
-                          href="#/"
+                        <span
+                          style={{cursor: 'pointer'}}
                           className="search-trigger-show"
                           title="Mostrar buscador"
                         >
@@ -112,7 +112,7 @@ class ModalDocumentsEmails extends Component {
                             Mostrar buscador
                           </strong>
                           <span className="lf-icon-search"></span>
-                        </a>
+                        </span>
                       </div>
                       <div className="lexon-clasification-list-searcher">
                         <label htmlFor="search">
@@ -126,8 +126,8 @@ class ModalDocumentsEmails extends Component {
                           className="form-control"
                           id="search"
                         />
-                        <a
-                          href="#/"
+                        <span
+                          style={{cursor: 'pointer'}}
                           className="search-trigger-hide"
                           title="Ocultar buscador"
                         >
@@ -135,7 +135,7 @@ class ModalDocumentsEmails extends Component {
                             Ocultar buscador
                           </strong>
                           <span className="lf-icon-close"></span>
-                        </a>
+                        </span>
                       </div>
                     </div>
                     <PerfectScrollbar>

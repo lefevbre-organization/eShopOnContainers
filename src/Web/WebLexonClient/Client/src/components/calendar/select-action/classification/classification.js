@@ -51,8 +51,8 @@ class EventClassification extends Component {
             <p><strong>{i18n.t('classification.assigned')} </strong>{description}</p>
             { name && <p><strong>Expediente: </strong>{name}</p> }
           <p className='text-right tools-bar event-toolbar'>
-            <a
-                href='#/'
+            <span
+                style={{cursor: 'pointer'}}
                 title={i18n.t('classification.remove-document')}
                 onClick={() => {
                   this._handleOnclick(idActuation)
@@ -61,7 +61,7 @@ class EventClassification extends Component {
                 {i18n.t('classification.remove-document')}
               </strong>
               <span className='lf-icon-trash'></span>
-            </a>
+            </span>
           </p>
           <style jsx>{`
             .event-toolbar {

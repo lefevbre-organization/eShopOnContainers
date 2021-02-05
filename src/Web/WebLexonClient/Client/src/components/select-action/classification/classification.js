@@ -79,15 +79,15 @@ class Classification extends Component {
         <p>{description}</p>
         <p>{intervening}</p>
         <p className='text-right tools-bar'>
-          <a
-            href='#/'
+          <span
+            style={{cursor: 'pointer'}}
             title={i18n.t('classification.remove-document')}
             onClick={() => this._handleOnclick(this.props.classification)}>
             <strong className='sr-only sr-only-focusable'>
               {i18n.t('classification.remove-document')}
             </strong>
             <span className='lf-icon-trash'></span>
-          </a>
+          </span>
         </p>
       </li>
     );
@@ -103,15 +103,15 @@ class Classification extends Component {
           <span>{description}</span>
         </p>
         <p className='text-right tools-bar'>
-          <a
-            href='#/'
+          <span
+            style={{cursor: 'pointer'}}
             title={i18n.t('classification.remove-document')}
             onClick={() => this._handleOnclick(this.props.classification)}>
             <strong className='sr-only sr-only-focusable'>
               {i18n.t('classification.remove-document')}
             </strong>
             <span className='lf-icon-trash'></span>
-          </a>
+          </span>
         </p>
       </li>
     );
