@@ -3,7 +3,7 @@
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    #region Using
+  
 
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
