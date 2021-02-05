@@ -406,7 +406,10 @@ class MessageList extends Component {
   }
 
   messageClicked(message) {
-    if(this.props.selectedFolder.name === 'Drafts' || this.props.selectedFolder.name === 'Borradores') {
+    if (
+        this.props.selectedFolder.attributes.find(att => att && att.toUpperCase() === "\\DRAFTS")
+        || this.props.selectedFolder.name.toUpperCase() === 'DRAFTS' 
+        || this.props.selectedFolder.name.toUpperCase() === 'BORRADORES') {
       this.props.messageClicked(message);
       this.props.newMessage('');      
     } else {

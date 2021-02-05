@@ -429,7 +429,7 @@ class Calendar extends Component {
                                           <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                       </ViewsDirective>
                                        <ResourcesDirective>
-                                          <ResourceDirective field='eventType' title={t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
+                                          {/*<ResourceDirective field='eventType' title={t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}
                                           <ResourceDirective ref={this.calendarObj} field='CalendarId' title={t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                       </ResourcesDirective>
                                       <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
@@ -1592,16 +1592,16 @@ class Calendar extends Component {
         }
 
         // default values for EventType coming from event args
-        if (args.data.EventType != undefined) {
-            this.setState({ eventType: args.data.EventType.name })
-            if (this.drowDownListEventType != undefined) {
-                this.drowDownListEventType.value = args.data.EventType.name
-            }
-        }
-        else {
-            this.setState({ eventType: undefined })
-            //this.drowDownListEventType.value = undefined;
-        }
+        //if (args.data.EventType != undefined) {
+        //    this.setState({ eventType: args.data.EventType.name })
+        //    if (this.drowDownListEventType != undefined) {
+        //        this.drowDownListEventType.value = args.data.EventType.name
+        //    }
+        //}
+        //else {
+        //    this.setState({ eventType: undefined })
+        //    //this.drowDownListEventType.value = undefined;
+        //}
 
 
         // default values for Atendees coming from event args
@@ -1618,34 +1618,34 @@ class Calendar extends Component {
         }
 
         // default values for Visibility coming from event args
-        if (args.data.Visibility != undefined) {
-            const isVisibility = args.data.Visibility == 'private' ? true : false;
-            this.setState({ isVisibility: isVisibility });
-            if (this.drowDownListVisibility != undefined) {
-                this.drowDownListVisibility.checked = isVisibility;
-            }
-        }
+        //if (args.data.Visibility != undefined) {
+        //    const isVisibility = args.data.Visibility == 'private' ? true : false;
+        //    this.setState({ isVisibility: isVisibility });
+        //    if (this.drowDownListVisibility != undefined) {
+        //        this.drowDownListVisibility.checked = isVisibility;
+        //    }
+        //}
 
         // default values for Reminders coming from event args
 
-        if (args.data.Reminders != undefined) {
-            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
-            var arr = [];
-            Object.keys(args.data.Reminders).forEach(function (key) {
-                //arr.push(args.data.Reminders[key]);
-                arr.push({
-                    title: args.data.Reminders[key].method,
-                    value: args.data.Reminders[key].minutes,
-                    minutesvalue: args.data.Reminders[key].minutes,
-                    id: 'n',
-                    icon: "delete-icon"
-                });
-            });
-            this.setState({ reminders: arr })
-        }
-        else {
-            this.setState({ reminders: [] })
-        }
+        //if (args.data.Reminders != undefined) {
+        //    //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
+        //    var arr = [];
+        //    Object.keys(args.data.Reminders).forEach(function (key) {
+        //        //arr.push(args.data.Reminders[key]);
+        //        arr.push({
+        //            title: args.data.Reminders[key].method,
+        //            value: args.data.Reminders[key].minutes,
+        //            minutesvalue: args.data.Reminders[key].minutes,
+        //            id: 'n',
+        //            icon: "delete-icon"
+        //        });
+        //    });
+        //    this.setState({ reminders: arr })
+        //}
+        //else {
+        //    this.setState({ reminders: [] })
+        //}
 
 
 
@@ -1756,39 +1756,39 @@ class Calendar extends Component {
 
 
                 // Adding event type element
-                let containerEventType = createElement('div', { className: 'custom-field-container' });
-                row.appendChild(containerEventType);
-                let inputEle = createElement('input', {
-                    className: 'e-field', attrs: { name: 'EventType' }
-                });
-                containerEventType.appendChild(inputEle);
+                //let containerEventType = createElement('div', { className: 'custom-field-container' });
+                //row.appendChild(containerEventType);
+                //let inputEle = createElement('input', {
+                //    className: 'e-field', attrs: { name: 'EventType' }
+                //});
+                //containerEventType.appendChild(inputEle);
 
-                this.drowDownListEventType = new DropDownList({
-                    itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
-                    dataSource: this.eventTypeDataSource,
-                    value: this.state.eventType,
-                    floatLabelType: 'Always', placeholder: t("schedule.eventtype")
-                });
-                this.drowDownListEventType.appendTo(inputEle);
-                inputEle.setAttribute('name', 'EventType');
+                //this.drowDownListEventType = new DropDownList({
+                //    itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
+                //    dataSource: this.eventTypeDataSource,
+                //    value: this.state.eventType,
+                //    floatLabelType: 'Always', placeholder: t("schedule.eventtype")
+                //});
+                //this.drowDownListEventType.appendTo(inputEle);
+                //inputEle.setAttribute('name', 'EventType');
 
 
                 // Adding visibility element
-                let containerVisibility = createElement('div', { className: 'custom-field-container' });
-                row.appendChild(containerVisibility);
-                let inputVisibility = createElement('input', {
-                    className: 'e-field', attrs: { name: 'Visibility' }
-                });
-                containerVisibility.appendChild(inputVisibility);
+                //let containerVisibility = createElement('div', { className: 'custom-field-container' });
+                //row.appendChild(containerVisibility);
+                //let inputVisibility = createElement('input', {
+                //    className: 'e-field', attrs: { name: 'Visibility' }
+                //});
+                //containerVisibility.appendChild(inputVisibility);
 
-                this.drowDownListVisibility = new CheckBoxComponent({
-                    value: this.state.isVisibility,
-                    label: t("schedule.visibility"),
-                    checked: this.state.isVisibility
-                });
+                //this.drowDownListVisibility = new CheckBoxComponent({
+                //    value: this.state.isVisibility,
+                //    label: t("schedule.visibility"),
+                //    checked: this.state.isVisibility
+                //});
 
-                this.drowDownListVisibility.appendTo(inputVisibility);
-                inputVisibility.setAttribute('name', 'Visibility');
+                //this.drowDownListVisibility.appendTo(inputVisibility);
+                //inputVisibility.setAttribute('name', 'Visibility');
 
 
 
