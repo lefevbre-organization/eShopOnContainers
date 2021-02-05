@@ -18,6 +18,7 @@ data:
 {{- if .Values.nextcloud.defaultConfigs }}
 {{- if index .Values.nextcloud.defaultConfigs ".htaccess" }}
   .htaccess: |-
+    # lo meto en config
     # line below if for Apache 2.4
     <ifModule mod_authz_core.c>
     Require all denied

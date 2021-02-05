@@ -3,7 +3,7 @@
 ##
 image:
   repository: nextcloud
-  tag: 19.0.3-apache
+  tag: 17.0.0-apache
   pullPolicy: IfNotPresent
   # pullSecrets:
   #   - myRegistrKeySecretName
@@ -64,14 +64,6 @@ nextcloud:
   host: nextcloud.kube.home
   username: admin
   password: changeme
-  ## Use an existing secret
-  existingSecret:
-    enabled: false
-    # secretName: nameofsecret
-    # usernameKey: username
-    # passwordKey: password
-    # smtpUsernameKey: smtp_username
-    # smtpPasswordKey: smtp_password
   update: 0
   datadir: /var/www/html/data
   tableprefix:
@@ -96,9 +88,9 @@ nextcloud:
   # Default confgurations can be found here: https://github.com/nextcloud/docker/tree/master/16.0/apache/config
   defaultConfigs:
     # To protect /var/www/html/config
-    .htaccess: false
+    .htaccess: true
     # Redis default configuration
-    redis.config.php: false
+    redis.config.php: true
     # Apache configuration for rewrite urls
     apache-pretty-urls.config.php: true
     # Define APCu as local cache
@@ -108,42 +100,10 @@ nextcloud:
     # Used for auto configure database
     autoconfig.php: true
     # SMTP default configuration
-    smtp.config.php: false
+    smtp.config.php: true
   # Extra config files created in /var/www/html/config/
   # ref: https://docs.nextcloud.com/server/15/admin_manual/configuration_server/config_sample_php_parameters.html#multiple-config-php-file
-  configs:
-    .htaccess: |-
-      # line below if for Apache 2.2
-      <ifModule !mod_authz_core.c>
-      deny from all
-      </ifModule>
-      # lo meto en values
-      # line below if for Apache 2.4
-      <ifModule mod_authz_core.c>
-      Require all denied
-      </ifModule>
-      # section for Apache 2.2 and 2.4
-      <ifModule mod_autoindex.c>
-      IndexIgnore *
-      </ifModule>
-      # Section for Apache 2.2
-      <IfModule !mod_authz_core.c>
-         <IfModule !mod_access_compat.c>
-           <IfModule mod_authz_host.c>
-             Order Allow,Deny
-             Deny from all
-           </IfModule>
-           Satisfy All
-         </IfModule>
-      </IfModule>
-      Header always set Access-Control-Allow-Origin "*"
-      Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, REPORT, PROPFIND, MKCALENDAR, MKEVENT"
-      Header always set Access-Control-Allow-Headers "*"
-      # Force to request 200 for options
-      RewriteEngine On
-      RewriteCond %{REQUEST_METHOD} OPTIONS
-      RewriteRule .* / [R=200,L]
-
+  configs: {}
 
   # For example, to use S3 as primary storage
   # ref: https://docs.nextcloud.com/server/13/admin_manual/configuration_files/primary_storage.html#simple-storage-service-s3
@@ -213,7 +173,7 @@ nginx:
   resources: {}
 
 internalDatabase:
-  enabled: false
+  enabled: true
   name: nextcloud
 
 ##
@@ -249,44 +209,27 @@ externalDatabase:
 ##
 mariadb:
   ## Whether to deploy a mariadb server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
-  enabled: true
+  enabled: false
 
   db:
     name: nextcloud
     user: nextcloud
-    password: elefebvre_1234
-
-  replication:
-    enabled: false
+    password: changeme
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
   ##
-  master:
-    persistence:
-      enabled: true
-      # storageClass: ""
-      accessMode: ReadWriteOnce
-      size: 8Gi
-
-postgresql:
-  enabled: false
-  global:
-    postgresql:
-      postgresqlUsername: nextcloud
-      postgresqlPassword: changeme
-      postgresqlDatabase: nextcloud
   persistence:
     enabled: false
-    # storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 8Gi
 
 redis:
   enabled: false
   usePassword: false
-  password: ''
 
 ## Cronjob to execute Nextcloud background tasks
-## ref: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#webcron
+## ref: https://docs.nextcloud.com/server/latest/admin_manual/configuration_server/background_jobs_configuration.html#cron-jobs
 ##
 cronjob:
   enabled: false
@@ -297,10 +240,10 @@ cronjob:
     # pullPolicy: IfNotPresent
     # pullSecrets:
     #   - myRegistrKeySecretName
-  # Every 5 minutes
-  # Note: Setting this to any any other value than 5 minutes might
+  # Every 15 minutes
+  # Note: Setting this to any any other value than 15 minutes might
   #  cause issues with how nextcloud background jobs are executed
-  schedule: "*/5 * * * *"
+  schedule: "*/15 * * * *"
   annotations: {}
   # Set curl's insecure option if you use e.g. self-signed certificates
   curlInsecure: false
@@ -339,7 +282,7 @@ service:
 ##
 persistence:
   # Nextcloud Data (/var/www/html)
-  enabled: true
+  enabled: false
   annotations: {}
   ## nextcloud data Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
@@ -375,26 +318,18 @@ resources: {}
 ##
 livenessProbe:
   enabled: true
-  initialDelaySeconds: 10
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  periodSeconds: 15
   timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
 readinessProbe:
   enabled: true
-  initialDelaySeconds: 10
-  periodSeconds: 10
+  initialDelaySeconds: 30
+  periodSeconds: 15
   timeoutSeconds: 5
   failureThreshold: 3
   successThreshold: 1
-startupProbe:
-  enabled: false
-  initialDelaySeconds: 30
-  periodSeconds: 10
-  timeoutSeconds: 5
-  failureThreshold: 30
-  successThreshold: 1
-
 
 ## Enable pod autoscaling using HorizontalPodAutoscaler
 ## ref: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
@@ -446,3 +381,4 @@ metrics:
       prometheus.io/scrape: "true"
       prometheus.io/port: "9205"
     labels: {}
+
