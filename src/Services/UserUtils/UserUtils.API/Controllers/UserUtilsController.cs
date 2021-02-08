@@ -29,7 +29,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _log = log ?? throw new ArgumentNullException(nameof(log));
-            _log.LogInformation("Entra en controlador userutils");
+           // _log.LogInformation("Entra en controlador userutils");
         }
 
         /// <summary>

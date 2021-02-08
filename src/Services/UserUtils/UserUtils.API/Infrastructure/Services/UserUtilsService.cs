@@ -47,28 +47,34 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
            // _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            _clientMinihub = _clientFactory.CreateClient();
-            _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
+            var handler = new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
 
             _clientLogin = _clientFactory.CreateClient();
             _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
             _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            var handler = new HttpClientHandler()
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
             _clientOnline = new HttpClient(handler)
             {
                 BaseAddress = new Uri(_settings.Value.OnlineUrl)
             };
-
             var authData = Convert.ToBase64String(
                         System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
 
             _clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
-
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+
+            _clientMinihub = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(_settings.Value.MinihubUrl)
+            };
+            //_clientMinihub = _clientFactory.CreateClient();
+            //_clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
+
+
 
             _clientLexonApi = _clientFactory.CreateClient();
             _clientLexonApi.BaseAddress = new Uri(_settings.Value.LexonApiUrl);
@@ -375,28 +381,40 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             WriteInfo($"GetUserUtilsActualToServiceAsync {idUser} -> Entramos");
             var result = new Result<string>(null);
-            var user = await GetUserAsync(idUser);
-            WriteInfo($"get user {idUser} for service {nameService}");
-            AddResultTrace(user, result);
-            if (user.errors?.Count == 0)
+            try
             {
-                var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
-                if (app == null)
+                var user = await GetUserAsync(idUser);
+                WriteInfo($"get user {idUser} for service {nameService}");
+                AddResultTrace(user, result);
+                if (user.errors?.Count == 0)
                 {
-                    TraceError(result.errors,
-                       new UserUtilsDomainException($"Error when get apps of user {idUser} - try again in few seconds"),
-                       Codes.UserUtils.ByPass,
-                       Codes.Areas.Mongo);
+                    var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
+                    if (app == null)
+                    {
+                        TraceError(result.errors,
+                           new UserUtilsDomainException($"Error when get apps of user {idUser} - try again in few seconds"),
+                           Codes.UserUtils.ByPass,
+                           Codes.Areas.Mongo);
 
-                    var resultUpdateApps = await GetUserUtilsAsync(idUser, true);
-                    TraceInfo(resultUpdateApps.infos, "Try to recover apps again", Codes.UserUtils.ByPass);
-                    AddResultTrace(resultUpdateApps, result);
-                } 
-                WriteInfo($"Find app -> {app}");
+                        var resultUpdateApps = await GetUserUtilsAsync(idUser, true);
+                        TraceInfo(resultUpdateApps.infos, "Try to recover apps again", Codes.UserUtils.ByPass);
+                        AddResultTrace(resultUpdateApps, result);
+                    }
+                    WriteInfo($"Find app -> {app.descHerramienta} - try to get final link");
 
-                Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
-                AddResultTrace(temporalLinkResult, user);
-                result.data = temporalLinkResult?.data;
+                    Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
+                    AddResultTrace(temporalLinkResult, user);
+                    result.data = temporalLinkResult?.data;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                TraceError(result.errors,
+                           new UserUtilsDomainException($"Error when get final link of bypass", ex), 
+                           Codes.UserUtils.ByPass, 
+                           Codes.Areas.Hub);
+
             }
 
             return result;
@@ -440,9 +458,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<string>(null);
             try
             {
+                var inicio = DateTime.Now;
+                TraceInfoTime(result.infos, newUrl, inicio, null, Codes.UserUtils.GetHub);
+
                 using (var response = await _clientMinihub.GetAsync(newUrl))
                 {
-                    WriteInfo($"Get data from minihub {newUrl}");
+                    TraceInfoTime(result.infos, newUrl, inicio, DateTime.Now, Codes.UserUtils.GetHub);
+
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
