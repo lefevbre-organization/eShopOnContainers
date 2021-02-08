@@ -1,8 +1,6 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -11,20 +9,27 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 {
+    using Infrastructure.Services;
+    using Models;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class UserUtilsController : ControllerBase
     {
         private IUserUtilsService _service;
         private readonly IOptions<UserUtilsSettings> _settings;
+        internal readonly ILogger<UserUtilsController> _log;
 
         public UserUtilsController(
           IUserUtilsService service
+            , ILogger<UserUtilsController> log
           , IOptions<UserUtilsSettings> settings
           )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
+            _log = log ?? throw new ArgumentNullException(nameof(log));
+            _log.LogInformation("Entra en controlador userutils");
         }
 
         /// <summary>
@@ -251,17 +256,22 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
               [FromQuery] string idUser = "E1621396"
             )
         {
+            _log.LogInformation("Entra en apps/redirect");
+
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
 
             if (resultUserUtils?.data == null || resultUserUtils.errors.Count > 0)
+            {
+                _log.LogInformation("Error en apps/redirect");
                 return BadRequest(resultUserUtils);
+            }
 
             return Redirect(resultUserUtils.data);
         }
 
         /// <summary>
         /// Devueve una redirección hacia una url de signature
-         /// </summary>
+        /// </summary>
         /// <returns></returns>
         [HttpGet("user/apps/redirect/signature")]
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
@@ -326,6 +336,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
-        #endregion
+
+        #endregion Firma
     }
 }

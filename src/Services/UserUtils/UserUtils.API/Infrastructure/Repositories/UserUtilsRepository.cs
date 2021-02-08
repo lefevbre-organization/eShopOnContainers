@@ -133,18 +133,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             return Builders<UserUtilsModel>.Filter.Eq(u => u.idNavision, idNavision.ToUpperInvariant());
         }
 
-        //Task<Result<LexUser>> IUserUtilsRepository.GetLexonUserAsync(string idNavision)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
         {
+            WriteInfo("Repository GetUserAsync -> Entramos");
             var result = new Result<UserUtilsModel>();
             try
             {

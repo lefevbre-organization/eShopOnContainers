@@ -7,10 +7,10 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        # "userutils.api"
+        "userutils.api"
         # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
         #  "database.api", 
-        "googleaccount.api" #, "googledrive.api"        
+        # "googleaccount.api" #, "googledrive.api"        
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient",
         # "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
@@ -19,10 +19,10 @@ Param(
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        # "userutils.api"
+        "userutils.api"
         # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
         #  "database.api",
-        "googleaccount.api" #, "googledrive.api" 
+        # "googleaccount.api" #, "googledrive.api" 
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient",
         # "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",

@@ -373,13 +373,25 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
+            WriteInfo($"GetUserUtilsActualToServiceAsync {idUser} -> Entramos");
             var result = new Result<string>(null);
-            WriteInfo($"get user {idUser} for service {nameService}");
             var user = await GetUserAsync(idUser);
+            WriteInfo($"get user {idUser} for service {nameService}");
             AddResultTrace(user, result);
             if (user.errors?.Count == 0)
             {
                 var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
+                if (app == null)
+                {
+                    TraceError(result.errors,
+                       new UserUtilsDomainException($"Error when get apps of user {idUser} - try again in few seconds"),
+                       Codes.UserUtils.ByPass,
+                       Codes.Areas.Mongo);
+
+                    var resultUpdateApps = await GetUserUtilsAsync(idUser, true);
+                    TraceInfo(resultUpdateApps.infos, "Try to recover apps again", Codes.UserUtils.ByPass);
+                    AddResultTrace(resultUpdateApps, result);
+                } 
                 WriteInfo($"Find app -> {app}");
 
                 Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
