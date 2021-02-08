@@ -61,6 +61,7 @@ import java.io.IOException;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Date;
 import java.util.Properties;
@@ -96,7 +97,9 @@ public class SmtpService {
     private static final String IMAPS_PROTOCOL = "imaps";
     private static final String SMTP_PROTOCOL = "smtp";
     private static final String SMTPS_PROTOCOL = "smtps";
+    //private static final Pattern DATA_URI_IMAGE_PATTERN = Pattern.compile("\"data:(image\\/[^;]*?);base64,([^\\\"]*?)\"|\"data:(IMAGE\\/[^;]*?);BASE64,([^\\\"]*?)\"");
     private static final Pattern DATA_URI_IMAGE_PATTERN = Pattern.compile("\"data:(image\\/[^;]*?);base64,([^\\\"]*?)\"");
+    private static final Pattern DATA_URI_IMAGE_PATTERN_UPPERCASE = Pattern.compile("\"data:(IMAGE\\/[^;]*?);BASE64,([^\\\"]*?)\"");
     private static final String STYLES =
             "body {font-family: 'Roboto', 'Calibri',  sans-serif; font-size: 1rem; color: #333}" +
             "h1 {margin: 6px 0 16px 0; font-size: 3rem; font-weight: normal}" +
@@ -339,7 +342,6 @@ public class SmtpService {
             
             imapStore.close();
         } catch (Exception e) {
-            //log.info("Error de los buenos");
             throw new IsotopeException("Problem leaving a copy of the message in Draft Folder", e);
         }
     }
@@ -423,12 +425,26 @@ public class SmtpService {
                 final InternetHeaders headers = new InternetHeaders();
                 headers.addHeader("Content-Type", contentType);
                 headers.addHeader("Content-Transfer-Encoding", "base64");
-                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).getBytes());
+                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).replaceAll("(.{70})", "$1\n\r").getBytes());
                 multipart.addBodyPart(cidImagePart);
                 cidImagePart.setDisposition(MimeBodyPart.INLINE);
                 cidImagePart.setContentID(String.format("<%s>",cid));
                 cidImagePart.setFileName(String.format("%s.%s", cid, contentType.substring(contentType.indexOf('/') + 1)));
                 finalContent = finalContent.replace(matcher.group(), "\"cid:" +cid +"\"");
+            }
+            final Matcher matcher2 = DATA_URI_IMAGE_PATTERN_UPPERCASE.matcher(originalContent);
+            while(matcher2.find()) {
+                final String cid = UUID.randomUUID().toString().replace("-", "");
+                final String contentType = matcher2.group(1);
+                final InternetHeaders headers = new InternetHeaders();
+                headers.addHeader("Content-Type", contentType);
+                headers.addHeader("Content-Transfer-Encoding", "base64");
+                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher2.group(2).replaceAll("(.{70})", "$1\n\r").getBytes());
+                multipart.addBodyPart(cidImagePart);
+                cidImagePart.setDisposition(MimeBodyPart.INLINE);
+                cidImagePart.setContentID(String.format("<%s>",cid));
+                cidImagePart.setFileName(String.format("%s.%s", cid, contentType.substring(contentType.indexOf('/') + 1)));
+                finalContent = finalContent.replace(matcher2.group(), "\"cid:" +cid +"\"");
             }
 
             // Include attachments
@@ -437,7 +453,6 @@ public class SmtpService {
                     multipart.addBodyPart(toBodyPart(request, attachment));
                 }
             }
-
             // Create body part
             final MimeBodyPart body = new MimeBodyPart();
             multipart.addBodyPart(body);
@@ -500,12 +515,26 @@ public class SmtpService {
                 final InternetHeaders headers = new InternetHeaders();
                 headers.addHeader("Content-Type", contentType);
                 headers.addHeader("Content-Transfer-Encoding", "base64");
-                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).getBytes());
+                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).replaceAll("(.{70})", "$1\n\r").getBytes());
                 multipart.addBodyPart(cidImagePart);
                 cidImagePart.setDisposition(MimeBodyPart.INLINE);
                 cidImagePart.setContentID(String.format("<%s>",cid));
                 cidImagePart.setFileName(String.format("%s.%s", cid, contentType.substring(contentType.indexOf('/') + 1)));
                 finalContent = finalContent.replace(matcher.group(), "\"cid:" +cid +"\"");
+            }
+            final Matcher matcher2 = DATA_URI_IMAGE_PATTERN_UPPERCASE.matcher(originalContent);
+            while(matcher2.find()) {
+                final String cid = UUID.randomUUID().toString().replace("-", "");
+                final String contentType = matcher2.group(1);
+                final InternetHeaders headers = new InternetHeaders();
+                headers.addHeader("Content-Type", contentType);
+                headers.addHeader("Content-Transfer-Encoding", "base64");
+                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher2.group(2).replaceAll("(.{70})", "$1\n\r").getBytes());
+                multipart.addBodyPart(cidImagePart);
+                cidImagePart.setDisposition(MimeBodyPart.INLINE);
+                cidImagePart.setContentID(String.format("<%s>",cid));
+                cidImagePart.setFileName(String.format("%s.%s", cid, contentType.substring(contentType.indexOf('/') + 1)));
+                finalContent = finalContent.replace(matcher2.group(), "\"cid:" +cid +"\"");
             }
 
             // Include attachments
@@ -613,6 +642,7 @@ public class SmtpService {
                 attachment.getContentType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;
         final DataSource dataSource;
         if (attachment.getContent() != null) {
+            //log.info(Base64.getEncoder().encodeToString(attachment.getContent()));
             dataSource = new ByteArrayDataSource(attachment.getContent(), mimeType);
         } else {
             dataSource = new IsotopeURLDataSource(attachment.getLink(REL_DOWNLOAD).getTemplate().expand().toURL(),
