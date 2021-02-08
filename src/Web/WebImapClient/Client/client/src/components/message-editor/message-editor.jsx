@@ -718,7 +718,8 @@ class MessageEditor extends Component {
       
       // Get content directly from editor, state content may not contain latest changes
       var content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
-      content = await this.replaceBlobs(content);
+      if (content.includes('blob:'))
+        content = await this.replaceBlobs(content);
       const { user, credentials, to, cc, bcc, subject, selectedMessageEdit } = this.props;
       const fullTime = this.getTimeDraft();
       const { draftFolderbyAttribute, draftFolderbyName} = this.props;
@@ -832,9 +833,10 @@ class MessageEditor extends Component {
     let newAttachments = [];
     if (updatedMessage.attachments) {
       updatedMessage.attachments.forEach((attachment, i) => {
-        const link = attachment._links.download.href.replace(/(\/messages\/\d+\/attachments\/)/gm, `/messages/${id}/attachments/`);
-        updatedMessage.attachments[i]._links.download.href = link;
-        
+        if (attachment._links){
+          const link = attachment._links.download.href.replace(/(\/messages\/\d+\/attachments\/)/gm, `/messages/${id}/attachments/`);
+          updatedMessage.attachments[i]._links.download.href = link;  
+        }
       });
     }
     this.props.editMessage({...updatedMessage});
