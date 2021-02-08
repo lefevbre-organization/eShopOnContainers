@@ -48,6 +48,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
                 options.Filters.Add(typeof(ValidateModelStateFilter));
             }) // Added for functional tests
             .AddApplicationPart(typeof(CalendarController).Assembly)
+            .AddApplicationPart(typeof(EventController).Assembly)
             .AddNewtonsoftJson()
                 ;
 
