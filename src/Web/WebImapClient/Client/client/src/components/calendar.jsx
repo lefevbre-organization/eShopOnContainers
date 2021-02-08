@@ -97,7 +97,7 @@ import { Popup } from '@syncfusion/ej2-popups';
 //import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../calendar/components/eventtypes/eventtype';
 //import { EventsImport } from '../events-import/events'
-//import { getEventTypes } from "../../../api/accounts";
+import { getEventTypes } from '../services/accounts';
 //import HeaderAddress from '../../../components/compose-message/header-address';
 //import AttendeeAddress from '../calendar/components/';
 import { Calendars } from '../calendar/components/calendars/calendars';
@@ -1247,15 +1247,13 @@ class Calendar extends Component {
     }
 
     getlistEventTypes() {
-    //    let email = this.props.googleUser.getBasicProfile().getEmail();
-
-    //    getEventTypes(email)
-    //        .then(result => {
-    //            this.onDataBindingEventTypeList(result.data.eventTypes)
-    //        })
-    //        .catch(error => {
-    //            console.log('error ->', error);
-    //        });
+       getEventTypes(this.props.email)
+           .then(result => {
+               this.onDataBindingEventTypeList(result.data.eventTypes)
+           })
+           .catch(error => {
+               console.log('error ->', error);
+           });
     }
 
 
@@ -1444,7 +1442,6 @@ class Calendar extends Component {
     }
 
     getRecurrenceEvent(recurrenceRule) {
-        console.log(recurrenceRule)
         const valueList = recurrenceRule.split(';');
         let freqValue = null;
         let intervalValue = null;
@@ -1633,16 +1630,16 @@ class Calendar extends Component {
         }
 
         // default values for EventType coming from event args
-        //if (args.data.EventType != undefined) {
-        //    this.setState({ eventType: args.data.EventType.name })
-        //    if (this.drowDownListEventType != undefined) {
-        //        this.drowDownListEventType.value = args.data.EventType.name
-        //    }
-        //}
-        //else {
-        //    this.setState({ eventType: undefined })
-        //    //this.drowDownListEventType.value = undefined;
-        //}
+        if (args.data.EventType != undefined) {
+           this.setState({ eventType: args.data.EventType.name })
+           if (this.drowDownListEventType != undefined) {
+               this.drowDownListEventType.value = args.data.EventType.name
+           }
+        }
+        else {
+           this.setState({ eventType: undefined })
+           //this.drowDownListEventType.value = undefined;
+        }
 
 
         // default values for Atendees coming from event args
@@ -1797,21 +1794,21 @@ class Calendar extends Component {
 
 
                 // Adding event type element
-                //let containerEventType = createElement('div', { className: 'custom-field-container' });
-                //row.appendChild(containerEventType);
-                //let inputEle = createElement('input', {
-                //    className: 'e-field', attrs: { name: 'EventType' }
-                //});
-                //containerEventType.appendChild(inputEle);
+                let containerEventType = createElement('div', { className: 'custom-field-container' });
+                row.appendChild(containerEventType);
+                let inputEle = createElement('input', {
+                   className: 'e-field', attrs: { name: 'EventType' }
+                });
+                containerEventType.appendChild(inputEle);
 
-                //this.drowDownListEventType = new DropDownList({
-                //    itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
-                //    dataSource: this.eventTypeDataSource,
-                //    value: this.state.eventType,
-                //    floatLabelType: 'Always', placeholder: t("schedule.eventtype")
-                //});
-                //this.drowDownListEventType.appendTo(inputEle);
-                //inputEle.setAttribute('name', 'EventType');
+                this.drowDownListEventType = new DropDownList({
+                   itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
+                   dataSource: this.eventTypeDataSource,
+                   value: this.state.eventType,
+                   floatLabelType: 'Always', placeholder: t("schedule.eventtype")
+                });
+                this.drowDownListEventType.appendTo(inputEle);
+                inputEle.setAttribute('name', 'EventType');
 
 
                 // Adding visibility element
