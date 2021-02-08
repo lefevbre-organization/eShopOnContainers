@@ -464,8 +464,10 @@ const mapDispatchToProps = (dispatch) =>
       setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
     });
 
-  const mapStateToProps = (state) => ({
-  lexon: state.lexon,
-});
+  const mapStateToProps = (state) => {
+    return {
+      lexon: state.lexon,
+    }
+  };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuUser);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   RichTextEditorComponent,
   Toolbar,
@@ -13,6 +13,7 @@ import {
 } from '@syncfusion/ej2-react-richtexteditor';
 import i18n from 'i18next';
 import { L10n } from '@syncfusion/ej2-base';
+import useComponentSize from "@rehooks/component-size";
 
 // RichTextEditor items list
 const items = [
@@ -190,6 +191,17 @@ const toolbarSettings = {
 
 const UserSign = (props) => {
   const { onChange, defaultValue = '' } = props;
+  const ref = useRef(null);
+  let size = useComponentSize(ref);
+
+  useEffect(()=>{
+    debugger
+    const toolbar = document.getElementById('toolsRTE_toolbar');
+    if(toolbar) {
+      toolbar.style.width = size.width+'px';
+    }
+  }, [size])
+
   return (
     <RichTextEditorComponent
       id='toolsRTE'

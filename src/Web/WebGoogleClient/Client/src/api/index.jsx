@@ -534,12 +534,9 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
 
 
 export const sendMessage = async ({ headers, body, attachments }) => {
-  debugger
   let email = getDataEmail({ headers, body, attachments });
 
-  debugger
   return new Promise((resolve, reject) => {
-    debugger
     const base64EncodedEmail = Base64.encodeURI(email);
     const request = window.gapi.client.gmail.users.messages.send({
       userId: 'me',
@@ -547,14 +544,10 @@ export const sendMessage = async ({ headers, body, attachments }) => {
         raw: base64EncodedEmail,
       },
     });
-    debugger
     request.execute((err, res) => {
-      debugger
       if (err.error) {
-        debugger
         reject(err.error);
       } else {
-        debugger
         resolve(err);
       }
     });
