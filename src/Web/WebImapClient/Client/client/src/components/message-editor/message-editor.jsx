@@ -167,7 +167,7 @@ class MessageEditor extends Component {
         }
         this.props.draftClean();
 
-      } else if (this.props.draf && this.props.draft.error === true){
+      } else if (this.props.draft && this.props.draft.error === true){
         this.setState({ showNotification: true, messageNotification: 'Error al guardar el borrador', closeButton: true});
       }
     }
