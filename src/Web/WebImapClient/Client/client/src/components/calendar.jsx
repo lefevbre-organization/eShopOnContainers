@@ -17,7 +17,6 @@ import MessageSnackbar from './message-snackbar/message-snackbar';
 import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
 import CentinelaComponent from '../apps/centinela_content';
 
-
 import {
   clearUserCredentials,
   selectMessage,
@@ -96,7 +95,7 @@ import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalenda
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 //import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-//import { Eventtype } from '../eventtypes/eventtype';
+import { Eventtype } from '../calendar/components/eventtypes/eventtype';
 //import { EventsImport } from '../events-import/events'
 //import { getEventTypes } from "../../../api/accounts";
 //import HeaderAddress from '../../../components/compose-message/header-address';
@@ -336,8 +335,9 @@ class Calendar extends Component {
     }
 
   render() {
-        const { t, lexon } = this.props;
+        const { t, lexon, email } = this.props;
         const { sideBar, calendars } = this.state;
+
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
@@ -530,7 +530,7 @@ class Calendar extends Component {
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
                       </DialogComponent>
-                        {/* <DialogComponent
+                        <DialogComponent
                             id='eventTypes'
                             isModal={true}
                             header={t("contactimport.title")}
@@ -544,12 +544,12 @@ class Calendar extends Component {
                             close={this.dialogEventTypeClose.bind(this)}>
                             <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtype
                                 getlistEventTypes={this.getlistEventTypes.bind(this)}
-                                googleUser={this.props.googleUser}
+                                email={this.props.email}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
                         </DialogComponent>
 
-                        <DialogComponent
+                        {/* <DialogComponent
                             id='contactImports'
                             isModal={true}
                             header={t("contactimport.title")}
@@ -566,7 +566,7 @@ class Calendar extends Component {
                                 googleUser={this.props.googleUser}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>*/}
+                        </DialogComponent> */}
 
                     </article >
                 </section >
@@ -1199,7 +1199,7 @@ class Calendar extends Component {
         let obj = this;
         setTimeout(function () {
         obj.LoadCalendarList();
-       // obj.getlistEventTypes()
+       obj.getlistEventTypes()
 
 
         // New event is called
@@ -1246,9 +1246,7 @@ class Calendar extends Component {
 
     }
 
-    //getlistEventTypes() {
-
-
+    getlistEventTypes() {
     //    let email = this.props.googleUser.getBasicProfile().getEmail();
 
     //    getEventTypes(email)
@@ -1258,7 +1256,7 @@ class Calendar extends Component {
     //        .catch(error => {
     //            console.log('error ->', error);
     //        });
-    //}
+    }
 
 
     LoadCalendarList(DisableloadSchedule) {
@@ -2407,7 +2405,7 @@ class Calendar extends Component {
 
                 if (!this.layoutIframe) {
                     let userIconItem = {
-                        align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                        align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: `e-schedule-user-icon ${styles['user-icon']}`
                     };
 
                     args.items.push(userIconItem);
@@ -2492,7 +2490,7 @@ const mapStateToProps = (state) => {
     return {
         calendarsResult: state.calendarsResult,
         lexon: state.lexon,
-        //email: state.login.formValues.user,
+        email: state.login.formValues.user,
         all: state,
         currentUser: state.currentUser,
     }

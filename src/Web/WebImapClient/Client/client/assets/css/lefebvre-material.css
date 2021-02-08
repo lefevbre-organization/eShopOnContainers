@@ -42542,11 +42542,11 @@ ejs-calendar {
     .e-schedule .e-schedule-toolbar .e-toolbar-pop {
       background: #fafafa; }
     .e-schedule .e-schedule-toolbar .e-tbar-btn {
-      background: #fafafa; }
+      background: transparent; }
       .e-schedule .e-schedule-toolbar .e-tbar-btn:hover, .e-schedule .e-schedule-toolbar .e-tbar-btn:focus {
-        background-color: #e0e0e0; }
+        background-color: transparent; }
       .e-schedule .e-schedule-toolbar .e-tbar-btn:active {
-        background: #e0e0e0; }
+        background: transparent; }
     .e-schedule .e-schedule-toolbar .e-tbar-btn .e-tbar-btn-text {
       cursor: pointer;
       font-size: 13px;
@@ -51281,3 +51281,11 @@ ejs-filemanager {
 .e-fe-popup.e-contextmenu-wrapper ul .e-menu-item .e-fe-dot,
 .e-fe-popup.e-contextmenu-wrapper ul .e-menu-item .e-fe-tick {
   color: #001978; }
+
+.e-profile-wrapper {
+  width: 210px;
+  height: 80px;
+  background-color: #fafafa;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
