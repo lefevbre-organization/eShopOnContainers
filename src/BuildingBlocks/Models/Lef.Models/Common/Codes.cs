@@ -130,6 +130,7 @@
             public static readonly string MySqlConn = "MYSQLCONN";
             public static readonly string MySql = "MYSQL";
             public static readonly string Mongo = "MONGO";
+            public static readonly string Google = "GOOGLE";
         }
 
         public static class Conferences
@@ -162,8 +163,10 @@
         {
             public static readonly string Create = "GA01";
             public static readonly string Get = "GA02";
-            public static readonly string GetCredentials ="GA03";
-            public static readonly string UpdateCredentials = "GA04";
+            public static readonly string Delete = "GA03";
+            public static readonly string GetCredentials ="GA04";
+            public static readonly string UpdateCredentials = "GA05";
+            public static readonly string GoogleAuthorization = "GA06";
         }
     }
 }
