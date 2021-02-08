@@ -1398,11 +1398,6 @@ class Calendar extends Component {
             //'color': 'green'
         }
 
-        //event.json = ({
-        //    'RRULE': "FREQ=DAILY",
-        //    'SEQUENCE': "1",
-        //})
-
         //if (values.LexonClassification != undefined) {
         //    const properties = {
         //        ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
@@ -1415,10 +1410,11 @@ class Calendar extends Component {
         //    }
         //}
 
-
-
         //Recurrence
-        //if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+        if (values.RecurrenceRule != undefined) {
+           const recurrenceEvent = this.getRecurrenceEvent(values.RecurrenceRule);
+           event.repeating = recurrenceEvent;
+        }
 
         //Atendees
         let arr = this.state.to2
@@ -1437,9 +1433,9 @@ class Calendar extends Component {
         event.attendees = ateendeeObj;  
 
         let organizerData = {
-            "name": "Alberto",
-            "email": "alberto.valverde.escribano@gmail.com",
-            "mailto": "alberto.valverde.escribano@gmail.com", //to override email
+            "name": "joel",
+            "email": "joeldetrinidad@gmail.com",
+            "mailto": "joeldetrinidad@gmail.com", //to override email
         }
             
     
@@ -1447,6 +1443,53 @@ class Calendar extends Component {
        
 
         return event
+    }
+
+    getRecurrenceEvent(recurrenceRule) {
+        console.log(recurrenceRule)
+        const valueList = recurrenceRule.split(';');
+        let freqValue = null;
+        let intervalValue = null;
+        let untilValue = null;
+        let byDayValue = null;
+        let bySetPosValue = null;
+        let byMonthValue = null;
+        let byMonthDayValue = null;
+        let countValue = null;
+        valueList.forEach(value => {
+             if (value.split('=')[0] === 'FREQ') {
+                 freqValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'INTERVAL') {
+                 intervalValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYDAY') {
+                 byDayValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYSETPOS') {
+                 bySetPosValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYMONTH') {
+                 byMonthValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYMONTHDAY') {
+                 byMonthDayValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'UNTIL') {
+                 untilValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'COUNT') {
+                 countValue = value.split('=')[1];
+             }  
+        });
+        const repeating = {
+             freq: freqValue, 
+             count: null,
+             interval: intervalValue,
+             byDay: byDayValue,
+             byMonth: parseInt(byMonthValue), 
+             byMonthDay: parseInt(byMonthDayValue),
+             bySetPos: parseInt(bySetPosValue), 
+             wkst: countValue // Start the week on Sunday, default is Monday
+         }
+         if(untilValue) {
+            repeating.until = moment(untilValue);
+         }
+
+        return repeating;
     }
 
     onEventDragStart(args) {
@@ -2072,7 +2115,7 @@ class Calendar extends Component {
                                     this.LoadCalendarList(false)
                                     return;
                                 }*/
-                
+                console.log('buildEventoGoogle --->', args.data[0])
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
@@ -2270,13 +2313,6 @@ class Calendar extends Component {
             //if (a.firstname > {b.firstname) { return 1; }
             return 1;
         })
-
-
-
-
-
-
-
 
     }
 

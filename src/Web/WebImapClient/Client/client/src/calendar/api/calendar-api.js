@@ -111,41 +111,17 @@ function listEventsParser(list) {
     //start: "20210108"
     //summary: "prueba"
     //__proto__: Object
-    console.log('listEventsParser', list)
     let listParse = [];
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {   
-        
-         let recurrenceRule = [] ;   
-         attendees = [];
-        console.log('listEventsParser', list[i])
-        if(list[i].json.RRULE != undefined ) {
-          let str;
-          let KeyPattern = 'FREQ';
-          let byDay = "BYDAY"; 
-          let ValueDay = ''
-          const type = list[i].json.RRULE.split('=')[1];
-          const key = type.split(';')[0];
-          switch (key) {
-              case 'DAILY':
-                  let strv = "MO,TU,WE,TH,FR,ST,SU";
-                  console.log(strv)
-                  ValueDay = strv
-                  break;
-              case 'MONTHLY':
-                  console.log('tomando MENSUAL')
-                  break;
-              default:
-                  break;
-          }
-          str = KeyPattern + "=" + key + ";" + byDay + "=" + ValueDay + ";";
-        //   FREQ=weekly;interval=1;month=0;dayOfMonth=0;BYDAY=MO,TU,WE,TH,FR;firstDayOfWeek=sunday;index=first;
-          console.log(str)
-        } else {
-          recurrenceRule = null;
-        }
-         
-          getAttendees(list[i].json, attendees);
+            attendees = [];
+            let recurrenceRule = [];
+            if(list[i].json.RRULE != undefined ) {
+                recurrenceRule = ["RRULE:" + list[i].json.RRULE]
+            } else {
+              recurrenceRule = null;
+            }
+            getAttendees(list[i].json, attendees);
             listParse.push({
                 id: list[i].href,
                 filename: list[i].href,
@@ -160,7 +136,7 @@ function listEventsParser(list) {
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].allDay,
                 //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
-                // recurrence: list[i].json.RRULE,
+                recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
                // extendedProperties: category,
