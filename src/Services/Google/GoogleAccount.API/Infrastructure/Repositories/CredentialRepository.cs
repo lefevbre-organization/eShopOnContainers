@@ -48,7 +48,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 Builders<GoogleAccountUser>.Filter.Eq(u => u.state, true));
             }
 
-            return Builders<GoogleAccountUser>.Filter.Eq(u => u.Id, LefebvreCredential.ToUpperInvariant());
+            return Builders<GoogleAccountUser>.Filter.Eq(u => u.LefebvreCredential, LefebvreCredential.ToUpperInvariant());
         }
 
         private static FilterDefinition<GoogleAccountScope> GetFilterScope(GoogleProduct product, bool onlyValid = true)
@@ -177,7 +177,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 if (credential == null)
                     return result;
 
-                if (credential.TokenExpire)
+                // Todo ver las credenciales
+                if (true)
                 {
                     using (HttpClient Client = new HttpClient())
                     {
@@ -208,7 +209,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     {
                         access_token = credential.Access_Token,
                         refresh_token = credential.Refresh_Token,
-                        expires_in = credential.Duration,
+                        expires_in = (int)credential.Duration,
                         scope = credential.Scope,
                         token_type = credential.Token_Type
                     };
@@ -233,27 +234,71 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             try
             {
 
-                var user = new GoogleAccountUser() { LefebvreCredential = LefebvreCredential, state = true, accounts = new List<Credential>() };
 
-                var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                var _user = await GetUser(LefebvreCredential);
+                if(_user != null)
+                {
+                    result.data = new UserResponse()
+                    {
+                        Id = _user.Id,
+                        LefebvreCredential = _user.LefebvreCredential,
+                        Credentials = new List<UserCredentialResponse>()
+                    };
+
+                    _user.Credentials.ForEach(x => {
+
+                        result.data.Credentials.Add(new UserCredentialResponse() {
+                             ClientId = x.ClientId,
+                             GoogleMailAccount = x.GoogleMailAccount,
+                             Product = x.Product,
+                             Secret  = x.Secret
+                        });
+
+                    });
+                    TraceInfo(result.infos, "Este usuario ya estaba registrado", Codes.GoogleAccount.GetCredentials);
+                    return result;
+                }
+
+
+                var user = new GoogleAccountUser() {
+                    LefebvreCredential = LefebvreCredential,
+                    state = true,
+                    Credentials = _user != null ? _user.Credentials : new List<Credential>()
+                };
+
+                
+                var resultUpdate = await _context.UserGoogleAccounts.ReplaceOneAsync(
                     GetFilterUser(LefebvreCredential, false),
-                    Builders<GoogleAccountUser>.Update.Set($"LefebvreCredential", LefebvreCredential)
+                    user, GetUpsertOptions());
 
-                );
 
-                var ok = ManageUpdate($"Don´t insert or modify the LefebvreCredential",
+                user.Id = ManageUpsert($"Don´t insert or modify the LefebvreCredential",
                      $"Se modifica el LefebvreCredential {LefebvreCredential}",
+                     $"Se inserta el LefebvreCredential {LefebvreCredential}",
                      resultUser, resultUpdate, "GA07");
 
                 AddResultTrace(resultUser, result);
 
-                if (ok)
+                if (user != null)
                 {
                     result.data = new UserResponse()
                     {
                         Id = user.Id,
-                        LefebvreCredential = user.LefebvreCredential
+                        LefebvreCredential = user.LefebvreCredential,
                     };
+
+                    user.Credentials.ForEach(x => {
+
+                        result.data.Credentials.Add(new UserCredentialResponse()
+                        {
+                            ClientId = x.ClientId,
+                            GoogleMailAccount = x.GoogleMailAccount,
+                            Product = x.Product,
+                            Secret = x.Secret
+                        });
+
+                    });
+
                 }
             }
             catch (Exception ex)
@@ -279,7 +324,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     return result;
                 }
 
-                Credential _credential = user.Credentials.SingleOrDefault
+                Credential _credential = user.Credentials?.SingleOrDefault
                 (
                     x => x.GoogleMailAccount == request.GoogleMailAccount &&
                     x.Product == request.Product &&

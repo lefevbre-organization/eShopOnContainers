@@ -1,19 +1,15 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
-    using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
+    using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
     using Model;
-    using Newtonsoft.Json;
-    using System.Net;
 
     [ApiController]
     [Route("api/v1/[controller]")]
@@ -21,18 +17,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     {
 
         private readonly IScopeService _service;
-        private readonly GoogleAccountSettings _settings;
-        private readonly IEventBus _eventBus;
 
         public ScopeController(
-            IScopeService service,
-            IOptionsSnapshot<GoogleAccountSettings> settings,
-            IEventBus eventBus
+            IScopeService service
             )
         {
             _service = service ?? throw new ArgumentNullException(nameof(service));
-            _settings = settings.Value;
-            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
         [HttpGet("test")]
@@ -55,7 +45,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(await _service.GetScopes(product.Value));
         }
 
-        [HttpPost("[action]")]
+        [HttpPost]
+        [Route("[action]")]
         [ProducesResponseType(typeof(Result<GoogleAccountScope>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<GoogleAccountScope>), (int)HttpStatusCode.BadRequest)]
         public async Task<ActionResult> CreateScope([FromBody] GoogleAccountScope scope)

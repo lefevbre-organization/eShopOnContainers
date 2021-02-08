@@ -69,7 +69,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La credencial es requerida.");
 
-            return Ok(await _service.GetUserCredential(LefebvreCredential));
+            return Ok(await _service.GetCredentials(LefebvreCredential));
         }
 
         [HttpGet("[action]")]
