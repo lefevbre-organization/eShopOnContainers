@@ -64,6 +64,10 @@ class ModalAttachDocuments extends Component {
         files: [],
         downloading: false,
         complete: false,
+        step2Data: {
+          idType: -1,
+          id: -1
+        }
       });
     }, 1000);
     this.props.toggleModalAttachDocuments &&
@@ -151,6 +155,7 @@ class ModalAttachDocuments extends Component {
 
   renderButtons() {
     const { step, complete, files } = this.state;
+    debugger
 
     switch (step) {
       case 1:
