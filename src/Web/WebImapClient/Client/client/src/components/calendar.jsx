@@ -1066,11 +1066,11 @@ class Calendar extends Component {
                 // EventType
                 let eventType = [];
                 let lexonClassification = null;
-                if (event.extendedProperties != undefined) {
-                    eventType.name = event.extendedProperties.private.eventTypeName;
-                    eventType.id = event.extendedProperties.private.eventTypeId;
-                    eventType.color = event.extendedProperties.private.eventTypeColor;
-                    lexonClassification = event.extendedProperties.private.lexonClassification;
+                if (event.categories != undefined) {
+                    eventType.name = event.categories;
+                    // eventType.id = event.extendedProperties.private.eventTypeId;
+                    // eventType.color = event.extendedProperties.private.eventTypeColor;
+                    // lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
@@ -1405,6 +1405,20 @@ class Calendar extends Component {
         //        private: properties
         //    }
         //}
+
+        //event Type
+        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
+            let item;
+            if (values.EventType.name != undefined) {
+                item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
+            }
+            else {
+                item = this.eventTypeDataSource.find(x => x.text == values.EventType)
+            }
+            event.categories = [{
+                'name': item.text,
+            }]
+        }
 
         //Recurrence
         if (values.RecurrenceRule != undefined) {
