@@ -111,6 +111,7 @@ function listEventsParser(list) {
     //start: "20210108"
     //summary: "prueba"
     //__proto__: Object
+    console.log('listEventsParser ==>', list[1].categories)
     let listParse = [];
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {   
@@ -139,7 +140,7 @@ function listEventsParser(list) {
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
-               // extendedProperties: category,
+                categories: list[1].categories,
             });
         }
     }
