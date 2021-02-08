@@ -3,11 +3,12 @@ import jwt_decode from 'jwt-decode';
 
 const users = [];
 
-export const getUser = async (userId) => {
+export const getUser = async (userId, useCache = true) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
 
   // Cache user
-  if(users[userId]) {
+
+  if(useCache && users[userId]) {
       return users[userId];
   }
 

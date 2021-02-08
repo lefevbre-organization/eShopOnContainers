@@ -1,7 +1,7 @@
 import history from '../routes/history';
 import jwt_decode from 'jwt-decode';
 
-export const getUser = async (userId) => {
+export const getUser = async (userId, useCache = true) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
   let url2 = `${window.API_GATEWAY}/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true`;
   if(window.currentUser && window.currentUser.env) {
