@@ -2,6 +2,7 @@ import {
   refreshMessageBackendRequest,
   refreshMessageBackendRequestCompleted,
   replaceMessageEmbeddedImages,
+  replaceMessageEmbeddedImagesBase64,
 } from '../actions/application';
 import { updateCacheIfExist } from '../actions/messages';
 import {
@@ -34,7 +35,8 @@ function _readEmbeddedContent(
   folder,
   message,
   signal,
-  attachment
+  attachment,
+  format = 'blob'
 ) {
   fetch(attachment._links.download.href, {
     method: 'GET',
@@ -43,7 +45,19 @@ function _readEmbeddedContent(
   })
     .then((response) => response.blob())
     .then((blob) => {
-      dispatch(replaceMessageEmbeddedImages(folder, message, attachment, blob));
+      if (format === 'blob'){
+        dispatch(replaceMessageEmbeddedImages(folder, message, attachment, blob));
+      } else if (format === 'base64'){
+        var reader = new FileReader();
+        reader.onloadend = function() {
+          const base64 = reader.result;
+          dispatch(replaceMessageEmbeddedImagesBase64(folder, message, attachment, base64));
+        };
+        reader.onerror = function () {
+          console.log('Se ha producido un error al obteher el base64 de la imagen incrustada.')
+        }
+        reader.readAsDataURL(blob);
+      }
     });
 }
 
@@ -154,7 +168,8 @@ export function readMessage(
   credentials,
   downloadedMessages,
   folder,
-  message
+  message,
+  type = 'blob'
 ) {
   // Abort any operations that can affect operation result data consistency
   closeResetFolderMessagesCacheEventSource(dispatch);
@@ -236,15 +251,17 @@ export function readMessage(
           const contentId = a.contentId.replace(/[<>]/g, '');
           return completeMessage.content.indexOf(`cid:${contentId}`) >= 0;
         })
-        .forEach((a) =>
-          _readEmbeddedContent(
-            dispatch,
-            credentials,
-            folder,
-            message,
-            signal,
-            a
-          )
+        .forEach((a) => {
+            _readEmbeddedContent(
+              dispatch,
+              credentials,
+              folder,
+              message,
+              signal,
+              a,
+              type
+            )
+        }
         );
     })
     .catch(() => {});

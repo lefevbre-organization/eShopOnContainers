@@ -105,6 +105,37 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
       }
       return newState;
     }
+    case ActionTypes.APPLICATION_MESSAGE_REPLACE_IMAGE_BASE64: {
+      const newState = {...state};
+      const folder = action.payload.folder;
+      const message = action.payload.message;
+      const attachment = action.payload.attachment;
+      const contentId = attachment.contentId.replace(/[<>]/g, '');
+      const regex = new RegExp(`cid:${contentId}`, 'g'); // Multiple occurrence -> ReplaceAll
+      if (contentId.length > 0) {
+          
+          // Store in application.downloadedMessages
+          newState.downloadedMessages[message.messageId].content =
+            newState.downloadedMessages[message.messageId].content.replace(regex, action.payload.base64);
+          // Update selected message if applicable
+          if (newState.selectedFolderId === folder.folderId
+            && newState.selectedMessage.uid === message.uid) {
+              //console.log('HA ENTRADO POR AQUÍ...');
+            const parsedMessage = newState.selectedMessage.content.replace(regex, action.payload.base64);
+            newState.selectedMessage = {...newState.selectedMessage, content: parsedMessage};
+          }
+          if (newState.newMessage){
+            // console.log('SE ESTÁ EDITANDO MENSAJE');
+            // console.log('newState.newMessage.content (BEFORE)');
+            // console.log(newState.newMessage.content);
+            const newMessage = newState.newMessage.content.replace(regex, action.payload.base64);
+            newState.newMessage.content = {...newState.newMessage, content: newMessage};
+            // console.log('newState.newMessage.content (AFTER)');
+            // console.log(newState.newMessage.content);
+          }
+        }        
+      return newState;
+    }
     case ActionTypes.APPLICATION_ERROR_SET:
       const errorsSetState = {...state};
       errorsSetState.errors = {...state.errors};

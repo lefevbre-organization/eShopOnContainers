@@ -110,3 +110,61 @@ export const classifyEmail = async (
     throw err;
   }
 };
+
+export const getEventTypes = async (account) => {
+  let url = `${window.URL_GET_EVENTSTYPE}/ev/get`;
+
+  let value = {
+      "email": account
+  };
+ 
+  try {
+      const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(value),
+      });
+
+      const user = await res.json();
+      return user;      
+  } catch (err) {
+      throw err;
+  }
+};
+
+export const addorUpdateEventType = async (eventType) => { 
+  let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
+  try {
+      const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventType),
+      });
+      const eventtype = await res.json();
+      return eventtype;
+  } catch (err) {
+      throw err;
+  }
+};
+
+export const deleteEventType = async (eventType) => {
+  let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/delete`;
+
+  try {
+      const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventType),
+      });
+      const eventtype = await res.json();
+      return eventtype;
+  } catch (err) {
+      throw err;
+  }
+};
