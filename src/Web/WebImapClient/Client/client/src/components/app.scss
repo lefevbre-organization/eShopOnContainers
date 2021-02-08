@@ -43,6 +43,15 @@ body {
 }
 
 
+.dot {
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border-right: 20px;
+    border-left: 20px;
+}
+
 .app {
     display: flex;
     height: 100vh;

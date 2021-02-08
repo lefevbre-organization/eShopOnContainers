@@ -1567,7 +1567,7 @@ class Calendar extends Component {
         return (
             <div className="typeitem">
                 <span> 
-                    <span style={{backgroundColor: data.backgroundColor}} className='dot'></span>  
+                    <span style={{backgroundColor: data.backgroundColor, marginRight: '20px'}} className={styles['dot']}></span>  
                     <span className='name'>{data.text}</span>
                 </span>
             </div>
