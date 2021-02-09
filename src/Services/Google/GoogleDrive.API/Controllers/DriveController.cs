@@ -44,6 +44,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             return Ok(new Result<string>(data));
         }
 
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetFiles(string LefebvreCredential)
+        {
+
+            var token = await _service.GetFiles(LefebvreCredential);
+
+            token.infos.Add(new Info(){
+              message = $"Cantidad de Items: {token.data.Count}"
+            });
+
+            return Ok(token);
+        }
         
     }
 }

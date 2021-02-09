@@ -7,6 +7,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
     public interface IGoogleDriveRepository
     {
-        
+        Task<Result<string>> GetToken(string LefebvreCredential);
     }
 }
