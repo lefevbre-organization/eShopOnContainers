@@ -164,7 +164,6 @@ class SideBar extends Component {
                 ))} */}
                 { calendars.length > 0 ?
                 calendars.map(el => {
-                    const color = '#0693e3';
                     const iconProps = {
                         icon: faCalendar,
                         color: "#001978",
@@ -176,7 +175,7 @@ class SideBar extends Component {
                             onClick={this.navigateToList}
                             name={el.summary}
                             id={el.id}
-                            color={color}
+                            color={el.backgroundColor}
                             accessRole={'owner'}
                             iconProps={iconProps}
                             selected={el.selected}

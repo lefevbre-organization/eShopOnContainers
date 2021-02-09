@@ -179,6 +179,7 @@ export default class Caldavjs {
    ** @param {string} timezone override for settings
    ** @param {string} fllename required
    ** @param {string} description 
+   ** @param {string} color 
    *
    * @return {string}
    */
@@ -193,6 +194,7 @@ export default class Caldavjs {
         data: requests.createCalendar({
           data: cal.toString(),
           name: input.name,
+          color: input.color,
           description: input.description
         }),
       })
@@ -207,6 +209,8 @@ export default class Caldavjs {
    * @return {array} of @return {object} 
    ** @return {string} owner
    ** @return {string} displayName
+   ** @return {string} description
+   ** @return {object} color
    ** @return {string} ctag
    ** @return {string} syncToken
    */
@@ -246,6 +250,8 @@ export default class Caldavjs {
         calendars.responses.shift();
         return calendars.responses.map(cal => {
           let obj = self.extractData(cal, ['owner', ['displayname', 'name'],
+            ['calendar-color', 'color'],
+            ['calendar-description', 'description'],
             ['getctag', 'ctag'],
             ['sync-token', 'syncToken']
           ]);

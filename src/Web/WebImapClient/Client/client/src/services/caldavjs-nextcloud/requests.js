@@ -24,10 +24,12 @@ requests.createCalendar = function (args) {
   return `
    <?xml version="1.0" encoding="utf-8" ?>
    <C:mkcalendar xmlns:D="DAV:"
-                 xmlns:C="urn:ietf:params:xml:ns:caldav">
+                 xmlns:C="urn:ietf:params:xml:ns:caldav"
+                 xmlns:E="http://apple.com/ns/ical/">
      <D:set>
        <D:prop>
          <D:displayname>${args.name}</D:displayname>
+         <E:calendar-color>${args.color}</E:calendar-color>
          <C:calendar-description xml:lang="en">${args.description}</C:calendar-description>
          <C:supported-calendar-component-set>
            <C:comp name="VEVENT"/>
@@ -61,10 +63,13 @@ requests.calendarHome = function (args) {
 
 requests.calendarList = function (args) {
   return `
-<d:propfind xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/" xmlns:c="urn:ietf:params:xml:ns:caldav">
+<d:propfind xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/" xmlns:c="urn:ietf:params:xml:ns:caldav"
+xmlns:e="http://apple.com/ns/ical/">
   <d:prop>
      <d:resourcetype />
      <d:displayname />
+     <e:calendar-color />
+     <c:calendar-description />
      <cs:getctag />
      <d:sync-token />
      <c:supported-calendar-component-set />
