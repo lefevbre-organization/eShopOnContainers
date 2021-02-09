@@ -1,6 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.IntegrationsEvents.Events
 {
     public class GoogleDriveBaseIntegrationEvent : IntegrationEvent
     {

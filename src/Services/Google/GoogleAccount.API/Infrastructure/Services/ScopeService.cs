@@ -16,7 +16,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IScopeRepository repository;
         private readonly IEventBus eventBus;
         private readonly IHttpClientFactory clientFactory;
-        private readonly ILogger<ScopeService> logger;
 
         public ScopeService(
             IOptions<GoogleAccountSettings> settings

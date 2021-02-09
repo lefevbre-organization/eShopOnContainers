@@ -51,6 +51,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API
             .AddApplicationPart(typeof(AuthController).Assembly)
             .AddApplicationPart(typeof(CredentialController).Assembly)
             .AddApplicationPart(typeof(RevokeController).Assembly)
+            .AddApplicationPart(typeof(ScopeController).Assembly)
             .AddNewtonsoftJson();
 
             services.AddSwagger(Configuration);

@@ -1,20 +1,17 @@
-using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API
 {
+    using Infrastructure.Middlewares;
+
     public class Program
     {
         public static readonly string Namespace = typeof(Program).Namespace;
@@ -131,6 +128,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers
               .UseConfiguration(configuration)
               .UseSerilog()
               .Build();
-
     }
 }

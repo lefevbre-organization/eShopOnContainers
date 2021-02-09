@@ -1,4 +1,4 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Filters
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Filters
 {
     public class JsonErrorResponse
     {

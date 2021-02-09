@@ -6,6 +6,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IAuthRepository repository;
         private readonly IEventBus eventBus;
         private readonly IHttpClientFactory clientFactory;
-        private readonly ILogger<AuthService> logger;
 
         public AuthService(
             IOptions<GoogleAccountSettings> settings
@@ -51,7 +51,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             googletoken.Append(resultCredential.data.Code);
             googletoken.Append("&grant_type=authorization_code");
             googletoken.Append("&redirect_uri=");
-            googletoken.Append(settings.Value.RedirectSuccessDriveUrl);
+            googletoken.Append($"{settings.Value.RedirectSuccessDriveUrl}/success");
 
             using (HttpClient client = new HttpClient())
             {
@@ -63,6 +63,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                     resultCredential.data.Access_Token = token.access_token;
                     resultCredential.data.Refresh_Token = token.refresh_token;
+                    resultCredential.data.TokenCreate = DateTime.Now;
+                    resultCredential.data.Duration = token.expires_in;
                     resultCredential.data.Scope = token.scope;
                     resultCredential.data.Token_Type = token.token_type;
 
@@ -70,7 +72,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 }
                 else
                 {
-                    TraceError(result.errors, new GoogleAccountDomainException($"Error la llamda a la autorhización de Google, StatusCode: {response.StatusCode}"), "GA02", "MONGO");
+                    TraceError(result.errors, new GoogleAccountDomainException($"Error la llamda a la autorhización de Google, StatusCode: {response.StatusCode}"), Codes.GoogleAccount.GoogleAuthorization, Codes.Areas.Google);
+                    TraceError(result.errors, new GoogleAccountDomainException($"{googletoken.ToString()}"), Codes.GoogleAccount.GoogleAuthorization, Codes.Areas.Google );
                 }
             }
             return result;

@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
-    public class GoogleAccountScope : MongoModel
+    public class GoogleAccountScope
     {
         [BsonId]
         [BsonIgnoreIfDefault]
@@ -19,4 +19,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 
         public bool state { get; set; }
     }
+
 }

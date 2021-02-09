@@ -21,15 +21,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
+        private readonly IAuthRepository repo;
 
         public CredentialRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<CredentialRepository> logger
+            , IAuthRepository repo
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
+            this.repo = repo;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
@@ -37,11 +40,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private async Task<GoogleAccountUser> GetUser(string LefebvreCredential)
         {
             return await _context.UserGoogleAccounts.Find(GetFilterUser(LefebvreCredential)).FirstOrDefaultAsync();
-        }
-
-        private async Task<List<GoogleAccountScope>> GetScopes(GoogleProduct product)
-        {
-            return await _context.ScopeGoogleAccounts.Find(GetFilterScope(product)).ToListAsync();
         }
 
         private static FilterDefinition<GoogleAccountUser> GetFilterUser(string LefebvreCredential, bool onlyValid = true)
@@ -53,7 +51,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 Builders<GoogleAccountUser>.Filter.Eq(u => u.state, true));
             }
 
-            return Builders<GoogleAccountUser>.Filter.Eq(u => u.Id, LefebvreCredential.ToUpperInvariant());
+            return Builders<GoogleAccountUser>.Filter.Eq(u => u.LefebvreCredential, LefebvreCredential.ToUpperInvariant());
         }
 
         private static FilterDefinition<GoogleAccountScope> GetFilterScope(GoogleProduct product, bool onlyValid = true)
@@ -79,7 +77,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 GoogleAccountUser user = await GetUser(LefebvreCredential);
                 if (user == null)
                 { 
-                    TraceError(result.errors, new GoogleAccountDomainException("User not found."));
+                    TraceError(result.errors, new GoogleAccountDomainException("User not found."), Codes.GoogleAccount.Get, Codes.Areas.Mongo);
                     return result;
                 }
 
@@ -163,9 +161,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return result;
         }
 
-        public async Task<Result<OAuth2TokenModel>> GetToken(string LefebvreCredential, GoogleProduct Product)
+        public async Task<Result<string>> GetToken(string LefebvreCredential, GoogleProduct Product)
         {
-            Result<OAuth2TokenModel> result = new Result<OAuth2TokenModel>();
+            Result<string> result = new Result<string>();
 
             try
             {
@@ -180,10 +178,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 Credential credential = user.Credentials.SingleOrDefault(x => x.Product == Product);
 
                 if (credential == null)
-                    return result;
-
-                if (credential.TokenExpire)
                 {
+                    TraceError(result.errors, new GoogleAccountDomainException("No existe una credencial para este usuario"), Codes.GoogleAccount.GetCredentials, Codes.Areas.Mongo);
+                    return result;
+                }
+
+                
+                if (DateTime.Now > credential.TokenCreate.AddMilliseconds(credential.Duration))
+                {
+
+                    TraceInfo(result.infos, "token restablecido");
+
                     using (HttpClient Client = new HttpClient())
                     {
                         OAuth2RefreshToken request = new OAuth2RefreshToken()
@@ -198,79 +203,107 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                         if (refresh.IsSuccessStatusCode)
                         {
-                            result.data = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
+                            var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
+
+                            var resultupdate = await repo.UpdateCredentialsSuccess(credential, user.Id);
+
+                            result.data = token.access_token;
                             return result;
                         }
                         else
                         {
+                            TraceError(result.errors, new GoogleAccountDomainException("Error al pedir que refrescaran el token"), Codes.GoogleAccount.GoogleAuthorization, Codes.Areas.Google);
+
                             return result;
                         }
                     }
                 }
                 else
                 {
-                    result.data = new OAuth2TokenModel()
-                    {
-                        access_token = credential.Access_Token,
-                        refresh_token = credential.Refresh_Token,
-                        expires_in = credential.Duration,
-                        scope = credential.Scope,
-                        token_type = credential.Token_Type
-                    };
-
+                    result.data = credential.Access_Token;
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex));
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), Codes.GoogleAccount.Get, Codes.Areas.Mongo);
             }
 
             return result;
-
-
-
         }
         public async Task<Result<UserResponse>> CreateUserCredential(string LefebvreCredential)
         {
             Result<UserResponse> result = new Result<UserResponse>();
             Result<GoogleAccountUser> resultUser = new Result<GoogleAccountUser>();
-            // TODO No entiendo si esta creando una entidad nueva o puede modificrse una que esxista
-            // si es asi seria replaceone o updateone
-            // en caso de que estes creando y no hay duda 
-            // yo creo que puedes devolver el user creado entero en vez de un response
 
             try
             {
 
-                //GoogleAccountUser user = await GetUser(LefebvreCredential);
 
-                var user = new GoogleAccountUser() { LefebvreCredential = LefebvreCredential, state = true, accounts = new List<Credential>() };
+                var _user = await GetUser(LefebvreCredential);
+                if(_user != null)
+                {
+                    result.data = new UserResponse()
+                    {
+                        Id = _user.Id,
+                        LefebvreCredential = _user.LefebvreCredential,
+                        Credentials = new List<UserCredentialResponse>()
+                    };
 
-                //await _context.UserGoogleAccounts.InsertOneAsync(user);
+                    _user.Credentials.ForEach(x => {
+
+                        result.data.Credentials.Add(new UserCredentialResponse() {
+                             ClientId = x.ClientId,
+                             GoogleMailAccount = x.GoogleMailAccount,
+                             Product = x.Product,
+                             Secret  = x.Secret
+                        });
+
+                    });
+                    TraceInfo(result.infos, "Este usuario ya estaba registrado", Codes.GoogleAccount.GetCredentials);
+                    return result;
+                }
 
 
-                var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
+                var user = new GoogleAccountUser() {
+                    LefebvreCredential = LefebvreCredential,
+                    state = true,
+                    Credentials = _user != null ? _user.Credentials : new List<Credential>()
+                };
+
+                
+                var resultUpdate = await _context.UserGoogleAccounts.ReplaceOneAsync(
                     GetFilterUser(LefebvreCredential, false),
-                    Builders<GoogleAccountUser>.Update.Set($"LefebvreCredential", LefebvreCredential)
+                    user, GetUpsertOptions());
 
-                );
 
-                var ok = ManageUpdate($"Don´t insert or modify the LefebvreCredential",
+                user.Id = ManageUpsert($"Don´t insert or modify the LefebvreCredential",
                      $"Se modifica el LefebvreCredential {LefebvreCredential}",
+                     $"Se inserta el LefebvreCredential {LefebvreCredential}",
                      resultUser, resultUpdate, "GA07");
 
                 AddResultTrace(resultUser, result);
 
-                if (ok)
+                if (user != null)
                 {
                     result.data = new UserResponse()
                     {
                         Id = user.Id,
-                        LefebvreCredential = user.LefebvreCredential
+                        LefebvreCredential = user.LefebvreCredential,
                     };
-                    //resultUser.data = user;
+
+                    user.Credentials.ForEach(x => {
+
+                        result.data.Credentials.Add(new UserCredentialResponse()
+                        {
+                            ClientId = x.ClientId,
+                            GoogleMailAccount = x.GoogleMailAccount,
+                            Product = x.Product,
+                            Secret = x.Secret
+                        });
+
+                    });
+
                 }
-   
             }
             catch (Exception ex)
             {
@@ -295,7 +328,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     return result;
                 }
 
-                Credential _credential = user.Credentials.SingleOrDefault
+                Credential _credential = user.Credentials?.SingleOrDefault
                 (
                     x => x.GoogleMailAccount == request.GoogleMailAccount &&
                     x.Product == request.Product &&
@@ -307,19 +340,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     TraceError(result.errors, new GoogleAccountDomainException("The credential already exists."), "GA04");
                     return result;
                 }
-
-                //Credential credential = new Credential()
-                //{
-                //    Id = Guid.NewGuid(),
-                //    ClientId = request.ClientId,
-                //    GoogleMailAccount = request.GoogleMailAccount,
-                //    Product = request.Product,
-                //    Secret = request.Secret,
-                //    UserId = user.Id,
-                //    Active = true
-                //};
-
-                //user.Credentials.Add(credential);
 
                 var builder = Builders<GoogleAccountUser>.Filter;
                 var filter = GetFilterUser(LefebvreCredential);
@@ -342,8 +362,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                              updateResult,
                              "GA05");
 
-
-                // TODO Abner, se hace como te he puesto, los chequeos los dejamos , pero podemos optimizarlo en el futuro, no se porque devuelves este objeto y no devuelves la credencial, x ejemplo
                 if (ok){
                     TraceInfo(result.infos, "Credential create", "GA05");
                     result.data = new UserCredentialResponse()
@@ -403,7 +421,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), "GA01");
+                TraceError(result.errors, new GoogleAccountDomainException("Error", ex), Codes.GoogleAccount.Get, Codes.Areas.Mongo);
             }
 
             return result;

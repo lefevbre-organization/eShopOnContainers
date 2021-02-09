@@ -65,9 +65,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         public async Task<Result<bool>> GetRevokingDriveCredentialAsync(string LefebvreCredential, GoogleProduct idProduct = GoogleProduct.Drive)
         {
             Result<bool> result = new Result<bool>();
-            //var arrayFilters = GetFilterFromCredentials((int)idProduct);
-
-            // TODO esta es la revocacion de credenciales, revisalo y mira si funciona
 
             try
             {
@@ -90,37 +87,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     $"Credential revoke in {LefebvreCredential}",
                     result, resultUpdate, "GA10");
 
-                ////var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
-                ////    GetFilterUser(LefebvreCredential),
-                ////    Builders<GoogleAccountUser>.Update.Set($"credentias.$[i]", config),
-                ////    new UpdateOptions { ArrayFilters = arrayFilters }
-                ////);
-                //GoogleAccountUser user = await GetUser(LefebvreCredential);
-
-                //if (user == null)
-                //{
-                //    TraceError(result.errors, new GoogleAccountDomainException("User not Found"));
-                //    return result;
-                //}
-
-                //Credential credential = user.Credentials.SingleOrDefault(x => x.Product == GoogleProduct.Drive && x.Active == true);
-
-
-                //if (credential == null)
-                //{
-                //    TraceError(result.errors, new GoogleAccountDomainException("User Credential not Found."));
-                //    return result;
-                //}
-
-                //credential.Access_Token = "";
-                //credential.Refresh_Token = "";
-                //credential.Code = "";
-
-               
-
-                //result.data = true;
-
-               // TraceInfo(result.infos, "Credential revoke.");
             }
             catch (Exception ex)
             {

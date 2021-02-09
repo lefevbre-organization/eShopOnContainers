@@ -1,4 +1,4 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API
 {
     public class GoogleDriveSettings
     {
