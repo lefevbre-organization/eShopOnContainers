@@ -38,10 +38,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        public async Task<Result<UserGoogleDrive>> GetUserAsync(string idNavisionUser, short idApp)
-            => await _repo.GetUserAsync(idNavisionUser, idApp);
-
-        public async Task<Result<UserGoogleDrive>> PostUserAsync(UserGoogleDrive user)
-            => await _repo.PostUserAsync(user);
+        
     }
 }

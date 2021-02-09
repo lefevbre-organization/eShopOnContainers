@@ -44,34 +44,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             return Ok(new Result<string>(data));
         }
 
-        [HttpGet("{idNavision}")]
-        [ProducesResponseType(typeof(Result<UserGoogleDrive>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<UserGoogleDrive>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserAsync(
-            [FromRoute] string idNavision = "E1621396",
-            short idApp = 1)
-        {
-            if (string.IsNullOrEmpty(idNavision))
-                return BadRequest("Must be a valid idUserNavision");
-
-            Result<UserGoogleDrive> result = await _service.GetUserAsync(idNavision, idApp);
-
-            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
-        [HttpPost("user")]
-        [ProducesResponseType(typeof(Result<UserGoogleDrive>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<UserGoogleDrive>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> PostUserAsync(
-                [FromBody] UserGoogleDrive user
-            )
-        {
-            if (string.IsNullOrEmpty(user.idNavision))
-                return BadRequest("Must be a valid idUserNavision");
-
-            Result<UserGoogleDrive> result = await _service.PostUserAsync(user);
-
-            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+        
     }
 }

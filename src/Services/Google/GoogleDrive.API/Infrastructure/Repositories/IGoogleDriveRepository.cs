@@ -7,8 +7,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
     public interface IGoogleDriveRepository
     {
-        Task<Result<UserGoogleDrive>> GetUserAsync(string idUser, short idApp);
-
-        Task<Result<UserGoogleDrive>> PostUserAsync(UserGoogleDrive user);
+        
     }
 }

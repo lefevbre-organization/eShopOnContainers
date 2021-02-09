@@ -46,14 +46,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(UserGoogleDrive))) { BsonClassMap.RegisterClassMap<UserGoogleDrive>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(GoogleAccountUser))) { BsonClassMap.RegisterClassMap<UserGoogleDrive>(); }
         }
 
-        public IMongoCollection<UserGoogleDrive> UserGoogleDrives => Database.GetCollection<UserGoogleDrive>(_settings.Value.Collection);
+        public IMongoCollection<GoogleAccountUser> UserGoogleAccounts => Database.GetCollection<GoogleAccountUser>(_settings.Value.Collection);
 
-        public IMongoCollection<UserGoogleDrive> UserGoogleDrivesTransaction(IClientSessionHandle session)
+        public IMongoCollection<GoogleAccountUser> UserGoogleAccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserGoogleDrive>(_settings.Value.Collection);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<GoogleAccountUser>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
