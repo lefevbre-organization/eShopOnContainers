@@ -69,6 +69,13 @@ conference:
   jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
   jitsiroom: 'https://meet-test.lefebvre.es'
 
+googleaccount:
+  redirecturl: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac/auth/drive'
+  internalurl: 'https://lexbox-dev-apigwlex.lefebvre.es/{loquesea}'
+
+googledrive:
+  tokenurl: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac'
+
 nextcloud:
   host: lexbox-dev-nextcloud.lefebvre.es
   username: admin

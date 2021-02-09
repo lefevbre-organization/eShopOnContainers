@@ -3,7 +3,7 @@ Param(
     [parameter(Mandatory=$false)][string]$dockerUser="freyeslefebvre",
     [parameter(Mandatory=$false)][string]$dockerPassword="NetEb9221",
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers",
-    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
@@ -29,7 +29,7 @@ Param(
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-40.1",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-40.2",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )

@@ -22,4 +22,6 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   googleaccount__ConnectionString: mongodb://{{ $mongo }}
   googleaccount__Database: {{ .Values.inf.mongo.googleaccount.database }}
+  urls__RedirectSuccessDrive: "{{ .Values.googleaccount.redirecturl }}"
+  urls__InternalRedirection: "{{ .Values.googleaccount.internalurl }}"
   all__Version: {{ .Chart.Version | quote }}

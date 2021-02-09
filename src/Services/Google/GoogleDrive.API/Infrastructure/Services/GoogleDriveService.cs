@@ -44,7 +44,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             Result<string> result = new Result<string>();
             using (HttpClient client = new HttpClient())
             {
-                var resultgettoken = await client.GetAsync($"{_settings.Value.UrlToken}/api/v1/Credential/GetToken?LefebvreCredential={LefebvreCredential}&Product=0");
+                var resultgettoken = await client.GetAsync($"{_settings.Value.UrlToken}/Credential/GetToken?LefebvreCredential={LefebvreCredential}&Product=0");
 
                 if(resultgettoken.IsSuccessStatusCode)
                 {
