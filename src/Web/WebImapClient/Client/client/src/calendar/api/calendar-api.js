@@ -15,9 +15,9 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'joel',
-  password: 'joel1991.-',
-  server: 'http://localhost:8080',
+  username: 'admin',
+  password: 'admin_dev',
+  server: 'https://lexbox-dev-nextcloud.lefebvre.es/',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
   principalPath: '/principals/users',
@@ -31,6 +31,7 @@ export const caldav = new Caldav(settings);
 // Get calendars
 export const listCalendarList = async () => {
     const calendars = await caldav.listCalendars({});    
+    console.log('listCalendarList', calendars)
    // calendars = calendars.filter((c) => c.ctag !== undefined);
     return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
@@ -40,10 +41,11 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/joel/${calendar.summary}`,
+        filename: `/calendars/admin/${calendar.summary}`,
+        color: '#a9f90e',
         description: calendar.description        
     });   
-    console.log(calendar)
+    console.log(cal)
     return cal;
 };
 
@@ -111,7 +113,6 @@ function listEventsParser(list) {
     //start: "20210108"
     //summary: "prueba"
     //__proto__: Object
-    console.log('listEventsParser ==>', list[1].categories)
     let listParse = [];
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {   
@@ -224,8 +225,13 @@ function listCalendarParser(list) {
             //    primary = undefined
             //}
             let primary = false;
-
             let color = "#0693e3";
+            if(list[i].color) {
+                color = list[i].color._;
+            } else {
+                color = "#0693e3";
+            }
+            
             let selected = true
             if (i > 0) {
                 selected = false
