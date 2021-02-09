@@ -30,7 +30,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
             _log = log ?? throw new ArgumentNullException(nameof(log));
-            //_log.LogError("Recibe llamada Google Drive"); // only for test
         }
 
         /// <summary>
