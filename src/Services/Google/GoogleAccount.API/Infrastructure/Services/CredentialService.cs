@@ -43,7 +43,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         public async Task<Result<List<UserCredentialResponse>>> GetCredentials(string LefebvreCredential) =>
             await repository.GetCredentials(LefebvreCredential);
 
-        public async Task<Result<OAuth2TokenModel>> GetToken(string LefebvreCredential, GoogleProduct Product) =>
+        public async Task<Result<string>> GetToken(string LefebvreCredential, GoogleProduct Product) =>
             await repository.GetToken(LefebvreCredential, Product);
 
         public async Task<Result<UserResponse>> CreateUserCredential(string LefebvreCredential) =>

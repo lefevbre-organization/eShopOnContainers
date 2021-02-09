@@ -158,9 +158,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             return result;
         }
 
-        public async Task<Result<OAuth2TokenModel>> GetToken(string LefebvreCredential, GoogleProduct Product)
+        public async Task<Result<string>> GetToken(string LefebvreCredential, GoogleProduct Product)
         {
-            Result<OAuth2TokenModel> result = new Result<OAuth2TokenModel>();
+            Result<string> result = new Result<string>();
 
             try
             {
@@ -194,7 +194,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                         if (refresh.IsSuccessStatusCode)
                         {
-                            result.data = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
+                            var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
+                            result.data = token.access_token;
                             return result;
                         }
                         else
@@ -205,15 +206,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 }
                 else
                 {
-                    result.data = new OAuth2TokenModel()
-                    {
-                        access_token = credential.Access_Token,
-                        refresh_token = credential.Refresh_Token,
-                        expires_in = (int)credential.Duration,
-                        scope = credential.Scope,
-                        token_type = credential.Token_Type
-                    };
-
+                    result.data = credential.Access_Token;
                 }
             }
             catch (Exception ex)
