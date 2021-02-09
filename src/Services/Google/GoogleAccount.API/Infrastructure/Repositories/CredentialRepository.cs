@@ -184,7 +184,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 }
 
                 
-                if (DateTime.Now <= credential.TokenCreate.AddMilliseconds(credential.Duration))
+                if (DateTime.Now > credential.TokenCreate.AddMilliseconds(credential.Duration))
                 {
 
                     TraceInfo(result.infos, "token restablecido");
