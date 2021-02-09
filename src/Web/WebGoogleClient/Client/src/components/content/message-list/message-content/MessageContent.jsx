@@ -322,24 +322,27 @@ export class MessageContent extends Component {
                           var iframe = document.getElementById(
                             'message-iframe'
                           );
-                          const bd = iframe.contentDocument.body.innerHTML.replace(
-                            `cid:${contentId}`,
-                            'data:image/png;base64, ' + dataBase64Rep
-                          );
-                          iframe.contentDocument.body.innerHTML = bd;
-
-                          var blobUrl = URL.createObjectURL(urlBlob);
-                          var Attachment = addAttachmentElement(
-                            blobUrl,
-                            filename
-                          );
-                          var AttachmentDiv = addAttachmentContainer(mimeType);
-                          AttachmentDiv.appendChild(Attachment);
-                          iframe &&
-                            iframe.contentDocument &&
-                            iframe.contentDocument.body.appendChild(
-                              AttachmentDiv
+                          if (iframe){
+                            const bd = iframe.contentDocument.body.innerHTML.replace(
+                              `cid:${contentId}`,
+                              'data:image/png;base64, ' + dataBase64Rep
                             );
+                            iframe.contentDocument.body.innerHTML = bd;
+  
+                            var blobUrl = URL.createObjectURL(urlBlob);
+                            var Attachment = addAttachmentElement(
+                              blobUrl,
+                              filename
+                            );
+                            var AttachmentDiv = addAttachmentContainer(mimeType);
+                            AttachmentDiv.appendChild(Attachment);
+                            iframe &&
+                              iframe.contentDocument &&
+                              iframe.contentDocument.body.appendChild(
+                                AttachmentDiv
+                              );
+                          }
+                          
                         }
                       }
                     }
