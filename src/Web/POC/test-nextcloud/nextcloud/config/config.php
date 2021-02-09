@@ -36,4 +36,5 @@ $CONFIG = array (
   'dbuser' => 'nextcloud',
   'dbpassword' => 'password',
   'installed' => true,
+  'theme' => '',
 );
