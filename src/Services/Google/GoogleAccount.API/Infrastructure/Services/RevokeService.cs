@@ -17,7 +17,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IRevokeRepository repository;
         private readonly IEventBus eventBus;
         private readonly IHttpClientFactory clientFactory;
-        private readonly ILogger<RevokeService> logger;
 
         public RevokeService(
             IOptions<GoogleAccountSettings> settings

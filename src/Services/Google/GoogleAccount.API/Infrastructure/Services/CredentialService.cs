@@ -20,7 +20,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IScopeRepository scopeRepository;
         private readonly IEventBus eventBus;
         private readonly IHttpClientFactory clientFactory;
-        private readonly ILogger<CredentialService> logger;
 
         public CredentialService(
             IOptions<GoogleAccountSettings> settings

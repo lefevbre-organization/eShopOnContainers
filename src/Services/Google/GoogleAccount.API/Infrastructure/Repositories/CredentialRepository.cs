@@ -178,7 +178,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                     return result;
 
                 // Todo ver las credenciales
-                if (true)
+                if (DateTime.Now <= credential.TokenCreate.AddMilliseconds(credential.Duration))
                 {
                     using (HttpClient Client = new HttpClient())
                     {

@@ -24,8 +24,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     public class AuthController : Controller
     {
         
-        private readonly IConfiguration configuration;
-
         private readonly IAuthService _service;
         private readonly IOptions<GoogleAccountSettings> settings;
         private readonly IEventBus _eventBus;

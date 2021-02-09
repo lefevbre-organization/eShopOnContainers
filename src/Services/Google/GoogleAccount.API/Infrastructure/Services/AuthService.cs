@@ -19,7 +19,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly IAuthRepository repository;
         private readonly IEventBus eventBus;
         private readonly IHttpClientFactory clientFactory;
-        private readonly ILogger<AuthService> logger;
 
         public AuthService(
             IOptions<GoogleAccountSettings> settings
