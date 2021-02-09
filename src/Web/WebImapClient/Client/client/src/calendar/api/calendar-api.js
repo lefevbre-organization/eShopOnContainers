@@ -42,7 +42,7 @@ export const createCalendar = async (calendar) => {
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
         filename: `/calendars/admin/${calendar.summary}`,
-        color: '#a9f90e',
+        color: calendar.color,
         description: calendar.description        
     });   
     console.log(cal)
