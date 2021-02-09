@@ -1,0 +1,424 @@
+Release "it-elefebvre-nextcloud" has been upgraded. Happy Helming!
+NAME: it-elefebvre-nextcloud
+LAST DEPLOYED: Tue Feb  9 11:25:44 2021
+NAMESPACE: default
+STATUS: pending-upgrade
+REVISION: 3
+TEST SUITE: None
+HOOKS:
+MANIFEST:
+---
+# Source: nextcloud/charts/mariadb/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: "mariadb"
+    chart: "mariadb-7.10.2"
+    release: "it-elefebvre-nextcloud"
+    heritage: "Helm"
+type: Opaque
+data:
+  mariadb-root-password: "TlJSS1ljb2ZyNA=="
+  
+  mariadb-password: "ZWxlZmVidnJlX2Rldl8xMjM0"
+---
+# Source: nextcloud/templates/db-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: it-elefebvre-nextcloud-db
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    env: dev
+    version: "2.5.1"
+type: Opaque
+data:
+  db-password: "ZWxlZmVidnJlX2Rldl8xMjM0"
+  db-username: "bmV4dGNsb3VkX2Rldg=="
+---
+# Source: nextcloud/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: it-elefebvre-nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+data:
+  nextcloud-username: "YWRtaW4="
+  
+  nextcloud-password: "YWRtaW5fZGV2"
+---
+# Source: nextcloud/charts/mariadb/templates/master-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: "mariadb"
+    component: "master"
+    chart: "mariadb-7.10.2"
+    release: "it-elefebvre-nextcloud"
+    heritage: "Helm"
+data:
+  my.cnf: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+    
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    default-character-set=UTF8
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+---
+# Source: nextcloud/templates/nextcloud-pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: it-elefebvre-nextcloud-nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: app
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "8Gi"
+---
+# Source: nextcloud/charts/mariadb/templates/master-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: "mariadb"
+    component: "master"
+    chart: "mariadb-7.10.2"
+    release: "it-elefebvre-nextcloud"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+  selector:
+    app: "mariadb"
+    component: "master"
+    release: "it-elefebvre-nextcloud"
+---
+# Source: nextcloud/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: app
+    env: dev
+    version: "2.5.1"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: nextcloud
+---
+# Source: nextcloud/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: it-elefebvre-nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: app
+    env: dev
+    version: "2.5.1"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+      app.kubernetes.io/instance: it-elefebvre-nextcloud
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nextcloud
+        app.kubernetes.io/instance: it-elefebvre-nextcloud
+        app.kubernetes.io/component: app
+    spec:
+      containers:
+      - name: nextcloud
+        image: "nextcloud:19.0.3-apache"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MYSQL_HOST
+          value: it-elefebvre-nextcloud-mariadb
+        - name: MYSQL_DATABASE
+          value: "nextcloud_dev"
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: it-elefebvre-nextcloud-db
+              key: db-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: it-elefebvre-nextcloud-db
+              key: db-password
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: it-elefebvre-nextcloud
+              key: nextcloud-username
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: it-elefebvre-nextcloud
+              key: nextcloud-password
+        - name: NEXTCLOUD_TRUSTED_DOMAINS
+          value: lexbox-dev-nextcloud.lefebvre.es
+        - name: NEXTCLOUD_DATA_DIR
+          value: "/var/www/html/data"
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /status.php
+            port: http
+            httpHeaders:
+            - name: Host
+              value: "lexbox-dev-nextcloud.lefebvre.es"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /status.php
+            port: http
+            httpHeaders:
+            - name: Host
+              value: "lexbox-dev-nextcloud.lefebvre.es"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3            
+        resources:
+          {}
+        volumeMounts:
+        - name: nextcloud-data
+          mountPath: /var/www/
+          subPath: root
+        - name: nextcloud-data
+          mountPath: /var/www/html
+          subPath: html
+        - name: nextcloud-data
+          mountPath: /var/www/html/data
+          subPath: data
+        - name: nextcloud-data
+          mountPath: /var/www/html/config
+          subPath: config
+        - name: nextcloud-data
+          mountPath: /var/www/html/custom_apps
+          subPath: custom_apps
+        - name: nextcloud-data
+          mountPath: /var/www/tmp
+          subPath: tmp
+        - name: nextcloud-data
+          mountPath: /var/www/html/themes
+          subPath: themes
+      volumes:
+      - name: nextcloud-data
+        persistentVolumeClaim:
+          claimName: it-elefebvre-nextcloud-nextcloud
+      # Will mount configuration files as www-data (id: 33) for nextcloud
+      securityContext:
+        fsGroup: 33
+---
+# Source: nextcloud/charts/mariadb/templates/master-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: mariadb
+    chart: mariadb-7.10.2
+    release: it-elefebvre-nextcloud
+    heritage: Helm
+    component: master
+    
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+      release: it-elefebvre-nextcloud
+      component: master
+  serviceName: it-elefebvre-nextcloud-mariadb
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        chart: mariadb-7.10.2
+        release: it-elefebvre-nextcloud
+        heritage: Helm
+        component: master
+        
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: mariadb
+                    release: it-elefebvre-nextcloud      
+      initContainers:
+      containers:
+        - name: "mariadb"
+          image: docker.io/bitnami/mariadb:10.3.24-debian-10-r17
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: it-elefebvre-nextcloud-mariadb
+                  key: mariadb-root-password
+            - name: MARIADB_USER
+              value: "nextcloud_dev"
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: it-elefebvre-nextcloud-mariadb
+                  key: mariadb-password
+            - name: MARIADB_DATABASE
+              value: "nextcloud_dev"
+          ports:
+            - name: mysql
+              containerPort: 3306
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  password_aux="${MARIADB_ROOT_PASSWORD:-}"
+                  if [ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]; then
+                      password_aux=$(cat $MARIADB_ROOT_PASSWORD_FILE)
+                  fi
+                  mysqladmin status -uroot -p$password_aux
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  password_aux="${MARIADB_ROOT_PASSWORD:-}"
+                  if [ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]; then
+                      password_aux=$(cat $MARIADB_ROOT_PASSWORD_FILE)
+                  fi
+                  mysqladmin status -uroot -p$password_aux
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/mariadb
+            - name: config
+              mountPath: /opt/bitnami/mariadb/conf/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: config
+          configMap:
+            name: it-elefebvre-nextcloud-mariadb
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app: "mariadb"
+          component: "master"
+          release: "it-elefebvre-nextcloud"
+          heritage: "Helm"
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+
+NOTES:
+1. Get the nextcloud URL by running:
+
+  export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=it-elefebvre-nextcloud" -o jsonpath="{.items[0].metadata.name}")
+  echo http://127.0.0.1:8080/
+  kubectl port-forward $POD_NAME 8080:80
+
+2. Get your nextcloud login credentials by running:
+
+  echo User:     admin
+  echo Password: $(kubectl get secret --namespace default it-elefebvre-nextcloud -o jsonpath="{.data.nextcloud-password}" | base64 --decode)

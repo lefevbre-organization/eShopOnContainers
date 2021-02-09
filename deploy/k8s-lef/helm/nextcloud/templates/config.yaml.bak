@@ -8,8 +8,6 @@ metadata:
     helm.sh/chart: {{ include "nextcloud.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-    env: {{ .Values.lef.env }}
-    version: {{ .Chart.Version | quote }}
 data:
 {{- range $key, $value := .Values.nextcloud.configs }}
   {{ $key }}: |-
