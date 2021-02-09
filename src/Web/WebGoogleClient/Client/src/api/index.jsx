@@ -352,6 +352,7 @@ function removeHtmlTags(body, imgList) {
 export function getEmbeddedImages(body) {
   let res = [];
   let images = body.match(/<img [^>]*src="[^"]*"[^>]*>/gm);
+  images = (images) ? images : [];
   for (let i = 0; i < images.length; i++) {
     const image = images[i];
     if (!image.match(/src="http[^>]*/g)) {
@@ -370,11 +371,13 @@ export function getEmbeddedImages(body) {
 // Receives the list of images and generates a unique id for each of them.
 function genEmbedImgIds(images) {
   let ids = [];
-  for (let index = 0; index < images.length; index++) {
-    const element = images[index];
-    const name = getContentName(element);
-    const random = uuidv4().slice(0, 8);
-    ids.push(`${name.replace('.', '')}__${random}`);
+  if (images) {
+    for (let index = 0; index < images.length; index++) {
+      const element = images[index];
+      const name = getContentName(element);
+      const random = uuidv4().slice(0, 8);
+      ids.push(`${name.replace('.', '')}__${random}`);
+    }
   }
   return ids;
 }
@@ -408,7 +411,7 @@ function getImageData(imageTag) {
   srcSplitted = src.split(',');
   imageData = srcSplitted[1];
   imageData = parseAttachment(imageData);
-  console.log('getImageData:' + imageData);
+  //console.log('getImageData:' + imageData);
   return imageData;
 }
 
@@ -497,11 +500,131 @@ export const deleteDraft = async ({ draftId }) => {
 
 export const createDraft = async ({ headers, body, attachments, draftId }) => {
  
-  let email = getDataEmail({ headers, body, attachments });
+  let email = '';
+  let guidGlobal = uuidv4();
+  let guidRelated = uuidv4();
+  let guidAlternative = uuidv4();
+
+  let embeddedImages = false;
+  let embeddedImagesList;
+  let embeddedImagesIds = [];
+  let formattedBody = body;
+  let plainTextBody;
+
+  if (body.search('<img src=') !== -1) {
+    embeddedImagesList = getEmbeddedImages(body);
+    if (embeddedImagesList.length > 0) {
+      embeddedImages = true;
+    }
+    for (let index = 0; index < embeddedImagesList.length; index++) {
+      const element = embeddedImagesList[index];
+      formattedBody = formattedBody.replace(
+        `${element}`,
+        `${element.replace('>', ' nosend="1">')}`
+      );
+    }
+    embeddedImagesIds = genEmbedImgIds(embeddedImagesList);
+    formattedBody = formatBodyImages(
+      formattedBody,
+      embeddedImagesList,
+      embeddedImagesIds
+    );
+    plainTextBody = removeHtmlTags(body, embeddedImagesList);
+  }
+
+  email += `MIME-Version: 1.0\r\n`;
+  email += `Subject: ${headers.Subject}\r\n`;
+  email += `From: ${headers.From.getName()} <${headers.From.getEmail()}>\r\n`;
+  email += `To: ${headers.To}\r\n`;
+  if (headers.Cc && headers.Cc.length > 0) {
+    email += `Cc: ${headers.Cc}\r\n`;
+  }
+  if (headers.Bcc && headers.Bcc.length > 0) {
+    email += `Bcc: ${headers.Bcc}\r\n`;
+  }
+  email += `Content-Type: ${
+    attachments && attachments.length > 0
+      ? `multipart/mixed; `
+      : embeddedImages
+      ? `multipart/related;`
+      : `multipart/alternative;`
+  } boundary="${guidGlobal}"\r\n`;
+  email += `\r\n`;
+  email += `--${guidGlobal}\r\n`;
+  if (attachments && attachments.length > 0 && embeddedImages) {
+    email += `Content-Type: multipart/related; boundary="${guidRelated}"\r\n`;
+    email += `\r\n`;
+    email += `--${guidRelated}\r\n`;
+    email += `Content-Type: multipart/alternative; boundary="${guidAlternative}"\r\n`;
+  } else {
+    email += `Content-Type: multipart/alternative; boundary="${guidAlternative}"\r\n`;
+  }
+  email += `\r\n`;
+  email += `--${guidAlternative}\r\n`;
+  email += `Content-Type: text/plain; charset="utf8"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+  email += `\r\n`;
+  //email += `${chunkString(removeHtmlTags(body))}\r\n`;
+  //email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
+  if (embeddedImages) {
+    email += `${
+      plainTextBody.length === 0 ? '' : quotedPrintable.encode(utf8.encode(plainTextBody))
+    }\r\n`;
+  } else {
+    email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
+  }
+  email += `\r\n`;
+  email += `--${guidAlternative}\r\n`;
+  email += `Content-Type: text/html; charset="utf8"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+  email += `\r\n`;
+  email += `${
+    formattedBody.length === 0 ? '' : quotedPrintable.encode(utf8.encode(formattedBody))
+  }\r\n`;
+  email += `\r\n`;
+  email += `--${guidAlternative}--\r\n`;
+  if (embeddedImages) {
+    for (var i = 0; i < embeddedImagesList.length; i++) {
+      let imgName = getContentName(embeddedImagesList[i]);
+      let imgType = getContentType(embeddedImagesList[i]);
+      let imgData = getImageData(embeddedImagesList[i]);
+
+      if (attachments && attachments.length > 0 && embeddedImages) {
+        email += `--${guidRelated}\r\n`;
+      } else {
+        email += `--${guidGlobal}\r\n`;
+      }
+      email += `Content-type: ${imgType}; name="${imgName}"\r\n`;
+      email += `Content-Disposition: inline; filename="${imgName}"\r\n`;
+      email += `Content-Transfer-Encoding: base64\r\n`;
+      email += `X-Attachment-Id: ${embeddedImagesIds[i]}\r\n`;
+      email += `Content-ID: <${embeddedImagesIds[i]}>\r\n`;
+      email += `\r\n`;
+      email += `${imgData}`;
+    }
+  }
+  if (attachments && attachments.length > 0 && embeddedImages) {
+    email += `--${guidRelated}--\r\n`;
+  }
+  for (var i = 0; i < headers.attachments.length; i++) {
+    var mimetype = headers.attachments[i].type;
+    var fileData = base64Data(headers.attachments[i].content);
+    var fileName = headers.attachments[i].name;
+    var fileData2 = parseAttachment(fileData);
+
+    email += `--${guidGlobal}\r\n`;
+    email += `Content-Type: ${mimetype}; name="${fileName}"\r\n`;
+    email += `Content-Disposition: attachment; filename = "${fileName}"\r\n`;
+    email += `Content-Transfer-Encoding: base64\r\n`;
+    email += `\r\n`;
+    email += `${fileData2}`;
+  }
+  email += `--${guidGlobal}--`;
   return new Promise((resolve, reject) => {
     const base64EncodedEmail = Base64.encodeURI(email);
     let draft = null;
     if(draftId != '') {
+      console.log('index.jsx|CreateDraft: (update) ' + draftId);
       draft =  window.gapi.client.gmail.users.drafts.update({
         userId: 'me',
         id: draftId,
@@ -512,6 +635,7 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
         },
       });
      } else {
+      console.log('index.jsx|CreateDraft: (create) ');
       draft = window.gapi.client.gmail.users.drafts.create({
         userId: 'me',
         resource: {
@@ -534,12 +658,128 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
 
 
 export const sendMessage = async ({ headers, body, attachments }) => {
-  debugger
-  let email = getDataEmail({ headers, body, attachments });
+  let email = '';
+  let guidGlobal = uuidv4();
+  let guidRelated = uuidv4();
+  let guidAlternative = uuidv4();
 
-  debugger
+  let embeddedImages = false;
+  let embeddedImagesList;
+  let embeddedImagesIds = [];
+  let formattedBody = body;
+  let plainTextBody;
+
+  if (body.search('<img src=') !== -1) {
+    embeddedImagesList = getEmbeddedImages(body);
+    if (embeddedImagesList.length > 0) {
+      embeddedImages = true;
+    }
+    for (let index = 0; index < embeddedImagesList.length; index++) {
+      const element = embeddedImagesList[index];
+      formattedBody = formattedBody.replace(
+        `${element}`,
+        `${element.replace('>', ' nosend="1">')}`
+      );
+    }
+    embeddedImagesIds = genEmbedImgIds(embeddedImagesList);
+    formattedBody = formatBodyImages(
+      formattedBody,
+      embeddedImagesList,
+      embeddedImagesIds
+    );
+    plainTextBody = removeHtmlTags(body, embeddedImagesList);
+  }
+
+  email += `MIME-Version: 1.0\r\n`;
+  email += `Subject: ${headers.Subject}\r\n`;
+  email += `From: ${headers.From.getName()} <${headers.From.getEmail()}>\r\n`;
+  email += `To: ${headers.To}\r\n`;
+  if (headers.Cc && headers.Cc.length > 0) {
+    email += `Cc: ${headers.Cc}\r\n`;
+  }
+  if (headers.Bcc && headers.Bcc.length > 0) {
+    email += `Bcc: ${headers.Bcc}\r\n`;
+  }
+  email += `Content-Type: ${
+    attachments && attachments.length > 0
+      ? `multipart/mixed; `
+      : embeddedImages
+      ? `multipart/related;`
+      : `multipart/alternative;`
+  } boundary="${guidGlobal}"\r\n`;
+  email += `\r\n`;
+  email += `--${guidGlobal}\r\n`;
+  if (attachments && attachments.length > 0 && embeddedImages) {
+    email += `Content-Type: multipart/related; boundary="${guidRelated}"\r\n`;
+    email += `\r\n`;
+    email += `--${guidRelated}\r\n`;
+    email += `Content-Type: multipart/alternative; boundary="${guidAlternative}"\r\n`;
+  } else {
+    email += `Content-Type: multipart/alternative; boundary="${guidAlternative}"\r\n`;
+  }
+  email += `\r\n`;
+  email += `--${guidAlternative}\r\n`;
+  email += `Content-Type: text/plain; charset="utf8"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+  email += `\r\n`;
+  //email += `${chunkString(removeHtmlTags(body))}\r\n`;
+  //email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
+  if (embeddedImages) {
+    email += `${
+      plainTextBody.length === 0 ? '' : quotedPrintable.encode(utf8.encode(plainTextBody))
+    }\r\n`;
+  } else {
+    email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
+  }
+  email += `\r\n`;
+  email += `--${guidAlternative}\r\n`;
+  email += `Content-Type: text/html; charset="utf8"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+  email += `\r\n`;
+  email += `${
+    formattedBody.length === 0 ? '' : quotedPrintable.encode(utf8.encode(formattedBody))
+  }\r\n`;
+  email += `\r\n`;
+  email += `--${guidAlternative}--\r\n`;
+  if (embeddedImages) {
+    for (var i = 0; i < embeddedImagesList.length; i++) {
+      let imgName = getContentName(embeddedImagesList[i]);
+      let imgType = getContentType(embeddedImagesList[i]);
+      let imgData = getImageData(embeddedImagesList[i]);
+
+      if (attachments && attachments.length > 0 && embeddedImages) {
+        email += `--${guidRelated}\r\n`;
+      } else {
+        email += `--${guidGlobal}\r\n`;
+      }
+      email += `Content-type: ${imgType}; name="${imgName}"\r\n`;
+      email += `Content-Disposition: inline; filename="${imgName}"\r\n`;
+      email += `Content-Transfer-Encoding: base64\r\n`;
+      email += `X-Attachment-Id: ${embeddedImagesIds[i]}\r\n`;
+      email += `Content-ID: <${embeddedImagesIds[i]}>\r\n`;
+      email += `\r\n`;
+      email += `${imgData}`;
+    }
+  }
+  if (attachments && attachments.length > 0 && embeddedImages) {
+    email += `--${guidRelated}--\r\n`;
+  }
+  for (var i = 0; i < headers.attachments.length; i++) {
+    var mimetype = headers.attachments[i].type;
+    var fileData = base64Data(headers.attachments[i].content);
+    var fileName = headers.attachments[i].name;
+    var fileData2 = parseAttachment(fileData);
+
+    email += `--${guidGlobal}\r\n`;
+    email += `Content-Type: ${mimetype}; name="${fileName}"\r\n`;
+    email += `Content-Disposition: attachment; filename = "${fileName}"\r\n`;
+    email += `Content-Transfer-Encoding: base64\r\n`;
+    email += `\r\n`;
+    email += `${fileData2}`;
+  }
+  email += `--${guidGlobal}--`;
+
   return new Promise((resolve, reject) => {
-    debugger
     const base64EncodedEmail = Base64.encodeURI(email);
     const request = window.gapi.client.gmail.users.messages.send({
       userId: 'me',
@@ -547,14 +787,10 @@ export const sendMessage = async ({ headers, body, attachments }) => {
         raw: base64EncodedEmail,
       },
     });
-    debugger
     request.execute((err, res) => {
-      debugger
       if (err.error) {
-        debugger
         reject(err.error);
       } else {
-        debugger
         resolve(err);
       }
     });

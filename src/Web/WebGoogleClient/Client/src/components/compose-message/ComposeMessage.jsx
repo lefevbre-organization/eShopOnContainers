@@ -136,6 +136,10 @@ export class ComposeMessage extends PureComponent {
         (props.history.location.state &&
           props.history.location.state.composeProps.content) ||
         '',
+      isReply:
+      (props.history.location.state &&
+        props.history.location.state.composeProps.isReply) ||
+      false,
       showInlineDashboard: false,
       open: false,
       defaultContent: '',
@@ -147,7 +151,8 @@ export class ComposeMessage extends PureComponent {
       showEmptySubjectWarning: false,
       draftTime: '',
       draftId: '',
-      isDraftEdit: false
+      isDraftEdit: false,
+      embeddedImgLoaded: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -267,7 +272,7 @@ export class ComposeMessage extends PureComponent {
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailHeaderMessage(messageId);
-      this.props.getEmailMessage(messageId);
+      this.props.getEmailMessage(messageId)
     }
   }
 
@@ -359,22 +364,40 @@ export class ComposeMessage extends PureComponent {
       const src = image.replace(/.*src="([^"]*)".*/, '$1');
       let body = '';
       if(this.state.defaultContent) {
-        body = this.state.defaultContent.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+        let regExp = RegExp(src,"g")
+        body = this.state.defaultContent.replace(regExp, `data:${attach.mimeType};base64,${dataUrl}`);
       } else {
-        body = this.props.emailMessageResult.body.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+        let regExp = RegExp(src,"g")
+        body = this.props.emailMessageResult.body.replace(regExp, `data:${attach.mimeType};base64,${dataUrl}`);
       }
       this.setState({
        defaultContent: body,
-       content: body
+       content: body,
+       embeddedImgLoaded: true
       });
     }
+
+    const extractHeaders = (attachments) => {
+      attachments.forEach(attachment => {
+        const headers = attachment.headers;
+        if (headers){
+          const inline = headers.find(h => h.name === 'Content-Disposition' && (h.value.includes("inline") || h.value.includes("attachment")));
+          const attID = headers.find(h => h.name === "Content-ID");
+          if (inline && attID){
+            const image = embedddedImages.find(i => i.includes(attID.value.replace('<', '').replace('>','')));
+            if (image)
+              addImages(attachment, image);
+          }
+        }
+        if (attachment.parts && attachment.parts.length > 0){
+          extractHeaders(attachment.parts);
+        }
+      })
+    }
   
-    attachments[0].parts[1].parts.forEach((file, index) => {
-        if(file.filename != '') {
-            const image = embedddedImages[index - 1];
-            addImages(file, image);
-      }
-    });
+    if (attachments && attachments.length > 0){
+      extractHeaders(attachments);
+    }
   }
 
   getById() {
@@ -382,7 +405,7 @@ export class ComposeMessage extends PureComponent {
       const messageId = this.props.emailMessageResult.result.messageHeaders.find(x => 
         x.name == "Message-ID" || x.name == "Message-Id");
         getDraftListWithRFC(
-          messageId.value
+          messageId.value      
           ).then((data) => {
             const messageId = this.props.emailMessageResult.result.id;
 
@@ -582,6 +605,14 @@ export class ComposeMessage extends PureComponent {
       prevProps.emailMessageResult !== this.props.emailMessageResult
       ) {
       this.getById();
+    }
+    if (!this.state.embeddedImgLoaded && (this.state.isForward || this.state.isReply)){
+      const messageId = this.props.emailHeaderMessageResult.headers.find(h => h.name.toUpperCase() === "MESSAGE-ID");
+      if (messageId && messageId.value){
+        const attachments = this.props.emailMessageResult.attach;
+        const embeddedImages = getEmbeddedImages(this.props.emailMessageResult.body);
+        this.formatBodyImages(messageId.value, attachments, embeddedImages);  
+      }
     }
   }
 
