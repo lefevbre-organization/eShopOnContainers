@@ -181,7 +181,6 @@ class Main extends Component {
 
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
 
-    debugger
     this.props.setCaseFile({
       casefile: null,
       bbdd: null,

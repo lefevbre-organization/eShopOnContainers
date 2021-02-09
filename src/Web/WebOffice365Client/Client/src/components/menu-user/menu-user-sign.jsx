@@ -195,7 +195,6 @@ const UserSign = (props) => {
   let size = useComponentSize(ref);
 
   useEffect(()=>{
-    debugger
     const toolbar = document.getElementById('toolsRTE_toolbar');
     if(toolbar) {
       toolbar.style.width = size.width+'px';

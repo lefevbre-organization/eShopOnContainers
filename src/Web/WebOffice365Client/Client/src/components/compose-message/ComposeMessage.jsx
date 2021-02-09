@@ -510,7 +510,7 @@ export class ComposeMessage extends Component {
                 email.internetMessageId,
                 email.subject,
                 emailDate,
-                this.state.to2,
+                email.to2,
                 'SENT',
                 this.props.lexon.provider,
                 this.props.lexon.account,
@@ -715,7 +715,7 @@ export class ComposeMessage extends Component {
       subject: this.state.subject,
       importance: isPriority ? 'High' : 'Normal',
       isReadReceiptRequested: readConfirmation,
-      internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
+      internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`
     });
 
     sendMessage({
@@ -723,7 +723,8 @@ export class ComposeMessage extends Component {
       attachments: Fileattached,
     })
       .then((_) => {
-        this.sentEmail(email);
+        this.
+        sentEmail(email);
       })
       .catch((err) => {
         console.log(err);

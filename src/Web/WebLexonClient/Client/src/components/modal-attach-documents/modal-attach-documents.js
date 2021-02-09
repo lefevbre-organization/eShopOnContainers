@@ -155,7 +155,6 @@ class ModalAttachDocuments extends Component {
 
   renderButtons() {
     const { step, complete, files } = this.state;
-    debugger
 
     switch (step) {
       case 1:

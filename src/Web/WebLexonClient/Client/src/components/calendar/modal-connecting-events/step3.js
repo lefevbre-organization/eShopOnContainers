@@ -146,7 +146,6 @@ export class ConnectingEmailsStep3 extends React.Component {
   }
 
   onRowSelected(event) {
-    debugger
     this.setState(
       { rowSelected: event.data.idRelated + '_' + event.data.idActuation },
       () => {

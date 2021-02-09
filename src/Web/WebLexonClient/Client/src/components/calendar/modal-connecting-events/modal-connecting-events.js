@@ -180,17 +180,13 @@ class ModalConnectingEvents extends Component {
                   idActuation = sc.result.data;
               }
           }
-          debugger
           const event = {...message, StartTime: st, EndTime: et}
           sc = await createAppoinment(companySelected.bbdd, user, event);
           console.log(sc);
 
-          debugger
           sc = await addEventToActuation(companySelected.bbdd, user.idUser, sc.result.data, idActuation);
 
-          debugger
           this.props.getEventClassifications({bbdd: companySelected.bbdd, user: user.idUser, eventId})
-          debugger
 
           if(sc && sc.result && sc.result.data > 0) {
               const detail = { ...message, LexonClassification: idActuation };
@@ -198,7 +194,6 @@ class ModalConnectingEvents extends Component {
           }
       }
       if (error) {
-debugger
         if (notification === 1) {
           toggleNotification(
             i18n.t('classification-calendar.events-saved-ko'),
