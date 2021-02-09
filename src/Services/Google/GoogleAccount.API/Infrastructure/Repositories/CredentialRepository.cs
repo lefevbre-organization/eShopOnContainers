@@ -21,15 +21,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
         private readonly GoogleAccountContext _context;
         private readonly IOptions<GoogleAccountSettings> _settings;
         private readonly IEventBus _eventBus;
+        private readonly IAuthRepository repo;
 
         public CredentialRepository(
               IOptions<GoogleAccountSettings> settings
             , IEventBus eventBus
             , ILogger<CredentialRepository> logger
+            , IAuthRepository repo
             ) : base(logger)
         {
             _settings = settings;
             _eventBus = eventBus;
+            this.repo = repo;
             _context = new GoogleAccountContext(settings, eventBus);
         }
 
@@ -176,15 +179,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                 if (credential == null)
                 {
-                    // TODO Agregar Error si no hay una credencial
+                    TraceError(result.errors, new GoogleAccountDomainException("No existe una credencial para este usuario"), Codes.GoogleAccount.GetCredentials, Codes.Areas.Mongo);
                     return result;
                 }
 
-                // Todo ver las credenciales
+                
                 if (DateTime.Now <= credential.TokenCreate.AddMilliseconds(credential.Duration))
                 {
 
-                    // TODO Agregar info que el token fue restablecido
+                    TraceInfo(result.infos, "token restablecido");
 
                     using (HttpClient Client = new HttpClient())
                     {
@@ -202,14 +205,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                         {
                             var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
 
-                            // TODO Agregar la función para actualizar el token con el "token" variable que recupero satisfactoriamente 
+                            var resultupdate = await repo.UpdateCredentialsSuccess(credential, user.Id);
 
                             result.data = token.access_token;
                             return result;
                         }
                         else
                         {
-                            // TODO Agregar Error de que el Status code no fue 200 y no se pudo restablecer el token
+                            TraceError(result.errors, new GoogleAccountDomainException("Error al pedir que refrescaran el token"), Codes.GoogleAccount.GoogleAuthorization, Codes.Areas.Google);
 
                             return result;
                         }

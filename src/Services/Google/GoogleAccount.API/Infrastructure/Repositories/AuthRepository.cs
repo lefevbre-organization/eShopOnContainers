@@ -109,6 +109,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 var update = Builders<GoogleAccountUser>.Update
                     .Set("Credentials.$.Access_Token", data.Access_Token)
                     .Set("Credentials.$.Refresh_Token", data.Refresh_Token)
+                    .Set("Credentials.$.Duration", data.Duration)
+                    .Set("Credentials.$.Token_type", data.Token_Type)
+                    .Set("Credentials.$.Scope", data.Scope)
                     .Set("Credentials.$.Code", data.Code);
 
                 var resultUpdate = await _context.UserGoogleAccounts.UpdateOneAsync(
