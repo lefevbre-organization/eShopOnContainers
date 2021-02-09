@@ -8,8 +8,11 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories
 {
+    using System.Linq;
+    using System.Net.Http;
     using Exceptions;
     using Model;
+    using Newtonsoft.Json;
 
     public class GoogleDriveRepository : BaseClass<GoogleDriveRepository>, IGoogleDriveRepository
     {
@@ -29,97 +32,39 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             _context = new GoogleDriveContext(settings, eventBus);
         }
 
-        public async Task<Result<UserGoogleDrive>> GetUserAsync(string idUser, short idApp)
+        public async Task<Result<string>> GetToken(string LefebvreCredential)
         {
-            var filter = GetFilterUser(idUser, idApp);
-            return await GetUserCommonAsync(filter);
-        }
+            Result<string> result = new Result<string>();
 
-        private async Task<Result<UserGoogleDrive>> GetUserCommonAsync(FilterDefinition<UserGoogleDrive> filter)
-        {
-            var result = new Result<UserGoogleDrive>();
-            try
+            using (HttpClient client = new HttpClient())
             {
-                result.data = await _context.UserGoogleDrives.Find(filter).FirstOrDefaultAsync();
+                var resultgettoken = await client.GetAsync($"{_settings.Value.UrlToken}/api/v1/Credential/GetToken?LefebvreCredential={LefebvreCredential}&Product=0");
 
-                if (result.data == null)
-                    TraceError(result.errors, new GoogleDriveDomainException($"No se encuentra ningún usuario"), Codes.GoogleDrive.Get, Codes.Areas.Mongo);
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors,
-                           new GoogleDriveDomainException($"Error when get users", ex),
-                           Codes.GoogleDrive.Get,
-                           Codes.Areas.Mongo
-                           );
-            }
-            return result;
-        }
-
-        public async Task<Result<UserGoogleDrive>> PostUserAsync(UserGoogleDrive user)
-        {
-            var result = new Result<UserGoogleDrive>();
-            ReviewUser(user);
-
-            try
-            {
-                var resultReplace = await _context.UserGoogleDrives.ReplaceOneAsync(GetFilterUser(user.idNavision, user.idApp), user, GetUpsertOptions());
-
-                user.Id = ManageUpsert<UserGoogleDrive>($"Don´t insert or modify the user {user.idNavision}",
-                    $"Se modifica el usuario {user.idNavision}",
-                    $"Se inserta el usuario {user.idNavision} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
-
-                result.data = user;
-
-                //var eventAssoc = new AddUserGoogleDriveIntegrationEvent(user.idNavision, user.idApp);
-                //_eventBus.Publish(eventAssoc);
-            }
-            catch (Exception ex)
-            {
-                TraceError(result.errors,
-                           new GoogleDriveDomainException("Error when create user conference", ex),
-                           Codes.GoogleDrive.Create,
-                           Codes.Areas.Mongo);
-            }
-            return result;
-        }
-
-        private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                if(resultgettoken.IsSuccessStatusCode)
                 {
-                    TraceInfo(result.infos, msgModify, Codes.GoogleDrive.Create);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert, Codes.GoogleDrive.Create);
-                    return resultReplace.UpsertedId.ToString();
+                    result = JsonConvert.DeserializeObject<Result<string>>(await resultgettoken.Content.ReadAsStringAsync());
+                }else{
+
                 }
             }
-            else
-            {
-                TraceError(result.errors,
-                           new GoogleDriveDomainException(msgError),
-                           Codes.GoogleDrive.Create,
-                           Codes.Areas.Mongo);
-            }
-            return null;
+
+            return result;
+
         }
 
-        private void ReviewUser(UserGoogleDrive userMail)
+
+        public async Task GetTreeFiles(string LefebvreCredential)
         {
-            userMail.idNavision = userMail.idNavision.ToUpperInvariant();
+
+            await Task.Delay(1);
+
         }
 
-        private static FilterDefinition<UserGoogleDrive> GetFilterUser(string idUser, short idApp = 1)
-        {
-            return Builders<UserGoogleDrive>.Filter.And(
-                Builders<UserGoogleDrive>.Filter.Eq(u => u.idNavision, idUser.ToUpperInvariant()),
-                Builders<UserGoogleDrive>.Filter.Eq(u => u.idApp, idApp)
-                );
-        }
+
+
+
+
+
+
     }
 }
