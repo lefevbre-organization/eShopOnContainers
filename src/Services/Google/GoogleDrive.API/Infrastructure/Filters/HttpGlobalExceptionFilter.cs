@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.APIInfrastructure.Filters
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Filters
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {

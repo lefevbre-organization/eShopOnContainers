@@ -60,14 +60,14 @@ RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-WORKDIR /src/src/Services/Conference/Conference.API
+WORKDIR /src/src/Services/Google/GoogleDrive.API
 RUN dotnet publish --no-restore -c Release -o /app
 
 #FROM build as unittest
-#WORKDIR /src/src/Services/Conference/Conference.UnitTests
+#WORKDIR /src/src/Services/Google/GoogleDrive.UnitTests
 
 #FROM build as functionaltest
-#WORKDIR /src/src/Services/Conference/Conference.FunctionalTests
+#WORKDIR /src/src/Services/Google/GoogleDrive.FunctionalTests
 #
 FROM build AS publish
 
@@ -88,4 +88,4 @@ RUN update-ca-certificates
 WORKDIR /app
 COPY --from=publish /app .
 #RUN ls -lha /app
-ENTRYPOINT ["dotnet", "Conference.API.dll"]
+ENTRYPOINT ["dotnet", "GoogleDrive.API.dll"]

@@ -1,20 +1,16 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.IntegrationsEvents.Events;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories
 {
+    using Exceptions;
+    using Model;
+
     public class GoogleDriveRepository : BaseClass<GoogleDriveRepository>, IGoogleDriveRepository
     {
         private readonly GoogleDriveContext _context;
@@ -33,14 +29,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             _context = new GoogleDriveContext(settings, eventBus);
         }
 
-
-
         public async Task<Result<UserGoogleDrive>> GetUserAsync(string idUser, short idApp)
         {
             var filter = GetFilterUser(idUser, idApp);
             return await GetUserCommonAsync(filter);
         }
-
 
         private async Task<Result<UserGoogleDrive>> GetUserCommonAsync(FilterDefinition<UserGoogleDrive> filter)
         {
@@ -79,8 +72,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
                 result.data = user;
 
-                var eventAssoc = new AddUserGoogleDriveIntegrationEvent(user.idNavision, user.idApp);
-                _eventBus.Publish(eventAssoc);
+                //var eventAssoc = new AddUserGoogleDriveIntegrationEvent(user.idNavision, user.idApp);
+                //_eventBus.Publish(eventAssoc);
             }
             catch (Exception ex)
             {
@@ -128,8 +121,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                 Builders<UserGoogleDrive>.Filter.Eq(u => u.idApp, idApp)
                 );
         }
-      
-       
-       
     }
 }

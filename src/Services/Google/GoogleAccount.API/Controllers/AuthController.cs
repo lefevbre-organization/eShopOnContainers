@@ -59,7 +59,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         public async Task<ActionResult> GetDriveSuccess([FromQuery] string state, [FromQuery] string code, [FromQuery] string scope, [FromQuery] string error = "")
         {
             if (string.IsNullOrEmpty(code) && string.IsNullOrEmpty(error))
-                return BadRequest("email invalid. Must be a valid code or valid error");
+                return BadRequest("email invalid. Must be a valid code or a valid error");
 
             var result = await _service.Success(GoogleProduct.Drive, state, code, scope, error);
 

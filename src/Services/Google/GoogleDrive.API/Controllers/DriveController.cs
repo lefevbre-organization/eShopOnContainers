@@ -1,18 +1,16 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 {
+    using Infrastructure.Services;
+    using Model;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class DriveController : ControllerBase
@@ -46,8 +44,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             return Ok(new Result<string>(data));
         }
 
-
-        
         [HttpGet("{idNavision}")]
         [ProducesResponseType(typeof(Result<UserGoogleDrive>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserGoogleDrive>), (int)HttpStatusCode.BadRequest)]
@@ -77,8 +73,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
-
-
     }
 }

@@ -1,21 +1,16 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model;
-
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services
 {
+    using Model;
+    using Repositories;
+
     public class GoogleDriveService : BaseClass<GoogleDriveService>, IGoogleDriveService
     {
         public readonly IGoogleDriveRepository _repo;
@@ -38,7 +33,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
 
-
             _clientUserUtils = _clientFactory.CreateClient();
             _clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
             _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
@@ -49,6 +43,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
         public async Task<Result<UserGoogleDrive>> PostUserAsync(UserGoogleDrive user)
             => await _repo.PostUserAsync(user);
-
     }
 }

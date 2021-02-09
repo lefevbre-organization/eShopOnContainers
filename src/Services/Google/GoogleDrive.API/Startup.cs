@@ -1,14 +1,6 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.APIExtensions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.APIInfrastructure.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -19,8 +11,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API
 {
+    using Controllers;
+    using Extensions;
+    using Infrastructure.Filters;
+    using Infrastructure.Middlewares;
+    using Infrastructure.Repositories;
+    using Infrastructure.Services;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
