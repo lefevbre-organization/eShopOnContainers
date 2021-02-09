@@ -53,8 +53,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             googletoken.Append("&redirect_uri=");
             googletoken.Append($"{settings.Value.RedirectSuccessDriveUrl}/success");
 
-            Console.WriteLine(googletoken.ToString());
-
             using (HttpClient client = new HttpClient())
             {
                 var response = await client.PostAsync(googletoken.ToString(), null);
