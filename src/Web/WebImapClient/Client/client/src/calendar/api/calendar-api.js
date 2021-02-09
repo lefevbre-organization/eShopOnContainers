@@ -123,6 +123,7 @@ function listEventsParser(list) {
             } else {
               recurrenceRule = null;
             }
+            
             getAttendees(list[i].json, attendees);
             listParse.push({
                 id: list[i].href,
@@ -141,7 +142,7 @@ function listEventsParser(list) {
                 recurrence: recurrenceRule,
                 ImageName: "lefebvre",
                 attendees: attendees,
-                categories: list[1].categories,
+                categories: list[i].categories,
             });
         }
     }
@@ -225,7 +226,7 @@ function listCalendarParser(list) {
             //    primary = undefined
             //}
             let primary = false;
-            let color = "#0693e3";
+            let color = "";
             if(list[i].color) {
                 color = list[i].color._;
             } else {
