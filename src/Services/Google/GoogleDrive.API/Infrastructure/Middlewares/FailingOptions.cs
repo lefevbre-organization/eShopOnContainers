@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares
 {
     public class FailingOptions
     {

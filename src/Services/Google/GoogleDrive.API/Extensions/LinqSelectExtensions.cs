@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
 {
     public static class LinqSelectExtensions
     {

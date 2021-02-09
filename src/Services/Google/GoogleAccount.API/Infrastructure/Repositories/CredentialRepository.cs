@@ -175,11 +175,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 Credential credential = user.Credentials.SingleOrDefault(x => x.Product == Product);
 
                 if (credential == null)
+                {
+                    // TODO Agregar Error si no hay una credencial
                     return result;
+                }
 
                 // Todo ver las credenciales
                 if (DateTime.Now <= credential.TokenCreate.AddMilliseconds(credential.Duration))
                 {
+
+                    // TODO Agregar info que el token fue restablecido
+
                     using (HttpClient Client = new HttpClient())
                     {
                         OAuth2RefreshToken request = new OAuth2RefreshToken()
@@ -195,11 +201,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                         if (refresh.IsSuccessStatusCode)
                         {
                             var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
+
+                            // TODO Agregar la función para actualizar el token con el "token" variable que recupero satisfactoriamente 
+
                             result.data = token.access_token;
                             return result;
                         }
                         else
                         {
+                            // TODO Agregar Error de que el Status code no fue 200 y no se pudo restablecer el token
+
                             return result;
                         }
                     }
@@ -215,9 +226,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             }
 
             return result;
-
-
-
         }
         public async Task<Result<UserResponse>> CreateUserCredential(string LefebvreCredential)
         {

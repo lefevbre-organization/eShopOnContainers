@@ -1,4 +1,4 @@
-using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API
 {
     public class Program
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Exceptions
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

@@ -1,5 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

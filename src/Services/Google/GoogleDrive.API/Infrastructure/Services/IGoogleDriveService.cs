@@ -1,9 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services
 {
     public interface IGoogleDriveService
     {

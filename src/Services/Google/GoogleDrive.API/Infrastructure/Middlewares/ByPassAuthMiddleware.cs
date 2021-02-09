@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Middlewares
 {
     class ByPassAuthMiddleware
     {
