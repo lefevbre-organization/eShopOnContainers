@@ -1443,9 +1443,9 @@ class Calendar extends Component {
         event.attendees = ateendeeObj;  
 
         let organizerData = {
-            "name": "joel",
-            "email": "joeldetrinidad@gmail.com",
-            "mailto": "joeldetrinidad@gmail.com", //to override email
+            "name": "Alberto",
+            "email": "alberto.valverde.escribano@gmail.com",
+            "mailto": "alberto.valverde.escribano@gmail.com", //to override email
         }
             
     
