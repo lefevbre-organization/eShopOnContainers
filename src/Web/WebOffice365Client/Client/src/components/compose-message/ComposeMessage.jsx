@@ -434,8 +434,12 @@ export class ComposeMessage extends Component {
           this.props.history.push(`/${label.id}`)
         );
       } else if(findSelected) {
+        console.log("Envío 1")
+        //window.location.href = `/${findSelected.id.toLowerCase()}`
         this.props.history.push(`/${findSelected.id.toLowerCase()}`);
       } else {
+        //window.location.href = `/${this.props.labelsResult.labelInbox.id}`
+        console.log("Envío 2")
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
     } else {
@@ -449,12 +453,14 @@ export class ComposeMessage extends Component {
       }
       if (this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+        console.log("Envío 3")
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
     }
   }
 
   goBack() {
+    debugger
     this.props.updateComposerData({});
 
     if (this.props.casefile !== null && this.props.casefile !== undefined) {
@@ -467,14 +473,21 @@ export class ComposeMessage extends Component {
     } else if (this.props.mailContacts) {
       this.props.setMailContacts(null);
     }
-    //this.resetFields();
-    if(this.state.draftId) {
-      deleteDraft({ draftId: this.state.draftId }).then(() => {
-        this.closeModal();
-      });
-    } else {
-      this.closeModal();
-    } 
+
+    this.resetFields();
+    this.closeModal();
+      // if(this.state.draftId) {
+      //   deleteDraft({draftId: this.state.draftId}).then(() => {
+      //     this.resetFields();
+      //     this.closeModal();
+      //   }).catch(e => {
+      //     this.resetFields();
+      //     this.closeModal();
+      //   });
+      // } else {
+      //   this.resetFields();
+      //   this.closeModal();
+      // }
   }
 
   sentEmail(email) {
@@ -732,11 +745,11 @@ export class ComposeMessage extends Component {
     this.resetFields();
     if(this.state.draftId) {
       deleteDraft({ draftId: this.state.draftId }).then(() => {
-        this.closeModal();
-      });
+        this.goBack();
+      }).catch(err => { this.goBack(); });
     } else {
-      this.closeModal();
-    } 
+      this.goBack();
+    }
   }
 
   resetFields() {
