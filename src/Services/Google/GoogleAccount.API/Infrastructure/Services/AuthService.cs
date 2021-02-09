@@ -63,6 +63,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 
                     resultCredential.data.Access_Token = token.access_token;
                     resultCredential.data.Refresh_Token = token.refresh_token;
+                    resultCredential.data.Duration = token.expires_in;
                     resultCredential.data.Scope = token.scope;
                     resultCredential.data.Token_Type = token.token_type;
 
