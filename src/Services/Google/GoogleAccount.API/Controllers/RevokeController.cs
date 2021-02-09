@@ -8,6 +8,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
     using System;
     using System.Net;
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Options;
@@ -62,8 +63,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 
             var result = await _service.GetRevokingDriveCredentialAsync(LefebvreCredential);
 
-            if (!result.data)
-                return BadRequest();
+            if (result.errors?.Count > 0 && result.data == false)
+            {
+                result.data = false;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors?.Count == 0 && result.data == false)
+            {
+                return NotFound(result);
+            }
 
             return Ok(result);
         }

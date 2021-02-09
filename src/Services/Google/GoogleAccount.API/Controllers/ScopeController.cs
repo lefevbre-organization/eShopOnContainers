@@ -40,7 +40,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             return Ok(new Result<bool>(true));
         }
 
-        [HttpGet("/{product}")]
+        [HttpGet("{product}")]
         [ProducesResponseType(typeof(Result<List<GoogleAccountScope>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<GoogleAccountScope>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAllForProduct([FromRoute] GoogleProduct product = GoogleProduct.Drive  )

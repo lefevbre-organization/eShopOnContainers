@@ -13,6 +13,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
     using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Options;
@@ -55,8 +56,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La credencial es requerida.");
+            
+            var result = await _service.GetUserCredential(LefebvreCredential);
 
-            return Ok(await _service.GetUserCredential(LefebvreCredential));
+            if(result.errors.Count > 0)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpGet]
@@ -69,7 +75,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La credencial es requerida.");
 
-            return Ok(await _service.GetCredentials(LefebvreCredential));
+            var result =await _service.GetCredentials(LefebvreCredential);
+
+            if(result.errors.Count > 0)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpGet("[action]")]
@@ -84,7 +95,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             if (Product == null)
                 return BadRequest("Debe tener un valor válido para Producto (0 Drive).");
 
-            return Ok(await _service.GetToken(LefebvreCredential, Product.Value));
+            var result = await _service.GetToken(LefebvreCredential, Product.Value);
+
+            if(result.errors.Count > 0)
+                return BadRequest(result);
+
+            return Ok(result);
+
         }
 
         [HttpGet("[action]")]
@@ -95,7 +112,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La credencial es requerida.");
 
-            return Ok(await _service.CreateUserCredential(LefebvreCredential));
+            var result = await _service.CreateUserCredential(LefebvreCredential);
+
+            if(result.errors.Count > 0)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpPost("[action]")]
@@ -112,7 +134,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             if (string.IsNullOrEmpty(request.ClientId) || string.IsNullOrEmpty(request.Secret) || string.IsNullOrEmpty(request.GoogleMailAccount))
                 return BadRequest();
 
-            return Ok(await _service.CreateCredential(LefebvreCredential, request));
+            var result = await _service.CreateCredential(LefebvreCredential, request);
+
+            if(result.errors.Count > 0)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpGet("[action]")]
@@ -127,7 +154,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
             if (product == null)
                 return BadRequest("Debe tener un valor válido para Producto (0 Drive).");
 
-            return Ok(await _service.GetAuthorizationLink(LefebvreCredential, product.Value));
+            var result = await _service.GetAuthorizationLink(LefebvreCredential, product.Value);
+
+            if (result.errors?.Count > 0 && string.IsNullOrEmpty(result.data))
+            {
+                result.data = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors?.Count == 0 && string.IsNullOrEmpty(result.data))
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
         }
 
 
