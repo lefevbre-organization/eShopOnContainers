@@ -46,10 +46,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
         public async Task<IActionResult> GetAllForProduct([FromRoute] GoogleProduct product = GoogleProduct.Drive  )
         {
 
-            //if (product == null)
-            //    return BadRequest("Debe tener un valor válido para Producto (0 Drive).");
-
-            //return Ok(await _service.GetScopes(product));
             var result = await _service.GetScopes(product);
             if (result.errors?.Count > 0 && result.data == null)
             {

@@ -6,6 +6,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,7 +52,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
             googletoken.Append(resultCredential.data.Code);
             googletoken.Append("&grant_type=authorization_code");
             googletoken.Append("&redirect_uri=");
-            googletoken.Append(settings.Value.RedirectSuccessDriveUrl);
+            googletoken.Append($"{settings.Value.RedirectSuccessDriveUrl}/success");
+
+            Console.WriteLine(googletoken.ToString());
 
             using (HttpClient client = new HttpClient())
             {
@@ -70,7 +73,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                 }
                 else
                 {
-                    TraceError(result.errors, new GoogleAccountDomainException($"Error la llamda a la autorhización de Google, StatusCode: {response.StatusCode}"), "GA02", "MONGO");
+                    TraceError(result.errors, new GoogleAccountDomainException($"Error la llamda a la autorhización de Google, StatusCode: {response.StatusCode}"), Codes.GoogleAccount.GoogleAuthorization, Codes.Areas.Google);
+                    TraceError(result.errors, new GoogleAccountDomainException($"{googletoken.ToString()}"), Codes.GoogleAccount.GoogleAuthorization, Codes.Areas.Google );
                 }
             }
             return result;
