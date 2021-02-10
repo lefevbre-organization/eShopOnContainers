@@ -667,7 +667,6 @@ class Calendar extends Component {
             "backgroundColor": color,
             "foregroundColor": '#ffffff'
         }
-        console.log('calendarColorModify', calendarId, calendarData)
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {

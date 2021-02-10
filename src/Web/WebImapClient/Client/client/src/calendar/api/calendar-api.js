@@ -41,7 +41,7 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/joel/${calendar.summary}`,
+        filename: `/calendars/admin/${calendar.summary}`,
         color: calendar.color,
         description: calendar.description        
     });   
@@ -52,13 +52,12 @@ export const createCalendar = async (calendar) => {
 // Update Calendar
 export const updateCalendarList = async (calendarId, calendar) => {    
     const cal = await caldav.updateCalendar({
-        name: 'Trabajo Update',
+        name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/joel/trabajo/`,
+        filename: calendarId,
         color: calendar.backgroundColor,
-        // description: calendar.description        
+        description: calendar.description        
     });   
-    console.log(cal)
     return cal;
 };
 
