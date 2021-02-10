@@ -264,6 +264,7 @@ function listCalendarParser(list) {
                 primary: primary,
                 selected:selected,
                 summary: list[i].name,
+                description: list[i].description,
                 timeZone: "Europe/Madrid",
             });
         }
