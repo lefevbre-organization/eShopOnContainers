@@ -527,6 +527,7 @@ class Calendar extends Component {
                             close={this.dialogClose.bind(this)}>
                             <div>{(this.state.hidePromptDialog) ? <Calendars
                                 calendarId={this.state.calendarToEdit}
+                                calendars={calendars}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
                       </DialogComponent>
@@ -728,6 +729,7 @@ class Calendar extends Component {
         let calendarId = ""
         if (args != undefined)
             calendarId = args.currentTarget.id
+            console.log('openCalendarView', calendarId);
         this.setState(
             {
                 hidePromptDialog: true, calendarToEdit: calendarId

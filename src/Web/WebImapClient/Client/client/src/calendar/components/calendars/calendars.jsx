@@ -3,6 +3,7 @@ import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/ej2-react-buttons';
 import { createCalendar } from "../../api/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
+import { updateCalendarList } from '../../../calendar/api/calendar-api';
 //import { Acl } from './acl/acl';
 import i18n from 'i18next';
 
@@ -17,6 +18,7 @@ export class Calendars extends React.Component {
         this.state = {
             calendarid: this.props.calendarId,
             hideAddCalendarButton: false,
+            color: '',
         };      
 
         this.toasts = [
@@ -85,12 +87,13 @@ export class Calendars extends React.Component {
 
         let calendarData = {
             "summary": this.nameObj.value,
-            "description": this.descriptionObj.value
+            "description": this.descriptionObj.value,
+            "backgroundColor": this.state.color
         }
 
         this.toastObj.showProgressBar = true
         this.toastObj.show(this.toasts[0]);
-        updateCalendar(this.state.calendarid, calendarData)
+        updateCalendarList(this.props.calendarId, calendarData)
             .then(result => {
                
                 this.toastObj.hide('All');
@@ -112,20 +115,15 @@ export class Calendars extends React.Component {
     }     
 
     componentDidMount() {
-
-        //if (this.props.calendarId != "") {
-        //    this.setState({ hideAddCalendarButton: true });
-        //    getCalendar(this.props.calendarId)
-        //        .then(result => {
-        //            this.nameObj.value = result.summary;
-        //            if (result.description !== undefined) {
-        //                this.descriptionObj.value = result.description;
-        //            }
-        //        })
-        //        .catch(error => {
-        //            console.log('error ->', error);
-        //        });           
-        //}
+        if (this.props.calendarId != "") {
+           this.setState({ hideAddCalendarButton: true });
+           let calendar = this.props.calendars.find(a => a.id === this.props.calendarId);
+           this.nameObj.value = calendar.summary;
+           this.setState({color: calendar.backgroundColor})
+            if (calendar.description) {
+                this.descriptionObj.value = calendar.description;
+            }
+        }
     }
 
     render() {
