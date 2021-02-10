@@ -49,7 +49,9 @@ requests.updateCalendar = function (args) {
     xmlns:e="http://apple.com/ns/ical/">
       <d:set>
         <d:prop>
+          <d:displayname>${args.name}</d:displayname>
           <e:calendar-color>${args.color}</e:calendar-color>
+          <c:calendar-description xml:lang="en">${args.description}</c:calendar-description>
         </d:prop>
       </d:set>
     </d:propertyupdate>
