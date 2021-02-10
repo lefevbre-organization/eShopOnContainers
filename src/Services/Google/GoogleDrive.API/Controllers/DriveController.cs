@@ -54,7 +54,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 
             var token = await _service.GetCredential(LefebvreCredential);
 
-            if(token.errors.Count == 0 && token.data == null)
+            if(token.errors.Count > 0 || token.data == null)
               return BadRequest(token);
 
             return Ok(token);
@@ -71,7 +71,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 
             var files = await _service.GetFiles(LefebvreCredential);
 
-            if(files.errors.Count == 0 && files.data == null)
+            if(files.errors.Count > 0 || files.data == null)
               return BadRequest(files);
 
             files.infos.Add(new Info(){
@@ -95,7 +95,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 
             var filesResult = await _service.SearchFile(LefebvreCredential, Searcher);
 
-            if(filesResult.errors.Count == 0 && filesResult.data == null)
+            if(filesResult.errors.Count > 0 || filesResult.data == null)
               return BadRequest(filesResult);
 
             filesResult.infos.Add(new Info(){
