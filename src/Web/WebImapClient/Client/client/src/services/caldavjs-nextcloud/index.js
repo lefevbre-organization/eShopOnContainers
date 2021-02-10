@@ -40,6 +40,7 @@ export default class Caldavjs {
     this.extractData = this.extractData.bind(this);
     this.listEvents = this.listEvents.bind(this);
     this.createCalendar = this.createCalendar.bind(this);
+    this.updateCalendar = this.updateCalendar.bind(this);
     this.listCalendars = this.listCalendars.bind(this);
     this.deleteCalendar = this.deleteCalendar.bind(this);
     this.getChanges = this.getChanges.bind(this);
@@ -192,6 +193,38 @@ export default class Caldavjs {
         url: input.filename,
         method: 'MKCALENDAR',
         data: requests.createCalendar({
+          data: cal.toString(),
+          name: input.name,
+          color: input.color,
+          description: input.description
+        }),
+      })
+      .then(response => {
+        return "Success";
+      })
+  }
+
+  /**
+   * Updating a update calendar 
+   * 
+   * @param {object} required 
+   ** @param {string} name required
+   ** @param {string} timezone override for settings
+   ** @param {string} fllename required
+   ** @param {string} description 
+   ** @param {string} color 
+   *
+   * @return {string}
+   */
+  updateCalendar(input) {
+    let cal = icalGenerator({
+      name: input.name,
+      timezone: input.timezone || this.timezone,
+    });
+    return this.sendRequest({
+        url: input.filename,
+        method: 'PROPPATCH',
+        data: requests.updateCalendar({
           data: cal.toString(),
           name: input.name,
           color: input.color,

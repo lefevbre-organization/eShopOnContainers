@@ -41,6 +41,21 @@ requests.createCalendar = function (args) {
   `.trim();
 }
 
+requests.updateCalendar = function (args) {
+  return `
+   <?xml version="1.0" encoding="utf-8" ?>
+    <d:propertyupdate xmlns:d="DAV:"
+    xmlns:c="urn:ietf:params:xml:ns:caldav"
+    xmlns:e="http://apple.com/ns/ical/">
+      <d:set>
+        <d:prop>
+          <e:calendar-color>${args.color}</e:calendar-color>
+        </d:prop>
+      </d:set>
+    </d:propertyupdate>
+  `.trim();
+}
+
 requests.principal = function (args) {
   return `
 <d:propfind xmlns:d="DAV:">
