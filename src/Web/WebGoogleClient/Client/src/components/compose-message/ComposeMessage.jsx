@@ -136,6 +136,10 @@ export class ComposeMessage extends PureComponent {
         (props.history.location.state &&
           props.history.location.state.composeProps.content) ||
         '',
+      isReply:
+      (props.history.location.state &&
+        props.history.location.state.composeProps.isReply) ||
+      false,
       showInlineDashboard: false,
       open: false,
       defaultContent: '',
@@ -147,7 +151,11 @@ export class ComposeMessage extends PureComponent {
       showEmptySubjectWarning: false,
       draftTime: '',
       draftId: '',
-      isDraftEdit: false
+      isDraftEdit: false,
+      embeddedImgLoaded: false,
+      draftInProgress: false,
+      draftQueue: 0,
+      embeddedImgList: []
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -261,15 +269,84 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-
     //this.removeFields();
-
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailHeaderMessage(messageId);
-      this.props.getEmailMessage(messageId);
+      this.props.getEmailMessage(messageId)
     }
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && !this.props.match.params.id) {
+        if (!this.state.draftInProgress){
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }
+    }   
+
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && this.props.match.params.id 
+      && this.state.isDraftEdit) {
+        if (!this.state.draftInProgress){
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }   
+    }
+
+    if (this.state.draftQueue > 0 && !this.state.draftInProgress){
+      this.setState({draftInProgress: true, draftQueue: 0});
+      this.saveDraft();
+    }
+
+    if(
+      prevProps.emailMessageResult !== this.props.emailMessageResult
+      ) {
+      this.getById();
+    }
+    if (!this.state.embeddedImgLoaded && (this.state.isForward || this.state.isReply)){
+      const messageId = this.props.emailHeaderMessageResult.headers.find(h => h.name.toUpperCase() === "MESSAGE-ID");
+      if (messageId && messageId.value){
+        const attachments = this.props.emailMessageResult.attach;
+        const embeddedImages = getEmbeddedImages(this.props.emailMessageResult.body);
+        this.formatBodyImages(messageId.value, attachments, embeddedImages);
+        if (embeddedImages && embeddedImages.length > 0){
+          if (prevState.embeddedImgList === this.state.embeddedImgList){
+            this.setState({embeddedImgList: embeddedImages});
+          }
+        }
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent('CloseComposer'));
+    window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+    window.removeEventListener('AttachDocument', this.attachFromLexon);
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
+
+    this.removeFields();
+    this.props.setMailContacts(null);
+    this.uppy.close();
+  }  
 
   addSignToContent() {
     const { lexon } = this.props;
@@ -359,22 +436,40 @@ export class ComposeMessage extends PureComponent {
       const src = image.replace(/.*src="([^"]*)".*/, '$1');
       let body = '';
       if(this.state.defaultContent) {
-        body = this.state.defaultContent.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+        let regExp = RegExp(src,"g")
+        body = this.state.defaultContent.replace(regExp, `data:${attach.mimeType};base64,${dataUrl}`);
       } else {
-        body = this.props.emailMessageResult.body.replace(src, `data:${attach.mimeType};base64,${dataUrl}`);
+        let regExp = RegExp(src,"g")
+        body = this.props.emailMessageResult.body.replace(regExp, `data:${attach.mimeType};base64,${dataUrl}`);
       }
       this.setState({
        defaultContent: body,
-       content: body
+       content: body,
+       embeddedImgLoaded: true
       });
     }
+
+    const extractHeaders = (attachments) => {
+      attachments.forEach(attachment => {
+        const headers = attachment.headers;
+        if (headers){
+          const inline = headers.find(h => h.name === 'Content-Disposition' && (h.value.includes("inline") || h.value.includes("attachment")));
+          const attID = headers.find(h => h.name === "Content-ID");
+          if (inline && attID){
+            const image = embedddedImages.find(i => i.includes(attID.value.replace('<', '').replace('>','')));
+            if (image)
+              addImages(attachment, image);
+          }
+        }
+        if (attachment.parts && attachment.parts.length > 0){
+          extractHeaders(attachment.parts);
+        }
+      })
+    }
   
-    attachments[0].parts[1].parts.forEach((file, index) => {
-        if(file.filename != '') {
-            const image = embedddedImages[index - 1];
-            addImages(file, image);
-      }
-    });
+    if (attachments && attachments.length > 0){
+      extractHeaders(attachments);
+    }
   }
 
   getById() {
@@ -382,7 +477,7 @@ export class ComposeMessage extends PureComponent {
       const messageId = this.props.emailMessageResult.result.messageHeaders.find(x => 
         x.name == "Message-ID" || x.name == "Message-Id");
         getDraftListWithRFC(
-          messageId.value
+          messageId.value      
           ).then((data) => {
             const messageId = this.props.emailMessageResult.result.id;
 
@@ -464,7 +559,7 @@ export class ComposeMessage extends PureComponent {
      }
   }
 
-   goBack() {
+  goBack() {
      this.props.updateComposerData({});
 
      if (this.props.casefile != null && this.props.casefile !== undefined) {
@@ -557,49 +652,6 @@ export class ComposeMessage extends PureComponent {
     // this.uppyOne.upload();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && !this.props.match.params.id) {
-      this.saveDraft();
-    }   
-
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && this.props.match.params.id 
-      && this.state.isDraftEdit) {
-      this.saveDraft();
-    }
-
-    if(
-      prevProps.emailMessageResult !== this.props.emailMessageResult
-      ) {
-      this.getById();
-    }
-  }
-
-  componentWillUnmount() {
-    window.dispatchEvent(new CustomEvent('CloseComposer'));
-    window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
-    window.removeEventListener('AttachDocument', this.attachFromLexon);
-    window.removeEventListener(
-      'GetUserFromCentinelaConnector',
-      this.handleGetUserFromLexonConnector
-    );
-
-    this.removeFields();
-    this.props.setMailContacts(null);
-    this.uppy.close();
-  }
-
   handleChange(value, delta, source, editor) {
     if(value) {
       this.setState({content: value}, () => {
@@ -687,6 +739,7 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != ''){
+      //this.setState({draftPollingCount: this.state.draftPollingCount + 1});
       setTimeout(() => {
         createDraft({
           headers,
@@ -694,14 +747,35 @@ export class ComposeMessage extends PureComponent {
           attachments: Fileattached,
           draftId: this.state.draftId
         }).then((draft) => {
-          this.setState({draftTime: fullTime, draftId: draft.id});
+          console.log('DRAFT GUARDADO: ' + draft.id)
+          this.setState({draftTime: fullTime, draftId: draft.id, draftInProgress: false});
         })
         .catch((err) => {
+          console.log('ERROR GUARDANDO DRAFT');
           console.log('Error sending email:' + err);
+          this.setState({draftInProgress: false});
         });
       });
     }
     
+  }
+
+  // This function searches the images that are embedded in the body of the message
+  // and deletes them from external attachments to avoid sending them twice.
+  removeDuplicates(attachments){
+    const embeddedImages = this.state.embeddedImgList;
+    embeddedImages.forEach(img => {
+      // The name of the image is obtained from <img alt= value
+      var imgName = img.match(/alt\s*=\s*"(.+?)"/gm);
+      if (imgName){
+        var name = imgName[0].split('=')[1];
+        var name = name.replace(/"/g,'');
+        console.log(name);
+        const i = attachments.findIndex(att => name === att.name);
+        attachments.splice(i, 1);
+      }
+    });
+    return attachments;
   }
 
   _sendEmail() {
@@ -724,7 +798,8 @@ export class ComposeMessage extends PureComponent {
       headers.Bcc = validBcc.join(', ');
     }
 
-    const Fileattached = this.state.uppyPreviews;
+    var Fileattached = this.state.uppyPreviews;
+    Fileattached = this.removeDuplicates(Fileattached);
 
     sendMessage({
       headers,

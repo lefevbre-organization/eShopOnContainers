@@ -158,7 +158,7 @@ export class MessageContent extends Component {
 
   componentDidMount(prevProps) {
     console.log('ComponenDidUnmount ***** detail');
-
+    this.props.clearOpenMessageAttachment([]); //To erase attachments from previous opened message
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
@@ -257,7 +257,9 @@ export class MessageContent extends Component {
           // body.innerHTML = this.props.emailMessageResult.body;
 
           //Adding attach files
-          var attach = findAttachments(emailMessageResult);
+          var attach = [];
+          if (emailMessageResult.attach)
+            attach = findAttachments(emailMessageResult.attach);
 
           if (typeof attach !== 'undefined' && attach.length > 0) {
             const isFirefox = typeof InstallTrigger !== 'undefined';
@@ -320,24 +322,27 @@ export class MessageContent extends Component {
                           var iframe = document.getElementById(
                             'message-iframe'
                           );
-                          const bd = iframe.contentDocument.body.innerHTML.replace(
-                            `cid:${contentId}`,
-                            'data:image/png;base64, ' + dataBase64Rep
-                          );
-                          iframe.contentDocument.body.innerHTML = bd;
-
-                          var blobUrl = URL.createObjectURL(urlBlob);
-                          var Attachment = addAttachmentElement(
-                            blobUrl,
-                            filename
-                          );
-                          var AttachmentDiv = addAttachmentContainer(mimeType);
-                          AttachmentDiv.appendChild(Attachment);
-                          iframe &&
-                            iframe.contentDocument &&
-                            iframe.contentDocument.body.appendChild(
-                              AttachmentDiv
+                          if (iframe){
+                            const bd = iframe.contentDocument.body.innerHTML.replace(
+                              `cid:${contentId}`,
+                              'data:image/png;base64, ' + dataBase64Rep
                             );
+                            iframe.contentDocument.body.innerHTML = bd;
+  
+                            var blobUrl = URL.createObjectURL(urlBlob);
+                            var Attachment = addAttachmentElement(
+                              blobUrl,
+                              filename
+                            );
+                            var AttachmentDiv = addAttachmentContainer(mimeType);
+                            AttachmentDiv.appendChild(Attachment);
+                            iframe &&
+                              iframe.contentDocument &&
+                              iframe.contentDocument.body.appendChild(
+                                AttachmentDiv
+                              );
+                          }
+                          
                         }
                       }
                     }
@@ -546,20 +551,22 @@ const getHeader = (headers, name) => {
   }
 };
 
-const findAttachments = (email) => {
-  let attachs = [];
-  if (email.attach) {
-    for (let i = 0; i < email.attach.length; i++) {
-      if (email.attach[i].mimeType.startsWith('multipart') === true) {
-        for (let j = 0; j < email.attach[i].parts.length; j++) {
-          attachs.push(email.attach[i].parts[j]);
-        }
+const findAttachments = (attachments, found = []) => {
+  
+    for (let i = 0; i < attachments.length; i++) {
+      if (attachments[i].mimeType.startsWith('multipart') === true) {
+        if (attachments[i].parts && attachments[i].parts.length > 0){
+          findAttachments(attachments[i].parts, found)
+        } 
+        // for (let j = 0; j < attachments[i].parts.length; j++) {
+        //   found.push(email.attach[i].parts[j]);
+        // }
       } else {
-        attachs.push(email.attach[i]);
+        if (attachments[i].filename !== '')
+          found.push(attachments[i]);
       }
     }
-  }
-  return attachs;
+  return found;
 };
 
 function getFolderName(t, folder) {
