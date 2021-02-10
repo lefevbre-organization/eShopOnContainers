@@ -662,9 +662,11 @@ class Calendar extends Component {
     }
 
     calendarColorModify(calendarId, color) {
-        
+        let calendar = this.state.calendars.find(a => a.id === calendarId);
         let calendarData = {
             "backgroundColor": color,
+            "summary": calendar.summary,
+            "description": calendar.description,
             "foregroundColor": '#ffffff'
         }
 
