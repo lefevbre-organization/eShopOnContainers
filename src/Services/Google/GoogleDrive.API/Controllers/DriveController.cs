@@ -47,16 +47,92 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetUser(string LefebvreCredential)
+        {
+
+            if(string.IsNullOrEmpty(LefebvreCredential))
+              return BadRequest("La Credencial de Lefebvre es requerida");
+
+            var token = await _service.GetCredential(LefebvreCredential);
+
+            if(token.errors.Count == 0 && token.data == null)
+              return BadRequest(token);
+
+            return Ok(token);
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetFiles(string LefebvreCredential)
         {
 
-            var token = await _service.GetFiles(LefebvreCredential);
+            if(string.IsNullOrEmpty(LefebvreCredential))
+              return BadRequest("La Credencial de Lefebvre es requerida");
 
-            token.infos.Add(new Info(){
-              message = $"Cantidad de Items: {token.data.Count}"
+            var files = await _service.GetFiles(LefebvreCredential);
+
+            if(files.errors.Count == 0 && files.data == null)
+              return BadRequest(files);
+
+            files.infos.Add(new Info(){
+              message = $"Cantidad de Items: {files.data.Count}"
             });
 
-            return Ok(token);
+            return Ok(files);
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Search(string LefebvreCredential, string Searcher)
+        {
+
+            if(string.IsNullOrEmpty(LefebvreCredential))
+              return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if(string.IsNullOrEmpty(Searcher))
+              return BadRequest("Es necesario un término de búsqueda");
+
+            var files = await _service.SearchFile(LefebvreCredential, Searcher);
+
+            if(files.errors.Count == 0 && files.data == null)
+              return BadRequest(files);
+
+            files.infos.Add(new Info(){
+              message = $"Cantidad de Items: {files.data.Count}"
+            });
+
+            return Ok(files);
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Delete(string LefebvreCredential, string FileId)
+        {
+
+            if(string.IsNullOrEmpty(LefebvreCredential))
+              return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if(string.IsNullOrEmpty(FileId))
+              return BadRequest("Es necesario un Id de un documento válido");
+
+            var files = await _service.Delete(LefebvreCredential, FileId);
+            return Ok(files);
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Trash(string LefebvreCredential)
+        {
+
+            if(string.IsNullOrEmpty(LefebvreCredential))
+              return BadRequest("La Credencial de Lefebvre es requerida");
+
+            var files = await _service.Trash(LefebvreCredential);
+            return Ok(files);
         }
         
     }
