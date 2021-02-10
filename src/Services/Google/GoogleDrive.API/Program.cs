@@ -19,8 +19,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API
 
         private static (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
         {
-            var grpcPort = config.GetValue("GRPC_PORT", 5001);
-            var port = config.GetValue("PORT", 80);
+            var grpcPort = config.GetValue("GRPC_PORT", 6001);
+            var port = config.GetValue("PORT", 8080);
             return (port, grpcPort);
         }
 
