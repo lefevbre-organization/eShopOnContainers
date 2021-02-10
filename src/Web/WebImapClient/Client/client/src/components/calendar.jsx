@@ -87,10 +87,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
+import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -662,12 +662,12 @@ class Calendar extends Component {
     }
 
     calendarColorModify(calendarId, color) {
-
+        
         let calendarData = {
             "backgroundColor": color,
             "foregroundColor": '#ffffff'
         }
-
+        console.log('calendarColorModify', calendarId, calendarData)
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {
