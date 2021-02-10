@@ -152,7 +152,12 @@ export class ComposeMessage extends PureComponent {
       draftTime: '',
       draftId: '',
       isDraftEdit: false,
-      embeddedImgLoaded: false
+      embeddedImgLoaded: false,
+      draftInProgress: false,
+      // draftPollingCount: 0,
+      // draftStoreDelay: 10000,
+      // maxDraftPollsWithoutUpdates: 3,
+      draftQueue: 0
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -274,6 +279,8 @@ export class ComposeMessage extends PureComponent {
       this.props.getEmailHeaderMessage(messageId);
       this.props.getEmailMessage(messageId)
     }
+
+    //this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
   }
 
   addSignToContent() {
@@ -580,6 +587,15 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    // if (this.state.draftPollingCount === this.state.maxDraftPollsWithoutUpdates){
+    //   clearInterval(this.interval);
+    // }
+
+    // if (this.state.draftPollingCount === 0) {
+    //   this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
+    // } else if (this.state.draftPollingCount === this.state.maxDraftPollsWithoutUpdates){
+    //   clearInterval(this.interval);
+    // }
     if((prevState.to !== this.state.to 
       || prevState.cc !== this.state.cc 
       || prevState.bcc !== this.state.bcc 
@@ -587,7 +603,16 @@ export class ComposeMessage extends PureComponent {
       || prevState.content !== this.state.content
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
       && !this.props.match.params.id) {
-      this.saveDraft();
+        if (!this.state.draftInProgress){
+          // this.setState({draftInProgress: true, draftPollingCount: 0});
+          //clearInterval(this.interval);
+          // this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
+
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }
     }   
 
     if((prevState.to !== this.state.to 
@@ -598,6 +623,20 @@ export class ComposeMessage extends PureComponent {
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
       && this.props.match.params.id 
       && this.state.isDraftEdit) {
+        if (!this.state.draftInProgress){
+          // this.setState({draftInProgress: true, draftPollingCount: 0});
+          // clearInterval(this.interval);
+          // this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
+
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }   
+    }
+
+    if (this.state.draftQueue > 0 && !this.state.draftInProgress){
+      this.setState({draftInProgress: true, draftQueue: 0});
       this.saveDraft();
     }
 
@@ -628,6 +667,7 @@ export class ComposeMessage extends PureComponent {
     this.removeFields();
     this.props.setMailContacts(null);
     this.uppy.close();
+    // clearInterval(this.interval);
   }
 
   handleChange(value, delta, source, editor) {
@@ -717,6 +757,7 @@ export class ComposeMessage extends PureComponent {
     || this.state.bcc != ''
     || this.state.subject != '' 
     || this.state.content != ''){
+      //this.setState({draftPollingCount: this.state.draftPollingCount + 1});
       setTimeout(() => {
         createDraft({
           headers,
@@ -724,10 +765,13 @@ export class ComposeMessage extends PureComponent {
           attachments: Fileattached,
           draftId: this.state.draftId
         }).then((draft) => {
-          this.setState({draftTime: fullTime, draftId: draft.id});
+          console.log('DRAFT GUARDADO: ' + draft.id)
+          this.setState({draftTime: fullTime, draftId: draft.id, draftInProgress: false});
         })
         .catch((err) => {
+          console.log('ERROR GUARDANDO DRAFT');
           console.log('Error sending email:' + err);
+          this.setState({draftInProgress: false});
         });
       });
     }
