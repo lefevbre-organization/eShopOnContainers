@@ -154,7 +154,8 @@ export class ComposeMessage extends PureComponent {
       isDraftEdit: false,
       embeddedImgLoaded: false,
       draftInProgress: false,
-      draftQueue: 0
+      draftQueue: 0,
+      embeddedImgList: []
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -268,17 +269,84 @@ export class ComposeMessage extends PureComponent {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-
     //this.removeFields();
-
     const messageId = this.props.match.params.id;
     if(messageId){
       this.props.getEmailHeaderMessage(messageId);
       this.props.getEmailMessage(messageId)
     }
-
-    //this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && !this.props.match.params.id) {
+        if (!this.state.draftInProgress){
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }
+    }   
+
+    if((prevState.to !== this.state.to 
+      || prevState.cc !== this.state.cc 
+      || prevState.bcc !== this.state.bcc 
+      || prevState.subject !== this.state.subject
+      || prevState.content !== this.state.content
+      || prevState.uppyPreviews !== this.state.uppyPreviews) 
+      && this.props.match.params.id 
+      && this.state.isDraftEdit) {
+        if (!this.state.draftInProgress){
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }   
+    }
+
+    if (this.state.draftQueue > 0 && !this.state.draftInProgress){
+      this.setState({draftInProgress: true, draftQueue: 0});
+      this.saveDraft();
+    }
+
+    if(
+      prevProps.emailMessageResult !== this.props.emailMessageResult
+      ) {
+      this.getById();
+    }
+    if (!this.state.embeddedImgLoaded && (this.state.isForward || this.state.isReply)){
+      const messageId = this.props.emailHeaderMessageResult.headers.find(h => h.name.toUpperCase() === "MESSAGE-ID");
+      if (messageId && messageId.value){
+        const attachments = this.props.emailMessageResult.attach;
+        const embeddedImages = getEmbeddedImages(this.props.emailMessageResult.body);
+        this.formatBodyImages(messageId.value, attachments, embeddedImages);
+        if (embeddedImages && embeddedImages.length > 0){
+          if (prevState.embeddedImgList === this.state.embeddedImgList){
+            this.setState({embeddedImgList: embeddedImages});
+          }
+        }
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent('CloseComposer'));
+    window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+    window.removeEventListener('AttachDocument', this.attachFromLexon);
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
+
+    this.removeFields();
+    this.props.setMailContacts(null);
+    this.uppy.close();
+  }  
 
   addSignToContent() {
     const { lexon } = this.props;
@@ -491,7 +559,7 @@ export class ComposeMessage extends PureComponent {
      }
   }
 
-   goBack() {
+  goBack() {
      this.props.updateComposerData({});
 
      if (this.props.casefile != null && this.props.casefile !== undefined) {
@@ -582,72 +650,6 @@ export class ComposeMessage extends PureComponent {
   uploadFile() {
     console.log(this.state.uppyPreviews);
     // this.uppyOne.upload();
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && !this.props.match.params.id) {
-        if (!this.state.draftInProgress){
-          this.setState({draftInProgress: true, draftQueue: 0});
-          this.saveDraft();
-        } else {
-          this.setState({draftQueue: this.state.draftQueue + 1})
-        }
-    }   
-
-    if((prevState.to !== this.state.to 
-      || prevState.cc !== this.state.cc 
-      || prevState.bcc !== this.state.bcc 
-      || prevState.subject !== this.state.subject
-      || prevState.content !== this.state.content
-      || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && this.props.match.params.id 
-      && this.state.isDraftEdit) {
-        if (!this.state.draftInProgress){
-          this.setState({draftInProgress: true, draftQueue: 0});
-          this.saveDraft();
-        } else {
-          this.setState({draftQueue: this.state.draftQueue + 1})
-        }   
-    }
-
-    if (this.state.draftQueue > 0 && !this.state.draftInProgress){
-      this.setState({draftInProgress: true, draftQueue: 0});
-      this.saveDraft();
-    }
-
-    if(
-      prevProps.emailMessageResult !== this.props.emailMessageResult
-      ) {
-      this.getById();
-    }
-    if (!this.state.embeddedImgLoaded && (this.state.isForward || this.state.isReply)){
-      const messageId = this.props.emailHeaderMessageResult.headers.find(h => h.name.toUpperCase() === "MESSAGE-ID");
-      if (messageId && messageId.value){
-        const attachments = this.props.emailMessageResult.attach;
-        const embeddedImages = getEmbeddedImages(this.props.emailMessageResult.body);
-        this.formatBodyImages(messageId.value, attachments, embeddedImages);  
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    window.dispatchEvent(new CustomEvent('CloseComposer'));
-    window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
-    window.removeEventListener('AttachDocument', this.attachFromLexon);
-    window.removeEventListener(
-      'GetUserFromCentinelaConnector',
-      this.handleGetUserFromLexonConnector
-    );
-
-    this.removeFields();
-    this.props.setMailContacts(null);
-    this.uppy.close();
   }
 
   handleChange(value, delta, source, editor) {
@@ -758,6 +760,24 @@ export class ComposeMessage extends PureComponent {
     
   }
 
+  // This function searches the images that are embedded in the body of the message
+  // and deletes them from external attachments to avoid sending them twice.
+  removeDuplicates(attachments){
+    const embeddedImages = this.state.embeddedImgList;
+    embeddedImages.forEach(img => {
+      // The name of the image is obtained from <img alt= value
+      var imgName = img.match(/alt\s*=\s*"(.+?)"/gm);
+      if (imgName){
+        var name = imgName[0].split('=')[1];
+        var name = name.replace(/"/g,'');
+        console.log(name);
+        const i = attachments.findIndex(att => name === att.name);
+        attachments.splice(i, 1);
+      }
+    });
+    return attachments;
+  }
+
   _sendEmail() {
     const validTo = getValidEmails(this.state.to);
 
@@ -778,7 +798,8 @@ export class ComposeMessage extends PureComponent {
       headers.Bcc = validBcc.join(', ');
     }
 
-    const Fileattached = this.state.uppyPreviews;
+    var Fileattached = this.state.uppyPreviews;
+    Fileattached = this.removeDuplicates(Fileattached);
 
     sendMessage({
       headers,
