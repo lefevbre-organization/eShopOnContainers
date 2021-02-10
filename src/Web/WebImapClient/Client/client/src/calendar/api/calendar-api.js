@@ -17,7 +17,7 @@ const CalendarColors = [
 const settings = {
   username: 'admin',
   password: 'admin_dev',
-  server: 'https://lexbox-dev-nextcloud.lefebvre.es/',
+  server: 'https://lexbox-dev-nextcloud.lefebvre.es',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
   principalPath: '/principals/users',
@@ -41,9 +41,22 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/admin/${calendar.summary}`,
+        filename: `/calendars/joel/${calendar.summary}`,
         color: calendar.color,
         description: calendar.description        
+    });   
+    console.log(cal)
+    return cal;
+};
+
+// Update Calendar
+export const updateCalendarList = async (calendarId, calendar) => {    
+    const cal = await caldav.updateCalendar({
+        name: 'Trabajo Update',
+        timezone: 'Europe/Madrid', // only to override settings
+        filename: `/calendars/joel/trabajo/`,
+        color: calendar.backgroundColor,
+        // description: calendar.description        
     });   
     console.log(cal)
     return cal;
