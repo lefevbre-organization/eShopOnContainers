@@ -154,9 +154,6 @@ export class ComposeMessage extends PureComponent {
       isDraftEdit: false,
       embeddedImgLoaded: false,
       draftInProgress: false,
-      // draftPollingCount: 0,
-      // draftStoreDelay: 10000,
-      // maxDraftPollsWithoutUpdates: 3,
       draftQueue: 0
     };
 
@@ -587,15 +584,6 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // if (this.state.draftPollingCount === this.state.maxDraftPollsWithoutUpdates){
-    //   clearInterval(this.interval);
-    // }
-
-    // if (this.state.draftPollingCount === 0) {
-    //   this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
-    // } else if (this.state.draftPollingCount === this.state.maxDraftPollsWithoutUpdates){
-    //   clearInterval(this.interval);
-    // }
     if((prevState.to !== this.state.to 
       || prevState.cc !== this.state.cc 
       || prevState.bcc !== this.state.bcc 
@@ -604,10 +592,6 @@ export class ComposeMessage extends PureComponent {
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
       && !this.props.match.params.id) {
         if (!this.state.draftInProgress){
-          // this.setState({draftInProgress: true, draftPollingCount: 0});
-          //clearInterval(this.interval);
-          // this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
-
           this.setState({draftInProgress: true, draftQueue: 0});
           this.saveDraft();
         } else {
@@ -624,10 +608,6 @@ export class ComposeMessage extends PureComponent {
       && this.props.match.params.id 
       && this.state.isDraftEdit) {
         if (!this.state.draftInProgress){
-          // this.setState({draftInProgress: true, draftPollingCount: 0});
-          // clearInterval(this.interval);
-          // this.interval = setInterval(this.saveDraft(), this.state.draftStoreDelay);
-
           this.setState({draftInProgress: true, draftQueue: 0});
           this.saveDraft();
         } else {
@@ -667,7 +647,6 @@ export class ComposeMessage extends PureComponent {
     this.removeFields();
     this.props.setMailContacts(null);
     this.uppy.close();
-    // clearInterval(this.interval);
   }
 
   handleChange(value, delta, source, editor) {
