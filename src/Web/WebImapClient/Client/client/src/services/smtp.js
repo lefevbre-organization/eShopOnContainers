@@ -32,7 +32,7 @@ export function sendMessage(
     content,
   }
 ) {
-  const normalizedAttachments = attachments.map( at => ({ ...at, fileName: removeAccents(at.fileName)}));
+  const normalizedAttachments = (attachments) ?  attachments.map( at => ({ ...at, fileName: removeAccents(at.fileName)})): [];
   const message = {
     recipients: [
       ...to.map((address) => ({ type: 'To', address: address })),

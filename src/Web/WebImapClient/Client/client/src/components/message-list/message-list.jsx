@@ -406,8 +406,11 @@ class MessageList extends Component {
   }
 
   messageClicked(message) {
-    if(this.props.selectedFolder.name === 'Drafts' || this.props.selectedFolder.name === 'Borradores') {
-      this.props.messageClicked(message);
+    if (
+        this.props.selectedFolder.attributes.find(att => att && att.toUpperCase() === "\\DRAFTS")
+        || this.props.selectedFolder.name.toUpperCase() === 'DRAFTS' 
+        || this.props.selectedFolder.name.toUpperCase() === 'BORRADORES') {
+      this.props.messageClickedDraft(message);
       this.props.newMessage('');      
     } else {
       this.props.messageClicked(message);
@@ -499,6 +502,10 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(selectMessage(message));
     readMessage(dispatch, credentials, downloadedMessages, folder, message);
   },
+  messageClickedDraft: (credentials, downloadedMessages, folder, message) => {
+    dispatch(selectMessage(message));
+    readMessage(dispatch, credentials, downloadedMessages, folder, message, 'base64');
+  },
   newMessage: (sign) => editNewMessage(dispatch, [], sign),
   draftMessage: (selectedMessage, sign) =>
     draftMessage(dispatch, selectedMessage, sign),
@@ -514,6 +521,15 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
     messageClicked: (message) =>
       dispatchProps.messageClicked(
+        stateProps.credentials,
+        stateProps.downloadedMessages,
+        stateProps.selectedFolder,
+        message,
+        stateProps.sign,
+        stateProps.selectedMessage
+      ),
+      messageClickedDraft: (message) =>
+      dispatchProps.messageClickedDraft(
         stateProps.credentials,
         stateProps.downloadedMessages,
         stateProps.selectedFolder,

@@ -21,7 +21,9 @@ export class Notification extends Component {
         aria-labelledby='contained-modal-title-vcenter'
         centered
         dialogClassName={`modal notification ${error ? 'error' : ''}`}
-        animation={false}>
+        animation={false}
+        backdrop={'static'}
+        keyboard={false}>
         <Modal.Header className='align-items-center' closeButton={closeButton}>
           <Modal.Title>
             <div className='modal-title h4'>

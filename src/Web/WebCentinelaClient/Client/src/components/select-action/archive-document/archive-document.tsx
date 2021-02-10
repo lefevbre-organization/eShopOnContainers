@@ -55,10 +55,15 @@ class ArchiveDocument extends Component<Props> {
 
     return (
       <p className="add-more-container">
-        <a href="#/" className="add-more" onClick={this._handleOnClick}>
+        <span className="add-more" onClick={this._handleOnClick}>
           <span className="lf-icon-add-round"></span>
           <strong>{i18n.t('tab-archive.new-archive-location')}</strong>
-        </a>
+        </span>
+        <style jsx>{`
+        .add-more {
+          cursor: pointer;
+        }
+        `}</style>
       </p>
     );
   }

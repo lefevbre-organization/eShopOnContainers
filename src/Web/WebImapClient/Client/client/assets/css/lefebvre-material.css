@@ -25786,7 +25786,7 @@ body.e-colorpicker-overflow {
   .e-container .e-custom-palette {
     display: inline-block; }
     .e-container .e-custom-palette .e-palette {
-      padding: 10px; }
+      padding: 15px; }
     .e-container .e-custom-palette.e-palette-group {
       height: 270px;
       overflow-y: scroll; }
@@ -25800,14 +25800,16 @@ body.e-colorpicker-overflow {
       display: table-row;
       white-space: nowrap; }
     .e-container .e-palette .e-tile {
-      border: 0.5px solid transparent;
+      border: .5px solid transparent;
       box-sizing: border-box;
       cursor: pointer;
       display: inline-block;
-      height: 27px;
+      height: 26px;
       text-align: center;
       vertical-align: middle;
-      width: 27px; }
+      width: 30px;
+      border-radius: 4px;
+      margin: 3px; }
       .e-container .e-palette .e-tile.e-selected {
         outline: #000 0.5px solid;
         position: relative; }
@@ -42542,11 +42544,11 @@ ejs-calendar {
     .e-schedule .e-schedule-toolbar .e-toolbar-pop {
       background: #fafafa; }
     .e-schedule .e-schedule-toolbar .e-tbar-btn {
-      background: #fafafa; }
+      background: transparent; }
       .e-schedule .e-schedule-toolbar .e-tbar-btn:hover, .e-schedule .e-schedule-toolbar .e-tbar-btn:focus {
-        background-color: #e0e0e0; }
+        background-color: transparent; }
       .e-schedule .e-schedule-toolbar .e-tbar-btn:active {
-        background: #e0e0e0; }
+        background: transparent; }
     .e-schedule .e-schedule-toolbar .e-tbar-btn .e-tbar-btn-text {
       cursor: pointer;
       font-size: 13px;
@@ -51281,3 +51283,11 @@ ejs-filemanager {
 .e-fe-popup.e-contextmenu-wrapper ul .e-menu-item .e-fe-dot,
 .e-fe-popup.e-contextmenu-wrapper ul .e-menu-item .e-fe-tick {
   color: #001978; }
+
+.e-profile-wrapper {
+  width: 210px;
+  height: 80px;
+  background-color: #fafafa;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}

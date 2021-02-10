@@ -515,7 +515,6 @@ export class ComposeMessage extends PureComponent {
 
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-
     this.props.setMailContacts(null);
     this.props.updateComposerData({});
 
@@ -538,11 +537,13 @@ export class ComposeMessage extends PureComponent {
           const user = await getUser(this.props.lexon.userId);
           if (user && user.data && user.data.configUser) {
             if (user.data.configUser.getContacts) {
+              console.log(this.state);
+
               await classifyEmail(
                 message.id,
                 message.subject,
                 message.sentDateTime,
-                this.state.to2,
+                message.to,
                 '[GMAIL]/Enviados',
                 this.props.lexon.provider,
                 this.props.lexon.account,
@@ -788,11 +789,11 @@ export class ComposeMessage extends PureComponent {
         //this.sentEmail(email.id, this.state.subject);
         getMessageHeader(email.id)
           .then((headers) => {
-            console.log('Headers:' + headers);
             const message = {
               id: this.getContentByHeader(headers, 'Message-Id'),
               subject: this.getContentByHeader(headers, 'Subject'),
               sentDateTime: this.getContentByHeader(headers, 'Date'),
+              to: validTo
             };
             this.sentEmail(message);
           })

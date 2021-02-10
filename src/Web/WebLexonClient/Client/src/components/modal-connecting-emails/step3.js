@@ -228,15 +228,15 @@ export class ConnectingEmailsStep3 extends React.Component {
           </ol>
           <div className='new-folder'>
             <div className={`new-folder-container ${disabled}`}>
-              <a
-                href='#'
+              <span
+                style={{cursor: 'pointer'}}
                 onClick={this.onCreateFolder}
                 className={'add-more ' + disabled}>
                 <span className='pager-icon lf-icon-folder-new new-folder-icon' />
                 <span className='new-folder-text'>
                   {i18n.t(`connecting.new-folder`)}
                 </span>
-              </a>
+              </span>
             </div>
           </div>
           <section className='panel section-border'>

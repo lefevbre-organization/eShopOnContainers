@@ -19,6 +19,7 @@
     "@syncfusion/ej2-react-navigations": "18.2.47",
     "@syncfusion/ej2-react-notifications": "18.1.42",
     "@syncfusion/ej2-react-popups": "18.1.46",
+    "@syncfusion/ej2-react-progressbar": "^18.4.39",
     "@syncfusion/ej2-react-richtexteditor": "18.1.54",
     "@syncfusion/ej2-react-schedule": "18.1.55",
     "@syncfusion/ej2-react-splitbuttons": "18.1.43",

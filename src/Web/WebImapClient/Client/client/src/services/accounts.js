@@ -1,7 +1,7 @@
 import history from '../routes/history';
 import jwt_decode from 'jwt-decode';
 
-export const getUser = async (userId) => {
+export const getUser = async (userId, useCache = true) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
   let url2 = `${window.API_GATEWAY}/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true`;
   if(window.currentUser && window.currentUser.env) {
@@ -108,5 +108,63 @@ export const classifyEmail = async (
     return data;
   } catch (err) {
     throw err;
+  }
+};
+
+export const getEventTypes = async (account) => {
+  let url = `${window.URL_GET_EVENTSTYPE}/ev/get`;
+
+  let value = {
+      "email": account
+  };
+ 
+  try {
+      const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(value),
+      });
+
+      const user = await res.json();
+      return user;      
+  } catch (err) {
+      throw err;
+  }
+};
+
+export const addorUpdateEventType = async (eventType) => { 
+  let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
+  try {
+      const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventType),
+      });
+      const eventtype = await res.json();
+      return eventtype;
+  } catch (err) {
+      throw err;
+  }
+};
+
+export const deleteEventType = async (eventType) => {
+  let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/delete`;
+
+  try {
+      const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventType),
+      });
+      const eventtype = await res.json();
+      return eventtype;
+  } catch (err) {
+      throw err;
   }
 };

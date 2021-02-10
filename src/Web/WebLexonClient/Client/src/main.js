@@ -180,6 +180,7 @@ class Main extends Component {
     );
 
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+
     this.props.setCaseFile({
       casefile: null,
       bbdd: null,
@@ -495,6 +496,8 @@ const mapDispatchToProps = (dispatch) => ({
   setComposerOpen: (open) =>
     dispatch(APPLICATION_ACTIONS.setComposerOpen(open)),
   setShowSpinner: (show) => dispatch(APPLICATION_ACTIONS.setShowSpinner(show)),
+  setCaseFile: (caseFile) => dispatch(APPLICATION_ACTIONS.setCaseFile(caseFile)),
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

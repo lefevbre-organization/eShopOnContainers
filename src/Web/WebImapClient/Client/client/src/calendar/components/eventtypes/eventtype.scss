@@ -13,6 +13,26 @@
     visibility: hidden;
 }
 
+.dot {
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border-right: 20px;
+    border-left: 20px;
+}
+
+.listicons {
+    float: right;
+    cursor: pointer;
+    padding-top: 10px;
+    padding-left: 15px;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
 #loader {
     color: #008cff;
     height: 40px;

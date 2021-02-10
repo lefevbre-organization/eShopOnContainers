@@ -5,10 +5,9 @@ import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import i18n from 'i18next';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
-import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api/accounts";
+import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../services/accounts";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
-import './eventtype.scss';
-
+import Styles from './eventtype.scss';
 
 export class Eventtype extends React.Component {
     constructor(props) {
@@ -58,18 +57,18 @@ export class Eventtype extends React.Component {
     listTemplate(data) {
         return (
             <div className="text-content"> 
-            <span style={{`background-color: ${data.Color}; margin-right: 20px`}} className='dot'></span>
+            <span style={{backgroundColor: data.Color, marginRight: '20px'}} className={Styles['dot']}></span>
             {data.Text} 
-            <span className="listicons lf-icon-close-round" onClick={this.deleteEventType.bind(this)} />
-            <span className="listicons lf-icon-edit" onClick={this.onModifyEventTypeState.bind(this)} />
-            <span className='id hidden'>{data.Id}</span>
+            <span className={`${Styles['listicons']} lf-icon-close-round`} onClick={this.deleteEventType.bind(this)} />
+            <span className={`${Styles['listicons']} lf-icon-edit`} onClick={() => this.onModifyEventTypeState(data)} />
+            <span className={`${Styles['hidden']}`}>{data.Id}</span>
             </div>
         );        
     }  
 
     onModifyEventTypeState(args) {
         this.setState({ updatemode: true })
-        let idEventType = args.target.parentElement.lastChild.innerText   
+        let idEventType = args.Id;   
         if (idEventType == undefined) {
             if (this.state.idEvent != undefined || this.state.idEvent != "") {
                 idEventType = this.state.idEvent
@@ -85,7 +84,7 @@ export class Eventtype extends React.Component {
     }
 
     newState() {
-        this.setState({ idEvent: undefined});
+       this.setState({ idEvent: undefined});
        this.setState({ newmode: true });
        this.setState({ name: undefined });
        this.setState({ color: undefined });
@@ -112,10 +111,9 @@ export class Eventtype extends React.Component {
         this.eventTypeData = [];
         this.eventTypeData = vowels;
 
-        let email = this.props.googleUser.getBasicProfile().getEmail();      
         let dataEventTypeAPI = {            
             "idEvent": args.target.parentElement.lastChild.innerText,
-             "email": email
+             "email": this.props.email
         }
 
         deleteEventType(dataEventTypeAPI)
@@ -162,13 +160,10 @@ export class Eventtype extends React.Component {
             "Text": this.TitleTypeEventObj.value,
             "Color": this.state.color 
         }
-
-
-        let dataEventTypeAPI = [];
-        let email = this.props.googleUser.getBasicProfile().getEmail();      
+        let dataEventTypeAPI = [];    
         if (this.state.idEvent != undefined) {
             dataEventTypeAPI = {
-                "email": email,
+                "email": this.props.email,
                 "eventType":
                 {
                     "idEvent": this.state.idEvent,
@@ -180,7 +175,7 @@ export class Eventtype extends React.Component {
         else {
            
             dataEventTypeAPI = {
-                "email": email,
+                "email": this.props.email,
                 "eventType":
                 {                  
                     "name": this.TitleTypeEventObj.value,
@@ -275,8 +270,7 @@ export class Eventtype extends React.Component {
     }
 
     getlistEventTypes() {
-        let email  = this.props.googleUser.getBasicProfile().getEmail();
-        getEventTypes(email)
+        getEventTypes(this.props.email)
             .then(result => {
                 this.onDataBinding(result.data.eventTypes)
             })
@@ -306,6 +300,7 @@ export class Eventtype extends React.Component {
     }    
 
     render() {  
+        console.log(this.props.email);
         var ObjId;
         var ObjText;
        

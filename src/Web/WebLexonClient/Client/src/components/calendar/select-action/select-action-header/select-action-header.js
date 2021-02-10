@@ -62,12 +62,12 @@ class CalendarSelectActionHeader extends Component {
           {i18n.t("select-action-header.company-selected")}
           <br />
           <strong>{companySelected.name}</strong>
-          <a href="#/" title={i18n.t("select-action-header.change-company")}>
+          <span style={{cursor: 'pointer'}} title={i18n.t("select-action-header.change-company")}>
             <strong className="sr-only sr-only-focusable">
               {i18n.t("select-action-header.select-another-company")}
             </strong>
             {this.renderArrowChangePage()}
-          </a>
+          </span>
         </p>
 
 

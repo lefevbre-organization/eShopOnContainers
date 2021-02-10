@@ -31,6 +31,15 @@ export class Calendars extends React.Component {
         show: {  duration: '200' }
     };
 
+    getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
     onAddClick(args) {
         this.setState({ buttonDisabled: true })
 
@@ -38,9 +47,12 @@ export class Calendars extends React.Component {
         //    this.descriptionObj.value = "";
         //}
 
+        let color = this.getRandomColor();
+
         let calendar = {
             "summary": this.nameObj.value,
-            "description": this.descriptionObj.value
+            "description": this.descriptionObj.value,
+            "color": color
         }
 
         this.toastObj.showProgressBar = true
