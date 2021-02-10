@@ -155,8 +155,11 @@
         public static class GoogleDrive
         {
             public static readonly string Create = "GD01";
-            public static readonly string Get = "GD02";
-
+            public static readonly string GetFiles = "GD02";
+            public static readonly string GetToken = "GD03";
+            public static readonly string Delete = "GD04";
+            public static readonly string Trash = "GD05";
+            public static readonly string GetRoot = "GD06";
         }
 
         public static class GoogleAccount

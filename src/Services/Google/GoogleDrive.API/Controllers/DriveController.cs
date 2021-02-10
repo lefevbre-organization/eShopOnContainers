@@ -40,7 +40,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         public IActionResult Test()
         {
             var data = $"Google Drive v.{ _settings.Value.Version}";
-            //_log.LogError(data);
             return Ok(new Result<string>(data));
         }
 
@@ -94,16 +93,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             if(string.IsNullOrEmpty(Searcher))
               return BadRequest("Es necesario un término de búsqueda");
 
-            var files = await _service.SearchFile(LefebvreCredential, Searcher);
+            var filesResult = await _service.SearchFile(LefebvreCredential, Searcher);
 
-            if(files.errors.Count == 0 && files.data == null)
-              return BadRequest(files);
+            if(filesResult.errors.Count == 0 && filesResult.data == null)
+              return BadRequest(filesResult);
 
-            files.infos.Add(new Info(){
-              message = $"Cantidad de Items: {files.data.Count}"
+            filesResult.infos.Add(new Info(){
+              message = $"Cantidad de Items: {filesResult.data.Count}"
             });
 
-            return Ok(files);
+            return Ok(filesResult);
         }
 
         [HttpGet("[action]")]
@@ -118,8 +117,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             if(string.IsNullOrEmpty(FileId))
               return BadRequest("Es necesario un Id de un documento válido");
 
-            var files = await _service.Delete(LefebvreCredential, FileId);
-            return Ok(files);
+            var fileDeleteResult = await _service.Delete(LefebvreCredential, FileId);
+
+            if (fileDeleteResult.errors.Count > 0)
+                return BadRequest(fileDeleteResult);
+
+            return Ok(fileDeleteResult);
         }
 
         [HttpGet("[action]")]
