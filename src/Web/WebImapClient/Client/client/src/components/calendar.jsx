@@ -918,6 +918,7 @@ class Calendar extends Component {
     };
 
     eventTemplate(props) {
+        console.log('eventTemplate', props)
         const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {
@@ -1418,6 +1419,7 @@ class Calendar extends Component {
             else {
                 item = this.eventTypeDataSource.find(x => x.text == values.EventType)
             }
+            console.log('buildEventoGoogle ==>', item)
             event.categories = [{
                 'name': item.text,
             }]
@@ -1446,9 +1448,9 @@ class Calendar extends Component {
         event.attendees = ateendeeObj;  
 
         let organizerData = {
-            "name": "Alberto",
-            "email": "alberto.valverde.escribano@gmail.com",
-            "mailto": "alberto.valverde.escribano@gmail.com", //to override email
+            "name": "joel",
+            "email": "j.hostilio-ext@lefebvre.es",
+            "mailto": "j.hostilio-ext@lefebvre.es", //to override email
         }
             
     

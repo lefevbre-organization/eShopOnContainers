@@ -149,7 +149,7 @@
     "newevent": "Añadir tipología"
   },
   "contactimport": {
-    "title": "Importar Eventos"
+    "title": "Migración de eventos Lex-on"
   },
   "tooltips": {
     "lexon": "Lex-on",

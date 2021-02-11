@@ -56,20 +56,45 @@ export class Step1 extends React.Component {
     this.props.onChangeDates(this.startDate, this.endDate);
   }
 
+  itemTemplate(data) {
+    console.log('itemTemplate ===>', data)
+    return (
+      <div>
+        <span style={{background: data.backgroundColor, padding: '0px 10px 3px', marginRight: '5px' }}>
+        </span>
+        <span style={{paddingRight: '5px'}}>{data.summary}</span>
+      </div>
+    );
+  }
+
   render() {
     const { companies, calendars } = this.props;
-
     return (
       <Fragment>
         <div><p className="ie-title">Añade los eventos que ya tienes planificados en Lex-on a tus calendarios. Decide qué eventos quieres migrar y en qué calendarios deben visualizarse.</p></div>
         <div className="ie-dialogborder">
           <div className="ie-dropwrapper">
-            <p>Selecciona la base de datos de origen</p>
-            <DropDownListComponent id="companies" dataSource={companies} fields={this.companiesFields} placeholder="" popupHeight="220px" change={ (ddbb) => { this.props.onChangeDDBB(ddbb.value); } } />
+            {/* <label htmlFor="companies" className="control-label">Selecciona la base de datos de origen</label> */}
+            <DropDownListComponent 
+              floatLabelType="Always" 
+              id="companies" 
+              dataSource={companies}
+              fields={this.companiesFields} 
+              placeholder="Selecciona la base de datos de origen" 
+              popupHeight="220px" 
+              change={ (ddbb) => { this.props.onChangeDDBB(ddbb.value); } } />
           </div>
           <div className="ie-dropwrapper">
-            <p>Selecciona el calendario de destino</p>
-            <DropDownListComponent id="calendars" dataSource={calendars} fields={this.calendarsFields} placeholder="" popupHeight="220px" change={ (cal) => { this.props.onChangeCalendar(cal.value); } } />
+            <DropDownListComponent 
+              floatLabelType="Always"  
+              id="calendars" 
+              dataSource={calendars} 
+              fields={this.calendarsFields} 
+              placeholder="Selecciona el calendario de destino" 
+              popupHeight="220px"
+              itemTemplate={this.itemTemplate = this.itemTemplate.bind(this)} 
+              change={ (cal) => { this.props.onChangeCalendar(cal.value); } }
+             />
           </div>
           <div className="ie-dateswrapper">
             <div>
@@ -132,6 +157,22 @@ export class Step1 extends React.Component {
             flex: 1;
             padding: 0 20px;
           }
+
+          label.e-float-text, .e-float-input label.e-float-text, .e-float-input.e-control-wrapper label.e-float-text {
+            font-size: 14px !important;
+            font-family: MTTMilano-Medium;
+          }
+
+          input[type='radio'] + label:before {
+            border: 2px solid #757575;
+          }
+
+          .e-calendar, .e-bigger.e-small .e-calendar {
+            max-width: 246px !important;
+            min-width: 240px !important;
+            padding: 0;
+          }
+          
         `} </style>
       </Fragment>
     );

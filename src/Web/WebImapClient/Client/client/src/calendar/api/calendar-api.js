@@ -15,8 +15,8 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'admin',
-  password: 'admin_dev',
+  username: 'joel',
+  password: 'Choel2015',
   server: 'https://lexbox-dev-nextcloud.lefebvre.es',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
