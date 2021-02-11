@@ -474,10 +474,11 @@ export class Main extends Component {
                 end,
                 isAllDay,
                 summary: events[i].subject,
-                attendees: []
+                attendees: [],
+                notes: events[i].notes || ''
             };
 
-            try {
+            try {   
                 const res = await addCalendarEvent(calendar, lefEvent);
                 eventsImported++
             } catch(err) {
