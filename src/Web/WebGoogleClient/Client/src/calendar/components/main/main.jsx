@@ -1437,7 +1437,7 @@ export class Main extends Component {
                         Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
                         this.tabObj = new TabComponent({
                             items: [
-                                { header: { text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
+                                { header: { text: 'EVENTO', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
                                 { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
                             ],
                             selectedItem: 0,
