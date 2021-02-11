@@ -109,11 +109,12 @@ class ModalImportEvents extends Component {
 
         let fromDate;
         let toDate;
+        debugger
         if(selectedType === 0) {
             fromDate = moment(startDate).format("YYYY-MM-DD");
             toDate = moment(endDate).format("YYYY-MM-DD");
         } else if(selectedType === 2) {
-            toDate = moment().format("YYYY-MM-DD");
+            fromDate = moment().format("YYYY-MM-DD");
         }
 
 
