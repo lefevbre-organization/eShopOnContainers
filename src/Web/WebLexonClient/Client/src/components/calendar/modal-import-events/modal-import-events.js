@@ -235,7 +235,14 @@ class ModalImportEvents extends Component {
                         color: #fff;
                         background-color: #d2d2d2;
                         border-color: #d2d2d2;
-                    }    
+                    }   
+                    .e-dialog .e-btn.e-dlg-closeicon-btn:hover, 
+                    .e-dialog .e-btn.e-dlg-closeicon-btn:focus,
+                    .e-dialog .e-btn.e-dlg-closeicon-btn:active {
+                        background-color: transparent !important;
+                        border-color: transparent;
+                        box-shadow: transparent;
+                    }
                 `}</style>
             </Fragment>
         );

@@ -104,12 +104,24 @@ export class Step1 extends React.Component {
               <RadioButtonComponent change={ this.onChangeType } label='Eventos futuros' name='eventType' value="future"></RadioButtonComponent>
             </div>
             <div>
-              <p>Comienzo</p>
-              <DatePickerComponent disabled={this.state.typeSelected === 1} format='dd/MM/yyyy' change={this.onChangeStartDate} value={this.startDate}></DatePickerComponent>
+              <DatePickerComponent 
+                disabled={this.state.typeSelected === 1} 
+                format='dd/MM/yyyy' 
+                placeholder="Comienzo"
+                change={this.onChangeStartDate} 
+                value={this.startDate}
+                floatLabelType="Always">
+              </DatePickerComponent>
             </div>
             <div>
-              <p>Fin</p>
-              <DatePickerComponent  disabled={this.state.typeSelected === 1} format='dd/MM/yyyy' change={this.onChangeEndDate} value={this.endDate}></DatePickerComponent>
+            <DatePickerComponent  
+              disabled={this.state.typeSelected === 1} 
+              format='dd/MM/yyyy' 
+              placeholder="Fin"
+              change={this.onChangeEndDate} 
+              value={this.endDate}
+              floatLabelType="Always" >
+            </DatePickerComponent>
             </div>
           </div>
         </div>

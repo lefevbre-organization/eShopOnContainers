@@ -2355,7 +2355,7 @@ export class Main extends Component {
 
 
                     {this.layoutIframe && this.layoutIframeNewEventView || this.layoutIframeEditEventView ? (
-                        <style jsx>{`
+                    <style jsx>{`
                         .e-dlg-overlay {
                             background-color: #FFFFFF !important;
                             opacity: 1 !important;
