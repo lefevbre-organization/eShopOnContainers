@@ -81,6 +81,7 @@ const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
 class App extends Component {
   constructor(props) {
     super(props);
+    this.lastAuto = '';
     this.state = {
       sidebarOpen: false,
       sidebarDocked: false,
@@ -763,6 +764,52 @@ class App extends Component {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+
+  async classifyEmail(message) {
+    if(this.lastAuto === message.idMessage) {
+      return;
+    }
+
+    this.lastAuto = message.idMessage;
+    if (this.props.lexon.bbdd && this.props.email) {
+      try {
+        const user = await getUser(this.props.lexon.userId);
+
+        if (user && user.data && user.data.configUser) {
+          console.log(user);
+
+          if (user.data.configUser.getContacts === true) {
+            const emailDate = new Date()
+                .toISOString()
+                .replace(/T/, ' ')
+                .replace(/\..+/, '');
+
+            var folder = findSentFolder(this.props.folders);
+
+            (folder === null || folder === undefined || folder === '') ? folder = findSentFolderByName(this.props.folders) : null
+
+            await classifyEmail(
+                message.idMessage,
+                message.message.subject,
+                emailDate,
+                message.message.recipients.map((rec) =>
+                    this.clearEmailAddress(rec.address)
+                ),
+                folder.fullName,
+                this.props.lexon.provider,
+                this.props.email,
+                this.props.lexon.bbdd,
+                user.data.lexonUserId
+            );
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        //throw err;
+      }
+    }
+  }
+
   async componentDidUpdate() {
     if (
       this.props.lexon.userId !== '' &&
@@ -771,47 +818,10 @@ class App extends Component {
       !this.props.outbox.eventNotified
     ) {
       this.sentEmail(
-        this.props.outbox.idMessage,
-        this.props.outbox.message.subject
+          this.props.outbox.idMessage,
+          this.props.outbox.message.subject
       );
-
-      if (this.props.lexon.bbdd && this.props.email) {
-        try {
-          const user = await getUser(this.props.lexon.userId);
-
-          if (user && user.data && user.data.configUser) {
-            console.log(user);
-
-            if (user.data.configUser.getContacts === true) {
-              const emailDate = new Date()
-                .toISOString()
-                .replace(/T/, ' ')
-                .replace(/\..+/, '');
-
-              var folder = findSentFolder(this.props.folders);
-
-              (folder === null || folder === undefined || folder === '') ? folder = findSentFolderByName(this.props.folders) : null
-
-              await classifyEmail(
-                this.props.outbox.idMessage,
-                this.props.outbox.message.subject,
-                emailDate,
-                this.props.outbox.message.recipients.map((rec) =>
-                  clearEmailAddress(rec.address)
-                ),
-                folder.fullName,
-                this.props.lexon.provider,
-                this.props.email,
-                this.props.lexon.bbdd,
-                user.data.lexonUserId
-              );
-            }
-          }
-        } catch (err) {
-          console.log(err);
-          //throw err;
-        }
-      }
+      await this.classifyEmail({...this.props.outbox});
 
       this.props.outboxEventNotified();
     } else {
@@ -965,6 +975,16 @@ class App extends Component {
       },
     });
   }
+
+  clearEmailAddress(address) {
+    const regExp = /<([^>]+)?>/;
+    const result = regExp.exec(address);
+
+    if (result && result.length >= 2) {
+      return result[1];
+    }
+    return address;
+  }
 }
 
 App.propTypes = {
@@ -1054,12 +1074,4 @@ export default connect(
   mergeProps
 )(translate()(App));
 
-function clearEmailAddress(address) {
-  const regExp = /<([^>]+)?>/;
-  const result = regExp.exec(address);
 
-  if (result && result.length >= 2) {
-    return result[1];
-  }
-  return address;
-}

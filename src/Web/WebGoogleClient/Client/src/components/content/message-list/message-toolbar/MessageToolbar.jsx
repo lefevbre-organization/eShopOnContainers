@@ -96,6 +96,7 @@ export class MessageToolbar extends PureComponent {
     } > ${t('composemessage-toobar.wrote')}:</p>`;
 
     const composeProps = {
+      isReply: true,
       subject: `Re: ${subject.value}`,
       to: nameEmail.email,
       content: `<p>&nbsp;</p>

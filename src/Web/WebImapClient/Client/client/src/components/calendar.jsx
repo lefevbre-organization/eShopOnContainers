@@ -17,7 +17,6 @@ import MessageSnackbar from './message-snackbar/message-snackbar';
 import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
 import CentinelaComponent from '../apps/centinela_content';
 
-
 import {
   clearUserCredentials,
   selectMessage,
@@ -88,17 +87,17 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ updateCalendarList } from '../services/calendar-api';
+import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent} from '../calendar/api/calendar-api'
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 //import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-//import { Eventtype } from '../eventtypes/eventtype';
+import { Eventtype } from '../calendar/components/eventtypes/eventtype';
 //import { EventsImport } from '../events-import/events'
-//import { getEventTypes } from "../../../api/accounts";
+import { getEventTypes } from '../services/accounts';
 //import HeaderAddress from '../../../components/compose-message/header-address';
 //import AttendeeAddress from '../calendar/components/';
 import { Calendars } from '../calendar/components/calendars/calendars';
@@ -124,6 +123,7 @@ class Calendar extends Component {
         reminders: [],
         eventType: undefined,
         isVisibility: false,
+        calendars: [],
         to2: [],
         //data: [{
         //  Id: 2,
@@ -335,8 +335,8 @@ class Calendar extends Component {
     }
 
   render() {
-        const { t, lexon } = this.props;
-        const { sideBar } = this.state;
+        const { t, lexon, email } = this.props;
+        const { sideBar, calendars } = this.state;
 
         //if (!isUpdatedDefaultAccount) {
         //    return null;
@@ -377,6 +377,7 @@ class Calendar extends Component {
                       onCalendarColorModify={this.calendarColorModify}
                       isIframeContainer={this.layoutIframe}
                       ref={sidebar => this.sidebarCalendarObj = sidebar}
+                      calendars={calendars}
                   />
 
                   <div
@@ -428,7 +429,7 @@ class Calendar extends Component {
                                           <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                       </ViewsDirective>
                                        <ResourcesDirective>
-                                          <ResourceDirective field='eventType' title={t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  
+                                          {/*<ResourceDirective field='eventType' title={t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}
                                           <ResourceDirective ref={this.calendarObj} field='CalendarId' title={t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                       </ResourcesDirective>
                                       <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
@@ -526,10 +527,11 @@ class Calendar extends Component {
                             close={this.dialogClose.bind(this)}>
                             <div>{(this.state.hidePromptDialog) ? <Calendars
                                 calendarId={this.state.calendarToEdit}
+                                calendars={calendars}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
                       </DialogComponent>
-                        {/* <DialogComponent
+                        <DialogComponent
                             id='eventTypes'
                             isModal={true}
                             header={t("contactimport.title")}
@@ -543,12 +545,12 @@ class Calendar extends Component {
                             close={this.dialogEventTypeClose.bind(this)}>
                             <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtype
                                 getlistEventTypes={this.getlistEventTypes.bind(this)}
-                                googleUser={this.props.googleUser}
+                                email={this.props.email}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
                         </DialogComponent>
 
-                        <DialogComponent
+                        {/* <DialogComponent
                             id='contactImports'
                             isModal={true}
                             header={t("contactimport.title")}
@@ -565,7 +567,7 @@ class Calendar extends Component {
                                 googleUser={this.props.googleUser}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>*/}
+                        </DialogComponent> */}
 
                     </article >
                 </section >
@@ -661,12 +663,13 @@ class Calendar extends Component {
     }
 
     calendarColorModify(calendarId, color) {
-
+        let calendar = this.state.calendars.find(a => a.id === calendarId);
         let calendarData = {
             "backgroundColor": color,
+            "summary": calendar.summary,
+            "description": calendar.description,
             "foregroundColor": '#ffffff'
         }
-
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {
@@ -726,6 +729,7 @@ class Calendar extends Component {
         let calendarId = ""
         if (args != undefined)
             calendarId = args.currentTarget.id
+            console.log('openCalendarView', calendarId);
         this.setState(
             {
                 hidePromptDialog: true, calendarToEdit: calendarId
@@ -1065,11 +1069,11 @@ class Calendar extends Component {
                 // EventType
                 let eventType = [];
                 let lexonClassification = null;
-                if (event.extendedProperties != undefined) {
-                    eventType.name = event.extendedProperties.private.eventTypeName;
-                    eventType.id = event.extendedProperties.private.eventTypeId;
-                    eventType.color = event.extendedProperties.private.eventTypeColor;
-                    lexonClassification = event.extendedProperties.private.lexonClassification;
+                if (event.categories != undefined) {
+                    eventType.name = event.categories;
+                    // eventType.id = event.extendedProperties.private.eventTypeId;
+                    // eventType.color = event.extendedProperties.private.eventTypeColor;
+                    // lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
 
                 let reminders = []
@@ -1198,7 +1202,7 @@ class Calendar extends Component {
         let obj = this;
         setTimeout(function () {
         obj.LoadCalendarList();
-       // obj.getlistEventTypes()
+       obj.getlistEventTypes()
 
 
         // New event is called
@@ -1245,25 +1249,23 @@ class Calendar extends Component {
 
     }
 
-    //getlistEventTypes() {
-
-
-    //    let email = this.props.googleUser.getBasicProfile().getEmail();
-
-    //    getEventTypes(email)
-    //        .then(result => {
-    //            this.onDataBindingEventTypeList(result.data.eventTypes)
-    //        })
-    //        .catch(error => {
-    //            console.log('error ->', error);
-    //        });
-    //}
+    getlistEventTypes() {
+       getEventTypes(this.props.email)
+           .then(result => {
+               this.onDataBindingEventTypeList(result.data.eventTypes)
+           })
+           .catch(error => {
+               console.log('error ->', error);
+           });
+    }
 
 
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
         listCalendarList()
         .then(result => {
+            console.log('get calendars in sidebar', result.items)
+            this.setState({ calendars: result.items });
             this.resourceCalendarData = orderBy(result.items, "primary")
             this.props.getCalendars(this.resourceCalendarData);
             this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
@@ -1395,11 +1397,6 @@ class Calendar extends Component {
             //'color': 'green'
         }
 
-        //event.json = ({
-        //    'RRULE': "FREQ=DAILY",
-        //    'SEQUENCE': "1",
-        //})
-
         //if (values.LexonClassification != undefined) {
         //    const properties = {
         //        ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
@@ -1412,10 +1409,25 @@ class Calendar extends Component {
         //    }
         //}
 
-
+        //event Type
+        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
+            let item;
+            if (values.EventType.name != undefined) {
+                item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
+            }
+            else {
+                item = this.eventTypeDataSource.find(x => x.text == values.EventType)
+            }
+            event.categories = [{
+                'name': item.text,
+            }]
+        }
 
         //Recurrence
-        //if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+        if (values.RecurrenceRule != undefined) {
+           const recurrenceEvent = this.getRecurrenceEvent(values.RecurrenceRule);
+           event.repeating = recurrenceEvent;
+        }
 
         //Atendees
         let arr = this.state.to2
@@ -1444,6 +1456,52 @@ class Calendar extends Component {
        
 
         return event
+    }
+
+    getRecurrenceEvent(recurrenceRule) {
+        const valueList = recurrenceRule.split(';');
+        let freqValue = null;
+        let intervalValue = null;
+        let untilValue = null;
+        let byDayValue = null;
+        let bySetPosValue = null;
+        let byMonthValue = null;
+        let byMonthDayValue = null;
+        let countValue = null;
+        valueList.forEach(value => {
+             if (value.split('=')[0] === 'FREQ') {
+                 freqValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'INTERVAL') {
+                 intervalValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYDAY') {
+                 byDayValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYSETPOS') {
+                 bySetPosValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYMONTH') {
+                 byMonthValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'BYMONTHDAY') {
+                 byMonthDayValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'UNTIL') {
+                 untilValue = value.split('=')[1];
+             } else if (value.split('=')[0] === 'COUNT') {
+                 countValue = value.split('=')[1];
+             }  
+        });
+        const repeating = {
+             freq: freqValue, 
+             count: null,
+             interval: intervalValue,
+             byDay: byDayValue,
+             byMonth: parseInt(byMonthValue), 
+             byMonthDay: parseInt(byMonthDayValue),
+             bySetPos: parseInt(bySetPosValue), 
+             wkst: countValue // Start the week on Sunday, default is Monday
+         }
+         if(untilValue) {
+            repeating.until = moment(untilValue);
+         }
+
+        return repeating;
     }
 
     onEventDragStart(args) {
@@ -1526,7 +1584,7 @@ class Calendar extends Component {
         return (
             <div className="typeitem">
                 <span> 
-                    <span style={{backgroundColor: data.backgroundColor}} className='dot'></span>  
+                    <span style={{backgroundColor: data.backgroundColor, marginRight: '20px'}} className={styles['dot']}></span>  
                     <span className='name'>{data.text}</span>
                 </span>
             </div>
@@ -1590,14 +1648,14 @@ class Calendar extends Component {
 
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
-            this.setState({ eventType: args.data.EventType.name })
-            if (this.drowDownListEventType != undefined) {
-                this.drowDownListEventType.value = args.data.EventType.name
-            }
+           this.setState({ eventType: args.data.EventType.name })
+           if (this.drowDownListEventType != undefined) {
+               this.drowDownListEventType.value = args.data.EventType.name
+           }
         }
         else {
-            this.setState({ eventType: undefined })
-            //this.drowDownListEventType.value = undefined;
+           this.setState({ eventType: undefined })
+           //this.drowDownListEventType.value = undefined;
         }
 
 
@@ -1615,34 +1673,34 @@ class Calendar extends Component {
         }
 
         // default values for Visibility coming from event args
-        if (args.data.Visibility != undefined) {
-            const isVisibility = args.data.Visibility == 'private' ? true : false;
-            this.setState({ isVisibility: isVisibility });
-            if (this.drowDownListVisibility != undefined) {
-                this.drowDownListVisibility.checked = isVisibility;
-            }
-        }
+        //if (args.data.Visibility != undefined) {
+        //    const isVisibility = args.data.Visibility == 'private' ? true : false;
+        //    this.setState({ isVisibility: isVisibility });
+        //    if (this.drowDownListVisibility != undefined) {
+        //        this.drowDownListVisibility.checked = isVisibility;
+        //    }
+        //}
 
         // default values for Reminders coming from event args
 
-        if (args.data.Reminders != undefined) {
-            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
-            var arr = [];
-            Object.keys(args.data.Reminders).forEach(function (key) {
-                //arr.push(args.data.Reminders[key]);
-                arr.push({
-                    title: args.data.Reminders[key].method,
-                    value: args.data.Reminders[key].minutes,
-                    minutesvalue: args.data.Reminders[key].minutes,
-                    id: 'n',
-                    icon: "delete-icon"
-                });
-            });
-            this.setState({ reminders: arr })
-        }
-        else {
-            this.setState({ reminders: [] })
-        }
+        //if (args.data.Reminders != undefined) {
+        //    //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
+        //    var arr = [];
+        //    Object.keys(args.data.Reminders).forEach(function (key) {
+        //        //arr.push(args.data.Reminders[key]);
+        //        arr.push({
+        //            title: args.data.Reminders[key].method,
+        //            value: args.data.Reminders[key].minutes,
+        //            minutesvalue: args.data.Reminders[key].minutes,
+        //            id: 'n',
+        //            icon: "delete-icon"
+        //        });
+        //    });
+        //    this.setState({ reminders: arr })
+        //}
+        //else {
+        //    this.setState({ reminders: [] })
+        //}
 
 
 
@@ -1756,36 +1814,36 @@ class Calendar extends Component {
                 let containerEventType = createElement('div', { className: 'custom-field-container' });
                 row.appendChild(containerEventType);
                 let inputEle = createElement('input', {
-                    className: 'e-field', attrs: { name: 'EventType' }
+                   className: 'e-field', attrs: { name: 'EventType' }
                 });
                 containerEventType.appendChild(inputEle);
 
                 this.drowDownListEventType = new DropDownList({
-                    itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
-                    dataSource: this.eventTypeDataSource,
-                    value: this.state.eventType,
-                    floatLabelType: 'Always', placeholder: t("schedule.eventtype")
+                   itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this),
+                   dataSource: this.eventTypeDataSource,
+                   value: this.state.eventType,
+                   floatLabelType: 'Always', placeholder: t("schedule.eventtype")
                 });
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
 
 
                 // Adding visibility element
-                let containerVisibility = createElement('div', { className: 'custom-field-container' });
-                row.appendChild(containerVisibility);
-                let inputVisibility = createElement('input', {
-                    className: 'e-field', attrs: { name: 'Visibility' }
-                });
-                containerVisibility.appendChild(inputVisibility);
+                //let containerVisibility = createElement('div', { className: 'custom-field-container' });
+                //row.appendChild(containerVisibility);
+                //let inputVisibility = createElement('input', {
+                //    className: 'e-field', attrs: { name: 'Visibility' }
+                //});
+                //containerVisibility.appendChild(inputVisibility);
 
-                this.drowDownListVisibility = new CheckBoxComponent({
-                    value: this.state.isVisibility,
-                    label: t("schedule.visibility"),
-                    checked: this.state.isVisibility
-                });
+                //this.drowDownListVisibility = new CheckBoxComponent({
+                //    value: this.state.isVisibility,
+                //    label: t("schedule.visibility"),
+                //    checked: this.state.isVisibility
+                //});
 
-                this.drowDownListVisibility.appendTo(inputVisibility);
-                inputVisibility.setAttribute('name', 'Visibility');
+                //this.drowDownListVisibility.appendTo(inputVisibility);
+                //inputVisibility.setAttribute('name', 'Visibility');
 
 
 
@@ -2069,7 +2127,7 @@ class Calendar extends Component {
                                     this.LoadCalendarList(false)
                                     return;
                                 }*/
-                
+                console.log('buildEventoGoogle --->', args.data[0])
                 event = this.buildEventoGoogle(args.data[0]);
 
                 // if the calendar is not checked remove from current view
@@ -2268,13 +2326,6 @@ class Calendar extends Component {
             return 1;
         })
 
-
-
-
-
-
-
-
     }
 
     predicateQueryEvents(calendarList, predicate) {
@@ -2368,7 +2419,7 @@ class Calendar extends Component {
 
                 if (!this.layoutIframe) {
                     let userIconItem = {
-                        align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                        align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: `e-schedule-user-icon ${styles['user-icon']}`
                     };
 
                     args.items.push(userIconItem);
@@ -2453,7 +2504,7 @@ const mapStateToProps = (state) => {
     return {
         calendarsResult: state.calendarsResult,
         lexon: state.lexon,
-        //email: state.login.formValues.user,
+        email: state.login.formValues.user,
         all: state,
         currentUser: state.currentUser,
     }

@@ -25,8 +25,8 @@ import {
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
-import jwt from 'njwt';
 import { signOut } from '../../api/authentication';
+import {ProgressBarComponent} from "@syncfusion/ej2-react-progressbar";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -38,6 +38,7 @@ class MenuUser extends Component {
       disconnect: true,
       showSign: false,
       sign: '',
+      loading: false
     };
 
     this.wrapperRef = null;
@@ -53,32 +54,52 @@ class MenuUser extends Component {
   }
 
   componentDidMount() {
-    const { lexon } = this.props;
-    const _this = this;
-    if (lexon.userId) {
-      getUser(lexon.userId)
-        .then((result) => {
-          if (result.errors.length === 0) {
-            _this.setState({
-              sign: result.data.accounts[0].sign,
-              accounts: result.data.accounts.filter(
-                (account) => account.defaultAccount !== true
-              ),
-            });
-          } else {
-            let errors;
-            result.errors.forEach(function (error) {
-              errors = `${error} `;
-            });
-            console.log('error ->', errors);
-          }
-        })
-        .catch((error) => {
-          console.log('error ->', error);
-        });
-    }
+    this.loadUser();
 
     document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  loadUser() {
+    const { lexon } = this.props;
+    const _this = this;
+
+    if (lexon.userId) {
+      this.setState({ loading: true}, ()=>{
+        getUser(lexon.userId, false)
+            .then((result) => {
+              if (result.errors.length === 0) {
+                _this.setState({
+                  loading: false,
+                  sign: result.data.accounts[0].sign,
+                  accounts: result.data.accounts.filter(
+                      (account) => account.defaultAccount !== true
+                  ),
+                });
+              } else {
+                let errors;
+                _this.setState({
+                  loading: false,
+                });
+                result.errors.forEach(function (error) {
+                  errors = `${error} `;
+                });
+                console.log('error ->', errors);
+              }
+            })
+            .catch((error) => {
+              _this.setState({
+                loading: false,
+              });
+              console.log('error ->', error);
+            });
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(prevState.showSign !== this.state.showSign && this.state.showSign === true) {
+      this.loadUser();
+    }
   }
 
   componentWillUnmount() {
@@ -160,9 +181,8 @@ class MenuUser extends Component {
   }
 
   render() {
-    const { dropdownOpen, accounts } = this.state;
+    const { dropdownOpen, accounts, loading, showSign, sign } = this.state;
     const { picUrl, fullName, onSignout, lexon } = this.props;
-    const { showSign, sign } = this.state;
 
     let acronym = undefined;
     if (!picUrl) {
@@ -175,6 +195,7 @@ class MenuUser extends Component {
         acronym = ' ';
       }
     }
+    console.log("********* SIGN1: " + sign);
 
     return (
       <Fragment>
@@ -269,7 +290,17 @@ class MenuUser extends Component {
                       </div>
                     </Fragment>
                   )}
-                  {showSign === true && (
+                  {showSign === true && loading === true && (
+                      <div className="progress-wrapper">
+                        <ProgressBarComponent id="rounded-container" type='Circular' width='80px' height='80px' cornerRadius='Round' isIndeterminate={true} value={20} animation={{
+                          enable: true,
+                          duration: 2000,
+                          delay: 0,
+                        }}>
+                        </ProgressBarComponent>
+                      </div>
+                  ) }
+                  {showSign === true && loading === false && (
                     <Fragment>
                       <UserSign
                         onChange={this.onSignChange}
@@ -297,6 +328,13 @@ class MenuUser extends Component {
           </div>
         )}
         <style jsx>{`
+          .progress-wrapper {
+            display: flex;
+            justify-content: center;
+            height: 300px;
+            align-items: center;
+          }
+          
           .e-rte-content span {
             display: inline !important;
           }

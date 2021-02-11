@@ -11,20 +11,20 @@ const Header = ({ title }) => {
           <h1 className="col-6">{title}</h1>
           <ul className="list-inline col-6 text-right tools-bar">
             <li className="list-inline-item">
-              <a href="#/" title={i18n.t("select-company.open-all-window")}>
+              <span style={{cursor:  'pointer'}} title={i18n.t("select-company.open-all-window")}>
                 <strong className="sr-only sr-only-focusable">
                   {i18n.t("select-company.open-all-window")}
                 </strong>
                 <span className="lf-icon-open-window"></span>
-              </a>
+              </span>
             </li>
             <li className="list-inline-item">
-              <a href="#/" title={i18n.t("select-company.hide-column")}>
+              <span style={{cursor: 'pointer'}} title={i18n.t("select-company.hide-column")}>
                 <strong className="sr-only sr-only-focusable">
                   {i18n.t("select-company.hide-column")}
                 </strong>
                 <span className="lf-icon-close"></span>
-              </a>
+              </span>
             </li>
           </ul>
         </div>

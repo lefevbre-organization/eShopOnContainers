@@ -1,6 +1,6 @@
-﻿import Caldav from 'caldavjs-nextcloud';
+﻿import Caldav from '../../services/caldavjs-nextcloud';
 import moment from 'moment';
-
+// import Caldav from 'caldavjs-nextcloud';
 
 const CalendarColors = [
     { value: 'lightBlue', color: '#0078d4', id: '0' },
@@ -15,22 +15,23 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'Alberto',
-  password: 'Alberto1971.-',
-  server: 'http://localhost:8080',
+  username: 'admin',
+  password: 'admin_dev',
+  server: 'https://lexbox-dev-nextcloud.lefebvre.es',
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
   principalPath: '/principals/users',
   parserLogging: true,
 };
 
-let newEmails = [];
+let attendees = [];
 
 export const caldav = new Caldav(settings);
 
 // Get calendars
 export const listCalendarList = async () => {
     const calendars = await caldav.listCalendars({});    
+    console.log('listCalendarList', calendars)
    // calendars = calendars.filter((c) => c.ctag !== undefined);
     return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
@@ -40,10 +41,23 @@ export const createCalendar = async (calendar) => {
     const cal = await caldav.createCalendar({
         name: calendar.summary,
         timezone: 'Europe/Madrid', // only to override settings
-        filename: `/calendars/alberto/${calendar.summary}`,
+        filename: `/calendars/admin/${calendar.summary}`,
+        color: calendar.color,
         description: calendar.description        
     });   
-    console.log(calendar)
+    console.log(cal)
+    return cal;
+};
+
+// Update Calendar
+export const updateCalendarList = async (calendarId, calendar) => {    
+    const cal = await caldav.updateCalendar({
+        name: calendar.summary,
+        timezone: 'Europe/Madrid', // only to override settings
+        filename: calendarId,
+        color: calendar.backgroundColor,
+        description: calendar.description        
+    });   
     return cal;
 };
 
@@ -69,6 +83,7 @@ export const listEvents = async (calendar) => {
 
 // Get events
 export const getEventList = async (calendar, selectedDate) => {
+    console.log('listEventsParser', calendar, selectedDate)
     const events = await caldav.listEvents({
         filename: calendar.replace(settings.basePath, ''),
         start: '20200601T000000Z',
@@ -79,6 +94,7 @@ export const getEventList = async (calendar, selectedDate) => {
 
 // Create and update event
 export const addCalendarEvent = async (calendar, event) => { 
+    console.log('addCalendarEvent --->', event)
     if(event.saveType === 'new')  {
         const date = moment(event.start).add(1, 'days');
         event.start = date._d;
@@ -112,8 +128,15 @@ function listEventsParser(list) {
     let listParse = [];
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {   
-          newEmails = [];
-          getAttendees(list[i].json, newEmails);
+            attendees = [];
+            let recurrenceRule = [];
+            if(list[i].json.RRULE != undefined ) {
+                recurrenceRule = ["RRULE:" + list[i].json.RRULE]
+            } else {
+              recurrenceRule = null;
+            }
+            
+            getAttendees(list[i].json, attendees);
             listParse.push({
                 id: list[i].href,
                 filename: list[i].href,
@@ -128,10 +151,10 @@ function listEventsParser(list) {
                 //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
                 IsAllDay: list[i].allDay,
                 //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
-               // recurrence: recurrenceRule,
+                recurrence: recurrenceRule,
                 ImageName: "lefebvre",
-                attendees: newEmails,
-               // extendedProperties: category,
+                attendees: attendees,
+                categories: list[i].categories,
             });
         }
     }
@@ -144,14 +167,14 @@ function listEventsParser(list) {
     return result
 }
 
-function getAttendees(json, newEmails) {
+function getAttendees(json, attendees) {
     for (const key in json) {
         if (json.hasOwnProperty(key)) {
             const attende = json[key];
             if (attende != undefined) {
                 const emails = attende.split(':')
                 if (emails.length === 3) {
-                    getEmails(emails[2], newEmails);
+                    getEmails(emails[2], attendees);
                 }
             }
            
@@ -159,12 +182,12 @@ function getAttendees(json, newEmails) {
     }
 }
 
-function getEmails(email, newEmails) {
-    newEmails.push({
+function getEmails(email, attendees) {
+    attendees.push({
         email: email,
         responseStatus: "needsAction"
     });
-    return newEmails
+    return attendees
 }
 
 function convertUTCDateToLocalDate(date, isAllDay) {
@@ -215,8 +238,13 @@ function listCalendarParser(list) {
             //    primary = undefined
             //}
             let primary = false;
-
-            let color = "#0693e3";
+            let color = "";
+            if(list[i].color) {
+                color = list[i].color._;
+            } else {
+                color = "#0693e3";
+            }
+            
             let selected = true
             if (i > 0) {
                 selected = false
@@ -236,6 +264,7 @@ function listCalendarParser(list) {
                 primary: primary,
                 selected:selected,
                 summary: list[i].name,
+                description: list[i].description,
                 timeZone: "Europe/Madrid",
             });
         }

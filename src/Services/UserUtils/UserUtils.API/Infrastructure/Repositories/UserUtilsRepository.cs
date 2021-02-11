@@ -136,12 +136,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
 
         public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
         {
-            WriteInfo("Repository GetUserAsync -> Entramos");
             var result = new Result<UserUtilsModel>();
             try
             {
                 result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
-                WriteInfo($"get user from repository {idNavision} with apps {result.data?.apps.Count()}");
+                TraceInfo( result.infos, $"get user from repository {idNavision} with apps {result.data?.apps.Count()}", "UU04");
 
                 if (result.data == null)
                     TraceError(result.errors, new UserUtilsDomainException($"Don´t recover the user {idNavision} with the list of bypass urls"), "UU04", "MONGO");

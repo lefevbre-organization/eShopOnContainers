@@ -509,7 +509,6 @@ export class Main extends Component {
 
     isAllDay(event) {
         if(event.allDay === true) {
-            debugger
         }
         return event.allDay;
     }
@@ -761,7 +760,6 @@ export class Main extends Component {
             sm = this.props.calendarsResult.calendars || []
         }
 
-        debugger
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
@@ -780,7 +778,6 @@ export class Main extends Component {
     }
 
     handleGetUserFromLexonConnector(event) {
-        debugger
         const { userId } = this.props.lexon;
         if (userId) {
             this.sendMessagePutUser(userId);
@@ -842,7 +839,6 @@ export class Main extends Component {
 
         window.addEventListener('RemoveSelectedDocument', (event) => {
             this.props.deleteMessage(event.detail.id);
-            debugger
             dispatchEvent(
                 new CustomEvent('Checkclick', {
                     detail: {
@@ -1103,7 +1099,6 @@ export class Main extends Component {
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
             if(args.selectedIndex === 0 && args.selectingIndex === 1) {
-                debugger
                 // Get subject text
                 const subjectElement = document.getElementsByClassName('e-subject')[0];
                 if(this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {

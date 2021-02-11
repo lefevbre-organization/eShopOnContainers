@@ -90,7 +90,7 @@ class MessageEditor extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromLexonConnector
     );
-    if (this.props.application.selectedMessage && Object.keys(this.props.application.selectedMessage).length > 0)
+    if (this.props.application.selectedMessage && Object.keys(this.props.application.selectedMessage).length > 0 && this.props.application.selectedFolderId === this.props.draftFolderbyName.folderId)
       this.getMessageById(this.props.application.selectedMessage)
     console.log('ComponentDidMount end');
   }
@@ -102,17 +102,37 @@ class MessageEditor extends Component {
     // console.log('this.props.draft');
     // console.log(this.props.draft);
     // console.log('*******************************************************************************************************');
+    // console.log('*******************************************************************************************************');
+    // console.log('prevProps.selectedMessageEdit:');
+    // console.log(prevProps.selectedMessageEdit.content);
+    // console.log('this.props.seledtedMessageEdit');
+    // console.log(this.props.selectedMessageEdit.content);
+    // console.log('this.props.application.selectedMessage');
+    // console.log(this.props.application.selectedMessage.content);
+    // console.log('prevProps.application.selectedMessage');
+    // console.log(prevProps.application.selectedMessage.content);
+    // console.log('*******************************************************************************************************');
 
     if (this.props.application.outbox !== prevProps.application.outbox){
       //A message has been sent
-      const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts' || folder.name === "Borradores");
-      if (this.props.application.outbox && this.props.application.outbox.sent === true && (this.props.draft !== null || this.props.application.selectedFolderId === draftFolder.folderId)){
-        //Sent message was a draft. Manually deleting message from draft folder.
-        console.log('Borrando el mensaje...');
-        this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
-        this.props.editMessage(null);
-        this.props.messageClean();
-        this.props.close(this.props.application);
+      const {draftFolderbyName, draftFolderbyAttribute } = this.props;
+      const draftFolder = (draftFolderbyAttribute) ? draftFolderbyAttribute : draftFolderbyName;
+      
+      if (this.props.application.outbox && this.props.application.outbox.sent === true){
+        if (this.props.draft !== null || this.props.application.selectedFolderId === draftFolder.folderId) {
+          //Sent message was a draft. Manually deleting message from draft folder.
+          console.log('Borrando el mensaje...');
+          this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
+          this.props.editMessage(null);
+          this.props.messageClean();
+          this.props.draftClean();
+          this.props.close(this.props.application);
+        } else {
+          this.props.editMessage(null);
+          this.props.messageClean();
+          this.props.draftClean();
+          this.props.close(this.props.application);
+        }
       }
     }
 
@@ -121,15 +141,13 @@ class MessageEditor extends Component {
       if (this.props.draft && this.props.draft.sent === true){
         // Draft has been sent
         console.log('DraftSent')
-        const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts' || folder.name === "Borradores");
+        const {draftFolderbyAttribute, draftFolderbyName} = this.props;
+        const draftFolder = (draftFolderbyAttribute) ? draftFolderbyAttribute : draftFolderbyName;
 
         if(this.state.draftId !== ''){
           this.props.deleteMessage(this.props.credentials, draftFolder, this.props.selectedMessageEdit);
-          this.setState({ showNotification: true, messageNotification: 'Borrador actualizado.', closeButton: true});
-        } else {
-          this.setState({ showNotification: true, messageNotification: 'Borrador guardado.', closeButton: true});
         }
-
+        
         const folderPromise = this.props.reloadFolders(this.props.credentials);
         const messagePromise = this.props.reloadMessageCache(this.props.application.user, draftFolder);
         await Promise.all([folderPromise, messagePromise]);
@@ -140,13 +158,33 @@ class MessageEditor extends Component {
         this.setState({ showNotification: false, messageNotification: ''});
         this.props.selectMessage(createdMessage.value);
         this.updateAttachmentLinks(createdMessage.key);
+        
+
+        if(this.state.draftId !== ''){
+          this.setState({ showNotification: true, messageNotification: 'Borrador actualizado.', closeButton: true, draftId: this.props.draft.idMessage});
+        } else {
+          this.setState({ showNotification: true, messageNotification: 'Borrador guardado.', closeButton: true, draftId: this.props.draft.idMessage});
+        }
         this.props.draftClean();
+
+      } else if (this.props.draft && this.props.draft.error === true){
+        this.setState({ showNotification: true, messageNotification: 'Error al guardar el borrador', closeButton: true});
       }
     }
     
-    if(this.props.selectedMessageEdit && this.props.selectedMessageEdit.content) {
-      this.getContentEdit(prevProps.selectedMessageEdit.content);
+    // We edit the compose with the original content of the message (inline images may take longer to be available)
+    if(this.props.selectedMessageEdit && this.props.selectedMessageEdit.content && (this.props.selectedMessageEdit.content !== prevProps.selectedMessageEdit.content)) {
+      this.getContentEdit(this.props.selectedMessageEdit.content);
+    } else 
+    // Loading info in the first run
+    if( 
+      (this.props.editedMessage.content === "<br/><br/><br/><br/>" 
+      || this.props.editedMessage.content === "" 
+      || this.props.editedMessage.content === null)
+      && this.props.selectedMessageEdit.content !== null) {
+        this.getContentEdit(this.props.selectedMessageEdit.content)
     }
+    
     // console.log('*******************************************************************************************************');
     // console.log('prevProps.selectedMessage.attachments:');
     // console.log((prevProps.selectedMessageEdit && prevProps.selectedMessageEdit.attachments) ? prevProps.selectedMessageEdit.attachments.length : 'null' );
@@ -160,7 +198,7 @@ class MessageEditor extends Component {
       // Si pasa de null a un valor -> lo debo actualizar porque se están recibiendo datos de un draft que se ha abierto
       // Si pasa de datos a null -> lo tengo que dejar como está porque se ha creado un draft nuevo y no se ha podido obtener aún el array de links de adjuntos
       // El mensaje editado no tiene adjuntos y los adjuntos del mensaje seleccionado han cambiado
-      if (this.props.editMessage && (this.props.editedMessage.attachments === null || this.props.editedMessage.attachments === undefined || this.props.editedMessage.attachments.length === 0) ){
+      if (this.props.editedMessage && (this.props.editedMessage.attachments === null || this.props.editedMessage.attachments === undefined || this.props.editedMessage.attachments.length === 0) ){
         this.getAttachmentsEdit(this.props.selectedMessageEdit.attachments);
       }
     }
@@ -182,12 +220,13 @@ class MessageEditor extends Component {
   getContentEdit(value) {
     console.log('GetContentEdit')
     const updatedMessage = { ...this.props.editedMessage };
-    if(
-      updatedMessage.content === "<br/><br/><br/><br/>" 
-      || updatedMessage.content === "" 
-      || updatedMessage.content === null) {
-      this.props.editMessage({ ...updatedMessage, content: value });
-    }
+    // if(
+    //   updatedMessage.content === "<br/><br/><br/><br/>" 
+    //   || updatedMessage.content === "" 
+    //   || updatedMessage.content === null) {
+    //   this.props.editMessage({ ...updatedMessage, content: value });
+    // }
+    this.props.editMessage({ ...updatedMessage, content: value });
   }
 
   getAttachmentsEdit(value){
@@ -234,7 +273,8 @@ class MessageEditor extends Component {
       this.removeMessageEditor(application);
     } else {
       const { draftId } = this.state;
-      if (draftId !== ''){
+      const draftSent = this.props.application && this.props.application.draft && this.props.application.draft.sent;
+      if (draftId !== '' || draftSent){
         this.setState({ showConfirmation: true, messageConfirmation: '¿Quiere eliminar el borrador definitivamente?'});
       } else {
         this.setState({ showConfirmation: true, messageConfirmation: '¿Quiere descartar el mensaje actual?'});
@@ -275,9 +315,9 @@ class MessageEditor extends Component {
   cancelConfirmation(){
     const { draftId } = this.state;
     this.setState({showConfirmation: false})
-    if (draftId !== ''){
-      this.removeMessageEditor(this.props)
-    }
+    // if (draftId !== ''){
+    //   this.removeMessageEditor(this.props)
+    // }
   }
 
   render() {
@@ -576,7 +616,8 @@ class MessageEditor extends Component {
     
     this.getSubjectEdit(subject);
     //this.addAttachments(attachments);
-    this.setState({draftId: selectedMessage.messageId});
+    if (this.props.application.selectedFolderId === this.props.draftFolderbyName.folderId || this.props.application.selectedFolderId === this.props.draftFolderbyAttribute.folderId)
+      this.setState({draftId: selectedMessage.messageId});
   }
 
   eliminateRTEtags(html) {
@@ -591,10 +632,59 @@ class MessageEditor extends Component {
     return finalString;
   }
 
-  submit() {
+  replaceBlobs = async (html) => {
+    return new Promise((resolve, reject) => {
+      console.log('REPLACING BLOB IMAGES');
+      const fetchAsBlob = url => fetch(url)
+          .then(response => response.blob())
+          .catch(err => {
+            console.log('Can\'t fetch BLOB');
+            console.log(err.message);
+          })
+  
+      const convertBlobToBase64 = blob => new Promise((resolve, reject) => {
+        const reader = new FileReader;
+        reader.onerror = reject;
+        reader.onload = () => {
+          resolve(reader.result);
+        };
+        reader.readAsDataURL(blob);
+      });
+
+      var div = document.createElement('div');
+      div.innerHTML = html;
+  
+      var imgs = div.querySelectorAll('img');
+      imgs.forEach( (img,i) => {
+        var oldVal = img.getAttribute('src');
+        if (oldVal.includes('blob:')){
+          fetchAsBlob(oldVal)
+            .then(convertBlobToBase64)
+            .then(value => {
+              html = html.replace(oldVal, value);
+              if (i === imgs.length -1){
+                resolve(html);
+              }
+            })
+            .catch(err => {
+              // if (i === imgs.length -1){
+                resolve(html);
+              // }
+            })
+         }
+      })
+      if (imgs.length === 0 || !html.includes('blob:')){
+        resolve(html);
+      }
+    })
+  }
+    
+
+  async submit() {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
-      const content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
+      var content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
+      content = await this.replaceBlobs(content);
       const { credentials, to, cc, bcc, subject } = this.props;
       //const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
 
@@ -606,7 +696,7 @@ class MessageEditor extends Component {
         subject,
         content,
       });
-      this.props.close(this.props.application);
+      //this.props.close(this.props.application);
     }
   }
 
@@ -623,14 +713,17 @@ class MessageEditor extends Component {
     return hour >= 12 ? time +' '+ 'PM' : time +' '+ 'AM';
   }
  
-  saveDraft() {
+  async saveDraft() {
     if (this.headerFormRef.current.reportValidity()) {
       
       // Get content directly from editor, state content may not contain latest changes
-      const content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
+      var content = this.eliminateRTEtags(this.getEditor().getContent().innerHTML);
+      if (content.includes('blob:'))
+        content = await this.replaceBlobs(content);
       const { user, credentials, to, cc, bcc, subject, selectedMessageEdit } = this.props;
       const fullTime = this.getTimeDraft();
-      const draftFolder = Object.values(this.props.folders.explodedItems).find(folder => folder.name === 'Drafts');
+      const { draftFolderbyAttribute, draftFolderbyName} = this.props;
+      const draftFolder = (draftFolderbyAttribute) ? draftFolderbyAttribute : draftFolderbyName;
 
       if(this.state.draftId !== '') {
         this.props.saveDraft(draftFolder, user, credentials, {
@@ -660,8 +753,11 @@ class MessageEditor extends Component {
       credentials, 
       selectedMessageEdit, 
       application,
-      draftFolder
+      draftFolderbyAttribute,
+      draftFolderbyName
     } = this.props;
+
+    const draftFolder = (draftFolderbyAttribute) ? draftFolderbyAttribute : draftFolderbyName;
 
     this.props.deleteMessage(
       credentials, 
@@ -735,11 +831,14 @@ class MessageEditor extends Component {
     console.log('updateAttachmentLinks');
     const updatedMessage = { ...this.props.editedMessage };
     let newAttachments = [];
-    updatedMessage.attachments.forEach((attachment, i) => {
-      const link = attachment._links.download.href.replace(/(\/messages\/\d+\/attachments\/)/gm, `/messages/${id}/attachments/`);
-      updatedMessage.attachments[i]._links.download.href = link;
-      
-    });
+    if (updatedMessage.attachments) {
+      updatedMessage.attachments.forEach((attachment, i) => {
+        if (attachment._links){
+          const link = attachment._links.download.href.replace(/(\/messages\/\d+\/attachments\/)/gm, `/messages/${id}/attachments/`);
+          updatedMessage.attachments[i]._links.download.href = link;  
+        }
+      });
+    }
     this.props.editMessage({...updatedMessage});
   }
 
@@ -892,6 +991,7 @@ class MessageEditor extends Component {
    */
   editorChange(content) {
     console.log('editorChange');
+    console.log(content);
     this.props.editMessage({ ...this.props.editedMessage, content });
     persistApplicationNewMessageContent(this.props.application, content);
   }
@@ -924,7 +1024,8 @@ const mapStateToProps = (state) => ({
   lexon: state.lexon,
   user: state.application.user,
   msgCache: state.messages.cache,
-  draftFolder: Object.values(state.folders.explodedItems).find(folder => folder.name === 'Drafts')
+  draftFolderbyName: Object.values(state.folders.explodedItems).find(folder => folder && folder.name && (folder.name.toUpperCase() === 'DRAFTS' || folder.name.toUpperCase() === 'BORRADORES')),
+  draftFolderbyAttribute: Object.values(state.folders.explodedItems).find(folder => folder && folder.name && folder.attributes.find(att => att && att.toUpperCase() === '\\DRAFTS'))
 
 });
 

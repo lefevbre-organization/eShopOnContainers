@@ -61,13 +61,13 @@ class Configuration extends Component {
       <Fragment>
         <div className='container'>
           <div className='row config-title'>
-            <a
-              href='#'
+            <span
+              style={{cursor: 'pointer'}}
               onClick={() => {
                 this.props.changePage(PAGE_SELECT_ACTION);
               }}>
               <span className='icon lf-icon-arrow-left'></span>
-            </a>
+            </span>
             <p>{i18n.t('configuration.configuration')}</p>
           </div>
         </div>
@@ -96,9 +96,9 @@ class Configuration extends Component {
                 onClick={() => {
                   this.props.toggleModalImportContacts();
                 }}>
-                <a href='#'>
+                <span style={{cursor: 'pointer', backgroundColor: 'transparent'}}>
                   <span className='icon lf-icon-contacts'></span>
-                </a>
+                </span>
                 <strong>{i18n.t('configuration.import-contacts')}</strong>
               </p>
             </div>

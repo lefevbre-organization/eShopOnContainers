@@ -71,11 +71,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 BaseAddress = new Uri(_settings.Value.MinihubUrl)
             };
-            //_clientMinihub = _clientFactory.CreateClient();
-            //_clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
-
-
-
+ 
             _clientLexonApi = _clientFactory.CreateClient();
             _clientLexonApi.BaseAddress = new Uri(_settings.Value.LexonApiUrl);
             _clientLexonApi.DefaultRequestHeaders.Add("Accept", "text/plain");
@@ -379,12 +375,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
-            WriteInfo($"GetUserUtilsActualToServiceAsync {idUser} -> Entramos");
             var result = new Result<string>(null);
             try
             {
                 var user = await GetUserAsync(idUser);
-                WriteInfo($"get user {idUser} for service {nameService}");
                 AddResultTrace(user, result);
                 if (user.errors?.Count == 0)
                 {
@@ -400,7 +394,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                         TraceInfo(resultUpdateApps.infos, "Try to recover apps again", Codes.UserUtils.ByPass);
                         AddResultTrace(resultUpdateApps, result);
                     }
-                    WriteInfo($"Find app -> {app.descHerramienta} - try to get final link");
+
+                    TraceInfo(result.infos, $"Find app -> {app.descHerramienta} - try to get final link", Codes.UserUtils.ByPass);
 
                     Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
                     AddResultTrace(temporalLinkResult, user);
@@ -411,12 +406,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
 
                 TraceError(result.errors,
-                           new UserUtilsDomainException($"Error when get final link of bypass", ex), 
-                           Codes.UserUtils.ByPass, 
+                           new UserUtilsDomainException($"Error when get final link of bypass", ex),
+                           Codes.UserUtils.ByPass,
                            Codes.Areas.Hub);
 
             }
-
             return result;
         }
 
@@ -468,14 +462,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     if (response.IsSuccessStatusCode)
                     {
                         var rawResult = await response.Content.ReadAsStringAsync();
-                        WriteInfo($"Response from minihub {rawResult}");
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
                             var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
                             result.data = resultado.url;
-                            WriteInfo($"The final url -> {result.data}");
-
                         }
                     }
                     else

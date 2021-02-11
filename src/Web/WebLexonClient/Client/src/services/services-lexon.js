@@ -679,7 +679,6 @@ export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) =>
 export const createAppoinment = async (bbdd, user, event) => {
   const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/appointments?env=${window.currentEnv}`;
 
-  debugger
   try {
     const response = await fetch(url, {
       method: 'POST',

@@ -58,7 +58,7 @@ export class Eventtype extends React.Component {
     listTemplate(data) {
         return (
             <div className="text-content"> 
-            <span Style={`background-color: ${data.Color}; margin-right: 20px`} className='dot'></span>
+            <span style={{backgroundColor: data.Color, marginRight: '20px'}} className='dot'></span>
             {data.Text} 
             <span className="listicons lf-icon-close-round" onClick={this.deleteEventType.bind(this)} />
             <span className="listicons lf-icon-edit" onClick={this.onModifyEventTypeState.bind(this)} />

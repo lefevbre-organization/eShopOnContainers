@@ -25,6 +25,8 @@ export const refreshMessageBackendRequest = () => ({type: ActionTypes.APPLICATIO
 export const refreshMessageBackendRequestCompleted = () => ({type: ActionTypes.APPLICATION_MESSAGE_REFRESH_BE_REQUEST_COMPLETED});
 export const preDownloadMessages = messages => ({type: ActionTypes.APPLICATION_MESSAGE_PRE_DOWNLOAD, payload: {messages}});
 export const replaceMessageEmbeddedImages = (folder, message, attachment, blob) => ({type: ActionTypes.APPLICATION_MESSAGE_REPLACE_IMAGE, payload: {folder, message, attachment, blob}});
+export const replaceMessageEmbeddedImagesBase64 = (folder, message, attachment, base64) => ({type: ActionTypes.APPLICATION_MESSAGE_REPLACE_IMAGE_BASE64, payload: {folder, message, attachment, base64}});
+
 export const setError = (type, value) => ({type: ActionTypes.APPLICATION_ERROR_SET, payload: {type, value}});
 
 export const editMessage = message => ({type: ActionTypes.APPLICATION_MESSAGE_EDIT, payload: message});
