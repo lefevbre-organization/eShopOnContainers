@@ -15,6 +15,16 @@ const Spinner = () => {
         body.bg-white {
           background-color: transparent;
         }
+        
+        .bg-white {
+            background-color: rgba(255,255,255, 0.8) !important;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            left: 0;
+            top: 0;
+        }
 
         .main-holder {
           position: fixed;
