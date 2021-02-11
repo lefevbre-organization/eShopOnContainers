@@ -23,6 +23,10 @@ spec:
       labels:
         app: {{ template "userutils-api.name" . }}
         release: {{ .Release.Name }}
+      {{ if .Values.inf.mesh.enabled -}}
+      annotations:
+        linkerd.io/inject: enabled
+      {{- end }}
     spec:
       volumes:
       - name: ca-root-st
