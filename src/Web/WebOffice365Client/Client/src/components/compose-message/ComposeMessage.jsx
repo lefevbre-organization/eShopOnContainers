@@ -28,6 +28,7 @@ import { Notification, Confirmation } from '../notification/';
 import HeaderAddress from './header-address';
 import { getUser, classifyEmail } from '../../api_graph/accounts';
 import ComposeMessageEditor from './composeMessageEditor';
+import Spinner from '../spinner/spinner';
 
 const Uppy = require('@uppy/core');
 const Tus = require('@uppy/tus');
@@ -142,7 +143,10 @@ export class ComposeMessage extends Component {
       readConfirmation: false,
       draftTime: '',
       draftId: '',
-      isDraftEdit: false
+      isDraftEdit: false,
+      draftInProgress: false,
+      draftQueue: 0,
+      showSpinner: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
@@ -188,7 +192,7 @@ export class ComposeMessage extends Component {
     this.showAttachActions = false;
 
     this.uppy.on('file-added', (file) => {
-      console.log('Added file', file);
+      //console.log('Added file', file);
 
       if (file.source.startsWith('Attachment:') === false) {
         // Define this onload every time to get file and base64 every time
@@ -430,8 +434,9 @@ export class ComposeMessage extends Component {
       );
 
       if (this.props.labelsResult.labelInbox === null) {
-        getLabelInbox().then((label) =>
+        getLabelInbox().then((label) => {
           this.props.history.push(`/${label.id}`)
+        }
         );
       } else if(findSelected) {
         console.log("Envío 1")
@@ -476,21 +481,10 @@ export class ComposeMessage extends Component {
 
     this.resetFields();
     this.closeModal();
-      // if(this.state.draftId) {
-      //   deleteDraft({draftId: this.state.draftId}).then(() => {
-      //     this.resetFields();
-      //     this.closeModal();
-      //   }).catch(e => {
-      //     this.resetFields();
-      //     this.closeModal();
-      //   });
-      // } else {
-      //   this.resetFields();
-      //   this.closeModal();
-      // }
   }
 
   sentEmail(email) {
+
     this.props.updateComposerData({});
 
     const emailDate = new Date()
@@ -568,7 +562,12 @@ export class ComposeMessage extends Component {
       || (prevState.content !== this.state.content)
       || (prevState.uppyPreviews !== this.state.uppyPreviews) 
       && (!this.props.match.params.id)) {
-      this.saveDraft();
+        if (!this.state.draftInProgress){
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }
     }
 
     if((prevState.to !== this.state.to 
@@ -579,6 +578,16 @@ export class ComposeMessage extends Component {
       || prevState.uppyPreviews !== this.state.uppyPreviews
       || prevState.isDraftEdit !== this.state.isDraftEdit) 
       && this.props.match.params.id) {
+        if (!this.state.draftInProgress){
+          this.setState({draftInProgress: true, draftQueue: 0});
+          this.saveDraft();
+        } else {
+          this.setState({draftQueue: this.state.draftQueue + 1})
+        }
+    }
+
+    if (this.state.draftQueue > 0 && !this.state.draftInProgress){
+      this.setState({draftInProgress: true, draftQueue: 0});
       this.saveDraft();
     }
 
@@ -692,11 +701,13 @@ export class ComposeMessage extends Component {
           this.setState({
             draftTime: fullTime, 
             draftId: draft.id, 
-            isDraftEdit: false
+            isDraftEdit: false,
+            draftInProgress: false
           });
         })
         .catch((err) => {
           console.log('Error sending email:' + err);
+          this.setState({draftInProgress: false});
         });
       }); 
     }
@@ -731,25 +742,44 @@ export class ComposeMessage extends Component {
       internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`
     });
 
+    this.setState({showSpinner: true});  
+
     sendMessage({
       data: email,
       attachments: Fileattached,
     })
       .then((_) => {
-        this.
-        sentEmail(email);
+        // this.setState({showNotification: true, messageNotification: 'Mensaje enviado'});
+        this.sentEmail(email);
+        if(this.state.draftId) {
+          // this.setState({showNotification: true, messageNotification: 'Borrando draft'});
+          deleteDraft({ draftId: this.state.draftId })
+            .then(() => {
+              this.resetFields();
+              this.goBack();
+              // this.setState({showNotification: false, messageNotification: ''});
+              this.setState({showSpinner: false});
+            })
+            .catch(err => { 
+              this.resetFields();
+              this.goBack(); 
+              // this.setState({showNotification: false, messageNotification: ''});
+              this.setState({showSpinner: false});
+            });
+        } else {
+          this.resetFields();
+          this.goBack();
+        //  this.setState({showNotification: false, messageNotification: ''});
+         this.setState({showSpinner: false});
+        }
       })
       .catch((err) => {
         console.log(err);
+        this.resetFields();
+        // this.setState({showNotification: false, messageNotification: ''});
+        this.setState({showSpinner: false});
       });
-    this.resetFields();
-    if(this.state.draftId) {
-      deleteDraft({ draftId: this.state.draftId }).then(() => {
-        this.goBack();
-      }).catch(err => { this.goBack(); });
-    } else {
-      this.goBack();
-    }
+    
   }
 
   resetFields() {
@@ -1055,7 +1085,8 @@ export class ComposeMessage extends Component {
       subject,
       to2, 
       cc2, 
-      bcc2
+      bcc2,
+      showSpinner
     } = this.state;
 
     const { to, cc, bcc } = this.props;
@@ -1080,6 +1111,7 @@ export class ComposeMessage extends Component {
           }}
           message={i18n.t('compose-message.no-subject-warning')}
         />
+        {( showSpinner) ? <Spinner/> : null}
         <div className='compose-dialog'>
           <div className='compose-panel'>
             <div className='d-flex justify-content-center align-items-center message-toolbar'>
