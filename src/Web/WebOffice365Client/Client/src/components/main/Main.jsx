@@ -303,8 +303,9 @@ export class Main extends Component {
       return false;
     }
 
-    if (nextProps.messagesResult.openMessage === '')
-      return false;
+    if (nextProps.messagesResult.openMessage === ''){
+      return true;
+    }
 
     if (
       nextProps.messagesResult.openMessage &&
