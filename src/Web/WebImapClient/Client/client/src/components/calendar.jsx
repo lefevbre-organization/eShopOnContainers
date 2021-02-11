@@ -1419,7 +1419,6 @@ class Calendar extends Component {
             else {
                 item = this.eventTypeDataSource.find(x => x.text == values.EventType)
             }
-            console.log('buildEventoGoogle ==>', item)
             event.categories = [{
                 'name': item.text,
             }]
@@ -1448,9 +1447,9 @@ class Calendar extends Component {
         event.attendees = ateendeeObj;  
 
         let organizerData = {
-            "name": "joel",
-            "email": "j.hostilio-ext@lefebvre.es",
-            "mailto": "j.hostilio-ext@lefebvre.es", //to override email
+            "name": "Alberto",
+            "email": "alberto.valverde.escribano@gmail.com",
+            "mailto": "alberto.valverde.escribano@gmail.com", //to override email
         }
             
     
