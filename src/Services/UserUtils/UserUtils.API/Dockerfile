@@ -1,20 +1,20 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
 ## EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
 
 # Install ASP.NET Core
-ENV ASPNETCORE_VERSION 2.2.1
-RUN curl -SL --output aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$ASPNETCORE_VERSION/aspnetcore-runtime-$ASPNETCORE_VERSION-linux-x64.tar.gz \
-    && aspnetcore_sha512='e027a5dada5d139a44675f28090f996375e49fbd72f7897aa925e48803632d5bf187d4f22dc8225505ac33e6a7a05dcdd8ed19d8b6d5e46b22e628315cf13e3e' \
-    && echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
-    && mkdir -p /usr/share/dotnet \
-    && tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet \
-    && rm aspnetcore.tar.gz \
-    && ln -sf /usr/share/dotnet/dotnet /usr/bin/dotnet
+#ENV ASPNETCORE_VERSION 2.2.1
+#RUN curl -SL --output aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$ASPNETCORE_VERSION/aspnetcore-runtime-$ASPNETCORE_VERSION-linux-x64.tar.gz \
+    #&& aspnetcore_sha512='e027a5dada5d139a44675f28090f996375e49fbd72f7897aa925e48803632d5bf187d4f22dc8225505ac33e6a7a05dcdd8ed19d8b6d5e46b22e628315cf13e3e' \
+    #&& echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
+    #&& mkdir -p /usr/share/dotnet \
+    #&& tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet \
+    #&& rm aspnetcore.tar.gz \
+    #&& ln -sf /usr/share/dotnet/dotnet /usr/bin/dotnet
 
 COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"
 
@@ -89,6 +89,7 @@ RUN update-ca-certificates
 
 WORKDIR /app
 COPY --from=publish /app .
-RUN dotnet --info
+#RUN dotnet --info
 #RUN ls -lha /app
+COPY --from=build /src/Services/UserUtils/UserUtils.API/Proto /app/Proto
 ENTRYPOINT ["dotnet", "UserUtils.API.dll"]

@@ -5,7 +5,7 @@
     "anonymousAuthentication": true, 
     "iisExpress": {
       "applicationUrl": "http://localhost:63968",
-      "sslPort": 44307
+      "sslPort": 0
     }
   },
   "profiles": {
@@ -14,10 +14,13 @@
       "launchBrowser": true,
       "launchUrl": "api",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "Serilog:LogstashgUrl": "http://locahost:8080",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "EventBusConnection": "localhost",
+        "Serilog:SeqServerUrl": "http://locahost:5340"
       }
     },
-    "UserUtils.API": {
+    "Lefebvre.eLefebvreOnContainers.Services.UserUtils.API": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "api",

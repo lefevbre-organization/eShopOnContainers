@@ -1,102 +1,121 @@
-﻿using Microsoft.AspNetCore;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.IO;
+using System.Net;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
+var configuration = GetConfiguration();
+
+Log.Logger = CreateSerilogLogger(configuration);
+
+try
 {
-    public class Program
-    {
-        public static readonly string Namespace = typeof(Program).Namespace;
-        public static readonly string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+    Log.Information("Configuring web host ({ApplicationContext})...", Program.AppName);
+    var host = CreateHostBuilder(configuration, args);
 
-        public static int Main(string[] args)
+    Log.Information("Applying migrations ({ApplicationContext})...", Program.AppName);
+    //host.MigrateDbContext<CatalogContext>((context, services) =>
+    //{
+    //    var env = services.GetService<IHostingEnvironment>();
+    //    var settings = services.GetService<IOptions<LexonSettings>>();
+    //    var logger = services.GetService<ILogger<CatalogContextSeed>>();
+
+    //    new CatalogContextSeed()
+    //        .SeedAsync(context, env, settings, logger)
+    //        .Wait();
+    //})
+    //.MigrateDbContext<IntegrationEventLogContext>((_, __) => { });
+
+    Log.Information("Starting web host ({ApplicationContext})...", Program.AppName);
+    host.Run();
+
+    return 0;
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", Program.AppName);
+    return 1;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
+
+IWebHost CreateHostBuilder(IConfiguration configuration, string[] args) =>
+    WebHost.CreateDefaultBuilder(args)
+        .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
+        .CaptureStartupErrors(false)
+        .ConfigureKestrel(options =>
         {
-            var configuration = GetConfiguration();
-
-            Log.Logger = CreateSerilogLogger(configuration);
-
-            try
+            var ports = GetDefinedPorts(configuration);
+            options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
             {
-                Log.Information("Configuring web host ({ApplicationContext})...", AppName);
-                var host = BuildWebHost(configuration, args);
-
-                //Log.Information("Applying migrations ({ApplicationContext})...", AppName);
-                //host.MigrateDbContext<CatalogContext>((context, services) =>
-                //{
-                //    var env = services.GetService<IHostingEnvironment>();
-                //    var settings = services.GetService<IOptions<LexonSettings>>();
-                //    var logger = services.GetService<ILogger<CatalogContextSeed>>();
-
-                //    new CatalogContextSeed()
-                //        .SeedAsync(context, env, settings, logger)
-                //        .Wait();
-                //})
-                //.MigrateDbContext<IntegrationEventLogContext>((_, __) => { });
-
-                Log.Information("Starting web host ({ApplicationContext})...", AppName);
-                host.Run();
-
-                return 0;
-            }
-            catch (Exception ex)
+                listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+            });
+            options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
             {
-                Log.Fatal(ex, "Program terminated unexpectedly ({ApplicationContext})!", AppName);
-                return 1;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
-        }
+                listenOptions.Protocols = HttpProtocols.Http2;
+            });
 
-        private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
-        {
-            var seqServerUrl = configuration["Serilog:SeqServerUrl"];
-            var logstashUrl = configuration["Serilog:LogstashgUrl"];
-            return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.WithProperty("ApplicationContext", AppName)
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
-                .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
+        })
+        .UseStartup<Startup>()
+        //.UseApplicationInsights()
+        .UseContentRoot(Directory.GetCurrentDirectory())
+        //.UseWebRoot("Pics")
+        //.UseConfiguration(configuration)
+        //.UseSerilog()
+        .Build();
 
-        private static IConfiguration GetConfiguration()
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
+Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+{
+    var seqServerUrl = configuration["Serilog:SeqServerUrl"];
+    var logstashUrl = configuration["Serilog:LogstashgUrl"];
+    return new LoggerConfiguration()
+        .MinimumLevel.Verbose()
+        .Enrich.WithProperty("ApplicationContext", Program.AppName)
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+        .WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
+        .ReadFrom.Configuration(configuration)
+        .CreateLogger();
+}
 
-            var config = builder.Build();
+(int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
+{
+    var grpcPort = config.GetValue("GRPC_PORT", 81);
+    var port = config.GetValue("PORT", 80);
+    return (port, grpcPort);
+}
 
-            //if (config.GetValue<bool>("UseVault", false))
-            //{
-            //    //is mandatory take values from azurevault
-            //    //builder.AddAzureKeyVault(
-            //    //    $"https://{config["Vault:Name"]}.vault.azure.net/",
-            //    //    config["Vault:ClientId"],
-            //    //    config["Vault:ClientSecret"]);
-            //}
+IConfiguration GetConfiguration()
+{
+    var builder = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddEnvironmentVariables();
 
-            return builder.Build();
-        }
+    var config = builder.Build();
 
-        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .CaptureStartupErrors(false)
-                .UseStartup<Startup>()
-                //.UseApplicationInsights()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                //.UseWebRoot("Pics")
-                .UseConfiguration(configuration)
-                .UseSerilog()
-                .Build();
-    }
+    //if (config.GetValue<bool>("UseVault", false))
+    //{
+    //    //is mandatory take values from azurevault
+    //    //builder.AddAzureKeyVault(
+    //    //    $"https://{config["Vault:Name"]}.vault.azure.net/",
+    //    //    config["Vault:ClientId"],
+    //    //    config["Vault:ClientSecret"]);
+    //}
+
+    return builder.Build();
+}
+
+
+public class Program
+{
+    public static string Namespace = typeof(Program).Namespace;
+    public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
 }

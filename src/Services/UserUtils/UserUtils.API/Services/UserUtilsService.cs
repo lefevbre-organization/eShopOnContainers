@@ -1,26 +1,27 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-
+﻿
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services
 {
-    public class UserUtilsService : BaseClass<UserUtilsService>, IUserUtilsService
+    using Exceptions;
+    using Repositories;
+    using Models;
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using System.Net.Http;
+    using Microsoft.Extensions.Options;
+    using Microsoft.Extensions.Logging;
+    using System;
+    using System.Threading.Tasks;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Collections.Generic;
+    using System.Security.Claims;
+    using System.Text;
+    using Microsoft.IdentityModel.Tokens;
+    using System.Net.Http.Headers;
+    using Newtonsoft.Json;
+    using System.Linq;
+    using System.Web;
+
+    public class UserUtilsService : BaseClass<UserUtilsService> //, IUserUtilsService
     {
         public readonly IUserUtilsRepository _repository;
         private readonly IEventBus _eventBus;
@@ -31,7 +32,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private readonly HttpClient _clientLexonApi;
         private readonly HttpClient _clientClaves;
         private readonly IOptions<UserUtilsSettings> _settings;
-       // internal readonly ILogger<UserUtilsService> _logger;
 
         public UserUtilsService(
                 IOptions<UserUtilsSettings> settings
@@ -45,7 +45,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             _repository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-           // _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             var handler = new HttpClientHandler()
             {

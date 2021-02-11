@@ -1,10 +1,11 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
+﻿
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services
 {
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Models;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+
     public interface IUserUtilsService
     {
         Task<Result<string>> GetEncodeUserAsync(string idNavisionUser);
