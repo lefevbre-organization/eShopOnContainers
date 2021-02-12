@@ -57,6 +57,7 @@
 
   <ItemGroup>
     <Folder Include="IntegrationEvents\EventHandling\" />
+    <Folder Include="Proto\"/>
   </ItemGroup>
 
 
