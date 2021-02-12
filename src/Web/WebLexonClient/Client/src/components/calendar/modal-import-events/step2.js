@@ -50,31 +50,34 @@ export class Step2 extends React.Component {
     render() {
         const { progress, numEvents, imported, errors } = this.props;
         const disabled = progress < 100;
-
         return (
             <Fragment>
                 <div className="progress-container">
-                    <ProgressBarComponent id="label-container" ref={this.progresRef}
-                      type='Linear'
-                      width='100%'
-                      progressColor="#001978"
-                      trackThickness={26}
-                      progressThickness={26}
-                      showProgressValue={true}
-                      value={progress}
-                      labelStyle={{
-                          textAlignment: 'Center',
-                          fontFamily: 'MTTMilano-Medium',
-                          text: `MIGRADO ${progress}%`,
-                          color: '#fff'
-                      }}
-                      animation={{
-                          enable: false,
-                          duration: 2000,
-                          delay: 0,
-                      }}
-                    >
-                    </ProgressBarComponent>
+                  {progress === 100  ?   
+                   <p className="migrated">Información sobre los eventos migrados desde LEX-ON:</p>
+                  :  
+                  <ProgressBarComponent id="label-container" ref={this.progresRef}
+                  type='Linear'
+                  width='100%'
+                  progressColor="#001978"
+                  trackThickness={26}
+                  progressThickness={26}
+                  showProgressValue={true}
+                  value={progress}
+                  labelStyle={{
+                      textAlignment: 'Center',
+                      fontFamily: 'MTTMilano-Medium',
+                      text: `MIGRANDO ${progress}%`,
+                      color: '#fff'
+                  }}
+                  animation={{
+                      enable: false,
+                      duration: 2000,
+                      delay: 0,
+                  }}
+                >
+                </ProgressBarComponent>
+                  }
                 </div>
                 <div className="ie-dialogborder">
                     <Frame disabled={disabled} number={numEvents} title={"Nº TOTAL"}>
@@ -103,6 +106,13 @@ export class Step2 extends React.Component {
           .ie-warning-wrapper {
             display: flex;
             flex-direction: column;
+          }
+          .migrated {
+            font-family: MTTMilano-Medium;
+            color: #9AA1C4;
+            font-size: medium;
+            padding: 7px;
+            text-align: center;
           }
           .ie-frame-button {
             height: 34px;

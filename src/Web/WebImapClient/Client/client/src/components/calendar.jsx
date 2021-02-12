@@ -918,6 +918,7 @@ class Calendar extends Component {
     };
 
     eventTemplate(props) {
+        console.log('eventTemplate', props)
         const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {

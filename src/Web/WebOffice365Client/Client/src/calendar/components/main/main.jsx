@@ -1386,7 +1386,7 @@ export class Main extends Component {
                         this.tabObj = new TabComponent({
                             items: [
                                 {
-                                    header: {text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right'},
+                                    header: {text: 'EVENTO', iconCss: 'e-twitter', iconPosition: 'right'},
                                     content: formContainer
                                 },
                                 {
