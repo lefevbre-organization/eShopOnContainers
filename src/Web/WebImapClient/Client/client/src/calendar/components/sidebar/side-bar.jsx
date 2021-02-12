@@ -119,7 +119,7 @@ class SideBar extends Component {
             style={{ height: 48 }}
             className={`${mainCss['mdc-button']}
                     ${mainCss['mdc-button']} ${styles['compose']}`}
-                    onClick={this.newCalendarClick}
+                    onClick={this.newEventClick}
                 >
             {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
             <img
