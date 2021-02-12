@@ -118,13 +118,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
             ConfigureAuth(app);
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GrpcUserutils.UserUtilsGrpcService>();
+                endpoints.MapGrpcService<UserUtilsGrpcService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapGet("/_proto/", async ctx =>
                 {
                     ctx.Response.ContentType = "text/plain";
-                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "userutils.proto"), FileMode.Open, FileAccess.Read);
+                    using var fs = new FileStream(Path.Combine(env.ContentRootPath, "Proto", "user.proto"), FileMode.Open, FileAccess.Read);
                     using var sr = new StreamReader(fs);
                     while (!sr.EndOfStream)
                     {

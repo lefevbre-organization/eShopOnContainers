@@ -14,11 +14,11 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
-  <!--<ItemGroup>
-    <Protobuf Include="Proto\userutils.proto" GrpcServices="Server" Generator="MSBuild:Compile" />
+  <ItemGroup>
+    <Protobuf Include="Proto\user.proto" GrpcServices="Server" Generator="MSBuild:Compile" />
     <Content Include="@(Protobuf)" />
     <None Remove="@(Protobuf)" />
-  </ItemGroup>-->
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" Version="5.0.1" />
@@ -57,7 +57,6 @@
 
   <ItemGroup>
     <Folder Include="IntegrationEvents\EventHandling\" />
-    <Folder Include="Proto\" />
   </ItemGroup>
 
 

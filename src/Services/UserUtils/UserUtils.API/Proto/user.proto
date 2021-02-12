@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcUserutils";
+
+package UserUtilsApi;
+
+service UserUtils {
+	rpc GetEncodeUser(GetEncodeUserRequest) returns (GetEncodeUserResponse) {}
+	rpc GetDecodeUser(GetDecodeUserRequest) returns (GetDecodeUserResponse) {}
+}
+
+message GetEncodeUserRequest{
+	string idNavisionUser = 1;
+}
+
+message GetDecodeUserRequest{
+	string idEncodeNavisionUser = 1;
+}
+
+message GetEncodeUserResponse{
+	string data = 1;
+	repeated ResultErrorInfoResponse errors = 2;
+	repeated ResultInfoResponse infos = 3;
+}
+
+message GetDecodeUserResponse{
+	string data = 1;
+	repeated ResultErrorInfoResponse errors = 2;
+	repeated ResultInfoResponse infos = 3;
+}
+
+message ResultErrorInfoResponse{
+       string source =1;
+       string detail =2;
+       string member =3;
+       int32 line =4;
+       string area =5;
+	   string code = 6;
+	   string message = 7;
+}
+
+message ResultInfoResponse{
+	   string code = 1;
+	   string message = 2;
+}
