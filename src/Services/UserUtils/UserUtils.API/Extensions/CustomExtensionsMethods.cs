@@ -114,8 +114,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
                    //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
 
-               // c.OperationFilter<FormDataOperationFilter>();
-               // c.OperationFilter<MultiPartFormDataOperationFilter>();
+                c.OperationFilter<FormDataOperationFilter>();
+                c.OperationFilter<MultiPartFormDataOperationFilter>();
 
 
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
