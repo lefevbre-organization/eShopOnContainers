@@ -92,4 +92,4 @@ COPY --from=publish /app .
 #RUN dotnet --info
 #RUN ls -lha /app
 COPY --from=build "src/src/Services/UserUtils/UserUtils.API/Proto/" "/app/Proto/"
-ENTRYPOINT ["dotnet", "UserUtils.API.dll"
+ENTRYPOINT ["dotnet", "UserUtils.API.dll"]

@@ -118,24 +118,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
                 c.OperationFilter<MultiPartFormDataOperationFilter>();
 
 
-                c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows()
-                    {
-                        Implicit = new OpenApiOAuthFlow()
-                        {
-                            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
-                            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
-                            Scopes = new Dictionary<string, string>()
-                            {
-                                { "userutils", "Userutils API" }
-                            }
-                        }
-                    }
-                });
+                //c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                //{
+                //    Type = SecuritySchemeType.OAuth2,
+                //    Flows = new OpenApiOAuthFlows()
+                //    {
+                //        Implicit = new OpenApiOAuthFlow()
+                //        {
+                //            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+                //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                //            Scopes = new Dictionary<string, string>()
+                //            {
+                //                { "userutils", "Userutils API" }
+                //            }
+                //        }
+                //    }
+                //});
 
-                c.OperationFilter<AuthorizeCheckOperationFilter>();
+                //c.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
             return services;
