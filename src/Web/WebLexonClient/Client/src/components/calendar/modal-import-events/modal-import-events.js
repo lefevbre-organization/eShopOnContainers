@@ -2,7 +2,6 @@ import React, {Component, createRef, Fragment} from 'react';
 import i18n from 'i18next';
 import {Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
-
 import {Step1} from './step1';
 import {Step2} from './step2';
 import {Step3} from './step3';
@@ -45,7 +44,6 @@ class ModalImportEvents extends Component {
 
     componentDidMount() {
         this.setState({step: 1})
-
         this.getUserCompanies()
     }
 
@@ -58,6 +56,7 @@ class ModalImportEvents extends Component {
         })
     }
 
+    
     showErrors() {
         this.setState({step: 3});
     }

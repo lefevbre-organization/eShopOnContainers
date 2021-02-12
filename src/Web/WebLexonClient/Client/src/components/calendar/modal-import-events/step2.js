@@ -28,7 +28,7 @@ export class Step2 extends React.Component {
     }
 
     componentDidMount() {
-
+     
     }
 
     componentWillUnmount() {

@@ -1,8 +1,14 @@
 import React, { Fragment } from 'react';
+import { loadCldr, L10n, setCulture } from "@syncfusion/ej2-base";
+import currencies from 'cldr-data/main/es/currencies.json';
+import gregorian from 'cldr-data/main/es/ca-gregorian.json';
+import numbers from 'cldr-data/main/es/numbers.json';
+import timeZoneNames from 'cldr-data/main/es/timeZoneNames.json';
+import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
+import weekData from 'cldr-data/supplemental/weekData.json';// To load the culture based first day of week
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import { RadioButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { DatePickerComponent } from '@syncfusion/ej2-react-calendars';
-
 import i18n from 'i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
@@ -18,8 +24,8 @@ export class Step1 extends React.Component {
     }
     this.companiesFields = { text: 'name', value: 'bbdd'};
     this.calendarsFields = { text: 'summary', value: 'id'}
-    this.startDate = new Date();
-    this.endDate = new Date();
+    this.startDate = new Date;
+    this.endDate = new Date;
     this.onChangeType = this.onChangeType.bind(this);
     this.onChangeStartDate = this.onChangeStartDate.bind(this);
     this.onChangeEndDate = this.onChangeEndDate.bind(this);
@@ -28,11 +34,32 @@ export class Step1 extends React.Component {
   async componentDidMount() {
     window.addEventListener('getContactListResult', this.contactListLoaded);
     window.dispatchEvent(new CustomEvent('getContactList'));
+    // Syncfusion component translation
+    this.setGlobalization();
   }
 
   componentWillUnmount() {
     window.removeEventListener('getContactListResult', this.contactListLoaded);
   }
+
+  setGlobalization() {
+    if (window.navigator.language.includes("es-")
+        || (window.navigator.language === "es")
+        || (window.navigator.language === "ca")
+        || (window.navigator.language === "ga")
+        || (window.navigator.language === "eu")) {
+        loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
+        // const data = await import('../../../syncfusion-resources/calendar-es.json')
+        setCulture('es');
+        L10n.load({
+          'es': {
+              'datepicker': { 
+               today: 'hoy' 
+            }
+          }
+        });
+    }
+}
 
   onChangeType(event) {
     let val = 0;
@@ -57,7 +84,6 @@ export class Step1 extends React.Component {
   }
 
   itemTemplate(data) {
-    console.log('itemTemplate ===>', data)
     return (
       <div>
         <span style={{background: data.backgroundColor, padding: '0px 10px 3px', marginRight: '5px' }}>
@@ -90,7 +116,7 @@ export class Step1 extends React.Component {
               id="calendars" 
               dataSource={calendars} 
               fields={this.calendarsFields} 
-              placeholder="Selecciona el calendario de destino" 
+              placeholder="Selecciona el calendario de dexstino" 
               popupHeight="220px"
               itemTemplate={this.itemTemplate = this.itemTemplate.bind(this)} 
               change={ (cal) => { this.props.onChangeCalendar(cal.value); } }
@@ -107,21 +133,23 @@ export class Step1 extends React.Component {
               <DatePickerComponent 
                 disabled={this.state.typeSelected === 1} 
                 format='dd/MM/yyyy' 
-                placeholder="Comienzo"
+                placeholder='Comienzo'
                 change={this.onChangeStartDate} 
                 value={this.startDate}
-                floatLabelType="Always">
-              </DatePickerComponent>
+                locale='es'
+                floatLabelType='Always'/>
+            
             </div>
             <div>
             <DatePickerComponent  
               disabled={this.state.typeSelected === 1} 
               format='dd/MM/yyyy' 
-              placeholder="Fin"
+              placeholder='Fin'
+              locale='es'
               change={this.onChangeEndDate} 
               value={this.endDate}
-              floatLabelType="Always" >
-            </DatePickerComponent>
+              floatLabelType='Always' />
+        
             </div>
           </div>
         </div>
