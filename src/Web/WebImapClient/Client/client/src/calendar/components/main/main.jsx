@@ -1222,9 +1222,16 @@ export class Main extends Component {
             this.setState({ reminders: [] })
         }
 
-
-
         if (args.type === 'QuickInfo') {
+            const currentClassification = args.data.LexonClassification;
+            const content = document.getElementsByClassName("e-popup-content");
+            debugger
+
+            if(currentClassification) {
+                const first = content[0].firstChild;
+                const ndiv = this.createClassifiedDiv();
+                content[0].insertBefore(ndiv, first);
+            }
 
             if (this.layoutIframe) {
                 var buttonElementEdit = ".e-event-popup .e-edit";
@@ -1237,7 +1244,6 @@ export class Main extends Component {
                     args.cancel = true
                 }
                 else {
-                    var content = document.getElementsByClassName("e-popup-content");
                     content[0].classList.add('hidden');
                 }
             }
@@ -1424,6 +1430,19 @@ export class Main extends Component {
 
         }
 
+    }
+
+    createClassifiedDiv() {
+        const ndiv = document.createElement('div');
+        const span = document.createElement('span');
+        const icon = document.createElement('span');
+        icon.classList.add('lf-icon-lexon');
+        span.textContent = 'Clasificado en Lexon';
+
+        ndiv.classList.add('e-div-iconlef');
+        ndiv.appendChild(icon);
+        ndiv.appendChild(span);
+        return ndiv;
     }
 
     addLogOutButton(args) {

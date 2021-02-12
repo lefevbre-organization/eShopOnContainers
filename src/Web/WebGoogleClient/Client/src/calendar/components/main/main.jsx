@@ -581,24 +581,18 @@ export class Main extends Component {
         }
 
         return (
-            <div Style="width: 98%;">
-                {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
+            <div style={{ width: '98%'}}>
                 <div className="image">
                     <div className='eventicon'>
-
                         { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
                         {subjectStr}
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot floatleft'/>
                         ) : (
                             ''
                         )}
                     </div>
                 </div>
-
-                {/* <div className="subject">{props.Subject}</div>
-               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
-
             </div>);
     }
 
@@ -626,9 +620,9 @@ export class Main extends Component {
                     <span className='eventicon truncate'>
                         <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot dotagenda'/>
                         ) : (
-                            <span Style={`background-color: ${'#FFFFFF'} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            <span style={{backgroundColor: '#FFFFFF', marginTop: '3px'}} className='dot dotagenda'/>
                         )}
 
                         {props.IsAllDay ? (
@@ -1147,13 +1141,13 @@ export class Main extends Component {
     eventTypeTemplate(data) {
         return (
             <div className="typeitem">
-                <span> <span Style={`background-color: ${data.backgroundColor}`} className='dot'></span>  <span className='name'>{data.text}</span></span>
+                <span className='name'>{data.text}</span>
             </div>
         );
     }
 
     ToogleCalendarResourceDirective(args) {
-        if (args.data.Id != undefined) {
+        if (args.data.Id !== undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
             ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
             var cal = document.getElementsByClassName("e-CalendarId-container");
@@ -1264,6 +1258,15 @@ export class Main extends Component {
 
 
         if (args.type === 'QuickInfo') {
+            const currentClassification = args.data.LexonClassification;
+            const content = document.getElementsByClassName("e-popup-content");
+            debugger
+
+            if(currentClassification) {
+                const first = content[0].firstChild;
+                const ndiv = this.createClassifiedDiv();
+                content[0].insertBefore(ndiv, first);
+            }
 
             if (this.layoutIframe) {
                 var buttonElementEdit = ".e-event-popup .e-edit";
@@ -1276,10 +1279,12 @@ export class Main extends Component {
                     args.cancel = true
                 }
                 else {
-                    var content = document.getElementsByClassName("e-popup-content");
                     content[0].classList.add('hidden');
                 }
             }
+
+            // Add icon div
+
 
             //Not allow to update events of not owner or writer calendar permissions
             let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
@@ -1460,9 +1465,20 @@ export class Main extends Component {
                     //}
                 }
             }
-
         }
+    }
 
+    createClassifiedDiv() {
+        const ndiv = document.createElement('div');
+        const span = document.createElement('span');
+        const icon = document.createElement('span');
+        icon.classList.add('lf-icon-lexon');
+        span.textContent = 'Clasificado en Lexon';
+
+        ndiv.classList.add('e-div-iconlef');
+        ndiv.appendChild(icon);
+        ndiv.appendChild(span);
+        return ndiv;
     }
 
     addLogOutButton(args) {
