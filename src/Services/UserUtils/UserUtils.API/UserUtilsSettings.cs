@@ -17,6 +17,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
         public string OnlineUrl { get; set; }
         public string LoginUrl { get; set; }
         public string ClavesUrl { get; set; }
+        public string IdentityUrlExternal { get; set; }
+        public string IdentityUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

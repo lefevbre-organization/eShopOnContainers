@@ -118,7 +118,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
             ConfigureAuth(app);
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<GrpcUserutils.UserUtilsService>();
+                endpoints.MapGrpcService<GrpcUserutils.UserUtilsGrpcService>();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapControllers();
                 endpoints.MapGet("/_proto/", async ctx =>

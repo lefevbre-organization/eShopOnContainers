@@ -48,7 +48,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddTransient<IUserUtilsService, UserUtilsService>();
+            services.AddTransient<IUserUtilsService, UserUtilsService>();
             services.AddTransient<IUserUtilsRepository, UserUtilsRepository>();
             services.AddOptions();
             return services;
@@ -105,7 +105,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
         {
             services.AddSwaggerGen(c =>
             {
-                c.DescribeAllEnumsAsStrings();
+                //c.DescribeAllEnumsAsStrings();
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Lefebvre Now - User Utils HTTP API",
@@ -113,8 +113,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
                     Description = "The UserUtils Microservice HTTP API"
                    //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
-                c.OperationFilter<FormDataOperationFilter>();
-                c.OperationFilter<MultiPartFormDataOperationFilter>();
+
+               // c.OperationFilter<FormDataOperationFilter>();
+               // c.OperationFilter<MultiPartFormDataOperationFilter>();
 
 
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

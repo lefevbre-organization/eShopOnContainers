@@ -21,11 +21,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
     using System.Linq;
     using System.Web;
 
-    public class UserUtilsService : BaseClass<UserUtilsService> //, IUserUtilsService
+    public class UserUtilsService : BaseClass<UserUtilsService> , IUserUtilsService
     {
         public readonly IUserUtilsRepository _repository;
         private readonly IEventBus _eventBus;
-        private readonly IHttpClientFactory _clientFactory;
+        //private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientMinihub;
         private readonly HttpClient _clientOnline;
         private readonly HttpClient _clientLogin;
@@ -37,14 +37,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 IOptions<UserUtilsSettings> settings
                 , IUserUtilsRepository usersRepository
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
+             //   , IHttpClientFactory clientFactory
                 , ILogger<UserUtilsService> logger
             ) : base(logger)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _repository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+           // _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
 
             var handler = new HttpClientHandler()
             {
@@ -52,31 +52,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             };
 
 
-            _clientLogin = _clientFactory.CreateClient();
-            _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
+            //_clientLogin = _clientFactory.CreateClient();
+            _clientLogin = new HttpClient(handler) { BaseAddress = new Uri(_settings.Value.LoginUrl) };
             _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            _clientOnline = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(_settings.Value.OnlineUrl)
-            };
-            var authData = Convert.ToBase64String(
-                        System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
+            _clientOnline = new HttpClient(handler) { BaseAddress = new Uri(_settings.Value.OnlineUrl)};
 
+            var authData = Convert.ToBase64String( Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
             _clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
 
-            _clientMinihub = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(_settings.Value.MinihubUrl)
-            };
- 
-            _clientLexonApi = _clientFactory.CreateClient();
-            _clientLexonApi.BaseAddress = new Uri(_settings.Value.LexonApiUrl);
+            _clientMinihub = new HttpClient(handler) { BaseAddress = new Uri(_settings.Value.MinihubUrl) };
+
+            //_clientLexonApi = _clientFactory.CreateClient();
+            _clientLexonApi = new HttpClient(handler) { BaseAddress = new Uri(_settings.Value.LexonApiUrl) };  
             _clientLexonApi.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            _clientClaves = _clientFactory.CreateClient();
-            _clientClaves.BaseAddress = new Uri(_settings.Value.ClavesUrl);
+            //_clientClaves = _clientFactory.CreateClient();
+            _clientClaves = new HttpClient() { BaseAddress = new Uri(_settings.Value.ClavesUrl) };
         }
 
         #region Generic
