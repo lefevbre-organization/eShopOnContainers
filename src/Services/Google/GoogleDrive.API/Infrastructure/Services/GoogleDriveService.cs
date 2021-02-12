@@ -18,25 +18,25 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
     public class GoogleDriveService : BaseClass<GoogleDriveService>, IGoogleDriveService
     {
         private readonly IEventBus _eventBus;
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly HttpClient _clientUserUtils;
+        //private readonly IHttpClientFactory _clientFactory;
+        //private readonly HttpClient _clientUserUtils;
         private readonly IOptions<GoogleDriveSettings> _settings;
 
         public GoogleDriveService(
                 IOptions<GoogleDriveSettings> settings
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
+                //, IHttpClientFactory clientFactory
                 , ILogger<GoogleDriveService> logger
             ) : base(logger)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
 
-            _clientUserUtils = _clientFactory.CreateClient();
-            _clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
-            _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
+            //_clientUserUtils = _clientFactory.CreateClient();
+            //_clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
+            //_clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
         public async Task<Result<string>> GetToken(string LefebvreCredential)

@@ -7,6 +7,7 @@ package UserUtilsApi;
 service UserUtils {
 	rpc GetEncodeUser(GetEncodeUserRequest) returns (GetEncodeUserResponse) {}
 	rpc GetDecodeUser(GetDecodeUserRequest) returns (GetDecodeUserResponse) {}
+	rpc GetAreasByUser(GetAreasByUserRequest) returns (GetAreasByUserResponse) {}
 }
 
 message GetEncodeUserRequest{
@@ -15,6 +16,10 @@ message GetEncodeUserRequest{
 
 message GetDecodeUserRequest{
 	string idEncodeNavisionUser = 1;
+}
+
+message GetAreasByUserRequest{
+	string idNavisionUser = 1;
 }
 
 message GetEncodeUserResponse{
@@ -29,17 +34,30 @@ message GetDecodeUserResponse{
 	repeated ResultInfoResponse infos = 3;
 }
 
+message GetAreasByUserResponse{
+	repeated ServiceComAreaResponse data =1;
+	repeated ResultErrorInfoResponse errors = 2;
+	repeated ResultInfoResponse infos = 3;
+}
+
 message ResultErrorInfoResponse{
-       string source =1;
-       string detail =2;
-       string member =3;
-       int32 line =4;
-       string area =5;
-	   string code = 6;
-	   string message = 7;
+    string source =1;
+    string detail =2;
+    string member =3;
+    int32 line =4;
+    string area =5;
+	string code = 6;
+	string message = 7;
 }
 
 message ResultInfoResponse{
-	   string code = 1;
-	   string message = 2;
+	string code = 1;
+	string message = 2;
+}
+
+message ServiceComAreaResponse{
+	int32 idArea =1;
+    string descArea =2;
+    int32 idExterno =3;
+    int32 indAdmin = 4;
 }

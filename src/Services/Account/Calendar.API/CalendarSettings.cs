@@ -10,7 +10,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
         public string CollectionEvents { get; set; }
 
 
-        public string UserUtilsUrl { get; set; }
+        //public string UserUtilsUrl { get; set; }
 
 
         public string EventBusConnection { get; set; }

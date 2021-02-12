@@ -8,7 +8,7 @@
         public string CollectionEvents { get; set; }
         public short Version { get; set; }
 
-        public string UserUtilsUrl { get; set; }
+        //public string UserUtilsUrl { get; set; }
 
         public string OnlineUrl { get; set; }
         public string OnlineLogin { get; set; }
