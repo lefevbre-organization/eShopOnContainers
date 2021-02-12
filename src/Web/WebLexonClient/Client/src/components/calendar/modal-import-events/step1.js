@@ -116,7 +116,7 @@ export class Step1 extends React.Component {
               id="calendars" 
               dataSource={calendars} 
               fields={this.calendarsFields} 
-              placeholder="Selecciona el calendario de dexstino" 
+              placeholder="Selecciona el calendario de destino" 
               popupHeight="220px"
               itemTemplate={this.itemTemplate = this.itemTemplate.bind(this)} 
               change={ (cal) => { this.props.onChangeCalendar(cal.value); } }
