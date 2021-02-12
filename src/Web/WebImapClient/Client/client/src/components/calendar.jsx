@@ -918,7 +918,6 @@ class Calendar extends Component {
     };
 
     eventTemplate(props) {
-        console.log('eventTemplate', props)
         const { t } = this.props;
         let colorExist = false;
         if (props.EventType != undefined) {
@@ -932,16 +931,19 @@ class Calendar extends Component {
             subjectStr = t("schedule.notitle")
         }
 
+        console.log('eventTemplate', colorExist)
+
         return (
             <div>
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
-                    <div className='eventicon'>
+                    <div className={styles['eventicon']}>
 
                         {props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} />}
                         {subjectStr}
                         {colorExist ? (
-                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot floatleft'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} 
+                            className={`${styles['dot']} ${styles['floatleft']}`}></span>
                         ) : (
                                 ''
                             )}
@@ -1068,14 +1070,14 @@ class Calendar extends Component {
                 }
 
                 // EventType
-                let eventType = [];
+                let eventType = {};
                 let lexonClassification = null;
                 if (event.categories != undefined) {
                     eventType.name = event.categories;
-                    // eventType.id = event.extendedProperties.private.eventTypeId;
-                    // eventType.color = event.extendedProperties.private.eventTypeColor;
-                    // lexonClassification = event.extendedProperties.private.lexonClassification;
+                    eventType.color = event.color;
                 }
+
+                console.log(eventType)
 
                 let reminders = []
                 if (event.reminders != undefined) {
@@ -1419,6 +1421,7 @@ class Calendar extends Component {
             else {
                 item = this.eventTypeDataSource.find(x => x.text == values.EventType)
             }
+            event.color = item.backgroundColor
             event.categories = [{
                 'name': item.text,
             }]
