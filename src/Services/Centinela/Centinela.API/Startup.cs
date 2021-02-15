@@ -1,25 +1,24 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
 {
+    using Controllers;
+    using Extensions;
+    using Infrastructure.Filters;
+    using Infrastructure.Middlewares;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -32,60 +31,58 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            //services.AddGrpc(options =>
-            //{
-            //    options.EnableDetailedErrors = true;
-            //});
+            services
+               //.AddGrpc(options =>
+               // {
+               //     options.EnableDetailedErrors = true;
+               // }).Services
+                .AddControllers(options =>
+                {
+                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                    options.Filters.Add(typeof(ValidateModelStateFilter));
+                }) // Added for functional tests
+                .AddApplicationPart(typeof(CentinelaController).Assembly)
+                .AddNewtonsoftJson();
 
-            //RegisterAppInsights(services);
+            ConfigureAuthService(services);
 
-            //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-            //        .AddNegotiate();
-
-            services.AddControllers(options =>
-                    {
-                        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                        options.Filters.Add(typeof(ValidateModelStateFilter));
-                    }) // Added for functional tests
-            .AddApplicationPart(typeof(CentinelaController).Assembly)
-            .AddNewtonsoftJson()
-                ;
-
-            services.AddSwagger(Configuration);
-
-            //ConfigureAuthService(services);
-
-            services.AddCustomHealthCheck(Configuration);
-
-            services.Configure<CentinelaSettings>(Configuration);
-
-            //services.AddRedis();
-
-            services.AddIntegrationServices(Configuration);
-
-            services.RegisterEventBus(Configuration);
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-            services.AddTransient<ICentinelaService, CentinelaService>();
-            //services.AddTransient<IIdentityService, IdentityService>();
-
-            services.AddOptions();
-            services.AddHttpClient();
+            services
+             .AddSwagger(Configuration)
+             //.AddHttpClient()
+             .AddCustomHealthCheck(Configuration)
+             //.AddAppInsight(Configuration)
+             .AddCustomDbContext(Configuration)
+             .AddCustomOptions(Configuration)
+             //.Configure<UserUtilsSettings>(Configuration)
+             .AddIntegrationServices(Configuration)
+             .AddEventBus(Configuration)
+             .AddCustomMVC(Configuration);
 
             var container = new ContainerBuilder();
             container.Populate(services);
+
             return new AutofacServiceProvider(container.Build());
+
+        }
+
+        private void ConfigureAuthService(IServiceCollection services)
+        {
+            // prevent from mapping "sub" claim to nameidentifier.
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+            var identityUrl = Configuration.GetValue<string>("IdentityUrl");
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = identityUrl;
+                options.RequireHttpsMetadata = false;
+                options.Audience = "centinela";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,6 +91,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
             var pathBase = Configuration["PATH_BASE"];
             if (!string.IsNullOrEmpty(pathBase))
             {
+                loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
+
                 app.UsePathBase(pathBase);
             }
 
@@ -103,14 +102,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
                    setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Centinela.API V1");
                    setup.OAuthClientId("centinelaswaggerui");
                    setup.OAuthAppName("Centinela Swagger UI");
+                   setup.RoutePrefix = @"api";
                });
 
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             ConfigureAuth(app);
 
             app.UseStaticFiles();
 
-            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 // endpoints.MapGrpcService<UsersService>();
@@ -158,25 +158,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
             app.UseAuthentication();
             app.UseAuthorization();
         }
-
-        //private void ConfigureAuthService(IServiceCollection services)
-        //{
-        //    // prevent from mapping "sub" claim to nameidentifier.
-        //    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
-
-        //    var identityUrl = Configuration.GetValue<string>("IdentityUrl");
-
-        //    services.AddAuthentication(options =>
-        //    {
-        //        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    }).AddJwtBearer(options =>
-        //    {
-        //        options.Authority = identityUrl;
-        //        options.Audience = "centinela";
-        //        options.RequireHttpsMetadata = false;
-        //    });
-        //}
 
         private void ConfigureEventBus(IApplicationBuilder app, out IEventBus eventBus)
         {

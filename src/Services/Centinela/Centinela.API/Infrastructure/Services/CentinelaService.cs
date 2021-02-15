@@ -1,7 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,6 +15,10 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
 {
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using Models;
+
     public class CentinelaService : BaseClass<CentinelaService>, ICentinelaService
     {
         public readonly ICentinelaRepository _centinelaRepository;
@@ -29,7 +30,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 IOptions<CentinelaSettings> settings
                 , ICentinelaRepository centinelaRepository
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
                 , ILogger<CentinelaService> logger
             ) : base(logger)
         {

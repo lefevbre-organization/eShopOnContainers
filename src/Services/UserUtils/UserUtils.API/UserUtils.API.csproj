@@ -6,6 +6,7 @@
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>UserUtils.API</AssemblyName>
     <PackageId>UserUtils.API</PackageId>
+    <RootNamespace>Lefebvre.eLefebvreOnContainers.Services.UserUtils.API</RootNamespace>
     <UserSecretsId>879d7bd4-a4f7-4d7d-96e0-19507ce1dec8</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..\..</DockerfileContext>

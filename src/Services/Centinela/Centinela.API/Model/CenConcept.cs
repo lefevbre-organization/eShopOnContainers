@@ -22,12 +22,6 @@
 
         public bool? isFront { get; set; }
 
-        //"processId": null,
-        //public string processId { get; set; }
-
-        //"processBaseId": null,
-        //public string processBaseId { get; set; }
-
         public bool? hasProcessOps { get; set; }
 
         //"identifierFieldId": null,

@@ -143,8 +143,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
                 });
             });
 
-
-
             //if (env.IsDevelopment())
             //{
             //    app.UseDeveloperExceptionPage();

@@ -14,6 +14,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
     {
         public static string Namespace = typeof(Program).Namespace;
         public static string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+ 
         public static int Main(string[] args)
         {
             var configuration = GetConfiguration();
@@ -79,7 +80,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
                 //.UseSerilog()
                 .Build();
 
-        static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+        static ILogger CreateSerilogLogger(IConfiguration configuration)
         {
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
             var logstashUrl = configuration["Serilog:LogstashgUrl"];
@@ -108,7 +109,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            var config = builder.Build();
+            //var config = builder.Build();
 
             //if (config.GetValue<bool>("UseVault", false))
             //{
