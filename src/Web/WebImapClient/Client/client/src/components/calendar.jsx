@@ -111,11 +111,11 @@ class Calendar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sidebarOpen: false,
-      sidebarDocked: false,
-      sideBar: {
-        collapsed: false,
-      },
+        sidebarOpen: false,
+        sidebarDocked: false,
+        leftSideBar: {
+            collapsed: false
+        },
         hidePromptDialog: false,
         hidePromptEventTypeDialog: false,
         showPromptImportContactsDialog: false,
@@ -327,9 +327,9 @@ class Calendar extends Component {
     }
 
     toggleSideBar() {
-        const toggleCollapsed = !this.state.sideBar.collapsed;
+        const toggleCollapsed = !this.state.leftSideBar.collapsed;
         this.setState({
-            sideBar: {
+            leftSideBar: {
                 collapsed: toggleCollapsed,
             },
         });
@@ -337,7 +337,7 @@ class Calendar extends Component {
 
   render() {
         const { t, lexon, email } = this.props;
-        const { sideBar, calendars } = this.state;
+        const { leftSideBar, calendars } = this.state;
 
         //if (!isUpdatedDefaultAccount) {
         //    return null;
@@ -360,7 +360,7 @@ class Calendar extends Component {
               <div id='target' className={styles.app}>                 
 
                   <SideBar
-                      collapsed={sideBar.collapsed}
+                      collapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       bbdd={lexon.bbdd}
@@ -383,7 +383,7 @@ class Calendar extends Component {
 
                   <div
                       className={`${styles['content-wrapper']}
-                                ${sideBar.collapsed
+                                ${leftSideBar.collapsed
                               ? ''
                               : styles['with-side-bar']
                           } ${styles['custom-padding-top']}`}>
@@ -580,10 +580,8 @@ class Calendar extends Component {
     );
   }    
 
-  
-
   toggleSideBar() {
-    const toggleCollapsed = !this.state.sideBar.collapsed;
+    const toggleCollapsed = !this.state.leftSideBar.collapsed;
     this.setState({
       sideBar: {
         collapsed: toggleCollapsed,
@@ -2418,7 +2416,7 @@ class Calendar extends Component {
         if (args.requestType === 'toolbarItemRendering') {
             if (args.requestType === 'toolbarItemRendering') {
                 let CalendarsIconItem = {
-                    align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: 'e-schedule-calendar-icon'
+                    align: 'Right', prefixIcon: 'calendar-icon', text: '', cssClass: `${styles['calendar-icon']} e-schedule-calendar-icon`
                 };
                 args.items.push(CalendarsIconItem);
 
