@@ -1,6 +1,7 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;

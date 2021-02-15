@@ -1,10 +1,10 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
-using Lexon.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;

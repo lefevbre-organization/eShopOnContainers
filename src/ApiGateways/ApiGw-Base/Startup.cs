@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using System;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using OcelotApiGw.Extensions;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace OcelotApiGw
 {
@@ -24,8 +26,6 @@ namespace OcelotApiGw
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var identityUrl = _cfg.GetValue<string>("IdentityUrl");
-            var authenticationProviderKey = "IdentityApiKey";
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
@@ -38,52 +38,58 @@ namespace OcelotApiGw
                 //.AddUrlGroup(new Uri(_cfg["DatabaseApiUrlHC"]), name: "databaseapi-check", tags: new string[] { "databaseapi" })
                 ;
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowCredentials());
-            });
+            ConfigureAuthService(services);
+            services
+                .AddCustomMVC()
+                .AddOcelot(_cfg);
 
-            services.AddAuthentication()
-                .AddJwtBearer(authenticationProviderKey, x =>
-                {
-                    x.Authority = identityUrl;
-                    x.RequireHttpsMetadata = false;
-                    x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-                    {
-                        ValidAudiences = new[] { "orders", "basket", "locations", "marketing", "mobileshoppingagg", "webshoppingagg" }
-                    };
-                    x.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents()
-                    {
-                        OnAuthenticationFailed = async ctx =>
-                        {
-                            int i = 0;
-                        },
-                        OnTokenValidated = async ctx =>
-                        {
-                            int i = 0;
-                        },
-
-                        OnMessageReceived = async ctx =>
-                        {
-                            int i = 0;
-                        }
-                    };
-                });
-
-
-            services.AddOcelot(_cfg);
             services.Configure<KestrelServerOptions>(options =>
             {
                 options.Limits.MaxRequestBodySize = 5200000000; // if don't set default value is: 30 MB
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        private void ConfigureAuthService(IServiceCollection services)
+        {
+            // prevent from mapping "sub" claim to nameidentifier.
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+            var identityUrl = _cfg.GetValue<string>("IdentityUrl");
+            //var authenticationProviderKey = "IdentityApiKey";
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = identityUrl;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                {
+                    ValidAudiences = new[] { "orders", "basket", "locations", "marketing", "mobileshoppingagg", "webshoppingagg" }
+                };
+                options.Events = new JwtBearerEvents()
+                {
+                    OnAuthenticationFailed = async ctx =>
+                    {
+                        int i = 0;
+                    },
+                    OnTokenValidated = async ctx =>
+                    {
+                        int i = 0;
+                    },
+
+                    OnMessageReceived = async ctx =>
+                    {
+                        int i = 0;
+                    }
+                };
+            });
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             var pathBase = _cfg["PATH_BASE"];
 
@@ -92,10 +98,10 @@ namespace OcelotApiGw
                 app.UsePathBase(pathBase);
             }
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
 
             app.UseHealthChecks("/hc", new HealthCheckOptions()
             {

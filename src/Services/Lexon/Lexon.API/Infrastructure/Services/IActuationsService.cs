@@ -1,6 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

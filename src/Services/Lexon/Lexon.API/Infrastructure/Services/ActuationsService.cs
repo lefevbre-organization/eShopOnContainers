@@ -4,7 +4,7 @@ using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositor
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;

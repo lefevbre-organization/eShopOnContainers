@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using Lexon.API.Infrastructure.Filters;
-using Lexon.API.Infrastructure.Repositories;
-using Lexon.API.IntegrationsEvents.EventHandling;
-using Lexon.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Filters;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.EventHandling;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
