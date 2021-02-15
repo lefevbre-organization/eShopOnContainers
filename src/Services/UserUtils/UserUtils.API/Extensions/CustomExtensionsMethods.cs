@@ -1,7 +1,4 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -14,13 +11,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using UserUtils.API.Infrastructure.Middlewares;
+
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
 {
+    using Infrastructure.Repositories;
+    using Infrastructure.Services;
+
     public static class CustomExtensionsMethods
     {
         //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
@@ -103,10 +100,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
 
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(op =>
             {
                 //c.DescribeAllEnumsAsStrings();
-                c.SwaggerDoc("v1", new OpenApiInfo
+                op.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Lefebvre Now - User Utils HTTP API",
                     Version = "v1",
@@ -114,8 +111,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
                    //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
 
-                c.OperationFilter<FormDataOperationFilter>();
-                c.OperationFilter<MultiPartFormDataOperationFilter>();
+                op.OperationFilter<FormDataOperationFilter>();
+                op.OperationFilter<MultiPartFormDataOperationFilter>();
 
 
                 //c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

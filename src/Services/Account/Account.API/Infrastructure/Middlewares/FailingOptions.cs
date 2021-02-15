@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Middlewares
 {
     public class FailingOptions
     {

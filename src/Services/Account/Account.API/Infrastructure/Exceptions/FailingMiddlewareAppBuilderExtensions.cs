@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using System;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Exceptions
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions
 {
 using Infrastructure.Middlewares;
     public static class FailingMiddlewareAppBuilderExtensions

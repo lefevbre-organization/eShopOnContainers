@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Middlewares
 {
     public class AuthorizeCheckOperationFilter : IOperationFilter
     {
@@ -28,7 +28,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.M
                 {
                     new OpenApiSecurityRequirement
                     {
-                        [ oAuthScheme ] = new [] { "userutilsapi" }
+                        [ oAuthScheme ] = new [] { "accountapi" }
                     }
                 };
         }

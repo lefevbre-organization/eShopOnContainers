@@ -25,7 +25,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
                 Log.Information("Configuring web host ({ApplicationContext})...", Program.AppName);
                 var host = CreateHostBuilder(configuration, args);
 
-                Log.Information("Applying migrations ({ApplicationContext})...", Program.AppName);
+                //Log.Information("Applying migrations ({ApplicationContext})...", Program.AppName);
                 //host.MigrateDbContext<CatalogContext>((context, services) =>
                 //{
                 //    var env = services.GetService<IHostingEnvironment>();
@@ -55,7 +55,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
         }
 
          static IWebHost CreateHostBuilder(IConfiguration configuration, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+                WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
                 .CaptureStartupErrors(false)
                 .ConfigureKestrel(options =>

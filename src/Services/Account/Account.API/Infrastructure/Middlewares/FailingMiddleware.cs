@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Middlewares
 {
     public class FailingMiddleware
     {

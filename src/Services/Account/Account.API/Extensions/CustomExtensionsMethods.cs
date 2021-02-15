@@ -1,19 +1,21 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Extensions
+﻿using Autofac;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using RabbitMQ.Client;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Extensions
 {
     #region Using
 
-    using Autofac;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Diagnostics.HealthChecks;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using RabbitMQ.Client;
     using Infrastructure.Filters;
     using Account.API.Infrastructure.Repositories;
     using Infrastructure.Services;
@@ -23,19 +25,19 @@
 
     public static class CustomExtensionsMethods
     {
-        public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //})
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    .AddControllersAsServices();
 
             services.AddCors(options =>
             {
@@ -49,11 +51,7 @@
 
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAccountsService, AccountsService>();
-            services.AddTransient<IEventsService, EventsService>();
-            services.AddTransient<ICalendarService, CalendarService>();
             services.AddTransient<IAccountsRepository, AccountsRepository>();
-            services.AddTransient<IEventsRepository, EventsRepository>();
-            services.AddTransient<ICalendarRepository, CalendarRepository>();
             return services;
         }
 
@@ -66,7 +64,7 @@
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddMongoDb(
                     configuration["ConnectionString"],
-                    name: "lexon-mongodb-check",
+                    name: "account-mongodb-check",
                     tags: new string[] { "mongodb" })
                 .AddRabbitMQ(
                     $"amqp://{configuration["EventBusConnection"]}",
@@ -105,18 +103,18 @@
             return services;
         }
 
-        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSwaggerGen(options =>
+            services.AddSwaggerGen(op =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                op.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Lefebvre Now - Account HTTP API",
                     Version = "v1",
-                    Description = "The Account Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    TermsOfService = "Terms Of Service"
+                    Description = "The Account Microservice HTTP API"
+                    //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
+
             });
 
             return services;

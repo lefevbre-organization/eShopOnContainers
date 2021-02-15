@@ -1,25 +1,26 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
     #region using
 
     using IntegrationEvents.Events;
-    using Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions;
-    using Lefebvre.eLefebvreOnContainers.Services.Account.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Bson;
-    using MongoDB.Driver;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Infrastructure.Exceptions;
+    using Model;
 
     #endregion using
 
-    public class AccountsRepository : AccountsBaseClass<AccountsRepository>, IAccountsRepository
+    public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
     {
         private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
@@ -64,30 +65,6 @@
             }
             return result;
         }
-
-        //private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
-        //{
-        //    if (resultReplace.IsAcknowledged)
-        //    {
-        //        if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-        //        {
-        //            TraceInfo(result.infos, msgModify, Codes.MailAccounts.UserUpsert);
-        //        }
-        //        else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-        //        {
-        //            TraceInfo(result.infos, msgInsert, Codes.MailAccounts.UserUpsert);
-        //            return resultReplace.UpsertedId.ToString();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        TraceError(result.errors,
-        //                   new AccountDomainException("Error when upsert user mail"),
-        //                   Codes.MailAccounts.UserUpsert,
-        //                   Codes.Areas.Mongo);
-        //    }
-        //    return null;
-        //}
 
         public async Task<Result<UserMail>> GetUser(string user)
         {
@@ -528,7 +505,6 @@
         #endregion Relations
 
         #region Common
-
 
         private void ReviewUserMail(UserMail userMail)
         {

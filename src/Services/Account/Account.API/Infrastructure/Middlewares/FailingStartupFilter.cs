@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Middlewares
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Middlewares
 {
-    using UserUtils.API.Infrastructure.Exceptions;
-
+    using Exceptions;
     public class FailingStartupFilter : IStartupFilter
     {
         private readonly Action<FailingOptions> _options;

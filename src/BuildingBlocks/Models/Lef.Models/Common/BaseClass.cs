@@ -276,17 +276,17 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             resultOut.infos.AddRange(resultIn.infos);
         }
 
-        public string ManageUpsert<U>(string msgError, string msgModify, string msgInsert, Result<U> result, ReplaceOneResult resultReplace, string codeError)
+        public string ManageUpsert<U>(string msgError, string msgModify, string msgInsert, Result<U> result, ReplaceOneResult resultReplace, string code)
         {
             if (resultReplace.IsAcknowledged)
             {
                 if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, msgModify, Codes.MailAccounts.UserUpsert);
+                    TraceInfo(result.infos, msgModify, code);
                 }
                 else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
                 {
-                    TraceInfo(result.infos, msgInsert, Codes.MailAccounts.UserUpsert);
+                    TraceInfo(result.infos, msgInsert, code);
                     return resultReplace.UpsertedId.ToString();
                 }
             }
@@ -294,7 +294,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             {
                 TraceError(result.errors,
                            new BaseDomainException(msgError),
-                           codeError,
+                           code,
                            Codes.Areas.Mongo);
             }
             return null;
@@ -320,7 +320,10 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             else
             {
-                TraceError(result.errors, new BaseDomainException(errorMsg), code, Codes.Areas.Mongo);
+                TraceError(result.errors,
+                           new BaseDomainException(errorMsg),
+                           code,
+                           Codes.Areas.Mongo);
             }
             return false;
         }

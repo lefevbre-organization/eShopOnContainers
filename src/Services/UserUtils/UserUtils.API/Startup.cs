@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using GrpcUserutils;
 using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -13,17 +13,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using GrpcUserutils;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
-using UserUtils.API.Infrastructure.Middlewares;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
+    using Extensions;
+    using Infrastructure.Filters;
+    using Controllers;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -146,16 +143,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
                 });
             });
 
-            //app.UseHealthChecks("/hc", new HealthCheckOptions()
-            //{
-            //    Predicate = _ => true,
-            //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            //});
-
-            //app.UseHealthChecks("/liveness", new HealthCheckOptions
-            //{
-            //    Predicate = r => r.Name.Contains("self")
-            //});
 
 
             //if (env.IsDevelopment())

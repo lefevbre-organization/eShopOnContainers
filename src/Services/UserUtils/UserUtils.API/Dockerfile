@@ -75,7 +75,7 @@ FROM build AS publish
 FROM base AS final
 
 USER root
-RUN whoami
+#RUN whoami
 RUN apt update && apt dist-upgrade -y
 
 #RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
