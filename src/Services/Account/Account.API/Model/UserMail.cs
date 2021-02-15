@@ -9,7 +9,7 @@
     #endregion Using
 
     [BsonIgnoreExtraElements]
-    public class UserMail : MongoModel
+    public class UserMail //: MongoModel
     {
 
         [BsonId]
