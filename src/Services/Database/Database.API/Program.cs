@@ -1,4 +1,3 @@
-using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,12 +15,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
         public static readonly string Namespace = typeof(Program).Namespace;
         public static readonly string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
 
-        private static (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
-        {
-            var grpcPort = config.GetValue("GRPC_PORT", 5001);
-            var port = config.GetValue("PORT", 80);
-            return (port, grpcPort);
-        }
 
         public static int Main(string[] args)
         {
@@ -32,7 +25,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
             try
             {
                 Log.Information("Configuring web host ({ApplicationContext})...", AppName);
-                var host = BuildWebHost(configuration, args);
+                var host = CreateHostBuilder(configuration, args);
 
                 //Log.Information("Applying migrations ({ApplicationContext})...", AppName);
                 //host.MigrateDbContext<CatalogContext>((context, services) =>
@@ -63,7 +56,31 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
             }
         }
 
-        private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+        static IWebHost CreateHostBuilder(IConfiguration configuration, string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
+            .CaptureStartupErrors(false)
+            .ConfigureKestrel(options =>
+            {
+                var ports = GetDefinedPorts(configuration);
+                options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
+                {
+                    listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                });
+
+                options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
+                {
+                    listenOptions.Protocols = HttpProtocols.Http2;
+                });
+            })
+            .UseStartup<Startup>()
+            // .UseApplicationInsights()
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            //.UseConfiguration(configuration)
+            //.UseSerilog()
+            .Build();
+
+        static ILogger CreateSerilogLogger(IConfiguration configuration)
         {
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
             var logstashUrl = configuration["Serilog:LogstashgUrl"];
@@ -77,56 +94,32 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
+        static (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
+        {
+            var grpcPort = config.GetValue("GRPC_PORT", 5001);
+            var port = config.GetValue("PORT", 80);
+            return (port, grpcPort);
+        }
 
-        private static IConfiguration GetConfiguration()
+        static IConfiguration GetConfiguration()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            var config = builder.Build();
+            //var config = builder.Build();
 
-            if (config.GetValue<bool>("UseVault", false))
-            {
-                //is mandatory take values from azurevault
-                //builder.AddAzureKeyVault(
-                //    $"https://{config["Vault:Name"]}.vault.azure.net/",
-                //    config["Vault:ClientId"],
-                //    config["Vault:ClientSecret"]);
-            }
+            //if (config.GetValue<bool>("UseVault", false))
+            //{
+            //    //is mandatory take values from azurevault
+            //    //builder.AddAzureKeyVault(
+            //    //    $"https://{config["Vault:Name"]}.vault.azure.net/",
+            //    //    config["Vault:ClientId"],
+            //    //    config["Vault:ClientSecret"]);
+            //}
 
             return builder.Build();
         }
-
-        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-                WebHost.CreateDefaultBuilder(args)
-              //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
-              .CaptureStartupErrors(false)
-              .ConfigureKestrel(options =>
-              {
-                  var ports = GetDefinedPorts(configuration);
-                  options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
-                  {
-                      listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                  });
-
-                  options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
-                  {
-                      listenOptions.Protocols = HttpProtocols.Http2;
-                  });
-              })
-              .UseFailing(options =>
-              {
-                  options.ConfigPath = "/Failing";
-                  options.NotFilteredPaths.AddRange(new[] { "/hc", "/liveness" });
-              })
-              .UseStartup<Startup>()
-              // .UseApplicationInsights()
-              .UseContentRoot(Directory.GetCurrentDirectory())
-              .UseConfiguration(configuration)
-              .UseSerilog()
-              .Build();
-
     }
 }

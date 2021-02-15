@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -15,6 +14,9 @@ using RabbitMQ.Client;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Extensions
 {
+    using Infrastructure.Middlewares;
+    using Infrastructure.Repositories;
+    using Infrastructure.Services;
     public static class CustomExtensionsMethods
     {
         //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
@@ -22,29 +24,31 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Extensions
         //    return services;
         //}
 
-        //public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddMvc(options =>
-        //    {
-        //        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-        //    })
-        //        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-        //        .AddControllersAsServices();
+        public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
+        {
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //})
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    .AddControllersAsServices();
 
-        //    services.AddCors(options =>
-        //    {
-        //        options.AddPolicy("CorsPolicy",
-        //            builder => builder
-        //            .SetIsOriginAllowed((host) => true)
-        //            .AllowAnyMethod()
-        //            .AllowAnyHeader()
-        //            .AllowCredentials());
-        //    });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
-        //    services.AddTransient<ICentinelaService, CentinelaService>();
-        //    services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-        //    return services;
-        //}
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IDatabaseService, DatabaseService>();
+            services.AddTransient<IDatabaseRepository, DatabaseRepository>();
+            //services.AddTransient<IIdentityService, IdentityService>();
+            return services;
+        }
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
@@ -64,10 +68,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Extensions
             return services;
         }
 
-        //public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    return services;
-        //}
+        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            return services;
+        }
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
@@ -125,35 +129,35 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Extensions
             return services;
         }
 
-        //public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    var subscriptionClientName = configuration["SubscriptionClientName"];
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        {
+            var subscriptionClientName = configuration["SubscriptionClientName"];
 
-        //    if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-        //    {
-        //        //no implementado y posiblemente no se necesite
-        //    }
-        //    else
-        //    {
-        //        services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
-        //        {
-        //            var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
-        //            var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
-        //            var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
-        //            var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+            {
+                //no implementado y posiblemente no se necesite
+            }
+            else
+            {
+                services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+                {
+                    var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+                    var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+                    var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+                    var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
-        //            var retryCount = 5;
-        //            if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
-        //                retryCount = int.Parse(configuration["EventBusRetryCount"]);
+                    var retryCount = 5;
+                    if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+                        retryCount = int.Parse(configuration["EventBusRetryCount"]);
 
-        //            return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
-        //        });
-        //    }
-        //    services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-        //    //services.AddTransient<AddFileToUserIntegrationEventHandler>();
+                    return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+                });
+            }
+            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+            //services.AddTransient<AddFileToUserIntegrationEventHandler>();
 
-        //    return services;
-        //}
+            return services;
+        }
 
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
