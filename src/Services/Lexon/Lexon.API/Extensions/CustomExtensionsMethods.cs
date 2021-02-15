@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
-namespace Lexon.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Extensions
 {
     public static class CustomExtensionsMethods
     {

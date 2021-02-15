@@ -1,9 +1,9 @@
-﻿using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {
     public interface IUsersRepository
     {

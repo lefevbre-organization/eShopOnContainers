@@ -1,6 +1,6 @@
-﻿using Lexon.API;
-using Lexon.API.Infrastructure.Exceptions;
-using Lexon.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -16,7 +16,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     public class UsersService : LexonBaseClass<UsersService>, IUsersService
     {

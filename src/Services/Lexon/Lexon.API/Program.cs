@@ -5,7 +5,7 @@ using Serilog;
 using System;
 using System.IO;
 
-namespace Lexon.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 {
     public class Program
     {

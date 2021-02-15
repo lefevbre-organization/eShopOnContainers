@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Lexon.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models
 {
     [BsonIgnoreExtraElements]
     public class LexonMaster: MongoModel, ILexonList<LexonEntityType>

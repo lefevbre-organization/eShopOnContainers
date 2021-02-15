@@ -1,4 +1,4 @@
-﻿namespace Lexon.API.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models
 {
     internal interface ILexonList<T>
     {

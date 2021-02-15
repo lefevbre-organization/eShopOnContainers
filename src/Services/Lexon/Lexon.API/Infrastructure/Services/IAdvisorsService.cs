@@ -3,7 +3,7 @@ using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     public interface IAdvisorsService
     {

@@ -1,4 +1,4 @@
-﻿namespace Lexon.API.IntegrationsEvents.Events
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events
 {
     public class DissociateMailFromEntityIntegrationEvent: LexonBaseIntegrationEvent
     {

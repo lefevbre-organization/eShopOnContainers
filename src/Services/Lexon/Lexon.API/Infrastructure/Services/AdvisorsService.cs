@@ -1,6 +1,6 @@
-﻿using Lexon.API;
-using Lexon.API.Infrastructure.Exceptions;
-using Lexon.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
@@ -15,7 +15,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     public class AdvisorsService : LexonBaseClass<AdvisorsService>, IAdvisorsService
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lexon.API.Infrastructure.Exceptions
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

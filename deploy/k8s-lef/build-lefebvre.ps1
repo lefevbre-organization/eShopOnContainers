@@ -7,7 +7,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "userutils.api"
+        "calendar.api", "account.api", "centinela.api"
         # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
         #  "database.api", 
         # "googleaccount.api", "googledrive.api"        
@@ -19,7 +19,7 @@ Param(
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "userutils.api"
+        "calendar.api", "account.api", "centinela.api"
         # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
         #  "database.api",
         # "googleaccount.api", "googledrive.api" 

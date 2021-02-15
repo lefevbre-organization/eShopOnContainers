@@ -9,9 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using Lexon.API.Extensions;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Extensions;
 
-namespace Lexon.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 {
     public class Startup
     {

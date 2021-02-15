@@ -1,10 +1,10 @@
-﻿using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     public interface IActuationsService
     {

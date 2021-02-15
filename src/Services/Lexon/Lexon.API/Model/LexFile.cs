@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models
 {
 
     public class LexFile

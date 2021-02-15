@@ -20,7 +20,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
     {
         public readonly IConferenceRepository _repo;
         private readonly IEventBus _eventBus;
-        private readonly IHttpClientFactory _clientFactory;
+        //private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientJitsi;
         private readonly HttpClient _clientUserUtils;
         private readonly IOptions<ConferenceSettings> _settings;
@@ -29,7 +29,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
                 IOptions<ConferenceSettings> settings
                 , IConferenceRepository databaseRepository
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
+                //, IHttpClientFactory clientFactory
                 , ILogger<ConferenceService> logger
             ) : base(logger)
         {
@@ -37,15 +37,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
             _repo = databaseRepository ?? throw new ArgumentNullException(nameof(databaseRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
 
-            _clientJitsi = _clientFactory.CreateClient();
-            _clientJitsi.BaseAddress = new Uri(_settings.Value.JitsiUrl);
+            _clientJitsi = new HttpClient { BaseAddress = new Uri(_settings.Value.JitsiUrl) };
             _clientJitsi.DefaultRequestHeaders.Add("Accept", "application/json");
             //_clientJitsi.DefaultRequestHeaders.Add("Content-Type", "application/json");
 
-            _clientUserUtils = _clientFactory.CreateClient();
-            _clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
+            _clientUserUtils = new HttpClient{BaseAddress = new Uri(_settings.Value.UserUtilsUrl) };
             _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 

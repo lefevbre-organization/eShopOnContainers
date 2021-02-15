@@ -1,5 +1,5 @@
-﻿using Lexon.API.IntegrationsEvents.Events;
-using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
@@ -15,7 +15,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {
     public class UsersRepository : BaseClass<UsersRepository>, IUsersRepository
     {

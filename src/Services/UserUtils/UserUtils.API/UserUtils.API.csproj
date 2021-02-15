@@ -61,7 +61,6 @@
     <Folder Include="Proto\"/>
   </ItemGroup>
 
-
   <ItemGroup>
     <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

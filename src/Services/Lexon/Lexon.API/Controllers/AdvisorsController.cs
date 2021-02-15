@@ -1,4 +1,4 @@
-﻿using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
 using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

@@ -91,7 +91,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
         }
      
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var pathBase = Configuration["PATH_BASE"];
 
