@@ -85,7 +85,6 @@ export class Step1 extends React.Component {
   }
 
   onCalendarTemplate(data) {
-    console.log(data)
     return (
       <div>
         <span style={{background: data.backgroundColor, padding: '0px 10px 3px', marginRight: '5px' }}>
