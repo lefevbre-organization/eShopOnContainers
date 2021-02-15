@@ -751,6 +751,12 @@ export class Main extends Component {
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
         let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
+        if(sm.length > 0) {
+            sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
+            if (!sm[0].Guid) {
+                sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
+            }
+        }
         if(this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
@@ -1120,8 +1126,8 @@ export class Main extends Component {
             if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
                 // this.tabObj.refresh()
                 let id = this.scheduleObj.eventWindow.eventData.Id;
-                if (id == undefined) {
-                    //this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                if (id === undefined) {
+                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
                     //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
@@ -1129,9 +1135,6 @@ export class Main extends Component {
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
-            //else if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id != undefined){
-            //    this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
-            //}
         }
         else {
             args.cancel = true
@@ -1255,12 +1258,9 @@ export class Main extends Component {
             this.setState({ reminders: [] })
         }
 
-
-
         if (args.type === 'QuickInfo') {
             const currentClassification = args.data.LexonClassification;
             const content = document.getElementsByClassName("e-popup-content");
-            debugger
 
             if(currentClassification) {
                 const first = content[0].firstChild;
@@ -1282,9 +1282,6 @@ export class Main extends Component {
                     content[0].classList.add('hidden');
                 }
             }
-
-            // Add icon div
-
 
             //Not allow to update events of not owner or writer calendar permissions
             let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
@@ -1715,13 +1712,11 @@ export class Main extends Component {
 
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
-
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
+                            this.scheduleObj.eventWindow.eventData.Subject = event.summary;
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
-
-
 
                         // this.scheduleObj.eventWindow.resetForm();
                         args.data[0].Id = result.id;

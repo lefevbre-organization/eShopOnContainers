@@ -685,8 +685,23 @@ export class Main extends Component {
 
 
     sendMessagePutUser(user) {
+        if(!this.scheduleObj.eventWindow.eventData.Id) {
+            setTimeout(() =>{
+                debugger
+                this.sendMessagePutUser(user);
+                }, 200);
+            return;
+        }
+
         const {selectedMessages, User} = this.props;
         let sm = this.selectedEvent ? [{...this.selectedEvent, Guid: this.selectedEvent.Id}] : [];
+        if(sm.length > 0) {
+            sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
+            if (!sm[0].Guid) {
+                sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
+            }
+        }
+
         if (this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
@@ -755,11 +770,11 @@ export class Main extends Component {
             window.URL_LEXON
             );
         }
-
     }
 
     async handleClassificatedEvent(event) {
-        let resp = await addEventClassification(event.detail.Id, event.detail.LexonClassification);
+        debugger
+        let resp = await addEventClassification(event.detail.Guid, event.detail.LexonClassification);
         this.currentClassification = event.detail.LexonClassification;
     }
 
@@ -769,7 +784,6 @@ export class Main extends Component {
     }
 
     componentDidMount() {
-
         if (this.layoutIframe) {
             this.setState({leftSideBar: {collapsed: true}})
         }
@@ -864,7 +878,6 @@ export class Main extends Component {
         if (this.drowDownListEventType != undefined) {
             this.drowDownListEventType.dataSource = this.eventTypeDataSource;
         }
-
     }
 
     getlistEventTypes() {
@@ -1054,7 +1067,7 @@ export class Main extends Component {
                 // this.tabObj.refresh()               
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id == undefined) {
-                    //this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
                     //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 } else {
@@ -1198,7 +1211,6 @@ export class Main extends Component {
         if (args.type === 'QuickInfo') {
             const currentClassification = args.data.LexonClassification;
             const content = document.getElementsByClassName("e-popup-content");
-            debugger
 
             if(currentClassification) {
                 const first = content[0].firstChild;
@@ -1619,12 +1631,11 @@ export class Main extends Component {
 
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
-
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
+                            this.scheduleObj.eventWindow.eventData.Subject = event.summary;
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
-
 
                         // this.scheduleObj.eventWindow.resetForm();
                         args.data[0].Id = result.id;
