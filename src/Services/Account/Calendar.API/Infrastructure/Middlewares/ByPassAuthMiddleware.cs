@@ -11,12 +11,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Mi
     {
         private readonly RequestDelegate _next;
         private string _currentUserId;
+
         public ByPassAuthMiddleware(RequestDelegate next)
         {
             _next = next;
             _currentUserId = null;
         }
-
 
         public async Task Invoke(HttpContext context)
         {

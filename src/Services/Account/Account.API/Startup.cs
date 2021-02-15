@@ -80,7 +80,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
             });
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var pathBase = Configuration["PATH_BASE"];
 
@@ -91,16 +91,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
             }
 
             app.UseSwagger()
-              .UseSwaggerUI(setup =>
-              {
-                  setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Account.API V1");
-                  setup.OAuthClientId("accountswaggerui");
-                  setup.OAuthAppName("Account Swagger UI");
-                  setup.RoutePrefix = @"api";
-              });
+                  .UseSwaggerUI(setup =>
+                  {
+                      setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Account.API V1");
+                      setup.OAuthClientId("accountswaggerui");
+                      setup.OAuthAppName("Account Swagger UI");
+                      setup.RoutePrefix = @"api";
+                  })
+                .UseRouting()
+                .UseCors("CorsPolicy");
 
-            app.UseRouting();
-            app.UseCors("CorsPolicy");
             ConfigureAuth(app);
 
             app.UseEndpoints(endpoints =>

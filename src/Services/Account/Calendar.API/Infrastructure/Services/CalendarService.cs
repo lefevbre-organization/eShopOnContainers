@@ -1,15 +1,12 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Services
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using System;
+using System.Threading.Tasks;
+namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Services
 {
-    #region Using
-
+    
     using Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Repositories;
-    using System;
-    using System.Threading.Tasks;
-
-    #endregion Using
 
     public class CalendarService : ICalendarService
     {

@@ -117,6 +117,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Extensions
 
             });
 
+            //options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            //{
+            //    Type = SecuritySchemeType.OAuth2,
+            //    Flows = new OpenApiOAuthFlows()
+            //    {
+            //        Implicit = new OpenApiOAuthFlow()
+            //        {
+            //            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+            //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+            //            Scopes = new Dictionary<string, string>()
+            //            {
+            //                { "googledrive", "Google Drive API" }
+            //            }
+            //        }
+            //    }
+            //});
+
             return services;
         }
 
@@ -142,12 +159,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Extensions
 
                     if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
                         factory.Password = configuration["EventBusPassword"];
-
-                    //if (settings.EventBus.Port != 0)
-                    //    factory.Port = settings.EventBus.Port;
-
-                    //if (!string.IsNullOrEmpty(settings.EventBus.VirtualHost))
-                    //    factory.VirtualHost = settings.EventBus.VirtualHost;
 
                     var retryCount = settings.EventBusRetryCount != 0 ? settings.EventBusRetryCount : 5;
 

@@ -1,19 +1,19 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Options;
+using System;
+using System.Net;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Controllers
 {
-    #region Usings
+
 
     using ViewModel;
     using Infrastructure.Services;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
     using Model;
-    using System;
-    using System.Net;
-    using System.Threading.Tasks;
 
-    #endregion Usings
 
     [Route("api/v2/events")]
     [ApiController]

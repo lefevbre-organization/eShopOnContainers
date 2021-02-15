@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
 {
@@ -32,63 +34,60 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            //services.AddGrpc(options =>
-            //{
-            //    options.EnableDetailedErrors = true;
-            //});
-
-            //RegisterAppInsights(services);
-
-            //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-            //        .AddNegotiate();
-
-            services.AddControllers(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                options.Filters.Add(typeof(ValidateModelStateFilter));
-            }) // Added for functional tests
+            services
+             //.AddGrpc(options =>
+             //{
+             //    options.EnableDetailedErrors = true;
+             //}).Services
+             .AddControllers(options =>
+                {
+                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                    options.Filters.Add(typeof(ValidateModelStateFilter));
+                }) // Added for functional tests
             .AddApplicationPart(typeof(CalendarController).Assembly)
             .AddApplicationPart(typeof(EventController).Assembly)
-            .AddNewtonsoftJson()
-                ;
+            .AddNewtonsoftJson();
 
-            services.AddSwagger(Configuration);
+            ConfigureAuthService(services);
+           
+            services
+             .AddSwagger(Configuration)
+             .AddCustomHealthCheck(Configuration)
+             .AddCustomDbContext(Configuration)
+             .AddCustomOptions(Configuration)
+             .AddIntegrationServices(Configuration)
+             .AddEventBus(Configuration)
+             .AddCustomMVC(Configuration);
 
-            //ConfigureAuthService(services);
 
-            services.AddCustomHealthCheck(Configuration);
+            //services.RegisterEventBus(Configuration);
 
-            services.Configure<CalendarSettings>(Configuration);
-
-            //services.AddRedis();
-
-            services.AddIntegrationServices(Configuration);
-
-            services.RegisterEventBus(Configuration);
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IEventsService, EventsService>();
-            services.AddTransient<ICalendarService, CalendarService>();
-            services.AddTransient<IEventsRepository, EventsRepository>();
-            services.AddTransient<ICalendarRepository, CalendarRepository>();
-            //services.AddTransient<IIdentityService, IdentityService>();
-
-            services.AddOptions();
-            services.AddHttpClient();
+            //services.AddOptions();
+            //services.AddHttpClient();
 
             var container = new ContainerBuilder();
             container.Populate(services);
             return new AutofacServiceProvider(container.Build());
+        }
+
+        private void ConfigureAuthService(IServiceCollection services)
+        {
+            // prevent from mapping "sub" claim to nameidentifier.
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
+
+            var identityUrl = Configuration.GetValue<string>("IdentityUrl");
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = identityUrl;
+                options.RequireHttpsMetadata = false;
+                options.Audience = "calendar";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,14 +105,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
                    setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Calendar.API V1");
                    setup.OAuthClientId("calendarswaggerui");
                    setup.OAuthAppName("Calendar Swagger UI");
-               });
+                   setup.RoutePrefix = @"api";
+               })
+            .UseRouting()
+            .UseCors("CorsPolicy");
 
-            app.UseRouting();
             ConfigureAuth(app);
 
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
 
-            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 // endpoints.MapGrpcService<UsersService>();
@@ -153,33 +153,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API
 
         protected virtual void ConfigureAuth(IApplicationBuilder app)
         {
-            if (Configuration.GetValue<bool>("UseLoadTest"))
-            {
-                app.UseMiddleware<ByPassAuthMiddleware>();
-            }
+            //if (Configuration.GetValue<bool>("UseLoadTest"))
+            //{
+            //    app.UseMiddleware<ByPassAuthMiddleware>();
+            //}
 
             app.UseAuthentication();
             app.UseAuthorization();
         }
-
-        //private void ConfigureAuthService(IServiceCollection services)
-        //{
-        //    // prevent from mapping "sub" claim to nameidentifier.
-        //    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("sub");
-
-        //    var identityUrl = Configuration.GetValue<string>("IdentityUrl");
-
-        //    services.AddAuthentication(options =>
-        //    {
-        //        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    }).AddJwtBearer(options =>
-        //    {
-        //        options.Authority = identityUrl;
-        //        options.Audience = "centinela";
-        //        options.RequireHttpsMetadata = false;
-        //    });
-        //}
 
         private void ConfigureEventBus(IApplicationBuilder app, out IEventBus eventBus)
         {

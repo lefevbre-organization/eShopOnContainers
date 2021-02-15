@@ -1,11 +1,9 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Services
-{
-    #region Using
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using System.Threading.Tasks;
 
+namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Services
+{
     using Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using System.Threading.Tasks;
-    #endregion
 
     public interface IEventsService
     {

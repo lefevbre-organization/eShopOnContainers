@@ -1,23 +1,21 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Repositories
-{
-    #region using
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
+namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Repositories
+{
+ 
     using Infrastructure.Exceptions;
     using Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Driver;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
-    #endregion using
-
-    public class EventsRepository : CalendarBaseClass<EventsRepository>, IEventsRepository
+    public class EventsRepository : BaseClass<EventsRepository>, IEventsRepository
     {
         private readonly CalendarContext _context;
         private readonly IEventBus _eventBus;

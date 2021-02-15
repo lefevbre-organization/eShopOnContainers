@@ -83,7 +83,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
             .Build();
 
 
-        static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+        static ILogger CreateSerilogLogger(IConfiguration configuration)
         {
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
             var logstashUrl = configuration["Serilog:LogstashgUrl"];
@@ -111,7 +111,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            var config = builder.Build();
+            //var config = builder.Build();
 
             //if (config.GetValue<bool>("UseVault", false))
             //{
