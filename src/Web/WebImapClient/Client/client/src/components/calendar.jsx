@@ -394,7 +394,6 @@ class Calendar extends Component {
                               <div className='control-wrapper'>
                                 <ScheduleComponent
                                       //delayUpdate='false'
-                                      timezone='Europe/Madrid'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
@@ -1383,7 +1382,7 @@ class Calendar extends Component {
             filename = values.Id;
             saveType = 'update'
         }
-
+        console.log('values.StartTime', values.StartTime)
         //Event basic data
         var event = {
             'allDay': values.IsAllDay,
@@ -1615,7 +1614,7 @@ class Calendar extends Component {
     }
 
     onPopupOpen(args) {
-
+        console.log('onPopupOpen', args)
         const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;
@@ -2023,6 +2022,7 @@ class Calendar extends Component {
                 break;
 
             case 'eventChanged':
+                    console.log('eventChanged--->', args.data[0])
                 let idEvent;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id
@@ -2351,17 +2351,18 @@ class Calendar extends Component {
     }
 
     handleScheduleOpenNewEventEditor = () => {
-        console.log('handleScheduleOpenNewEventEditor', this.state.schedule);
         var endTimeDate = new Date();
         endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
         let cellData = {
-            startTime: new Date(Date.now()),
+            startTime: new Date(),
             endTime: endTimeDate,
         };
+        console.log('handleScheduleOpenNewEventEditor', new Date(Date.now()))
         this.state.schedule.openEditor(cellData, 'Add');
     }
 
     handleScheduleOpenEditEventEditor() {
+        console.log('handleScheduleOpenEditEventEditor')
         let eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent)
         this.scheduleObj.openEditor(eventData, 'Save');
     }
