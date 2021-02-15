@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -13,6 +10,9 @@ using Microsoft.Extensions.Options;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using Model;
     public class CredentialService : BaseClass<CredentialService>, ICredentialService
     {
         private readonly IOptions<GoogleAccountSettings> settings;

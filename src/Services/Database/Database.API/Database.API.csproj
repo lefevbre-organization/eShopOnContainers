@@ -64,9 +64,6 @@
     </Content>
   </ItemGroup>
 
-  
-  <ItemGroup>
-    <Folder Include="IntegrationEvents\EventHandling\" />
-  </ItemGroup>
+ 
 
 </Project>

@@ -1,25 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Options;
+
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
-    using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
+    using Infrastructure.Services;
     using Model;
-    using Newtonsoft.Json;
-    using System.Net;
 
     [ApiController]
     [Route("api/v1/[controller]")]

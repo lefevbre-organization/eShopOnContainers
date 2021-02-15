@@ -4,9 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -16,6 +14,9 @@ using Newtonsoft.Json;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using Model;
     public class CredentialRepository : BaseClass<CredentialRepository>, ICredentialRepository
     {
         private readonly GoogleAccountContext _context;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
 {
     public static class LinqSelectExtensions
     {

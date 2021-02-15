@@ -1,7 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using Model;
     public class AuthService : BaseClass<AuthService>, IAuthService
     {
         private readonly IOptions<GoogleAccountSettings> settings;

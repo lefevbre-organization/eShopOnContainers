@@ -1,17 +1,15 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System;
+using System.Net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Options;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
-    using System;
-    using System.Net;
-    using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
+    using Infrastructure.Services;
     using Model;
 
     [ApiController]

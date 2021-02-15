@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -15,6 +14,10 @@ using RabbitMQ.Client;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
 {
+    using Infrastructure.Middlewares;
+    using Infrastructure.Repositories;
+    using Infrastructure.Services;
+
     public static class CustomExtensionsMethods
     {
         //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
@@ -22,29 +25,40 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
         //    return services;
         //}
 
-        //public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddMvc(options =>
-        //    {
-        //        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-        //    })
-        //        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-        //        .AddControllersAsServices();
+        public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
+        {
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //})
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    .AddControllersAsServices();
 
-        //    services.AddCors(options =>
-        //    {
-        //        options.AddPolicy("CorsPolicy",
-        //            builder => builder
-        //            .SetIsOriginAllowed((host) => true)
-        //            .AllowAnyMethod()
-        //            .AllowAnyHeader()
-        //            .AllowCredentials());
-        //    });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
-        //    services.AddTransient<ICentinelaService, CentinelaService>();
-        //    services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-        //    return services;
-        //}
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Repositories
+            services.AddTransient<ICredentialRepository, CredentialRepository>();
+            services.AddTransient<IAuthRepository, AuthRepository>();
+            services.AddTransient<IRevokeRepository, RevokeRepository>();
+            services.AddTransient<IScopeRepository, ScopeRepository>();
+
+            // Services
+            services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<ICredentialService, CredentialService>();
+            services.AddTransient<IRevokeService, RevokeService>();
+            services.AddTransient<IScopeService, ScopeService>();
+            return services;
+        }
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
@@ -64,10 +78,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
             return services;
         }
 
-        //public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    return services;
-        //}
+        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            return services;
+        }
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
@@ -92,7 +106,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
 
             return services;
         }
-
 
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -159,7 +172,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
             return services;
         }
 
-        public static IServiceCollection RegisterEventBus(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             var subscriptionClientName = configuration["SubscriptionClientName"];
 
@@ -183,9 +196,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Extensions
                     return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
                 });
             }
-
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-            // if needed create events
             //services.AddTransient<AddFileToUserIntegrationEventHandler>();
 
             return services;

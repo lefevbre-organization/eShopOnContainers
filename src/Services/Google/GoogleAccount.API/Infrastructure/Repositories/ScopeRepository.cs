@@ -12,7 +12,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
 {
     using Infrastructure.Exceptions;
     using Model;
-
     public class ScopeRepository : BaseClass<ScopeRepository>, IScopeRepository
     {
         private readonly GoogleAccountContext _context;

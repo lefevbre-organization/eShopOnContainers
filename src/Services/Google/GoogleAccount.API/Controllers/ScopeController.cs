@@ -2,16 +2,16 @@
 using System.Net;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
 
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Infrastructure.Services;
     using Model;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.AspNetCore.Http;
 
     [Route("api/v1/[controller]")]
     [ApiController]
