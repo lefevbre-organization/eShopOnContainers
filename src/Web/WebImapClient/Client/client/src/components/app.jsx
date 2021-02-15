@@ -64,7 +64,7 @@ import LexonComponent from '../apps/lexon_content';
 import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
-import {createCalendarUser} from "../calendar/api/calendar-api";
+//import {createCalendarUser} from "../calendar/api/calendar-api";
 
 const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
 
@@ -616,7 +616,7 @@ class App extends Component {
         delete newAccount.configAccount;
       }
 
-      await createCalendarUser(userId);
+      //await createCalendarUser(userId);
 
       addOrUpdateAccount(userId, newAccount)
         .then(() => {
