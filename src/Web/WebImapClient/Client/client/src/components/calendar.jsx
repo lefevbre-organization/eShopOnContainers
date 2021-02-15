@@ -394,6 +394,7 @@ class Calendar extends Component {
                               <div className='control-wrapper'>
                                 <ScheduleComponent
                                       //delayUpdate='false'
+                                      timezone='Europe/Madrid'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
@@ -1614,7 +1615,7 @@ class Calendar extends Component {
     }
 
     onPopupOpen(args) {
-        console.log('onPopupOpen', args)
+
         const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;
