@@ -155,6 +155,7 @@ function listEventsParser(list) {
                 ImageName: "lefebvre",
                 attendees: attendees,
                 categories: list[i].categories,
+                color: list[i].color,
             });
         }
     }
