@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services
 {
     using System.Collections.Generic;
-    using Model;
+    using Models;
 
     public interface IGoogleDriveService
     {

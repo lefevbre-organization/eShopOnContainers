@@ -1,4 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories
 {
-    using Model;
+    using Models;
 
     public interface IGoogleDriveRepository
     {

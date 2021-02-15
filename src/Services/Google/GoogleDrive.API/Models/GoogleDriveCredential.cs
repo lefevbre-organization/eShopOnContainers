@@ -1,4 +1,4 @@
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Models
 {
     
     public class User    

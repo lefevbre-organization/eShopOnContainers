@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 {
     using Infrastructure.Services;
-    using Model;
 
     [Route("api/v1/[controller]")]
     [ApiController]

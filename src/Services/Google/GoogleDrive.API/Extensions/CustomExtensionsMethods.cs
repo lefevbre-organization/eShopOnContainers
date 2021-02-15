@@ -15,6 +15,8 @@ using RabbitMQ.Client;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
 {
     using Infrastructure.Middlewares;
+    using Infrastructure.Repositories;
+    using Infrastructure.Services;
 
     public static class CustomExtensionsMethods
     {
@@ -23,29 +25,31 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
         //    return services;
         //}
 
-        //public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.AddMvc(options =>
-        //    {
-        //        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-        //    })
-        //        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-        //        .AddControllersAsServices();
+        public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
+        {
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //})
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    .AddControllersAsServices();
 
-        //    services.AddCors(options =>
-        //    {
-        //        options.AddPolicy("CorsPolicy",
-        //            builder => builder
-        //            .SetIsOriginAllowed((host) => true)
-        //            .AllowAnyMethod()
-        //            .AllowAnyHeader()
-        //            .AllowCredentials());
-        //    });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
-        //    services.AddTransient<ICentinelaService, CentinelaService>();
-        //    services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-        //    return services;
-        //}
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IGoogleDriveRepository, GoogleDriveRepository>();
+            services.AddTransient<IGoogleDriveService, GoogleDriveService>();
+            //services.AddTransient<IIdentityService, IdentityService>();
+            return services;
+        }
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
@@ -55,20 +59,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddMongoDb(
                     configuration["ConnectionString"],
-                    name: "database-mongodb-check",
+                    name: "googledrive-mongodb-check",
                     tags: new string[] { "mongodb" })
                 .AddRabbitMQ(
                     $"amqp://{configuration["EventBusConnection"]}",
-                    name: "database-rabbitmqbus-check",
+                    name: "googledrive-rabbitmqbus-check",
                     tags: new string[] { "rabbitmqbus" });
 
             return services;
         }
 
-        //public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    return services;
-        //}
+        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        {
+            return services;
+        }
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
@@ -159,7 +163,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
             return services;
         }
 
-        public static IServiceCollection RegisterEventBus(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             var subscriptionClientName = configuration["SubscriptionClientName"];
 
@@ -183,9 +187,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Extensions
                     return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
                 });
             }
-
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-            // if needed create events
             //services.AddTransient<AddFileToUserIntegrationEventHandler>();
 
             return services;
