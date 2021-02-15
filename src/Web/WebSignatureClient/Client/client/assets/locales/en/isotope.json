@@ -283,6 +283,9 @@
   "noPhoneModal": {
     "text": "The selected contact does not have an associated mobile phone."
   },
+  "multiPageErrorModal": {
+    "text": "The option 'Sign all pages' is only available with PDF files."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",

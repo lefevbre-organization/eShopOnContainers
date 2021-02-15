@@ -4,24 +4,17 @@
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    //using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     //using Microsoft.eShopOnContainers.Services.Signature.API.Model;
     using Microsoft.Extensions.Options;
     using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
     using Signature.API.Model;
     using RestSharp;
-    using Newtonsoft.Json;
-    using System.Web;
     using Microsoft.Extensions.Configuration;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
     using Newtonsoft.Json.Linq;
 
     #endregion
@@ -33,13 +26,11 @@
         private readonly IConfiguration _configuration;
         private readonly ISignaturitService _signaturitService;
         private readonly IOptions<SignatureSettings> _settings;
-        private readonly int _timeout;
 
         public SignaturitController(IConfiguration configuration, ISignaturitService signaturitService, IOptions<SignatureSettings> settings)
         {
             _configuration = configuration;
             _signaturitService = signaturitService ?? throw new ArgumentNullException(nameof(signaturitService));
-            _timeout = 5000;
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
@@ -67,14 +58,6 @@
 
             try
             {
-                //var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures.json?lefebvre_id={user}");
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.GET);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.GetSignatures(user);
 
                 return Ok(response.Content);
@@ -111,15 +94,6 @@
 
             try
             {
-                //var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures/{id}/cancel.json");
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.PATCH);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-                //request.AlwaysMultipartFormData = true;
-
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.CancelSignature(id);
 
                 return Ok(response.Content);
@@ -200,14 +174,6 @@
 
             try
             {
-                //var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures/{signatureId}/documents/{documentId}/download/signed");
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.GET);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-                //request.AlwaysMultipartFormData = true;
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.DownloadDocument(signatureId, documentId);
 
                 var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
@@ -248,14 +214,6 @@
 
             try
             {
-                //var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures/{signatureId}/documents/{documentId}/download/audit_trail");
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.GET);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-                //request.AlwaysMultipartFormData = true;
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.DownloadTrail(signatureId, documentId);
 
                 var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
@@ -336,13 +294,6 @@
 
             try
             {
-                //var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures/{signatureId}/reminder.json");
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.POST);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.sendReminder(signatureId);
 
                 return Ok(response.Content);
@@ -381,33 +332,6 @@
 
             try
             {
-                //var client = new RestClient($"https://api.sandbox.signaturit.com/v3/brandings.json");
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.POST);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-
-                //request.AddParameter("application_texts[sign_button]", brandingInfo.application_texts.sign_button);
-                //request.AddParameter("application_texts[send_button]", brandingInfo.application_texts.send_button);
-                //request.AddParameter("application_texts[open_sign_button]", brandingInfo.application_texts.open_sign_button);
-                //request.AddParameter("application_texts[open_email_button]", brandingInfo.application_texts.open_email_button);
-                //request.AddParameter("application_texts[terms_and_conditions]", brandingInfo.application_texts.terms_and_conditions);
-                //request.AddParameter("layout_color", brandingInfo.layout_color);
-                //request.AddParameter("logo", brandingInfo.logo);
-                //request.AddParameter("signature_color", brandingInfo.signature_color);
-                //request.AddParameter("templates[signatures_request]", brandingInfo.templates.signatures_request);
-                //request.AddParameter("templates[signatures_receipt]", brandingInfo.templates.signatures_receipt);
-                //request.AddParameter("templates[pending_sign]", brandingInfo.templates.pending_sign);
-                //request.AddParameter("templates[document_canceled]", brandingInfo.templates.document_canceled);
-                //request.AddParameter("templates[request_expired]", brandingInfo.templates.request_expired);
-                //request.AddParameter("text_color", brandingInfo.text_color);
-                //request.AddParameter("show_survey_page", brandingInfo.show_survey_page);
-                //request.AddParameter("show_csv", brandingInfo.show_csv);
-                //request.AddParameter("show_biometric_hash", brandingInfo.show_biometric_hash);
-                //request.AddParameter("show_welcome_page", brandingInfo.show_welcome_page);
-
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.CreateBranding(brandingInfo);
 
                 if (response.IsSuccessful)

@@ -69,11 +69,6 @@ namespace Signature.API.Infrastructure
 
         private static void ClassMapping()
         {
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(SignatureUser))) { BsonClassMap.RegisterClassMap6SignatureUser>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(LexUser))) { BsonClassMap.RegisterClassMap<LexUser>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(SignatureMaster))) { BsonClassMap.RegisterClassMap<SignatureMaster>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(Signatures))) { BsonClassMap.RegisterClassMap<Signatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserSignatures))) { BsonClassMap.RegisterClassMap<UserSignatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseBrandings))) { BsonClassMap.RegisterClassMap<BaseBrandings>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserEmails))) { BsonClassMap.RegisterClassMap<UserEmails>(); }
@@ -82,13 +77,7 @@ namespace Signature.API.Infrastructure
             if (!BsonClassMap.IsClassMapRegistered(typeof(SignEventInfo))) { BsonClassMap.RegisterClassMap<SignEventInfo>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(EmailEventInfo))) { BsonClassMap.RegisterClassMap<EmailEventInfo>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(SmsEventInfo))) { BsonClassMap.RegisterClassMap<SmsEventInfo>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(Signature.API.Model.EventInfo))) { BsonClassMap.RegisterClassMap<Signature.API.Model.EventInfo>(); }
         }
-
-        //public IMongoCollection<SignatureUser> SignatureUsers
-        //{
-        //    get { return Database.GetCollection<SignatureUser>(_settings.Value.Collection); }
-        //}
 
         public IMongoCollection<LexUser> LexUsers
         {
