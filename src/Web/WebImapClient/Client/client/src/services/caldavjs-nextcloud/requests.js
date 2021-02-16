@@ -123,6 +123,17 @@ xmlns:card="urn:ietf:params:xml:ns:carddav">
   `.trim();
 }
 
+requests.contacts = function (args) {
+  return `
+  <card:addressbook-query xmlns:d="DAV:" xmlns:card="urn:ietf:params:xml:ns:carddav">
+  <d:prop>
+      <d:getetag />
+      <card:address-data />
+  </d:prop>
+</card:addressbook-query>
+  `.trim();
+}
+
 
 
 export default requests;

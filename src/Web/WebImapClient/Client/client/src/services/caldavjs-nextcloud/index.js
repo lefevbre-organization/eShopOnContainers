@@ -47,6 +47,7 @@ export default class Caldavjs {
     this.createEvent = this.createEvent.bind(this);
     this.deleteEvent = this.deleteEvent.bind(this);
     this.addressbooks = this.addressbooks.bind(this);
+    this.contacts = this.contacts.bind(this);
   };
 
   async sendRequest(options) {
@@ -422,7 +423,7 @@ export default class Caldavjs {
   }
 
     /**
-   * Get contacts  
+   * Retrieving addressbook information
    * 
    * @param {object} required 
    ** @param {string} filename required
@@ -453,4 +454,40 @@ export default class Caldavjs {
       })
   }
 
+  /**
+   * Get contacts  
+   * 
+   * @param {object} required 
+   ** @param {string} filename required
+   *
+   * @return {object} 
+   ** @return {object} addressbooks
+   *** @return {string} href
+   *** @return {object} ctag
+    *** @return {string} name
+   */
+  contacts(input) {
+    let self = this;
+    return this.sendRequest({
+        url: input.filename,
+        method: 'REPORT',
+        headers: {
+          Depth: 1
+        },
+        data: requests.contacts({}),
+      })
+      .then(contacts => {
+        contacts = contacts.responses.map(contact => {
+          return self.extractData(contact, [
+            ['getetag', 'etag'],
+            ['address-data', 'address']
+          ]);
+        });
+        return {
+          contacts
+        };
+      })
+  }
+
 }
+

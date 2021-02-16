@@ -278,18 +278,6 @@ function listCalendarParser(list) {
     return items;
 }
 
-
-// Get contacts
-export const getContactList = async () => {
-    const contacts = await caldav.addressbooks({
-        filename: '/addressbooks/users/admin/contacts/' 
-    });    
-    console.log('contactList', contacts)
-
-    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
-};
-
-
 //loadCalendarEvents(calendar, checked) {
 //    listEvents(calendar/*, this.scheduleObj.selectedDate*/)
 //        .then(result => {
@@ -303,3 +291,23 @@ export const getContactList = async () => {
 //        })
 
 //}
+
+// Retrieving addressbook information
+export const getAddressbooks = async () => {
+    const Addressbooks = await caldav.addressbooks({
+        filename: '/addressbooks/users/admin/contacts/' 
+    });    
+    console.log('Addressbooks', Addressbooks)
+
+    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
+};
+
+// Get contacts
+export const getContactList = async () => {
+    const contacts = await caldav.contacts({
+        filename: '/addressbooks/users/admin/contacts/' 
+    });    
+    console.log('contactList', contacts)
+
+    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
+};
