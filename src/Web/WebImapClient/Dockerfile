@@ -6,18 +6,15 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY ["src/Web/WebImapClient/Client/package.json", "src/Web/WebImapClient/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
-COPY ["src/Web/WebImapClient/Client/", "./"]
+COPY ["src/Web/WebImapClient/Client/client/package.json", "src/Web/WebImapClient/Client/client/package-lock.json", "./"]
+RUN ["npm", "install", "--silent"]
+COPY ["src/Web/WebImapClient/Client/client", "./"]
 RUN ["npm", "run", "build", "--silent"]
 #RUN echo $(ls -1 /web/build)
  #RUN ls -lha /web
  #RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
-WORKDIR /src
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
 COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"

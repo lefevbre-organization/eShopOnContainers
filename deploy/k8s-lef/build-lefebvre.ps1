@@ -7,27 +7,23 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "calendar.api", "account.api", "centinela.api"
-        # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
-        #  "database.api", 
-        # "googleaccount.api", "googledrive.api"        
-        # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient",
-        # "webdatabaseclient", 
+        #  "webimapclient"
+        # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",  "database.api", 
+        # "googleaccount.api", "googledrive.api",        
+        # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
-        # "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", # "webdatabaseapigw", 
-        # "webstatus"
+        "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw",  
+        "webstatus"
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "calendar.api", "account.api", "centinela.api"
-        # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",
-        #  "database.api",
-        # "googleaccount.api", "googledrive.api" 
-        # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient",
-        # "webdatabaseclient", 
+        #  "webimapclient"
+        # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api",
+        # "googleaccount.api", "googledrive.api" ,
+        # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
-        # "ocelotapigw", 
-        # "webstatuslef"
+        "ocelotapigw", 
+        "webstatuslef"
         ),
     [parameter(Mandatory=$false)][string]$imageEnv="core5-40",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",

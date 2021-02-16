@@ -6,9 +6,13 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY ["src/Web/WebSignatureClient/Client/package.json", "src/Web/WebSignatureClient/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
-COPY ["src/Web/WebSignatureClient/Client/", "./"]
+#COPY src/Web/WebSignatureClient/Client/client .
+#RUN npm install
+#RUN npm run build
+COPY ["src/Web/WebSignatureClient/Client/client", "./"]
+#COPY ["src/Web/WebSignatureClient/Client/client/package.json", "./"]
+RUN ["npm", "install", "--silent"]
+#COPY ["src/Web/WebSignatureClient/Client/client", "./"]
 RUN ["npm", "run", "build", "--silent"]
 #RUN ls -lha /web/build
 

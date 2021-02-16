@@ -6,9 +6,10 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY ["src/Web/WebCentinelaClient/Client/package.json", "src/Web/WebCentinelaClient/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
 COPY ["src/Web/WebCentinelaClient/Client/", "./"]
+#COPY ["src/Web/WebCentinelaClient/Client/package.json", "src/Web/WebCentinelaClient/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--silent"]
+#COPY ["src/Web/WebCentinelaClient/Client/", "./"]
 RUN ["npm", "run", "build", "--silent"]
 # RUN ls -lha /web
 # RUN ls -lha /web/build

@@ -6,9 +6,10 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY ["src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Client/package.json", "src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
 COPY ["src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Client/", "./"]
+#COPY ["src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Client/package.json", "src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--silent"]
+#COPY ["src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Client/", "./"]
 RUN ["npm", "run", "build", "--silent"]
 #RUN ls -lha /web
 

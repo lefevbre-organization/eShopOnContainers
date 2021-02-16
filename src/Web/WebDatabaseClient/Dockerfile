@@ -7,7 +7,7 @@ EXPOSE 80
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
 COPY ["src/Web/WebDatabaseClient/Client/package.json", "src/Web/WebDatabaseClient/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
+RUN ["npm", "install", "--silent"]
 COPY ["src/Web/WebDatabaseClient/Client/", "./"]
 RUN ["npm", "run", "build", "--silent"]
 # RUN ls -lha /web
