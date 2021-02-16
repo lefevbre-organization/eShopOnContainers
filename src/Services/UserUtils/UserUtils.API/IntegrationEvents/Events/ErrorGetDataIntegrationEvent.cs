@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtis.API.IntegrationsEvents.Events
 {
-    public class ErrorGetDataIntegrationEvent : IntegrationEvent
+    public record ErrorGetDataIntegrationEvent : IntegrationEvent
     {
         public string UserId { get; set; }
 

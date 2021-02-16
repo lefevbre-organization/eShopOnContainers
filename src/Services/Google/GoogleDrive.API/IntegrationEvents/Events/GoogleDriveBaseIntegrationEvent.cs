@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.IntegrationsEvents.Events
 {
-    public class GoogleDriveBaseIntegrationEvent : IntegrationEvent
+    public record GoogleDriveBaseIntegrationEvent : IntegrationEvent
     {
         public long IdAppNavision { get; set; }
         public string UserId { get; set; }

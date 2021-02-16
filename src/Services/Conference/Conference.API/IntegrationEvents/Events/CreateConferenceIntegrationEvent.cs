@@ -1,9 +1,8 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEvents.Events
 {
-    public class CreateConferenceIntegrationEvent : IntegrationEvent
+    public record CreateConferenceIntegrationEvent : IntegrationEvent
     {
         public string UserId { get; set; }
 
@@ -16,74 +15,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEve
         {
             UserId = userId;
             ConferenceId = conferenceId;
-        }
-    }
-
-    public class AddUserConferenceIntegrationEvent : IntegrationEvent
-    {
-        public string User { get; set; }
-        public short IdApp { get; set; }
-
-        public AddUserConferenceIntegrationEvent(
-            string user,
-            short idApp)
-        {
-            User = user;
-            IdApp = idApp;
-        }
-    }
-
-    public class CreateRoomIntegrationEvent : IntegrationEvent
-    {
-        public string User { get; set; }
-        public short IdApp { get; set; }
-        public Room RoomData { get; set; }
-
-        public CreateRoomIntegrationEvent(
-            string user,
-            short idApp,
-            Room room)
-        {
-            User = user;
-            IdApp = idApp;
-            RoomData = room;
-        }
-    }
-
-    public class ManageRoomIntegrationEvent : IntegrationEvent
-    {
-        public string User { get; set; }
-        public short IdApp { get; set; }
-        public Room RoomData { get; set; }
-        public Room RoomDataOld { get; set; }
-
-        public ManageRoomIntegrationEvent(
-            string user,
-            short idApp,
-            Room room,
-            Room oldRoom)
-        {
-            User = user;
-            IdApp = idApp;
-            RoomData = room;
-            RoomDataOld = oldRoom;
-        }
-    }
-
-    public class DeleteRoomIntegrationEvent : IntegrationEvent
-    {
-        public string User { get; set; }
-        public short IdApp { get; set; }
-        public string RoomId { get; set; }
-
-        public DeleteRoomIntegrationEvent(
-            string user,
-            short idApp,
-            string roomId)
-        {
-            User = user;
-            IdApp = idApp;
-            RoomId = roomId;
         }
     }
 }

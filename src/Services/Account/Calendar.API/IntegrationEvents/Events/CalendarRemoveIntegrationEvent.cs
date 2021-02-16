@@ -2,7 +2,7 @@
 {
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class CalendarRemoveIntegrationEvent : IntegrationEvent
+    public record CalendarRemoveIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
         public short IdApp { get; set; }

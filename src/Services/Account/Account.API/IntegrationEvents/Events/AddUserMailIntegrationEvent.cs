@@ -3,7 +3,7 @@
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class AddUserMailIntegrationEvent : IntegrationEvent
+    public record AddUserMailIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 
@@ -18,7 +18,7 @@
         }
     }
 
-    public class AddRawMessageIntegrationEvent : IntegrationEvent
+    public record AddRawMessageIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 

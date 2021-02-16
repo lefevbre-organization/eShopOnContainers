@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.API.IntegrationsEvents.Events
 {
-    public class GoogleAccountBaseIntegrationEvent : IntegrationEvent
+    public record GoogleAccountBaseIntegrationEvent : IntegrationEvent
     {
         public long IdAppNavision { get; set; }
         public string UserId { get; set; }

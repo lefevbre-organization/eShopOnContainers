@@ -3,7 +3,7 @@
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class UpsertAccountIntegrationEvent : IntegrationEvent
+    public record UpsertAccountIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 

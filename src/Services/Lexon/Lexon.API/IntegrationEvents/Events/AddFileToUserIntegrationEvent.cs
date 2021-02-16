@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events
 {
-    public class AddFileToUserIntegrationEvent : IntegrationEvent
+    public record AddFileToUserIntegrationEvent : IntegrationEvent
     {
         public string UserId { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.IntegrationsEvents.Events
 {
-    public class CentinelaBaseIntegrationEvent : IntegrationEvent
+    public record CentinelaBaseIntegrationEvent : IntegrationEvent
     {
         public long IdAppNavision { get; set; }
         public string UserId { get; set; }

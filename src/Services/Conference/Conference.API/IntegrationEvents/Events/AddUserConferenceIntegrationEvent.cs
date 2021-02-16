@@ -1,13 +1,13 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEvents.Events
 {
-    public record AddUserGoogleAccountIntegrationEvent : IntegrationEvent
+    public record AddUserConferenceIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
         public short IdApp { get; set; }
 
-        public AddUserGoogleAccountIntegrationEvent(
+        public AddUserConferenceIntegrationEvent(
             string user,
             short idApp)
         {
@@ -15,7 +15,4 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Integration
             IdApp = idApp;
         }
     }
-
-
-
 }
