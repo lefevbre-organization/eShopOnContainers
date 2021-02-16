@@ -353,6 +353,7 @@ class Calendar extends Component {
                   <MainBar
                       sideBarCollapsed={false}
                       sideBarToggle={this.toggleSideBar}
+                      hiddeSearch={this.layoutIframe}
               />
 
               <div id='mainnav-app' />
