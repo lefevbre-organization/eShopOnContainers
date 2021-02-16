@@ -1,21 +1,12 @@
-﻿namespace Signature.API.Infrastructure.Repositories
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
 {
     #region using
-    using Signature.API.IntegrationsEvents.Events;
-    using Signature.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+    using Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using MongoDB.Bson;
-    using MongoDB.Bson.Serialization;
     using MongoDB.Driver;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
 
     #endregion

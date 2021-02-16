@@ -1,4 +1,4 @@
-﻿namespace Signature.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API
 {
     public class SignatureSettings
     {

@@ -1,4 +1,4 @@
-﻿namespace Signature.API.IntegrationsEvents.Events
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.IntegrationsEvents.Events
 {
     public class DissociateMailFromEntityIntegrationEvent: SignatureBaseIntegrationEvent
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using System.Threading.Tasks;
 
-namespace Signature.API.IntegrationsEvents
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.IntegrationsEvents
 {
     public interface ISignatureIntegrationEventService
     {

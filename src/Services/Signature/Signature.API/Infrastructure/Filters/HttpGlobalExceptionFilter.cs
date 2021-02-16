@@ -1,14 +1,15 @@
-﻿using Signature.API.Infrastructure.ActionResults;
-using Signature.API.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Signature.API.Infrastructure.Filters
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Filters
 {
+    using ActionResults;
+    using Exceptions;
+
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
         private readonly IHostingEnvironment env;

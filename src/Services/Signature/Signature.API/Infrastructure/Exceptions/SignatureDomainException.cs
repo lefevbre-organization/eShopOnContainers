@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Signature.API.Infrastructure.Exceptions
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

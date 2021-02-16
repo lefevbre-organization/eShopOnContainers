@@ -1,21 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using RestSharp;
-using Signature.API.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using Signature.API.Infrastructure.Repositories;
 using Newtonsoft.Json;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using MongoDB.Driver;
 
-namespace Signature.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
+    using Model;
+    using Infrastructure.Repositories;
     public class SignaturitService : ISignaturitService
     {
 

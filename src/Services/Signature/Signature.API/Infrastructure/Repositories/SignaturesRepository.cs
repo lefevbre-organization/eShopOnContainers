@@ -1,11 +1,7 @@
-﻿namespace Signature.API.Infrastructure.Repositories
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
 {
     #region using
-    using Signature.API.IntegrationsEvents.Events;
-    using Signature.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+    using Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -15,12 +11,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.WindowsAzure.Storage;
-    using System.Net.NetworkInformation;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
 
     #endregion
     public class SignaturesRepository : BaseClass<SignaturesRepository>, ISignaturesRepository

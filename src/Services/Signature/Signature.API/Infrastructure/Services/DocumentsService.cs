@@ -1,32 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Signature.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
     #region Using
-    using Signature.API;
-    using Signature.API.Model;
-    using Signature.API.Infrastructure.Repositories;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Model;
+    using Repositories;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Text;
     using System.Threading.Tasks;
-    using MongoDB.Bson;
-    using RestSharp;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json.Linq;
     #endregion
 
     public class DocumentsService : IDocumentsService

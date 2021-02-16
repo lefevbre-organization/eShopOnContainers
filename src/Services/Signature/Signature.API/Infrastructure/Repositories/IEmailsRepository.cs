@@ -1,11 +1,10 @@
-﻿namespace Signature.API.Infrastructure.Repositories
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
 {
     #region using
-    using Signature.API.Model;
+    using Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using MongoDB.Bson;
     #endregion
 
     public interface IEmailsRepository

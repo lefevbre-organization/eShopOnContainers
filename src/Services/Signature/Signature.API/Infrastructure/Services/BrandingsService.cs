@@ -1,12 +1,11 @@
-﻿namespace Signature.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
     #region Using
 
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Options;
-    using Signature.API;
-    using Signature.API.Infrastructure.Repositories;
-    using Signature.API.Model;
+    using Infrastructure.Repositories;
+    using Model;
     using System;
     using System.Threading.Tasks;
 

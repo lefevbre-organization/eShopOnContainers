@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Signature.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Extensions
 {
     public static class LinqSelectExtensions
     {

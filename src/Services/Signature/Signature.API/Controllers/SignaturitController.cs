@@ -1,27 +1,18 @@
-﻿namespace Signature.API.Controllers
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Controllers
 {
     #region Usings
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    //using Microsoft.eShopOnContainers.Services.Signature.API.Model;
     using Microsoft.Extensions.Options;
     using System;
-    using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
     using Signature.API.Model;
     using RestSharp;
-    using Newtonsoft.Json;
-    using System.Web;
     using Microsoft.Extensions.Configuration;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
     using Newtonsoft.Json.Linq;
 
     #endregion
