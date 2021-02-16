@@ -1,13 +1,8 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,6 +12,12 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using Lexon.API;
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using Models;
+    using MySql.Data.MySqlClient;
+
     public class ActuationsService : LexonBaseClass<ActuationsService>, IActuationsService
     {
         public readonly IUsersRepository _usersRepository;

@@ -1,13 +1,10 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,6 +12,9 @@ using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
+    using Models;
+    using Infrastructure.Services;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class ActuationsController : ControllerBase
@@ -95,7 +95,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetActuationsAsync(
+            var result = await _svc.GetActuationsAsync(
                 idType: idType,
                 idCategory: idCategory,
                 idUser: idUser,
@@ -104,8 +104,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
                 filter: search,
                 pageSize,
                 pageIndex);
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-
+            
             if (result.errors.Count() > 0 && result.data?.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
@@ -175,7 +174,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<List<LexAppointment>> result = await _svc.GetAppointmentsAsync(
+            var result = await _svc.GetAppointmentsAsync(
                 idUser: idUser,
                 bbdd: bbdd,
                 env: env,
@@ -232,7 +231,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid isuser, bbdd, id and idActuation to vinculate action to appointment ");
 
 
-            Result<int> result = await _svc.AddAppointmentActionAsync(idAppointment, idAction, env, idUser, bbdd);
+            var result = await _svc.AddAppointmentActionAsync(idAppointment, idAction, env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -251,7 +250,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid iduser, bbdd and id");
 
 
-            Result<int> result = await _svc.RemoveAppointmentActionAsync(idRelation, env, idUser, bbdd);
+            var result = await _svc.RemoveAppointmentActionAsync(idRelation, env, idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -274,7 +273,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             if (pageIndex == 0) pageIndex = 1;
             if (pageSize == 0) pageSize = 10;
 
-            Result<PaginatedItemsViewModel<LexActuation>> result = await _svc.GetRelationsOfAppointmentAsync(idEvent, idUser, env, bbdd, pageSize, pageIndex);
+            var result = await _svc.GetRelationsOfAppointmentAsync(idEvent, idUser, env, bbdd, pageSize, pageIndex);
 
             if (result.errors.Count() > 0 && result.data?.Count == 0)
             {

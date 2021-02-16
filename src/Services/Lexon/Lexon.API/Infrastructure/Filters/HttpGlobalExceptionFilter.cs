@@ -1,6 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.ActionResults;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -9,6 +7,9 @@ using System.Net;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Filters
 {
+    using ActionResults;
+    using Exceptions;
+
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
         private readonly IHostingEnvironment env;

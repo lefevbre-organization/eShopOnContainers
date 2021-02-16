@@ -98,7 +98,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
             if (!string.IsNullOrEmpty(pathBase))
             {
                 loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
-
                 app.UsePathBase(pathBase);
             }
 

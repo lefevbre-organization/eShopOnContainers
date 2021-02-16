@@ -1,5 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
@@ -8,6 +7,8 @@ using System.Data;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using Exceptions;
+
     public class LexonBaseClass<T>: BaseClass<T>
     {
         public LexonBaseClass(ILogger<T> logger):base(logger)

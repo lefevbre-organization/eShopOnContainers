@@ -1,22 +1,21 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using Lexon.API;
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using MySql.Data.MySqlClient;
+
     public class AdvisorsService : LexonBaseClass<AdvisorsService>, IAdvisorsService
     {
         public readonly IUsersRepository _usersRepository;

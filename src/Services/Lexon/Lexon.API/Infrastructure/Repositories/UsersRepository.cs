@@ -1,6 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -17,6 +15,9 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {
+    using IntegrationsEvents.Events;
+    using Models;
+
     public class UsersRepository : BaseClass<UsersRepository>, IUsersRepository
     {
         private readonly LexonContext _context;
@@ -582,24 +583,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
         public async Task<Result<bool>> UpsertCompaniesAsync(Result<List<LexCompany>> companiesToInsert, string idUser)
         {
             var result = new Result<bool>();
-            //var companiesToInsert = new List<LexCompany>();
             var filterUser = GetFilterLexUser(idUser);
 
             try
             {
                 var user = await _context.LexUsers.Find(filterUser).FirstOrDefaultAsync();
-
-                //if (user != null)
-                //{
-                //    foreach (var comp in lexUser.data.companies)
-                //    {
-                //        var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
-                //        if (companySearch == 0)
-                //        {
-                //            companiesToInsert.Add(comp);
-                //        }
-                //    }
-                //}
 
                 var update = Builders<LexUser>.Update.AddToSetEach(x => x.companies, companiesToInsert.data?.ToArray());
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(filterUser, update);

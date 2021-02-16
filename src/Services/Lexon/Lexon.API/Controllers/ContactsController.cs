@@ -1,20 +1,17 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
+    using Models;
+    using Infrastructure.Services;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class ContactsController : ControllerBase
@@ -66,7 +63,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
                 classification.ContactList == null || classification.ContactList.GetLength(0) <= 0)
                 return BadRequest("values invalid. Must be a valid idType, idmail, idRelated and some contacts to add in a actuation");
 
-            Result<int> result = await _svc.AddRelationContactsMailAsync(env, idUser, bbdd, classification);
+            var result = await _svc.AddRelationContactsMailAsync(env, idUser, bbdd, classification);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -86,7 +83,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             if (idContact <= 0 || idType <= 0)
                 return BadRequest("values invalid. Must be a valid idType and idEntity to get de Entity");
 
-            Result<LexContact> result = await _svc.GetContactAsync(env, idUser, bbdd, idType, idContact);
+            var result = await _svc.GetContactAsync(env, idUser, bbdd, idType, idContact);
             return Ok(result);
         }
 
@@ -103,11 +100,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             )
         {
 
-            Result<PaginatedItemsViewModel<LexContact>> result = await _svc.GetAllContactsAsync(env, idUser, bbdd, null, pageIndex, pageSize);
+            var result = await _svc.GetAllContactsAsync(env, idUser, bbdd, null, pageIndex, pageSize);
             return Ok(result);
         }
-
-
 
 
         #endregion Contacts

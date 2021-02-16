@@ -1,8 +1,4 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.EventHandling;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -14,24 +10,29 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
+using Microsoft.OpenApi.Models;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Extensions
 {
+    using Infrastructure.Filters;
+    using Infrastructure.Repositories;
+    using IntegrationsEvents.EventHandling;
+    using Infrastructure.Services;
     public static class CustomExtensionsMethods
     {
-        public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //})
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    .AddControllersAsServices();
 
             services.AddCors(options =>
             {
@@ -99,19 +100,36 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSwaggerGen(options =>
+            services.AddSwaggerGen(op =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                //options.DescribeAllEnumsAsStrings();
+                op.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Lefebvre Now - Lexon HTTP API",
                     Version = "v1",
                     Description = "The Lexon Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    TermsOfService = "Terms Of Service"
+                    //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
             });
+
+            //c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+            //{
+            //    Type = SecuritySchemeType.OAuth2,
+            //    Flows = new OpenApiOAuthFlows()
+            //    {
+            //        Implicit = new OpenApiOAuthFlow()
+            //        {
+            //            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+            //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+            //            Scopes = new Dictionary<string, string>()
+            //            {
+            //                { "lexon", "Lexon API" }
+            //            }
+            //        }
+            //    }
+            //});
 
             return services;
         }
@@ -138,12 +156,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Extensions
 
                     if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
                         factory.Password = configuration["EventBusPassword"];
-
-                    //if (settings.EventBus.Port != 0)
-                    //    factory.Port = settings.EventBus.Port;
-
-                    //if (!string.IsNullOrEmpty(settings.EventBus.VirtualHost))
-                    //    factory.VirtualHost = settings.EventBus.VirtualHost;
 
                     var retryCount = settings.EventBusRetryCount != 0 ? settings.EventBusRetryCount : 5;
 
