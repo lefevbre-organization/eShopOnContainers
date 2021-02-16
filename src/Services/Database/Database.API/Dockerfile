@@ -58,7 +58,7 @@ COPY "src/Addon/Centinela/Office365/WebOffice365AddonCentinela/WebOffice365Addon
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 COPY "NuGet.config" "NuGet.config"
 
-RUN dotnet restore "eLefebvreOnContainers-ServicesAndWebApps.sln"
+RUN ["dotnet", "restore", "eLefebvreOnContainers-ServicesAndWebApps.sln"]
 
 COPY . .
 WORKDIR /src/src/Services/Database/Database.API

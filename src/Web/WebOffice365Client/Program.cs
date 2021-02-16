@@ -11,10 +11,10 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebOffice
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            CreateHostBuilder(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHost CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
              .UseStartup<Startup>()
                 .UseContentRoot(Directory.GetCurrentDirectory())
@@ -27,7 +27,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebOffice
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     builder.AddConsole();
                     builder.AddDebug();
-                    builder.AddAzureWebAppDiagnostics();
+                    //builder.AddAzureWebAppDiagnostics();
                 })
                 //.UseApplicationInsights()
                 .UseSerilog((builderContext, config) =>

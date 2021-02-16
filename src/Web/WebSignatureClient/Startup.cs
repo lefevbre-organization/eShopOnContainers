@@ -1,5 +1,4 @@
 ﻿using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Clients.WebSignature.Infrastructure;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -14,6 +13,8 @@ using System.IO;
 
 namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
 {
+    using Infrastructure;
+    
     public class Startup
     {
         public Startup(IConfiguration configuration)

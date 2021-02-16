@@ -27,7 +27,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     builder.AddConsole();
                     builder.AddDebug();
-                    builder.AddAzureWebAppDiagnostics();
+                    //builder.AddAzureWebAppDiagnostics();
                 })
                 //.UseApplicationInsights()
                 .UseSerilog((builderContext, config) =>
