@@ -46,6 +46,7 @@ export default class Caldavjs {
     this.getChanges = this.getChanges.bind(this);
     this.createEvent = this.createEvent.bind(this);
     this.deleteEvent = this.deleteEvent.bind(this);
+    this.addressbooks = this.addressbooks.bind(this);
   };
 
   async sendRequest(options) {
@@ -418,6 +419,39 @@ export default class Caldavjs {
    */
   deleteEvent(input) {
     return this.deleteCalendar(input);
+  }
+
+    /**
+   * Get contacts  
+   * 
+   * @param {object} required 
+   ** @param {string} filename required
+   ** @param {string} syncToken required
+   *
+   * @return {object} 
+   ** @return {string} syncToken
+   ** @return {object} changes
+   *** @return {string} href
+   *** @return {string} etag
+   */
+  addressbooks(input) {
+    let self = this;
+    return this.sendRequest({
+        url: input.filename,
+        method: 'PROPFIND',
+        data: requests.addressbooks({}),
+      })
+      .then(addressbooks => {
+        addressbooks = addressbooks.responses.map(addressbook => {
+          return self.extractData(addressbook, [
+            ['getctag', 'ctag'],
+            ['displayname', 'name']
+          ]);
+        });
+        return {
+          addressbooks
+        };
+      })
   }
 
 }

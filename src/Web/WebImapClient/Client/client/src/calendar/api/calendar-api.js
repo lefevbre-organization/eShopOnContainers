@@ -94,7 +94,6 @@ export const getEventList = async (calendar, selectedDate) => {
 
 // Create and update event
 export const addCalendarEvent = async (calendar, event) => { 
-    console.log('addCalendarEvent --->', event)
     if(event.saveType === 'new')  {
         const date = moment(event.start).add(1, 'days');
         event.start = date._d;
@@ -278,6 +277,17 @@ function listCalendarParser(list) {
     items = ({ items: listParse });
     return items;
 }
+
+
+// Get contacts
+export const getContactList = async () => {
+    const contacts = await caldav.addressbooks({
+        filename: '/addressbooks/users/admin/contacts/' 
+    });    
+    console.log('contactList', contacts)
+
+    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
+};
 
 
 //loadCalendarEvents(calendar, checked) {
