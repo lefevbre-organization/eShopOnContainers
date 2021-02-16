@@ -1,5 +1,8 @@
 ﻿import Caldav from '../../services/caldavjs-nextcloud';
 import moment from 'moment';
+import axios from 'axios';
+import base64 from 'base-64';
+import utf8 from 'utf8';
 // import Caldav from 'caldavjs-nextcloud';
 
 const CalendarColors = [
@@ -291,5 +294,26 @@ function listCalendarParser(list) {
 //        .catch(error => {
 //            console.log('error ->', error);
 //        })
-
 //}
+
+export const createCalendarUser = async (name) => {
+    const auth = base64.encode(utf8.encode(`${window.NEXTCOUD_ADMIN_USERNAME}:${window.NEXTCLOUD_ADMIN_PASSWD}`));
+    const params = new URLSearchParams();
+    params.append('userid', name);
+    params.append('password', window.NEXTCLOUD_USERS_PASSWD);
+
+    const response = await axios.post(
+        'http://localhost:8080/ocs/v1.php/cloud/users',
+        params,
+        {
+            headers: {
+                'OCS-APIRequest':'true',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                Authorization: `Basic ${auth}`
+            }
+        }
+    );
+    return response;
+};
+
