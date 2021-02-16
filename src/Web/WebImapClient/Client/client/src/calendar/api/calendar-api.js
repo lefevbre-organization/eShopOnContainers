@@ -97,9 +97,6 @@ export const addCalendarEvent = async (calendar, event) => {
     if(event.saveType === 'new')  {
         const date = moment(event.start).add(1, 'days');
         event.start = date._d;
-    } else {
-        const date = moment(event.start).add(1, 'days');
-        event.start = date._d;
     }
     const response = await caldav.createEvent(event);    
     return response;    
@@ -298,8 +295,6 @@ export const getAddressbooks = async () => {
         filename: '/addressbooks/users/admin/contacts/' 
     });    
     console.log('Addressbooks', Addressbooks)
-
-    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
 
 // Get contacts
@@ -308,6 +303,45 @@ export const getContactList = async () => {
         filename: '/addressbooks/users/admin/contacts/' 
     });    
     console.log('contactList', contacts)
-
-    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
+    return listContactParser(contacts.contacts.filter((c) => c.etag !== undefined))
 };
+
+function listContactParser(list) {
+    let listParse = [];
+    console.log('listContactParser', list)
+    // if (list.length > 0) {
+    //     for (let i = 0; i < list.length; i++) {
+    //         let roll = "owner";
+
+    //         let primary = false;
+    //         let color = "";
+    //         if(list[i].color) {
+    //             color = list[i].color._;
+    //         } else {
+    //             color = "#0693e3";
+    //         }
+            
+    //         let selected = true
+    //         if (i > 0) {
+    //             selected = false
+    //         }
+               
+    //         listParse.push({
+    //             accessRole: roll,
+    //             backgroundColor: color,                         
+    //             colorId: color,
+    //             defaultReminders: [],
+    //             id: list[i].href,
+    //             primary: primary,
+    //             selected:selected,
+    //             summary: list[i].name,
+    //             description: list[i].description,
+    //             timeZone: "Europe/Madrid",
+    //         });
+    //     }
+    // }
+
+    // let items;
+    // items = ({ items: listParse });
+    // return items;
+}
