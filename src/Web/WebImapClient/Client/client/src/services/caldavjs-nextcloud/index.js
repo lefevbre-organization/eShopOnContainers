@@ -426,13 +426,12 @@ export default class Caldavjs {
    * 
    * @param {object} required 
    ** @param {string} filename required
-   ** @param {string} syncToken required
    *
    * @return {object} 
-   ** @return {string} syncToken
-   ** @return {object} changes
+   ** @return {object} addressbooks
    *** @return {string} href
-   *** @return {string} etag
+   *** @return {object} ctag
+    *** @return {string} name
    */
   addressbooks(input) {
     let self = this;
