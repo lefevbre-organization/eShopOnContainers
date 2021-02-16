@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { loadCldr, L10n, setCulture } from "@syncfusion/ej2-base";
+import { loadCldr, L10n, setCulture } from '@syncfusion/ej2-base';
 import currencies from 'cldr-data/main/es/currencies.json';
 import gregorian from 'cldr-data/main/es/ca-gregorian.json';
 import numbers from 'cldr-data/main/es/numbers.json';
@@ -29,6 +29,7 @@ export class Step1 extends React.Component {
     this.onChangeType = this.onChangeType.bind(this);
     this.onChangeStartDate = this.onChangeStartDate.bind(this);
     this.onChangeEndDate = this.onChangeEndDate.bind(this);
+    this.onCalendarTemplate = this.onCalendarTemplate.bind(this)
   }
 
   async componentDidMount() {
@@ -83,7 +84,7 @@ export class Step1 extends React.Component {
     this.props.onChangeDates(this.startDate, this.endDate);
   }
 
-  itemTemplate(data) {
+  onCalendarTemplate(data) {
     return (
       <div>
         <span style={{background: data.backgroundColor, padding: '0px 10px 3px', marginRight: '5px' }}>
@@ -118,7 +119,7 @@ export class Step1 extends React.Component {
               fields={this.calendarsFields} 
               placeholder="Selecciona el calendario de destino" 
               popupHeight="220px"
-              itemTemplate={this.itemTemplate = this.itemTemplate.bind(this)} 
+              itemTemplate={this.onCalendarTemplate} 
               change={ (cal) => { this.props.onChangeCalendar(cal.value); } }
              />
           </div>
@@ -136,7 +137,7 @@ export class Step1 extends React.Component {
                 placeholder='Comienzo'
                 change={this.onChangeStartDate} 
                 value={this.startDate}
-                locale='es'
+                // locale='es'
                 floatLabelType='Always'/>
             
             </div>
@@ -145,7 +146,7 @@ export class Step1 extends React.Component {
               disabled={this.state.typeSelected === 1} 
               format='dd/MM/yyyy' 
               placeholder='Fin'
-              locale='es'
+              // locale='es'
               change={this.onChangeEndDate} 
               value={this.endDate}
               floatLabelType='Always' />

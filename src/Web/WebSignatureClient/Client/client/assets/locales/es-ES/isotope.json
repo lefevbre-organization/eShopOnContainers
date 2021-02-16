@@ -302,6 +302,9 @@
   "noPhoneModal": {
     "text": "El contacto que ha seleccionado no tiene teléfono móvil asociado"
   },
+  "multiPageErrorModal": {
+    "text": "La opción 'Firmar documento en todas las hojas' sólo es compatible con documentos en formato PDF."
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
