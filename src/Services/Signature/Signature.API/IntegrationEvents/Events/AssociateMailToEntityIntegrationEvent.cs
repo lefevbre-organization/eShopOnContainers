@@ -1,7 +1,7 @@
 ﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.IntegrationsEvents.Events
 {
 
-    public class AssociateMailToEntityIntegrationEvent: DissociateMailFromEntityIntegrationEvent
+    public record AssociateMailToEntityIntegrationEvent: DissociateMailFromEntityIntegrationEvent
     {
 
         public string SubjectMail { get; set; }

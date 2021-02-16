@@ -21,14 +21,14 @@ COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-Servi
 
 # Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
 COPY "src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj" "src/ApiGateways/ApiGw-Base/"
-COPY "src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj" "src/BuildingBlocks/Devspaces.Support/"
+#COPY "src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj" "src/BuildingBlocks/Devspaces.Support/"
 COPY "src/BuildingBlocks/Models/Lef.Models/Lef.Models.csproj" "src/BuildingBlocks/Models/Lef.Models/"
 COPY "src/BuildingBlocks/EventBus/EventBus/EventBus.csproj" "src/BuildingBlocks/EventBus/EventBus/"
 COPY "src/BuildingBlocks/EventBus/EventBus.Tests/EventBus.Tests.csproj" "src/BuildingBlocks/EventBus/EventBus.Tests/"
 COPY "src/BuildingBlocks/EventBus/EventBusRabbitMQ/EventBusRabbitMQ.csproj" "src/BuildingBlocks/EventBus/EventBusRabbitMQ/"
 COPY "src/BuildingBlocks/EventBus/EventBusServiceBus/EventBusServiceBus.csproj" "src/BuildingBlocks/EventBus/EventBusServiceBus/"
 COPY "src/BuildingBlocks/EventBus/IntegrationEventLogEF/IntegrationEventLogEF.csproj" "src/BuildingBlocks/EventBus/IntegrationEventLogEF/"
-COPY "src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Customization.csproj" "src/BuildingBlocks/WebHostCustomization/WebHost.Customization/"
+#COPY "src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Customization.csproj" "src/BuildingBlocks/WebHostCustomization/WebHost.Customization/"
 
 # Lefebvre projects
 COPY "src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj" "src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/"
