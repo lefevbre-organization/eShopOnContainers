@@ -97,7 +97,6 @@ export const getEventList = async (calendar, selectedDate) => {
 
 // Create and update event
 export const addCalendarEvent = async (calendar, event) => { 
-    console.log('addCalendarEvent --->', event)
     if(event.saveType === 'new')  {
         const date = moment(event.start).add(1, 'days');
         event.start = date._d;
@@ -282,7 +281,6 @@ function listCalendarParser(list) {
     return items;
 }
 
-
 //loadCalendarEvents(calendar, checked) {
 //    listEvents(calendar/*, this.scheduleObj.selectedDate*/)
 //        .then(result => {
@@ -317,3 +315,22 @@ export const createCalendarUser = async (name) => {
     return response;
 };
 
+// Retrieving addressbook information
+export const getAddressbooks = async () => {
+    const Addressbooks = await caldav.addressbooks({
+        filename: '/addressbooks/users/admin/contacts/' 
+    });    
+    console.log('Addressbooks', Addressbooks)
+
+    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
+};
+
+// Get contacts
+export const getContactList = async () => {
+    const contacts = await caldav.contacts({
+        filename: '/addressbooks/users/admin/contacts/' 
+    });    
+    console.log('contactList', contacts)
+
+    // return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
+};
