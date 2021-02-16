@@ -411,7 +411,8 @@
           "none": "NO",
           "photoNumber": "(__) fotos adjuntas",
           "download": "Descargar"
-        }
+        },
+        "emailBounced": "Email erróneo"
       },
       "body": {
         "title": "PROGRESO PETICIÓN",

@@ -410,7 +410,8 @@
           "none": "NO",
           "photoNumber": "(__) photos jointes",
           "download": "Télécharger"
-        }
+        },
+        "emailBounced": "Mauvaise adresse mail"
       },
       "body": {
         "title": "Progrés de demande",
