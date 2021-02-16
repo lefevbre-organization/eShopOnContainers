@@ -12,7 +12,7 @@ Param(
         # "googleaccount.api", "googledrive.api",        
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
-        "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw",  
+        # "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw",  
         "webstatus"
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
@@ -22,7 +22,7 @@ Param(
         # "googleaccount.api", "googledrive.api" ,
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
-        "ocelotapigw", 
+        # "ocelotapigw", 
         "webstatuslef"
         ),
     [parameter(Mandatory=$false)][string]$imageEnv="core5-40",
