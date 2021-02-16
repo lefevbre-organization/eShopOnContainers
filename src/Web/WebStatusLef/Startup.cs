@@ -76,51 +76,6 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebStatusLef
             });
         }
 
-        //// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        //{
-        //    //loggerFactory.AddAzureWebAppDiagnostics();
-        //    //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
-
-        //    if (env.IsDevelopment())
-        //    {
-        //        app.UseDeveloperExceptionPage();
-        //    }
-        //    else
-        //    {
-        //        app.UseExceptionHandler("/Home/Error");
-        //        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        //        app.UseHsts();
-        //    }
-
-        //    var pathBase = Configuration["PATH_BASE"];
-        //    if (!string.IsNullOrEmpty(pathBase))
-        //    {
-        //        app.UsePathBase(pathBase);
-        //    }
-
-        //    app.UseHealthChecks("/liveness", new HealthCheckOptions
-        //    {
-        //        Predicate = r => r.Name.Contains("self")
-        //    });
-
-        //    app.UseHealthChecksUI(config => {
-        //        config.ResourcesPath = string.IsNullOrEmpty(pathBase) ? "/ui/resources" : $"{pathBase}/ui/resources";
-        //        config.UIPath = "/hc-ui";
-        //    });
-
-        //    app.UseStaticFiles();
-
-        //    app.UseHttpsRedirection();
-
-        //    app.UseMvc(routes =>
-        //    {
-        //        routes.MapRoute(
-        //            name: "default",
-        //            template: "{controller=Home}/{action=Index}/{id?}");
-        //    });
-        //}
-
         //private void RegisterAppInsights(IServiceCollection services)
         //{
         //    services.AddApplicationInsightsTelemetry(Configuration);

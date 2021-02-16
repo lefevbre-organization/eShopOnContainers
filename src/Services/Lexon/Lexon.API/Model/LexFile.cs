@@ -7,5 +7,11 @@
         public string idUser { get; set; }
     }
 
+    public class LexGetFile: LexFile
+    {
+        public long? idDocument { get; set; }
+
+    }
+
 
 }

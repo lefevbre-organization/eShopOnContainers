@@ -46,17 +46,18 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebStatusLef
         }
 
 
-        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
+        static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .CaptureStartupErrors(false)
+                .ConfigureAppConfiguration(x => x.AddConfiguration(configuration))
                 .UseStartup<Startup>()
                 //.UseApplicationInsights()
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseConfiguration(configuration)
+                //.UseConfiguration(configuration)
                 .UseSerilog()
                 .Build();
 
-        private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+        static ILogger CreateSerilogLogger(IConfiguration configuration)
         {
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
             var logstashUrl = configuration["Serilog:LogstashgUrl"];
@@ -71,14 +72,14 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebStatusLef
                 .CreateLogger();
         }
 
-        private static IConfiguration GetConfiguration()
+        static IConfiguration GetConfiguration()
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            var config = builder.Build();
+            //var config = builder.Build();
 
             //if (config.GetValue<bool>("UseVault", false))
             //{
