@@ -34,8 +34,6 @@ export const caldav = new Caldav(settings);
 // Get calendars
 export const listCalendarList = async () => {
     const calendars = await caldav.listCalendars({});    
-    console.log('listCalendarList', calendars)
-   // calendars = calendars.filter((c) => c.ctag !== undefined);
     return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
 
@@ -48,7 +46,6 @@ export const createCalendar = async (calendar) => {
         color: calendar.color,
         description: calendar.description        
     });   
-    console.log(cal)
     return cal;
 };
 
@@ -70,7 +67,6 @@ export const deleteCalendar = async (calendar) => {
     const cal = await caldav.deleteCalendar({       
         filename: calendar     
     });
-    console.log(calendar)
     return cal;
 };
 
@@ -86,7 +82,6 @@ export const listEvents = async (calendar) => {
 
 // Get events
 export const getEventList = async (calendar, selectedDate) => {
-    console.log('listEventsParser', calendar, selectedDate)
     const events = await caldav.listEvents({
         filename: calendar.replace(settings.basePath, ''),
         start: '20200601T000000Z',
@@ -109,7 +104,6 @@ export const addCalendarEvent = async (calendar, event) => {
 };
 
 export const deleteCalendarEvent = async (filename) => {   
-    console.log(filename);
     const response = await caldav.deleteEvent({
         "filename": filename
     });    
@@ -320,7 +314,6 @@ export const getAddressbooks = async () => {
     const Addressbooks = await caldav.addressbooks({
         filename: '/addressbooks/users/admin/contacts/' 
     });    
-    console.log('Addressbooks', Addressbooks)
 };
 
 // Get contacts
