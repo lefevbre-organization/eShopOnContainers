@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
-    using Lexon.API;
     using Infrastructure.Exceptions;
     using Infrastructure.Repositories;
+    using Lexon.API;
     using Models;
 
     public class UsersService : LexonBaseClass<UsersService>, IUsersService
@@ -29,7 +29,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
         private readonly IOptions<LexonSettings> _settings;
         private string _conn;
         private string _urlLexon;
-
 
         public UsersService(
                 IOptions<LexonSettings> settings
@@ -584,14 +583,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
             return await _svcContacts.GetContactAsync(entitySearch.env, entitySearch.idUser, entitySearch.bbdd, (short)entitySearch.idType, (long)entitySearch.idEntity);
-
         }
 
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
             var resultadoPaginado = await _svcContacts.GetAllContactsAsync(search.env, search.idUser, search.bbdd, null, 0, 0);
-            return new Result<List<LexContact>>() { data = (List<LexContact>)resultadoPaginado.data.Data, errors=resultadoPaginado.errors, infos = resultadoPaginado.infos};
-           
+            return new Result<List<LexContact>>() { data = (List<LexContact>)resultadoPaginado.data.Data, errors = resultadoPaginado.errors, infos = resultadoPaginado.infos };
         }
 
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
@@ -757,7 +754,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
 
                         await command.ExecuteNonQueryAsync();
                         CheckErrorOutParameters(command, result.errors, Codes.Lexon.AddFolderToEntity, nameof(AddFolderToEntityAsync));
-                         result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
+                        result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
                     }
                 }
             }
@@ -782,9 +779,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
 
             try
             {
+                var resultId = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env);
+                if(resultId.data == 0 || resultId.errors?.Count > 0)
+                {
+                    AddResultTrace(resultId, result);
+                    return result;
+
+                }
                 var lexonFile = new LexGetFile
                 {
-                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
+                    idCompany = resultId.data,
                     idUser = fileMail.idUser,
                     idDocument = fileMail.idEntity ?? 0
                 };
@@ -834,19 +838,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
 
             try
             {
-                var lexonFile = await GetFileDataByTypeActuation(fileMail);
-                lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
-                var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
+                var lexonFileResult = await GetFileDataByTypeActuation(fileMail);
+                if (lexonFileResult.errors?.Count > 0)
+                {
+                    AddResultTrace(lexonFileResult, result);
+                    return result;
+                }
 
-                name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
-                name = string.Concat(name.Split(Path.GetInvalidPathChars()));
-                var maxlenght = name.Length > 55 ? 55 : name.Length;
-                lexonFile.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFile.fileName)}";
+                CleanFileName(lexonFileResult);
 
-                var json = JsonConvert.SerializeObject(lexonFile);
+                var json = JsonConvert.SerializeObject(lexonFileResult.data);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
-
                 SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
 
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
@@ -877,6 +880,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             return result;
         }
 
+        private void CleanFileName(Result<LexPostFile> lexonFileResult)
+        {
+            lexonFileResult.data.fileName = RemoveProblematicChars(lexonFileResult.data.fileName);
+            var name = Path.GetFileNameWithoutExtension(lexonFileResult.data.fileName);
+
+            name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
+            name = string.Concat(name.Split(Path.GetInvalidPathChars()));
+            var maxlenght = name.Length > 55 ? 55 : name.Length;
+            lexonFileResult.data.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFileResult.data.fileName)}";
+        }
+
         private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
         {
             url = $"{_urlLexon}{path}";
@@ -887,47 +901,77 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
-        private async Task<LexPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        private async Task<Result<LexPostFile>> GetFileDataByTypeActuation(MailFileView fileMail)
         {
-            var lexonFile = new LexPostFile
+            var result = new Result<LexPostFile>(new LexPostFile());
+
+            try
             {
-                idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
-                fileName = fileMail.Name,
-                idUser = fileMail.idUser,
-                idEntityType = fileMail.idType ?? 0
-            };
-            if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
-            {
-                lexonFile.idFolder = fileMail.IdParent ?? 0;
-                lexonFile.idEntity = fileMail.idEntity ?? 0;
+                var resultId = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env);
+
+                if (resultId.data == 0 || resultId.errors?.Count > 0)
+                {
+                    AddResultTrace(resultId, result);
+                    return result;
+                }
+
+                var lexonFile = new LexPostFile
+                {
+                    idCompany = resultId.data,
+                    fileName = fileMail.Name,
+                    idUser = fileMail.idUser,
+                    idEntityType = fileMail.idType ?? 0
+                };
+                if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
+                {
+                    lexonFile.idFolder = fileMail.IdParent ?? 0;
+                    lexonFile.idEntity = fileMail.idEntity ?? 0;
+                }
+                else
+                {
+                    lexonFile.idFolder = 0;
+                    lexonFile.idEntity = (long)fileMail.IdActuation;
+                };
+
+                result.data = lexonFile;
             }
-            else
+            catch (Exception ex)
             {
-                lexonFile.idFolder = 0;
-                lexonFile.idEntity = (long)fileMail.IdActuation;
-            };
-            return lexonFile;
+
+                TraceError(result.errors, new LexonDomainException($"Error al componer fichero para envio", ex), Codes.Lexon.PostFile, Codes.Areas.InternalApi);
+            }
+         
+            return result;
         }
 
-        private async Task<long> GetIdCompany(string idUser, string bbdd, string env)
+        private async Task<Result<long>> GetIdCompany(string idUser, string bbdd, string env)
         {
-            var resultadoCompanies = await GetCompaniesFromUserAsync(idUser, env);
-            var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
-            var idCompany = companies?.FirstOrDefault()?.idCompany;
-            return idCompany ?? 0; // "88";
+            var resultId = new Result<long>(0);
+            try
+            {
+                var resultadoCompanies = await GetCompaniesFromUserAsync(idUser, env);
+                AddResultTrace(resultadoCompanies, resultId);
+                var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
+                var idCompany = companies?.FirstOrDefault()?.idCompany;
+
+                resultId.data = idCompany ?? 0;
+            }
+            catch (Exception ex)
+            {
+                TraceError(resultId.errors, new LexonDomainException($"Error al obtener id de compañia", ex), Codes.Lexon.GetIdCompany, Codes.Areas.MySql);
+            }
+
+            return resultId;
         }
 
         #endregion Files
 
         #region Common
 
-   
         //private string GiveMeBaseFilter(string bbdd, string idUser)
         //{
         //    return $"{{ {GetUserFilter(bbdd, idUser)} }}";
         //}
-
-
 
         private string GiveMeRelationMultipleFilter(string bbdd, string idUser, MailInfo[] listaMails, short? idType, long? idRelated)
         {

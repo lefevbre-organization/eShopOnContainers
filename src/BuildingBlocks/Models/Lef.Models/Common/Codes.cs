@@ -94,6 +94,7 @@
 
             public static readonly string GetFile = "LX40";
             public static readonly string PostFile = "LX41";
+            public static readonly string GetIdCompany = "LX42";
         }
 
         public static class UserUtils
