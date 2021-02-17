@@ -21,6 +21,7 @@ import {
   getImapFolder,
 } from '../../services/jwt';
 import jwt from 'njwt';
+import {createCalendarUser} from "../../calendar/api/calendar-api";
 
 class UserCalendar extends Component {
   constructor(props) {
@@ -111,8 +112,10 @@ class UserCalendar extends Component {
       this.props.logout();
     }
 
-    debugger
     this.props.setUser(user);
+    const caldavuser = user.substring(3);
+    debugger
+    await createCalendarUser(caldavuser);
 
     // if (idMessage && base64regex.test(idMessage)) {
     //   idMessage = base64.decode(idMessage);

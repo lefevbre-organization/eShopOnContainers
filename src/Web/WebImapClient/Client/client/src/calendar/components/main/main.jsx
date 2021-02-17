@@ -1225,7 +1225,6 @@ export class Main extends Component {
         if (args.type === 'QuickInfo') {
             const currentClassification = args.data.LexonClassification;
             const content = document.getElementsByClassName("e-popup-content");
-            debugger
 
             if(currentClassification) {
                 const first = content[0].firstChild;

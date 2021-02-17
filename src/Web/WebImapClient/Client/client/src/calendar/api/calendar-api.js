@@ -18,9 +18,9 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'admin',
-  password: 'admin_dev',
-  server: 'https://lexbox-dev-nextcloud.lefebvre.es',
+  username: window.NEXTCOUD_ADMIN_USERNAME,
+  password: window.NEXTCLOUD_ADMIN_PASSWD,
+  server: window.NEXTCLOUD_URL,
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
   principalPath: '/principals/users',
@@ -301,7 +301,7 @@ export const createCalendarUser = async (name) => {
     params.append('password', window.NEXTCLOUD_USERS_PASSWD);
 
     const response = await axios.post(
-        'http://localhost:8080/ocs/v1.php/cloud/users',
+        `${window.NEXTCLOUD_URL}/ocs/v1.php/cloud/users`,
         params,
         {
             headers: {
