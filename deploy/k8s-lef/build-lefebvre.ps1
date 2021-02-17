@@ -7,25 +7,23 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        #  "webimapclient"
-        # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",  "database.api", 
-        # "googleaccount.api", "googledrive.api",        
-        # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
-        # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
+        # "webofficeclient" , "webgoogleclient"
+        # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",  "database.api", "googleaccount.api", "googledrive.api",        
+        "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela" 
         # "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw",  
-        "webstatus"
+        # "webstatus"
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        #  "webimapclient"
-        # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api",
-        # "googleaccount.api", "googledrive.api" ,
-        # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
-        # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
+        # "webofficeclient" , "webgoogleclient"
+        # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api", "googleaccount.api", "googledrive.api" ,
+        "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient", 
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela"
         # "ocelotapigw", 
-        "webstatuslef"
+        # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="core5-40",
+    [parameter(Mandatory=$false)][string]$imageEnv="core5-alpine-41",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
@@ -75,14 +73,14 @@ if ($buildImages) {
 
     if($buildAll){
         Write-Host "Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
-        docker-compose -p .. -f ../docker-compose.yml build      
+        docker-compose -p .. -f ../docker-compose.yml build   
     }else{
 
         foreach ($service in $servicesToBuild) {
             Write-Host "=====================================" -ForegroundColor DarkCyan
             Write-Host "Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
             Write-Host "=====================================" -ForegroundColor DarkCyan
-            docker-compose -p .. -f ../../docker-compose.yml build $service
+            docker-compose -p .. -f ../../docker-compose.yml build $service 
         }
     }
 }

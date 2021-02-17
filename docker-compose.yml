@@ -26,7 +26,7 @@ services:
       context: .
       dockerfile: src/Web/WebPortalClient/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
@@ -36,7 +36,7 @@ services:
       context: .
       dockerfile: src/Web/WebGoogleClient/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
@@ -46,7 +46,7 @@ services:
       context: .
       dockerfile: src/Web/WebOffice365Client/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
      
@@ -56,7 +56,7 @@ services:
       context: .
       dockerfile: src/Web/WebLexonClient/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
@@ -66,7 +66,7 @@ services:
       context: .
       dockerfile: src/Web/WebAddonLauncher/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
@@ -76,7 +76,7 @@ services:
       context: .
       dockerfile: src/Addon/Lexon/Office365/WebOffice365AddonLexon/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
@@ -86,7 +86,7 @@ services:
       context: .
       dockerfile: src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Dockerfile
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
@@ -131,15 +131,6 @@ services:
       - nosql.data
       - rabbitmq
 
-#  lexon.mysql.api:
-#    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-dev}
-#    build:
-#      context: .
-#      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
-#    depends_on:
-#      - nosql.data
-#      - rabbitmq
-#      - lexon.api
   googledrive.api:
     image: ${REGISTRY:-elefebvreoncontainers}/googledrive.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
@@ -177,7 +168,7 @@ services:
       context: .
       dockerfile: src/Web/WebImapClient/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq   
       
@@ -216,7 +207,7 @@ services:
       context: .
       dockerfile: src/Web/WebSignatureClient/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq   
 
@@ -226,7 +217,7 @@ services:
       context: .
       dockerfile: src/Web/WebCentinelaClient/Dockerfile    
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq  
 
@@ -274,7 +265,7 @@ services:
       context: .
       dockerfile: src/Web/WebDatabaseClient/Dockerfile
       args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:14.15-alpine3.13}
     depends_on:
       - rabbitmq
 
