@@ -350,11 +350,29 @@ class Calendar extends Component {
                 className='custom-padding-top'>
               
 
-                  <MainBar
-                      sideBarCollapsed={false}
-                      sideBarToggle={this.toggleSideBar}
-                      hiddeSearch={this.layoutIframe}
-              />
+                
+
+
+
+              {!this.layoutIframe ? (
+                  <div >
+                      <MainBar
+                          sideBarCollapsed={false}
+                          sideBarToggle={this.toggleSideBar}
+                          hiddeSearch={true}
+                      />
+                  </div>
+              ) : (
+                      <div>
+                          <style jsx>{`
+                                         .e-content-wrap {
+                                             height:100% !important;
+                                            }                            
+                                    `}</style>
+
+                      </div>
+                  )}
+
 
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
@@ -644,6 +662,8 @@ class Calendar extends Component {
         if (window != window.top) {
             this.layoutIframe = true;
         }
+
+       
 
         if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true
