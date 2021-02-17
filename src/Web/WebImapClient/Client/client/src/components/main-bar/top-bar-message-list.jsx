@@ -33,7 +33,7 @@ export class TopBarMessageList extends React.Component{
                     </div>*/}
             </section>
             <section  className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-start']}  ${styles['modules-item-custom']}`}>
-            {hiddeSearch ?
+            {!hiddeSearch ?
               <SearchBar
                   value = {this.state.searchTerm}
                   onChange={(newSearchTerm) => this.setState({searchTerm: newSearchTerm})}
