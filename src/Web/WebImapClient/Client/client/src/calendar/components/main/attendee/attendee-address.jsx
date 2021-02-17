@@ -74,10 +74,28 @@ export class AttendeeAddress extends Component {
         />
       <style jsx>{`
           .header-address-suggestions-container {
-            position: absolute;
-            z-index: 2;
-            background-color: white;
             box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+            width: 70%;
+            display: block;
+            position: absolute;
+            background-color: #fff;
+            font-family: Helvetica, sans-serif;
+            font-weight: 300;
+            font-size: 16px;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+            z-index: 2;
+          }
+
+          .header-address-suggestions-container 
+          .header-address-suggestions-list {
+            margin-bottom: 0px;
+          }
+
+          .header-address-suggestions-container 
+          .header-address-suggestions-list li {
+            padding: 15px 10px 11px 10px;
+            margin-bottom: 0px;
           }
 
           .header-address-container {
