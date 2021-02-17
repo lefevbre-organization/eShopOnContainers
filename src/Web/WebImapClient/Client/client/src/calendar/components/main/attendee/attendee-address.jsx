@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
 import {validateEmail} from '../../../../services/validation';
-//import { getContacts } from "../../../api/calendar-api";
+import { getContactList } from '../../../../calendar/api/contacts-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import i18n from 'i18next';
@@ -15,7 +15,7 @@ export class AttendeeAddress extends Component {
     super(props);
     this.inputRef = React.createRef();
     this.handleOnSuggestionChange = this.onSuggestionChange.bind(this);
-    //this.handleOnSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+    this.handleOnSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
     this.handleOnSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
     this.handleOnSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.handleOnHeaderKeyDown = this.onHeaderKeyDown.bind(this);
@@ -60,9 +60,9 @@ export class AttendeeAddress extends Component {
           }}
           getSuggestionValue={AttendeeAddress.getSuggestionValue}
           renderSuggestion={AttendeeAddress.renderSuggestion}
-          //onSuggestionsFetchRequested={this.handleOnSuggestionsFetchRequested}
-          //onSuggestionsClearRequested={this.handleOnSuggestionsClearRequested}
-         // onSuggestionSelected={this.handleOnSuggestionSelected}
+          onSuggestionsFetchRequested={this.handleOnSuggestionsFetchRequested}
+          onSuggestionsClearRequested={this.handleOnSuggestionsClearRequested}
+          onSuggestionSelected={this.handleOnSuggestionSelected}
           theme={{
             container: `header-address-container`,
             suggestionsContainer: `header-address-suggestions-container`,
@@ -194,13 +194,14 @@ export class AttendeeAddress extends Component {
 
   filterItems(ar, query) {
     return ar.filter(function (el) {
-          return el.toLowerCase().indexOf(query.toLowerCase()) > -1;
+      return el.toLowerCase().indexOf(query.toLowerCase()) > -1;
     })
   }
-  //async onSuggestionsFetchRequested({ value }) {
-  //      var contacts = await getContacts();
-  //      this.setState({ suggestions: this.filterItems(contacts, value) });
-  //}
+
+  async onSuggestionsFetchRequested({ value }) {
+    const contacts = await getContactList();
+    this.setState({ suggestions: this.filterItems(contacts, value) });
+  }
 
   onSuggestionsClearRequested() {
     this.setState({suggestions: []});
