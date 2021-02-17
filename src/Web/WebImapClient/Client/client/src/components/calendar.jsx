@@ -90,7 +90,7 @@ import "@pathofdev/react-tag-input/build/index.css";
 import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList, getContactList } from '../calendar/api/calendar-api';
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -353,6 +353,7 @@ class Calendar extends Component {
                   <MainBar
                       sideBarCollapsed={false}
                       sideBarToggle={this.toggleSideBar}
+                      hiddeSearch={this.layoutIframe}
               />
 
               <div id='mainnav-app' />
@@ -394,7 +395,7 @@ class Calendar extends Component {
                               <div className='control-wrapper'>
                                 <ScheduleComponent
                                       //delayUpdate='false'
-                                      timezone='Europe/Madrid'
+                                    //   timezone='Europe/Madrid'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
