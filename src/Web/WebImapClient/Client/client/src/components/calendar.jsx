@@ -1188,7 +1188,8 @@ class Calendar extends Component {
         if (this.layoutIframe) {
             this.setState({ leftSideBar: { collapsed: true } })
         }
-
+        const contact = await getContactList();
+        console.log('componentDidMount', contact)
         document.title = 'Lefebvre Calendar';
 
         const {

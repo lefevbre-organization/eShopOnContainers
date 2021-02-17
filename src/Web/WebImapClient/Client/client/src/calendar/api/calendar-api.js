@@ -3,7 +3,7 @@ import moment from 'moment';
 import axios from 'axios';
 import base64 from 'base-64';
 import utf8 from 'utf8';
-// import Caldav from 'caldavjs-nextcloud';
+let vCard = require('vcard-parser');
 
 const CalendarColors = [
     { value: 'lightBlue', color: '#0078d4', id: '0' },
@@ -328,46 +328,24 @@ export const getContactList = async () => {
     const contacts = await caldav.contacts({
         filename: '/addressbooks/users/admin/contacts/' 
     });    
-    console.log('contactList', contacts)
     return listContactParser(contacts.contacts.filter((c) => c.etag !== undefined))
 };
 
 function listContactParser(list) {
     let listParse = [];
-    console.log('listContactParser', list)
-    // if (list.length > 0) {
-    //     for (let i = 0; i < list.length; i++) {
-    //         let roll = "owner";
 
-    //         let primary = false;
-    //         let color = "";
-    //         if(list[i].color) {
-    //             color = list[i].color._;
-    //         } else {
-    //             color = "#0693e3";
-    //         }
-            
-    //         let selected = true
-    //         if (i > 0) {
-    //             selected = false
-    //         }
-               
-    //         listParse.push({
-    //             accessRole: roll,
-    //             backgroundColor: color,                         
-    //             colorId: color,
-    //             defaultReminders: [],
-    //             id: list[i].href,
-    //             primary: primary,
-    //             selected:selected,
-    //             summary: list[i].name,
-    //             description: list[i].description,
-    //             timeZone: "Europe/Madrid",
-    //         });
-    //     }
-    // }
+    if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+            const address = vCard.parse(list[i].address);
+            listParse.push({
+               email: address.email[0].value,
+               name: address.fn[0].value,
+               phone: address.tel[0].value
+            });
+        }
+    }
 
-    // let items;
-    // items = ({ items: listParse });
-    // return items;
+    let items;
+    items = ({ items: listParse });
+    return items;
 }

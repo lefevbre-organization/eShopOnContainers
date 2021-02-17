@@ -478,6 +478,7 @@ export default class Caldavjs {
       })
       .then(contacts => {
         contacts = contacts.responses.map(contact => {
+          console.log('extractData', contact)
           return self.extractData(contact, [
             ['getetag', 'etag'],
             ['address-data', 'address']

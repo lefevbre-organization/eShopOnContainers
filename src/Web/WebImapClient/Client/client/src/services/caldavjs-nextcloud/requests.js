@@ -128,7 +128,12 @@ requests.contacts = function (args) {
   <card:addressbook-query xmlns:d="DAV:" xmlns:card="urn:ietf:params:xml:ns:carddav">
   <d:prop>
       <d:getetag />
-      <card:address-data />
+      <card:address-data>
+       <card:prop name="FN"/>
+       <card:prop name="EMAIL"/>
+       <card:prop name="TEL"/>
+       <card:prop name="CATEGORIES"/>
+      </card:address-data>
   </d:prop>
 </card:addressbook-query>
   `.trim();
