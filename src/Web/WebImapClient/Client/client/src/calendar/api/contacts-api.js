@@ -36,16 +36,15 @@ function listContactParser(list) {
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
             const address = vCard.parse(list[i].address);
-            // contacts.push({
-            //    email: address.email[0].value,
-            //    name: address.fn[0].value,
-            //    phone: address.tel[0].value
-            // });
-            contacts.push(address.email[0].value);
+            if(address.email !== undefined) {
+                contacts.push(address.email[0].value);
+            }
+            
         }
     }
 
     let items;
     items = contacts;
+    console.log(items)
     return items;
 }
