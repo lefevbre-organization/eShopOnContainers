@@ -90,7 +90,7 @@ import "@pathofdev/react-tag-input/build/index.css";
 import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent, /*listCalendarList,*/ } from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList, getContactList } from '../calendar/api/calendar-api';
+import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
 //import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
@@ -1188,10 +1188,7 @@ class Calendar extends Component {
         if (this.layoutIframe) {
             this.setState({ leftSideBar: { collapsed: true } })
         }
-        const contact = await getContactList();
-        console.log('componentDidMount', contact)
         document.title = 'Lefebvre Calendar';
-
         const {
             userId,
             idCaseFile,
@@ -1223,7 +1220,6 @@ class Calendar extends Component {
             value = 250;
         }
         let obj = this;
-        console.log('obj.scheduleObj', obj.scheduleObj)
         this.setState({ schedule: obj.scheduleObj });
         setTimeout(function () {
         obj.LoadCalendarList();
