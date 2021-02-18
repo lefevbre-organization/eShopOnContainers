@@ -125,15 +125,8 @@ class Calendar extends Component {
         isVisibility: false,
         calendars: [],
         schedule: null,
-        to2: [],
-        //data: [{
-        //  Id: 2,
-        //  Subject: 'Paris',
-        //  StartTime: new Date(2021, 0, 15, 10, 0),
-        //  EndTime: new Date(2021, 0, 15, 12, 30),
-        //  }],
-     
-      isUpdatedDefaultAccount: false,
+        to2: [],  
+        isUpdatedDefaultAccount: false,
       };
 
       const { t } = this.props;
@@ -241,50 +234,7 @@ class Calendar extends Component {
           }
       ];
 
-      this.TokensFlows();
-
-      //this.setState({
-      //    data: {
-      //        Id: 2,
-      //        Subject: 'Paris',
-      //        StartTime: new Date(2021, 0, 15, 10, 0),
-      //        EndTime: new Date(2021, 0, 15, 12, 30),
-      //    },
-      //});
-
-      //this.data = [{
-      //    Id: 2,
-      //    Subject: 'Paris',
-      //    StartTime: new Date(2021, 0, 15, 10, 0),
-      //    EndTime: new Date(2021, 0, 15, 12, 30),
-      //}];
-
-      //var calendar = '/remote.php/dav/calendars/alberto/personal/'
-      //var listData = [];
-      //listEvents(calendar)
-      //    .then(result => {
-      //        let items = result.result.items; 
-      //            if (items.length > 0) {
-      //                for (let i = 0; i < items.length; i++) {
-      //                    console.log(items[i]);
-      //                    listData.push({
-      //                        Id: items[i].id,
-      //                        Subject: items[i].summary,
-      //                        StartTime: moment(items[i].start.dateTime).format('YYYY-MM-DD hh:mm:ss'),
-      //                        EndTime: moment(items[i].end.dateTime).format('YYYY-MM-DD hh:mm:ss'),
-      //                    })
-      //                }
-      //            }
-             
-      //        this.setState({
-      //            data: listData 
-      //        })  
-          
-      //  })
-      //  .catch(error => {
-      //      console.log('error ->', error);
-      //  })
-
+      this.TokensFlows();  
 
     }
 
@@ -344,15 +294,8 @@ class Calendar extends Component {
         //}
       return (
 
-
-
              <div
-                className='custom-padding-top'>
-              
-
-                
-
-
+                className='custom-padding-top'>  
 
               {!this.layoutIframe ? (
                   <div >
@@ -371,8 +314,7 @@ class Calendar extends Component {
                                     `}</style>
 
                       </div>
-                  )}
-
+              )}
 
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
@@ -406,7 +348,6 @@ class Calendar extends Component {
                               ? ''
                               : styles['with-side-bar']
                           } ${styles['custom-padding-top']}`}>
-
 
                       <div className='schedule-control-section'>
                           <div className='control-section'>
@@ -456,31 +397,8 @@ class Calendar extends Component {
                               </div >
                           </div >
                       </div >
-
-
-
-
-                  </div>
-                 
-
-              </div>
-
-              {/* <Sidebar
-                  sideBarCollapsed={false}
-                  sideBarToggle={this.toggleSideBar}
-                  getCalendarList={this.sidebarCalendarList}
-                  pathname={this.props.location.pathname}
-                  calendarResult={this.props.calendarsResult}
-                  onCalendarClick={this.loadCalendarEvents}
-                  onSidebarCloseClick={this.handleShowLeftSidebarClick}
-                  onCalendarChange={this.handleScheduleDate}
-                  onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
-                  onCalendarOpenCalnendarView={this.openCalendarView}
-                  onCalendarDelete={this.deleteCalendar}
-                  onCalendarColorModify={this.calendarColorModify}
-                  isIframeContainer={this.layoutIframe}
-                  ref={sidebar => this.sidebarCalendarObj = sidebar}
-              />*/}
+                  </div> 
+              </div>             
                  
                  <section className='main hbox space-between'>
 
@@ -498,8 +416,7 @@ class Calendar extends Component {
                             />
                         </div>
 
-
-                          <div className="hidden">
+                        <div className="hidden">
                           {/*  <Reminder
                                 reminders={this.state.reminders}
                                 ref={rem => this.remObj = rem}
@@ -517,9 +434,7 @@ class Calendar extends Component {
                                     onClick={this.onImportContactsTypeClick.bind(this)}
                                 >Importar eventos</ButtonComponent>
                             </div>
-                        </div>
-
-                     
+                        </div>                     
 
                          <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                             id='toast_pos'
