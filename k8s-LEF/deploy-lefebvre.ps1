@@ -3,15 +3,15 @@ Param(
     [parameter(Mandatory=$false)][string]$dockerUser="avalverdelefebvre",
     [parameter(Mandatory=$false)][string]$dockerPassword="Alberto1971.-",
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers",
-    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "calendar.api"
-        # "calendar.api", "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
+        "webofficeclient", "webgoogleclient"
+        # "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
         # "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         # "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
@@ -19,14 +19,14 @@ Param(
          ),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "calendar.api"
-        # "calendar.api", "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
+        "webofficeclient", "webgoogleclient"
+        # "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
         # "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
         # "ocelotapigw", 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-40",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-41.1",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,

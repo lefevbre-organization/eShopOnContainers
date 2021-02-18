@@ -23,6 +23,9 @@ window.API_CENTINELA_GATEWAY =
   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
 
 window.WEBSPELLCHECKER_CODE = '';
+window.NEXTCOUD_ADMIN_USERNAME = 'admin';
+window.NEXTCLOUD_ADMIN_PASSWD = 'admin';
+window.NEXTCLOUD_USERS_PASSWD = '123456';
 
 window.RELEASE = 'RC DEV';
 window.SHOW_EXPERIMENTAL = '1';

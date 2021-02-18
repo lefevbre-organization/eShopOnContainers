@@ -43281,7 +43281,7 @@ ejs-calendar {
     .e-schedule .e-month-view .e-appointment .e-disable {
       display: none; }
     .e-schedule .e-month-view .e-appointment .e-appointment-details {
-      display: flex;
+      /* display: flex; */
       flex: auto;
       line-height: 20px;
       overflow: hidden; }

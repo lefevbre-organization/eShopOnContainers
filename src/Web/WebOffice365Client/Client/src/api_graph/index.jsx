@@ -103,7 +103,7 @@ export const getAuthenticatedClient = (accessToken) => {
 //END IMPLEMENT RECURSIVE FOLDERS
 
 export const getAccessTokenSilent = async () => {
-  console.log(config.scopes);
+  //console.log(config.scopes);
   return await window.msal.acquireTokenSilent({ scopes: config.scopes });
 };
 
@@ -481,7 +481,7 @@ export const emailBody = (data) => {
 
 export const emailToRecipients = (data) => {
   //to Recipients
-  var email = `[]`;
+  var email = `"ToRecipients": [],`;
   if (data.to === '') return email;
 
   var toRecipients = data.to.split(',');
@@ -544,6 +544,7 @@ export const emailReadConfirmation = () => {
 };
 
 export const emailAttachments = (data) => {
+  console.log('Call to emailAttachments');
   var email = `"Attachments": [],`;
   var attachments = data.uppyPreviews;
 
@@ -589,10 +590,13 @@ export const deleteDraft = async ({ draftId }) => {
     const client = getAuthenticatedClient(accessToken);
     let response = null;
     if(draftId != '') {
+      console.log('Deleting Draft: ' + draftId);
       response =  await client
       .api(`/me/messages/${draftId}`)
       .delete();  
     } 
+    console.log('response');
+    console.log(response);
     return response;
   } catch (err) {
     console.log(err);
@@ -619,15 +623,53 @@ export const createDraft = async ({ data, attachments, draftId }) => {
     const client = getAuthenticatedClient(accessToken);
     let response = null;
     if(draftId != '') {
+      console.log('createDraft - UPDATE: ' + draftId);
       response =  await client
       .api(`/me/messages/${draftId}`)
       .update(email);  
+      
+      if (response){
+        let serverAtts = await getAttachmentsList(draftId);
+        let attToUpload = [];
+        let attToErase = [];
+        
+        // Find attachments in composer that are already in outlook.com
+        data.uppyPreviews.forEach((composerAtt, i) => {
+          console.log('File.name: ' + composerAtt.name);
+          console.log(serverAtts.find(a => a.name === composerAtt.name));
+          if (!serverAtts.find( a => a.name === composerAtt.name)){
+            console.log('Remove element '+i);
+            attToUpload.push(composerAtt);
+          }
+        });
+        //Find attachments in server that are not in composer and must be removed
+        serverAtts.forEach((serverAtt, i) => {
+          if (!data.uppyPreviews.find( a => a.name === serverAtt.name)){
+            attToErase.push(serverAtt);
+          }
+        })
+        if (attToUpload.length > 0){
+          console.log('Adding new files');
+          await uploadFiles(response.id, attToUpload );
+        }
+        if (attToErase.length > 0){
+          console.log('Removing old files');
+          await removeFiles(response.id, attToErase);
+        }
+        // console.log(response2);
+        // console.log(attachments);
+        // console.log(data.uppyPreviews);
+      }
     } else {
+      console.log('createDraft - CREATE');
       response = await client
       .api('/me/messages')
       .post(email);
+      await uploadFiles(response.id, data.uppyPreviews);
     }
-    await uploadFiles(response.id, data.uppyPreviews);
+    
+    console.log('Response');
+    console.log(response);
     return response;
   } catch (err) {
     console.log(err);
@@ -652,6 +694,7 @@ export const sendMessage = async ({ data, attachments }) => {
   email += emailEnd();
 
   try {
+    console.log('Sending email.')
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     let response = await client.api('/me/messages').version('beta').post(email);
@@ -661,6 +704,8 @@ export const sendMessage = async ({ data, attachments }) => {
       .api(`/me/messages/${response.id}/send`)
       .version('beta')
       .post({});
+    console.log('Sending email response:');
+    console.log(response);
     return response;
   } catch (err) {
     console.log(err);
@@ -787,7 +832,32 @@ export const uploadFiles = async (emailId, attachments) => {
   }
 };
 
+
+export const removeFiles = async (emailId, attachments) => {
+  console.log('Removing files from server:' + emailId);
+  for (var i = 0; i < attachments.length; i++) {
+    //removeFile(emailId, attachment);
+    const attachment = attachments[i];
+    console.log('file:' + attachment.name);
+    console.log('id:'+ attachment.id);
+    const accessToken = await getAccessTokenSilent();
+    const client = await getAuthenticatedClient(accessToken);
+    try {
+      let res = await client
+        .api(`/me/messages/${emailId}/attachments/${attachment.id}`)
+        .version('beta')
+        .delete();
+      console.log('Delete result:')
+      console.log(res);
+    } catch (err) {
+      console.log('Delete err:')
+      console.log(err);
+    }
+  };
+}
+
 export const uploadFile = async (emailId, fileName, file, content) => {
+  console.log('UploadFile');
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
 
@@ -829,6 +899,7 @@ export const uploadFileWithUploadSession = async (
   };
 
   try {
+    console.log('UploadSession');
     const session = await client
       .api(`/me/messages/${emailId}/attachments/createUploadSession`)
       .version('beta')
@@ -901,4 +972,3 @@ export const addContact = (contact) =>
         reject(err);
       });
   });
-
