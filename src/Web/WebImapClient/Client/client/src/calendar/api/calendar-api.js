@@ -3,7 +3,6 @@ import moment from 'moment';
 import axios from 'axios';
 import base64 from 'base-64';
 import utf8 from 'utf8';
-let vCard = require('vcard-parser');
 
 const CalendarColors = [
     { value: 'lightBlue', color: '#0078d4', id: '0' },
@@ -308,37 +307,3 @@ export const createCalendarUser = async (name) => {
     );
     return response;
 };
-
-// Retrieving addressbook information
-export const getAddressbooks = async () => {
-    const Addressbooks = await caldav.addressbooks({
-        filename: '/addressbooks/users/admin/contacts/' 
-    });    
-};
-
-// Get contacts
-export const getContactList = async () => {
-    const contacts = await caldav.contacts({
-        filename: '/addressbooks/users/admin/contacts/' 
-    });    
-    return listContactParser(contacts.contacts.filter((c) => c.etag !== undefined))
-};
-
-function listContactParser(list) {
-    let listParse = [];
-
-    if (list.length > 0) {
-        for (let i = 0; i < list.length; i++) {
-            const address = vCard.parse(list[i].address);
-            listParse.push({
-               email: address.email[0].value,
-               name: address.fn[0].value,
-               phone: address.tel[0].value
-            });
-        }
-    }
-
-    let items;
-    items = ({ items: listParse });
-    return items;
-}
