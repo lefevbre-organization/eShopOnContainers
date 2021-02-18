@@ -213,9 +213,14 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             return null;
         }
-        public static UpdateOptions GetUpsertOptions()
+        //public static UpdateOptions GetUpsertOptions()
+        //{
+        //    return new UpdateOptions { IsUpsert = true };
+        //}
+
+        public static ReplaceOptions GetUpsertOptions()
         {
-            return new UpdateOptions { IsUpsert = true };
+            return new ReplaceOptions() { IsUpsert = true };
         }
 
         public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl, string code)
@@ -326,6 +331,11 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                            Codes.Areas.Mongo);
             }
             return false;
+        }
+
+        public AggregateOptions GetAggregateOptions()
+        {
+            return new AggregateOptions() { AllowDiskUse = true };
         }
     }
 }
