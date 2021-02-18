@@ -46,6 +46,7 @@ export class TopBar extends Component {
           selectedMessagesAllUnread={selectedMessagesAllUnread}
           onMarkReadClick={() => props.setMessagesSeen(true)}
           onMarkUnreadClick={() => props.setMessagesSeen(false)}
+          hiddeSearch={this.props.hiddeSearch}
         />
       </header>
     );

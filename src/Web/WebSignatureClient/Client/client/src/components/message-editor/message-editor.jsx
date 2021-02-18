@@ -57,7 +57,8 @@ class MessageEditor extends Component {
       MaximumSigners: 40,
       isCallApis: false,
       isFileType: false,
-      isContacts: false
+      isContacts: false,
+      multiPageError: false
     };
 
     this.fileInput = null;
@@ -255,7 +256,8 @@ class MessageEditor extends Component {
         bigAttachments: false, 
         centinelaDownloadError: false,
         hideConfirmDialog: false, 
-        hideRolDialog: false
+        hideRolDialog: false,
+        multiPageError: false
     });
   }
 
@@ -293,6 +295,19 @@ class MessageEditor extends Component {
     //createSignature();
   }
 
+  componentDidUpdate(prevProps, prevState){
+    // All pages signature is only available with PDFs. Verify condition to show modal and reset attached document
+    if (
+      ((prevProps.attachments !== this.props.attachments) && this.props.attachments.length > 0) || // verify condition with added attachments
+      (prevState.numPagesOption !== this.state.numPagesOption && this.props.attachments.length > 0) // verify condition with option changed
+    ){
+      if (this.props.attachments[0].contentType.toLowerCase() !== 'application/pdf' && this.state.numPagesOption === 2){
+        this.setState({hideAlertDialog: true, multiPageError: true})
+        this.removeAttachment(this.props.attachments[0]);
+      }
+    }
+  }
+
   removeMessageEditor(aplication) {
     const { close, lefebvre } = this.props;
 
@@ -319,33 +334,7 @@ class MessageEditor extends Component {
     })
   }
 
-  render() {
-    const noSignersModal = `
-      <span class="lf-icon-information modal-icon-content"></span>
-      <div class="modal-text-content">
-        ${i18n.t('noSignersModal.text')}
-      </div>`;
-
-    const noAttachModal = `
-      <span class="lf-icon-information modal-icon-content"></span>
-      <div class="modal-text-content">
-        ${i18n.t('noAttachmentsModal.text')}
-      </div>`;
-
-    const bigFileModal = `
-      <span class="lf-icon-information modal-icon-content"></span>
-      <div class="modal-text-content">
-        ${i18n.t('bigFileModal.text')}
-      </div>
-    `;
-
-    const attachNotFound = `
-      <span class="lf-icon-information modal-icon-content"></span>
-      <div class="modal-text-content">
-        ${i18n.t('attachNotFoundCentinela.text')}
-      </div>
-    `;
-
+  getConfirmDialogContent(){
     const confirmDiscard = `
       <span class="lf-icon-question modal-icon-content"></span>
       <div class="modal-text-content">
@@ -353,6 +342,38 @@ class MessageEditor extends Component {
       </div>
     `;
 
+    return confirmDiscard;
+  }
+
+  getInfoDialogContent(){
+    var base = `
+      <span class="lf-icon-information modal-icon-content"></span>
+      <div class="modal-text-content">
+       {{text}}
+      </div>`;
+    
+    var text = '';
+
+    //(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (this.state.dialogMessage !== '') ? this.state.dialogMessage : noSignersModal)))
+    if (this.state.centinelaDownloadError === true){
+      text =  i18n.t('attachNotFoundCentinela.text');
+    } else
+    if (this.props.attachments.length === 0 && this.state.multiPageError === false){
+      text = i18n.t('noAttachmentsModal.text');
+    } else 
+    if (this.state.bigAttachments){
+      text = i18n.t('bigFileModal.text');
+    } else
+    if (this.state.multiPageError){
+      text = i18n.t('multiPageErrorModal.text');
+    } else {
+      text = i18n.t('noSignersModal.text');
+    }
+
+    return base.replace('{{text}}', text);
+  }
+
+  render() {
     const confirmButtons = [
       {
           click: () => {
@@ -369,6 +390,8 @@ class MessageEditor extends Component {
       }
     ];
 
+    const infoDialogContent = this.getInfoDialogContent();
+    const confirmDialogContent = this.getConfirmDialogContent();
 
     const {
       t,
@@ -496,7 +519,8 @@ class MessageEditor extends Component {
           visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
+          content={infoDialogContent}
+          //content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : (this.state.dialogMessage !== '') ? this.state.dialogMessage : noSignersModal)))}
           //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           //target='#target' 
@@ -513,7 +537,8 @@ class MessageEditor extends Component {
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
           width='60%' 
-          content={confirmDiscard} 
+          //content={confirmDiscard} 
+          content={confirmDialogContent}
           ref={dialog => this.confirmDialogInstance = dialog} 
           //target='#target' 
           buttons={confirmButtons} 

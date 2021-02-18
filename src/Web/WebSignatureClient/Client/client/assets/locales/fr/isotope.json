@@ -301,6 +301,9 @@
   "noPhoneModal": {
     "text": "Le contact sélectionné n'a pas de téléphone mobile associé"
   },
+  "multiPageErrorModal": {
+    "text": "L'option 'Signer le document sur toutes les feuilles' n'est compatible qu'avec les documents au format PDF."
+  },
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",
@@ -407,7 +410,8 @@
           "none": "NO",
           "photoNumber": "(__) photos jointes",
           "download": "Télécharger"
-        }
+        },
+        "emailBounced": "Mauvaise adresse mail"
       },
       "body": {
         "title": "Progrés de demande",

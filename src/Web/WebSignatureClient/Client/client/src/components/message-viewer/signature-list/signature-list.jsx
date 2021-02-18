@@ -105,6 +105,11 @@ const SignatureList = (props) => {
               <div className={`${props.styles['tit-firmante']} left`}>{getRole(props.signatureConfig)}</div>
                 <span className={`${props.styles['name_firmante']} left`}>{props.signer.name}:</span>
                 <span className={props.styles.email}>{props.signer.email}</span>
+                {
+                  (props.signer.events.find(e => e.type === "email_bounced")) 
+                    ? <span className={props.styles.emailBounced}>({i18n.t('signatureViewer.signerCard.title.emailBounced')})</span>
+                    : null
+                }
                 <span className={`${props.styles['numero_firmante']} right`}>
                 {i18n.t('signatureViewer.signerCard.title.signer')} {(props.index + 1)}
                 </span>

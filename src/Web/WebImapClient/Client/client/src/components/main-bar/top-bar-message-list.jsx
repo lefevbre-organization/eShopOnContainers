@@ -19,6 +19,7 @@ export class TopBarMessageList extends React.Component{
         this.state = {searchTerm: ""};
     }
     render() {
+      const { hiddeSearch } = this.props;
       return(
         <div className={mainCss['mdc-top-app-bar__row']}>      
         
@@ -32,29 +33,31 @@ export class TopBarMessageList extends React.Component{
                     </div>*/}
             </section>
             <section  className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-start']}  ${styles['modules-item-custom']}`}>
-            <SearchBar
-                value = {this.state.searchTerm}
-                onChange={(newSearchTerm) => this.setState({searchTerm: newSearchTerm})}
-                onRequestSearch={() => {
-                  if (this.state.searchTerm !== null && this.state.searchTerm !== undefined && this.state.searchTerm !== ""){
-                    this.props.setMessageFilter('USER_SEARCH');
-                    this.props.setMessageFilterKeyword(this.state.searchTerm);
-                  } else {
-                    this.props.setMessageFilter('ALL');
-                  }
-                }}
-                onCancelSearch={() => {
-                  this.props.setMessageFilter(null);
-                  this.props.setMessageFilterKeyword(null);
-                  this.setState({searchTerm: ""});
-                }}
-                placeholder={this.props.t('topBar.search')}
-                style={{
-                margin: '0 auto',
-                width: '100%',
-                maxWidth: 800
-                }}
-            />
+            {!hiddeSearch ?
+              <SearchBar
+                  value = {this.state.searchTerm}
+                  onChange={(newSearchTerm) => this.setState({searchTerm: newSearchTerm})}
+                  onRequestSearch={() => {
+                    if (this.state.searchTerm !== null && this.state.searchTerm !== undefined && this.state.searchTerm !== ""){
+                      this.props.setMessageFilter('USER_SEARCH');
+                      this.props.setMessageFilterKeyword(this.state.searchTerm);
+                    } else {
+                      this.props.setMessageFilter('ALL');
+                    }
+                  }}
+                  onCancelSearch={() => {
+                    this.props.setMessageFilter(null);
+                    this.props.setMessageFilterKeyword(null);
+                    this.setState({searchTerm: ""});
+                  }}
+                  placeholder={this.props.t('topBar.search')}
+                  style={{
+                  margin: '0 auto',
+                  width: '100%',
+                  maxWidth: 800
+                  }}
+              />
+            : null }
             </section>
             
             <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-end']}  ${styles['modules-item-custom']}`}>

@@ -350,10 +350,29 @@ class Calendar extends Component {
                 className='custom-padding-top'>
               
 
-                  <MainBar
-                      sideBarCollapsed={false}
-                      sideBarToggle={this.toggleSideBar}
-              />
+                
+
+
+
+              {!this.layoutIframe ? (
+                  <div >
+                      <MainBar
+                          sideBarCollapsed={false}
+                          sideBarToggle={this.toggleSideBar}
+                          hiddeSearch={true}
+                      />
+                  </div>
+              ) : (
+                      <div>
+                          <style jsx>{`
+                                         .e-content-wrap {
+                                             height:100% !important;
+                                            }                            
+                                    `}</style>
+
+                      </div>
+                  )}
+
 
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
@@ -394,6 +413,7 @@ class Calendar extends Component {
                               <div className='control-wrapper'>
                                 <ScheduleComponent
                                       //delayUpdate='false'
+                                    //   timezone='Europe/Madrid'
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
@@ -642,6 +662,8 @@ class Calendar extends Component {
         if (window != window.top) {
             this.layoutIframe = true;
         }
+
+       
 
         if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true
@@ -1166,9 +1188,7 @@ class Calendar extends Component {
         if (this.layoutIframe) {
             this.setState({ leftSideBar: { collapsed: true } })
         }
-
         document.title = 'Lefebvre Calendar';
-
         const {
             userId,
             idCaseFile,
@@ -1200,7 +1220,6 @@ class Calendar extends Component {
             value = 250;
         }
         let obj = this;
-        console.log('obj.scheduleObj', obj.scheduleObj)
         this.setState({ schedule: obj.scheduleObj });
         setTimeout(function () {
         obj.LoadCalendarList();
@@ -1614,7 +1633,7 @@ class Calendar extends Component {
     }
 
     onPopupOpen(args) {
-        console.log('onPopupOpen', args)
+
         const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;

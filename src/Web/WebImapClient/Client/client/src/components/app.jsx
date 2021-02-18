@@ -64,7 +64,6 @@ import LexonComponent from '../apps/lexon_content';
 import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
-//import {createCalendarUser} from "../calendar/api/calendar-api";
 
 const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
 
@@ -166,9 +165,9 @@ class App extends Component {
   onSetSidebarOpenCompliance(open) {
     const lexon = (
       <img
-        border='0'
-        alt='Lefebvre'
-        src='/assets/images/lexon-fake-null.png'></img>
+    border='0'
+    alt='Lefebvre'
+    src='/assets/images/lexon-fake-null.png'/>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -615,8 +614,6 @@ class App extends Component {
       if (!newAccount.configAccount.imapPass) {
         delete newAccount.configAccount;
       }
-
-      //await createCalendarUser(userId);
 
       addOrUpdateAccount(userId, newAccount)
         .then(() => {

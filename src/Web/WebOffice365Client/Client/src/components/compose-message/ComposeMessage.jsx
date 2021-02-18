@@ -257,7 +257,10 @@ export class ComposeMessage extends Component {
     if(this.props.composer.content && this.props.composer.content !== '') {
       this.state.defaultContent = this.props.composer;
     } else {
-      if (this.props.lexon.sign && this.props.lexon.sign !== '') {
+      const messageInfo = this.props.emailMessageResult.result;
+      const isDraft = (messageInfo) ? messageInfo.isDraft : false;
+
+      if (this.props.lexon.sign && this.props.lexon.sign !== '' && !isDraft) {
         this.state.content = `<br/><br/><p>${this.props.lexon.sign}</p>` + this.state.content;
       }
     }
@@ -266,22 +269,6 @@ export class ComposeMessage extends Component {
   }
 
   componentDidMount() {
-        const { lexon } = this.props;
-
-    if(this.props.composer && this.props.composer.content && this.props.composer.content !== '') {
-      this.setState({...this.props.composer, defaultContent: this.props.composer.content});
-    } else {
-      if (lexon.sign && lexon.sign !== '') {
-        const {content} = this.state;
-
-        const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
-        this.setState({
-          defaultContent: dc,
-          content: dc,
-        });
-      }
-    }
-
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
     window.addEventListener(
