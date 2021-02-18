@@ -395,7 +395,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.R
             var listaActuaciones = new List<LexActuation>();
             try
             {
-                var options = new AggregateOptions() { AllowDiskUse = true, UseCursor = false };
+                var options = GetAggregateOptions();
 
                 PipelineDefinition<CenUser, BsonDocument> pipeline = new BsonDocument[]
                     {

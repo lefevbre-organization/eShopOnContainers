@@ -7,23 +7,23 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "lexon-api"
-        # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",  "database.api", "googleaccount.api", "googledrive.api"        
-        # ,"webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient" 
-        # ,"webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela" 
-        # ,"webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw"  
-        # ,"webstatus"
+        # "lexon.api"
+        "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",  "database.api", "googleaccount.api", "googledrive.api",        
+        "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient" ,
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela" ,
+        "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw",  
+        "webstatus"
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-         "lexon-api"
-        # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api", "googleaccount.api", "googledrive.api"
-        # ,"webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient"
-        # ,"webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela"
-        # ,"ocelotapigw" 
-        # ,"webstatuslef"
+        #  "lexon.api"
+        "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api", "googleaccount.api", "googledrive.api",
+        "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient",
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela",
+        "ocelotapigw" ,
+        "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="core5-41",
+    [parameter(Mandatory=$false)][string]$imageEnv="core5-41.1",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
@@ -50,10 +50,10 @@ else {
 if ([string]::IsNullOrEmpty($imageTag)) {
     $imageTag = $(git rev-parse --abbrev-ref HEAD)
 }
-
+$StartMs = (Get-Date).Millisecond
 Write-Host "=====================================" -ForegroundColor DarkCyan
 Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
-Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
+Write-Host "Empieza la operación a las: $StartMs" -ForegroundColor DarkCyan 
 Write-Host "Deploy Kubernetes: $deployKubernetes" -ForegroundColor DarkCyan 
 Write-Host "Docker: Build $buildImages all[$buildAll] and Clean $cleanDocker" -ForegroundColor DarkCyan 
 Write-Host "Kubernetes: $deployKubernetes with Infraestructure $cleanDocker" -ForegroundColor DarkCyan 
@@ -80,7 +80,7 @@ if ($buildImages) {
             Write-Host "=====================================" -ForegroundColor DarkCyan
             Write-Host "Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
             Write-Host "=====================================" -ForegroundColor DarkCyan
-            docker-compose -p .. -f ../../docker-compose.yml build $service 
+            docker-compose -f ../../docker-compose.yml build $service 
         }
     }
 }
@@ -102,4 +102,10 @@ if ($pushImages) {
     Write-Host "All images pushed  to $registry/$dockerOrg" -ForegroundColor Magenta
 }
 
-Write-Host "-------------------END PROCESS-------------" -ForegroundColor Green
+$End = (Get-Date)
+$EndMs = $End.Millisecond
+Write-Host "=====================================" -ForegroundColor DarkCyan
+Write-Host "-------------END PROCESS-------------" -ForegroundColor DarkCyan
+Write-Host "Termina la operación a las: $End" -ForegroundColor DarkCyan 
+Write-Host "Tiempo total: $($EndMs - $StartMs)" -ForegroundColor DarkCyan 
+Write-Host "=====================================" -ForegroundColor DarkCyan

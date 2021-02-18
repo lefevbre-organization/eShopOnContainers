@@ -427,12 +427,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             var listaActuaciones = new List<LexActuation>();
             try
             {
-                var options = new AggregateOptions() { AllowDiskUse = true, UseCursor = false };
+                var options = GetAggregateOptions();
 
                 PipelineDefinition<LexUser, BsonDocument> pipeline = new BsonDocument[]
                     {
                     new BsonDocument("$match", new BsonDocument()
-                        //.Add("idUser", idUser)
                         .Add("$or", new BsonArray
                                 {
                                     new BsonDocument().Add("idUser", idUser),
