@@ -474,10 +474,11 @@ export class Main extends Component {
                 end,
                 isAllDay,
                 summary: events[i].subject,
-                attendees: []
+                attendees: [],
+                notes: events[i].notes || ''
             };
 
-            try {
+            try {   
                 const res = await addCalendarEvent(calendar, lefEvent);
                 eventsImported++
             } catch(err) {
@@ -580,24 +581,18 @@ export class Main extends Component {
         }
 
         return (
-            <div Style="width: 98%;">
-                {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
+            <div style={{ width: '98%'}}>
                 <div className="image">
                     <div className='eventicon'>
-
                         { props.LexonClassification && <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> }
                         {subjectStr}
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot floatleft'/>
                         ) : (
                             ''
                         )}
                     </div>
                 </div>
-
-                {/* <div className="subject">{props.Subject}</div>
-               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
-
             </div>);
     }
 
@@ -625,9 +620,9 @@ export class Main extends Component {
                     <span className='eventicon truncate'>
                         <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
                         {colorExist ? (
-                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}} className='dot dotagenda'/>
                         ) : (
-                            <span Style={`background-color: ${'#FFFFFF'} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            <span style={{backgroundColor: '#FFFFFF', marginTop: '3px'}} className='dot dotagenda'/>
                         )}
 
                         {props.IsAllDay ? (
@@ -756,6 +751,12 @@ export class Main extends Component {
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
         let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
+        if(sm.length > 0) {
+            sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
+            if (!sm[0].Guid) {
+                sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
+            }
+        }
         if(this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
@@ -1125,8 +1126,8 @@ export class Main extends Component {
             if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
                 // this.tabObj.refresh()
                 let id = this.scheduleObj.eventWindow.eventData.Id;
-                if (id == undefined) {
-                    //this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                if (id === undefined) {
+                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
                     //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
@@ -1134,9 +1135,6 @@ export class Main extends Component {
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
-            //else if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id != undefined){
-            //    this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
-            //}
         }
         else {
             args.cancel = true
@@ -1146,13 +1144,13 @@ export class Main extends Component {
     eventTypeTemplate(data) {
         return (
             <div className="typeitem">
-                <span> <span Style={`background-color: ${data.backgroundColor}`} className='dot'></span>  <span className='name'>{data.text}</span></span>
+                <span className='name'>{data.text}</span>
             </div>
         );
     }
 
     ToogleCalendarResourceDirective(args) {
-        if (args.data.Id != undefined) {
+        if (args.data.Id !== undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
             ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
             var cal = document.getElementsByClassName("e-CalendarId-container");
@@ -1260,9 +1258,15 @@ export class Main extends Component {
             this.setState({ reminders: [] })
         }
 
-
-
         if (args.type === 'QuickInfo') {
+            const currentClassification = args.data.LexonClassification;
+            const content = document.getElementsByClassName("e-popup-content");
+
+            if(currentClassification) {
+                const first = content[0].firstChild;
+                const ndiv = this.createClassifiedDiv();
+                content[0].insertBefore(ndiv, first);
+            }
 
             if (this.layoutIframe) {
                 var buttonElementEdit = ".e-event-popup .e-edit";
@@ -1275,7 +1279,6 @@ export class Main extends Component {
                     args.cancel = true
                 }
                 else {
-                    var content = document.getElementsByClassName("e-popup-content");
                     content[0].classList.add('hidden');
                 }
             }
@@ -1436,7 +1439,7 @@ export class Main extends Component {
                         Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
                         this.tabObj = new TabComponent({
                             items: [
-                                { header: { text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
+                                { header: { text: 'EVENTO', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
                                 { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
                             ],
                             selectedItem: 0,
@@ -1459,9 +1462,20 @@ export class Main extends Component {
                     //}
                 }
             }
-
         }
+    }
 
+    createClassifiedDiv() {
+        const ndiv = document.createElement('div');
+        const span = document.createElement('span');
+        const icon = document.createElement('span');
+        icon.classList.add('lf-icon-lexon');
+        span.textContent = 'Clasificado en Lexon';
+
+        ndiv.classList.add('e-div-iconlef');
+        ndiv.appendChild(icon);
+        ndiv.appendChild(span);
+        return ndiv;
     }
 
     addLogOutButton(args) {
@@ -1698,13 +1712,11 @@ export class Main extends Component {
 
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
-
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
+                            this.scheduleObj.eventWindow.eventData.Subject = event.summary;
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
-
-
 
                         // this.scheduleObj.eventWindow.resetForm();
                         args.data[0].Id = result.id;
@@ -2354,7 +2366,7 @@ export class Main extends Component {
 
 
                     {this.layoutIframe && this.layoutIframeNewEventView || this.layoutIframeEditEventView ? (
-                        <style jsx>{`
+                    <style jsx>{`
                         .e-dlg-overlay {
                             background-color: #FFFFFF !important;
                             opacity: 1 !important;

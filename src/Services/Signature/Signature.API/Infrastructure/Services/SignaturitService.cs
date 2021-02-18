@@ -132,7 +132,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.S
                 if (recipient.signatureType == "certificate")
                 {
                     Console.WriteLine($"{_guid} - Adding recipient_{i} - Certificate");
-                    request.AddParameter($"{_guid} - recipients[{i}][sign_with_digital_certificate_file]", 1);
+                    request.AddParameter($"recipients[{i}][sign_with_digital_certificate_file]", 1);
                 }
                 if (recipient.doubleAuthType == "photo")
                 {

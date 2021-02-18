@@ -43280,7 +43280,7 @@ ejs-calendar {
       display: none; }
     .e-schedule .e-month-view .e-appointment .e-appointment-details {
       display: flex;
-      flex: auto;
+      /* flex: auto; */
       line-height: 20px;
       overflow: hidden; }
       .e-schedule .e-month-view .e-appointment .e-appointment-details .e-subject {

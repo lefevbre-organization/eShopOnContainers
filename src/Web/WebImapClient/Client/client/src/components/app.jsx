@@ -165,9 +165,9 @@ class App extends Component {
   onSetSidebarOpenCompliance(open) {
     const lexon = (
       <img
-        border='0'
-        alt='Lefebvre'
-        src='/assets/images/lexon-fake-null.png'></img>
+    border='0'
+    alt='Lefebvre'
+    src='/assets/images/lexon-fake-null.png'/>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });

@@ -62,5 +62,9 @@ configValues: |
   window.API_CENTINELA_GATEWAY =   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'
   window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
   window.URL_MF_DATABASE_BASE='http://localhost:3006'
+  window.NEXTCLOUD_URL = 'https://lexbox-dev-nextcloud.lefebvre.es';
+  window.NEXTCOUD_ADMIN_USERNAME = 'admin';
+  window.NEXTCLOUD_ADMIN_PASSWD = 'admin_dev';
+  window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
   window.SHOW_EXPERIMENTAL='1'
-  window.RELEASE = 'RC 0.40'
+  window.RELEASE = 'RC 0.41'

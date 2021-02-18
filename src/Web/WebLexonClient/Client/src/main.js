@@ -6,6 +6,7 @@ import APPLICATION_ACTIONS from './actions/applicationAction';
 import SELECTION_ACTIONS from './actions/selections';
 import './main.css';
 import i18n from 'i18next';
+// Here we have referred local json files for preview purpose
 // import Header from "./components/header/header";
 import Routing from './components/routing/routing';
 import Spinner from './components/spinner/spinner';
@@ -18,7 +19,6 @@ import {
 import {PAGE_IMPORT_EVENTS} from "./constants";
 import dbStore from "./services/dbstore";
 import parse from "emailjs-mime-parser";
-
 
 class Main extends Component {
   constructor(props) {

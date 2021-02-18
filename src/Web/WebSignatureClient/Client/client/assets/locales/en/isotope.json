@@ -283,6 +283,9 @@
   "noPhoneModal": {
     "text": "The selected contact does not have an associated mobile phone."
   },
+  "multiPageErrorModal": {
+    "text": "The option 'Sign all pages' is only available with PDF files."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
@@ -389,7 +392,8 @@
           "none": "NO",
           "photoNumber": "(__) photos attached",
           "download": "Download"
-        }
+        },
+        "emailBounced": "Email doesn't exist"
       },
       "body": {
         "title": "SIGNATURE PROGRESS",

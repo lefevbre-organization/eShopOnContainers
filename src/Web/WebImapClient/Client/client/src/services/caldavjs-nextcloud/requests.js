@@ -80,7 +80,8 @@ requests.calendarHome = function (args) {
 
 requests.calendarList = function (args) {
   return `
-<d:propfind xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/" xmlns:c="urn:ietf:params:xml:ns:caldav"
+<d:propfind xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/" 
+xmlns:c="urn:ietf:params:xml:ns:caldav"
 xmlns:e="http://apple.com/ns/ical/">
   <d:prop>
      <d:resourcetype />
@@ -107,5 +108,37 @@ requests.getChanges = function (args) {
 </d:sync-collection>
   `.trim();
 }
+
+requests.addressbooks = function (args) {
+  return `
+<d:propfind 
+xmlns:d="DAV:" 
+xmlns:cs="http://calendarserver.org/ns/"
+xmlns:card="urn:ietf:params:xml:ns:carddav">
+  <d:prop>
+     <d:displayname />
+     <cs:getctag />
+  </d:prop>
+</d:propfind>
+  `.trim();
+}
+
+requests.contacts = function (args) {
+  return `
+  <card:addressbook-query xmlns:d="DAV:" xmlns:card="urn:ietf:params:xml:ns:carddav">
+  <d:prop>
+      <d:getetag />
+      <card:address-data>
+       <card:prop name="FN"/>
+       <card:prop name="EMAIL"/>
+       <card:prop name="TEL"/>
+       <card:prop name="CATEGORIES"/>
+      </card:address-data>
+  </d:prop>
+</card:addressbook-query>
+  `.trim();
+}
+
+
 
 export default requests;

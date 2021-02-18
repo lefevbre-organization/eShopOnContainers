@@ -57,4 +57,4 @@ configValues: |
   window.API_GATEWAY_CEN = 'https://lexbox-apigwcen.lefebvre.es'
   window.API_GATEWAY_ACC = 'https://lexbox-apigwcen.lefebvre.es'
   window.POLLING_INTERVAL = 10000
-  window.RELEASE = 'RC 0.40'
+  window.RELEASE = 'RC 0.41'

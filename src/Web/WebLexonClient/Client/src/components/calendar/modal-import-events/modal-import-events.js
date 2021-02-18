@@ -2,7 +2,6 @@ import React, {Component, createRef, Fragment} from 'react';
 import i18n from 'i18next';
 import {Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
-
 import {Step1} from './step1';
 import {Step2} from './step2';
 import {Step3} from './step3';
@@ -45,7 +44,6 @@ class ModalImportEvents extends Component {
 
     componentDidMount() {
         this.setState({step: 1})
-
         this.getUserCompanies()
     }
 
@@ -58,6 +56,7 @@ class ModalImportEvents extends Component {
         })
     }
 
+    
     showErrors() {
         this.setState({step: 3});
     }
@@ -113,7 +112,7 @@ class ModalImportEvents extends Component {
             fromDate = moment(startDate).format("YYYY-MM-DD");
             toDate = moment(endDate).format("YYYY-MM-DD");
         } else if(selectedType === 2) {
-            toDate = moment().format("YYYY-MM-DD");
+            fromDate = moment().format("YYYY-MM-DD");
         }
 
 
@@ -235,7 +234,14 @@ class ModalImportEvents extends Component {
                         color: #fff;
                         background-color: #d2d2d2;
                         border-color: #d2d2d2;
-                    }    
+                    }   
+                    .e-dialog .e-btn.e-dlg-closeicon-btn:hover, 
+                    .e-dialog .e-btn.e-dlg-closeicon-btn:focus,
+                    .e-dialog .e-btn.e-dlg-closeicon-btn:active {
+                        background-color: transparent !important;
+                        border-color: transparent;
+                        box-shadow: transparent;
+                    }
                 `}</style>
             </Fragment>
         );

@@ -216,7 +216,7 @@
   "modal-import-contacts": {
     "title": "Importar contactos de Lex-on",
     "info": "Información sobre las fichas de contacto detectadas en Lex-on:",
-    "import": "Importar",
+    "import": "MIGRAR",
     "ok": "!Las fichas de contacto se han importado correctamente a tu cuenta!",
     "back": "Volver",
     "accept": "Aceptar",

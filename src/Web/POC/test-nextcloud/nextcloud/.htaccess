@@ -86,8 +86,8 @@ Options -Indexes
 </IfModule>
 #### DO NOT CHANGE ANYTHING ABOVE THIS LINE ####
 
-ErrorDocument 403 //
-ErrorDocument 404 //
+ErrorDocument 403 /
+ErrorDocument 404 /
 <IfModule mod_rewrite.c>
   Options -MultiViews
   RewriteRule ^core/js/oc.js$ index.php [PT,E=PATH_INFO:$1]
@@ -117,11 +117,3 @@ ErrorDocument 404 //
     </IfModule>
   </IfModule>
 </IfModule>
-
-Header always set Access-Control-Allow-Origin "*"
-Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, REPORT, PROPFIND, MKCALENDAR"
-Header always set Access-Control-Allow-Headers "*"
-# Force to request 200 for options
-RewriteEngine On
-RewriteCond %{REQUEST_METHOD} OPTIONS
-RewriteRule .* / [R=200,L]

@@ -1,6 +1,8 @@
 ﻿import Caldav from '../../services/caldavjs-nextcloud';
 import moment from 'moment';
-// import Caldav from 'caldavjs-nextcloud';
+import axios from 'axios';
+import base64 from 'base-64';
+import utf8 from 'utf8';
 
 const CalendarColors = [
     { value: 'lightBlue', color: '#0078d4', id: '0' },
@@ -15,9 +17,9 @@ const CalendarColors = [
 ];
 
 const settings = {
-  username: 'admin',
-  password: 'admin_dev',
-  server: 'https://lexbox-dev-nextcloud.lefebvre.es',
+  username: window.NEXTCOUD_ADMIN_USERNAME,
+  password: window.NEXTCLOUD_ADMIN_PASSWD,
+  server: window.NEXTCLOUD_URL,
   basePath: '/remote.php/dav',
   timezone: 'Europe/Madrid',
   principalPath: '/principals/users',
@@ -31,8 +33,6 @@ export const caldav = new Caldav(settings);
 // Get calendars
 export const listCalendarList = async () => {
     const calendars = await caldav.listCalendars({});    
-    console.log('listCalendarList', calendars)
-   // calendars = calendars.filter((c) => c.ctag !== undefined);
     return listCalendarParser(calendars.filter((c) => c.ctag !== undefined))
 };
 
@@ -45,7 +45,6 @@ export const createCalendar = async (calendar) => {
         color: calendar.color,
         description: calendar.description        
     });   
-    console.log(cal)
     return cal;
 };
 
@@ -67,7 +66,6 @@ export const deleteCalendar = async (calendar) => {
     const cal = await caldav.deleteCalendar({       
         filename: calendar     
     });
-    console.log(calendar)
     return cal;
 };
 
@@ -83,7 +81,6 @@ export const listEvents = async (calendar) => {
 
 // Get events
 export const getEventList = async (calendar, selectedDate) => {
-    console.log('listEventsParser', calendar, selectedDate)
     const events = await caldav.listEvents({
         filename: calendar.replace(settings.basePath, ''),
         start: '20200601T000000Z',
@@ -94,17 +91,18 @@ export const getEventList = async (calendar, selectedDate) => {
 
 // Create and update event
 export const addCalendarEvent = async (calendar, event) => { 
-    console.log('addCalendarEvent --->', event)
-    if(event.saveType === 'new')  {
-        const date = moment(event.start).add(1, 'days');
-        event.start = date._d;
-    }
+    // if(event.saveType === 'new')  {
+    //     const date = moment(event.start).add(1, 'days');
+    //     event.start = date._d;
+    // } else {
+    //     const date = moment(event.start).add(1, 'days');
+    //     event.start = date._d;
+    // }
     const response = await caldav.createEvent(event);    
     return response;    
 };
 
 export const deleteCalendarEvent = async (filename) => {   
-    console.log(filename);
     const response = await caldav.deleteEvent({
         "filename": filename
     });    
@@ -155,6 +153,7 @@ function listEventsParser(list) {
                 ImageName: "lefebvre",
                 attendees: attendees,
                 categories: list[i].categories,
+                color: list[i].color,
             });
         }
     }
@@ -275,7 +274,6 @@ function listCalendarParser(list) {
     return items;
 }
 
-
 //loadCalendarEvents(calendar, checked) {
 //    listEvents(calendar/*, this.scheduleObj.selectedDate*/)
 //        .then(result => {
@@ -287,5 +285,25 @@ function listCalendarParser(list) {
 //        .catch(error => {
 //            console.log('error ->', error);
 //        })
-
 //}
+
+export const createCalendarUser = async (name) => {
+    const auth = base64.encode(utf8.encode(`${window.NEXTCOUD_ADMIN_USERNAME}:${window.NEXTCLOUD_ADMIN_PASSWD}`));
+    const params = new URLSearchParams();
+    params.append('userid', name);
+    params.append('password', window.NEXTCLOUD_USERS_PASSWD);
+
+    const response = await axios.post(
+        `${window.NEXTCLOUD_URL}/ocs/v1.php/cloud/users`,
+        params,
+        {
+            headers: {
+                'OCS-APIRequest':'true',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                Authorization: `Basic ${auth}`
+            }
+        }
+    );
+    return response;
+};

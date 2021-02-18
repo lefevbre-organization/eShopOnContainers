@@ -21,8 +21,9 @@ import {
   getImapFolder,
 } from '../../services/jwt';
 import jwt from 'njwt';
+import {createCalendarUser} from "../../calendar/api/calendar-api";
 
-class UserLexon extends Component {
+class UserCalendar extends Component {
   constructor(props) {
     super(props);
 
@@ -111,8 +112,10 @@ class UserLexon extends Component {
       this.props.logout();
     }
 
-    debugger
     this.props.setUser(user);
+    const caldavuser = user.substring(3);
+    debugger
+    await createCalendarUser(caldavuser);
 
     // if (idMessage && base64regex.test(idMessage)) {
     //   idMessage = base64.decode(idMessage);
@@ -214,14 +217,14 @@ class UserLexon extends Component {
       isNewAccount,
     } = this.state;
     if (readyToRedirect) {
-      return <Redirect to='/' />;
+      return <Redirect to='/calendar' />;
     }
 
     //if (isNewAccount || readyToRedirectToLogin) {
     //  //this.props.logout();
     //  return <Redirect to="/login" />;
     //}
-    return <Redirect to='/' />;
+      return <Redirect to='/calendar' />;
     //return null;
   }
 }
@@ -247,4 +250,4 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);
+export default connect(mapStateToProps, mapDispatchToProps)(UserCalendar);
