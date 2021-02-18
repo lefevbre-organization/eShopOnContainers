@@ -577,7 +577,6 @@ class Calendar extends Component {
         if (window != window.top) {
             this.layoutIframe = true;
         }
-
        
 
         if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
