@@ -205,6 +205,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastruct
                         {
                             var token = JsonConvert.DeserializeObject<OAuth2TokenModel>(await refresh.Content.ReadAsStringAsync());
 
+                            credential.Access_Token = token.access_token;
+                            credential.Duration = token.expires_in;
+                            credential.TokenCreate = DateTime.Now;
                             var resultupdate = await repo.UpdateCredentialsSuccess(credential, user.Id);
 
                             result.data = token.access_token;
