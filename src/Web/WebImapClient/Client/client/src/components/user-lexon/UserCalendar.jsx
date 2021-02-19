@@ -110,11 +110,11 @@ class UserCalendar extends Component {
         smtp: '',
       });
       this.props.logout();
+      return;
     }
 
     this.props.setUser(user);
     const caldavuser = user.substring(3);
-    debugger
     await createCalendarUser(caldavuser);
 
     // if (idMessage && base64regex.test(idMessage)) {

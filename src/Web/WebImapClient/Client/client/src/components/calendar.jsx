@@ -106,11 +106,14 @@ import './lefebvre-material.css';
 import {getCalendars, selectCalendar} from "../calendar/components/sidebar/sidebar.actions";
 import {bindActionCreators} from "redux";
 import ACTIONS from "../actions/lexon";
+import {Redirect} from "react-router-dom";
 
 class Calendar extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
+        redirectToLogin: this.props.lexon.user?false:true,
         sidebarOpen: false,
         sidebarDocked: false,
         leftSideBar: {
@@ -128,6 +131,10 @@ class Calendar extends Component {
         to2: [],  
         isUpdatedDefaultAccount: false,
       };
+
+      if(!this.props.lexon.user) {
+          this.props.logout();
+      }
 
       const { t } = this.props;
 
@@ -288,6 +295,11 @@ class Calendar extends Component {
   render() {
         const { t, lexon, email } = this.props;
         const { leftSideBar, calendars } = this.state;
+
+        if(this.state.redirectToLogin) {
+            debugger
+            return <Redirect to={"/login"}/>
+        }
 
         //if (!isUpdatedDefaultAccount) {
         //    return null;
@@ -2448,17 +2460,24 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => {
-    return bindActionCreators(
-        {
-            getCalendars,
-            selectCalendar,
-            setDataBase,
-            setGUID: setGUID,
-            setSign: setSign
-        },
-        dispatch
-    );
-}
+    return {
+        ...bindActionCreators(
+            {
+                getCalendars,
+                selectCalendar,
+                setDataBase,
+                setGUID: setGUID,
+                setSign: setSign
+            },
+            dispatch
+        ),
+        logout: () => {
+            dispatch(clearUserCredentials());
+            history.push('/login');
+        }
+    };
+};
+
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
