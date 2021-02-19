@@ -110,6 +110,7 @@ class UserCalendar extends Component {
         smtp: '',
       });
       this.props.logout();
+      this.props.setUser(user);
       return;
     }
 
