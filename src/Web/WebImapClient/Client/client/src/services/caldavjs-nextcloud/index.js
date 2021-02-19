@@ -393,6 +393,7 @@ export default class Caldavjs {
           timezone: input.timezone || this.timezone,
           categories: input.categories,
           attendees: input.attendees,
+          alarms: input.reminders,
           repeating: input.repeating,
           allDay: input.allDay || true
         }]
