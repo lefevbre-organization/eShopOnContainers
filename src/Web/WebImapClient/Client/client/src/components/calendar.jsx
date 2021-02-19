@@ -1403,19 +1403,17 @@ class Calendar extends Component {
         let reminders = []
         let arrR = this.remObj.listviewInstance.dataSource;
         console.log(arrR)
-        // if (arrR.length > 0) {
+        if (arrR.length > 0) {
+            event.reminders = []
+            Object.keys(arrR).forEach(function (key) {
+                event.reminders.push({
+                    type: 'display',
+                    trigger: arrR[key].minutesvalue,
+                });
+            });
+        }
 
-        //     event.reminders = {
-        //         'useDefault': false,
-        //         'overrides': [],
-        //     }
-        //     Object.keys(arrR).forEach(function (key) {
-        //         event.reminders.overrides.push({
-        //             method: arrR[key].title,
-        //             minutes: arrR[key].minutesvalue,
-        //         });
-        //     });
-        // }
+        console.log(event)
        
 
         return event

@@ -133,7 +133,12 @@ function listEventsParser(list) {
             } else {
               recurrenceRule = null;
             }
-            
+
+            if(list[i].json.VALARM) {
+                list[i].json.VALARM = JSON.stringify(list[i].json.VALARM)
+                console.log('listEventsParser',   list[i].json.VALARM)
+            }
+          
             getAttendees(list[i].json, attendees);
             listParse.push({
                 id: list[i].href,
@@ -157,12 +162,11 @@ function listEventsParser(list) {
             });
         }
     }
-
     let result;
     let items;
     items = ({ items: listParse });
     result = ({ result: items });
-
+    
     return result
 }
 
@@ -170,7 +174,7 @@ function getAttendees(json, attendees) {
     for (const key in json) {
         if (json.hasOwnProperty(key)) {
             const attende = json[key];
-            if (attende != undefined) {
+            if (attende != undefined && json.VALARM) {
                 const emails = attende.split(':')
                 if (emails.length === 3) {
                     getEmails(emails[2], attendees);
