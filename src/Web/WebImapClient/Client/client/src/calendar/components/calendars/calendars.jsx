@@ -121,7 +121,8 @@ export class Calendars extends React.Component {
            this.nameObj.value = calendar.summary;
            this.setState({color: calendar.backgroundColor})
             if (calendar.description) {
-                this.descriptionObj.value = calendar.description;
+                this.descriptionObj.value = calendar.description !== 'undefined' ? 
+                calendar.description : '';
             }
         }
     }
