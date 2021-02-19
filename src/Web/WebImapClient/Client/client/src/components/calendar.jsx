@@ -92,7 +92,7 @@ import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/
 
 import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
-//import Reminder from "./reminder/reminder"
+import Reminder from "../calendar/components/main/reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 //import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../calendar/components/eventtypes/eventtype';
@@ -429,10 +429,10 @@ class Calendar extends Component {
                         </div>
 
                         <div className="hidden">
-                          {/*  <Reminder
+                           <Reminder
                                 reminders={this.state.reminders}
                                 ref={rem => this.remObj = rem}
-                            />*/}
+                            />
                         </div>
 
                          <div className="hidden">
@@ -1399,6 +1399,23 @@ class Calendar extends Component {
             
     
         event.organizer = organizerData;  
+
+        let reminders = []
+        let arrR = this.remObj.listviewInstance.dataSource;
+        console.log(arrR)
+        // if (arrR.length > 0) {
+
+        //     event.reminders = {
+        //         'useDefault': false,
+        //         'overrides': [],
+        //     }
+        //     Object.keys(arrR).forEach(function (key) {
+        //         event.reminders.overrides.push({
+        //             method: arrR[key].title,
+        //             minutes: arrR[key].minutesvalue,
+        //         });
+        //     });
+        // }
        
 
         return event
@@ -1629,24 +1646,24 @@ class Calendar extends Component {
 
         // default values for Reminders coming from event args
 
-        //if (args.data.Reminders != undefined) {
-        //    //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
-        //    var arr = [];
-        //    Object.keys(args.data.Reminders).forEach(function (key) {
-        //        //arr.push(args.data.Reminders[key]);
-        //        arr.push({
-        //            title: args.data.Reminders[key].method,
-        //            value: args.data.Reminders[key].minutes,
-        //            minutesvalue: args.data.Reminders[key].minutes,
-        //            id: 'n',
-        //            icon: "delete-icon"
-        //        });
-        //    });
-        //    this.setState({ reminders: arr })
-        //}
-        //else {
-        //    this.setState({ reminders: [] })
-        //}
+        if (args.data.Reminders != undefined) {
+           //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
+           var arr = [];
+           Object.keys(args.data.Reminders).forEach(function (key) {
+               //arr.push(args.data.Reminders[key]);
+               arr.push({
+                   title: args.data.Reminders[key].method,
+                   value: args.data.Reminders[key].minutes,
+                   minutesvalue: args.data.Reminders[key].minutes,
+                   id: 'n',
+                   icon: "delete-icon"
+               });
+           });
+           this.setState({ reminders: arr })
+        }
+        else {
+           this.setState({ reminders: [] })
+        }
 
 
 
@@ -1806,10 +1823,10 @@ class Calendar extends Component {
                 //containerTab.appendChild(nodeA);
 
                 // Adding reminder element
-                //let containerRem = createElement('div', { className: 'custom-field-container' });
-                //rowReminders.appendChild(containerRem);
-                //var nodeR = ReactDOM.findDOMNode(this.remObj);
-                //containerRem.appendChild(nodeR);
+                let containerRem = createElement('div', { className: 'custom-field-container' });
+                rowReminders.appendChild(containerRem);
+                var nodeR = ReactDOM.findDOMNode(this.remObj);
+                containerRem.appendChild(nodeR);
             }
 
             // if from iframe is requested a new event
@@ -1824,7 +1841,7 @@ class Calendar extends Component {
                         Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
                         this.tabObj = new TabComponent({
                             items: [
-                                { header: { text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
+                                { header: { text: 'EVENTO', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
                                 { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
                             ],
                             selectedItem: 0,
@@ -1982,20 +1999,20 @@ class Calendar extends Component {
 
                 if (desc) {
 
-                    ////reset reminders
-                    //desc.Reminders = [];
+                    //reset reminders
+                    desc.Reminders = [];
 
-                    ////Update Reminders
-                    //let arrR = this.remObj.listviewInstance.dataSource;
-                    //if (arrR.length > 0) {
-                    //    Object.keys(arrR).forEach(function (key) {
-                    //        desc.Reminders.push({
-                    //            method: arrR[key].title,
-                    //            minutes: arrR[key].value,
-                    //        });
+                    //Update Reminders
+                    let arrR = this.remObj.listviewInstance.dataSource;
+                    if (arrR.length > 0) {
+                       Object.keys(arrR).forEach(function (key) {
+                           desc.Reminders.push({
+                               method: arrR[key].title,
+                               minutes: arrR[key].value,
+                           });
 
-                    //    });
-                    //}
+                       });
+                    }
 
                     //reset attendess
                     desc.Attendees = [];
