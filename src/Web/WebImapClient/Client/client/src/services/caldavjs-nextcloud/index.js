@@ -375,6 +375,7 @@ export default class Caldavjs {
    *** @param {string} email 
    *** @param {string} mailto 
    ** @param {boolean} allDay 
+    ** @param {object} [alarms]
    ** @param {object|String} [repeating]
    *
    * @return {string}
