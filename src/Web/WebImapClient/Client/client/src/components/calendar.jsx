@@ -86,7 +86,10 @@ import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
-import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/ requestRecurringEvent /*listCalendarList,*/ } from '../services/calendar-api';
+import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/
+    requestRecurringEvent,
+    updateCalendarEvent /*listCalendarList,*/
+} from '../services/calendar-api';
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
 import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
@@ -162,6 +165,8 @@ class Calendar extends Component {
       this.onCloseDialog = this.onCloseDialog.bind(this);
       this.onExportEvents = this.onExportEvents.bind(this);
       this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
+      this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
+      this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
 
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
@@ -248,6 +253,7 @@ class Calendar extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages, selected } = this.props.messages;
+    debugger
     console.log('messages ->', this.props.messages);
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
@@ -547,7 +553,7 @@ class Calendar extends Component {
 
     async handleClassificatedEvent(event) {
         const googleEvent = this.buildEventoGoogle(event.detail);
-        const resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+        //const resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
         this.currentClassification = event.detail.LexonClassification;
     }
 
@@ -1029,7 +1035,9 @@ calendarId = args.currentTarget.id;
 
     sendMessagePutUser(user) {
         const { email, lexon, calendarsResult } = this.props;
-        let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: this.selectedEvent.Id }] : [];
+
+        const eventId = this.selectedEvent.Id.split("/").pop();
+        let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: eventId }] : [];
         if (this.state.showPromptImportContactsDialog) {
             sm = calendarsResult.calendars || [];
         }
@@ -1144,6 +1152,17 @@ calendarId = args.currentTarget.id;
         window.addEventListener(
             'GetUserFromLexonConnector',
             this.handleGetUserFromLexonConnector
+        );
+
+
+        window.addEventListener(
+            'EventClassified',
+            this.handleClassificatedEvent
+        );
+
+        window.addEventListener(
+            'RemoveSelectedEvent',
+            this.handleClassificatedEventRemoved
         );
 
             //if (this.layoutIframe) {

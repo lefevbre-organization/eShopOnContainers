@@ -859,6 +859,7 @@ export class Main extends Component {
 
 
 
+
         this.sidebarCalendarList();
 
         //Firefox load is slow and need to take into account wait more time to be ready
