@@ -32,7 +32,6 @@ export const getContactList = async () => {
 
 function listContactParser(list) {
     let contacts = [];
-
     if (list.length > 0) {
         for (let i = 0; i < list.length; i++) {
             const address = vCard.parse(list[i].address);
@@ -42,9 +41,16 @@ function listContactParser(list) {
             
         }
     }
-
     let items;
     items = contacts;
-    console.log(items)
     return items;
 }
+
+
+// Create and update contact
+export const addContact = async (calendar, event) => { 
+    const response = await caldav.createContact({
+        filename: '/addressbooks/users/admin/contacts/526c3ea3-b528-4706-bb9f-f6eb47ef84b6.vcf' 
+    });    
+    return response;    
+};

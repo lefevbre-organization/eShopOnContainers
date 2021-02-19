@@ -7,6 +7,7 @@ import xml2js from 'xml2js';
 import needle from 'needle';
 import moment from 'moment';
 
+let vCard = require('vcards-js');
 /**
  * Class contructor to create the CalDav connection 
  * and expose methods for interaction
@@ -48,6 +49,7 @@ export default class Caldavjs {
     this.deleteEvent = this.deleteEvent.bind(this);
     this.addressbooks = this.addressbooks.bind(this);
     this.contacts = this.contacts.bind(this);
+    this.createContact = this.createContact.bind(this);
   };
 
   async sendRequest(options) {
@@ -487,6 +489,36 @@ export default class Caldavjs {
           contacts
         };
       })
+  }
+
+    /**
+   * Save a create contact 
+   * 
+   * @param {object} required 
+   ** @param {string} fn required
+   ** @param {string} email required
+   ** @param {string} tel required
+   ** @param {string} categories 
+   *
+   * @return {string}
+   */
+  createContact(input) {
+    let string = null;
+    try {
+    vCard = vCard();
+    vCard.firstName = 'Eric Jose';
+    vCard.email = 'j.hostilio-ext@lefebvre.es';
+    } catch (e) {
+      throw new Error(e.toString());
+    }
+    return this.sendRequest({
+      url: input.filename,
+      method: 'PUT',
+      data: vCard.getFormattedString(),
+      headers: {
+        'Content-Type': 'text/vcard; charset=utf-8'
+      },
+    })
   }
 
 }
