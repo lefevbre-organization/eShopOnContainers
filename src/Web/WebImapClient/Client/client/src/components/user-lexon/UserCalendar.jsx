@@ -266,7 +266,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   setToken: (token) => dispatch(ACTIONS.setToken(token)),
   setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
-  //setIdEvent: (id) => dispatch(ACTIONS.setIdEvent(id)),
+  setIdEvent: (id) => dispatch(ACTIONS.setIdEvent(id)),
   setIdActuation: (id) => dispatch(ACTIONS.setIdActuation(id)),
   setTitle: (title) => dispatch(ACTIONS.setTitle(title))
 });
