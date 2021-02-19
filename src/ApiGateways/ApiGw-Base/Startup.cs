@@ -29,12 +29,12 @@ namespace OcelotApiGw
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddUrlGroup(new Uri(_cfg["AccountApiUrlHC"]), name: "accountsapi-check", tags: new string[] { "accountsapi" })
-                .AddUrlGroup(new Uri(_cfg["CentinelaApiUrlHC"]), name: "centinelaapi-check", tags: new string[] { "centinelaapi" })
-                .AddUrlGroup(new Uri(_cfg["ConferenceApiUrlHC"]), name: "conferenceapi-check", tags: new string[] { "conferenceapi" })
-                .AddUrlGroup(new Uri(_cfg["LexonApiUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
-                .AddUrlGroup(new Uri(_cfg["SignatureApiUrlHC"]), name: "signatureapi-check", tags: new string[] { "signatureapi" })
-                .AddUrlGroup(new Uri(_cfg["UserUtilsApiUrlHC"]), name: "userutilsapi-check", tags: new string[] { "userutilsapi" })
+                //.AddUrlGroup(new Uri(_cfg["AccountApiUrlHC"]), name: "accountsapi-check", tags: new string[] { "accountsapi" })
+                //.AddUrlGroup(new Uri(_cfg["CentinelaApiUrlHC"]), name: "centinelaapi-check", tags: new string[] { "centinelaapi" })
+                //.AddUrlGroup(new Uri(_cfg["ConferenceApiUrlHC"]), name: "conferenceapi-check", tags: new string[] { "conferenceapi" })
+                //.AddUrlGroup(new Uri(_cfg["LexonApiUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
+                //.AddUrlGroup(new Uri(_cfg["SignatureApiUrlHC"]), name: "signatureapi-check", tags: new string[] { "signatureapi" })
+                //.AddUrlGroup(new Uri(_cfg["UserUtilsApiUrlHC"]), name: "userutilsapi-check", tags: new string[] { "userutilsapi" })
                 //.AddUrlGroup(new Uri(_cfg["DatabaseApiUrlHC"]), name: "databaseapi-check", tags: new string[] { "databaseapi" })
                 ;
 

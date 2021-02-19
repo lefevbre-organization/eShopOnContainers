@@ -1,6 +1,6 @@
 apiVersion: v1
 name: database-api
-version: 0.40
+version: 0.41
 description: Database management API
 home: https://github.com/lefevbre-organization/eShopOnContainers
 icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
