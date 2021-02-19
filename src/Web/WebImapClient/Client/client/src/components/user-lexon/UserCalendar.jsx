@@ -19,6 +19,9 @@ import {
   getMailContacts,
   getIdMail,
   getImapFolder,
+  getTitle,
+  getIdActuation,
+  getIdEvent
 } from '../../services/jwt';
 import jwt from 'njwt';
 import {createCalendarUser} from "../../calendar/api/calendar-api";
@@ -89,6 +92,15 @@ class UserCalendar extends Component {
     const mailContacts = this.props.match.params.token
       ? getMailContacts(payload)
       : this.props.match.params.mailContacts;
+    const idEvent = this.props.match.params.token
+      ? getIdEvent(payload)
+      : null
+    const idActuation = this.props.match.params.token
+      ? getIdActuation(payload)
+      : null
+    const title = this.props.match.params.token
+      ? getTitle(payload)
+      : null
 
     const claims = this.props.match.params.token
       ? { idClienteNavision: getUserId(payload) }
@@ -126,8 +138,8 @@ class UserCalendar extends Component {
     // }
     if (idFolder === null || idFolder === undefined || idFolder === 'NULL') {
       idFolder = 'INBOX';
-    }
-
+      }
+      
     if (casefile) {
       this.props.setCaseFile({
         casefile: casefile,
@@ -145,7 +157,12 @@ class UserCalendar extends Component {
         idFolder: idFolder,
         emailShown: false,
       });
-    }
+      }
+
+      this.props.setIdEvent(idEvent);
+      this.props.setIdActuation(idActuation);
+      this.props.setTitle(title);
+
     if (mailContacts) {
       console.log('Contactos recibidos');
       //if (base64regex.test(mailContacts)) {
@@ -249,6 +266,9 @@ const mapDispatchToProps = (dispatch) => ({
   },
   setToken: (token) => dispatch(ACTIONS.setToken(token)),
   setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
+  //setIdEvent: (id) => dispatch(ACTIONS.setIdEvent(id)),
+  setIdActuation: (id) => dispatch(ACTIONS.setIdActuation(id)),
+  setTitle: (title) => dispatch(ACTIONS.setTitle(title))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserCalendar);

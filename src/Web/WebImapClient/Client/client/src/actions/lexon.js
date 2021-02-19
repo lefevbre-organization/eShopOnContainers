@@ -60,6 +60,21 @@ export const setToken = token => ({
     payload: token
 })
 
+export const setIdActuation = (idActuation) => ({
+    type: ActionTypes.LEXON_IDACTUATION,
+    payload: idActuation,
+})
+
+export const setIdEvent = (idEvent) => ({
+    type: ActionTypes.LEXON_IDEVENT,
+    payload: idEvent,
+})
+
+export const setTitle = (title) => ({
+    type: ActionTypes.LEXON_TITLE,
+    payload: title,
+})
+
 export default {
     setUser,
     setDataBase,
@@ -72,5 +87,8 @@ export default {
     setGUID,
     setSign,
     setIdMail,
-    setToken
+    setToken,
+    setTitle,
+    setIdEvent,
+    setIdActuation
 };
