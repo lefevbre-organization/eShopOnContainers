@@ -536,7 +536,7 @@ class Calendar extends Component {
     }
 
     onCloseDialog() {
-        console.log()
+        console.log('onCloseDialog')
         this.LoadCalendarList(false)
         const buttons = document.getElementsByClassName("e-footer-content");
         if (buttons) {
@@ -1199,20 +1199,24 @@ class Calendar extends Component {
            });
     }
 
-
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
         listCalendarList()
         .then(result => {
-            console.log('get calendars in sidebar', result.items)
-            this.setState({ calendars: result.items });
+            console.log('get calendars in sidebar', this.state.calendars, result.items)
             this.resourceCalendarData = orderBy(result.items, "primary")
             this.props.getCalendars(this.resourceCalendarData);
-            this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
-            if (!DisableloadSchedule) {
-                this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
-                this.scheduleObj.refresh();
+            if(this.state.calendars.length !== result.items.length) {
+                this.setState({ calendars: result.items });
+                this.resourceCalendarData = orderBy(result.items, "primary")
+                this.props.getCalendars(this.resourceCalendarData);
+                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
+                if (!DisableloadSchedule) {
+                    this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                    this.scheduleObj.refresh();
+                }
             }
+           
         })
         .catch(error => {
             console.log('error ->', error);
