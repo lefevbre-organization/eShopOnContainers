@@ -1323,6 +1323,7 @@ class Calendar extends Component {
             saveType = 'update'
         }
         console.log('values.StartTime', values.StartTime)
+        console.log('values.StartTime', values.EndTime)
         //Event basic data
         var event = {
             'allDay': values.IsAllDay,
@@ -1330,11 +1331,11 @@ class Calendar extends Component {
             'location': values.Location,
             'description': values.Description,
             'start': moment(values.StartTime),
-            'end': moment(values.EndTime),          
+            'end': moment(values.EndTime).add(1, 'days'), 
+            'timestamp': moment(values.StartTime),         
             'timezone': 'Europe/Madrid',
             'filename': filename, 
-            'saveType': saveType,
-            //'color': 'green'
+            'saveType': saveType
         }
 
         //if (values.LexonClassification != undefined) {

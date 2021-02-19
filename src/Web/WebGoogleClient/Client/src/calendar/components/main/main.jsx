@@ -724,6 +724,8 @@ export class Main extends Component {
                     reminders = event.reminders.overrides;
                 }
 
+                console.log('onDataBinding ===>', reminders);
+
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
