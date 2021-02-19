@@ -133,12 +133,13 @@ function listEventsParser(list) {
             } else {
               recurrenceRule = null;
             }
-
+            
+            let reminders = [];
             if(list[i].json.VALARM) {
+                reminders = getReminders(list[i].json.VALARM);
                 list[i].json.VALARM = JSON.stringify(list[i].json.VALARM)
-                console.log('listEventsParser',   list[i].json.VALARM)
-            }
-          
+            } 
+
             getAttendees(list[i].json, attendees);
             listParse.push({
                 id: list[i].href,
@@ -159,6 +160,7 @@ function listEventsParser(list) {
                 attendees: attendees,
                 categories: list[i].categories,
                 color: list[i].color,
+                reminders: reminders
             });
         }
     }
@@ -168,6 +170,21 @@ function listEventsParser(list) {
     result = ({ result: items });
     
     return result
+}
+
+
+function getReminders(alarms) {
+    let reminders = [];
+    alarms.forEach(alarm => {
+        const trigger = alarm.TRIGGER.split('-')[1];
+        const time = moment.duration(trigger, moment.ISO_8601);
+        const timeSeconds = time.asSeconds()
+        reminders.push({
+            method: 'email',
+            minutes: timeSeconds
+        })
+    });
+    return reminders;
 }
 
 function getAttendees(json, attendees) {

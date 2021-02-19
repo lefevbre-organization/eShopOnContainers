@@ -997,14 +997,11 @@ class Calendar extends Component {
                 //    start = event.start.date;
                 //    end = event.end.date;
                 //}
-
-
                 // Recurrence
                 let recurrenceRule
                 if (event.recurrence != undefined) {
                     recurrenceRule = event.recurrence[0].replace('RRULE:', '');
                 }
-
                 // Attendees
                 let attendees = []
                 if (event.attendees != undefined) {
@@ -1013,7 +1010,6 @@ class Calendar extends Component {
                 else {
                     attendees = undefined;
                 }
-
                 // EventType
                 let eventType = {};
                 let lexonClassification = null;
@@ -1021,13 +1017,12 @@ class Calendar extends Component {
                     eventType.name = event.categories;
                     eventType.color = event.color;
                 }
-
-                console.log(eventType)
-
+                // Reminders
                 let reminders = []
                 if (event.reminders != undefined) {
-                    reminders = event.reminders.overrides;
+                    reminders = event.reminders;
                 }
+    
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,  
