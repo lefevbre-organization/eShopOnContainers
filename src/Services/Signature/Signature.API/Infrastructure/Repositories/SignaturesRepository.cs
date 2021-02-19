@@ -531,10 +531,6 @@
         #endregion
 
         #region Helpers
-        private static UpdateOptions GetUpsertOptions()
-        {
-            return new UpdateOptions { IsUpsert = true };
-        }
 
         private UserSignatures GetNewUserSignature(string user, string externalId, string guid, string app, List<Document> documents)
         {

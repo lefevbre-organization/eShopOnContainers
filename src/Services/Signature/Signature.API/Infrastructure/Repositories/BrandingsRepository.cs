@@ -235,12 +235,5 @@
 
         #endregion
 
-        #region Helpers
-        private static UpdateOptions GetUpsertOptions()
-        {
-            return new UpdateOptions { IsUpsert = true };
-        }
-        #endregion
-
     }
 }

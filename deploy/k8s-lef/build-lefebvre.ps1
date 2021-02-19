@@ -50,10 +50,10 @@ else {
 if ([string]::IsNullOrEmpty($imageTag)) {
     $imageTag = $(git rev-parse --abbrev-ref HEAD)
 }
-$StartMs = (Get-Date).Millisecond
+$Start = (Get-Date)
 Write-Host "=====================================" -ForegroundColor DarkCyan
 Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
-Write-Host "Empieza la operación a las: $StartMs" -ForegroundColor DarkCyan 
+Write-Host "Start process at: $Start" -ForegroundColor DarkCyan 
 Write-Host "Deploy Kubernetes: $deployKubernetes" -ForegroundColor DarkCyan 
 Write-Host "Docker: Build $buildImages all[$buildAll] and Clean $cleanDocker" -ForegroundColor DarkCyan 
 Write-Host "Kubernetes: $deployKubernetes with Infraestructure $cleanDocker" -ForegroundColor DarkCyan 
@@ -103,9 +103,8 @@ if ($pushImages) {
 }
 
 $End = (Get-Date)
-$EndMs = $End.Millisecond
+$Duration = New-TimeSpan -Start $Start -End $End
 Write-Host "=====================================" -ForegroundColor DarkCyan
-Write-Host "-------------END PROCESS-------------" -ForegroundColor DarkCyan
-Write-Host "Termina la operación a las: $End" -ForegroundColor DarkCyan 
-Write-Host "Tiempo total: $($EndMs - $StartMs)" -ForegroundColor DarkCyan 
+Write-Host "End process at: $End" -ForegroundColor DarkCyan 
+Write-Host "Total Time : $Duration" -ForegroundColor DarkCyan 
 Write-Host "=====================================" -ForegroundColor DarkCyan

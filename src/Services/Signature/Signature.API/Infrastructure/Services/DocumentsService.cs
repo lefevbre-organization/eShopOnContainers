@@ -16,8 +16,8 @@
         public readonly IDocumentsRepository _documentsRepository;
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
-        private readonly int _timeout;
-        private readonly int _timeoutFile;
+        //private readonly int _timeout;
+        //private readonly int _timeoutFile;
 
         public DocumentsService(
             IOptions<SignatureSettings> settings
@@ -30,8 +30,8 @@
             _documentsRepository = documentsRepository ?? throw new ArgumentNullException(nameof(documentsRepository));
             //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _configuration = configuration;
-            _timeout = 5000;
-            _timeoutFile = 90000;
+            //_timeout = 5000;
+            //_timeoutFile = 90000;
 
         }
 
