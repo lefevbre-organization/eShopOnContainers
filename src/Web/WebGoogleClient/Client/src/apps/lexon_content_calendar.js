@@ -56,12 +56,9 @@ export class LexonComponentCalendar extends Component {
   }
 
   render() {
-    const { sidebarDocked } = this.props;
-    const { style } = this.state;
-
-      return ( 
+      return (
           <div>             
-             <div id='lexon-app'></div>   
+             <div id='lexon-app'/>
           </div>
     );
   }

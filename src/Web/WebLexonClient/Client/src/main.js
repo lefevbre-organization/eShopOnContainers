@@ -305,6 +305,7 @@ class Main extends Component {
       this.props.addMessage(message);
     });
 
+    debugger
     getUser(user)
       .then((result) => {
         const newUser = Object.assign({}, result.user, {
