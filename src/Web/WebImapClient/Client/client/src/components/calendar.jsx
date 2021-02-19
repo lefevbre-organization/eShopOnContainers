@@ -92,7 +92,7 @@ import { /*addCalendarEvent,*/ /*deleteCalendarEvent, *//*updateCalendarEvent,*/
 
 import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
-//import Reminder from "./reminder/reminder"
+import Reminder from "../calendar/components/main/reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 //import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../calendar/components/eventtypes/eventtype';
