@@ -1215,7 +1215,14 @@ calendarId = args.currentTarget.id;
             this.setState({ calendars: result.items });
             this.resourceCalendarData = orderBy(result.items, "primary");
             this.props.getCalendars(this.resourceCalendarData);
-            if(this.state.calendars.length !== result.items.length) {
+            let existChange = this.state.calendars.filter(calendar => {
+                return !result.items.some(item => {
+                  return item.backgroundColor === calendar.backgroundColor 
+                  && item.summary === calendar.summary
+                  && item.description === calendar.description;
+                });
+            });
+            if(this.state.calendars.length !== result.items.length || existChange.length > 0) {
                 this.setState({ calendars: result.items });
                 this.resourceCalendarData = orderBy(result.items, "primary")
                 this.props.getCalendars(this.resourceCalendarData);
