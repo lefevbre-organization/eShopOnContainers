@@ -1240,6 +1240,7 @@ calendarId = args.currentTarget.id;
     }
 
     CreateGuid() {
+        debugger
         function _p8(s) {
             const p = (`${Math.random().toString(16)}000000000`).substr(2, 8);
             return s ? `-${p.substr(0, 4)}-${p.substr(4, 4)}` : p;
@@ -1271,7 +1272,6 @@ calendarId = args.currentTarget.id;
         } else {
             filename = values.CalendarId + this.CreateGuid();
         }
-<<<<<<< HEAD
 
         //Event basic data
         const event = {
@@ -1286,35 +1286,6 @@ calendarId = args.currentTarget.id;
             saveType: saveType
             //'color': 'green'
         };
-=======
-        console.log('values.StartTime', values.StartTime)
-        console.log('values.StartTime', values.EndTime)
-        //Event basic data
-        var event = {
-            'allDay': values.IsAllDay,
-            'summary': values.Subject,
-            'location': values.Location,
-            'description': values.Description,
-            'start': moment(values.StartTime),
-            'end': moment(values.EndTime).add(1, 'days'), 
-            'timestamp': moment(values.StartTime),         
-            'timezone': 'Europe/Madrid',
-            'filename': filename, 
-            'saveType': saveType
-        }
-
-        //if (values.LexonClassification != undefined) {
-        //    const properties = {
-        //        ...(event.extendedProperties ? event.extendedProperties.private || {} : {}),
-        //        'lexonClassification': '' + values.LexonClassification
-        //    }
-
-        //    event.extendedProperties = {
-        //        ...event.extendedProperties,
-        //        private: properties
-        //    }
-        //}
->>>>>>> d2e90ab9f902ce24808bf29539ae9487ee1874d9
 
         //event Type
         if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
@@ -1364,31 +1335,24 @@ calendarId = args.currentTarget.id;
             const cat = values.LexonClassification;
             event.x = { key: 'X-ACTUATION', value: `${cat}`};
         }
-<<<<<<< HEAD
+        event.organizer = organizerData;
+
+        //let reminders = [];
+        // let arrR = this.remObj.listviewInstance.dataSource;
+        // console.log(arrR)
+        // if (arrR.length > 0) {
+        //     event.reminders = []
+        //     Object.keys(arrR).forEach(function (key) {
+        //         event.reminders.push({
+        //             type: 'display',
+        //             trigger: arrR[key].minutesvalue,
+        //         });
+        //     });
+        // }
+
+        console.log(event);
+
         return event;
-=======
-            
-    
-        event.organizer = organizerData;  
-
-        let reminders = []
-        let arrR = this.remObj.listviewInstance.dataSource;
-        console.log(arrR)
-        if (arrR.length > 0) {
-            event.reminders = []
-            Object.keys(arrR).forEach(function (key) {
-                event.reminders.push({
-                    type: 'display',
-                    trigger: arrR[key].minutesvalue,
-                });
-            });
-        }
-
-        console.log(event)
-       
-
-        return event
->>>>>>> d2e90ab9f902ce24808bf29539ae9487ee1874d9
     }
 
     getRecurrenceEvent(recurrenceRule) {
@@ -1542,7 +1506,6 @@ calendarId = args.currentTarget.id;
     }
 
     onPopupOpen(args) {
-        debugger
         const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;
