@@ -1131,7 +1131,6 @@ export class Main extends Component {
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id === undefined) {
                     this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
-                    //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
@@ -1329,7 +1328,7 @@ export class Main extends Component {
                 head.classList.add('hidden');
             }
 
-
+            debugger
             this.selectedEvent = {...args.data};
 
             var editButton = document.querySelector('.e-event-delete');

@@ -256,8 +256,17 @@ class Calendar extends Component {
   }
 
   sendMessagePutUser(user) {
-    const { selectedMessages, selected } = this.props.messages;
-
+      debugger
+      let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
+      if(sm.length > 0) {
+          sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
+          if (!sm[0].Guid) {
+              sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
+          }
+      }
+      if(this.state.showPromptImportContactsDialog) {
+          sm = this.props.calendarsResult.calendars || [];
+      }
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
@@ -1032,6 +1041,7 @@ calendarId = args.currentTarget.id;
     sendMessagePutUser(user) {
         const { email, lexon, calendarsResult } = this.props;
 
+        debugger
         const eventId = this.selectedEvent.Id.split("/").pop();
         let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: eventId }] : [];
         if (this.state.showPromptImportContactsDialog) {
@@ -1275,6 +1285,9 @@ calendarId = args.currentTarget.id;
             const guid =  this.createGuid();
             filename = values.CalendarId + guid;
             values.Guid = guid;
+            if(!values.Id) {
+                values.Id = guid;
+            }
         }
 
         //Event basic data
@@ -1440,9 +1453,15 @@ calendarId = args.currentTarget.id;
         const validator = (formElement).ej2_instances[0];
         validator.validate();
 
+        debugger
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
             if (args.selectedIndex === 0 && args.selectingIndex === 1) {
+                const subjectElement = document.getElementsByClassName('e-subject')[0];
+                if(this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
+                    this.selectedEvent.Subject = subjectElement ? subjectElement.textContent : '';
+                }
+
                 // Hide buttons
                 const buttons = document.getElementsByClassName("e-footer-content");
                 if (buttons) {
@@ -1460,12 +1479,11 @@ calendarId = args.currentTarget.id;
                 }
             }
 
-            if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
+            if (this.tabObj.selectingID === "1") {
                 // this.tabObj.refresh()
                 const id = this.scheduleObj.eventWindow.eventData.Id;
-                if (id == undefined) {
-                    //this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
-                    //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
+                if (id === undefined) {
+                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 } else {
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
@@ -1653,7 +1671,7 @@ calendarId = args.currentTarget.id;
                 head.classList.add('hidden');
             }
 
-
+            debugger
             this.selectedEvent = { ...args.data };
 
             var editButton = document.querySelector('.e-event-delete');
@@ -1946,9 +1964,7 @@ calendarId = args.currentTarget.id;
                 args.data.LexonClassification = this.currentClassification;
 
                 //update the Event to call the api
-                debugger
                 args.data.Id = args.data.CalendarId + args.data.Guid;
-                debugger
                 event = this.buildEventoCalDav(args.data);
 
                 const itemToModify = args.data.Id;
@@ -1991,7 +2007,6 @@ calendarId = args.currentTarget.id;
                                     this.LoadCalendarList(false)
                                     return;
                                 }*/
-                debugger
                 event = this.buildEventoCalDav(args.data[0], true);
 
                 // if the calendar is not checked remove from current view
@@ -1999,12 +2014,12 @@ calendarId = args.currentTarget.id;
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
 
-
+                this.selectedEvent = { ...args.data[0] };
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
-                            this.scheduleObj.eventWindow.eventData.Id = result.id;
+                            this.scheduleObj.eventWindow.eventData.Subject = event.summary;
                         }
 
                         this.localEvents[args.data[0].Id] = args.data[0].Guid;
@@ -2196,8 +2211,11 @@ calendarId = args.currentTarget.id;
                 }
             });
         }
-        this.scheduleObj.eventSettings.query = new Query().where(predicate);
-        this.scheduleObj.refreshEvents();
+
+        if(this.scheduleObj) {
+            this.scheduleObj.eventSettings.query = new Query().where(predicate);
+            this.scheduleObj.refreshEvents();
+        }
     }
 
     handleScheduleDate(args) {
