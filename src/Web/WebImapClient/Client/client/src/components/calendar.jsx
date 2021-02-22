@@ -110,6 +110,7 @@ import LexonComponentCalendar from "../apps/lexon_content_calendar";
 class Calendar extends Component {
   constructor(props) {
     super(props);
+    this.localEvents = [];
 
     this.state = {
         redirectToLogin: this.props.lexon.user ? false : true,
@@ -1187,7 +1188,9 @@ calendarId = args.currentTarget.id;
     getlistEventTypes() {
        getEventTypes(this.props.email)
            .then(result => {
-               this.onDataBindingEventTypeList(result.data.eventTypes);
+               if(result && result.data) {
+                   this.onDataBindingEventTypeList(result.data.eventTypes);
+               }
            })
            .catch(error => {
                console.log('error ->', error);
@@ -1212,7 +1215,6 @@ calendarId = args.currentTarget.id;
                     this.scheduleObj.refresh();
                 }
             }
-           
         })
         .catch(error => {
             console.log('error ->', error);
@@ -1239,8 +1241,7 @@ calendarId = args.currentTarget.id;
         //window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
 
-    CreateGuid() {
-        debugger
+    createGuid() {
         function _p8(s) {
             const p = (`${Math.random().toString(16)}000000000`).substr(2, 8);
             return s ? `-${p.substr(0, 4)}-${p.substr(4, 4)}` : p;
@@ -1267,10 +1268,13 @@ calendarId = args.currentTarget.id;
         let filename = "";
         const saveType = isNew ? "new" : "update";
 
-        if (values.Id) {
+        debugger
+        if (typeof values.Id === 'string') {
             filename = values.Id.startsWith(values.CalendarId) ? values.Id : values.CalendarId + values.Id;
         } else {
-            filename = values.CalendarId + this.CreateGuid();
+            const guid =  this.createGuid();
+            filename = values.CalendarId + guid;
+            values.Guid = guid;
         }
 
         //Event basic data
@@ -1891,15 +1895,23 @@ calendarId = args.currentTarget.id;
                 break;
 
             case 'eventChanged':
-                    console.log('eventChanged--->', args.data[0]);
                 let idEvent;
+                debugger;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id;
+                    if( typeof args.data[0].Id !== 'string') {
+                        args.data[0].Guid = this.localEvents[args.data[0].Id];
+                    }
                 } else {
                     idEvent = args.data.Id;
+                    if( typeof args.data.Id !== 'string') {
+                        args.data.Guid = this.localEvents[args.data.Id];
+                    }  else {
+                        args.data.Guid = args.data.Id.split("/").pop();
+                    }
                 }
 
-                var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(e => e.Id == idEvent);
+                var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(e => e.Id === idEvent);
 
                 if (desc) {
                     //reset reminders
@@ -1926,22 +1938,6 @@ calendarId = args.currentTarget.id;
                             desc.Attendees.push({ email: att[key] });
                         });
                     }
-
-                    //update eventType
-                    //Convert dropdown eventType in eventtype object to paint into schedule event
-                    //if (desc.EventType != undefined && desc.EventType != null) {
-                    //    let item;
-                    //    item = this.eventTypeDataSource.find(x => x.text == desc.EventType)
-                    //    // create EventType with structure
-                    //    let eventType = [];
-                    //    if (item != undefined) {
-                    //        eventType.name = item.text;
-                    //        eventType.id = item.id;
-                    //        eventType.color = item.backgroundColor;
-                    //        desc.EventType = eventType;
-                    //    }
-                    //}
-
                     desc.LexonClassification = this.currentClassification;
                 }
 
@@ -1952,6 +1948,7 @@ calendarId = args.currentTarget.id;
                 //update the Event to call the api
                 debugger
                 args.data.Id = args.data.CalendarId + args.data.Guid;
+                debugger
                 event = this.buildEventoCalDav(args.data);
 
                 const itemToModify = args.data.Id;
@@ -1995,7 +1992,6 @@ calendarId = args.currentTarget.id;
                                     return;
                                 }*/
                 debugger
-                args.data[0].Id = undefined;
                 event = this.buildEventoCalDav(args.data[0], true);
 
                 // if the calendar is not checked remove from current view
@@ -2011,8 +2007,10 @@ calendarId = args.currentTarget.id;
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
 
+                        this.localEvents[args.data[0].Id] = args.data[0].Guid;
                         // this.scheduleObj.eventWindow.resetForm();
                         //args.data[0].Id = event.filename;
+                        debugger
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
@@ -2269,7 +2267,6 @@ calendarId = args.currentTarget.id;
 
     onActionBegin(args) {
         //ask for iframe
-        debugger
         if (args.requestType === 'toolbarItemRendering') {
             if (args.requestType === 'toolbarItemRendering') {
                 const CalendarsIconItem = {

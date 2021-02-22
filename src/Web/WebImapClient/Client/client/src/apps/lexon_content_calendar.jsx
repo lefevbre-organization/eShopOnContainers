@@ -24,7 +24,7 @@ const styles = {
     padding: 0,
     height: "100%",
     backgroundColor: "#fff",
-    overflowY: "hidden"
+    overflow: "hidden"
   }
 };
 
