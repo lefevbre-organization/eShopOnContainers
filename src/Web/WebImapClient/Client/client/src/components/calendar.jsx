@@ -2009,11 +2009,14 @@ calendarId = args.currentTarget.id;
 
             case 'eventCreated':
 
-                /*                if(args.data[0].Id) {
-                                    // refresh events view from api
-                                    this.LoadCalendarList(false)
-                                    return;
-                                }*/
+                // if event is all day add one less day
+                let EndTime = moment(args.data[0].EndTime).add(-1, 'days');
+                
+                if(args.data[0].IsAllDay) {
+                    args.data[0].EndTime = EndTime._d;
+                    args.data[0].endTime = EndTime._d;
+                }
+                
                 event = this.buildEventoCalDav(args.data[0], true);
 
                 // if the calendar is not checked remove from current view
