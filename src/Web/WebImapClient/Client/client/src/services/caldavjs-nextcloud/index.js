@@ -502,10 +502,11 @@ export default class Caldavjs {
    * Save a create contact 
    * 
    * @param {object} required 
-   ** @param {string} fn required
+   ** @param {string} firstName required
+   ** @param {string} lastName required
    ** @param {string} email required
-   ** @param {string} tel required
-   ** @param {string} categories 
+   ** @param {string} workPhone required
+   ** @param {string} uid required
    *
    * @return {string}
    */
@@ -513,8 +514,11 @@ export default class Caldavjs {
     let string = null;
     try {
     vCard = vCard();
-    vCard.firstName = 'Eric Jose';
+    vCard.firstName = 'Eric';
+    vCard.lastName = 'Nesser';
     vCard.email = 'j.hostilio-ext@lefebvre.es';
+    vCard.workPhone = '312-555-1212';
+    vCard.uid = '69531f4a-c34d-4a1e-8922-bd38a9476a53';
     } catch (e) {
       throw new Error(e.toString());
     }
