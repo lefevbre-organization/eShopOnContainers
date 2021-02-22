@@ -88,7 +88,7 @@ import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
+import { addCalendarEvent, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
 import Reminder from "../calendar/components/main/reminder/reminder";
 import { Popup } from '@syncfusion/ej2-popups';
@@ -1211,8 +1211,6 @@ calendarId = args.currentTarget.id;
         this.resourceCalendarData = [];
         listCalendarList()
         .then(result => {
-            console.log('get calendars in sidebar', result.items);
-            this.setState({ calendars: result.items });
             this.resourceCalendarData = orderBy(result.items, "primary");
             this.props.getCalendars(this.resourceCalendarData);
             let existChange = this.state.calendars.filter(calendar => {
