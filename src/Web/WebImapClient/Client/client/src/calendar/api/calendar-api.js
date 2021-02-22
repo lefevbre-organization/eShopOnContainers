@@ -103,19 +103,7 @@ export const deleteCalendarEvent = async filename => {
 };
 
 function listEventsParser(list) {
-  //allDay: true
-  //calendarData: "BEGIN:VCALENDAR↵PRODID:-//IDN nextcloud.com//Calendar app 2.1.3//EN↵CALSCALE:GREGORIAN↵VERSION:2.0↵BEGIN:VEVENT↵CREATED:20210108T155756Z↵DTSTAMP:20210108T155801Z↵LAST-MODIFIED:20210108T155801Z↵SEQUENCE:2↵UID:eed9b1c1-4b37-41e5-a460-de783317d4bc↵DTSTART;VALUE=DATE:20210108↵DTEND;VALUE=DATE:20210109↵SUMMARY:prueba↵END:VEVENT↵END:VCALENDAR"
-  //categories: undefined
-  //color: undefined
-  //description: undefined
-  //end: "20210109"
-  //etag: "3e6884ba94ab190285f9d9731d4ceb62"
-  //href: "/remote.php/dav/calendars/alberto/personal/50EB1A0D-49CC-4BF7-8D9F-0A819A561BCE.ics"
-  //json: { CREATED: "20210108T155756Z", DTSTAMP: "20210108T155801Z", LAST - MODIFIED: "20210108T155801Z", SEQUENCE: "2", UID: "eed9b1c1-4b37-41e5-a460-de783317d4bc", … }
-  //location: undefined
-  //start: "20210108"
-  //summary: "prueba"
-  //__proto__: Object
+
   const listParse = [];
   if (list.length > 0) {
     for (let i = 0; i < list.length; i++) {
@@ -146,7 +134,8 @@ function listEventsParser(list) {
         ImageName: "lefebvre",
         attendees: attendees,
         categories: list[i].categories,
-        color: list[i].color
+        color: list[i].color,
+        lexonActuation: list[i].lexonActuation
       });
     }
   }

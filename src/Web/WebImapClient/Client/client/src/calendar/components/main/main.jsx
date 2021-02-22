@@ -1061,7 +1061,6 @@ export class Main extends Component {
     }
 
     selectingTab(args) {
-        debugger
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();

@@ -168,6 +168,7 @@ export default class Caldavjs {
               evt.description = parsed.DESCRIPTION;
               evt.color = parsed.COLOR;
               evt.categories = parsed.CATEGORIES;
+              evt.lexonActuation = parsed["X-ACTUATION"];
               evt.json = parsed;
               resolve();
             })
@@ -385,6 +386,8 @@ export default class Caldavjs {
     try {
       evt = icalGenerator({
         events: [{
+          id: input.filename,
+          uid: input.filename.split("/").pop(),
           start: new Date(input.start),
           end: new Date(input.end),
           summary: input.summary,
@@ -396,7 +399,8 @@ export default class Caldavjs {
           attendees: input.attendees,
           alarms: input.reminders,
           repeating: input.repeating,
-          allDay: input.allDay || true
+          allDay: input.allDay || true,
+          x: input.x ? [input.x]:[]
         }]
       });
     } catch (e) {

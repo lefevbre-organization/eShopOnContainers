@@ -90,7 +90,7 @@ import "@pathofdev/react-tag-input/build/index.css";
 
 import { addCalendarEvent, listEvents, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
 
-import Reminder from "../calendar/components/main/reminder/reminder"
+import Reminder from "../calendar/components/main/reminder/reminder";
 import { Popup } from '@syncfusion/ej2-popups';
 //import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../calendar/components/eventtypes/eventtype';
@@ -257,7 +257,6 @@ class Calendar extends Component {
   sendMessagePutUser(user) {
     const { selectedMessages, selected } = this.props.messages;
 
-    console.log('messages ->', this.props.messages);
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
@@ -560,9 +559,7 @@ class Calendar extends Component {
 
     async handleClassificatedEvent(event) {
         const caldavEvent = this.buildEventoCalDav(event.detail);
-
-
-        const resp = await addCalendarEvent(event.detail.CalendarId, event.detail.Id, caldavEvent);
+        const resp = await addCalendarEvent(event.detail.CalendarId, caldavEvent);
         this.currentClassification = event.detail.LexonClassification;
     }
 
@@ -591,7 +588,6 @@ class Calendar extends Component {
         if (window != window.top) {
             this.layoutIframe = true;
         }
-
 
         if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true;
@@ -742,7 +738,6 @@ calendarId = args.currentTarget.id;
         const { detail } = eventData;
         const { events, calendar } = detail;
         const errors = [];
-        const progress = 0;
         let eventsImported = 0;
 
         for (let i = 0; i < events.length; i++) {
@@ -869,29 +864,23 @@ calendarId = args.currentTarget.id;
             subjectStr = t("schedule.notitle");
         }
 
-        console.log('eventTemplate', colorExist);
-
         return (
             <div>
-                {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <div className={styles.eventicon}>
 
-                        {props.LexonClassification && <img width="16" height="16" src={`assets/img/${props.ImageName}.png`} />}
+                        {props.LexonClassification && <img width="16" height="16" src={`assets/images/${props.ImageName}.png`} style={{marginRight: 5, marginBottom: 2 }}/>}
                         {subjectStr}
                         {colorExist ? (
                             <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}}
-                            className={`${styles.dot} ${styles.floatleft}`}></span>
+    className={`${styles.dot} ${styles.floatleft}`}/>
                         ) : (
                                 ''
                             )}
                     </div>
                 </div>
-
-                {/* <div className="subject">{props.Subject}</div>
-               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
-
-            </div>);
+            </div>
+        );
     }
 
     eventTemplateAgendaView(props) {
@@ -1035,7 +1024,7 @@ calendarId = args.currentTarget.id;
                     Attendees: attendees,
                     EventType: eventType,
                     Reminders: reminders,
-                    LexonClassification: lexonClassification
+                    LexonClassification: event.lexonActuation
                 });
             }
         }
@@ -1261,8 +1250,7 @@ calendarId = args.currentTarget.id;
         return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
     }
 
-    buildEventoCalDav(values) {
-        debugger
+    buildEventoCalDav(values, isNew = false) {
         let timezoneEnd = 'Europe/Madrid';
         if (values.EndTimezone != undefined) {
             timezoneEnd = values.EndTimezone;
@@ -1275,25 +1263,22 @@ calendarId = args.currentTarget.id;
 
         //important to update event
         let filename = "";
-        let saveType = "";
-        if (values.filename === undefined) {
-            // New Event
-            filename = values.CalendarId + this.CreateGuid();
-            saveType = 'new';
+        const saveType = isNew ? "new" : "update";
+
+        if (values.Id) {
+            filename = values.Id.startsWith(values.CalendarId) ? values.Id : values.CalendarId + values.Id;
         } else {
-           // Edit event
-            filename = values.Id;
-            saveType = 'update';
+            filename = values.CalendarId + this.CreateGuid();
         }
-        console.log('values.StartTime', values.StartTime);
+
         //Event basic data
         const event = {
             allDay: values.IsAllDay,
             summary: values.Subject,
             location: values.Location,
             description: values.Description,
-            start: moment(values.StartTime),
-            end: moment(values.EndTime),
+            start: moment(values.StartTime).add(1, 'days'),
+            end: moment(values.EndTime).add(1, 'days'),
             timezone: 'Europe/Madrid',
             filename: filename,
             saveType: saveType
@@ -1345,11 +1330,8 @@ calendarId = args.currentTarget.id;
         event.attendees = ateendeeObj;
 
         if (values.LexonClassification) {
-            const cat = `LEXON#${values.LexonClassification}`;
-            if (!event.categories) {
-                event.categories = [];
-            }
-            event.categories = [...event.categories.filter(c => c.name !== cat), {name: cat}];
+            const cat = values.LexonClassification;
+            event.x = { key: 'X-ACTUATION', value: `${cat}`};
         }
         return event;
     }
@@ -1505,6 +1487,7 @@ calendarId = args.currentTarget.id;
     }
 
     onPopupOpen(args) {
+        debugger
         const { t } = this.props;
         //if (this.layoutIframe) {
         //    args.cancel = true;
@@ -1742,10 +1725,10 @@ calendarId = args.currentTarget.id;
                 //containerTab.appendChild(nodeA);
 
                 // Adding reminder element
-                const containerRem = createElement('div', { className: 'custom-field-container' });
-                rowReminders.appendChild(containerRem);
-                const nodeR = ReactDOM.findDOMNode(this.remObj);
-                containerRem.appendChild(nodeR);
+                // const containerRem = createElement('div', { className: 'custom-field-container' });
+                // rowReminders.appendChild(containerRem);
+                // const nodeR = ReactDOM.findDOMNode(this.remObj);
+                // containerRem.appendChild(nodeR);
             }
 
             // if from iframe is requested a new event
@@ -1905,15 +1888,15 @@ calendarId = args.currentTarget.id;
                     desc.Reminders = [];
 
                     //Update Reminders
-                    const arrR = this.remObj.listviewInstance.dataSource;
-                    if (arrR.length > 0) {
-                       Object.keys(arrR).forEach(key => {
-                           desc.Reminders.push({
-                               method: arrR[key].title,
-                               minutes: arrR[key].value
-                           });
-                       });
-                    }
+                    // const arrR = this.remObj.listviewInstance.dataSource;
+                    // if (arrR.length > 0) {
+                    //    Object.keys(arrR).forEach(key => {
+                    //        desc.Reminders.push({
+                    //            method: arrR[key].title,
+                    //            minutes: arrR[key].value
+                    //        });
+                    //    });
+                    // }
 
                     //reset attendess
                     desc.Attendees = [];
@@ -1949,6 +1932,8 @@ calendarId = args.currentTarget.id;
                 args.data.LexonClassification = this.currentClassification;
 
                 //update the Event to call the api
+                debugger
+                args.data.Id = args.data.CalendarId + args.data.Guid;
                 event = this.buildEventoCalDav(args.data);
 
                 const itemToModify = args.data.Id;
@@ -1967,6 +1952,7 @@ calendarId = args.currentTarget.id;
 
                     //call function to add new single event out of the serie
                     args.addedRecords[0].RecurrenceRule = undefined;
+                    debugger
                     const eventOcurrence = this.buildEventoCalDav(args.addedRecords[0]);
                     this.addCalendarEventCRUD(args.data.parent.CalendarId, eventOcurrence);
                     break;
@@ -1974,6 +1960,7 @@ calendarId = args.currentTarget.id;
                 if (args.changedRecords[0] != undefined) {
                     calendarToModify = args.changedRecords[0].CalendarId;
                     args.changedRecords[0].LexonClassification = this.currentClassification;
+                    debugger
                     event = this.buildEventoCalDav(args.changedRecords[0]);
                 }
 
@@ -1989,8 +1976,9 @@ calendarId = args.currentTarget.id;
                                     this.LoadCalendarList(false)
                                     return;
                                 }*/
-                console.log('buildEventoGoogle --->', args.data[0]);
-                event = this.buildEventoCalDav(args.data[0]);
+                debugger
+                args.data[0].Id = undefined;
+                event = this.buildEventoCalDav(args.data[0], true);
 
                 // if the calendar is not checked remove from current view
                 if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {
@@ -2006,7 +1994,7 @@ calendarId = args.currentTarget.id;
                         }
 
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = event.filename;
+                        //args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
@@ -2125,7 +2113,6 @@ calendarId = args.currentTarget.id;
                 else {
                     this.scheduleData = this.scheduleData.filter(obj => obj.CalendarId !== calendar);
                 }
-
 
                this.props.selectCalendar(calendar);
 
@@ -2264,7 +2251,7 @@ calendarId = args.currentTarget.id;
 
     onActionBegin(args) {
         //ask for iframe
-
+        debugger
         if (args.requestType === 'toolbarItemRendering') {
             if (args.requestType === 'toolbarItemRendering') {
                 const CalendarsIconItem = {
