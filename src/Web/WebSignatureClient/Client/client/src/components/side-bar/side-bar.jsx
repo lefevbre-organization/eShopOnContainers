@@ -23,7 +23,7 @@ class SideBar extends Component {
     super(props);
     this.state = {
       dragOver: false,
-      hideAlertDialog: true,
+      hideAlertDialog: false,
       hideSendingTypeDialog: false,
       hideConfirmDialog: false
     };
