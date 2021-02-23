@@ -1149,7 +1149,7 @@ calendarId = args.currentTarget.id;
         if (obj.layoutIframeEditEventView) {
             setTimeout(() => {
                 obj.handleScheduleOpenEditEventEditor();
-            }, 2000);
+            }, 3000);
         }
     }, value);
 

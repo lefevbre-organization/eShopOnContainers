@@ -104,7 +104,7 @@ import './App.css';
                 close={this.dialogCloseNew.bind(this)}>
             
                 <div className="modalview">
-                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6bnVsbCwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.zK3w455SefI1Ts2W8mcXXPm87pBgjiTKL8GU5_qt6-g/?prov=IM0"
+                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.FIEi8dWdsJ-ZZkycmWd9ydkgWMV9kE32myKYpmiPU0c/?prov=IM0&account=YWxiZXJ0by52YWx2ZXJkZS5lc2NyaWJhbm9AZ21haWwuY29t"
                         width="100%"
                         height="100%"
                         id="myId2"
@@ -133,7 +133,7 @@ import './App.css';
                 close={this.dialogCloseEdit.bind(this)}>
                 
                 <div className="modalview">
-                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IkFBTWtBRFl3TjJVNU9XWmxMV1V3WkRrdE5EUTNZaTA1TVRRMkxUTXhZbVV5TUdFeE1qY3dOZ0JHQUFBQUFBQUJHVHJpc3Q2NVI1WGxWZm1ZM0tBcUJ3QWNuQmlLTHdsS1FydmlCOFhrd3hhY0FBQUFBQUVOQUFBY25CaUtMd2xLUXJ2aUI4WGt3eGFjQUFHMDI3dFFBQUE9IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.Xfjw1EYSed8YNaYrqp5EzjVB27AumFDeG-_4jE09siw/?prov=IM0"
+                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRBY3R1YXRpb24iOiIyMyIsImlkRXZlbnQiOiIvcmVtb3RlLnBocC9kYXYvY2FsZW5kYXJzL2FkbWluL3BlcnNvbmFsLzZhNzY0MTVjLWE4MTUtZDliNC02Mjg2LTY3NDE4NzcwYTg5YiIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.yxmaUfUUDFU6Mq_e8hF-AypoBg9hHqWEitBObg5uX28/?prov=IM0&account=YWxiZXJ0by52YWx2ZXJkZS5lc2NyaWJhbm9AZ21haWwuY29t"
                         width="100%"
                         height="100%"
                         id="myId2"
@@ -148,7 +148,7 @@ import './App.css';
 
             <div id="calendar" className='col-lg-6 control-section'> 
                 <div className='control-wrapper'>
-                    <Iframe url="http://localhost:7000/calendar/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IkFBTWtBRFl3TjJVNU9XWmxMV1V3WkRrdE5EUTNZaTA1TVRRMkxUTXhZbVV5TUdFeE1qY3dOZ0JHQUFBQUFBQUJHVHJpc3Q2NVI1WGxWZm1ZM0tBcUJ3QWNuQmlLTHdsS1FydmlCOFhrd3hhY0FBQUFBQUVOQUFBY25CaUtMd2xLUXJ2aUI4WGt3eGFjQUFHMDI3dFFBQUE9IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.Xfjw1EYSed8YNaYrqp5EzjVB27AumFDeG-_4jE09siw/?prov=IM0"
+                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2In0.8f30OHW3KtisOVjUASxjKYSHOIIaRqnvA593aaAfYgM/?prov=IM0"
                         width="754px"
                         height="425px"
                         id="myId"
@@ -167,5 +167,7 @@ import './App.css';
 }
 
 //eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRFdmVudCI6IkFBTWtBRFl3TjJVNU9XWmxMV1V3WkRrdE5EUTNZaTA1TVRRMkxUTXhZbVV5TUdFeE1qY3dOZ0JHQUFBQUFBQUJHVHJpc3Q2NVI1WGxWZm1ZM0tBcUJ3QWNuQmlLTHdsS1FydmlCOFhrd3hhY0FBQUFBQUVOQUFBY25CaUtMd2xLUXJ2aUI4WGt3eGFjQUFHMDI3dFFBQUE9IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.Xfjw1EYSed8YNaYrqp5EzjVB27AumFDeG-_4jE09siw
+
+//http://localhost:7000/calendar/access/?prov=IM0
 
 export default Main;
