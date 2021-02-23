@@ -51,6 +51,28 @@ const email = (state = INITIAL_STATE.email, action) => {
             }     
         }
 
+        case ACTIONS.Types.ADD_LOADING_MESSAGE: {
+            const aux = [...state.loadingMessages.filter(m => m !== action.payload.id), action.payload];
+            return {
+                ...state,
+                loadingMessages: aux
+            }
+        }
+
+        case ACTIONS.Types.DELETE_LOADING_MESSAGE: {     
+            return {
+                ...state,
+                loadingMessages: state.loadingMessages.filter(message => message !== action.payload)
+            }         
+        }
+
+        case ACTIONS.Types.RESET_LIST_LOADING_MESSAGES: {        
+            return {
+                ...state,
+                loadingMessages: []
+            }     
+        }
+
         default: return state;
     }
 }

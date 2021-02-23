@@ -154,7 +154,7 @@ class FolderContainer extends Component {
             : this.props.deleteMessage(message.extMessageId);
 
         if (selected === true) {
-            window.dispatchEvent(new CustomEvent('LoadingMessage'));
+            window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: extMessageId}));
             const msgRaw = await getMessage(msg.id, 'raw');
             message.raw = msgRaw.result;
             //this.props.addMessage(message);

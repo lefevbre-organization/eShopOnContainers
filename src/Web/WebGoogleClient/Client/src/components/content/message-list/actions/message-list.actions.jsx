@@ -125,7 +125,7 @@ export const getEmailHeaderMessage = (messageId) => (dispatch) => {
     });
 };
 
-const setMessageLoadInProgress = () => ({
+export const setMessageLoadInProgress = () => ({
   type: MESSAGE_LOAD_IN_PROGRESS,
 });
 
