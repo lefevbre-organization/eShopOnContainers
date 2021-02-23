@@ -153,6 +153,7 @@ export class MessageContent extends Component {
   }
 
   componentDidMount(prevProps) {
+    console.log('*** COMPONENTDIDMOUNT');
     const messageId = this.props.match.params.id;
     this.props.getEmailMessage(messageId);
     this.props.setOpenMessage(messageId);
@@ -160,23 +161,31 @@ export class MessageContent extends Component {
     window.dispatchEvent(new CustomEvent('ResetList'));
   }
 
-  componentWillUnmount() {
+  async componentWillUnmount() {
+    console.log('*** COMPONENT WILL UNMOUNT');
     this.props.setOpenMessage('');
     window.dispatchEvent(new CustomEvent('ResetList'));
     for (let i = 0; i < this.props.selectedMessages.length; i++) {
       const detail = {
         id: this.props.selectedMessages[i].id,
-        extMessageId: this.props.selectedMessages[i].internetId,
+        extMessageId: this.props.selectedMessages[i].extMessageId,
         subject: this.props.selectedMessages[i].subject,
         sentDateTime: this.props.selectedMessages[i].sentDateTime,
         raw: '',
         chkselected: true,
       };
+      
+      window.dispatchEvent(new CustomEvent('LoadingMessage', { detail: detail.extMessageId}));
+      const msgRaw = await getMessage(detail.id, 'raw');
+      detail.raw = msgRaw;
+
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
           detail,
         })
       );
+
+      window.dispatchEvent(new CustomEvent('LoadedMessage'));
     }
     if (this.refresh && this.props.refresh) {
       this.props.refresh();
@@ -200,10 +209,9 @@ export class MessageContent extends Component {
       };
 
       // Get raw message
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: emailHeaderMessageResult.headers.internetMessageId}));
       getMessage(emailHeaderMessageResult.headers.id, 'raw')
         .then((msgRaw) => {
-          window.dispatchEvent(new CustomEvent('LoadedMessage'));
           detail.raw = msgRaw;
 
           window.dispatchEvent(
@@ -211,6 +219,7 @@ export class MessageContent extends Component {
               detail,
             })
           );
+          window.dispatchEvent(new CustomEvent('LoadedMessage'));
         })
         .catch((err) => {
           window.dispatchEvent(new CustomEvent('LoadedMessage'));

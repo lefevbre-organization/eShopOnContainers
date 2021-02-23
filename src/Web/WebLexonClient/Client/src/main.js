@@ -222,6 +222,8 @@ class Main extends Component {
         global.mimeParserAsync(event.detail.raw).then(  mime => {
           attachments = findAttachments(JSON.parse(mime));
           saveMessageInfo(event, attachments);
+          if (this.props.loadingMessages.length === this.props.selectedMessages.length)
+            this.props.setShowSpinner(false);
       }).catch(err => {
         console.log(err);
       });

@@ -326,6 +326,11 @@ export class Main extends Component {
         return true;
       }
     }
+
+    if (nextProps.messagesResult.openMessage !== this.props.messagesResult.openMessage){ // to prevent component MessageContent from mounting twice when opening a msg
+      return false
+    }
+
     return true;
   }
 
@@ -827,7 +832,7 @@ export class Main extends Component {
                 </span>
               )}
               <span className='productsbutton'>
-                {lexon.user && this.hasProduct('lexonconnector') ? (
+                {lexon.user  ? (
                   <TooltipComponent content={i18n.t('tooltips.lexon')}>
                     <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
