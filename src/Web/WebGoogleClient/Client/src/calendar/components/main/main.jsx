@@ -240,9 +240,17 @@ export class Main extends Component {
         if(!event.detail.Id) {
             event.detail.Id = event.detail.Guid;
         }
+
         const googleEvent = this.buildEventoGoogle(event.detail);
         let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
         this.currentClassification = event.detail.LexonClassification;
+
+
+        const evt = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
+            return e.Id == event.detail.Id;
+        });
+        evt.LexonClassification = event.detail.LexonClassification;
+        this.scheduleObj.refresh();
     }
 
     async handleClassificatedEventRemoved(event) {
@@ -763,6 +771,7 @@ export class Main extends Component {
         if(this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
+
 
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
@@ -1716,6 +1725,11 @@ export class Main extends Component {
 
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
+                        const dataEvt = this.scheduleObj.dataModule.dataManager.dataSource.json[this.scheduleObj.dataModule.dataManager.dataSource.json.length-1];
+                        dataEvt.Id = result.id;
+
+                        this.selectedEvent = { ...this.selectedEvent, Subject: result.summary, Id: result.id }
+
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
                             this.scheduleObj.eventWindow.eventData.Subject = event.summary;
@@ -1723,7 +1737,7 @@ export class Main extends Component {
                         }
 
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = event.filename;
+                        //args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
