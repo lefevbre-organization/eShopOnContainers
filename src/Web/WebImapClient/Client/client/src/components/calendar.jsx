@@ -1481,6 +1481,11 @@ calendarId = args.currentTarget.id;
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
             if (args.selectedIndex === 0 && args.selectingIndex === 1) {
+                const subjectElement = document.getElementsByClassName('e-subject')[0];
+                if(this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
+                    this.selectedEvent.Subject = subjectElement ? subjectElement.textContent : '';
+                }
+
                 // Hide buttons
                 const buttons = document.getElementsByClassName("e-footer-content");
                 if (buttons) {
