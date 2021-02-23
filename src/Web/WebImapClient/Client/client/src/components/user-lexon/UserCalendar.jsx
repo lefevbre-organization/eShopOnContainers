@@ -49,12 +49,16 @@ class UserCalendar extends Component {
     ) {
       //const account64 = this.props.location.search.split("account=")[1];
       parametros = new URLSearchParams(this.props.location.search);
-      if (parametros.get('account')) {
+      const acParam = parametros.get('account');
+      if (acParam) {
         // Get user account
-        const account = base64.decode(parametros.get('account'));
-
-        if (account) {
-          this.props.setAccount(account);
+        try {
+          const account = base64.decode(acParam);
+          if (account) {
+            this.props.setAccount(account);
+          }
+        } catch (e) {
+          console.log(e);
         }
       }
     }
@@ -101,6 +105,10 @@ class UserCalendar extends Component {
     const title = this.props.match.params.token
       ? getTitle(payload)
       : null
+
+    this.props.setIdEvent(idEvent);
+    this.props.setIdActuation(idActuation);
+    this.props.setTitle(title);
 
     const claims = this.props.match.params.token
       ? { idClienteNavision: getUserId(payload) }
@@ -159,10 +167,6 @@ class UserCalendar extends Component {
         emailShown: false,
       });
       }
-
-      this.props.setIdEvent(idEvent);
-      this.props.setIdActuation(idActuation);
-      this.props.setTitle(title);
 
     if (mailContacts) {
       console.log('Contactos recibidos');
