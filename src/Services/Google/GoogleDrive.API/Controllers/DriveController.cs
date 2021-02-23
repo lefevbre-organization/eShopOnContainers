@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 {
     using Infrastructure.Services;
+    using Microsoft.AspNetCore.Http;
     using Model;
 
     [Route("api/v1/[controller]")]
@@ -137,6 +138,54 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             var files = await _service.Trash(LefebvreCredential);
             return Ok(files);
         }
-        
+
+        [HttpPost("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CreateFolder(string LefebvreCredential, string folderName, string parentId)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (string.IsNullOrEmpty(folderName))
+                return BadRequest("El nombre del nuevo fichero es requerido");
+
+            var response = await _service.CreateFolder(LefebvreCredential, folderName,parentId);
+            return Ok(response);
+        }
+
+        [HttpPost("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (formFile == null)
+                return BadRequest("El archivo es requerido");
+
+            var response = await _service.UploadFile(LefebvreCredential, formFile, parentId);
+            return Ok(response);
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DownloadFile(string LefebvreCredential, string fileId)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (string.IsNullOrEmpty(fileId))
+                return BadRequest("El ID del archivo es requerido");
+
+            var file = await _service.DownloadFile(LefebvreCredential, fileId);
+            return Ok(file);
+        }
+
     }
 }

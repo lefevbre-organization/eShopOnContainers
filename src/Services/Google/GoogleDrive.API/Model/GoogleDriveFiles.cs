@@ -1,13 +1,14 @@
+
 using System.Collections.Generic;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
 {
-    public class File    
+    public class GoogleDriveFile    
     {
 
-        public File()
+        public GoogleDriveFile()
         {
-            files = new HashSet<File>();
+            files = new HashSet<GoogleDriveFile>();
         }
 
         public string kind { get; set; } 
@@ -20,7 +21,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
         public string webViewLink { get; set; } 
         public string iconLink { get; set; } 
         public bool hasThumbnail { get; set; } 
-        public IEnumerable<File> files { get; set; }
+        public IEnumerable<GoogleDriveFile> files { get; set; }
 
     }
 
@@ -28,6 +29,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
         public string kind { get; set; } 
         public string nextPageToken { get; set; } 
         public bool incompleteSearch { get; set; } 
-        public List<File> files { get; set; } 
+        public List<GoogleDriveFile> files { get; set; } 
     }
+
+    public class DownloadedFile
+    {
+        public string mimeType { get; set; }
+        public string content { get; set; }
+    }
+
+    public class GoogleDriveResonse
+    {
+        public string kind { get; set; }
+        public string id { get; set; }
+        public string name { get; set; }
+        public string mimeType { get; set; }
+    }
+ 
 }

@@ -160,6 +160,9 @@
             public static readonly string Delete = "GD04";
             public static readonly string Trash = "GD05";
             public static readonly string GetRoot = "GD06";
+            public static readonly string CreateFolder = "GD07";
+            public static readonly string UploadFile = "GD08";
+            public static readonly string DownloadFile = "GD09";
         }
 
         public static class GoogleAccount

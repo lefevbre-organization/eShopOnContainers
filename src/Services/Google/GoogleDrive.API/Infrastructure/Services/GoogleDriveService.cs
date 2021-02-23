@@ -9,11 +9,17 @@ using System.Threading.Tasks;
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services
 {
     using Exceptions;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
     using Model;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Net.Http.Headers;
+
+    using System.Runtime.Serialization;
+    using System.Text;
 
     public class GoogleDriveService : BaseClass<GoogleDriveService>, IGoogleDriveService
     {
@@ -68,10 +74,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             return result;
         }
 
-        private async Task<Result<List<File>>> GetRoot(Root root, string LefebvreCredential)
+        private async Task<Result<List<GoogleDriveFile>>> GetRoot(Root root, string LefebvreCredential)
         {
-            List<File> files = new List<File>();
-            Result<List<File>> filesResult = new Result<List<File>>(new List<File>());
+            List<GoogleDriveFile> files = new List<GoogleDriveFile>();
+            Result<List<GoogleDriveFile>> filesResult = new Result<List<GoogleDriveFile>>(new List<GoogleDriveFile>());
             //TODO: ABner revisa por favor este método, que te lo he cambiado a result<> y no se si puede haberse roto
 
             try
@@ -140,9 +146,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
         //}
 
 
-        public async Task<Result<List<File>>> GetFiles(string LefebvreCredential)
+        public async Task<Result<List<GoogleDriveFile>>> GetFiles(string LefebvreCredential)
         {
-            Result<List<File>> result = new Result<List<File>>();
+            Result<List<GoogleDriveFile>> result = new Result<List<GoogleDriveFile>>();
 
             try
             {
@@ -163,7 +169,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                         var _files = await GetRoot(_root, LefebvreCredential);
                         AddResultTrace(_files, result);
                         result.data = _files.data;
-                     }
+                    }
                     else
                     {
                         TraceError(result.errors, new GoogleDriveDomainException("La Llamada a la api fallo"), Codes.GoogleDrive.GetFiles, Codes.Areas.Google);
@@ -214,9 +220,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             return result;
         }
 
-        public async Task<Result<List<File>>> SearchFile(string LefebvreCredential, string Searcher)
+        public async Task<Result<List<GoogleDriveFile>>> SearchFile(string LefebvreCredential, string Searcher)
         {
-            Result<List<File>> result = new Result<List<File>>();
+            Result<List<GoogleDriveFile>> result = new Result<List<GoogleDriveFile>>();
 
             try
             {
@@ -305,5 +311,169 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
             return result;
         }
+
+        private  void SerializeToMultiPart(string type, string name, string parent, IFormFile formFile , out MultipartFormDataContent multiPartFormDataContent)
+        {
+            // metadata part
+            var stringContent = new StringContent("{'name':'" + name + "','mimeType':" + (type.Equals("folder") ? "'application/vnd.google-apps.folder'" : "'"+formFile.ContentType +"'") + (!string.IsNullOrEmpty(parent) ? ", 'parents': ['" +parent +"']" : "")        + "}", Encoding.UTF8, "application/json");
+            stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            stringContent.Headers.ContentDisposition.Name = "\"metadata\"";
+
+            var boundary = DateTime.Now.Ticks.ToString();
+            multiPartFormDataContent = new MultipartFormDataContent(boundary);
+            // rfc2387 headers with boundary
+            multiPartFormDataContent.Headers.Remove("Content-Type");
+            multiPartFormDataContent.Headers.TryAddWithoutValidation("Content-Type", "multipart/related; boundary=" + boundary);
+            // request body
+            multiPartFormDataContent.Add(stringContent); // metadata part - must be first part in request body
+
+            if (type.Equals("file") && formFile != null)
+            {
+                var streamContent = new StreamContent(formFile.OpenReadStream());
+                streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                streamContent.Headers.ContentDisposition.Name = formFile.Name;
+                multiPartFormDataContent.Add(streamContent); // media part - must follow metadata part
+            }
+
+        }
+
+        public async Task<Result<GoogleDriveResonse>> CreateFolder(string LefebvreCredential, string folderName, string parentId)
+        {
+            Result<GoogleDriveResonse> result = new Result<GoogleDriveResonse>();
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                using (HttpClient client = new HttpClient())
+
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    SerializeToMultiPart("folder", folderName, parentId,null,out MultipartFormDataContent multiPartFormDataContent);
+
+                    var get = await client.PostAsync($"{_settings.Value.GoogleDriveApiUpload}?uploadType=multipart", multiPartFormDataContent);
+
+                    if (get.IsSuccessStatusCode)
+                    {
+                        var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
+                        TraceInfo(result.infos, "Nuevo fichero creado");
+                        result.data = responseMessage;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.CreateFolder, Codes.Areas.Google);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.CreateFolder, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<GoogleDriveResonse>> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId)
+        {
+            Result<GoogleDriveResonse> result = new Result<GoogleDriveResonse>();
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                using (HttpClient client = new HttpClient())
+
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    SerializeToMultiPart("file", formFile.FileName, parentId, formFile, out MultipartFormDataContent multiPartFormDataContent);
+
+                    var get = await client.PostAsync($"{_settings.Value.GoogleDriveApiUpload}?uploadType=multipart", multiPartFormDataContent);
+                                   
+                    if (get.IsSuccessStatusCode)
+                    {
+                        var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
+
+                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");
+                        result.data = responseMessage;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<DownloadedFile>> DownloadFile(string LefebvreCredential, string fileId)
+        {
+            Result<DownloadedFile> result = new Result<DownloadedFile>();
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                using (HttpClient client = new HttpClient())
+
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var get = await client.GetAsync($"{_settings.Value.GoogleDriveApi}/files/fileId?alt=media&fileId={fileId}");
+
+                    if (get.Content != null)
+                    {
+                        var memory = new MemoryStream();
+                        await get.Content.CopyToAsync(memory);
+                        var resultMessage = await get.Content.ReadAsStringAsync();
+                       
+                        DownloadedFile downloadedFile = new DownloadedFile();
+                        downloadedFile.mimeType = get.Content.Headers.ContentType.MediaType;
+                        downloadedFile.content= Convert.ToBase64String(memory.ToArray());
+                        result.data = downloadedFile;
+                        
+                    }
+                    if (get.IsSuccessStatusCode)
+                    {
+                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");                      
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
     }
 }
