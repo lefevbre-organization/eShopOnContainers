@@ -1436,7 +1436,7 @@ class Calendar extends Component {
             this.cancel = false;
             if (args.selectedIndex === 0 && args.selectingIndex === 1) {
                 const subjectElement = document.getElementsByClassName('e-subject')[0];
-                if (this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
+                if(this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
                     this.selectedEvent.Subject = subjectElement ? subjectElement.textContent : '';
                 }
 

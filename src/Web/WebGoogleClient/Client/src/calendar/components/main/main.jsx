@@ -237,6 +237,9 @@ export class Main extends Component {
     }
 
     async handleClassificatedEvent(event) {
+        if(!event.detail.Id) {
+            event.detail.Id = event.detail.Guid;
+        }
         const googleEvent = this.buildEventoGoogle(event.detail);
         let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
         this.currentClassification = event.detail.LexonClassification;
@@ -1721,9 +1724,9 @@ export class Main extends Component {
                         }
 
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = result.id;
+                        args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] })
 
