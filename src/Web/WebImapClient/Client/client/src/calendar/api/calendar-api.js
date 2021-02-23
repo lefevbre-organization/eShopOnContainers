@@ -150,7 +150,6 @@ function listEventsParser(list) {
     let items;
     items = ({ items: listParse });
     result = ({ result: items });
-    
     return result
 }
 
@@ -170,13 +169,13 @@ function getReminders(alarms) {
 }
 
 function getAttendees(json, attendees) {
-  if(!attendees || attendees.length === 0) {
+  if(!attendees) {
     return;
   }
     for (const key in json) {
         if (json.hasOwnProperty(key)) {
             const attende = json[key];
-            if (attende != undefined && json.VALARM) {
+            if (attende != undefined) {
                 const emails = attende.split(':')
                 if (emails.length === 3) {
                     getEmails(emails[2], attendees);

@@ -1270,22 +1270,19 @@ class Calendar extends Component {
                 values.Id = guid;
             }
         }
-        console.log('values.StartTime', values.StartTime)
-        console.log('values.EndTime', values.EndTime)
+
         //Event basic data
         const event = {
             allDay: values.IsAllDay,
             summary: values.Subject,
             location: values.Location,
             description: values.Description,
-            start: values.StartTime,
+            start: moment(values.StartTime),
             end: moment(values.EndTime).add(1, 'days'),
             timezone: 'Europe/Madrid',
             filename: filename,
             saveType: saveType
-            //'color': 'green'
         };
-
         //event Type
         if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
             let item;
@@ -1347,7 +1344,6 @@ class Calendar extends Component {
                 });
             });
         }
-
         return event;
     }
 
@@ -2003,9 +1999,7 @@ class Calendar extends Component {
                         args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] });
-                 
-                        //args.data[0].Reminders = result.reminders.overrides;
-
+                
                         // Convert dropdown eventType in eventtype object to paint into schedule event
                         if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
                            let item;
@@ -2014,9 +2008,9 @@ class Calendar extends Component {
                            let eventType = [];
                            if (item != undefined) {
                             eventType.push({
-                                name: item.text,
+                                text: item.text,
                                 id: item.id,
-                                color: item.backgroundColor
+                                backgroundColor: item.backgroundColor
                             });
                             args.data[0].EventType = eventType;
                            }

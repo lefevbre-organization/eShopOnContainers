@@ -407,7 +407,7 @@ export default class Caldavjs {
       throw new Error(e.toString());
     }
     let string = evt.toString();
-    string = string.replace('\nLOCATION', '\nCOLOR:' + input.color + '\nLOCATION');
+    string = string.replace('\nCATEGORIES', '\nCOLOR:' + input.color + '\nCATEGORIES');
     return this.sendRequest({
       url: input.filename,
       method: 'PUT',
