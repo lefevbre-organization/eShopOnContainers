@@ -56,6 +56,16 @@ spec:
                   key: {{ .key }}
           {{- end -}}
           {{- end }}
+            - name: OnlineLogin
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: svconline_login
+            - name: OnlinePassword
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: svconline_pass
           ports:
             - name: http
               containerPort: 80

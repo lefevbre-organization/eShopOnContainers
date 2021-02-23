@@ -24,5 +24,5 @@ data:
   database__Database: {{ .Values.inf.mongo.database.database }}
   all__Version: {{ .Chart.Version | quote }}
   urls__OnlineUrlExternal: http://{{ .Values.svconline.url }}
-  all__OnlinePass: {{ .Values.svconline.pass }}
-  all__OnlineUser: {{ .Values.svconline.user }}
+  # all__OnlinePass: {{ .Values.svconline.pass }}
+  # all__OnlineUser: {{ .Values.svconline.user }}

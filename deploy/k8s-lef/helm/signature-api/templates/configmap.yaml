@@ -28,7 +28,7 @@ data:
   signature__Database: {{ .Values.inf.mongo.signature.database }}
   all__Version: {{ .Chart.Version | quote }}
   urls__SignatureUrlExternal: https://{{ .Values.signature.url }}
-  all__SignaturePass: {{ .Values.signature.pass }}
+  # all__SignaturePass: {{ .Values.signature.pass }}
   urls__LexonUrlExternal: https://{{ .Values.lexon.dev.url }}
   urls__LexonApi: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
   urls__LexonApi_bis: https://{{ .Values.app.ingress.entries.lexonapigw}}/api/v1

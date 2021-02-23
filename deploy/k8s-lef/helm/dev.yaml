@@ -2,8 +2,8 @@ lef:
   env: 'dev'
 
 centinela:
-  user: 'centinelaApi'
-  pass: 'led.2018'
+  # user: 'centinelaApi'
+  # pass: 'led.2018'c
   url: 'compliance-api.affin.es/api/secure'
 
 lexon:
@@ -30,7 +30,7 @@ lexon:
 
 signature:
   url: 'api.sandbox.signaturit.com/v3'
-  pass: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'   # name: Signaturit
+  # pass: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'   # name: Signaturit
   lex_url: 'https://led-dev-lexon.eu.els.local'
   callback_url: 'lexbox-dev-websignature.lefebvre.es' 
   gw_url: 'lexbox-dev-apigwsig.lefebvre.es' 
@@ -44,8 +44,8 @@ svchub:
 
 svconline:
   url: 'herculesppd.lefebvre.es' # name: OnlineUrl
-  login: 'ws'
-  pass: '22lcqsp11lsw'
+  # login: 'ws'
+  # pass: '22lcqsp11lsw'
 
 svccomtools:
   url: 'led-pre-servicecomtools.eu.els.local' # name: LoginUrl
@@ -56,7 +56,7 @@ svcclaves:
 userutils:
   token:
     caducity: 1500
-    key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+    # key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
   bypass:
     lex:
       id: 'Lex-On'

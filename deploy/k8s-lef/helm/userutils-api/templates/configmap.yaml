@@ -28,12 +28,12 @@ data:
   userutils__ConnectionString: mongodb://{{ $mongo }}
   userutils__Database: {{ .Values.inf.mongo.centinela.database }}
   userutils__TokenCaducity: {{ .Values.userutils.token.caducity | quote}}
-  userutils__TokenKey: {{ .Values.userutils.token.key | quote}}
+  # userutils__TokenKey: {{ .Values.userutils.token.key | quote}}
   all__Version: {{ .Chart.Version | quote }}
   urls__HubUrlExternal: http://{{ .Values.svchub.url }}/Herramientas/get
   urls__OnlineUrlExternal: https://{{ .Values.svconline.url }}/webclient46/ws
-  all__OnlineLogin: {{ .Values.svconline.login | quote }}
-  all__OnlinePass: {{ .Values.svconline.pass | quote }}
+  # all__OnlineLogin: {{ .Values.svconline.login | quote }}
+  # all__OnlinePass: {{ .Values.svconline.pass | quote }}
   urls__ComToolsUrlExternal: http://{{ .Values.svccomtools.url }}
   urls__ClavesUrlExternal: https://{{ .Values.svcclaves.url }}
   urls__LexonApi: http://{{ .Values.app.ingress.entries.lexonapi }}/api/v1/Lexon
