@@ -437,10 +437,10 @@ class Calendar extends Component {
                         </div>
 
                         <div className="hidden">
-{/*                           <Reminder
+                          <Reminder
                                 reminders={this.state.reminders}
                                 ref={rem => this.remObj = rem}
-                            />*/}
+                            />
                         </div>
 
                          <div className="hidden">
@@ -544,7 +544,6 @@ class Calendar extends Component {
     }
 
     onCloseDialog() {
-        console.log();
         this.LoadCalendarList(false);
         const buttons = document.getElementsByClassName("e-footer-content");
         if (buttons) {
@@ -623,7 +622,6 @@ class Calendar extends Component {
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {
-                console.log(result);
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false;
                 this.toastObj.show(this.toasts[1]);
@@ -660,21 +658,10 @@ class Calendar extends Component {
     }
     // Calendar View Dialog
     openCalendarView(args) {
-        //if (args.target.innerHTML.toLowerCase() == 'alert') {
-        //    this.setState({ hideAlertDialog: true });
-        //}
-        //else if (args.target.innerHTML.toLowerCase() == 'confirm') {
-        //    this.setState({ hideConfirmDialog: true });
-        //}
-        //else if (args.target.innerHTML.toLowerCase() == 'prompt')
-
-        //this.promptDialogInstance.show(true);
-
         let calendarId = "";
         if (args != undefined) {
-calendarId = args.currentTarget.id;
-}
-            console.log('openCalendarView', args);
+            calendarId = args.currentTarget.id;
+        }
         this.setState(
             {
                 hidePromptDialog: true, calendarToEdit: calendarId
@@ -906,9 +893,6 @@ calendarId = args.currentTarget.id;
         }
 
         //var eventstart = new Date('August 19, 1975 23:15:30 GMT+00:00');
-
-        //console.log(event.toLocaleTimeString('en-US'));
-
         return (
             <div >
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
@@ -1006,7 +990,6 @@ calendarId = args.currentTarget.id;
                     eventType.name = event.categories;
                     eventType.color = event.color;
                 }
-                console.log(eventType);
 
                 let reminders = [];
                 if (event.reminders != undefined) {
@@ -1287,14 +1270,15 @@ calendarId = args.currentTarget.id;
                 values.Id = guid;
             }
         }
-
+        console.log('values.StartTime', values.StartTime)
+        console.log('values.EndTime', values.EndTime)
         //Event basic data
         const event = {
             allDay: values.IsAllDay,
             summary: values.Subject,
             location: values.Location,
             description: values.Description,
-            start: moment(values.StartTime).add(1, 'days'),
+            start: values.StartTime,
             end: moment(values.EndTime).add(1, 'days'),
             timezone: 'Europe/Madrid',
             filename: filename,
@@ -1352,20 +1336,17 @@ calendarId = args.currentTarget.id;
         }
         event.organizer = organizerData;
 
-        //let reminders = [];
-        // let arrR = this.remObj.listviewInstance.dataSource;
-        // console.log(arrR)
-        // if (arrR.length > 0) {
-        //     event.reminders = []
-        //     Object.keys(arrR).forEach(function (key) {
-        //         event.reminders.push({
-        //             type: 'display',
-        //             trigger: arrR[key].minutesvalue,
-        //         });
-        //     });
-        // }
-
-        console.log(event);
+        let reminders = [];
+        let arrR = this.remObj.listviewInstance.dataSource;
+        if (arrR.length > 0) {
+            event.reminders = []
+            Object.keys(arrR).forEach(function (key) {
+                event.reminders.push({
+                    type: 'display',
+                    trigger: arrR[key].minutesvalue,
+                });
+            });
+        }
 
         return event;
     }
@@ -1557,7 +1538,6 @@ calendarId = args.currentTarget.id;
 
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
-            console.log('args.data.EventType', args.data.EventType);
            this.setState({ eventType: args.data.EventType.name });
            if (this.drowDownListEventType != undefined) {
                this.drowDownListEventType.value = args.data.EventType.name;
@@ -1591,10 +1571,8 @@ calendarId = args.currentTarget.id;
         // default values for Reminders coming from event args
 
         if (args.data.Reminders != undefined) {
-           //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
            const arr = [];
            Object.keys(args.data.Reminders).forEach(key => {
-               //arr.push(args.data.Reminders[key]);
                arr.push({
                    title: args.data.Reminders[key].method,
                    value: args.data.Reminders[key].minutes,
@@ -1665,7 +1643,7 @@ calendarId = args.currentTarget.id;
 
             if (this.layoutIframe & this.layoutIframeNewEventView || this.layoutIframeEditEventView) {
                 const head = document.getElementById("schedule_dialog_wrapper_dialog-header");
-                head.classList.add('e-hidden');
+                head.classList.add('hidden');
             }
 
             this.selectedEvent = { ...args.data };
@@ -1761,10 +1739,10 @@ calendarId = args.currentTarget.id;
                 //containerTab.appendChild(nodeA);
 
                 // Adding reminder element
-                // const containerRem = createElement('div', { className: 'custom-field-container' });
-                // rowReminders.appendChild(containerRem);
-                // const nodeR = ReactDOM.findDOMNode(this.remObj);
-                // containerRem.appendChild(nodeR);
+                const containerRem = createElement('div', { className: 'custom-field-container' });
+                rowReminders.appendChild(containerRem);
+                const nodeR = ReactDOM.findDOMNode(this.remObj);
+                containerRem.appendChild(nodeR);
             }
 
             // if from iframe is requested a new event
@@ -1930,16 +1908,16 @@ calendarId = args.currentTarget.id;
                     //reset reminders
                     desc.Reminders = [];
 
-                    //Update Reminders
-                    // const arrR = this.remObj.listviewInstance.dataSource;
-                    // if (arrR.length > 0) {
-                    //    Object.keys(arrR).forEach(key => {
-                    //        desc.Reminders.push({
-                    //            method: arrR[key].title,
-                    //            minutes: arrR[key].value
-                    //        });
-                    //    });
-                    // }
+                    // Update Reminders
+                    const arrR = this.remObj.listviewInstance.dataSource;
+                    if (arrR.length > 0) {
+                       Object.keys(arrR).forEach(key => {
+                           desc.Reminders.push({
+                               type: 'display',
+                               trigger: arrR[key].value,
+                           });
+                       });
+                    }
 
                     //reset attendess
                     desc.Attendees = [];
@@ -2025,24 +2003,26 @@ calendarId = args.currentTarget.id;
                         args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] });
+                 
+                        //args.data[0].Reminders = result.reminders.overrides;
 
-                       // args.data[0].Reminders = result.reminders.overrides;
-
-                        //Convert dropdown eventType in eventtype object to paint into schedule event
-                        //if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
-                        //    let item;
-                        //    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                        //    // create EventType with structure
-                        //    let eventType = [];
-                        //    if (item != undefined) {
-                        //        eventType.name = item.text;
-                        //        eventType.id = item.id;
-                        //        eventType.color = item.backgroundColor;
-                        //        args.data[0].EventType = eventType;
-                        //    }
-                        //}
-
+                        // Convert dropdown eventType in eventtype object to paint into schedule event
+                        if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                           let item;
+                           item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                           // create EventType with structure
+                           let eventType = [];
+                           if (item != undefined) {
+                            eventType.push({
+                                name: item.text,
+                                id: item.id,
+                                color: item.backgroundColor
+                            });
+                            args.data[0].EventType = eventType;
+                           }
+                        }
                         this.toastObj.show(this.toasts[1]);
+                        this.loadCalendarEvents(args.data[0].CalendarId, true);
                     })
                     .catch(error => {
                          this.toastObj.show(this.toasts[2]);
@@ -2225,12 +2205,10 @@ calendarId = args.currentTarget.id;
             startTime: new Date(),
             endTime: endTimeDate
         };
-        console.log('handleScheduleOpenNewEventEditor', new Date(Date.now()));
         this.state.schedule.openEditor(cellData, 'Add');
     }
 
     handleScheduleOpenEditEventEditor() {
-        console.log('handleScheduleOpenEditEventEditor');
         const eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent);
         this.scheduleObj.openEditor(eventData, 'Save');
     }

@@ -517,7 +517,7 @@ export default class Caldavjs {
     vCard.lastName = 'Nesser';
     vCard.email = 'j.hostilio-ext@lefebvre.es';
     vCard.workPhone = '312-555-1212';
-    vCard.uid = '69531f4a-c34d-4a1e-8922-bd38a9476a53';
+    vCard.uid = 'some-other-random-string';
     } catch (e) {
       throw new Error(e.toString());
     }
