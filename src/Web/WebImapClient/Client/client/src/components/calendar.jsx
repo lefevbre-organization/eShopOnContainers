@@ -1768,7 +1768,7 @@ calendarId = args.currentTarget.id;
             }
 
             // if from iframe is requested a new event
-            if (!this.layoutIframeNewEventView) {
+            if (!this.layoutIframeNewEventView & !this.layoutIframeEditEventView) {
                 const TabContainer = args.element.querySelector('.custom-tab-row');
                 if (TabContainer === null) {
                     if (args.element.querySelector('.e-dlg-content')) {
