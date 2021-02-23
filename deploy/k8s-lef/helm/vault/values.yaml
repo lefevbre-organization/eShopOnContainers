@@ -63,7 +63,7 @@ injector:
   authPath: "auth/kubernetes"
 
   # Configures the log verbosity of the injector. Supported log levels: Trace, Debug, Error, Warn, Info
-  logLevel: "info"
+  logLevel: "trace"
 
   # Configures the log format of the injector. Supported log formats: "standard", "json".
   logFormat: "standard"

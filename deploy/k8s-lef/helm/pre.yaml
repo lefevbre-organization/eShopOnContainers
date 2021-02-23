@@ -73,12 +73,21 @@ nextcloud:
   username: admin
   password: admin_pre
 
+
 mariadb:
   enabled: true
   db:
     name: nextcloud_pre
     user: nextcloud_pre
     password: elefebvre_pre_1234
+    # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
+    rootUser: 
+      password: PRE_sad324_VX_Zaq12
+      forcePassword: true
+    replication:
+      password: PRE_.qwewq56_12wssXVB_
+      forcePassword: true
+      
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default

@@ -9,23 +9,23 @@ centinela:
 lexon:
   devs:
     env: 'DEVS'
-    conn: 'database=lexondevconecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    # conn: 'database=lexondevconecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'led-dev-lexon.eu.els.local'
   dev:
     env: 'DEV'
-    conn: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    # conn: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'led-dev-lexon.eu.els.local'
   qa:
     env: 'QA'
-    conn: 'database=lexon_qa_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    # conn: 'database=lexon_qa_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'www-led-pre.lex-on.es'
   pre:
     env: 'PRE'
-    conn: 'database=lexon_pre_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
+    # conn: 'database=lexon_pre_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'www-led-pre.lex-on.es'
   pro:
     env: 'PRO'
-    conn: 'database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100'
+    # conn: 'database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100'
     url: 'www.lex-on.es'      
 
 signature:
@@ -78,18 +78,32 @@ googledrive:
 
 nextcloud:
   host: lexbox-dev-nextcloud.lefebvre.es
-  username: admin
-  password: admin_dev
+  username: oldadmin
+  password: oldadmin_dev
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-secret
+    usernameKey: username
+    passwordKey: password
+    smtpUsernameKey: smtp_username
+    smtpPasswordKey: smtp_password
 
 mariadb:
   enabled: true
   db:
-    name: nextcloud_dev
-    user: nextcloud_dev
-    password: elefebvre_dev_1234
+    name: oldnextcloud_dev
+    user: oldnextcloud_dev
+    password: oldelefebvre_dev_1234
+    # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
+    rootUser: 
+      password: OLD_sad324_VX_Zaq12
+      forcePassword: true
+    replication:
+      password: OLD_.qwewq56_12wssXVB_
+      forcePassword: true
 
   replication:
-    enabled: false
+    enabled: true
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default

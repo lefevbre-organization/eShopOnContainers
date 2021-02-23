@@ -49,32 +49,32 @@ env:
       key: all__Version
     - name: EnvModels__0__env
       key: lexon__Devs
-    - name: EnvModels__0__conn
-      key: lexon__DevsConn
+    # - name: EnvModels__0__conn
+    #   key: lexon__DevsConn
     - name: EnvModels__0__url
       key: lexon__DevsUrl
     - name: EnvModels__1__env
       key: lexon__Dev
-    - name: EnvModels__1__conn
-      key: lexon__DevConn
+    # - name: EnvModels__1__conn
+    #   key: lexon__DevConn
     - name: EnvModels__1__url
       key: lexon__DevUrl
     - name: EnvModels__2__env
       key: lexon__Qa
-    - name: EnvModels__2__conn
-      key: lexon__QaConn
+    # - name: EnvModels__2__conn
+    #   key: lexon__QaConn
     - name: EnvModels__2__url
       key: lexon__QaUrl
     - name: EnvModels__3__env
       key: lexon__Pre
-    - name: EnvModels__3__conn
-      key: lexon__PreConn
+    # - name: EnvModels__3__conn
+    #   key: lexon__PreConn
     - name: EnvModels__3__url
       key: lexon__PreUrl
     - name: EnvModels__4__env
       key: lexon__Pro
-    - name: EnvModels__4__conn
-      key: lexon__ProConn
+    # - name: EnvModels__4__conn
+    #   key: lexon__ProConn
     - name: EnvModels__4__url
       key: lexon__ProUrl
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)

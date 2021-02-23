@@ -79,6 +79,13 @@ mariadb:
     name: nextcloud_pro
     user: nextcloud_pro
     password: elefebvre_pro_1234
+    # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
+    rootUser: 
+      password: PRO_sad324_VX_Zaq12
+      forcePassword: true
+    replication:
+      password: PRO_.qwewq56_12wssXVB_
+      forcePassword: true
     
 env:
   values:

@@ -209,10 +209,10 @@ externalDatabase:
 
   ## Use a existing secret
   existingSecret:
-    enabled: false
-    # secretName: nameofsecret
-    # usernameKey: username
-    # passwordKey: password
+    enabled: true
+    secretName: nextcloud-secrets
+    usernameKey: db_username
+    passwordKey: db_password
 
 ##
 ## MariaDB chart configuration
@@ -225,6 +225,12 @@ mariadb:
     name: nextcloud
     user: nextcloud
     password: elefebvre_1234
+    rootUser: # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
+      password: sad324_VX_Zaq12
+      forcePassword: true
+    replication:
+      password: .qwewq56_12wssXVB_
+      forcePassword: true  
 
   replication:
     enabled: false
@@ -248,7 +254,7 @@ postgresql:
       postgresqlDatabase: nextcloud
   persistence:
     enabled: false
-    # storageClass: ""
+    # storageClass: "efs-sc"
 
 redis:
   enabled: false
@@ -312,7 +318,7 @@ persistence:
   enabled: true
   annotations: {}
   ## nextcloud data Persistent Volume Storage Class
-  ## If defined, storageClassName: <storageClass>
+  ## If defined, storageClassName: efs-sc
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on

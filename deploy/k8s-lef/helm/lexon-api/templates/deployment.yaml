@@ -56,6 +56,31 @@ spec:
                   key: {{ .key }}
           {{- end -}}
           {{- end }}
+            - name: EnvModels__0__conn
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: lexon_devs_conn
+            - name: EnvModels__1__conn
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: lexon_dev_conn
+            - name: EnvModels__2__conn
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: lexon_qa_conn
+            - name: EnvModels__3__conn
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: lexon_pre_conn
+            - name: EnvModels__4__conn
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: lexon_pro_conn                        
           ports:
             - name: http
               containerPort: 80
