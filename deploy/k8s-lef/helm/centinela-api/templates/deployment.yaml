@@ -56,6 +56,16 @@ spec:
                   key: {{ .key }}
           {{- end -}}
           {{- end }}
+            - name: CentinelaLogin
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: centinela_user
+            - name: CentinelaPassword
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: centinela_pass          
           ports:
             - name: http
               containerPort: 80

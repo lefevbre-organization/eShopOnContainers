@@ -24,5 +24,5 @@ data:
   centinela__Database: {{ .Values.inf.mongo.centinela.database }}
   all__Version: {{ .Chart.Version | quote }}
   urls__CentinelaUrlExternal: https://{{ .Values.centinela.url }}
-  all__CentinelaPass: {{ .Values.centinela.pass }}
-  all__CentinelaUser: {{ .Values.centinela.user }}
+  # all__CentinelaPass: {{ .Values.centinela.pass }}
+  # all__CentinelaUser: {{ .Values.centinela.user }}

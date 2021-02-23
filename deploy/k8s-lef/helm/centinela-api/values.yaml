@@ -47,10 +47,10 @@ env:
       key: centinela__Database
     - name: CentinelaUrl
       key: urls__CentinelaUrlExternal
-    - name: CentinelaLogin
-      key: all__CentinelaUser
-    - name: CentinelaPassword
-      key: all__CentinelaPass
+    # - name: CentinelaLogin
+    #   key: all__CentinelaUser
+    # - name: CentinelaPassword
+    #   key: all__CentinelaPass
     - name: DeployVersion
       key: all__Version
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
