@@ -384,7 +384,6 @@ export default class Caldavjs {
   createEvent(input) {
     let evt = null;
     try {
-      debugger
       evt = icalGenerator({
         events: [{
           id: input.filename,

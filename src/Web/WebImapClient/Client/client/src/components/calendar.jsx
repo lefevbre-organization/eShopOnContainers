@@ -256,15 +256,14 @@ class Calendar extends Component {
   }
 
   sendMessagePutUser(user) {
-      debugger
-      let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
-      if(sm.length > 0) {
+      let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: this.selectedEvent.Id }] : [];
+      if (sm.length > 0) {
           sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
           if (!sm[0].Guid) {
               sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
           }
       }
-      if(this.state.showPromptImportContactsDialog) {
+      if (this.state.showPromptImportContactsDialog) {
           sm = this.props.calendarsResult.calendars || [];
       }
     window.dispatchEvent(
@@ -583,10 +582,10 @@ class Calendar extends Component {
 
     async setGlobalization() {
         if (window.navigator.language.includes("es-")
-            || (window.navigator.language == "es")
-            || (window.navigator.language == "ca")
-            || (window.navigator.language == "ga")
-            || (window.navigator.language == "eu")) {
+            || (window.navigator.language === "es")
+            || (window.navigator.language === "ca")
+            || (window.navigator.language === "ga")
+            || (window.navigator.language === "eu")) {
             loadCldr(currencies, numberingSystems, gregorian, numbers, timeZoneNames, weekData);
             const data = await import('../calendar/syncfusion-resources/calendar-es.json');
             setCulture('es');
@@ -599,9 +598,9 @@ class Calendar extends Component {
             this.layoutIframe = true;
         }
 
-        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+        if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
-        } else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+        } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
             this.layoutIframeNewEventView = true;
         }
     }
@@ -1013,7 +1012,7 @@ calendarId = args.currentTarget.id;
                 if (event.reminders != undefined) {
                     reminders = event.reminders;
                 }
-    
+
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -1041,7 +1040,6 @@ calendarId = args.currentTarget.id;
     sendMessagePutUser(user) {
         const { email, lexon, calendarsResult } = this.props;
 
-        debugger
         const eventId = this.selectedEvent.Id.split("/").pop();
         let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: eventId }] : [];
         if (this.state.showPromptImportContactsDialog) {
@@ -1144,14 +1142,14 @@ calendarId = args.currentTarget.id;
         if (obj.layoutIframeNewEventView) {
             setTimeout(() => {
                 obj.handleScheduleOpenNewEventEditor();
-            }, 1000);
+            }, 3000);
         }
 
         // Edit event is called
         if (obj.layoutIframeEditEventView) {
             setTimeout(() => {
                 obj.handleScheduleOpenEditEventEditor();
-            }, 1000);
+            }, 2000);
         }
     }, value);
 
@@ -1198,7 +1196,7 @@ calendarId = args.currentTarget.id;
     getlistEventTypes() {
        getEventTypes(this.props.email)
            .then(result => {
-               if(result && result.data) {
+               if (result && result.data) {
                    this.onDataBindingEventTypeList(result.data.eventTypes);
                }
            })
@@ -1213,16 +1211,12 @@ calendarId = args.currentTarget.id;
         .then(result => {
             this.resourceCalendarData = orderBy(result.items, "primary");
             this.props.getCalendars(this.resourceCalendarData);
-            let existChange = this.state.calendars.filter(calendar => {
-                return !result.items.some(item => {
-                  return item.backgroundColor === calendar.backgroundColor 
+            const existChange = this.state.calendars.filter(calendar => !result.items.some(item => item.backgroundColor === calendar.backgroundColor
                   && item.summary === calendar.summary
-                  && item.description === calendar.description;
-                });
-            });
-            if(this.state.calendars.length !== result.items.length || existChange.length > 0) {
+                  && item.description === calendar.description));
+            if (this.state.calendars.length !== result.items.length || existChange.length > 0) {
                 this.setState({ calendars: result.items });
-                this.resourceCalendarData = orderBy(result.items, "primary")
+                this.resourceCalendarData = orderBy(result.items, "primary");
                 this.props.getCalendars(this.resourceCalendarData);
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
                 if (!DisableloadSchedule) {
@@ -1283,14 +1277,13 @@ calendarId = args.currentTarget.id;
         let filename = "";
         const saveType = isNew ? "new" : "update";
 
-        debugger
         if (typeof values.Id === 'string') {
             filename = values.Id.startsWith(values.CalendarId) ? values.Id : values.CalendarId + values.Id;
         } else {
-            const guid =  this.createGuid();
+            const guid = this.createGuid();
             filename = values.CalendarId + guid;
             values.Guid = guid;
-            if(!values.Id) {
+            if (!values.Id) {
                 values.Id = guid;
             }
         }
@@ -1458,12 +1451,11 @@ calendarId = args.currentTarget.id;
         const validator = (formElement).ej2_instances[0];
         validator.validate();
 
-        debugger
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
             if (args.selectedIndex === 0 && args.selectingIndex === 1) {
                 const subjectElement = document.getElementsByClassName('e-subject')[0];
-                if(this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
+                if (this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
                     this.selectedEvent.Subject = subjectElement ? subjectElement.textContent : '';
                 }
 
@@ -1676,7 +1668,6 @@ calendarId = args.currentTarget.id;
                 head.classList.add('hidden');
             }
 
-            debugger
             this.selectedEvent = { ...args.data };
 
             var editButton = document.querySelector('.e-event-delete');
@@ -1919,17 +1910,16 @@ calendarId = args.currentTarget.id;
 
             case 'eventChanged':
                 let idEvent;
-                debugger;
                 if (args.data[0] != undefined) {
                     idEvent = args.data[0].Id;
-                    if( typeof args.data[0].Id !== 'string') {
+                    if (typeof args.data[0].Id !== 'string') {
                         args.data[0].Guid = this.localEvents[args.data[0].Id];
                     }
                 } else {
                     idEvent = args.data.Id;
-                    if( typeof args.data.Id !== 'string') {
+                    if (typeof args.data.Id !== 'string') {
                         args.data.Guid = this.localEvents[args.data.Id];
-                    }  else {
+                    } else {
                         args.data.Guid = args.data.Id.split("/").pop();
                     }
                 }
@@ -1988,7 +1978,6 @@ calendarId = args.currentTarget.id;
 
                     //call function to add new single event out of the serie
                     args.addedRecords[0].RecurrenceRule = undefined;
-                    debugger
                     const eventOcurrence = this.buildEventoCalDav(args.addedRecords[0]);
                     this.addCalendarEventCRUD(args.data.parent.CalendarId, eventOcurrence);
                     break;
@@ -1996,7 +1985,6 @@ calendarId = args.currentTarget.id;
                 if (args.changedRecords[0] != undefined) {
                     calendarToModify = args.changedRecords[0].CalendarId;
                     args.changedRecords[0].LexonClassification = this.currentClassification;
-                    debugger
                     event = this.buildEventoCalDav(args.changedRecords[0]);
                 }
 
@@ -2008,13 +1996,13 @@ calendarId = args.currentTarget.id;
             case 'eventCreated':
 
                 // if event is all day add one less day
-                let EndTime = moment(args.data[0].EndTime).add(-1, 'days');
-                
-                if(args.data[0].IsAllDay) {
+                const EndTime = moment(args.data[0].EndTime).add(-1, 'days');
+
+                if (args.data[0].IsAllDay) {
                     args.data[0].EndTime = EndTime._d;
                     args.data[0].endTime = EndTime._d;
                 }
-                
+
                 event = this.buildEventoCalDav(args.data[0], true);
 
                 // if the calendar is not checked remove from current view
@@ -2033,7 +2021,6 @@ calendarId = args.currentTarget.id;
                         this.localEvents[args.data[0].Id] = args.data[0].Guid;
                         // this.scheduleObj.eventWindow.resetForm();
                         //args.data[0].Id = event.filename;
-                        debugger
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
@@ -2220,7 +2207,7 @@ calendarId = args.currentTarget.id;
             });
         }
 
-        if(this.scheduleObj) {
+        if (this.scheduleObj) {
             this.scheduleObj.eventSettings.query = new Query().where(predicate);
             this.scheduleObj.refreshEvents();
         }
