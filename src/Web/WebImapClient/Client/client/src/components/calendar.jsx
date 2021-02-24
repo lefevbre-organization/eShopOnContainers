@@ -1639,7 +1639,7 @@ class Calendar extends Component {
 
             if (this.layoutIframe & this.layoutIframeNewEventView || this.layoutIframeEditEventView) {
                 const head = document.getElementById("schedule_dialog_wrapper_dialog-header");
-                head.classList.add('hidden');
+                head.classList.add('e-hidden');
             }
 
             this.selectedEvent = { ...args.data };
