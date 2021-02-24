@@ -832,7 +832,7 @@ export class Main extends Component {
                 </span>
               )}
               <span className='productsbutton'>
-                {lexon.user  ? (
+                {lexon.user && this.hasProduct('lexonconnector') ? (
                   <TooltipComponent content={i18n.t('tooltips.lexon')}>
                     <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
