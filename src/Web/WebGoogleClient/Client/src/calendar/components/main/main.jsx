@@ -2344,7 +2344,7 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='eventTypes'
                                     isModal={true}
-                                    header={i18n.t("contactimport.title")}
+                                    header={i18n.t("eventtype.title")}
                                     visible={this.state.hidePromptEventTypeDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
