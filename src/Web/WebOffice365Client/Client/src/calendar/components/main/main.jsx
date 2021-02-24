@@ -685,9 +685,8 @@ export class Main extends Component {
 
 
     sendMessagePutUser(user) {
-        if(!this.scheduleObj.eventWindow.eventData.Id) {
+        if(this.scheduleObj.eventWindow.eventData && !this.scheduleObj.eventWindow.eventData.Id) {
             setTimeout(() =>{
-                debugger
                 this.sendMessagePutUser(user);
                 }, 200);
             return;
@@ -773,7 +772,6 @@ export class Main extends Component {
     }
 
     async handleClassificatedEvent(event) {
-        debugger
         let resp = await addEventClassification(event.detail.Guid, event.detail.LexonClassification);
         this.currentClassification = event.detail.LexonClassification;
     }
@@ -2066,7 +2064,7 @@ export class Main extends Component {
                     eventsImported
                 }
             }));
-            await this.sleep(1000);
+            await sleep(1000);
         }
 
         dispatchEvent(new CustomEvent('ExportEventsProgress', {
@@ -2409,3 +2407,6 @@ export default compose(
 )(Main);
 
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
