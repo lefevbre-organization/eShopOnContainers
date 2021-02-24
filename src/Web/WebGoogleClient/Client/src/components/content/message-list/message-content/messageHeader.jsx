@@ -77,7 +77,7 @@ class MessageHeader extends Component {
           </h1>
           <div className="fromDate">
             <div className="from">
-              <span className="fromName">{this.getHeader("From")}</span>
+              <span className="fromName">Desde: {this.getHeader("From")}</span>
               <br />
               <span className="email">Para: {this.getHeader("To")}</span>
               {this.getHeader("Cc") ? 
