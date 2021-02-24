@@ -13,10 +13,7 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
         user: user,
         provider: provider,
         isNewAccount: isNewAccount,
-        userId: userId,
-        idActuation: idActuation,
-        idEvent: idEvent,
-        title: title,
+        userId: userId
       };
     case ActionTypes.LEXON_ACCOUNT:
       const account = action.payload;

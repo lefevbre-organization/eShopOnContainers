@@ -254,7 +254,7 @@ class MessageList extends Component {
 
       if (checked === true) {
         console.log('LoadingMessage: 4');
-        window.dispatchEvent(new CustomEvent('LoadingMessage'));
+        window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: message.messageId}));
       }
 
       const prs = [];
@@ -338,7 +338,7 @@ class MessageList extends Component {
 
       if (checked === true) {
         console.log('LoadingMessage: 5');
-        window.dispatchEvent(new CustomEvent('LoadingMessage'));
+        window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: message.messageId}));
         const rm = readMessageRaw(
           null,
           this.props.credentials,
@@ -398,6 +398,7 @@ class MessageList extends Component {
             },
           })
         );
+        //window.dispatchEvent(new CustomEvent('LoadedMessage'));
         console.log(
           `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
         );

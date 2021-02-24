@@ -215,7 +215,7 @@ class App extends Component {
       selectedMessages.length !== selected.length
     ) {
       console.log('LoadingMessage: 1');
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: this.props.lexon.idEmail}));
     }
   }
 
@@ -372,7 +372,8 @@ class App extends Component {
                 isotip={t('productBar.lexon')}
                 isotip-position='bottom-end'
                 isotip-size='small'>
-                {lexon.user && this.hasProduct('lexonconnector') ? (
+                {/* {lexon.user && this.hasProduct('lexonconnector') ? ( */}
+                {lexon.user ? (
                     <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
                       <img
                           border='0'
