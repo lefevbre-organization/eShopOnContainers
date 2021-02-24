@@ -26,24 +26,40 @@ class MessageHeader extends Component {
     if (headers) {
       if(name === 'To' && headers.toRecipients.length > 0) {
         let to = ''
+        let firtsAddress = headers.toRecipients[0]
         headers.toRecipients.forEach(toRecipient => {
-          to = toRecipient.emailAddress.address + ',' + to;
+          if(firtsAddress.emailAddress.address === toRecipient.emailAddress.address) {
+            to = toRecipient.emailAddress.address + ' ' + to;
+          } else {
+            to = toRecipient.emailAddress.address + ',  ' + to;
+          }
         });
         return to
       }
 
       if(name === 'Cc' && headers.ccRecipients.length > 0) {
         let cc = ''
+        let firtsAddress = headers.ccRecipients[0]
         headers.ccRecipients.forEach(ccRecipient => {
-          cc = ccRecipient.emailAddress.address + ',' + cc;
+          if(firtsAddress.emailAddress.address === ccRecipient.emailAddress.address) {
+            cc = ccRecipient.emailAddress.address + ' ' + cc;
+          } else {
+            cc = ccRecipient.emailAddress.address + ',  ' + cc;
+          }
+          
         });
         return cc
       }
 
       if(name === 'Bcc' && headers.bccRecipients.length > 0) {
         let bcc = ''
+        let firtsAddress = headers.bccRecipients[0]
         headers.bccRecipients.forEach(bccRecipient => {
-          bcc = bccRecipient.emailAddress.address + ',' + bcc;
+          if(firtsAddress.emailAddress.address === bccRecipient.emailAddress.address) {
+            bcc = bccRecipient.emailAddress.address + ' ' + bcc;
+          } else {
+            bcc = bccRecipient.emailAddress.address + ',  ' + bcc;
+          }
         });
         return bcc
       }
@@ -96,7 +112,7 @@ class MessageHeader extends Component {
                   </span>
                 </> 
               : null} 
-              {this.getHeader("To") ? 
+              {this.getHeader("Cc") ? 
                 <>
                   <br />
                   <span className="email">
