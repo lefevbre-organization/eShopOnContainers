@@ -72,7 +72,8 @@ export class MessageToolbar extends PureComponent {
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       for (let i = 0; i < messages.length; i++) {
         const msgRaw = await getMessage(messages[i].id, 'raw');
-        messages[i].raw = msgRaw.result;
+        messages[i].raw = msgRaw.result.raw;
+        messages[i].attach = msgRaw.result.attach;
       }
     }
 

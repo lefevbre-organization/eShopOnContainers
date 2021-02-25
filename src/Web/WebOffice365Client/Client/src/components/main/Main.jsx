@@ -326,6 +326,11 @@ export class Main extends Component {
         return true;
       }
     }
+
+    if (nextProps.messagesResult.openMessage !== this.props.messagesResult.openMessage){ // to prevent component MessageContent from mounting twice when opening a msg
+      return false
+    }
+
     return true;
   }
 

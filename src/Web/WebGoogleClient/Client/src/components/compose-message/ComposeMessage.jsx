@@ -173,6 +173,7 @@ export class ComposeMessage extends PureComponent {
     this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
       this
     );
+    console.log('ComponentDidMount constructor');
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -263,6 +264,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidMount(prevProps) {
+    console.log('ComposeMessage componentDidMount');
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
     window.addEventListener(
@@ -285,11 +287,15 @@ export class ComposeMessage extends PureComponent {
       || prevState.content !== this.state.content
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
       && !this.props.match.params.id) {
+        console.log('Checking draft in progress...');
+        console.log(this.state.draftInProgress);
         if (!this.state.draftInProgress){
+          console.log('Setting draftInProgress to true and cleaning draftQueue');
           this.setState({draftInProgress: true, draftQueue: 0});
           this.saveDraft();
         } else {
           this.setState({draftQueue: this.state.draftQueue + 1})
+          console.log('Draft queue:'+this.state.draftQueue);
         }
     }   
 
@@ -301,15 +307,22 @@ export class ComposeMessage extends PureComponent {
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
       && this.props.match.params.id 
       && this.state.isDraftEdit) {
+        console.log('Checking draft in progress...');
+        console.log(this.state.draftInProgress);
+
         if (!this.state.draftInProgress){
+          console.log('Setting draftInProgress to true and cleaning draftQueue');
+
           this.setState({draftInProgress: true, draftQueue: 0});
           this.saveDraft();
         } else {
           this.setState({draftQueue: this.state.draftQueue + 1})
+          console.log('Draft queue:'+this.state.draftQueue);
         }   
     }
 
     if (this.state.draftQueue > 0 && !this.state.draftInProgress){
+      console.log('Queued changes, saving them...');
       this.setState({draftInProgress: true, draftQueue: 0});
       this.saveDraft();
     }
@@ -335,6 +348,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
+    console.log('ComposeMessage componentWillUnmount');
     window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
     window.removeEventListener('AttachDocument', this.attachFromLexon);
@@ -519,7 +533,9 @@ export class ComposeMessage extends PureComponent {
     const { detail } = event;
     console.log('attachFromLexon');
     console.log(event.detail);
-    const length = detail.content.length;
+    // (3 * (LengthInCharacters / 4)) - (numberOfPaddingCharacters) = length in bytes
+    //const length = detail.content.length;
+    const length = (3 * (detail.content.length / 4)) - ((detail.content.match(/==/g) || []).length);
 
     this.uppy.addFile({
       name: detail.document.code,

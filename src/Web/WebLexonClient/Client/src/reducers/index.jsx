@@ -15,6 +15,7 @@ export const INITIAL_STATE = {
   },
   email: {
     selectedMessages: [],
+    loadingMessages: []
   },
   selections: {
     companySelected: null,

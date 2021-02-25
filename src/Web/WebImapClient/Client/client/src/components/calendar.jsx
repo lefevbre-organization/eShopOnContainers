@@ -563,12 +563,18 @@ class Calendar extends Component {
                 window.URL_LEXON
             );
         }
+
     }
 
     async handleClassificatedEvent(event) {
         const caldavEvent = this.buildEventoCalDav(event.detail);
         const resp = await addCalendarEvent(event.detail.CalendarId, caldavEvent);
         this.currentClassification = event.detail.LexonClassification;
+
+        const evt = this.scheduleObj.dataModule.dataManager.dataSource.json.find(e => e.Id.endsWith(event.detail.Id));
+        console.log(evt);
+        evt.LexonClassification = event.detail.LexonClassification;
+        this.scheduleObj.refresh();
     }
 
     async handleClassificatedEventRemoved(event) {
@@ -1245,6 +1251,8 @@ class Calendar extends Component {
         return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", { timeZone: tzString }));
     }
 
+    newVar;
+
     buildEventoCalDav(values, isNew = false) {
         let timezoneEnd = 'Europe/Madrid';
         if (values.EndTimezone != undefined) {
@@ -1272,7 +1280,7 @@ class Calendar extends Component {
         }
 
         //Event basic data
-        const event = {
+        this.newVar = {
             allDay: values.IsAllDay,
             summary: values.Subject,
             location: values.Location,
@@ -1283,6 +1291,7 @@ class Calendar extends Component {
             filename: filename,
             saveType: saveType
         };
+        const event = this.newVar;
         //event Type
         if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
             let item;
@@ -1333,16 +1342,17 @@ class Calendar extends Component {
         }
         event.organizer = organizerData;
 
-        let reminders = [];
-        let arrR = this.remObj.listviewInstance.dataSource;
-        if (arrR.length > 0) {
-            event.reminders = []
-            Object.keys(arrR).forEach(function (key) {
-                event.reminders.push({
-                    type: 'display',
-                    trigger: arrR[key].minutesvalue,
+        if(this.remObj && this.remObj.listviewInstance ) {
+            const arrR = this.remObj.listviewInstance.dataSource;
+            if (arrR.length > 0) {
+                event.reminders = [];
+                Object.keys(arrR).forEach(function (key) {
+                    event.reminders.push({
+                        type: 'display',
+                        trigger: arrR[key].minutesvalue,
+                    });
                 });
-            });
+            }
         }
         return event;
     }
@@ -1970,7 +1980,8 @@ class Calendar extends Component {
             case 'eventCreated':
 
                 // if event is all day add one less day
-                const EndTime = moment(args.data[0].EndTime).add(-1, 'days');
+                const EndTime = moment(args.data[0].EndTime);   //.add(1, 'days');
+                args.data[0].StartTime = moment(args.data[0].StartTime).add(1, 'days');
 
                 if (args.data[0].IsAllDay) {
                     args.data[0].EndTime = EndTime._d;

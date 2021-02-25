@@ -56,6 +56,7 @@ export class MessageList extends Component {
   }
 
   async componentDidMount() {
+    console.log('MessageList componenDidMount');
     const searchParam = this.props.location.search;
     const token = searchParam.indexOf('?') === 0 ? searchParam.slice(1) : null;
 
@@ -74,10 +75,12 @@ export class MessageList extends Component {
   }
 
   componentWillUnmount() {
+    console.log('MessageList componentWillUnmount');
     this.props.setSearchQuery("");
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('MessageList componentDidUpdate');
     if (
       prevProps.messagesResult.messages.length > 0 &&
       prevProps.messagesResult.messages.length !==
@@ -133,9 +136,11 @@ export class MessageList extends Component {
       : this.props.deleteMessage(message.extMessageId);
 
     if (selected === true) {
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      console.log('SE EJECUTA EL DE MESSAGELIST');
+      window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: extMessageId}));
       const msgRaw = await getMessage(msg.id, 'raw');
-      message.raw = msgRaw.result;
+      message.raw = msgRaw.result.raw;
+      message.attach = msgRaw.result.attach;
       //this.props.addMessage(message);
     }
 

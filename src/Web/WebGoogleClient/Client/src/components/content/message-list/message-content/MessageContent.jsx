@@ -148,6 +148,7 @@ export class MessageContent extends Component {
     this.modifyMessage = this.modifyMessage.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal;
+    console.log('MessageContent constructor');
   }
 
   toggleShowMessageNotFound() {
@@ -157,7 +158,8 @@ export class MessageContent extends Component {
   }
 
   componentDidMount(prevProps) {
-    console.log('ComponenDidUnmount ***** detail');
+    console.log('MessageContent ComponentDidMount');
+    // console.log('ComponenDidUnmount ***** detail');
     this.props.clearOpenMessageAttachment([]); //To erase attachments from previous opened message
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
@@ -167,8 +169,10 @@ export class MessageContent extends Component {
     window.dispatchEvent(new CustomEvent('ResetList'));
   }
 
-  componentWillUnmount() {
-    this.props.setOpenMessage('');
+  async componentWillUnmount() {
+    console.log('MessageContent componentWillUnmount');
+    //this.props.setOpenMessage('');
+    //this.props.setOpenMessage('');
     window.dispatchEvent(new CustomEvent('ResetList'));
     for (let i = 0; i < this.props.selectedMessages.length; i++) {
       const detail = {
@@ -182,11 +186,18 @@ export class MessageContent extends Component {
         provider: 'GOOGLE',
         raw: this.props.selectedMessages[i].raw,
       };
+      window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: detail.extMessageId}));
+      const msgRaw = await getMessage(detail.id, 'raw');
+      detail.raw = msgRaw.result.raw;
+      detail.attach = msgRaw.result.attach;
+
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
           detail,
         })
       );
+
+      window.dispatchEvent(new CustomEvent('LoadedMessage'));
     }
     if (this.refresh && this.props.refresh) {
       this.props.refresh();
@@ -200,16 +211,14 @@ export class MessageContent extends Component {
       emailHeaderMessageResult.headers !== null
     ) {
       if (
-        this.props.emailMessageResult &&
-        this.props.emailMessageResult.result
+        emailMessageResult &&
+        emailMessageResult.result
       ) {
         const msgId = this.props.emailMessageResult.result.id;
+        const extMessageId = getHeader(emailHeaderMessageResult.headers, 'Message-Id');
         const detail = {
           id: msgId,
-          extMessageId: getHeader(
-            emailHeaderMessageResult.headers,
-            'Message-Id'
-          ),
+          extMessageId: extMessageId,
           subject: getHeader(emailHeaderMessageResult.headers, 'subject'),
           sentDateTime: getHeader(emailHeaderMessageResult.headers, 'date'),
           chkselected: true,
@@ -219,17 +228,31 @@ export class MessageContent extends Component {
           raw: null,
         };
 
-        window.dispatchEvent(new CustomEvent('LoadingMessage'));
+        console.log('SE EJECUTA EL DE MESSAGECONTENT');
+        window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: extMessageId}));
         getMessage(msgId, 'raw')
           .then((msgRaw) => {
-            window.dispatchEvent(new CustomEvent('LoadedMessage'));
-            detail.raw = msgRaw.result;
+
+            detail.raw = msgRaw.result.raw;
+            detail.attach = msgRaw.result.attach;
 
             window.dispatchEvent(
               new CustomEvent('Checkclick', {
                 detail,
               })
             );
+
+            setTimeout(()=>{
+              window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: extMessageId}));
+              window.dispatchEvent(
+                  new CustomEvent('Checkclick', {
+                    detail,
+                  })
+              );
+              window.dispatchEvent(new CustomEvent('LoadedMessage'));
+            }, 1000);
+
+            window.dispatchEvent(new CustomEvent('LoadedMessage'));
           })
           .catch((err) => {
             window.dispatchEvent(new CustomEvent('LoadedMessage'));
@@ -278,13 +301,14 @@ export class MessageContent extends Component {
 
             this.props.clearOpenMessageAttachment();
             for (var i = 0; i < attach.length; i++) {
-              if (attach[i].filename && attach[i].filename.length > 0) {
+              if ((attach[i].filename && attach[i].filename.length > 0) || attach[i].headers.find(h => h.name === 'Content-ID')) {
                 const athc = attach[i];
                 if (!this.attachments[attach[i].partId]) {
                   const msgid =
                     emailMessageResult.id || emailMessageResult.result.id;
                   this.attachments[attach[i].partId] = '1';
 
+                  // console.log('*******||| IF');
                   getAttachments(
                     msgid,
                     attach[i],
@@ -301,20 +325,26 @@ export class MessageContent extends Component {
                             data: dataBase64Rep,
                           },
                         });
+                        // console.log('*******||| attachment.name:' + filename);
 
                         let urlBlob = b64toBlob(
                           dataBase64Rep,
                           mimeType,
                           attachment.size
                         );
-                        //console.log(urlBlob);
+                        // console.log('*******||| urlBlob:');
+                        // console.log(urlBlob);
                         const contentDisposition = getHeader(
                           athc.headers,
                           'content-disposition'
                         );
                         if (contentDisposition) {
+                          // console.log('HEADERS:');
+                          // console.log(athc.headers);
                           var contentId = getHeader(athc.headers, 'Content-ID');
                           if (contentId !== undefined) {
+                            // console.log('*******||| contentId:' + contentId);
+
                             contentId = contentId
                               .replace('<', '')
                               .replace('>', '');
@@ -323,26 +353,33 @@ export class MessageContent extends Component {
                             'message-iframe'
                           );
                           if (iframe){
+                            // console.log('*******||| HTML:');
+                            // console.log(iframe.contentDocument.body.innerHTML);
+                            // console.log('*******||| REPLACE CID:'+contentId);
+                            // console.log('*******||| WITH BASE64:'+dataBase64Rep);
                             const bd = iframe.contentDocument.body.innerHTML.replace(
                               `cid:${contentId}`,
                               'data:image/png;base64, ' + dataBase64Rep
                             );
-                            iframe.contentDocument.body.innerHTML = bd;
-  
+                            iframe.contentDocument.body.innerHTML = bd;  
                             var blobUrl = URL.createObjectURL(urlBlob);
-                            var Attachment = addAttachmentElement(
-                              blobUrl,
-                              filename
-                            );
-                            var AttachmentDiv = addAttachmentContainer(mimeType);
-                            AttachmentDiv.appendChild(Attachment);
-                            iframe &&
-                              iframe.contentDocument &&
-                              iframe.contentDocument.body.appendChild(
-                                AttachmentDiv
+
+                            // console.log('*******||| blobUrl:');
+                            // console.log(blobUrl);
+                            if (filename !== ''){
+                              var Attachment = addAttachmentElement(
+                                blobUrl,
+                                filename
                               );
+                              var AttachmentDiv = addAttachmentContainer(mimeType);
+                              AttachmentDiv.appendChild(Attachment);
+                              iframe &&
+                                iframe.contentDocument &&
+                                iframe.contentDocument.body.appendChild(
+                                  AttachmentDiv
+                                );
+                            }
                           }
-                          
                         }
                       }
                     }
@@ -360,6 +397,8 @@ export class MessageContent extends Component {
           this.toggleShowMessageNotFound(true);
           this.notFoundModal = 1;
         }
+        // console.log('*******||| ELSE');
+
         var iframe = document.getElementById('message-iframe');
         var Divider = addDivDivider();
         if (iframe.contentDocument) {
@@ -376,7 +415,7 @@ export class MessageContent extends Component {
                   mimeType,
                   attachment
                 ) {
-                  console.log('Attachment received');
+                  // console.log('*******||| attachment.name:' + filename);
                   let dataBase64Rep = attachment.data
                     .replace(/-/g, '+')
                     .replace(/_/g, '/');
@@ -385,8 +424,10 @@ export class MessageContent extends Component {
                     mimeType,
                     attachment.size
                   );
+                  // console.log('*******||| urlBlob:' + urlBlob);
                   //console.log(urlBlob);
                   var blobUrl = URL.createObjectURL(urlBlob);
+                  // console.log('*******||| blobUrl:' + blobUrl);
                   var Attachment = addAttachmentElement(blobUrl, filename);
                   var AttachmentDiv = addAttachmentContainer(mimeType);
                   AttachmentDiv.appendChild(Attachment);
@@ -562,8 +603,12 @@ const findAttachments = (attachments, found = []) => {
         //   found.push(email.attach[i].parts[j]);
         // }
       } else {
-        if (attachments[i].filename !== '')
+        if (attachments[i].filename !== '') {
           found.push(attachments[i]);
+        } else if (attachments[i].filename === '' && attachments[i].headers.find(h => h.name.toUpperCase() === 'CONTENT-ID')) {
+          found.push(attachments[i]);
+        }
+         
       }
     }
   return found;

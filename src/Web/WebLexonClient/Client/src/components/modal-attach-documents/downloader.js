@@ -26,7 +26,8 @@ export class Downloader extends React.Component {
         try {
             const res = await downloadFile(doc.idRelated, bbdd.bbdd, user.idUser, ({ length, progress }) => {
                 if (length) {
-                    this.setState({ length })
+                    const realLength = 3 * (length/4);
+                    this.setState({ length: realLength })
                 }
 
                 if (progress) {
@@ -40,7 +41,7 @@ export class Downloader extends React.Component {
                 this.setState({ downloading: false, error: "Error descargando fichero" })
             }
             else if (res.status === 200) {
-                this.setState({ downloading: false, progress: 100, error: "" })
+                this.setState({ downloading: false, progress: 100, error: "", length: (3 * (res.data.length / 4)) - ((res.data.match(/==/g) || []).length) - ((res.data.match(/=/g) || []).length) })
                 window.dispatchEvent(new CustomEvent("AttachDocument", { detail: { document: doc, content: res.data } }));
             }
         } catch (err) {

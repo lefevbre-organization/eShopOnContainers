@@ -30,6 +30,8 @@ import {
   clearPageTokens,
   setSearchQuery,
   deleteMessage,
+  setOpenMessage,
+  setMessageLoadInProgress
 } from '../content/message-list/actions/message-list.actions';
 
 import { selectLabel } from '../sidebar/sidebar.actions';
@@ -243,6 +245,7 @@ export class Main extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    console.log('ShouldComponentUpdate path:'+this.props.location.pathname);
     const difP = detailedDiff(this.props, nextProps);
     const difSt = detailedDiff(this.state, nextState);
 
@@ -261,6 +264,7 @@ export class Main extends Component {
       difP.updated.messagesResult &&
       difP.updated.messagesResult.hasOwnProperty('openMessage')
     ) {
+      console.log('ShouldComponentUpdate: false -> messagesResult.hasOwnProperty(openMessage)');
       return false;
     }
 
@@ -268,28 +272,46 @@ export class Main extends Component {
       difP.updated.lexon &&
       difP.updated.lexon.hasOwnProperty('mailContacts')
     ) {
+      console.log('ShouldComponentUpdate: false -> lexon.hasOwnProperty(mailContacts)');
       return false;
     }
 
     if (
       nextProps.messagesResult.openMessage !== null &&
-      nextProps.messagesResult.openMessage ===
-        this.props.messagesResult.openMessage
+      nextProps.messagesResult.openMessage === this.props.messagesResult.openMessage
     ) {
-      if (
-        nextProps.location.pathname ===
-        '/' + nextProps.messagesResult.openMessage
-      ) {
+      if ( nextProps.location.pathname === '/' + nextProps.messagesResult.openMessage) {
+        console.log('ShouldComponentUpdate: location.pathName === /messageResult.openMessage');
+        console.log('ShouldComponentUpdate: '+nextProps.location.pathname+' === '+'/'+nextProps.messagesResult.openMessage);
+
         if (nextState.sidebarDocked !== this.state.sidebarDocked) {
+          console.log('ShouldComponentUpdate: true -> sidebardocked changed');
           return true;
         }
 
+        if (this.props.location.pathname !== '/' + nextProps.messagesResult.openMessage){
+          return true;
+        }
+        
+        console.log('ShouldComponentUpdate: false -> sidebardocked hasnt changed');
         return false;
       } else {
+
+        console.log('ShouldComponentUpdate: '+nextProps.location.pathname+' !== '+'/'+nextProps.messagesResult.openMessage);
+        
+        if (this.props.location.pathname !== nextProps.location.pathname){
+          console.log('ShouldComponentUpdate: true -> pathname changed from '+nextProps.location.pathname+' to '+ this.props.location.pathname);
+          return true
+        } else if (nextProps.location.pathname === '/compose' && nextProps.messagesResult.openMessage !== ''){
+          console.log('ShouldComponentUpdate: false -> /compose with openedMessage');
+          return false
+        }
+        
+        console.log('ShouldComponentUpdate: true -> location.pathName !== /messageResult.openMessage');
         return true;
       }
     }
-
+    console.log('ShouldComponentUpdate: true');
     return true;
   }
 
@@ -545,6 +567,8 @@ export class Main extends Component {
   }
 
   loadLabelMessages(label) {
+    this.props.setOpenMessage('');
+    this.props.setMessageLoadInProgress();
     const currentSearchQuery = this.props.searchQuery;
     this.props.clearPageTokens();
     this.props.selectLabel(label.id);
@@ -918,6 +942,8 @@ const mapDispatchToProps = (dispatch) =>
       clearPageTokens,
       setSearchQuery,
       deleteMessage,
+      setOpenMessage,
+      setMessageLoadInProgress,
       setBBDD: ACTIONS.setBBDD,
       setGUID: ACTIONS.setGUID,
       setSign: ACTIONS.setSign,

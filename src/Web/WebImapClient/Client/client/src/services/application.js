@@ -153,7 +153,7 @@ export function replyMessage(dispatch, originalMessage, sign = '') {
       ? originalMessage.replyTo
       : originalMessage.from;
   let to;
-  if(originalMessage.folder.fullName === 'INBOX') {
+  if(originalMessage.folder && originalMessage.folder.fullName === 'INBOX') {
     to = replyTo;
   } else {
     to = recipients
