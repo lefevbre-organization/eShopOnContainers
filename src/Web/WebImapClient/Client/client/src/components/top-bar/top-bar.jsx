@@ -12,6 +12,7 @@ import { getFolders, findTrashFolder, FolderTypes } from '../../services/folder'
 import {
   forwardMessage,
   replyMessage,
+  replyMessageAll,
   clearSelectedMessage,
 } from '../../services/application';
 import {
@@ -32,12 +33,17 @@ export class TopBar extends Component {
 
     this.onForwardMessage = this.onForwardMessage.bind(this);
     this.onReplyMessage = this.onReplyMessage.bind(this);
+    this.onReplyAllMessage = this.onReplyAllMessage.bind(this);
   }
 
   onReplyMessage() {
     this.props.replyMessage(this.props.lexon.sign);
   }
 
+  onReplyAllMessage() {
+    this.props.replyMessageAll(this.props.lexon.sign);
+  }
+  
   onForwardMessage() {
     this.props.forwardMessage(this.props.lexon.sign);
   }
@@ -92,6 +98,7 @@ export class TopBar extends Component {
             clearSelectedMessage={props.clearSelectedMessage}
             outboxEmpty={outbox === null}
             onReplyMessageClick={this.onReplyMessage}
+            onReplyAllMessageClick={this.onReplyAllMessage}
             onForwardMessageClick={this.onForwardMessage}
             onDeleteClick={() => this.onDelete(props.deleteMessage)}
             onMarkUnreadClick={toggleMessageSeen}
@@ -188,6 +195,8 @@ const mapDispatchToProps = (dispatch) => ({
   clearSelectedMessage: () => clearSelectedMessage(dispatch),
   replyMessage: (selectedMessaage, sign) =>
     replyMessage(dispatch, selectedMessaage, sign),
+  replyMessageAll: (selectedMessaage, sign) =>
+    replyMessageAll(dispatch, selectedMessaage, sign),
   forwardMessage: (selectedMessaage, sign) =>
     forwardMessage(dispatch, selectedMessaage, sign),
   deleteMessage: (credentials, folders, selectedFolder, selectedMessage) => {
@@ -249,6 +258,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
     replyMessage: (sign) =>
       dispatchProps.replyMessage(stateProps.selectedMessage, sign),
+    replyMessageAll: (sign) =>
+      dispatchProps.replyMessageAll(stateProps.selectedMessage, sign),
     forwardMessage: (sign) =>
       dispatchProps.forwardMessage(stateProps.selectedMessage, sign),
     deleteMessage: () =>
