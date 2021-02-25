@@ -1,13 +1,13 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories
 {
-    using Newtonsoft.Json;
-    using System.Net.Http;
+    using BuidingBlocks.Lefebvre.Models;
 
     public class GoogleDriveRepository : BaseClass<GoogleDriveRepository>, IGoogleDriveRepository
     {

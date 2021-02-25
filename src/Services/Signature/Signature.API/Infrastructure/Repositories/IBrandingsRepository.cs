@@ -2,7 +2,7 @@
 {
     #region using
     using Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
     using System.Threading.Tasks;
     #endregion
 

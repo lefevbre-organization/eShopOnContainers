@@ -1,4 +1,4 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 {

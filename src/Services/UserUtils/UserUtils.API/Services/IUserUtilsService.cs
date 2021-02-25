@@ -1,7 +1,7 @@
 ﻿
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services
 {
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
     using Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;

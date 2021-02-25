@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
     public class BaseClass<T>
     {
@@ -107,12 +107,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             WriteLine(builder.ToString(), false);
         }
 
-        //public Exception GetInfoErrorFromParameters(object codeError, object valueError)
-        //{
-        //    if (codeError == null || exMessage == null || !(exMessage is string))
-        //        return;
-        //}
-
         public void TraceOutputMessage(
             List<ErrorInfo> errors,
             object exMessage,
@@ -122,8 +116,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            //if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
-            //    return;
             if (codeError == null || exMessage == null || !(exMessage is string))
                 return;
 
@@ -213,10 +205,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             return null;
         }
-        //public static UpdateOptions GetUpsertOptions()
-        //{
-        //    return new UpdateOptions { IsUpsert = true };
-        //}
+
 
         public static ReplaceOptions GetUpsertOptions()
         {
@@ -338,4 +327,5 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             return new AggregateOptions() { AllowDiskUse = true };
         }
     }
+
 }

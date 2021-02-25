@@ -4,7 +4,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
     using Exceptions;
     using Repositories;
     using Models;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using System.Net.Http;
     using Microsoft.Extensions.Options;

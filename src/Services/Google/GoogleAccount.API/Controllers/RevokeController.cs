@@ -4,7 +4,7 @@ using System;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers

@@ -1,6 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;

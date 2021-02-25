@@ -54,7 +54,7 @@ inf:
   registry:                # Uncomment "registry" to specify registry secret
     secretName: elefebvre-docker-secret               # name of the secret inside k8s   
     server: index.docker.io                           # Registry login server
-    login: freyeslefebvre                             # User login
-    pwd: NetEb9221                                    # User pwd
+    login: changue_name                               # User login
+    pwd: changue_pass                                 # User pwd
     mail: f.reyes-ext@lefebvre.es                     # mail of user (optional)
 

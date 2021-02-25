@@ -1,4 +1,4 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

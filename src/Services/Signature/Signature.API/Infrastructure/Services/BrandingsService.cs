@@ -2,7 +2,7 @@
 {
     #region Using
 
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Options;
     using Infrastructure.Repositories;
     using Model;

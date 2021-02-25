@@ -1,7 +1,7 @@
 ﻿namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Repositories
 {
     using Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
     using System.Threading.Tasks;
   
     public interface ICalendarRepository

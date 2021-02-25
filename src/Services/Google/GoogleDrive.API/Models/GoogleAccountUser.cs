@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Models
 {
-    
+    using BuidingBlocks.Lefebvre.Models;
     public class GoogleAccountUser : MongoModel
     {
         [BsonId]

@@ -1,6 +1,6 @@
 ﻿
 using Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
