@@ -29,16 +29,18 @@ class MessageHeader extends Component {
   }
 
   getHeader(name) {
-    const { messageHeaders } = this.props.emailMessageResult.result;
-    console.log('getHeader', messageHeaders)
-    if (Array.isArray(messageHeaders)) {
-      for (var i = 0; i < messageHeaders.length; i++) {
-        if (messageHeaders[i].name === name) {
-          return messageHeaders[i].value;
+    if(this.props.emailMessageResult.result) {
+      const {messageHeaders} = this.props.emailMessageResult.result;
+      console.log('getHeader', messageHeaders)
+      if (Array.isArray(messageHeaders)) {
+        for (var i = 0; i < messageHeaders.length; i++) {
+          if (messageHeaders[i].name === name) {
+            return messageHeaders[i].value;
+          }
         }
+      } else {
+        return null;
       }
-    } else {
-      return null;
     }
     return null;
   }
