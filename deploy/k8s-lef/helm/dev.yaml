@@ -2,35 +2,27 @@ lef:
   env: 'dev'
 
 centinela:
-  # user: 'centinelaApi'
-  # pass: 'led.2018'c
   url: 'compliance-api.affin.es/api/secure'
 
 lexon:
   devs:
     env: 'DEVS'
-    # conn: 'database=lexondevconecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'led-dev-lexon.eu.els.local'
   dev:
     env: 'DEV'
-    # conn: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'led-dev-lexon.eu.els.local'
   qa:
     env: 'QA'
-    # conn: 'database=lexon_qa_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'www-led-pre.lex-on.es'
   pre:
     env: 'PRE'
-    # conn: 'database=lexon_pre_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90'
     url: 'www-led-pre.lex-on.es'
   pro:
     env: 'PRO'
-    # conn: 'database=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100'
     url: 'www.lex-on.es'      
 
 signature:
   url: 'api.sandbox.signaturit.com/v3'
-  # pass: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'   # name: Signaturit
   lex_url: 'https://led-dev-lexon.eu.els.local'
   callback_url: 'lexbox-dev-websignature.lefebvre.es' 
   gw_url: 'lexbox-dev-apigwsig.lefebvre.es' 
@@ -44,8 +36,6 @@ svchub:
 
 svconline:
   url: 'herculesppd.lefebvre.es' # name: OnlineUrl
-  # login: 'ws'
-  # pass: '22lcqsp11lsw'
 
 svccomtools:
   url: 'led-pre-servicecomtools.eu.els.local' # name: LoginUrl
@@ -56,7 +46,6 @@ svcclaves:
 userutils:
   token:
     caducity: 1500
-    # key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
   bypass:
     lex:
       id: 'Lex-On'
