@@ -19,6 +19,9 @@
 
         public bool UseCustomizationData { get; set; }
         public bool AzureStorageEnabled { get; set; }
+        public short Version { get; set; }
+
+        public long IdAppNavision { get; set; }
 
 
     }
