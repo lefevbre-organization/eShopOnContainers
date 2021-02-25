@@ -120,18 +120,25 @@ class Main extends Component {
     this.props.setComposerOpen(false);
   }
 
-  onShowLoader() {
+  onShowLoader(event) {
     console.log('ShowSpinner');
     this.props.setShowSpinner(true);
+    if (event && event.detail && event.detail){
+      if (!this.props.loadingMessages.find(m => m === event.detail)){
+        this.props.addLoadingMessage(event.detail);
+      }
+    }
   }
 
   onHideLoader() {
     console.log('HideSpinner');
-    this.props.setShowSpinner(false);
+    if (this.props.loadingMessages.length === this.props.selectedMessages.length)
+      this.props.setShowSpinner(false);
   }
 
   async handleResetList(event) {
     this.props.resetListMessages();
+    this.props.resetListLoadingMessages();
   }
 
   // async handleSentMessage(event) {
@@ -190,33 +197,41 @@ class Main extends Component {
 
   handleKeyPress(event) {
     console.log('HandleEvent Client -> Lexon - Checkclick');
-
-    if(event.detail.chkselected) {
-      let raw = event.detail.raw;
-
-      global.mimeParserAsync(event.detail.raw).then(  mime => {
-        const attachments = findAttachments(JSON.parse(mime));
-
-        this.props.addMessage({
-          id: event.detail.extMessageId,
-          //extMessageId: event.detail.extMessageId,
-          subject: event.detail.subject,
-          folder: event.detail.folder,
-          sentDateTime: event.detail.sentDateTime,
-          raw: null, // event.detail.raw,
-          attachments: attachments.map( a => ({  name: a.Filename, checked: a.checked }) )
-        });
-
-        dbStore.saveMessage({ id: event.detail.extMessageId, attachments, raw: raw });
-        raw = null;
-        event.detail.raw = null;
-      }).catch(err => {
-         console.log(err);
+    const checked = this.props.loadingMessages.find(m => m === event.detail.extMessageId);
+    const saveMessageInfo = (event, attachments) => {
+      this.props.addMessage({
+        id: event.detail.extMessageId,
+        //extMessageId: event.detail.extMessageId,
+        subject: event.detail.subject,
+        folder: event.detail.folder,
+        sentDateTime: event.detail.sentDateTime,
+        raw: null, // event.detail.raw,
+        attachments: attachments.map( a => ({  name: a.Filename, checked: a.checked }) )
       });
-    } else {
-      this.props.deleteMessage(event.detail.extMessageId);
+
+      dbStore.saveMessage({ id: event.detail.extMessageId, attachments, raw: event.detail.raw });
+      //raw = null;
+      event.detail.raw = null;
     }
 
+    if(event.detail.chkselected && checked) {
+      let attachments = (event.detail.attach) ? event.detail.attach : null;
+      if (attachments !== null) { //Google Client sends attachments in a separate node
+        saveMessageInfo(event, attachments);
+      } else {
+        global.mimeParserAsync(event.detail.raw).then(  mime => {
+          attachments = findAttachments(JSON.parse(mime));
+          saveMessageInfo(event, attachments);
+          if (this.props.loadingMessages.length === this.props.selectedMessages.length)
+            this.props.setShowSpinner(false);
+      }).catch(err => {
+        console.log(err);
+      });
+      }
+    } else {
+      this.props.deleteMessage(event.detail.extMessageId);
+      this.props.deleteLoadingMessage(event.detail.extMessageId);
+    }
   }
 
   handleCheckAllclick(event) {
@@ -476,6 +491,7 @@ class Main extends Component {
 const mapStateToProps = (state) => {
   return {
     selectedMessages: state.email.selectedMessages,
+    loadingMessages: state.email.loadingMessages,
     errors: state.applicationReducer.errors,
   };
 };
@@ -497,12 +513,12 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(APPLICATION_ACTIONS.setComposerOpen(open)),
   setShowSpinner: (show) => dispatch(APPLICATION_ACTIONS.setShowSpinner(show)),
   setCaseFile: (caseFile) => dispatch(APPLICATION_ACTIONS.setCaseFile(caseFile)),
-
+  addLoadingMessage: (id) => dispatch(ACTIONS.addLoadingMessage(id)),
+  deleteLoadingMessage: (id) => dispatch(ACTIONS.deleteLoadingMessage(id)),
+  resetListLoadingMessages: () => dispatch(ACTIONS.resetListLoadingMessages()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);
-
-
 
 const findAttachments = (email) => {
   let attachs = [];
@@ -517,4 +533,3 @@ const findAttachments = (email) => {
 
   return attachs;
 };
-

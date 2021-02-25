@@ -212,6 +212,7 @@ export const getMessageHeader = (id) => {
 };
 
 export const getMessage = (messageId, format) => {
+  let content = [];
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
@@ -221,11 +222,62 @@ export const getMessage = (messageId, format) => {
       })
       .then((response) => {
         const { result } = response;
+        const raw = result.raw;
 
         if (format === 'raw') {
-          resolve({
-            result: base64url.decode(result.raw),
-          });
+          window.gapi.client.gmail.users.messages.get({
+            userId: 'me',
+            id: messageId, 
+            format: 'full'
+          })
+          .then((responsefull) => {
+            const {result} = responsefull;
+            const attachments = findAttachments(result.payload.parts);
+            
+            if (attachments.length === 0){
+              resolve({result: {raw: base64url.decode(raw), attach: []}});
+            }
+
+            for (let i=0; i<attachments.length; i++){
+              
+              if (attachments[i].body.attachmentId){
+                console.log(messageId);
+                console.log(attachments[i].body.attachmentId);
+                getAttachments({messageId: messageId, attachmentId: attachments[i].body.attachmentId})
+                .then(attContent => {
+                  
+                  content.push(
+                    {
+                      Content: attContent.data.replace(/-/g, '+').replace(/_/g, '/'), 
+                      ContentType: attachments[i].mimeType, 
+                      Filename: attachments[i].filename,
+                      HTMLRelated: false,
+                      Header: {},
+                      checked: true
+                    });
+                    console.log('Este está dentro:'+content);
+                    
+                    if (i === attachments.length-1){
+                      console.log('Retorno de todo');
+                      console.log(content);
+                      resolve({
+                        result: {raw: base64url.decode(raw), attach: content}
+                        //result: utf8.encode(Base64.decode(result.raw))
+                        //result: Base64.decode(result.raw),
+                      });
+                    }
+                })
+                .catch(err => {
+                  console.log(err);
+                  reject(err);
+                })
+              }
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            reject(err);
+          })
         } else {
           let body = getBody(result.payload, 'text/html');
           let attach = result.payload.parts;
@@ -375,12 +427,16 @@ function genEmbedImgIds(images) {
   let ids = [];
   if (images) {
     for (let index = 0; index < images.length; index++) {
+      console.log('genEmbededImgIds:');
+      console.log(images[index]);
       const element = images[index];
       const name = getContentName(element);
       const random = uuidv4().slice(0, 8);
       ids.push(`${name.replace('.', '')}__${random}`);
     }
   }
+  console.log('getEmbedImgIdsResult');
+  console.log(ids);
   return ids;
 }
 
@@ -400,6 +456,9 @@ function getContentType(imageTag) {
 function getContentName(imageTag) {
   let contentName;
   contentName = imageTag.replace(/.*alt="([^"]*)".*/, '$1');
+  if (imageTag === contentName)
+    contentName = '';
+    //contentName = `pastedImg_${uuidv4().slice(0, 8)}`;
   console.log('getContentName:' + contentName);
   return contentName;
 }
@@ -923,3 +982,25 @@ export const batchDeleteMessages = ({ ids }) =>
 //        reject(err);
 //      });
 //  });
+
+const findAttachments = (attachments, found = []) => {
+  
+  for (let i = 0; i < attachments.length; i++) {
+    if (attachments[i].mimeType.startsWith('multipart') === true) {
+      if (attachments[i].parts && attachments[i].parts.length > 0){
+        findAttachments(attachments[i].parts, found)
+      } 
+      // for (let j = 0; j < attachments[i].parts.length; j++) {
+      //   found.push(email.attach[i].parts[j]);
+      // }
+    } else {
+      if (attachments[i].filename !== '') {
+        found.push(attachments[i]);
+      } else if (attachments[i].filename === '' && attachments[i].headers.find(h => h.name.toUpperCase() === 'CONTENT-ID')) {
+        found.push(attachments[i]);
+      }
+       
+    }
+  }
+return found;
+};

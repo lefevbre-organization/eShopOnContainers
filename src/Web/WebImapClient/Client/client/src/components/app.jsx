@@ -215,7 +215,7 @@ class App extends Component {
       selectedMessages.length !== selected.length
     ) {
       console.log('LoadingMessage: 1');
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: this.props.lexon.idEmail}));
     }
   }
 

@@ -13,7 +13,9 @@ export const TopBarMessageViewer = (
     outboxEmpty, onReplyMessageClick, onForwardMessageClick,
     onDeleteClick,
     onMarkUnreadClick
-  }) => (
+  }) => {
+
+  return (
   <div className={mainCss['mdc-top-app-bar__row']}>
     <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-start']}`}>
       <ButtonCollapse collapsed={collapsed} sideBarToggle={sideBarToggle} />
@@ -26,8 +28,8 @@ export const TopBarMessageViewer = (
       </span>
     </section>
     <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-end']}`}>
-      <ButtonReply outboxEmpty={outboxEmpty} replyMessage={onReplyMessageClick}/>
-      <ButtonForward outboxEmpty={outboxEmpty} forwardMessage={onForwardMessageClick}/>
+      <ButtonReply outboxEmpty={true} replyMessage={onReplyMessageClick}/>
+      <ButtonForward outboxEmpty={true} forwardMessage={onForwardMessageClick}/>
       <span isotip={t('topBar.delete')} isotip-position='bottom' isotip-size='small'>
         <TopBarButton onClick={onDeleteClick}>delete</TopBarButton>
       </span>
@@ -36,7 +38,7 @@ export const TopBarMessageViewer = (
       </span>
     </section>
   </div>
-);
+) };
 
 TopBarMessageViewer.propTypes = {
   collapsed: PropTypes.bool.isRequired,
