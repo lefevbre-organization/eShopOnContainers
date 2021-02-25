@@ -237,9 +237,20 @@ export class Main extends Component {
     }
 
     async handleClassificatedEvent(event) {
+        if(!event.detail.Id) {
+            event.detail.Id = event.detail.Guid;
+        }
+
         const googleEvent = this.buildEventoGoogle(event.detail);
         let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
         this.currentClassification = event.detail.LexonClassification;
+
+
+        const evt = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
+            return e.Id == event.detail.Id;
+        });
+        evt.LexonClassification = event.detail.LexonClassification;
+        this.scheduleObj.refresh();
     }
 
     async handleClassificatedEventRemoved(event) {
@@ -763,6 +774,7 @@ export class Main extends Component {
             sm = this.props.calendarsResult.calendars || []
         }
 
+
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
@@ -858,6 +870,7 @@ export class Main extends Component {
                 })
             );
         });
+
 
 
 
@@ -1130,7 +1143,6 @@ export class Main extends Component {
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id === undefined) {
                     this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
-                    //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
                     this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
@@ -1328,7 +1340,7 @@ export class Main extends Component {
                 head.classList.add('hidden');
             }
 
-
+            debugger
             this.selectedEvent = {...args.data};
 
             var editButton = document.querySelector('.e-event-delete');
@@ -1714,6 +1726,11 @@ export class Main extends Component {
 
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
+                        const dataEvt = this.scheduleObj.dataModule.dataManager.dataSource.json[this.scheduleObj.dataModule.dataManager.dataSource.json.length-1];
+                        dataEvt.Id = result.id;
+
+                        this.selectedEvent = { ...this.selectedEvent, Subject: result.summary, Id: result.id }
+
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
                             this.scheduleObj.eventWindow.eventData.Subject = event.summary;
@@ -1721,9 +1738,9 @@ export class Main extends Component {
                         }
 
                         // this.scheduleObj.eventWindow.resetForm();
-                        args.data[0].Id = result.id;
+                        //args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = event.attendees;
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] })
 
@@ -2327,7 +2344,7 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='eventTypes'
                                     isModal={true}
-                                    header={i18n.t("contactimport.title")}
+                                    header={i18n.t("eventtype.title")}
                                     visible={this.state.hidePromptEventTypeDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}

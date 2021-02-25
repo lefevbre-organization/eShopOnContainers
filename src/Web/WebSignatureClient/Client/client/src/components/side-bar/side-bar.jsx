@@ -196,7 +196,7 @@ class SideBar extends Component {
         </DialogComponent>
         <DialogComponent 
           id='noSignaturesDialog'
-          header=' ' 
+          header='' 
           visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
           width='50%' 
@@ -208,7 +208,7 @@ class SideBar extends Component {
         />
         <DialogComponent 
           id="confirmDialog" 
-          header=' ' 
+          header='' 
           visible={this.state.hideConfirmDialog} 
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 

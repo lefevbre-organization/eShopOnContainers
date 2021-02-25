@@ -168,6 +168,7 @@ export default class Caldavjs {
               evt.description = parsed.DESCRIPTION;
               evt.color = parsed.COLOR;
               evt.categories = parsed.CATEGORIES;
+              evt.lexonActuation = parsed["X-ACTUATION"];
               evt.json = parsed;
               resolve();
             })
@@ -385,6 +386,8 @@ export default class Caldavjs {
     try {
       evt = icalGenerator({
         events: [{
+          id: input.filename,
+          uid: input.filename.split("/").pop(),
           start: new Date(input.start),
           end: new Date(input.end),
           summary: input.summary,
@@ -396,14 +399,15 @@ export default class Caldavjs {
           attendees: input.attendees,
           alarms: input.reminders,
           repeating: input.repeating,
-          allDay: input.allDay || true
+          allDay: input.allDay || true,
+          x: input.x ? [input.x]:[]
         }]
       });
     } catch (e) {
       throw new Error(e.toString());
     }
     let string = evt.toString();
-    string = string.replace('\nLOCATION', '\nCOLOR:' + input.color + '\nLOCATION');
+    string = string.replace('\nCATEGORIES', '\nCOLOR:' + input.color + '\nCATEGORIES');
     return this.sendRequest({
       url: input.filename,
       method: 'PUT',
@@ -497,10 +501,11 @@ export default class Caldavjs {
    * Save a create contact 
    * 
    * @param {object} required 
-   ** @param {string} fn required
+   ** @param {string} firstName required
+   ** @param {string} lastName required
    ** @param {string} email required
-   ** @param {string} tel required
-   ** @param {string} categories 
+   ** @param {string} workPhone required
+   ** @param {string} uid required
    *
    * @return {string}
    */
@@ -508,8 +513,11 @@ export default class Caldavjs {
     let string = null;
     try {
     vCard = vCard();
-    vCard.firstName = 'Eric Jose';
+    vCard.firstName = 'Eric';
+    vCard.lastName = 'Nesser';
     vCard.email = 'j.hostilio-ext@lefebvre.es';
+    vCard.workPhone = '312-555-1212';
+    vCard.uid = 'some-other-random-string';
     } catch (e) {
       throw new Error(e.toString());
     }

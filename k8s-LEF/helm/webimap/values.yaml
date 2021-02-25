@@ -67,4 +67,4 @@ configValues: |
   window.NEXTCLOUD_ADMIN_PASSWD = 'admin_dev';
   window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
   window.SHOW_EXPERIMENTAL='1'
-  window.RELEASE = 'RC 0.41'
+  window.RELEASE = 'RC 0.41.1'
