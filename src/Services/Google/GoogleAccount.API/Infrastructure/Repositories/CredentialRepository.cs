@@ -4,9 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-//using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -14,9 +12,10 @@ using Newtonsoft.Json;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Exceptions;
-    using Infrastructure.Repositories;
     using Model;
+   
     public class CredentialRepository : BaseClass<CredentialRepository>, ICredentialRepository
     {
         private readonly GoogleAccountContext _context;

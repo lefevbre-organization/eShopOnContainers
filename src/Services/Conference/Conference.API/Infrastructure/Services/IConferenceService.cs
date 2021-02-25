@@ -1,10 +1,11 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Services
 {
+    using Models;
+    using BuidingBlocks.Lefebvre.Models;
+ 
     public interface IConferenceService
     {
         Task<Result<UserConference>> GetUserAsync(string idNavisionUser, short idApp);

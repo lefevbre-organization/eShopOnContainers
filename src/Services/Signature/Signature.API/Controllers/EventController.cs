@@ -1,17 +1,17 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Controllers
 {
     #region Usings
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Services;
-    using Microsoft.AspNetCore.Mvc;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
-    using System;
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Threading.Tasks;
     using Signature.API.Model;
-    //using RestSharp;
-     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Configuration;
 
     #endregion
     [Route("api/v1/SignaturitEvent")]

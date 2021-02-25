@@ -1,15 +1,14 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
+﻿using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    #region Using
     using Model;
     using Repositories;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
-    #endregion
+    using BuidingBlocks.Lefebvre.Models;
 
     public class DocumentsService : IDocumentsService
     {

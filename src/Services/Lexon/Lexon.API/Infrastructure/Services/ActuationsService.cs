@@ -1,8 +1,7 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
-    using Lexon.API;
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Exceptions;
     using Infrastructure.Repositories;
     using Models;
-    using MySql.Data.MySqlClient;
+    using ViewModel;
 
     public class ActuationsService : LexonBaseClass<ActuationsService>, IActuationsService
     {

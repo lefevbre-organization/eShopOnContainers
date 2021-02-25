@@ -1,18 +1,18 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
 {
     #region Usings
 
     using Infrastructure.Services;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
+    using BuidingBlocks.Lefebvre.Models;
     using Model;
-    using System;
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Threading.Tasks;
-
     #endregion
 
     [Route("api/v2/usermail")]

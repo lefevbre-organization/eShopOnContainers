@@ -1,7 +1,7 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-
+﻿
 namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
 {
+    using BuidingBlocks.Lefebvre.Models;
     public class AccountSettings :BaseSettings
     {
         public string ConnectionString { get; set; }

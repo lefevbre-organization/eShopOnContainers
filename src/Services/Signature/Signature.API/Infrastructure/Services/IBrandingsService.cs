@@ -1,10 +1,9 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
+﻿using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    #region Using
     using Model;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using System.Threading.Tasks;
-    #endregion Using
+    using BuidingBlocks.Lefebvre.Models;
 
     public interface IBrandingsService
     {

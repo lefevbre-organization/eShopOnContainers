@@ -1,25 +1,26 @@
-﻿
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using System.Net.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using System.Linq;
+using System.Web;
+
+
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Exceptions;
-    using Repositories;
     using Models;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using System.Net.Http;
-    using Microsoft.Extensions.Options;
-    using Microsoft.Extensions.Logging;
-    using System;
-    using System.Threading.Tasks;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Collections.Generic;
-    using System.Security.Claims;
-    using System.Text;
-    using Microsoft.IdentityModel.Tokens;
-    using System.Net.Http.Headers;
-    using Newtonsoft.Json;
-    using System.Linq;
-    using System.Web;
+    using Repositories;
 
     public class UserUtilsService : BaseClass<UserUtilsService> , IUserUtilsService
     {

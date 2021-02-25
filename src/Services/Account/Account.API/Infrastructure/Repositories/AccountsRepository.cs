@@ -1,5 +1,4 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,6 +13,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Rep
 {
     #region using
 
+    using BuidingBlocks.Lefebvre.Models;
     using IntegrationEvents.Events;
     using Infrastructure.Exceptions;
     using Model;

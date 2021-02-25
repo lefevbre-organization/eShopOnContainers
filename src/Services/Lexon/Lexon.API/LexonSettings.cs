@@ -1,7 +1,7 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-
+﻿
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 {
+    using BuidingBlocks.Lefebvre.Models;
     public class LexonSettings : IEnvSettings
     {
         public string ConnectionString { get; set; }

@@ -1,7 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -12,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Exceptions;
+    using Models;
+
     public class UserUtilsRepository : BaseClass<UserUtilsRepository>, IUserUtilsRepository
     {
         private readonly UserUtilsContext _context;

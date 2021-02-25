@@ -1,19 +1,18 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MongoDB.Bson;
+using RestSharp;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    #region Using
+    using BuidingBlocks.Lefebvre.Models;
     using Model;
     using Repositories;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using MongoDB.Bson;
-    using RestSharp;
-    using Microsoft.Extensions.Configuration;
-    using Newtonsoft.Json.Linq;
-    #endregion
 
     public class SmsService : ISmsService
     {

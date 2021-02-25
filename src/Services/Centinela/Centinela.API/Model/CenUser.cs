@@ -1,7 +1,4 @@
-﻿//using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-//using MongoDB.Bson;
-//using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models
 {

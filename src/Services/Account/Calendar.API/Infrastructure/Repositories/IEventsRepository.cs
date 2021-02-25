@@ -2,7 +2,7 @@
 {
     
     using Model;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
+    using BuidingBlocks.Lefebvre.Models;
     using System.Threading.Tasks;
     
     public interface IEventsRepository

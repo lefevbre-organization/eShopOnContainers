@@ -1,10 +1,10 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
 {
+    using Models;
+    using BuidingBlocks.Lefebvre.Models;
     public interface ICentinelaService
     {
         Task<Result<CenUser>> GetUserAsync(string idNavisionUser);

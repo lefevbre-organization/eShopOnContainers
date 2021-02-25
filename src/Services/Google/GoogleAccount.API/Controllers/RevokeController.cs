@@ -4,14 +4,13 @@ using System;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Services;
-    using Model;
-
+    
     [ApiController]
     [Route("api/v1/[controller]")]
     public class RevokeController : Controller

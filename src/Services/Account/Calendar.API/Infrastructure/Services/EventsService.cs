@@ -1,10 +1,10 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using System;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Model;
     using Repositories;
 

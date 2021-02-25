@@ -1,8 +1,8 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using Models;
 

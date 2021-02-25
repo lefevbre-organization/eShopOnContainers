@@ -1,15 +1,12 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
-{
-    #region Using
+﻿using Microsoft.Extensions.Options;
+using System;
+using System.Threading.Tasks;
 
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Options;
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
+{
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Repositories;
     using Model;
-    using System;
-    using System.Threading.Tasks;
-
-    #endregion Using
 
     public class BrandingsService : IBrandingsService
     {
