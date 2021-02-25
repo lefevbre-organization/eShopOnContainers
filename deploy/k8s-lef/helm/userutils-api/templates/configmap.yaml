@@ -28,12 +28,9 @@ data:
   userutils__ConnectionString: mongodb://{{ $mongo }}
   userutils__Database: {{ .Values.inf.mongo.centinela.database }}
   userutils__TokenCaducity: {{ .Values.userutils.token.caducity | quote}}
-  # userutils__TokenKey: {{ .Values.userutils.token.key | quote}}
   all__Version: {{ .Chart.Version | quote }}
   urls__HubUrlExternal: http://{{ .Values.svchub.url }}/Herramientas/get
   urls__OnlineUrlExternal: https://{{ .Values.svconline.url }}/webclient46/ws
-  # all__OnlineLogin: {{ .Values.svconline.login | quote }}
-  # all__OnlinePass: {{ .Values.svconline.pass | quote }}
   urls__ComToolsUrlExternal: http://{{ .Values.svccomtools.url }}
   urls__ClavesUrlExternal: https://{{ .Values.svcclaves.url }}
   urls__LexonApi: http://{{ .Values.app.ingress.entries.lexonapi }}/api/v1/Lexon
@@ -42,8 +39,6 @@ data:
   urls__Signature: https://{{ .Values.app.ingress.entries.signature }}
   urls__ByPassLexOnId: {{ .Values.userutils.bypass.lex.id | quote}}
   urls__ByPassLexOnUrl: 'https://{{ $gwlex }}/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
-  # urls__ByPassLexOnUrl_bis: 'https://{{ .Values.userutils.bypass.lex.url }}'
   urls__ByPassSigId: {{ .Values.userutils.bypass.sig.id | quote}}
   urls__ByPassSigUrl: 'https://{{ .Values.app.ingress.entries.signature }}/access/{tokenSignature}'
-  # urls__ByPassSigUrl_bis: 'https://{{ .Values.userutils.bypass.sig.url }}'
 
