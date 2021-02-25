@@ -1,13 +1,10 @@
-﻿using System;
+﻿    using MongoDB.Bson;
+    using MongoDB.Bson.Serialization.Attributes;
+    using System.Collections.Generic;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
 {
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-
-
-    using MongoDB.Bson;
-    using MongoDB.Bson.Serialization.Attributes;
-    using System.Collections.Generic;
+    using BuidingBlocks.Lefebvre.Models;
 
     [BsonIgnoreExtraElements]
     public class GoogleAccountUser : MongoModel

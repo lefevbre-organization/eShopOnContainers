@@ -1,5 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Model
