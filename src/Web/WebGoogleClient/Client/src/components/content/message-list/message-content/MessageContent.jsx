@@ -229,7 +229,6 @@ export class MessageContent extends Component {
         };
 
         console.log('SE EJECUTA EL DE MESSAGECONTENT');
-
         window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: extMessageId}));
         getMessage(msgId, 'raw')
           .then((msgRaw) => {
@@ -242,6 +241,16 @@ export class MessageContent extends Component {
                 detail,
               })
             );
+
+            setTimeout(()=>{
+              window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: extMessageId}));
+              window.dispatchEvent(
+                  new CustomEvent('Checkclick', {
+                    detail,
+                  })
+              );
+              window.dispatchEvent(new CustomEvent('LoadedMessage'));
+            }, 1000);
 
             window.dispatchEvent(new CustomEvent('LoadedMessage'));
           })
