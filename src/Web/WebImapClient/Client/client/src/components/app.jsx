@@ -372,8 +372,7 @@ class App extends Component {
                 isotip={t('productBar.lexon')}
                 isotip-position='bottom-end'
                 isotip-size='small'>
-                {/* {lexon.user && this.hasProduct('lexonconnector') ? ( */}
-                {lexon.user ? (
+                {lexon.user && this.hasProduct('lexonconnector') ? (
                     <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
                       <img
                           border='0'
