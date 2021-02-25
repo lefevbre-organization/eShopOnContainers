@@ -152,12 +152,14 @@ export function replyMessage(dispatch, originalMessage, sign = '') {
     originalMessage.replyTo && originalMessage.replyTo.length > 0
       ? originalMessage.replyTo
       : originalMessage.from;
-  const to = recipients
+  let to;
+  if(originalMessage.folder.fullName === 'INBOX') {
+    to = replyTo;
+  } else {
+    to = recipients
     .filter(r => r.type === 'To')
-    .map(recipientMapper)
-    .concat(replyTo);
-  const cc = recipients.filter(r => r.type === 'Cc').map(recipientMapper);
-  const bcc = recipients.filter(r => r.type === 'Bcc').map(recipientMapper);
+    .map(recipientMapper);
+  }
   const attachments = [];
   const subject = `${
     originalMessage.subject.toLowerCase().indexOf('re:') === 0 ? '' : 'Re: '
@@ -210,8 +212,6 @@ export function replyMessage(dispatch, originalMessage, sign = '') {
       inReplyTo,
       references,
       to,
-      cc,
-      bcc,
       attachments,
       subject,
       content
