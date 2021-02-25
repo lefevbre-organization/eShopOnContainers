@@ -11,7 +11,10 @@ import mainCss from '../../styles/main.scss';
 export const TopBarMessageViewer = (
   {
     t, collapsed, sideBarToggle, clearSelectedMessage,
-    outboxEmpty, onReplyMessageClick, onForwardMessageClick,
+    outboxEmpty, 
+    onReplyMessageClick,
+    onReplyAllMessageClick, 
+    onForwardMessageClick,
     onDeleteClick,
     onMarkUnreadClick
   }) => (
@@ -28,7 +31,7 @@ export const TopBarMessageViewer = (
     </section>
     <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-end']}`}>
       <ButtonReply outboxEmpty={outboxEmpty} replyMessage={onReplyMessageClick}/>
-      <ButtonReplyAll outboxEmpty={outboxEmpty} replyMessage={onReplyMessageClick}/>
+      <ButtonReplyAll outboxEmpty={outboxEmpty} replyAllMessage={onReplyAllMessageClick}/>
       <ButtonForward outboxEmpty={outboxEmpty} forwardMessage={onForwardMessageClick}/>
       <span isotip={t('topBar.delete')} isotip-position='bottom' isotip-size='small'>
         <TopBarButton onClick={onDeleteClick}>delete</TopBarButton>
