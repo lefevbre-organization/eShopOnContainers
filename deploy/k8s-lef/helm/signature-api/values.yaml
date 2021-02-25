@@ -58,8 +58,6 @@ env:
       key: urls__CentinelaApi #'https://lexbox-dev-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
       key: urls__SignatureClient #'https://lexbox-dev-websignature.lefebvre.es/completed'
-    # - name: Signaturit
-    #   key: all__SignaturePass
     - name: SignatureNotificationUrl
       key: urls__SignatureNotification #'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
     - name: CertifiedEmailNotificationUrl

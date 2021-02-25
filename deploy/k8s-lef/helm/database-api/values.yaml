@@ -48,10 +48,6 @@ env:
       key: database__Database
     - name: OnlineUrl
       key: urls__OnlineUrlExternal
-    # - name: OnlineLogin
-    #   key: all__OnlineUser
-    # - name: OnlinePassword
-    #   key: all__OnlinePass
     - name: DeployVersion
       key: all__Version
   # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)

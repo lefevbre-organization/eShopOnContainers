@@ -24,17 +24,12 @@ data:
   lexon__Database: {{ .Values.inf.mongo.lexon.database }}
   all__Version: {{ .Chart.Version | quote }}
   lexon__Devs: {{ .Values.lexon.devs.env }}
-  # lexon__DevsConn: {{ .Values.lexon.devs.conn }}
   lexon__DevsUrl: https://{{ .Values.lexon.devs.url }}
   lexon__Dev: {{ .Values.lexon.dev.env }}
-  # lexon__DevConn: {{ .Values.lexon.dev.conn }}
   lexon__DevUrl: https://{{ .Values.lexon.dev.url }}
   lexon__Qa: {{ .Values.lexon.qa.env }}
-  # lexon__QaConn: {{ .Values.lexon.qa.conn }}
   lexon__QaUrl: https://{{ .Values.lexon.qa.url }}
   lexon__Pre: {{ .Values.lexon.pre.env }}
-  # lexon__PreConn: {{ .Values.lexon.pre.conn }}
   lexon__PreUrl: https://{{ .Values.lexon.pre.url }}
   lexon__Pro: {{ .Values.lexon.pro.env }}
-  # lexon__ProConn: {{ .Values.lexon.pro.conn }}
   lexon__ProUrl: https://{{ .Values.lexon.pro.url }}

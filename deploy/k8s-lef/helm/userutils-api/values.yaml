@@ -49,16 +49,10 @@ env:
       key: all__Version
     - name: TokenCaducity
       key: userutils__TokenCaducity
-    # - name: TokenKey
-    #   key: userutils__TokenKey 
     - name: MinihubUrl
       key: urls__HubUrlExternal
     - name: OnlineUrl
       key: urls__OnlineUrlExternal
-    # - name: OnlineLogin
-    #   key: all__OnlineLogin 
-    # - name: OnlinePasssword
-    #   key: all__OnlinePass 
     - name: LoginUrl
       key: urls__ComToolsUrlExternal 
     - name: ClavesUrl
