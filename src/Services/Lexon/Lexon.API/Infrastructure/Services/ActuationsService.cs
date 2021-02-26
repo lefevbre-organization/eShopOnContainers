@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
+
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
@@ -74,14 +74,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                     var filtro = GetUpsertAppointmentFilter(idUser, bbdd, appointment);
                     conn.Open();
 
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointment, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
-                        await command.ExecuteNonQueryAsync();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.UpsertAppointment, nameof(UpsertAppointmentAsync));
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointment, conn);
 
-                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
-                    }
+                    AddCommonParameters(idUser, command, "P_JSON", filtro, true);
+                    await command.ExecuteNonQueryAsync();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.UpsertAppointment, nameof(UpsertAppointmentAsync));
+
+                    result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
                 }
 
                 if (_settings.Value.UseMongo)
@@ -168,13 +167,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetRemoveAppointmentFilter(idUser, bbdd, idAppointment);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointment, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro);
-                        await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.RemoveAppointment, nameof(RemoveAppointmentAsync));
-                    }
+
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointment, conn);
+                    AddCommonParameters(idUser, command, "P_JSON", filtro);
+                    await command.ExecuteNonQueryAsync();
+                    result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.RemoveAppointment, nameof(RemoveAppointmentAsync));
                 }
                 catch (Exception ex)
                 {
@@ -218,13 +216,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                     var filtro = GetAddAppointmentActionFilter(idUser, bbdd, idAppointment, idAction);
                     conn.Open();
 
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointmentAction, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
-                        await command.ExecuteNonQueryAsync();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.AddAppointmentAction, nameof(AddAppointmentActionAsync));
-                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
-                    }
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointmentAction, conn);
+                    AddCommonParameters(idUser, command, "P_JSON", filtro, true);
+                    await command.ExecuteNonQueryAsync();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.AddAppointmentAction, nameof(AddAppointmentActionAsync));
+                    result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
                 }
 
                 if (_settings.Value.UseMongo)
@@ -265,13 +261,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetRemoveAppointmentActionFilter(idUser, bbdd, idRelation);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointmentAction, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro);
-                        await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.RemoveAppointmentAction, nameof(RemoveAppointmentAsync));
-                    }
+                    
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointmentAction, conn);
+                    AddCommonParameters(idUser, command, "P_JSON", filtro);
+                    await command.ExecuteNonQueryAsync();
+                    result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.RemoveAppointmentAction, nameof(RemoveAppointmentAsync));
                 }
                 catch (Exception ex)
                 {
@@ -317,32 +312,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetRelationsApointmentFilter(bbdd, idUser, idEvent);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchAppointmentRelations, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(pageSize, pageIndex, null, null, command);
-                        var r = command.ExecuteNonQuery();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetRelationsOfAppointment, nameof(GetRelationsOfAppointmentAsync));
+                    
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchAppointmentRelations, conn);
+                    AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                    AddListSearchParameters(pageSize, pageIndex, null, null, command);
+                    var r = command.ExecuteNonQuery();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetRelationsOfAppointment, nameof(GetRelationsOfAppointmentAsync));
 
-                        using (var reader = await command.ExecuteReaderAsync())
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (reader.Read())
+                    {
+                        var rawResult = reader.GetValue(0).ToString();
+                        if (!string.IsNullOrEmpty(rawResult))
                         {
-                            while (reader.Read())
-                            {
-                                var rawResult = reader.GetValue(0).ToString();
-                                if (!string.IsNullOrEmpty(rawResult))
-                                {
-                                    var resultado = JsonConvert.DeserializeObject<LexAppointmentActuation>(rawResult);
-                                    CompleteDataRelations(resultado);
-                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado.actuaciones);
-                                }
-                                else
-                                {
-                                    if (result.infos.Count > 1)
-                                        TraceError(result.errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.LexonActuations.GetRelationsOfAppointment, Codes.Areas.MySql);
-                                    else
-                                        TraceInfo(result.infos, "MySql get and empty string with this search", Codes.LexonActuations.GetRelationsOfAppointment);
-                                }
-                            }
+                            var resultado = JsonConvert.DeserializeObject<LexAppointmentActuation>(rawResult);
+                            CompleteDataRelations(resultado);
+                            result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado.actuaciones);
+                        }
+                        else
+                        {
+                            if (result.infos.Count > 1)
+                                TraceError(result.errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.LexonActuations.GetRelationsOfAppointment, Codes.Areas.MySql);
+                            else
+                                TraceInfo(result.infos, "MySql get and empty string with this search", Codes.LexonActuations.GetRelationsOfAppointment);
                         }
                     }
                 }
@@ -369,7 +361,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             return result;
         }
 
-        private void CompleteDataRelations(LexAppointmentActuation appointmentActuation)
+        private static void CompleteDataRelations(LexAppointmentActuation appointmentActuation)
         {
             var DataActuation = appointmentActuation.actuaciones.ToList();
 
@@ -391,24 +383,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     string filtro = GetAppointmentsSearchFilter(idUser, bbdd, fromDate, toDate);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAppointments, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
-                        var r = command.ExecuteNonQuery();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetAppointments, nameof(GetAppointmentsAsync));
+            
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAppointments, conn);
+                    AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                    AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
+                    var r = command.ExecuteNonQuery();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetAppointments, nameof(GetAppointmentsAsync));
 
-                        using (var reader = await command.ExecuteReaderAsync())
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (reader.Read())
+                    {
+                        var rawJson = reader.GetValue(0).ToString();
+                        if (!string.IsNullOrEmpty(rawJson))
                         {
-                            while (reader.Read())
-                            {
-                                var rawJson = reader.GetValue(0).ToString();
-                                if (!string.IsNullOrEmpty(rawJson))
-                                {
-                                    var resultado = (JsonConvert.DeserializeObject<LexAppointment[]>(rawJson)).ToList();
-                                    result.data = resultado;
-                                }
-                            }
+                            var resultado = (JsonConvert.DeserializeObject<LexAppointment[]>(rawJson)).ToList();
+                            result.data = resultado;
                         }
                     }
                 }
@@ -461,27 +450,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = $"{{ {GetUserFilter(bbdd, idUser)} }}";
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
-                        var r = command.ExecuteNonQuery();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuationTypes, nameof(GetActuationTypesAsync));
+                    
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn);
+                    AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                    AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
+                    var r = command.ExecuteNonQuery();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuationTypes, nameof(GetActuationTypesAsync));
 
-                        using (var reader = await command.ExecuteReaderAsync())
+                    using var reader = await command.ExecuteReaderAsync();
+                    var contador = GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value);
+                    if (PossibleHasData(result.errors, contador))
+                    {
+                        while (reader.Read())
                         {
-                            var contador = GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value);
-                            if (PossibleHasData(result.errors, contador))
+                            var rawJson = reader.GetValue(0).ToString();
+                            if (!string.IsNullOrEmpty(rawJson))
                             {
-                                while (reader.Read())
-                                {
-                                    var rawJson = reader.GetValue(0).ToString();
-                                    if (!string.IsNullOrEmpty(rawJson))
-                                    {
-                                        var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson)).ToList();
-                                        result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, contador, resultado);
-                                    }
-                                }
+                                var resultado = (JsonConvert.DeserializeObject<LexActuationType[]>(rawJson)).ToList();
+                                result.data = new PaginatedItemsViewModel<LexActuationType>(pageIndex, pageSize, contador, resultado);
                             }
                         }
                     }
@@ -521,24 +507,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = $"{{ {GetUserFilter(bbdd, idUser)} }}";
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationCategories, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(0, 1, "ts", "DESC", command);
-                        var r = command.ExecuteNonQuery();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuationCategories, nameof(GetActuationCategoriesAsync));
+                    
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationCategories, conn);
+                    AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                    AddListSearchParameters(0, 1, "ts", "DESC", command);
+                    var r = command.ExecuteNonQuery();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuationCategories, nameof(GetActuationCategoriesAsync));
 
-                        using (var reader = await command.ExecuteReaderAsync())
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (reader.Read())
+                    {
+                        var rawJson = reader.GetValue(0).ToString();
+                        if (!string.IsNullOrEmpty(rawJson))
                         {
-                            while (reader.Read())
-                            {
-                                var rawJson = reader.GetValue(0).ToString();
-                                if (!string.IsNullOrEmpty(rawJson))
-                                {
-                                    var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
-                                }
-                            }
+                            var resultado = (JsonConvert.DeserializeObject<LexActuationCategory[]>(rawJson)).ToList();
+                            result.data = new PaginatedItemsViewModel<LexActuationCategory>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
                         }
                     }
                 }
@@ -583,24 +566,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetActuationSearchFilter(idUser, bbdd, idType, idCategory, filter);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuations, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
-                        var r = command.ExecuteNonQuery();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuations, nameof(GetActuationsAsync));
+                    
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuations, conn);
+                    AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                    AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
+                    var r = command.ExecuteNonQuery();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.GetActuations, nameof(GetActuationsAsync));
 
-                        using (var reader = await command.ExecuteReaderAsync())
+                    using var reader = await command.ExecuteReaderAsync();
+                    while (reader.Read())
+                    {
+                        var rawJson = reader.GetValue(0).ToString();
+                        if (!string.IsNullOrEmpty(rawJson))
                         {
-                            while (reader.Read())
-                            {
-                                var rawJson = reader.GetValue(0).ToString();
-                                if (!string.IsNullOrEmpty(rawJson))
-                                {
-                                    var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
-                                    result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
-                                }
-                            }
+                            var resultado = (JsonConvert.DeserializeObject<LexActuation[]>(rawJson)).ToList();
+                            result.data = new PaginatedItemsViewModel<LexActuation>(pageIndex, pageSize, GetIntOutputParameter(command.Parameters["P_TOTAL_REG"].Value), resultado);
                         }
                     }
                 }
@@ -643,13 +623,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                     var filtro = GetAddActionFilter(idUser, bbdd, action);
                     conn.Open();
 
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAction, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
-                        await command.ExecuteNonQueryAsync();
-                        CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.AddAction, nameof(AddActionAsync));
-                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
-                    }
+                    using MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAction, conn);
+                    AddCommonParameters(idUser, command, "P_JSON", filtro, true);
+                    await command.ExecuteNonQueryAsync();
+                    CheckErrorOutParameters(command, result.errors, Codes.LexonActuations.AddAction, nameof(AddActionAsync));
+                    result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
                 }
 
                 if (_settings.Value.UseMongo)

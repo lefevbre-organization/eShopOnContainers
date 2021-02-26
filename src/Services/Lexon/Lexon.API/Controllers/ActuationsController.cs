@@ -105,11 +105,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
                 pageSize,
                 pageIndex);
             
-            if (result.errors.Count() > 0 && result.data?.Count == 0)
+            if (result.errors.Count > 0 && result.data?.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            else if (result.errors.Count() == 0 && (result.data == null || result.data?.Count == 0))
+            else if (result.errors.Count == 0 && (result.data == null || result.data?.Count == 0))
             {
                 return NotFound(result);
             }
@@ -184,11 +184,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
                 pageIndex);
 
 
-            if (result.errors.Count() > 0 && result.data?.Count == 0)
+            if (result.errors.Count > 0 && result.data?.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            else if (result.errors.Count() == 0 && (result.data == null || result.data?.Count == 0))
+            else if (result.errors.Count == 0 && (result.data == null || result.data?.Count == 0))
             {
                 return NotFound(result);
             }
@@ -275,11 +275,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 
             var result = await _svc.GetRelationsOfAppointmentAsync(idEvent, idUser, env, bbdd, pageSize, pageIndex);
 
-            if (result.errors.Count() > 0 && result.data?.Count == 0)
+            if (result.errors.Count > 0 && result.data?.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            else if (result.errors.Count() == 0 && (result.data== null || result.data?.Count == 0))
+            else if (result.errors.Count == 0 && (result.data== null || result.data?.Count == 0))
             {
                 return NotFound(result);
             }
