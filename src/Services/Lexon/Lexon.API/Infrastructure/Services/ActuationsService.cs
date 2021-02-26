@@ -285,7 +285,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), Codes.LexonActuations.RemoveAppointmentAction, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove the classification"), Codes.LexonActuations.RemoveAppointmentAction, Codes.Areas.MySql);
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }

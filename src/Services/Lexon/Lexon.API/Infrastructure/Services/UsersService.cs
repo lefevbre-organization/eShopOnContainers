@@ -71,7 +71,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), Codes.Lexon.GetUser, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), Codes.Lexon.GetUser, Codes.Areas.MySqlConn);
                 }
             }
 
@@ -83,7 +83,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 }
                 else
                 {
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), Codes.Lexon.GetUser, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), Codes.Lexon.GetUser, Codes.Areas.MySqlConn);
                     var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -115,7 +115,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), Codes.Lexon.GetCompaniesUser, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), Codes.Lexon.GetCompaniesUser, Codes.Areas.MySql);
                 }
             }
 
@@ -127,7 +127,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 }
                 else
                 {
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), Codes.Lexon.GetCompaniesUser, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), Codes.Lexon.GetCompaniesUser, Codes.Areas.MySql);
                     var resultMongo = await _usersRepository.GetUserAsync(idUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -194,7 +194,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceError(result.errors, new LexonDomainException($"Error when get exon user id", ex), Codes.Lexon.GetUserId, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get exon user id", ex), Codes.Lexon.GetUserId, Codes.Areas.MySqlConn);
                 }
             }
 
@@ -233,7 +233,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add classification", ex), Codes.Lexon.AddClassificationToList, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add classification", ex), Codes.Lexon.AddClassificationToList, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -289,13 +289,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when remove classification", ex), Codes.Lexon.RemoveClassificationFromList, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when remove classification", ex), Codes.Lexon.RemoveClassificationFromList, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove of the classification"), Codes.Lexon.RemoveClassificationFromList, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove of the classification"), Codes.Lexon.RemoveClassificationFromList, Codes.Areas.MySql);
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }
@@ -352,7 +352,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetClassificationFromList, "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetClassificationFromList, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", Codes.Lexon.GetClassificationFromList);
                                 }
@@ -363,7 +363,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get classifications", ex), Codes.Lexon.GetClassificationFromList, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get classifications", ex), Codes.Lexon.GetClassificationFromList, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -411,7 +411,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntities, "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntities, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", Codes.Lexon.GetEntities);
                                 }
@@ -422,7 +422,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get entities", ex), Codes.Lexon.GetEntities, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get entities", ex), Codes.Lexon.GetEntities, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -470,7 +470,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                     else
                                     {
                                         if (resultMySql.Infos.Count > 1)
-                                            TraceError(resultMySql.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntity, "MYSQL");
+                                            TraceError(resultMySql.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntity, Codes.Areas.MySql);
                                         else
                                             TraceInfo(resultMySql.Infos, "MySql get and empty string with this search", Codes.Lexon.GetEntity);
                                     }
@@ -482,7 +482,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get entitiy by id", ex), Codes.Lexon.GetEntity, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get entitiy by id", ex), Codes.Lexon.GetEntity, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -523,7 +523,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get master entities", ex), Codes.Lexon.GetEntityTypes, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get master entities", ex), Codes.Lexon.GetEntityTypes, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -562,7 +562,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                     }
                                     else
                                     {
-                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.CheckRelationsMail, "MYSQL");
+                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.CheckRelationsMail, Codes.Areas.MySql);
                                     }
                                 }
                         }
@@ -571,7 +571,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when check relations from mail", ex), Codes.Lexon.CheckRelationsMail, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when check relations from mail", ex), Codes.Lexon.CheckRelationsMail, Codes.Areas.MySqlConn);
             }
             return result;
         }
@@ -720,7 +720,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetNestedFolders, "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetNestedFolders, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", Codes.Lexon.GetNestedFolders);
                                 }
@@ -731,7 +731,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get folder and files entities", ex), Codes.Lexon.GetNestedFolders, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get folder and files entities", ex), Codes.Lexon.GetNestedFolders, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -760,7 +760,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add folder to entity", ex), Codes.Lexon.AddFolderToEntity, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add folder to entity", ex), Codes.Lexon.AddFolderToEntity, Codes.Areas.MySqlConn);
             }
 
             return result;

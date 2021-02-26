@@ -89,7 +89,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), Codes.Lexon.AddContactsToMail, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), Codes.Lexon.AddContactsToMail, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -128,7 +128,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                 }
                                 else
                                 {
-                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, "MYSQL");
+                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, Codes.Areas.MySql);
                                 }
                             }
                         }
@@ -137,7 +137,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get contact", ex), Codes.Lexon.GetContact, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get contact", ex), Codes.Lexon.GetContact, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -173,7 +173,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                                 }
                                 else
                                 {
-                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, "MYSQL");
+                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, Codes.Areas.MySql);
                                 }
                             }
                         }
@@ -182,7 +182,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get contacts", ex), Codes.Lexon.GetAllContacts, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get contacts", ex), Codes.Lexon.GetAllContacts, Codes.Areas.MySqlConn);
             }
             return result;
         }

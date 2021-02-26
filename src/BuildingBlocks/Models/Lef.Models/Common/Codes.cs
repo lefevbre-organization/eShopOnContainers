@@ -135,7 +135,13 @@
 
         public static class Database
         {
+            public static readonly string GetSession = "DA01";
+            public static readonly string GetEncodeUser = "DA02";
+            public static readonly string GetDocuments;
+            public static readonly string GetDocumentsByNref;
+            public static readonly string GetDocumentsFromDb;
 
+            public static string GetDocumentsCount { get; set; }
         }
 
         public static class Areas
@@ -171,7 +177,7 @@
             public static readonly string RoomSecure = "CN23";
             public static readonly string RoomReservation = "CN24";
             public static readonly string RoomGet = "CN25";
-            public static readonly string GetSession;
+
         }
 
         public static class GoogleDrive

@@ -84,7 +84,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when get advisor files", ex), Codes.LexonAdvisors.GetAdvisorFiles, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get advisor files", ex), Codes.LexonAdvisors.GetAdvisorFiles, Codes.Areas.MySqlConn);
                 }
             }
 

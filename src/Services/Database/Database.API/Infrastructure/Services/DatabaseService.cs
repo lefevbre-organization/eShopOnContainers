@@ -68,18 +68,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     }
                     else
                     {
-                        TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Conferences.GetSession, Codes.Areas.Online);
+                        TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetSession, Codes.Areas.Online);
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "594",
-                    detail = $"General error when call Online GetSesion",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetSesion {ex.Message}", ex), Codes.Database.GetSession, Codes.Areas.Online);
             }
 
             return result;
@@ -106,21 +101,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Error_EncodeUser_Service",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetEncodeUser, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online encode user",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetSesion {ex.Message}", ex), Codes.Database.GetEncodeUser, Codes.Areas.Online);
             }
 
             return result;
@@ -150,21 +136,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Erro_Get_Documents",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocuments, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "594",
-                    detail = $"General error when call centinela GetDocuments",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocuments {ex.Message}", ex), Codes.Database.GetDocuments, Codes.Areas.Online); 
             }
 
             return result;
@@ -345,21 +322,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Error_DocumentCount_Service",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocumentsCount, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online GetDocumentsCount",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocumentsCount {ex.Message}", ex), Codes.Database.GetDocumentsCount, Codes.Areas.Online);
             }
 
             return result;
@@ -387,21 +355,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Error_DocumentByNref_Service",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocumentsByNref, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online getDocumentsByNref",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocumentsByNref {ex.Message}", ex), Codes.Database.GetDocumentsByNref, Codes.Areas.Online);
             }
 
             return result;
@@ -428,21 +387,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Erro_Get_DocumentsDb",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocumentsFromDb, Codes.Areas.Online);
+
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "594",
-                    detail = $"General error when call DocumentsDb service",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocumentsFromDb {ex.Message}", ex), Codes.Database.GetDocumentsFromDb, Codes.Areas.Online);
             }
 
             return result;
