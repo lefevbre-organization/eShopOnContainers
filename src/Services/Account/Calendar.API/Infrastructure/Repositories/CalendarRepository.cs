@@ -40,7 +40,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 result.data = await _context.CalendarUsers.Find(GetFilterCalendarUser(idNavision, idNextCloud)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún calendario para esa cuenta {idNavision}", "AC50");
+                    TraceInfo(result.infos, $"No se encuentra ningún calendario para esa cuenta {idNavision}", Codes.Calendar.CalGet);
                 else
                 {
                     var orderEvents = result.data?.calendars.OrderByDescending(x => x.titulo).ToList();
@@ -50,7 +50,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when get calendars of {idNavision}", ex), "AC50");
+                TraceError(result.errors, new CalendarDomainException($"Error when get calendars of {idNavision}", ex), Codes.Calendar.CalGet, Codes.Areas.Mongo);
             }
             return result;
         }
@@ -68,13 +68,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 calendar.Id = ManageUpsert<CalendarUser>($"Don´t insert or modify the user {calendar.idNavision}",
                     $"Se modifica la cuenta {calendar.idNavision}",
                     $"Se inserta la cuenta {calendar.idNavision} con {resultReplace.UpsertedId}",
-                     result, resultReplace, "AC51");
+                     result, resultReplace, Codes.Calendar.CalUpsert);
 
                 result.data = calendar;
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when upsert celendar of {calendar.idNavision}", ex), "AC51");
+                TraceError(result.errors, new CalendarDomainException($"Error when upsert celendar of {calendar.idNavision}", ex), Codes.Calendar.CalUpsert, Codes.Areas.Mongo);
             }
             return result;
         }
@@ -88,12 +88,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {idNavision}", "AC54");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {idNavision}", Codes.Calendar.CalAccountRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when remove calndar of {idNavision}", ex), "AC54");
+                TraceError(result.errors, new CalendarDomainException($"Error when remove calndar of {idNavision}", ex), Codes.Calendar.CalAccountRemove, Codes.Areas.Mongo);
             }
             return result;
         }
@@ -116,18 +116,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
 
                 if (userUpdate != null)
                 {
-                    TraceInfo(result.infos, $"Se ha removido el calendario {idCalendar} de la cuenta {idNavision}", "AC52");
+                    TraceInfo(result.infos, $"Se ha removido el calendario {idCalendar} de la cuenta {idNavision}", Codes.Calendar.CalRemove);
                     resultAccount.data = userUpdate;
                     result.data = true;
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra la cuenta {idNavision} para remover el calendario {idCalendar}", "AC52");
+                    TraceInfo(result.infos, $"No se encuentra la cuenta {idNavision} para remover el calendario {idCalendar}", Codes.Calendar.CalRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when remove calendars of {idNavision}", ex), "AC52");
+                TraceError(result.errors, new CalendarDomainException($"Error when remove calendars of {idNavision}", ex), Codes.Calendar.CalRemove, Codes.Areas.Mongo);
             }
 
             return result;
@@ -165,7 +165,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when add calendars of {idNavision}", ex), "AC53");
+                TraceError(result.errors, new CalendarDomainException($"Error when add calendars of {idNavision}", ex), Codes.Calendar.CalAdd);
             }
 
             return result;
@@ -182,7 +182,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 var evByName = calendarUser.calendars.FirstOrDefault(s => s.titulo.ToUpperInvariant().Equals(calendar.titulo.ToUpperInvariant()));
                 if (evByName != null)
                 {
-                    TraceError(result.errors, new CalendarDomainException($"Error, exist other calendar  with same name {calendar.titulo}, review it"), "AC53");
+                    TraceError(result.errors, new CalendarDomainException($"Error, exist other calendar  with same name {calendar.titulo}, review it"), Codes.Calendar.CalAdd, Codes.Areas.Mongo);
                 }
                 else
                 {
@@ -190,7 +190,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
 
                     listEvents.Add(calendar);
                     calendarUser.calendars = listEvents.ToArray();
-                    TraceInfo(result.infos, $"insert new calendar {calendar.idCalendar}-{calendar.titulo}", "AC53");
+                    TraceInfo(result.infos, $"insert new calendar {calendar.idCalendar}-{calendar.titulo}", Codes.Calendar.CalAdd);
                 }
             }
             else
@@ -205,7 +205,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
             var ev = calendarUser.calendars.FirstOrDefault(s => s.idCalendar == calendar.idCalendar);
             if (ev == null)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error, calendar id don´t exist, review {calendar.idCalendar}  or correct account"), "AC53");
+                TraceError(result.errors, new CalendarDomainException($"Error, calendar id don´t exist, review {calendar.idCalendar}  or correct account"), Codes.Calendar.CalAdd, Codes.Areas.Mongo);
             }
             else
             {
@@ -214,9 +214,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 ev.color = calendar.color;
 
                 if (ev.titulo.ToUpperInvariant() == calendar.titulo?.ToUpperInvariant())
-                    TraceInfo(result.infos, $"Same titulo, modify calendar {ev.idCalendar} -> {ev.titulo} with new color", "AC53");
+                    TraceInfo(result.infos, $"Same titulo, modify calendar {ev.idCalendar} -> {ev.titulo} with new color", Codes.Calendar.CalAdd);
                 else
-                    TraceInfo(result.infos, $"Modify calendar {ev.idCalendar} -> {ev.titulo} with {ev.color}", "AC53");
+                    TraceInfo(result.infos, $"Modify calendar {ev.idCalendar} -> {ev.titulo} with {ev.color}", Codes.Calendar.CalAdd);
             }
         }
 

@@ -72,7 +72,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 result.data = await _context.AccountEvents.Find(GetFilterAccountEvents(account)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún EventTypes para esa cuenta {account}", "AC40");
+                    TraceInfo(result.infos, $"No se encuentra ningún EventTypes para esa cuenta {account}", Codes.Calendar.EventTypeGet);
                 else
                 {
                     var orderEvents = result.data?.eventTypes.OrderByDescending(x => x.name).ToList();
@@ -82,7 +82,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when get EventTypes of {account}", ex), "AC40");
+                TraceError(result.errors, new CalendarDomainException($"Error when get EventTypes of {account}", ex), Codes.Calendar.EventTypeGet, Codes.Areas.Mongo);
             }
             return result;
         }
@@ -99,13 +99,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 accountIn.Id = ManageUpsert<AccountEventTypes>($"Don´t insert or modify the user {accountIn.email}",
                     $"Se modifica la cuenta {accountIn.email}",
                     $"Se inserta la cuenta {accountIn.email} con {resultReplace.UpsertedId}",
-                     result, resultReplace, "AC41");
+                     result, resultReplace, Codes.Calendar.EventTypeUpsert);
 
                 result.data = accountIn;
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when upsert EventTypes of {accountIn.email}", ex), "AC41");
+                TraceError(result.errors, new CalendarDomainException($"Error when upsert EventTypes of {accountIn.email}", ex), Codes.Calendar.EventTypeUpsert, Codes.Areas.Mongo);
             }
             return result;
         }
@@ -128,18 +128,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
 
                 if (userUpdate != null)
                 {
-                    TraceInfo(result.infos, $"Se ha removido el evento {idEvent} de la cuenta {email}", "AC42");
+                    TraceInfo(result.infos, $"Se ha removido el evento {idEvent} de la cuenta {email}", Codes.Calendar.EventTypeRemove);
                     resultAccount.data = userUpdate;
                     result.data = true;
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra la cuenta {email} para remover el evento {idEvent}", "AC42");
+                    TraceInfo(result.infos, $"No se encuentra la cuenta {email} para remover el evento {idEvent}", Codes.Calendar.EventTypeRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when remove EventTypes of {email}", ex), "AC42");
+                TraceError(result.errors, new CalendarDomainException($"Error when remove EventTypes of {email}", ex), Codes.Calendar.EventTypeRemove, Codes.Areas.Mongo);
             }
 
             return result;
@@ -177,7 +177,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when add EventTypes of {email}", ex), "AC43");
+                TraceError(result.errors, new CalendarDomainException($"Error when add EventTypes of {email}", ex), Codes.Calendar.EventTypeAdd, Codes.Areas.Mongo);
             }
 
             return result;
@@ -192,7 +192,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 var evByName = account.eventTypes.FirstOrDefault(s => s.name.ToUpperInvariant().Equals(eventType.name.ToUpperInvariant()));
                 if (evByName != null)
                 {
-                    TraceError(result.errors, new CalendarDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), "AC43");
+                    TraceError(result.errors, new CalendarDomainException($"Error, exist other eventType with same name {eventType.name}, review it"), Codes.Calendar.EventTypeAdd, Codes.Areas.Mongo);
                 }
                 else
                 {
@@ -200,12 +200,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
 
                     listEvents.Add(eventType);
                     account.eventTypes = listEvents.ToArray();
-                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}", "AC43");
+                    TraceInfo(result.infos, $"insert new eventType {eventType.idEvent}-{eventType.name}", Codes.Calendar.EventTypeAdd);
                 }
             }
             else
             {
-                TraceError(result.errors, new CalendarDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), "AC43");
+                TraceError(result.errors, new CalendarDomainException($"Error, eventType id exist, review {eventType.idEvent}  or correct account"), Codes.Calendar.EventTypeAdd, Codes.Areas.Mongo);
             }
         }
 
@@ -215,7 +215,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
             var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
             if (ev == null)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), "AC43");
+                TraceError(result.errors, new CalendarDomainException($"Error, eventType id don´t exist, review {eventType.idEvent}  or correct account"), Codes.Calendar.EventTypeAdd, Codes.Areas.Mongo);
             }
             else
             {
@@ -223,9 +223,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 ev.color = eventType.color;
 
                 if (ev.name.ToUpperInvariant() == eventType.name?.ToUpperInvariant())
-                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color", "AC43");
+                    TraceInfo(result.infos, $"Same name, modify eventType {ev.idEvent} -> {ev.name} with new color", Codes.Calendar.EventTypeAdd);
                 else
-                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}", "AC43");
+                    TraceInfo(result.infos, $"Modify eventType {ev.idEvent} -> {ev.name} with {ev.color}", Codes.Calendar.EventTypeAdd);
             }
         }
 
@@ -238,12 +238,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Re
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}", "AC44");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {email}", Codes.Calendar.EventTypeRemove);
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new CalendarDomainException($"Error when remove eventType of {email}", ex), "AC44");
+                TraceError(result.errors, new CalendarDomainException($"Error when remove eventType of {email}", ex), Codes.Calendar.EventTypeRemove, Codes.Areas.Mongo);
             }
             return result;
         }
