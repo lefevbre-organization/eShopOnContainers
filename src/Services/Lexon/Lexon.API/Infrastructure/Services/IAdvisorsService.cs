@@ -1,9 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using ViewModel;
     public interface IAdvisorsService
     {
         Task<Result<PaginatedItemsViewModel<LexAdvisorFile>>> GetAdvisorsFilesAsync(string env,

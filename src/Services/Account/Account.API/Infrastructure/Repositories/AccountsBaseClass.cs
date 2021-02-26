@@ -1,6 +1,4 @@
 ﻿
-using Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -9,6 +7,8 @@ using System.Data;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Exceptions;
     public class AccountsBaseClass<T>: BaseClass<T>
     {
         public AccountsBaseClass(ILogger<T> logger):base(logger)

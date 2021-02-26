@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net;
@@ -8,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Controllers
 {
-
-    
+  
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Services;
     using Model;
 

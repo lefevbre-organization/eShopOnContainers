@@ -1,7 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -14,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Models;
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class LexonContext : IMongoDbContext, IIntegrationEventLogContextMongoDB

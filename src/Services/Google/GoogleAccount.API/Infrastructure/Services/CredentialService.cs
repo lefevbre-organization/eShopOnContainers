@@ -4,12 +4,12 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Exceptions;
     using Infrastructure.Repositories;
     using Model;

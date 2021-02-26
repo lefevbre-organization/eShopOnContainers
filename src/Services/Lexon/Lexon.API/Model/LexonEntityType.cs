@@ -1,8 +1,8 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models
 {
+    using BuidingBlocks.Lefebvre.Models;
     [BsonIgnoreExtraElements]
     public class LexonEntityType : MongoModel
     {

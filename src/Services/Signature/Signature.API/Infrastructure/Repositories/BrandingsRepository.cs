@@ -1,13 +1,14 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using System;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
 {
     #region using
     using Model;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Driver;
-    using System;
-    using System.Threading.Tasks;
+    using BuidingBlocks.Lefebvre.Models;
 
     #endregion
     public class BrandingsRepository : BaseClass<BrandingsRepository>, IBrandingsRepository

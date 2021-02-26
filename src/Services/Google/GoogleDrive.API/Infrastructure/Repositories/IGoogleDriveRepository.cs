@@ -1,10 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructure.Repositories
 {
-    using Models;
-
+    using BuidingBlocks.Lefebvre.Models;
+   
     public interface IGoogleDriveRepository
     {
         Task<Result<string>> GetToken(string LefebvreCredential);

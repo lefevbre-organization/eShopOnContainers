@@ -1,11 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using ViewModel;
     public interface IContactsService
     {
         Task<Result<int>> AddRelationContactsMailAsync(string env,

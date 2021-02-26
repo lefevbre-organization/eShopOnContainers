@@ -1,10 +1,11 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models
 {
+    using BuidingBlocks.Lefebvre.Models;
+ 
     [BsonIgnoreExtraElements]
     public class UserUtilsModel : MongoModel
     {

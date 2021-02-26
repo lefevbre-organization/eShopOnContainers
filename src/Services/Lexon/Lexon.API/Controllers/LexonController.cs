@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,8 +10,9 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
-    using Models;
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Services;
+    using ViewModel;
 
     [Route("api/v1/[controller]")]
     [ApiController]

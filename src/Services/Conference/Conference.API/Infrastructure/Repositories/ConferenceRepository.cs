@@ -1,8 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Conference.API.IntegrationsEvents.Events;
-using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -14,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Repositories
 {
+    using Exceptions;
+    using IntegrationsEvents.Events;
+    using Models;
+    using BuidingBlocks.Lefebvre.Models;
+
     public class ConferenceRepository : BaseClass<ConferenceRepository>, IConferenceRepository
     {
         private readonly ConferenceContext _context;

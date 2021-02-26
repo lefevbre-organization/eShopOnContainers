@@ -1,8 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -16,6 +12,11 @@ using System.Xml.Linq;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Services
 {
+    using Exceptions;
+    using Repositories;
+    using Models;
+    using BuidingBlocks.Lefebvre.Models;
+   
     public class ConferenceService : BaseClass<ConferenceService>, IConferenceService
     {
         public readonly IConferenceRepository _repo;

@@ -1,10 +1,10 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services
 {
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
+    using BuidingBlocks.Lefebvre.Models;
     using Models;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
 
     public interface IUserUtilsService
     {

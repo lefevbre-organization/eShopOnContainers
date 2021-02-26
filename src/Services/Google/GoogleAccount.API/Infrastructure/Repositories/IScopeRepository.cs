@@ -1,9 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Model;
     public interface IScopeRepository
     {

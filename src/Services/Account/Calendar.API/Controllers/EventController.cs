@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net;
@@ -10,6 +9,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Controllers
 {
 
 
+    using BuidingBlocks.Lefebvre.Models;
     using ViewModel;
     using Infrastructure.Services;
     using Model;

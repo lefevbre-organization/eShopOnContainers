@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using MongoDB.Driver;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    using Model;
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Repositories;
+    using Model;
+
     public class SignaturitService : ISignaturitService
     {
 

@@ -1,20 +1,19 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
-{
-    #region using
-    using Model;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Bson;
-    using MongoDB.Bson.Serialization;
-    using MongoDB.Driver;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-    #endregion
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
+{
+    using Model;
+    using BuidingBlocks.Lefebvre.Models;
+
     public class SignaturesRepository : BaseClass<SignaturesRepository>, ISignaturesRepository
     {
         private readonly SignatureContext _context;

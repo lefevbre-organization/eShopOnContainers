@@ -1,11 +1,10 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
 {
-    #region using
     using Model;
-    using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    #endregion
+    using BuidingBlocks.Lefebvre.Models;
 
     public interface ISmsRepository
     {

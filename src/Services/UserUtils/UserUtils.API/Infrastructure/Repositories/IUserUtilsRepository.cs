@@ -1,10 +1,11 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Models;
+
     public interface IUserUtilsRepository
     {
         Task<Result<List<ByPassModel>>> GetListByPassAsync();

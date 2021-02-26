@@ -1,8 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+
 namespace Lefebvre.eLefebvreOnContainers.Services.Calendar.API.Infrastructure.Services
 {
 
+    using BuidingBlocks.Lefebvre.Models;
     using Model;
 
     public interface ICalendarService

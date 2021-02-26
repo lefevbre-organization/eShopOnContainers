@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -11,6 +10,7 @@ using MongoDB.Driver;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Google.Account.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Exceptions;
     using Model;
     public class RevokeRepository : BaseClass<RevokeRepository>, IRevokeRepository
