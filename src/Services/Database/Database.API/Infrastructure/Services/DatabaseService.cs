@@ -13,7 +13,8 @@ using System.Threading.Tasks;
 namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Services
 {
     using BuidingBlocks.Lefebvre.Models;
-    using Infrastructure.Repositories;
+    using Repositories;
+    using Exceptions;
     using Models;
 
     public class DatabaseService : BaseClass<DatabaseService>, IDatabaseService
@@ -27,7 +28,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 IOptions<DatabaseSettings> settings
                 , IDatabaseRepository databaseRepository
                 , IEventBus eventBus
-                //, IHttpClientFactory clientFactory
                 , ILogger<DatabaseService> logger
             ) : base(logger)
         {
@@ -42,7 +42,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
 
             _clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
-
 
         }
 
@@ -69,11 +68,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "Error_Get_Session",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Conferences.GetSession, Codes.Areas.Online);
                     }
                 }
             }
@@ -195,25 +190,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("jurisprudencia"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.DESCRIPCION} {doc.EDJ} {doc.NREF}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrina"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO} {doc.EDD} {doc.NREF}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("legislación"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO} {doc.EDL} {doc.NREF}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("convenios"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO} {doc.BOLETIN} {doc.CODIGO}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
@@ -241,7 +232,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                   // doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().EndsWith("formularios"))
                 {
@@ -253,13 +243,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("esquemasquantor"))
                 {
                     doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("bibliografia"))
                 {
@@ -283,17 +271,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrinalibros"))
                 {
-                    //doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrinaarticulos"))
                 {
-                    //doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
@@ -333,8 +317,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     doc.TITULO = $"{doc.TITULO}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
-
-
 
             }
             return resultado;

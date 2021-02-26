@@ -130,7 +130,14 @@
             public static readonly string CertificationPost = "CE10";
             public static readonly string GetSmsContacts = "CE11";
 
+            public static readonly string RepositoryUnknow = "CE20";
         }
+
+        public static class Database
+        {
+
+        }
+
         public static class Areas
         {
             public static readonly string Api = "API";
@@ -164,6 +171,7 @@
             public static readonly string RoomSecure = "CN23";
             public static readonly string RoomReservation = "CN24";
             public static readonly string RoomGet = "CN25";
+            public static readonly string GetSession;
         }
 
         public static class GoogleDrive
