@@ -128,7 +128,7 @@ export class MessageViewer extends Component {
     );
 
     console.log('LoadingMessage: 2');
-    window.dispatchEvent(new CustomEvent('LoadingMessage'));
+    window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: this.props.selectedMessage.messageId}));
     readMessageRaw(
       null,
       this.props.credentials,

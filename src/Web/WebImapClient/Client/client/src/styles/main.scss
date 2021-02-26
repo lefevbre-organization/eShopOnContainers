@@ -223,20 +223,13 @@ element.style {
     width: auto;
 }
 
-
-/*.e-btn.e-flat, .e-css.e-btn.e-flat {
-    background-color: transparent;
-    border-color: transparent;
-    box-shadow: none;
-    color: #fff;
-}*/
-
-/*.e-error {
-    color: #001978 !important;
-    font-family: "Roboto", "Segoe UI", "GeezaPro", "DejaVu Serif", "sans-serif", "-apple-system", "BlinkMacSystemFont";
-    font-size: 12px;
-    font-weight: normal;
+.add-more-container {
+  top: 70px !important;
 }
-*/
+
+#schedule_dialog_wrapper {
+  max-height: 1221px !important;
+}
+
 
 

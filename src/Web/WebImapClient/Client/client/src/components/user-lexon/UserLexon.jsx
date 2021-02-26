@@ -111,7 +111,6 @@ class UserLexon extends Component {
       this.props.logout();
     }
 
-    debugger
     this.props.setUser(user);
 
     // if (idMessage && base64regex.test(idMessage)) {

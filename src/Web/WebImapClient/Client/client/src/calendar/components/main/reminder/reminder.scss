@@ -13,3 +13,10 @@
     float: right;
     cursor: pointer;
 }
+
+.delete-icon::after {
+    font-family: "e-icon";
+    content: "\e700";
+    float: right;
+    cursor: pointer;
+}

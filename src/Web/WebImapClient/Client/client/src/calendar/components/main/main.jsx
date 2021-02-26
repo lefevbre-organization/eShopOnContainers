@@ -690,6 +690,7 @@ export class Main extends Component {
                     eventType.color = event.extendedProperties.private.eventTypeColor;
                     lexonClassification = event.extendedProperties.private.lexonClassification;
                 }
+                }
 
                 let reminders = []
                 if (event.reminders != undefined) {
@@ -1426,9 +1427,7 @@ export class Main extends Component {
                     //}
                 }
             }
-
         }
-
     }
 
     createClassifiedDiv() {

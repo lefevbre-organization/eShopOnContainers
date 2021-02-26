@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
-import { addAcl, listAcl, deleteAcl } from '../../../../api/calendar-api';
+// import { addAcl, listAcl, deleteAcl } from '../../../../api/calendar-api';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { NumericTextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import i18n from 'i18next';
-import './reminder.scss';
+import Styles from './reminder.scss';
 
 export class Reminder extends React.Component {
   constructor(props) {
@@ -41,7 +41,7 @@ export class Reminder extends React.Component {
 
 
     onAddReminder(args) {   
-        let valueM = this.timeLogicTypetoMinutes(this.ReminType.value, this.numObj.value);
+        let valueM = this.timeLogicTypetoSeconds(this.ReminType.value, this.numObj.value);
         
 
     let dataReminder = {
@@ -61,8 +61,6 @@ export class Reminder extends React.Component {
   }
 
   onChange() {
-    //let value = document.getElementById('value');
-    //let text = document.getElementById('text');
       switch (this.ReminType.value) {
           case '1':
               //minutes
@@ -100,49 +98,51 @@ export class Reminder extends React.Component {
     }
     }
 
-    timeLogicTypetoMinutes(type, value) {
+    timeLogicTypetoSeconds(type, value) {
         switch (type) {
             case '1':
-                return value
+                return value;
             case '2':
-                //hours to minutes
-                return value * 60;
+                //hours to Seconds
+                return value * 3600;
 
             case '3':
                 //days to minutes
-                return value * 1440
+                return value * 86400
 
             case '4':
                 //weeks to minutes
-                return value * 10080
+                return value * 604800
 
         }
 
     }
 
-    timeMinutestoLogicType(time) { 
-       
-        if (time / 24 / 60 / 7 >= 1 && Number.isInteger(time / 24 / 60 / 7 )) {                 
-                return time / 24 / 60 / 7 + " semanas";
-            }
+    timeSecondstoLogicType(time) { 
+        if (time / 604800 >= 1 && Number.isInteger(time / 604800 )) {                 
+            return time / 604800 + " semanas";
+        }
 
-        if (time / 24 / 60 >= 1 && Number.isInteger(time / 24 / 60)) {
-                return time / 24 / 60 + " días";
-            }
+        if (time / 86400 >= 1 && Number.isInteger(time / 86400)) {
+            return time / 86400 + " días";
+        }
+
+        if (time / 3600 >= 1 && Number.isInteger(time / 3600)) {
+           // return time / 60 % 24 + " hours";
+            return time / 3600 + " horas";
+        }
 
         if (time / 60 % 24 >= 1 && Number.isInteger(time / 60 % 24)) {
-           // return time / 60 % 24 + " hours";
             return time / 60 + " horas";
-            }
+        }
             
         return time  + " " + this.ReminType.text ;  
-       
     }
 
     listTemplate(data) {
         //let value;
         //if (this.ReminType.value == 1) {
-          let  value = this.timeMinutestoLogicType(data.value);
+          let  value = this.timeSecondstoLogicType(data.value);
         //}
         //else {
         //    value = data.value + " " + this.ReminType.text ;
@@ -152,7 +152,7 @@ export class Reminder extends React.Component {
             <span className='e-list-content'>
                Correo electrónico   {value}
             </span>
-            <span className='delete-icon' onClick={this.deleteItem.bind(this)} />
+            <span className={`${Styles['delete-icon']} delete-icon`} onClick={this.deleteItem.bind(this)} />
           </div>
         );
   }
