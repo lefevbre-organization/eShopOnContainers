@@ -199,5 +199,10 @@
             public static readonly string UpdateCredentials = "GA05";
             public static readonly string GoogleAuthorization = "GA06";
         }
+
+        public static class Signature
+        {
+
+        }
     }
 }
