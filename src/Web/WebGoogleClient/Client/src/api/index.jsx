@@ -190,6 +190,8 @@ export const getMessageHeader = (id) => {
           'Delivered-To',
           'X-Received',
           'To',
+          'Cc',
+          'Bcc',
           'Message-ID',
           'Date',
           'Content-Type',

@@ -16,12 +16,6 @@ class MessageHeader extends Component {
   componentDidMount() {
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
-
-    console.log(
-      "emailHeaderMessageResult.headers ->",
-      this.props.emailHeaderMessageResult.headers
-    );
-    console.log("labelsResult ->", this.props.labelsResult);
   }
 
   onFolderClick(folder) {
@@ -29,18 +23,15 @@ class MessageHeader extends Component {
   }
 
   getHeader(name) {
-    if(this.props.emailMessageResult.result) {
-      const {messageHeaders} = this.props.emailMessageResult.result;
-      console.log('getHeader', messageHeaders)
-      if (Array.isArray(messageHeaders)) {
-        for (var i = 0; i < messageHeaders.length; i++) {
-          if (messageHeaders[i].name === name) {
-            return messageHeaders[i].value;
-          }
+    const { headers } = this.props.emailHeaderMessageResult;
+    if (Array.isArray(headers)) {
+      for (var i = 0; i < headers.length; i++) {
+        if (headers[i].name === name) {
+          return headers[i].value;
         }
-      } else {
-        return null;
       }
+    } else {
+      return null;
     }
     return null;
   }
@@ -86,10 +77,23 @@ class MessageHeader extends Component {
           </h1>
           <div className="fromDate">
             <div className="from">
-              <span className="fromName">{this.getHeader("From")}</span>
-              <span className="email">{this.getHeader("To")}</span>
-              <span className="email">{this.getHeader("Cc")}</span>
-              <span className="email">{this.getHeader("Bcc")}</span>
+              <span className="fromName">Desde: {this.getHeader("From")}</span>
+              <br />
+              <span className="email">Para: {this.getHeader("To")}</span>
+              {this.getHeader("Cc") ? 
+                <>
+                  <br />
+                  <span className="email">
+                    Cc: {this.getHeader("Cc")}
+                  </span>
+                </> 
+              : null} 
+               {this.getHeader("Bcc") ? 
+                <>
+                  <br />
+                  <span className="email">Bcc: {this.getHeader("Bcc")}</span>
+                </> 
+              : null} 
             </div>
             <div className="date">
               {new Date(this.getHeader("Date")).toLocaleString(

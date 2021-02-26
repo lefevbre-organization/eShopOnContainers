@@ -128,6 +128,11 @@ export class Acl extends React.Component {
     onDataBinding(items) {
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
+                if(
+                    items[i].id.split('@')[1] === 'group.calendar.google.com'
+                ) {
+                    i = 1;
+                }
                 let acl = items[i];
 
                 this.dataACLSource.push({
