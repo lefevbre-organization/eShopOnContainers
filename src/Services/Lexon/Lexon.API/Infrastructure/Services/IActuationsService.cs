@@ -14,7 +14,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
         Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env,
                                                                                                 string idUser,
                                                                                                 string bbdd);
-        Task<Result<int>> UpsertAppointmentAsync(LexAppointment appointment,
+        Task<Result<int>> UpsertAppointmentAsync(LexAppointmentInsert appointment,
                                               string env,
                                               string idUser,
                                               string bbdd);

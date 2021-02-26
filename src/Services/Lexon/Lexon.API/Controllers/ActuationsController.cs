@@ -140,7 +140,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddAppointmentAsync(
-            [FromBody] LexAppointment appointment,
+            [FromBody] LexAppointmentInsert appointment,
             [FromRoute] string idUser = "449",
             [FromRoute] string bbdd = "lexon_admin_02",
             [FromQuery] string env = "QA"
