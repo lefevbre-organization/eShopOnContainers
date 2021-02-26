@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
@@ -49,11 +50,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
 
         #region Common
 
-        public string GetIdEventParameters(string name, string idEvent, string idProvider, bool withComma = true)
-        {
-            var comma = withComma ? ", " : "";
-            return $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)} }}";
-        }
 
         private string GetIdFilter(string idName, int idValue)
         {
@@ -66,7 +62,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
 
         #region Appointments
 
-        public async Task<Result<int>> UpsertAppointmentAsync(LexAppointment appointment, string env, string idUser, string bbdd)
+        public async Task<Result<int>> UpsertAppointmentAsync(LexAppointmentInsert appointment, string env, string idUser, string bbdd)
         {
             var result = new Result<int>(0);
             ConfigureByEnv(env, result.infos, _settings.Value, out _conn, out _urlLexon, Codes.LexonActuations.UpsertAppointment);
@@ -105,7 +101,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             return result;
         }
 
-        private string GetUpsertAppointmentFilter(string idUser, string bbdd, LexAppointment appointment)
+        private string GetUpsertAppointmentFilter(string idUser, string bbdd, LexAppointmentInsert appointment)
         {
             return $"{{ " +
                 GetUserFilter(bbdd, idUser) +
@@ -115,7 +111,50 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 GetTextFilter("startDate", appointment.StartDate) +
                 GetTextFilter("endDate", appointment.EndDate) +
                 GetIdEventParameters("idEvent", appointment.IdEvent, appointment.Provider) +
+                GetRemainder("reminder", appointment.Reminder) +
+                GetEventType("typeEvent", appointment.EventType) +
+                GetCalendar("calendar", appointment.Calendar) +
                 $" }}";
+        }
+
+
+        public string GetIdEventParameters(string name, string idEvent, string idProvider, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)}}}";
+        }
+
+        public string GetRemainder(string name, Reminder reminder, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return $"{comma}\"{name}\": " +
+                $"{{ " +
+                $"{GetLongFilter(nameof(reminder.minutesBefore), reminder.minutesBefore, false)} " +
+                $"{GetTextFilter(nameof(reminder.name), reminder.name)}" +
+                $"  }}";
+        }
+       
+        public string GetEventType(string name, EventType eventType, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return $"{comma}\"{name}\": " +
+                $"{{ " +
+                //$"{GetTextFilter(nameof(eventType.idEvent), eventType.idEvent, false)}  " +
+                $"{GetTextFilter(nameof(eventType.name), eventType.name, false)} " +
+                $"{GetTextFilter(nameof(eventType.color), eventType.color)} " +
+                $"}}";
+        }
+
+        public string GetCalendar(string name, Calendar calendar, bool withComma = true)
+        {
+            var comma = withComma ? ", " : "";
+            return $"{comma}\"{name}\": " +
+                $"{{ " +
+                //$"{GetTextFilter(nameof(calendar.idCalendar), calendar.idCalendar, false)}  " +
+                $"{GetTextFilter(nameof(calendar.titulo), calendar.titulo, false)} " +
+                $"{GetTextFilter(nameof(calendar.color), calendar.color)} " +
+                $"{GetTextFilter(nameof(calendar.descripcion), calendar.descripcion)} " +
+                $"}}";
         }
 
         public async Task<Result<int>> RemoveAppointmentAsync(int idAppointment, string env, string idUser, string bbdd)
