@@ -44,6 +44,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
         public string id { get; set; }
         public string name { get; set; }
         public string mimeType { get; set; }
+        public string sessionId { get; set; }
+    }
+
+    public class GoogleDriveBiggerFile
+    {
+        public string name { get; set; }
     }
  
 }

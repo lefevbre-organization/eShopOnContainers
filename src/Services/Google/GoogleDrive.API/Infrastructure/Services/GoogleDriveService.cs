@@ -312,15 +312,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             return result;
         }
 
-        private  void SerializeToMultiPart(string type, string name, string parent, IFormFile formFile , out MultipartFormDataContent multiPartFormDataContent)
+        private MultipartFormDataContent SerializeToMultiPart(string type, string name, string parent, IFormFile formFile)
         {
             // metadata part
-            var stringContent = new StringContent("{'name':'" + name + "','mimeType':" + (type.Equals("folder") ? "'application/vnd.google-apps.folder'" : "'"+formFile.ContentType +"'") + (!string.IsNullOrEmpty(parent) ? ", 'parents': ['" +parent +"']" : "")        + "}", Encoding.UTF8, "application/json");
+            var stringContent = new StringContent("{'name':'" + name + "','mimeType':" + (type.Equals("folder") ? "'application/vnd.google-apps.folder'" : "'" + formFile.ContentType + "'") + (!string.IsNullOrEmpty(parent) ? ", 'parents': ['" + parent + "']" : "") + "}", Encoding.UTF8, "application/json");
             stringContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
             stringContent.Headers.ContentDisposition.Name = "\"metadata\"";
 
             var boundary = DateTime.Now.Ticks.ToString();
-            multiPartFormDataContent = new MultipartFormDataContent(boundary);
+            var multiPartFormDataContent = new MultipartFormDataContent(boundary);
             // rfc2387 headers with boundary
             multiPartFormDataContent.Headers.Remove("Content-Type");
             multiPartFormDataContent.Headers.TryAddWithoutValidation("Content-Type", "multipart/related; boundary=" + boundary);
@@ -334,6 +334,25 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                 streamContent.Headers.ContentDisposition.Name = formFile.Name;
                 multiPartFormDataContent.Add(streamContent); // media part - must follow metadata part
             }
+            return multiPartFormDataContent;
+
+        }
+
+        private MultipartFormDataContent SerializeToMultiPart(IFormFile formFile)
+        {
+            var boundary = DateTime.Now.Ticks.ToString();
+            var multiPartFormDataContent = new MultipartFormDataContent(boundary);
+            // rfc2387 headers with boundary
+            multiPartFormDataContent.Headers.Remove("Content-Type");
+            multiPartFormDataContent.Headers.TryAddWithoutValidation("Content-Type", "multipart/related; boundary=" + boundary);
+
+
+            var streamContent = new StreamContent(formFile.OpenReadStream());
+            streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            streamContent.Headers.ContentDisposition.Name = formFile.Name;
+            multiPartFormDataContent.Add(streamContent); // media part 
+
+            return multiPartFormDataContent;
 
         }
 
@@ -355,7 +374,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    SerializeToMultiPart("folder", folderName, parentId,null,out MultipartFormDataContent multiPartFormDataContent);
+                    var multiPartFormDataContent = SerializeToMultiPart("folder", folderName, parentId, null);
 
                     var get = await client.PostAsync($"{_settings.Value.GoogleDriveApiUpload}?uploadType=multipart", multiPartFormDataContent);
 
@@ -398,16 +417,75 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                    SerializeToMultiPart("file", formFile.FileName, parentId, formFile, out MultipartFormDataContent multiPartFormDataContent);
 
-                    var get = await client.PostAsync($"{_settings.Value.GoogleDriveApiUpload}?uploadType=multipart", multiPartFormDataContent);
-                                   
+                    string uri = "";
+
+                    MultipartFormDataContent multiPartFormDataContent;
+                    HttpResponseMessage get = new HttpResponseMessage();
+
+                    if ((formFile.Length / 1024) <= 5000)
+                    {
+                        uri = $"{_settings.Value.GoogleDriveApiUpload}?uploadType=multipart";
+                        multiPartFormDataContent = SerializeToMultiPart("file", formFile.FileName, parentId, formFile);
+                        get = await client.PostAsync(uri, multiPartFormDataContent);
+                    }
+                    else
+                    {
+                        multiPartFormDataContent = SerializeToMultiPart(formFile);
+                        uri = $"{_settings.Value.GoogleDriveApiUpload}?uploadType=resumable";
+                        client.DefaultRequestHeaders.TryAddWithoutValidation("X-Upload-Content-Type", formFile.ContentType);
+                        client.DefaultRequestHeaders.TryAddWithoutValidation("X-Upload-Content-Length", multiPartFormDataContent.Headers.ContentLength.ToString());
+                        //client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Length", formFile.Length.ToString());
+                        GoogleDriveBiggerFile request = new GoogleDriveBiggerFile();
+                        request.name = formFile.FileName;
+
+                        get = await client.PostAsync(uri, new StringContent("{'name':'" + formFile.FileName + (!string.IsNullOrEmpty(parentId) ? "', 'parents': ['" + parentId + "']" : "'") + "}", Encoding.UTF8, "application/json"));
+
+
+                    }
+
+
                     if (get.IsSuccessStatusCode)
                     {
-                        var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
 
-                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");
-                        result.data = responseMessage;
+
+                        if ((formFile.Length / 1024) <= 5000)
+                        {
+                            var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
+                            TraceInfo(result.infos, "nuevo archivo subido exitosamente");
+                            result.data = responseMessage;
+                        }
+                        else
+                        {
+                            string newUri = get.Headers.Location.AbsoluteUri;
+                           
+
+                            using (HttpClient client2 = new HttpClient())
+
+                            {
+                                client2.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                                client2.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                                client2.DefaultRequestHeaders.TryAddWithoutValidation("Content-Length", multiPartFormDataContent.Headers.ContentLength.ToString());
+
+                                var resumable = await client2.PostAsync(newUri, multiPartFormDataContent);
+                                if (resumable.IsSuccessStatusCode)
+                                {
+                                    var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await resumable.Content.ReadAsStringAsync());
+                                    responseMessage.sessionId = newUri;
+                                    TraceInfo(result.infos, "nuevo archivo subido exitosamente");
+                                    result.data = responseMessage;
+
+                                }
+                                else
+                                {
+                                    TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
+                                }
+                            }
+                              
+
+
+
+                        }
                     }
                     else
                     {
@@ -436,8 +514,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     return result;
                 }
 
-                using (HttpClient client = new HttpClient())
-
+                using (HttpClient   client = new HttpClient())
+                     
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -449,16 +527,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                         var memory = new MemoryStream();
                         await get.Content.CopyToAsync(memory);
                         var resultMessage = await get.Content.ReadAsStringAsync();
-                       
+
                         DownloadedFile downloadedFile = new DownloadedFile();
                         downloadedFile.mimeType = get.Content.Headers.ContentType.MediaType;
-                        downloadedFile.content= Convert.ToBase64String(memory.ToArray());
+                        downloadedFile.content = Convert.ToBase64String(memory.ToArray());
                         result.data = downloadedFile;
-                        
+
                     }
                     if (get.IsSuccessStatusCode)
                     {
-                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");                      
+                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");
                     }
                     else
                     {
