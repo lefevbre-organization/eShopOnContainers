@@ -1,0 +1,75 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  finalizers:
+  - kubernetes.io/pv-protection
+  name: pv-seqserver
+  selfLink: /api/v1/persistentvolumes/pv-seqserver
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-5e0e5bef
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+status:
+  phase: Bound
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+  - kubernetes.io/pvc-protection
+  name: elefebvre-vol-nextcloud-mdb-claim
+  namespace: default
+  selfLink: /api/v1/namespaces/default/persistentvolumeclaims/elefebvre-vol-nextcloud-mdb-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+  volumeName: pv-nextcloud-mdb
+status:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
+  phase: Bound
+
+--- 
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+  - kubernetes.io/pvc-protection
+  name: elefebvre-vol-seqserver-claim
+  namespace: default
+  selfLink: /api/v1/namespaces/default/persistentvolumeclaims/elefebvre-vol-seqserver-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+  volumeName: pv-seqserver
+status:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi

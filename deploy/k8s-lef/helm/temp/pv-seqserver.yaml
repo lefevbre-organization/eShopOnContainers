@@ -1,0 +1,111 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  finalizers:
+  - kubernetes.io/pv-protection
+  name: pv-seqserver
+  selfLink: /api/v1/persistentvolumes/pv-seqserver
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-5e0e5bef
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+status:
+  phase: Bound
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"PersistentVolume","metadata":{"annotations":{},"name":"pv-nextcloud-mdb"},"spec":{"accessModes":["ReadWriteMany"],"capacity":{"storage":"8Gi"},"csi":{"driver":"efs.csi.aws.com","volumeHandle":"fs-5e0e5bef"},"persistentVolumeReclaimPolicy":"Retain","storageClassName":"efs-sc","volumeMode":"Filesystem"}}
+    pv.kubernetes.io/bound-by-controller: "yes"
+  creationTimestamp: "2021-02-24T11:39:27Z"
+  finalizers:
+  - kubernetes.io/pv-protection
+  name: pv-nextcloud-mdb
+  resourceVersion: "34881108"
+  selfLink: /api/v1/persistentvolumes/pv-nextcloud-mdb
+  uid: 7b6721a1-8995-419d-994b-7cebf7ae8b32
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: elefebvre-vol-nextcloud-seqserver-claim
+    namespace: default
+    resourceVersion: "34881106"
+    uid: 4532d528-07c2-4329-a3da-5ef4f3081949
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: fs-5e0e5bef
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+status:
+  phase: Bound
+
+--- 
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+  - kubernetes.io/pvc-protection
+  name: elefebvre-vol-nextcloud-mdb-claim
+  namespace: default
+  selfLink: /api/v1/namespaces/default/persistentvolumeclaims/elefebvre-vol-nextcloud-mdb-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+  volumeName: pv-nextcloud-mdb
+status:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
+  phase: Bound
+
+--- 
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  finalizers:
+  - kubernetes.io/pvc-protection
+  name: elefebvre-vol-seqserver-claim
+  namespace: default
+  selfLink: /api/v1/namespaces/default/persistentvolumeclaims/elefebvre-vol-seqserver-claim
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: efs-sc
+  volumeMode: Filesystem
+  volumeName: pv-seqserver
+status:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 8Gi
