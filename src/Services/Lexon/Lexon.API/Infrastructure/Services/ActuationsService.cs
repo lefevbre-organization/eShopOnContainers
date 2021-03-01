@@ -110,7 +110,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 GetTextFilter("startDate", appointment.StartDate) +
                 GetTextFilter("endDate", appointment.EndDate) +
                 GetIdEventParameters("idEvent", appointment.IdEvent, appointment.Provider) +
-                GetRemainder("reminder", appointment.Reminder) +
+                GetRemainders("reminder", appointment.Reminder) +
                 GetEventType("typeEvent", appointment.EventType) +
                 GetCalendar("calendar", appointment.Calendar) +
                 $" }}";
@@ -123,14 +123,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             return $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)}}}";
         }
 
-        public string GetRemainder(string name, Reminder reminder, bool withComma = true)
+        public string GetRemainders(string name, Reminder[] reminder, bool withComma = true)
         {
             var comma = withComma ? ", " : "";
+            var listReminders = "";
+            foreach (var rem in reminder){
+                listReminders +=
+                    $"{{ " +
+                    $"{GetLongFilter(nameof(rem.minutesBefore), rem.minutesBefore, false)} " +
+                    $"{GetTextFilter(nameof(rem.method), rem.method)}" +
+                    $"  }},";
+            }
             return $"{comma}\"{name}\": " +
-                $"{{ " +
-                $"{GetLongFilter(nameof(reminder.minutesBefore), reminder.minutesBefore, false)} " +
-                $"{GetTextFilter(nameof(reminder.method), reminder.method)}" +
-                $"  }}";
+                $"[ " + listReminders.Remove(listReminders.Length - 1) + $"  ]";
         }
        
         public string GetEventType(string name, EventType eventType, bool withComma = true)
@@ -152,6 +157,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 //$"{GetTextFilter(nameof(calendar.idCalendar), calendar.idCalendar, false)}  " +
                 $"{GetTextFilter(nameof(calendar.titulo), calendar.titulo, false)} " +
                 $"{GetTextFilter(nameof(calendar.color), calendar.color)} " +
+                $"{GetTextFilter(nameof(calendar.fgcolor), calendar.fgcolor)} " +
                 $"{GetTextFilter(nameof(calendar.descripcion), calendar.descripcion)} " +
                 $"}}";
         }
