@@ -4,7 +4,7 @@
     {
         public string IdEvent { get; set; }
         public string Provider { get; set; }
-        public Reminder Reminder { get; set; }
+        public Reminder[] Reminder { get; set; }
         public EventType EventType { get; set; }
         public new Calendar Calendar { get; set; }
 

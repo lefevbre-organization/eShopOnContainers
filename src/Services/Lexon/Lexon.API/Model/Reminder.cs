@@ -3,7 +3,7 @@
     public class Reminder
     {
 
-        public string name { get; set; }
+        public string method { get; set; }
 
         public int minutesBefore { get; set; }
 

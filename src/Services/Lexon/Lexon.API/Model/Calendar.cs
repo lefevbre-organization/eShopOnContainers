@@ -5,6 +5,7 @@
         public string titulo { get; set; }
         public string descripcion { get; set; }
         public string color { get; set; }
+        public string fgcolor { get; set; }
 
     }
 }
