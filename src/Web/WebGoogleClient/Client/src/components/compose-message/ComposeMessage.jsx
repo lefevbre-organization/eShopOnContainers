@@ -252,7 +252,9 @@ export class ComposeMessage extends PureComponent {
     }, 500);
 
     if(this.props.composer.content && this.props.composer.content !== '') {
-      this.state.defaultContent = this.props.composer;
+      this.state.defaultContent = this.props.composer.content;
+      this.state.content = this.props.composer.content;
+
     } else {
       if (this.props.lexon.sign && this.props.lexon.sign !== '') {
         this.state.content = `<br/><br/><p>${this.props.lexon.sign}</p>` + this.state.content;
@@ -660,6 +662,8 @@ export class ComposeMessage extends PureComponent {
     console.log('addFileToState', fls)
     this.setState({
       uppyPreviews: fls,
+    }, ()=> {
+      this.props.updateComposerData(this.state);
     });
   }
 

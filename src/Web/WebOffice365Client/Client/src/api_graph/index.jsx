@@ -679,6 +679,11 @@ export const createDraft = async ({ data, attachments, draftId }) => {
 };
 
 export const sendMessage = async ({ data, attachments }) => {
+  const embeddedImgsBase64 = getEmbeddedImages(data.content);
+  const embeddedImgsIds = genEmbedImgIds(embeddedImgsBase64);
+  const finalBody = formatBodyImages(data.content, embeddedImgsBase64, embeddedImgsIds);
+  data.content = finalBody;
+
   let email = '';
   email = emailBody(data);
   email += emailToRecipients(data);
@@ -698,7 +703,8 @@ export const sendMessage = async ({ data, attachments }) => {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     let response = await client.api('/me/messages').version('beta').post(email);
-
+    // Upload inline imgs
+    await uploadInlineImgs(response.id, embeddedImgsIds, embeddedImgsBase64);
     await uploadFiles(response.id, data.uppyPreviews);
     response = await client
       .api(`/me/messages/${response.id}/send`)
@@ -856,6 +862,36 @@ export const removeFiles = async (emailId, attachments) => {
   };
 }
 
+export const uploadInlineImgs = async (emailId, embeddedImgsIds, embeddedImgsBase64) => {
+  console.log('uploadInlineImgs');
+  const accessToken = await getAccessTokenSilent();
+  const client = await getAuthenticatedClient(accessToken);
+
+  for (let i = 0; i < embeddedImgsIds.length; i++) {
+    const cid = embeddedImgsIds[i];
+    const content = getImageData(embeddedImgsBase64[i]);
+    const fileName = getContentName(embeddedImgsBase64[i]);
+    const attachment = {
+      '@odata.type': '#microsoft.graph.fileAttachment',
+      name: fileName,
+      contentBytes: content,
+      isInline: true,
+      contentId: cid
+    };
+
+    try {
+      let res = await client
+        .api(`/me/messages/${emailId}/attachments`)
+        .version('beta')
+        .post(attachment);
+  
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
+
 export const uploadFile = async (emailId, fileName, file, content) => {
   console.log('UploadFile');
   const accessToken = await getAccessTokenSilent();
@@ -972,3 +1008,98 @@ export const addContact = (contact) =>
         reject(err);
       });
   });
+
+
+  // Gets all the <img src> tags of the email
+function getEmbeddedImages(body) {
+  let res = [];
+  let images = body.match(/<img [^>]*src="[^"]*"[^>]*>/gm);
+  images = (images) ? images : [];
+  for (let i = 0; i < images.length; i++) {
+    const image = images[i];
+    if (!image.match(/src="http[^>]*/g)) {
+      res.push(image);
+    }
+  }
+  console.log('getEmbeddedImages:');
+  console.log(images);
+  let imagesData = images.map((x) => x.replace(/.*src="([^"]*)".*/, '$1'));
+  console.log('imagesData');
+  console.log(imagesData);
+  //return images;
+  return res;
+}
+
+// Receives the list of images and generates a unique id for each of them.
+function genEmbedImgIds(images) {
+  let ids = [];
+  if (images) {
+    for (let index = 0; index < images.length; index++) {
+      console.log('genEmbededImgIds:');
+      console.log(images[index]);
+      const element = images[index];
+      const name = getContentName(element);
+      const random = uuidv4().slice(0, 8);
+      ids.push(`${name.replace('.', '')}__${random}`);
+    }
+  }
+  console.log('getEmbedImgIdsResult');
+  console.log(ids);
+  return ids;
+}
+
+// Receives a single image html tag <img src> and returns the type of the image: jpg, png, etc.
+function getContentType(imageTag) {
+  let src;
+  let srcSplitted;
+  let contentType;
+  src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
+  srcSplitted = src.split(';');
+  contentType = srcSplitted[0].replace('data:', '');
+  console.log('getContentType:' + contentType);
+  return contentType;
+}
+
+// Receives a single image html tag <img src> and returns the name of the image: image1.png, image2.jpeg, etc.
+function getContentName(imageTag) {
+  let contentName;
+  contentName = imageTag.replace(/.*alt="([^"]*)".*/, '$1');
+  if (imageTag === contentName)
+    contentName = '';
+    //contentName = `pastedImg_${uuidv4().slice(0, 8)}`;
+  console.log('getContentName:' + contentName);
+  return contentName;
+}
+
+// Receives a single image html tag <img src> and returns the image data in base64
+function getImageData(imageTag) {
+  let src;
+  let srcSplitted;
+  let imageData;
+  src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
+  debugger;
+  srcSplitted = src.split(',');
+  imageData = srcSplitted[1];
+  // imageData = parseAttachment(imageData);
+  //console.log('getImageData:' + imageData);
+  return imageData;
+}
+
+// Receives an email body, the list of images and the list of unique ids of those images and returns the body formatted with the image Id's
+function formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
+  for (let index = 0; index < embedddedImagesList.length; index++) {
+    const element = embedddedImagesList[index];
+    const src = element.replace(/.*src="([^"]*)".*/, '$1');
+    body = body.replace(src, `cid:${embeddedImagesIds[index]}`);
+  }
+  return body;
+}
+
+function uuidv4() {
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
+}
