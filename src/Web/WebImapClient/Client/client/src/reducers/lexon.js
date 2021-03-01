@@ -101,6 +101,17 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
               title: action.payload,
           }
 
+      case ActionTypes.LEXON_RESET_IDACTUATION:
+          return {
+              ...state,
+              idActuation: null,
+          }
+      case ActionTypes.LEXON_RESET_IDEVENT:
+          return {
+              ...state,
+              idEvent: null,
+          }
+
     default:
       return state;
   }

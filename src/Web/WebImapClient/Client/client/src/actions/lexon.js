@@ -75,6 +75,14 @@ export const setTitle = (title) => ({
     payload: title,
 })
 
+export const resetIdActuation = () => ({
+    type: ActionTypes.LEXON_RESET_IDACTUATION   
+})
+
+export const resetIdEvent = () => ({
+    type: ActionTypes.LEXON_RESET_IDEVENT
+})
+
 export default {
     setUser,
     setDataBase,
@@ -90,5 +98,7 @@ export default {
     setToken,
     setTitle,
     setIdEvent,
-    setIdActuation
+    setIdActuation,
+    resetIdActuation,
+    resetIdEvent
 };

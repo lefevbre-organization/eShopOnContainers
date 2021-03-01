@@ -29,7 +29,10 @@ import { clearSelected, setSelected } from '../actions/messages';
 import {
  setGUID,
  setSign,
- setDataBase
+ setDataBase,
+ resetIdActuation,
+ resetIdEvent
+
 } from '../actions/lexon';
 
 //import { getSelectedFolder } from '../selectors/folders';
@@ -371,7 +374,11 @@ class Calendar extends Component {
 
                       <div className='schedule-control-section'>
                           <div className='control-section'>
-                              <div className='control-wrapper'>
+                              <div className={`
+                                ${!this.layoutIframeNewEventView
+                                      ? ''
+                                      : styles['hidden']
+                                  } `}>
                                 <ScheduleComponent
                                       //delayUpdate='false'
                                     //   timezone='Europe/Madrid'
@@ -599,6 +606,13 @@ class Calendar extends Component {
     }
 
     TokensFlows() {
+
+        //var closing = window.close;
+        //window.close = function () {
+        //    console.log('window close fired!');
+        //    closing();
+        //};
+
         if (window != window.top) {
             this.layoutIframe = true;
         }
@@ -608,6 +622,11 @@ class Calendar extends Component {
         } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
             this.layoutIframeNewEventView = true;
         }
+
+        this.props.resetIdActuation();
+        this.props.resetIdEvent();
+
+
     }
 
     convertUnicode(input) {
@@ -1220,6 +1239,8 @@ class Calendar extends Component {
     }
 
     componentWillUnmount() {
+
+        //console.log('#################close################')
         //window.removeEventListener(
         //    'EventClassified',
         //    this.handleClassificatedEvent
@@ -2362,7 +2383,9 @@ const mapDispatchToProps = dispatch => ({
                 selectCalendar,
                 setDataBase,
                 setGUID: setGUID,
-                setSign: setSign
+                setSign: setSign,
+                resetIdActuation,
+                resetIdEvent
             },
             dispatch
         ),
@@ -2391,7 +2414,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
     close: application => dispatchProps.close(stateProps.application),
     setError: (err, msg) => dispatchProps.setError(err, msg),
-    resetIdEmail: () => dispatchProps.resetIdEmail(),
+    //  resetIdEmail: () => dispatchProps.resetIdEmail(),
+      resetIdActuation: () => dispatchProps.resetIdActuation(),
+      resetIdEvent: () => dispatchProps.resetIdEvent(),
     setCaseFile: casefile => dispatchProps.setCaseFile(casefile)
   });
 
