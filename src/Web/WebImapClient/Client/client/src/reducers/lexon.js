@@ -95,6 +95,19 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
               idEvent: action.payload,
         }
 
+
+    case ActionTypes.LEXON_NEW_IDACTUATION:
+        return {
+              ...state,
+              newIdActuation: action.payload,
+        };
+
+    case ActionTypes.LEXON_NEW_IDEVENT:
+        return {
+              ...state,
+              newIdEvent: action.payload,
+        }
+
     case ActionTypes.LEXON_TITLE:
           return {
               ...state,

@@ -70,6 +70,16 @@ export const setIdEvent = (idEvent) => ({
     payload: idEvent,
 })
 
+export const setNewIdActuation = (idActuation) => ({
+    type: ActionTypes.LEXON_NEW_IDACTUATION,
+    payload: idActuation,
+})
+
+export const setNewIdEvent = (idEvent) => ({
+    type: ActionTypes.LEXON_NEW_IDEVENT,
+    payload: idEvent,
+})
+
 export const setTitle = (title) => ({
     type: ActionTypes.LEXON_TITLE,
     payload: title,

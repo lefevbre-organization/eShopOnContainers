@@ -60,6 +60,8 @@ export const INITIAL_STATE = {
     token: null,
     idActuation: null,
     idEvent: null,
+    newIdActuation: null,
+    newIdEvent: null,
   },
   currentUser: {
     idClienteNavision: null,

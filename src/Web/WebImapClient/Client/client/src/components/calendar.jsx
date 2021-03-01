@@ -312,12 +312,6 @@ class Calendar extends Component {
             return <Redirect to={"/login"}/>;
         }
 
-        // if(this.layoutIframeNewEventView) {
-        //     return <Spinner  
-        //     className={styles.spinner} />;
-        // }
-
-
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
@@ -616,13 +610,12 @@ class Calendar extends Component {
     }
 
     TokensFlows() {
-
         //var closing = window.close;
         //window.close = function () {
         //    console.log('window close fired!');
         //    closing();
         //};
-
+        
         if (window != window.top) {
             this.layoutIframe = true;
         }
@@ -630,6 +623,7 @@ class Calendar extends Component {
         if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
         } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
+            console.log('TokensFlows', this.props.lexon.idActuation)
             this.layoutIframeNewEventView = true;
         }
 
@@ -2241,6 +2235,7 @@ class Calendar extends Component {
             startTime: new Date(),
             endTime: endTimeDate
         };
+        console.log('handleScheduleOpenNewEventEditor', this.state.schedule.openEditor)
         this.state.schedule.openEditor(cellData, 'Add');
     }
 
