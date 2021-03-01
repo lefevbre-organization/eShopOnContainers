@@ -129,7 +129,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             return $"{comma}\"{name}\": " +
                 $"{{ " +
                 $"{GetLongFilter(nameof(reminder.minutesBefore), reminder.minutesBefore, false)} " +
-                $"{GetTextFilter(nameof(reminder.name), reminder.name)}" +
+                $"{GetTextFilter(nameof(reminder.method), reminder.method)}" +
                 $"  }}";
         }
        
