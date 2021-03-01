@@ -35,10 +35,10 @@ export class Acl extends React.Component {
         ]
 
         this.roleData = [
-            { "Id": "freeBusyReader", "Role": "freeBusyReader" },
-            { "Id": "reade", "Role": "reader" },
-            { "Id": "writer", "Role": "writer" },
-            { "Id": "owner", "Role": "owner" }
+            { "Id": "freeBusyReader", "Role": i18n.t('acl.freebusyreader') },
+            { "Id": "reade", "Role": i18n.t('acl.reader')},
+            { "Id": "writer", "Role": i18n.t('acl.writer') },
+            { "Id": "owner", "Role": i18n.t('acl.owner') }
         ];
     }
 
@@ -225,7 +225,7 @@ export class Acl extends React.Component {
                             cssClass='e-flat e-primary'
                             floatLabelType="Always"
                             onClick={this.onAddPermission}
-                        >Add</ButtonComponent>
+                        >{i18n.t('acl.add')}</ButtonComponent>
                     </div>
                 </div>
             </div>
