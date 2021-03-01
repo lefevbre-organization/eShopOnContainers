@@ -158,8 +158,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         [HttpPost("[action]")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId)
-        {
+        public async Task<IActionResult> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId, string sessionId) { 
 
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La Credencial de Lefebvre es requerida");
@@ -167,7 +166,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             if (formFile == null)
                 return BadRequest("El archivo es requerido");
 
-            var response = await _service.UploadFile(LefebvreCredential, formFile, parentId);
+            var response = await _service.UploadFile(LefebvreCredential, formFile, parentId,sessionId);
             return Ok(response);
         }
 
@@ -184,6 +183,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
                 return BadRequest("El ID del archivo es requerido");
 
             var file = await _service.DownloadFile(LefebvreCredential, fileId);
+            return Ok(file);
+        }
+
+        [HttpPatch("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> MoveElement(string LefebvreCredential, string elementId, string parentId, string destinationId)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (string.IsNullOrEmpty(elementId))
+                return BadRequest("El ID del elemento es requerido");
+
+
+            var file = await _service.MoveElement(LefebvreCredential, elementId, parentId,destinationId);
             return Ok(file);
         }
 

@@ -399,7 +399,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             return result;
         }
 
-        public async Task<Result<GoogleDriveResonse>> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId)
+        public async Task<Result<GoogleDriveResonse>> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId, string sessionId)
         {
             Result<GoogleDriveResonse> result = new Result<GoogleDriveResonse>();
             try
@@ -429,23 +429,27 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                         multiPartFormDataContent = SerializeToMultiPart("file", formFile.FileName, parentId, formFile);
                         get = await client.PostAsync(uri, multiPartFormDataContent);
                     }
-                    else
+                    else 
                     {
                         multiPartFormDataContent = SerializeToMultiPart(formFile);
-                        uri = $"{_settings.Value.GoogleDriveApiUpload}?uploadType=resumable";
-                        client.DefaultRequestHeaders.TryAddWithoutValidation("X-Upload-Content-Type", formFile.ContentType);
-                        client.DefaultRequestHeaders.TryAddWithoutValidation("X-Upload-Content-Length", multiPartFormDataContent.Headers.ContentLength.ToString());
-                        //client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Length", formFile.Length.ToString());
-                        GoogleDriveBiggerFile request = new GoogleDriveBiggerFile();
-                        request.name = formFile.FileName;
 
-                        get = await client.PostAsync(uri, new StringContent("{'name':'" + formFile.FileName + (!string.IsNullOrEmpty(parentId) ? "', 'parents': ['" + parentId + "']" : "'") + "}", Encoding.UTF8, "application/json"));
+                        if (string.IsNullOrEmpty(sessionId))
+                        {
+                            uri = $"{_settings.Value.GoogleDriveApiUpload}?uploadType=resumable";
+                            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Upload-Content-Type", formFile.ContentType);
+                            client.DefaultRequestHeaders.TryAddWithoutValidation("X-Upload-Content-Length", multiPartFormDataContent.Headers.ContentLength.ToString());
+                            //client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Length", formFile.Length.ToString());
+                            GoogleDriveBiggerFile request = new GoogleDriveBiggerFile();
+                            request.name = formFile.FileName;
 
+                            get = await client.PostAsync(uri, new StringContent("{'name':'" + formFile.FileName + (!string.IsNullOrEmpty(parentId) ? "', 'parents': ['" + parentId + "']" : "'") + "}", Encoding.UTF8, "application/json"));
+
+                        }
 
                     }
 
 
-                    if (get.IsSuccessStatusCode)
+                    if (get.IsSuccessStatusCode || string.IsNullOrEmpty(sessionId))
                     {
 
 
@@ -457,12 +461,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                         }
                         else
                         {
-                            string newUri = get.Headers.Location.AbsoluteUri;
+                            string newUri = string.IsNullOrEmpty(sessionId) ? get.Headers.Location.AbsoluteUri : sessionId;
                            
 
                             using (HttpClient client2 = new HttpClient())
 
                             {
+                                client2.Timeout = TimeSpan.FromMinutes(30);
                                 client2.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
                                 client2.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                                 client2.DefaultRequestHeaders.TryAddWithoutValidation("Content-Length", multiPartFormDataContent.Headers.ContentLength.ToString());
@@ -477,14 +482,30 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
 
                                 }
                                 else
+                                if (resumable.StatusCode.ToString().Equals("503"))
+                                {
+                                    var responseMessageError = new GoogleDriveResonse
+                                    {
+                                        sessionId = newUri,
+                                        message = "Hubo un error al intentar subir el archivo. Por favor intente nuevamente enviando como parametro el sessionId generado"
+                                    };
+                                    result.data = responseMessageError;
+                                    
+                                }else
+                                if (resumable.StatusCode.ToString().Equals("308"))
+                                {
+                                    var responseMessageError = new GoogleDriveResonse
+                                    {
+                                        sessionId = "",
+                                        message = "Hubo un error al intentar subir el archivo. Por favor intente nuevamente"
+                                    };
+                                    result.data = responseMessageError;
+                                }
+                                else
                                 {
                                     TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
                                 }
                             }
-                              
-
-
-
                         }
                     }
                     else
@@ -548,6 +569,50 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             catch (Exception ex)
             {
                 TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<GoogleDriveResonse>> MoveElement(string LefebvreCredential, string elementId, string parentId, string destinationId)
+        {
+            Result<GoogleDriveResonse> result = new Result<GoogleDriveResonse>();
+
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                using (HttpClient client = new HttpClient())
+
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var get = await client.PatchAsync($"{_settings.Value.GoogleDriveApi}/files/{elementId}?{(!string.IsNullOrEmpty(parentId) ? "removeParents=" + parentId : "addParents=" + destinationId)}", null);
+
+
+                   
+                    if (get.IsSuccessStatusCode)
+                    {
+                        var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
+                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");
+                        result.data = responseMessage;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.MoveElement, Codes.Areas.Google);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.MoveElement, Codes.Areas.Google);
             }
 
             return result;

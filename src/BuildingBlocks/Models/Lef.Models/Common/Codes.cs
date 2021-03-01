@@ -163,6 +163,7 @@
             public static readonly string CreateFolder = "GD07";
             public static readonly string UploadFile = "GD08";
             public static readonly string DownloadFile = "GD09";
+            public static readonly string MoveElement = "GD10";
         }
 
         public static class GoogleAccount
