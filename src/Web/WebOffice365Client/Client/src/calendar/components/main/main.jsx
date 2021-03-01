@@ -2234,13 +2234,13 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
-
                                                 //delayUpdate='false' 
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
+                                                dateFormat='dd/M/yyyy'
                                                 allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
@@ -2268,7 +2268,8 @@ export class Main extends Component {
                                                                    eventTemplate={this.eventTemplate.bind(this)}/>
                                                     <ViewDirective option='WorkWeek'
                                                                    eventTemplate={this.eventTemplate.bind(this)}/>
-                                                    <ViewDirective option='Month'
+                                                    <ViewDirective option='Month' 
+                                                                   dateFormat='MMMM yyyy'
                                                                    eventTemplate={this.eventTemplate.bind(this)}/>
                                                     <ViewDirective option='Agenda'
                                                                    eventTemplate={this.eventTemplateAgendaView.bind(this)}/>
