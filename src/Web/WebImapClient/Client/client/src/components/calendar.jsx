@@ -312,6 +312,12 @@ class Calendar extends Component {
             return <Redirect to={"/login"}/>;
         }
 
+        // if(this.layoutIframeNewEventView) {
+        //     return <Spinner  
+        //     className={styles.spinner} />;
+        // }
+
+
         //if (!isUpdatedDefaultAccount) {
         //    return null;
         //}
@@ -342,7 +348,11 @@ class Calendar extends Component {
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
               <div id='target' className={styles.app}>
-
+                  <Spinner
+                    visible={this.layoutIframeNewEventView}
+                    className={styles.spinnerCalendar}
+                    pathClassName={styles.spinnerPath}
+                  />
                   <SideBar
                       collapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
@@ -464,8 +474,8 @@ class Calendar extends Component {
                         </div>
 
                          <ToastComponent ref={toast => {
- this.toastObj = toast;
-}}
+                                this.toastObj = toast;
+                            }}
                             id='toast_pos'
                             content='Action successfully completed.'
                             position={this.position}
@@ -894,7 +904,7 @@ class Calendar extends Component {
                         {subjectStr}
                         {colorExist ? (
                             <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}}
-    className={`${styles.dot} ${styles.floatleft}`}/>
+                            className={`${styles.dot} ${styles.floatleft}`}/>
                         ) : (
                                 ''
                             )}
