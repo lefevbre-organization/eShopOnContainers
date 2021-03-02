@@ -452,7 +452,6 @@ export class ComposeMessage extends Component {
   }
 
   goBack() {
-    debugger
     this.props.updateComposerData({});
 
     if (this.props.casefile !== null && this.props.casefile !== undefined) {
