@@ -1,29 +1,12 @@
 Release "it-elefebvre-nextcloud" has been upgraded. Happy Helming!
 NAME: it-elefebvre-nextcloud
-LAST DEPLOYED: Mon Feb  8 19:48:11 2021
+LAST DEPLOYED: Mon Mar  1 20:12:33 2021
 NAMESPACE: default
 STATUS: pending-upgrade
-REVISION: 2
+REVISION: 6
 TEST SUITE: None
 HOOKS:
 MANIFEST:
----
-# Source: nextcloud/charts/mariadb/templates/secrets.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: it-elefebvre-nextcloud-mariadb
-  namespace: default
-  labels:
-    app: "mariadb"
-    chart: "mariadb-7.10.2"
-    release: "it-elefebvre-nextcloud"
-    heritage: "Helm"
-type: Opaque
-data:
-  mariadb-root-password: "RnBkWHhCcGlXOA=="
-  
-  mariadb-password: "ZWxlZmVidnJlX2Rldl8xMjM0"
 ---
 # Source: nextcloud/templates/db-secret.yaml
 apiVersion: v1
@@ -39,24 +22,8 @@ metadata:
     version: "2.5.1"
 type: Opaque
 data:
-  db-password: "ZWxlZmVidnJlX2Rldl8xMjM0"
+  db-password: ""
   db-username: "bmV4dGNsb3VkX2Rldg=="
----
-# Source: nextcloud/templates/secrets.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: it-elefebvre-nextcloud
-  labels:
-    app.kubernetes.io/name: nextcloud
-    helm.sh/chart: nextcloud-2.5.1
-    app.kubernetes.io/instance: it-elefebvre-nextcloud
-    app.kubernetes.io/managed-by: Helm
-type: Opaque
-data:
-  nextcloud-username: "YWRtaW4="
-  
-  nextcloud-password: "YWRtaW5fZGV2"
 ---
 # Source: nextcloud/charts/mariadb/templates/master-configmap.yaml
 apiVersion: v1
@@ -97,123 +64,6 @@ data:
     port=3306
     socket=/opt/bitnami/mariadb/tmp/mysql.sock
     pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
----
-# Source: nextcloud/templates/config.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: it-elefebvre-nextcloud-config
-  labels:
-    app.kubernetes.io/name: nextcloud
-    helm.sh/chart: nextcloud-2.5.1
-    app.kubernetes.io/instance: it-elefebvre-nextcloud
-    app.kubernetes.io/managed-by: Helm
-    env: dev
-    version: "2.5.1"
-data:
-  .htaccess: |-
-    # line below if for Apache 2.2
-    <ifModule !mod_authz_core.c>
-    deny from all
-    </ifModule>
-    # lo meto en values
-    # line below if for Apache 2.4
-    <ifModule mod_authz_core.c>
-    Require all denied
-    </ifModule>
-    # section for Apache 2.2 and 2.4
-    <ifModule mod_autoindex.c>
-    IndexIgnore *
-    </ifModule>
-    # Section for Apache 2.2
-    <IfModule !mod_authz_core.c>
-       <IfModule !mod_access_compat.c>
-         <IfModule mod_authz_host.c>
-           Order Allow,Deny
-           Deny from all
-         </IfModule>
-         Satisfy All
-       </IfModule>
-    </IfModule>
-    Header always set Access-Control-Allow-Origin "*"
-    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, REPORT, PROPFIND, MKCALENDAR, MKEVENT"
-    Header always set Access-Control-Allow-Headers "*"
-    # Force to request 200 for options
-    RewriteEngine On
-    RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule .* / [R=200,L]
-  apache-pretty-urls.config.php: |-
-    <?php
-    $CONFIG = array (
-      'htaccess.RewriteBase' => '/',
-    );
-  apcu.config.php: |-
-    <?php
-    $CONFIG = array (
-      'memcache.local' => '\OC\Memcache\APCu',
-    );
-  apps.config.php: |-
-    <?php
-    $CONFIG = array (
-      "apps_paths" => array (
-          0 => array (
-                  "path"     => OC::$SERVERROOT."/apps",
-                  "url"      => "/apps",
-                  "writable" => false,
-          ),
-          1 => array (
-                  "path"     => OC::$SERVERROOT."/custom_apps",
-                  "url"      => "/custom_apps",
-                  "writable" => true,
-          ),
-      ),
-    );
-  autoconfig.php: |-
-    <?php
-    $autoconfig_enabled = false;
-    if (getenv('SQLITE_DATABASE')) {
-        $AUTOCONFIG["dbtype"] = "sqlite";
-        $AUTOCONFIG["dbname"] = getenv('SQLITE_DATABASE');
-        $autoconfig_enabled = true;
-    } elseif (getenv('MYSQL_DATABASE') && getenv('MYSQL_USER') && getenv('MYSQL_PASSWORD') && getenv('MYSQL_HOST')) {
-        $AUTOCONFIG["dbtype"] = "mysql";
-        $AUTOCONFIG["dbname"] = getenv('MYSQL_DATABASE');
-        $AUTOCONFIG["dbuser"] = getenv('MYSQL_USER');
-        $AUTOCONFIG["dbpass"] = getenv('MYSQL_PASSWORD');
-        $AUTOCONFIG["dbhost"] = getenv('MYSQL_HOST');
-        $autoconfig_enabled = true;
-    } elseif (getenv('POSTGRES_DB') && getenv('POSTGRES_USER') && getenv('POSTGRES_PASSWORD') && getenv('POSTGRES_HOST')) {
-        $AUTOCONFIG["dbtype"] = "pgsql";
-        $AUTOCONFIG["dbname"] = getenv('POSTGRES_DB');
-        $AUTOCONFIG["dbuser"] = getenv('POSTGRES_USER');
-        $AUTOCONFIG["dbpass"] = getenv('POSTGRES_PASSWORD');
-        $AUTOCONFIG["dbhost"] = getenv('POSTGRES_HOST');
-        $autoconfig_enabled = true;
-    }
-    if ($autoconfig_enabled) {
-        if (getenv('NEXTCLOUD_TABLE_PREFIX')) {
-            $AUTOCONFIG["dbtableprefix"] = getenv('NEXTCLOUD_TABLE_PREFIX');
-        }
-        $AUTOCONFIG["directory"] = getenv('NEXTCLOUD_DATA_DIR') ?: "/var/www/html/data";
-    }
----
-# Source: nextcloud/templates/nextcloud-pvc.yaml
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: it-elefebvre-nextcloud-nextcloud
-  labels:
-    app.kubernetes.io/name: nextcloud
-    helm.sh/chart: nextcloud-2.5.1
-    app.kubernetes.io/instance: it-elefebvre-nextcloud
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/component: app
-spec:
-  accessModes:
-    - "ReadWriteOnce"
-  resources:
-    requests:
-      storage: "8Gi"
 ---
 # Source: nextcloud/charts/mariadb/templates/master-svc.yaml
 apiVersion: v1
@@ -290,10 +140,12 @@ spec:
         app.kubernetes.io/instance: it-elefebvre-nextcloud
         app.kubernetes.io/component: app
     spec:
+      imagePullSecrets:
+        - name: elefebvre-docker-secret
       containers:
       - name: nextcloud
-        image: "nextcloud:19.0.3-apache"
-        imagePullPolicy: IfNotPresent
+        image: "elefebvreoncontainers/nextcloud:linux-dev-40.1"
+        imagePullPolicy: Always
         env:
         - name: MYSQL_HOST
           value: it-elefebvre-nextcloud-mariadb
@@ -302,23 +154,23 @@ spec:
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-              name: it-elefebvre-nextcloud-db
-              key: db-username
+              name: nextcloud-secrets
+              key: mariadb-username
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: it-elefebvre-nextcloud-db
-              key: db-password
+              name: nextcloud-secrets
+              key: mariadb-password
         - name: NEXTCLOUD_ADMIN_USER
           valueFrom:
             secretKeyRef:
-              name: it-elefebvre-nextcloud
-              key: nextcloud-username
+              name: nextcloud-secrets
+              key: username
         - name: NEXTCLOUD_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: it-elefebvre-nextcloud
-              key: nextcloud-password
+              name: nextcloud-secrets
+              key: password
         - name: NEXTCLOUD_TRUSTED_DOMAINS
           value: lexbox-dev-nextcloud.lefebvre.es
         - name: NEXTCLOUD_DATA_DIR
@@ -375,28 +227,10 @@ spec:
         - name: nextcloud-data
           mountPath: /var/www/html/themes
           subPath: themes
-        - name: nextcloud-config
-          mountPath: /var/www/html/config/.htaccess
-          subPath: .htaccess
-        - name: nextcloud-config
-          mountPath: /var/www/html/config/apache-pretty-urls.config.php
-          subPath: apache-pretty-urls.config.php
-        - name: nextcloud-config
-          mountPath: /var/www/html/config/apcu.config.php
-          subPath: apcu.config.php
-        - name: nextcloud-config
-          mountPath: /var/www/html/config/apps.config.php
-          subPath: apps.config.php
-        - name: nextcloud-config
-          mountPath: /var/www/html/config/autoconfig.php
-          subPath: autoconfig.php
       volumes:
       - name: nextcloud-data
         persistentVolumeClaim:
-          claimName: it-elefebvre-nextcloud-nextcloud
-      - name: nextcloud-config
-        configMap:
-          name: it-elefebvre-nextcloud-config
+          claimName: elefebvre-vol-nextcloud-server-claim
       # Will mount configuration files as www-data (id: 33) for nextcloud
       securityContext:
         fsGroup: 33
@@ -457,14 +291,14 @@ spec:
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: it-elefebvre-nextcloud-mariadb
+                  name: nextcloud-secrets
                   key: mariadb-root-password
             - name: MARIADB_USER
               value: "nextcloud_dev"
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: it-elefebvre-nextcloud-mariadb
+                  name: nextcloud-secrets
                   key: mariadb-password
             - name: MARIADB_DATABASE
               value: "nextcloud_dev"
@@ -513,20 +347,9 @@ spec:
         - name: config
           configMap:
             name: it-elefebvre-nextcloud-mariadb
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-        labels:
-          app: "mariadb"
-          component: "master"
-          release: "it-elefebvre-nextcloud"
-          heritage: "Helm"
-      spec:
-        accessModes:
-          - "ReadWriteOnce"
-        resources:
-          requests:
-            storage: "8Gi"
+        - name: data
+          persistentVolumeClaim:
+            claimName: elefebvre-vol-nextcloud-mdb-claim
 
 NOTES:
 1. Get the nextcloud URL by running:

@@ -209,10 +209,10 @@ externalDatabase:
 
   ## Use a existing secret
   existingSecret:
-    enabled: true
+    enabled: false
     secretName: nextcloud-secrets
-    usernameKey: db_username
-    passwordKey: db_password
+    usernameKey: mariadb-username
+    passwordKey: mariadb-password
 
 ##
 ## MariaDB chart configuration
@@ -242,8 +242,9 @@ mariadb:
     persistence:
       enabled: true
       storageClass: "efs-sc"
-      # accessMode: ReadWriteOnce
-      # size: 8Gi
+      existingClaim: elefebvre-vol-nextcloud-mdb-claim 
+      accessMode: ReadWriteOnce
+      size: 8Gi
 
 postgresql:
   enabled: false
@@ -329,7 +330,7 @@ persistence:
   ## A manually managed Persistent Volume and Claim
   ## Requires persistence.enabled: true
   ## If defined, PVC must be created manually before volume will be bound
-  # existingClaim:
+  existingClaim: elefebvre-vol-nextcloud-server-claim
 
   accessMode: ReadWriteOnce
   size: 8Gi

@@ -67,11 +67,11 @@ googledrive:
 
 nextcloud:
   host: lexbox-dev-nextcloud.lefebvre.es
-  username: oldadmin
-  password: oldadmin_dev
+  username: admin
+  # password: oldadmin_dev
   existingSecret:
     enabled: true
-    secretName: nextcloud-secret
+    secretName: nextcloud-secrets
     usernameKey: username
     passwordKey: password
     smtpUsernameKey: smtp_username
@@ -93,7 +93,7 @@ mariadb:
       forcePassword: true
 
   replication:
-    enabled: true
+    enabled: false
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default
