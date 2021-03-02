@@ -122,6 +122,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API
                   options.ConfigPath = "/Failing";
                   options.NotFilteredPaths.AddRange(new[] { "/hc", "/liveness" });
               })
+            .UseKestrel(options =>
+            {
+                /*
+                 * This change was added because there is a restriction when a file bigger than 30mb is uploaded, the Http client throws an exception. 
+                 * I faced this issue on Mac, for that reason I added the change for Kestrel, if the same issue happens on windows please check the next link
+                 * https://stackoverflow.com/questions/60111106/unable-to-uploading-large-file-in-net-core3-1-web-api-service
+                */
+
+                options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(60);
+                options.Limits.MaxRequestBodySize = null;
+            })
               .UseStartup<Startup>()
               // .UseApplicationInsights()
               .UseContentRoot(Directory.GetCurrentDirectory())
