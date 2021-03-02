@@ -70,9 +70,27 @@ export const setIdEvent = (idEvent) => ({
     payload: idEvent,
 })
 
+export const setNewIdActuation = (idActuation) => ({
+    type: ActionTypes.LEXON_NEW_IDACTUATION,
+    payload: idActuation,
+})
+
+export const setNewIdEvent = (idEvent) => ({
+    type: ActionTypes.LEXON_NEW_IDEVENT,
+    payload: idEvent,
+})
+
 export const setTitle = (title) => ({
     type: ActionTypes.LEXON_TITLE,
     payload: title,
+})
+
+export const resetIdActuation = () => ({
+    type: ActionTypes.LEXON_RESET_IDACTUATION   
+})
+
+export const resetIdEvent = () => ({
+    type: ActionTypes.LEXON_RESET_IDEVENT
 })
 
 export default {
@@ -90,5 +108,7 @@ export default {
     setToken,
     setTitle,
     setIdEvent,
-    setIdActuation
+    setIdActuation,
+    resetIdActuation,
+    resetIdEvent
 };

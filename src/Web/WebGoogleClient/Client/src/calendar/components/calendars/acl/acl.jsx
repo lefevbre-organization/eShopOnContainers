@@ -35,10 +35,10 @@ export class Acl extends React.Component {
         ]
 
         this.roleData = [
-            { "Id": "freeBusyReader", "Role": "freeBusyReader" },
-            { "Id": "reade", "Role": "reader" },
-            { "Id": "writer", "Role": "writer" },
-            { "Id": "owner", "Role": "owner" }
+            { "Id": "freeBusyReader", "Role": i18n.t('acl.freebusyreader') },
+            { "Id": "reade", "Role": i18n.t('acl.reader')},
+            { "Id": "writer", "Role": i18n.t('acl.writer') },
+            { "Id": "owner", "Role": i18n.t('acl.owner') }
         ];
     }
 
@@ -128,6 +128,11 @@ export class Acl extends React.Component {
     onDataBinding(items) {
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
+                if(
+                    items[i].id.split('@')[1] === 'group.calendar.google.com'
+                ) {
+                    i = 1;
+                }
                 let acl = items[i];
 
                 this.dataACLSource.push({
@@ -220,7 +225,7 @@ export class Acl extends React.Component {
                             cssClass='e-flat e-primary'
                             floatLabelType="Always"
                             onClick={this.onAddPermission}
-                        >Add</ButtonComponent>
+                        >{i18n.t('acl.add')}</ButtonComponent>
                     </div>
                 </div>
             </div>

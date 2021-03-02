@@ -29,7 +29,10 @@ import { clearSelected, setSelected } from '../actions/messages';
 import {
  setGUID,
  setSign,
- setDataBase
+ setDataBase,
+ resetIdActuation,
+ resetIdEvent
+
 } from '../actions/lexon';
 
 //import { getSelectedFolder } from '../selectors/folders';
@@ -339,7 +342,11 @@ class Calendar extends Component {
               <div id='mainnav-app' />
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
               <div id='target' className={styles.app}>
-
+                  <Spinner
+                    visible={this.layoutIframeNewEventView}
+                    className={styles.spinnerCalendar}
+                    pathClassName={styles.spinnerPath}
+                  />
                   <SideBar
                       collapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
@@ -371,7 +378,11 @@ class Calendar extends Component {
 
                       <div className='schedule-control-section'>
                           <div className='control-section'>
-                              <div className='control-wrapper'>
+                              <div className={`
+                                ${!this.layoutIframeNewEventView
+                                      ? ''
+                                      : styles['hidden']
+                                  } `}>
                                 <ScheduleComponent
                                       //delayUpdate='false'
                                     //   timezone='Europe/Madrid'
@@ -457,8 +468,8 @@ class Calendar extends Component {
                         </div>
 
                          <ToastComponent ref={toast => {
- this.toastObj = toast;
-}}
+                                this.toastObj = toast;
+                            }}
                             id='toast_pos'
                             content='Action successfully completed.'
                             position={this.position}
@@ -599,6 +610,12 @@ class Calendar extends Component {
     }
 
     TokensFlows() {
+        //var closing = window.close;
+        //window.close = function () {
+        //    console.log('window close fired!');
+        //    closing();
+        //};
+        
         if (window != window.top) {
             this.layoutIframe = true;
         }
@@ -606,8 +623,14 @@ class Calendar extends Component {
         if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
         } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
+            console.log('TokensFlows', this.props.lexon.idActuation)
             this.layoutIframeNewEventView = true;
         }
+
+        this.props.resetIdActuation();
+        this.props.resetIdEvent();
+
+
     }
 
     convertUnicode(input) {
@@ -875,7 +898,7 @@ class Calendar extends Component {
                         {subjectStr}
                         {colorExist ? (
                             <span style={{backgroundColor: props.EventType.color, marginTop: '3px'}}
-    className={`${styles.dot} ${styles.floatleft}`}/>
+                            className={`${styles.dot} ${styles.floatleft}`}/>
                         ) : (
                                 ''
                             )}
@@ -1220,6 +1243,8 @@ class Calendar extends Component {
     }
 
     componentWillUnmount() {
+
+        //console.log('#################close################')
         //window.removeEventListener(
         //    'EventClassified',
         //    this.handleClassificatedEvent
@@ -2210,6 +2235,7 @@ class Calendar extends Component {
             startTime: new Date(),
             endTime: endTimeDate
         };
+        console.log('handleScheduleOpenNewEventEditor', this.state.schedule.openEditor)
         this.state.schedule.openEditor(cellData, 'Add');
     }
 
@@ -2362,7 +2388,9 @@ const mapDispatchToProps = dispatch => ({
                 selectCalendar,
                 setDataBase,
                 setGUID: setGUID,
-                setSign: setSign
+                setSign: setSign,
+                resetIdActuation,
+                resetIdEvent
             },
             dispatch
         ),
@@ -2391,7 +2419,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
     close: application => dispatchProps.close(stateProps.application),
     setError: (err, msg) => dispatchProps.setError(err, msg),
-    resetIdEmail: () => dispatchProps.resetIdEmail(),
+    //  resetIdEmail: () => dispatchProps.resetIdEmail(),
+      resetIdActuation: () => dispatchProps.resetIdActuation(),
+      resetIdEvent: () => dispatchProps.resetIdEvent(),
     setCaseFile: casefile => dispatchProps.setCaseFile(casefile)
   });
 

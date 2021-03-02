@@ -130,6 +130,7 @@
     "sharewithpeople": "Share with people"
   },
   "acl": {
+    "add": "Add",
     "permissions": "Permissions",
     "emailaddresses": "Mail address",
     "freebusyreader": "freeBusyReader",

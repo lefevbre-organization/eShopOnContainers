@@ -5,8 +5,8 @@ import TopBarButton from './top-bar-button';
 
 export const ButtonReply = ({t, outboxEmpty, replyMessage}) => (
   outboxEmpty && (
-    <span isotip={t('topBar.replyAll')} isotip-position='bottom' isotip-size='small'>
-      <TopBarButton onClick={replyMessage}>reply_all</TopBarButton>
+    <span isotip={t('topBar.reply')} isotip-position='bottom' isotip-size='small'>
+      <TopBarButton onClick={replyMessage}>reply</TopBarButton>
     </span>)
 );
 

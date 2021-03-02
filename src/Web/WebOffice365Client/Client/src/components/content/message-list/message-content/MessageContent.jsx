@@ -277,7 +277,7 @@ export class MessageContent extends Component {
                   iframe.contentDocument.body.appendChild(AttachmentDiv);
                 } else {
                   const bd = body.innerHTML.replace(
-                    `cid:${attach[0].contentId}`,
+                    `cid:${attach[i].contentId}`,
                     'data:image/png;base64, ' + dataBase64Rep
                   );
                   body.innerHTML = bd;

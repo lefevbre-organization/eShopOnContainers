@@ -152,6 +152,84 @@ export function replyMessage(dispatch, originalMessage, sign = '') {
     originalMessage.replyTo && originalMessage.replyTo.length > 0
       ? originalMessage.replyTo
       : originalMessage.from;
+  let to;
+  if(originalMessage.folder && originalMessage.folder.fullName === 'INBOX') {
+    to = replyTo;
+  } else {
+    to = recipients
+    .filter(r => r.type === 'To')
+    .map(recipientMapper);
+  }
+  const attachments = [];
+  const subject = `${
+    originalMessage.subject.toLowerCase().indexOf('re:') === 0 ? '' : 'Re: '
+  }${originalMessage.subject}`;
+  const formattedDate = new Date(originalMessage.receivedDate).toLocaleString(
+    navigator.language,
+    {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }
+  );
+
+  const t = i18n.t.bind(i18n);
+  let content = '';
+
+  if (sign && sign !== '') {
+    content = `
+    <br/><br/><br/><br/>
+    ${sign}
+    <p></p>
+    <hr/>
+    <p>
+      <b>${t('replyAction.From')}:</b> ${originalMessage.from.join(', ')}<br/>
+      <b>${t('replyAction.Date')}:</b> ${formattedDate}<br/>
+      <b>${t('replyAction.Subject')}:</b> ${originalMessage.subject}<br/>
+    </p>
+    <br/>
+    ${sanitize.sanitize(originalMessage.content)}
+  `;
+  } else {
+    content = `
+      <p></p>
+      <hr/>
+      <p>
+        <b>${t('replyAction.From')}:</b> ${originalMessage.from.join(', ')}<br/>
+        <b>${t('replyAction.Date')}:</b> ${formattedDate}<br/>
+        <b>${t('replyAction.Subject')}:</b> ${originalMessage.subject}<br/>
+      </p>
+      <br/>
+      ${sanitize.sanitize(originalMessage.content)}
+    `;
+  }
+
+  dispatch(
+    editMessage({
+      inReplyTo,
+      references,
+      to,
+      attachments,
+      subject,
+      content
+    })
+  );
+}
+
+export function replyMessageAll(dispatch, originalMessage, sign = '') {
+  const recipients = [...originalMessage.recipients];
+  const recipientMapper = r => r.address;
+  const inReplyTo = [originalMessage.messageId];
+  const references = originalMessage.references.concat([
+    originalMessage.messageId
+  ]);
+  const replyTo =
+    originalMessage.replyTo && originalMessage.replyTo.length > 0
+      ? originalMessage.replyTo
+      : originalMessage.from;
   const to = recipients
     .filter(r => r.type === 'To')
     .map(recipientMapper)
@@ -218,6 +296,8 @@ export function replyMessage(dispatch, originalMessage, sign = '') {
     })
   );
 }
+
+
 
 export function forwardMessage(dispatch, originalMessage, sign = '') {
   const t = i18n.t.bind(i18n);

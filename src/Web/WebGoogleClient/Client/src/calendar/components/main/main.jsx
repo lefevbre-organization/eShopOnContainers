@@ -273,7 +273,6 @@ export class Main extends Component {
         }
     }
 
-
     TokensFlows() {
         if (window != window.top)
         {
@@ -2275,6 +2274,7 @@ export class Main extends Component {
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
+                                                dateFormat='dd/M/yyyy'
                                                 allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
@@ -2300,7 +2300,7 @@ export class Main extends Component {
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
-                                                    <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Month' dateFormat='MMMM yyyy' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
@@ -2382,8 +2382,6 @@ export class Main extends Component {
                             </article>
                         </section>
                     </Fragment>
-
-
                     {this.layoutIframe && this.layoutIframeNewEventView || this.layoutIframeEditEventView ? (
                     <style jsx>{`
                         .e-dlg-overlay {
