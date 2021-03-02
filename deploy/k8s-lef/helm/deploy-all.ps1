@@ -39,7 +39,7 @@ Param(
     [parameter(Mandatory=$false)][string]$aksName="",
     [parameter(Mandatory=$false)][bool]$useLocalImages=$false,
     [parameter(Mandatory=$false)][string]$aksRg="",
-    [parameter(Mandatory=$false)][string]$imageTag="latest",
+    [parameter(Mandatory=$false)][string]$imageTag="linux-dev-42.1",
     [parameter(Mandatory=$false)][bool]$useLocalk8s=$false,
     [parameter(Mandatory=$false)][bool]$useMesh=$false,
     [parameter(Mandatory=$false)][string][ValidateSet('Always','IfNotPresent','Never', IgnoreCase=$false)]$imagePullPolicy="Always",
@@ -73,7 +73,7 @@ function Install-Chart  {
     }
 
     if ($chart -ne "eshop-common" -or $customRegistry)  {       # eshop-common is ignored when no secret must be deployed
-        $command = "install $releaseName $options $chart"
+        $command = "upgrade --install $releaseName $options $chart"
         Write-Host "helm $command" -ForegroundColor Blue
         Invoke-Expression 'cmd /c "helm $command"'
     }
@@ -125,14 +125,14 @@ $clientYaml="react_dev.yaml"
 if ($sslSupport -eq "staging") {
     $envYaml="pre.yaml"
     $clientYaml="react_pre.yaml"
-    $sslEnabled=$true
+    # $sslEnabled=$true
     $tlsSecretName="efef-letsencrypt-staging"
     $sslIssuer="letsencrypt-staging"
 }
 elseif ($sslSupport -eq "prod") {
     $envYaml="pro.yaml"
     $clientYaml="react_pro.yaml"
-    $sslEnabled=$true
+    # $sslEnabled=$true
     $tlsSecretName="elef-letsencrypt-prod"
     $sslIssuer="letsencrypt-prod"
 }

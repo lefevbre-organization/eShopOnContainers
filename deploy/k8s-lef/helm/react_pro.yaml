@@ -1,7 +1,7 @@
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRO'
   window.SHOW_EXPERIMENTAL='1'
-  window.RELEASE = 'RC 0.37.2'
+  window.RELEASE = 'RC 0.42.2'
   window.PATH_BASE='https://lexbox'
   window.PATH_GW_ACC='-apigwacc.lefebvre.es/api/v2'
   window.PATH_GW_LEX='-apigwlex.lefebvre.es/api/v1'

@@ -4,6 +4,6 @@ description: Imap Server
 home: https://github.com/lefevbre-organization/eShopOnContainers
 icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
 keywords: ["imap", "lexon", "centinela", "infraestructure", "Service"]
-version: 0.41
+version: 0.42
 sources:
   - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src
