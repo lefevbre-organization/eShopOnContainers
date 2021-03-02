@@ -65,4 +65,4 @@ configValues: |
   window.URL_REDIRECT= 'https://lexbox-webgraph.lefebvre.es'
   window.URL_LEXON ='https://front.lex-on.es/'
   window.SHOW_EXPERIMENTAL='0'
-  window.RELEASE= 'RC 0.42'
+  window.RELEASE= 'RC 0.42.1'
