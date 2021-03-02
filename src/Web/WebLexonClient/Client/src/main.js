@@ -211,7 +211,7 @@ class Main extends Component {
 
       dbStore.saveMessage({ id: event.detail.extMessageId, attachments, raw: event.detail.raw });
       //raw = null;
-      event.detail.raw = null;
+      //event.detail.raw = null;
     }
 
     if(event.detail.chkselected && checked) {
