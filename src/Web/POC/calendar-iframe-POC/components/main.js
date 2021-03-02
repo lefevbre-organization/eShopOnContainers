@@ -147,8 +147,8 @@ import './App.css';
             </DialogComponent>
 
             <div id="calendar" className='col-lg-6 control-section'> 
-                <div className='control-wrapper'>
-                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2In0.8f30OHW3KtisOVjUASxjKYSHOIIaRqnvA593aaAfYgM/?prov=IM0"
+                {/* <div className='control-wrapper'>
+                    <Iframe url="https://lexbox-test-webimap.lefebvre.es/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2In0.8f30OHW3KtisOVjUASxjKYSHOIIaRqnvA593aaAfYgM/?prov=IM0"
                         width="754px"
                         height="425px"
                         id="myId"
@@ -160,7 +160,7 @@ import './App.css';
                         //loading = "cargando..."
                         position="relative" 
                         />
-                </div>
+                </div> */}
             </div> 
         </div>); 
     }

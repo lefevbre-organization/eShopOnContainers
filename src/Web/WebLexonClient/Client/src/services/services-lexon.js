@@ -570,7 +570,11 @@ export const getRawAddon = async (addonData) => {
 };
 
 export const getUserContacts = async (bbdd, idUser) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all`;
+  let url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
+
   const body = {
     bbdd,
     idUser,
@@ -597,7 +601,10 @@ export const getUserContacts = async (bbdd, idUser) => {
 };
 
 export const getActuationTypes = async (bbdd, idUser) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/types?env=${window.currentEnv}`;
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/types`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
 
   try {
     const response = await fetch(url, {
@@ -623,9 +630,14 @@ export const getActuations = async (
     pageSize,
     page
 ) => {
+  console.log("getActuations")
+
   const ps = pageSize || 100;
   const cp = page || 1;
-  let url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}&env=${window.currentEnv}`;
+  let url = `https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Actuations/${user}/${bbdd}/${typeId}?pageSize=${ps}&pageIndex=${cp}`;
+  if(window.currentEnv) {
+    url = `${url}&env=${window.currentEnv}`
+  }
   if(search !== '') {
     url = `${url}&search=${search}`;
   }
@@ -657,8 +669,12 @@ export const getActuations = async (
 };
 
 export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/appointments/${eventId}/relation/${actuationId}?env=${window.currentEnv}`;
+  console.log("addEventToActuation")
 
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${idUser}/${bbdd}/appointments/${eventId}/relation/${actuationId}`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -677,7 +693,12 @@ export const addEventToActuation = async (bbdd, idUser, eventId, actuationId) =>
 };
 
 export const createAppoinment = async (bbdd, user, event) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/appointments?env=${window.currentEnv}`;
+  console.log("createAppoinment")
+
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/appointments`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
 
   try {
     const response = await fetch(url, {
@@ -692,6 +713,17 @@ export const createAppoinment = async (bbdd, user, event) => {
         idEvent: event.Guid,
         startDate: event.StartTime,
         endDate: event.EndTime,
+        calendar: {
+          title: event.calendar.summary,
+          description: '',
+          color: event.calendar.backgroundColor,
+          fgColor: event.calendar.foregroundColor
+        },
+        eventType: event.EventType?{
+          name: event.EventType.eventTypeName,
+          color: event.EventType.eventTypeColor
+        }:undefined,
+        reminders: event.reminders && event.reminders.overrides?event.reminders.overrides.map( e => ({ method: e.method, minutesBefore: e.minutes })):[]
       }),
     });
     const result = await response.json();
@@ -703,7 +735,12 @@ export const createAppoinment = async (bbdd, user, event) => {
 };
 
 export const createActuation = async (bbdd, user, st, et, actuation, subject) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/actions?env=${window.currentEnv}`;
+  console.log("createActuation")
+
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user.idUser}/${bbdd}/actions`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
 
   try {
     const response = await fetch(url, {
@@ -730,8 +767,12 @@ export const createActuation = async (bbdd, user, st, et, actuation, subject) =>
 
 
 export const getActuationCategories = async (bbdd, user) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/categories?env=${window.currentEnv}`;
+  console.log("getActuationCategories")
 
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/categories`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -749,7 +790,13 @@ export const getActuationCategories = async (bbdd, user) => {
 };
 
 export const getEventClassifications = async (bbdd, user, eventId) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/${eventId}?env=${window.currentEnv}&pageSize=100&pageIndex=1`;
+  console.log("getEventClassifications")
+
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/${eventId}?pageSize=100&pageIndex=1`;
+  if(window.currentEnv) {
+    url = `${url}&env=${window.currentEnv}`
+  }
+
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -766,7 +813,12 @@ export const getEventClassifications = async (bbdd, user, eventId) => {
 };
 
 export const removeEventClassifications = async (bbdd, user, idActuation) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/relation/${idActuation}/remove?env=${window.currentEnv}`;
+  console.log("removeEventClassifications")
+
+  let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments/relation/${idActuation}/remove`;
+  if(window.currentEnv) {
+    url = `${url}?env=${window.currentEnv}`
+  }
 
   try {
     const response = await fetch(url, {
@@ -785,6 +837,7 @@ export const removeEventClassifications = async (bbdd, user, idActuation) => {
 };
 
 export const getEvents = async (bbdd, user, fromDate, toDate) => {
+  console.log("getEvents")
   // fromDate and toDate format: YYYY-MM-DD
   let url = `${window.API_GATEWAY}/api/v1/lex/Actuations/${user}/${bbdd}/appointments?pageSize=0&pageIndex=0`;
   if(fromDate) {

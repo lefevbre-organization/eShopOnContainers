@@ -58,7 +58,10 @@ export const INITIAL_STATE = {
     guid: null,
     idMail: null,
     token: null,
-    idActuation: null
+    idActuation: null,
+    idEvent: null,
+    newIdActuation: null,
+    newIdEvent: null,
   },
   currentUser: {
     idClienteNavision: null,

@@ -273,7 +273,6 @@ export class Main extends Component {
         }
     }
 
-
     TokensFlows() {
         if (window != window.top)
         {
@@ -735,8 +734,6 @@ export class Main extends Component {
                     reminders = event.reminders.overrides;
                 }
 
-                console.log('onDataBinding ===>', reminders);
-
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -773,7 +770,6 @@ export class Main extends Component {
         if(this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
-
 
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
@@ -1340,8 +1336,8 @@ export class Main extends Component {
                 head.classList.add('hidden');
             }
 
-            debugger
-            this.selectedEvent = {...args.data};
+            const calendar = this.props.calendarsResult.calendars.find( c => c.id === args.data.CalendarId);
+            this.selectedEvent = { ...args.data, calendar };
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;
@@ -1729,7 +1725,10 @@ export class Main extends Component {
                         const dataEvt = this.scheduleObj.dataModule.dataManager.dataSource.json[this.scheduleObj.dataModule.dataManager.dataSource.json.length-1];
                         dataEvt.Id = result.id;
 
-                        this.selectedEvent = { ...this.selectedEvent, Subject: result.summary, Id: result.id }
+                        this.selectedEvent = { ...this.selectedEvent, Subject: result.summary, Id: result.id, Reminders: result.reminders }
+                        if(result.extendedProperties) {
+                            this.selectedEvent.EventType = { ...result.extendedProperties.private }
+                        }
 
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
@@ -2275,6 +2274,7 @@ export class Main extends Component {
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
+                                                dateFormat='dd/M/yyyy'
                                                 allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
@@ -2300,7 +2300,7 @@ export class Main extends Component {
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
-                                                    <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Month' dateFormat='MMMM yyyy' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
@@ -2382,8 +2382,6 @@ export class Main extends Component {
                             </article>
                         </section>
                     </Fragment>
-
-
                     {this.layoutIframe && this.layoutIframeNewEventView || this.layoutIframeEditEventView ? (
                     <style jsx>{`
                         .e-dlg-overlay {

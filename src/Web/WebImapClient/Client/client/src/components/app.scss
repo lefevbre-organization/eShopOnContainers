@@ -17,6 +17,10 @@ body {
   border-color: #001978 !important;
 }
 
+.hidden{
+    display: none;
+}
+
 
 .connector {
   background-color: #ffffff;
@@ -85,6 +89,15 @@ body {
         .spinnerPath {
             stroke: $global-spinner-color;
         }
+    }
+
+    .spinnerCalendar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: map-get($z-index, thermosphere);
     }
 
     .productpanel {

@@ -130,6 +130,7 @@
     "sharewithpeople": "Compartir con determinadas personas"
   },
   "acl": {
+    "add": "Añadir",
     "permissions": "Permisos",
     "emailaddresses": "Dirección de correo electrónico",
     "freebusyreader": "Ver solo libre/ocupado",
