@@ -746,8 +746,7 @@ export class Main extends Component {
     }
 
     handleGetUserFromLexonConnector(event) {
-        // const { userId } = this.props.lexon;
-        const userId = 'E1621396'
+        const { userId } = this.props.lexon;
         if (userId) {
             this.sendMessagePutUser(userId);
         }
