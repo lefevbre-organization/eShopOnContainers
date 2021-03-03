@@ -203,5 +203,67 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             return Ok(file);
         }
 
+        [HttpPatch("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RenameElement(string LefebvreCredential, string elementId, string currentName, string newName)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (string.IsNullOrEmpty(elementId))
+                return BadRequest("El ID del elemento es requerido");
+
+            if (string.IsNullOrEmpty(currentName))
+                return BadRequest("El nombre actual del elemento es requerido");
+
+            if (string.IsNullOrEmpty(newName))
+                return BadRequest("El nuevo nombre del elemento es requerido");
+
+
+            var file = await _service.RenameElement(LefebvreCredential, elementId, currentName, newName);
+            return Ok(file);
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAvailableExportTypes(string LefebvreCredential, string fileId)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (string.IsNullOrEmpty(fileId))
+                return BadRequest("El ID del archivo es requerido");
+
+
+            var file = await _service.GetAvailableExportTypes(LefebvreCredential, fileId);
+            return Ok(file);
+        }
+
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ExportGoogleWorkspaceFile(string LefebvreCredential, string fileId, string mimeType)
+        {
+
+            if (string.IsNullOrEmpty(LefebvreCredential))
+                return BadRequest("La Credencial de Lefebvre es requerida");
+
+            if (string.IsNullOrEmpty(fileId))
+                return BadRequest("El ID del archivo es requerido");
+
+            if (string.IsNullOrEmpty(mimeType))
+                return BadRequest("El mimeType del archivo es requerido");
+
+
+            var file = await _service.ExportFile(LefebvreCredential, fileId, mimeType);
+            return Ok(file);
+        }
+
+
     }
 }

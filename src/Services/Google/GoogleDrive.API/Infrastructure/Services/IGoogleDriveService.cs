@@ -20,6 +20,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
         Task<Result<GoogleDriveResonse>> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId, string sessionId);
         Task<Result<DownloadedFile>> DownloadFile(string LefebvreCredential, string fileId);
         Task<Result<GoogleDriveResonse>> MoveElement(string LefebvreCredential, string elementId, string parentId, string destinationId);
+        Task<Result<GoogleDriveResonse>> RenameElement(string LefebvreCredential, string elementId, string currentName, string newName);
+        Task<Result<GoogleDriveExportMimeTypes>> GetAvailableExportTypes(string LefebvreCredential, string fileId);
+        Task<Result<DownloadedFile>> ExportFile(string LefebvreCredential, string fileId, string mimeType);
 
 
     }

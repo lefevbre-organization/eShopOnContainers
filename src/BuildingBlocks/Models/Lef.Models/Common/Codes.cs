@@ -164,6 +164,8 @@
             public static readonly string UploadFile = "GD08";
             public static readonly string DownloadFile = "GD09";
             public static readonly string MoveElement = "GD10";
+            public static readonly string RenameElement = "GD11";
+            public static readonly string ExportMimeType = "GD12";
         }
 
         public static class GoogleAccount

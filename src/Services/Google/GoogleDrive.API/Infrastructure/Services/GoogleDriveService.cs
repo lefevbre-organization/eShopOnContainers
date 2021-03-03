@@ -600,7 +600,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     if (get.IsSuccessStatusCode)
                     {
                         var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
-                        TraceInfo(result.infos, "nuevo archivo subido exitosamente");
+                        TraceInfo(result.infos, "elemento movido exitosamente");
                         result.data = responseMessage;
                     }
                     else
@@ -613,6 +613,265 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
             catch (Exception ex)
             {
                 TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.MoveElement, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<GoogleDriveResonse>> RenameElement(string LefebvreCredential, string elementId, string currentName, string newName)
+        {
+            Result<GoogleDriveResonse> result = new Result<GoogleDriveResonse>();
+
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                if (currentName.Contains("."))
+                {
+                    if (!newName.Contains("."))
+                    {
+                        newName += "."+ currentName.Split(".")[1];
+                    }
+                }
+
+                using (HttpClient client = new HttpClient())
+
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var get = await client.PatchAsync($"{_settings.Value.GoogleDriveApi}/files/{elementId}", new StringContent("{'name':'"+ newName+ "'}", Encoding.UTF8, "application/json"));
+
+
+
+                    if (get.IsSuccessStatusCode)
+                    {
+                        var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
+                        TraceInfo(result.infos, "elemento editado exitosamente");
+                        result.data = responseMessage;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<GoogleDriveResonse>> GetFile(string LefebvreCredential, string elementId)
+        {
+            Result<GoogleDriveResonse> result = new Result<GoogleDriveResonse>();
+
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+              
+                using (HttpClient client = new HttpClient())
+
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var get = await client.GetAsync($"{_settings.Value.GoogleDriveApi}/files/{elementId}");
+
+                    if (get.IsSuccessStatusCode)
+                    {
+                        var responseMessage = JsonConvert.DeserializeObject<GoogleDriveResonse>(await get.Content.ReadAsStringAsync());
+                        TraceInfo(result.infos, "elemento encontrado exitosamente");
+                        result.data = responseMessage;
+                    }
+                    else
+                    {
+                        if(get != null)
+                        {
+                            var resultMessage =  get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new GoogleDriveResonse()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response;
+                            
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                        }
+                        else
+                        {
+                            
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                        }
+                       
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<GoogleDriveExportMimeTypes>> GetAvailableExportTypes(string LefebvreCredential, string elementId)
+        {
+            Result<GoogleDriveExportMimeTypes> result = new Result<GoogleDriveExportMimeTypes>();
+
+            try
+            {
+
+                string[] driveMimeTypes = new string[] { "application/vnd.google-apps.document", "application/vnd.google-apps.spreadsheet", "application/vnd.google-apps.drawing", "application/vnd.google-apps.presentation" , "application/vnd.google-apps.script" };
+
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                var fileInfo = await GetFile(LefebvreCredential, elementId);
+
+                if (fileInfo.data.error == null) {
+                    var mimeTypeAllowed = driveMimeTypes.FirstOrDefault(x => fileInfo.data.mimeType == x);
+                    if (!string.IsNullOrEmpty(mimeTypeAllowed))
+                    {
+                        GoogleDriveExportMimeTypes response = new GoogleDriveExportMimeTypes();
+                        response.mimeTypes = new List<string>();
+                        switch (mimeTypeAllowed)
+                        {
+                            case "application/vnd.google-apps.document":
+                                response.mimeTypes.Add("text/html");
+                                response.mimeTypes.Add("application/zip");
+                                response.mimeTypes.Add("text/plain");
+                                response.mimeTypes.Add("application/rtf");
+                                response.mimeTypes.Add("application/vnd.oasis.opendocument.text");
+                                response.mimeTypes.Add("application/pdf");
+                                response.mimeTypes.Add("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                                response.mimeTypes.Add("application/epub+zip");
+                                break;
+                            case "application/vnd.google-apps.spreadsheet":
+                                response.mimeTypes.Add("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                                response.mimeTypes.Add("application/x-vnd.oasis.opendocument.spreadsheet");
+                                response.mimeTypes.Add("application/pdf");
+                                response.mimeTypes.Add("text/csv");
+                                response.mimeTypes.Add("text/tab-separated-values");
+                                break;
+                            case "application/vnd.google-apps.drawing":
+                                response.mimeTypes.Add("image/jpeg");
+                                response.mimeTypes.Add("image/png");
+                                response.mimeTypes.Add("image/svg+xml");
+                                response.mimeTypes.Add("application/pdf");
+                                break;
+                            case "application/vnd.google-apps.presentation":
+                                response.mimeTypes.Add("application/vnd.openxmlformats-officedocument.presentationml.presentation");
+                                response.mimeTypes.Add("application/vnd.oasis.opendocument.presentation");
+                                response.mimeTypes.Add("application/pdf");
+                                response.mimeTypes.Add("text/plain");
+                                break;
+                            case "application/vnd.google-apps.script":
+                                response.mimeTypes.Add("application/vnd.google-apps.script+json");
+                                break;
+                        }
+                        TraceInfo(result.infos, "formatos encontrados exitosamente");
+                        result.data = response;
+                    }
+                    else
+                    {
+                        TraceError(result.errors, new GoogleDriveDomainException("El mime type del archivo consultado no pertenece a Google Workspace"), Codes.GoogleDrive.ExportMimeType, Codes.Areas.Google);
+                    }
+                        
+                }
+                else
+                {
+                    result.data = new GoogleDriveExportMimeTypes() { error = fileInfo.data.error };
+                    result.errors = fileInfo.errors;
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.ExportMimeType, Codes.Areas.Google);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<DownloadedFile>> ExportFile(string LefebvreCredential, string fileId, string mimeType)
+        {
+            Result<DownloadedFile> result = new Result<DownloadedFile>();
+            try
+            {
+                var resultToken = await GetToken(LefebvreCredential);
+                if (resultToken.errors?.Count > 0 || resultToken.data == null)
+                {
+                    AddResultTrace(resultToken, result);
+                    return result;
+                }
+
+                var fileData = await GetAvailableExportTypes(LefebvreCredential, fileId);
+
+                if(fileData.errors.Count() <= 0)
+                {
+                    using (HttpClient client = new HttpClient())
+
+                    {
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultToken.data);
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                        var get = await client.GetAsync($"{_settings.Value.GoogleDriveApi}/files/{fileId}/export?mimeType={mimeType}");
+
+                        if (get.Content != null)
+                        {
+                            var memory = new MemoryStream();
+                            await get.Content.CopyToAsync(memory);
+                            var resultMessage = await get.Content.ReadAsStringAsync();
+
+                            DownloadedFile downloadedFile = new DownloadedFile();
+                            downloadedFile.mimeType = get.Content.Headers.ContentType.MediaType;
+                            downloadedFile.content = Convert.ToBase64String(memory.ToArray());
+                            result.data = downloadedFile;
+
+                        }
+                        if (get.IsSuccessStatusCode)
+                        {
+                            TraceInfo(result.infos, "archivo descargado exitosamente");
+                        }
+                        else
+                        {
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                        }
+                    }
+                }
+                else
+                {
+                    TraceError(result.errors, new GoogleDriveDomainException("El archivo solicitado no pertence a Google Workspace por lo que no es posible exportarlo"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                }
+
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                TraceError(result.errors, new GoogleDriveDomainException("Error", ex), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
             }
 
             return result;
