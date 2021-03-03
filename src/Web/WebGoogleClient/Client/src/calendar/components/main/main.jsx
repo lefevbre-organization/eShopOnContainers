@@ -862,11 +862,16 @@ export class Main extends Component {
 
         //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
+        let obj = this;
+
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
         }
 
-        let obj = this;
+        if(obj.layoutIframeNewEventView) {
+            value = 1000;
+        }
+        
         setTimeout(function () {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
