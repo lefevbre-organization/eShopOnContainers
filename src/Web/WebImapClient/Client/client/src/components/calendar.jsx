@@ -1077,8 +1077,8 @@ class Calendar extends Component {
     }
 
     handleGetUserFromLexonConnector(event) {
-        // const { userId } = this.props.lexon;
-        const userId = 'E1621396';
+        const { userId } = this.props.lexon;
+        // const userId = 'E1621396';
         if (userId) {
             this.sendMessagePutUser(userId);
         }
