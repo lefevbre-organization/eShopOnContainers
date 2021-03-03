@@ -48,7 +48,6 @@ configValues: |
 
   window.API_SIGN_GATEWAY = 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice'
   window.API_UTILS_GATEWAY = 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils'
-  window.URL_GET_ACCOUNTS = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
   window.URL_GET_USER = 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
   window.API_GATEWAY_LEX = 'https://lexbox-test-apigwlex.lefebvre.es'
   window.API_GATEWAY_CEN = 'https://lexbox-test-apigwcen.lefebvre.es'
