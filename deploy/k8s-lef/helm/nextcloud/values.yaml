@@ -209,7 +209,7 @@ externalDatabase:
 
   ## Use a existing secret
   existingSecret:
-    enabled: false
+    enabled: false #si esta activo no se generar secreto propio
     secretName: nextcloud-secrets
     usernameKey: mariadb-username
     passwordKey: mariadb-password

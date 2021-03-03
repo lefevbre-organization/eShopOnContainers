@@ -3,7 +3,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "nextcloud.fullname" . }}-nextcloud
+  name: {{ template "nextcloud.fullname" . }}-pvc
   labels:
     app.kubernetes.io/name: {{ include "nextcloud.name" . }}
     helm.sh/chart: {{ include "nextcloud.chart" . }}

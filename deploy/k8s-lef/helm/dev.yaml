@@ -68,9 +68,9 @@ googledrive:
 nextcloud:
   host: lexbox-dev-nextcloud.lefebvre.es
   username: admin
-  # password: oldadmin_dev
+  password: admin_dev
   existingSecret:
-    enabled: true
+    enabled: false
     secretName: nextcloud-secrets
     usernameKey: username
     passwordKey: password
@@ -79,17 +79,17 @@ nextcloud:
 
 mariadb:
   enabled: true
-  existingSecret: nextcloud-secrets
+  # existingSecret: nextcloud-secrets
   db:
     name: nextcloud_dev
     user: nextcloud_dev
-    # password: oldelefebvre_dev_1234
+    password: oldelefebvre_dev_1234
     # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
     rootUser: 
-      # password: OLD_sad324_VX_Zaq12
+      password: OLD_sad324_VX_Zaq12
       forcePassword: true
     replication:
-      # password: OLD_.qwewq56_12wssXVB_
+      password: OLD_.qwewq56_12wssXVB_
       forcePassword: true
 
   replication:
