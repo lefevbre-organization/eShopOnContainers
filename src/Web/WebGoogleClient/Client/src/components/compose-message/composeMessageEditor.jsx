@@ -281,6 +281,9 @@ const ComposeMessageEditor = (props) => {
         .e-richtexteditor.e-rte-tb-expand .e-rte-content {
           border-bottom: none;
         }
+        .e-rte-field .e-checkbox-wrapper {
+          display: none;
+        }
       `}</style>
     </Fragment>
   );
