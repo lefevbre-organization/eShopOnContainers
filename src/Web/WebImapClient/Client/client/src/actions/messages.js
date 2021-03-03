@@ -65,9 +65,9 @@ export const renameCache = (oldId, newId) => ({
  * @param selected {boolean}
  * @returns {{type: string, payload: {message: *, selected: *}}}
  */
-export const setSelected = (messages, selected, folderName) => ({
+export const setSelected = (messages, selected, folderName, folderId = '', uid = '') => ({
   type: ActionTypes.MESSAGES_SET_SELECTED,
-  payload: {messages, selected, folderName}
+  payload: {messages, selected, folderName, folderId, uid}
 });
 
 /**
@@ -77,6 +77,16 @@ export const setSelected = (messages, selected, folderName) => ({
  */
 export const clearSelected = () => ({
   type: ActionTypes.MESSAGES_CLEAR_SELECTED
+});
+
+/**
+ * Clears the opened message from selected messages list leaving previously selected intact
+ *
+ * @returns {{type: string}}
+ */
+export const clearSelectedAndRecover = id => ({
+  type: ActionTypes.MESSAGES_CLEAR_OPENED_AND_RECOVER_SELECTED,
+  payload: id
 });
 
 /**

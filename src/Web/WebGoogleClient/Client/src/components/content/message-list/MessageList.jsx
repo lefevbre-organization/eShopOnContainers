@@ -146,10 +146,10 @@ export class MessageList extends Component {
 
     window.dispatchEvent(
       new CustomEvent('Checkclick', {
-        detail: message,
+        detail: message
       })
     );
-    message.raw = null;
+    //message.raw = null;
 
     window.dispatchEvent(new CustomEvent('LoadedMessage'));
   }

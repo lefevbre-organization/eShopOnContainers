@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import FolderItem from './folder-item';
 import {createFolder as createFolderAction, renameFolder, selectFolder, editMessage, draftClean, selectMessage} from '../../actions/application';
-import {clearSelected} from '../../actions/messages';
+import {clearSelected, clearSelectedAndRecover} from '../../actions/messages';
 import {clearSelectedMessage} from '../../services/application';
 import {deleteFolder, findTrashFolder, FolderTypes, moveFolder} from '../../services/folder';
 import {moveMessages, resetFolderMessagesCache} from '../../services/message';
@@ -72,7 +72,7 @@ export class FolderListClass extends Component {
       this.props.messageClean();
       close(application);
     }
-    window.dispatchEvent(new CustomEvent("ResetList"));
+    //window.dispatchEvent(new CustomEvent("ResetList"));
   }
 
   static onDragStart(event, folder) {
@@ -142,6 +142,7 @@ FolderListClass.defaultProps = {
 const mapStateToProps = state => ({
   application: state.application,
   selectedFolder: getSelectedFolder(state) || {},
+  selectedMessage: (state.application.selectedMessage) ? state.application.selectedMessage.messageId : null,
   foldersState: state.folders,
   messages: state.messages,
   lexon: state.lexon
@@ -158,10 +159,11 @@ const mapDispatchToProps = dispatch => ({
     dispatch(draftClean());
   },
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
-  selectFolder: (folder, user) => {
+  selectFolder: (folder, user, selectedMessage) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);
-    dispatch(clearSelected());
+    //dispatch(clearSelected());
+    clearSelectedAndRecover(dispatch, selectedMessage);
     resetFolderMessagesCache(dispatch, user, folder);
   },
   renameFolder: folder => dispatch(renameFolder(folder)),

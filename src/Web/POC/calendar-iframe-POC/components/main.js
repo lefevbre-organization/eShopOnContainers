@@ -32,7 +32,7 @@ import './App.css';
                     value: valueJ
             });
 
-            if(JSON.parse(event.data).actionCancelled){
+            if(!Object.keys(event.data) && JSON.parse(event.data).actionCancelled){
                 this.dialogCloseEdit(); 
                 this.dialogCloseNew();    
 
@@ -104,7 +104,7 @@ import './App.css';
                 close={this.dialogCloseNew.bind(this)}>
             
                 <div className="modalview">
-                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.FIEi8dWdsJ-ZZkycmWd9ydkgWMV9kE32myKYpmiPU0c/?prov=IM0&account=YWxiZXJ0by52YWx2ZXJkZS5lc2NyaWJhbm9AZ21haWwuY29t"
+                    <Iframe url="http://localhost:3000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRBY3R1YXRpb24iOiIyMyIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.FIEi8dWdsJ-ZZkycmWd9ydkgWMV9kE32myKYpmiPU0c/?prov=GO0&account=am9lbGRldHJpbmlkYWRAZ21haWwuY29t"
                         width="100%"
                         height="100%"
                         id="myId2"
@@ -112,8 +112,7 @@ import './App.css';
                         className="frame2"
                         display="initial"
                         position="relative"                      
-                        />
-
+                    />
                 </div>
             </DialogComponent>
 
@@ -133,7 +132,7 @@ import './App.css';
                 close={this.dialogCloseEdit.bind(this)}>
                 
                 <div className="modalview">
-                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRBY3R1YXRpb24iOiIyMyIsImlkRXZlbnQiOiIvcmVtb3RlLnBocC9kYXYvY2FsZW5kYXJzL2FkbWluL3BlcnNvbmFsLzZhNzY0MTVjLWE4MTUtZDliNC02Mjg2LTY3NDE4NzcwYTg5YiIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.yxmaUfUUDFU6Mq_e8hF-AypoBg9hHqWEitBObg5uX28/?prov=IM0&account=YWxiZXJ0by52YWx2ZXJkZS5lc2NyaWJhbm9AZ21haWwuY29t"
+                    <Iframe url="http://localhost:3000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2IiwiaWRBY3R1YXRpb24iOiIyMyIsImlkRXZlbnQiOiJwb2MxMzNicTl1djVjcXRldW4xc2F0Z3Z2byIsInRpdGxlIjoicmV1bmlvbiBpbXBvcnRhbnRlIn0.rVcMUpcYFP13-qh3A8yv4WSRcenxpwzidaBv8mg1GJQ/?prov=GO0&account=am9lbGRldHJpbmlkYWRAZ21haWwuY29t"
                         width="100%"
                         height="100%"
                         id="myId2"
@@ -148,7 +147,7 @@ import './App.css';
 
             <div id="calendar" className='col-lg-6 control-section'> 
                 <div className='control-wrapper'>
-                    <Iframe url="http://localhost:7000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2In0.8f30OHW3KtisOVjUASxjKYSHOIIaRqnvA593aaAfYgM/?prov=IM0"
+                    <Iframe url="http://localhost:3000/calendar/access/eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJpZENsaWVudGVOYXZpc2lvbiI6IkUxNjIxMzk2In0.8f30OHW3KtisOVjUASxjKYSHOIIaRqnvA593aaAfYgM/?prov=GO0"
                         width="754px"
                         height="425px"
                         id="myId"

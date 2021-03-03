@@ -73,8 +73,10 @@ export class AttendeeAddress extends Component {
           }}
         />
       <style jsx>{`
-          .header-address-suggestions-container {
-            box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+          .header-address-suggestions-container {      
+            box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 
+            0px 8px 10px 1px rgb(0 0 0 / 3%), 
+            0px 3px 14px 2px rgb(0 0 0 / 3%);
             width: 70%;
             display: block;
             position: absolute;
@@ -85,6 +87,7 @@ export class AttendeeAddress extends Component {
             border-bottom-left-radius: 4px;
             border-bottom-right-radius: 4px;
             z-index: 2;
+            left: 3rem;
           }
 
           .header-address-suggestions-container 

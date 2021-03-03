@@ -55,7 +55,6 @@ import { getEventTypes } from "../../../api/accounts";
 import AttendeeAddress from './attendee/attendee-address';
 import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
-
 export class Main extends Component {
     constructor(props) {
         super(props);
@@ -173,7 +172,6 @@ export class Main extends Component {
         this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
 
-
         // to change when api would be ready
         this.eventTypeDataSource =
             [
@@ -211,8 +209,6 @@ export class Main extends Component {
         this.TokensFlows();
     }
 
-
-
     onCloseDialog() {
         this.LoadCalendarList(true)
         const buttons = document.getElementsByClassName("e-footer-content");
@@ -221,7 +217,6 @@ export class Main extends Component {
                 buttons[i].style.visibility = 'visible';
             }
         }
-
 
         if (window != window.top) {
             window.top.postMessage(
@@ -273,17 +268,16 @@ export class Main extends Component {
         }
     }
 
-
     TokensFlows() {
         if (window != window.top)
         {
             this.layoutIframe = true;
         }
-
-        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+        console.log('TokensFlows', this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null)
+        if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true
         }
-        else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+        else if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null) {
             this.layoutIframeNewEventView = true
         }
 
@@ -302,7 +296,6 @@ export class Main extends Component {
             "backgroundColor": color,
             "foregroundColor": '#ffffff'
         }
-
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {
@@ -653,7 +646,6 @@ export class Main extends Component {
             </div>);
     }
 
-
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
         this.setState({
@@ -735,8 +727,6 @@ export class Main extends Component {
                     reminders = event.reminders.overrides;
                 }
 
-                console.log('onDataBinding ===>', reminders);
-
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -759,8 +749,6 @@ export class Main extends Component {
         e.result = this.scheduleData;
     }
 
-
-
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
         let sm = this.selectedEvent?[ { ...this.selectedEvent, Guid: this.selectedEvent.Id } ]:[];
@@ -773,7 +761,6 @@ export class Main extends Component {
         if(this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
         }
-
 
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
@@ -871,28 +858,29 @@ export class Main extends Component {
             );
         });
 
-
-
-
         this.sidebarCalendarList();
 
         //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
+        let obj = this;
+
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
         }
 
-        let obj = this;
+        if(obj.layoutIframeNewEventView) {
+            value = 1000;
+        }
+        
         setTimeout(function () {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
-
 
             // New event is called
             if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenNewEventEditor()
-                }, 1000);
+                }, 3000);
             }
 
             // Edit event is called
@@ -903,8 +891,6 @@ export class Main extends Component {
             }
 
         }, value);
-
-
 
         //if (this.layoutIframe) {
         //    setTimeout(function () {
@@ -932,19 +918,19 @@ export class Main extends Component {
     }
 
     getlistEventTypes() {
-
-
+        
         let email = this.props.googleUser.getBasicProfile().getEmail();
 
         getEventTypes(email)
             .then(result => {
-                this.onDataBindingEventTypeList(result.data.eventTypes)
+                if(result.data && result.data.eventTypes){
+                    this.onDataBindingEventTypeList(result.data.eventTypes)
+                }
             })
             .catch(error => {
                 console.log('error ->', error);
             });
     }
-
 
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
@@ -985,8 +971,6 @@ export class Main extends Component {
 
         window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
-
-
 
     buildEventoGoogle(values) {
         //Event basic data
@@ -1340,8 +1324,8 @@ export class Main extends Component {
                 head.classList.add('hidden');
             }
 
-            debugger
-            this.selectedEvent = {...args.data};
+            const calendar = this.props.calendarsResult.calendars.find( c => c.id === args.data.CalendarId);
+            this.selectedEvent = { ...args.data, calendar };
 
             var editButton = document.querySelector('.e-event-delete');
             editButton.disabled = false;
@@ -1510,9 +1494,6 @@ export class Main extends Component {
 
 
     }
-
-
-
 
     addCalendarsButton(args) {
         let scheduleElement = document.getElementById('schedule');
@@ -1729,7 +1710,10 @@ export class Main extends Component {
                         const dataEvt = this.scheduleObj.dataModule.dataManager.dataSource.json[this.scheduleObj.dataModule.dataManager.dataSource.json.length-1];
                         dataEvt.Id = result.id;
 
-                        this.selectedEvent = { ...this.selectedEvent, Subject: result.summary, Id: result.id }
+                        this.selectedEvent = { ...this.selectedEvent, Subject: result.summary, Id: result.id, Reminders: result.reminders }
+                        if(result.extendedProperties) {
+                            this.selectedEvent.EventType = { ...result.extendedProperties.private }
+                        }
 
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
@@ -1945,14 +1929,8 @@ export class Main extends Component {
             return 1;
         })
 
-
-
-
-
-
-
-
     }
+
     predicateQueryEvents(calendarList, predicate) {
         if (calendarList != undefined) {
             calendarList.forEach(function (valor, indice) {
@@ -2118,7 +2096,7 @@ export class Main extends Component {
                 return this.renderSpinner();
             }
         }
-
+        console.log('this.layoutIframeNewEventView', this.layoutIframeNewEventView)
         console.log("Rendering.... " + this.scheduleData.length)
 
         return (
@@ -2200,7 +2178,7 @@ export class Main extends Component {
                                     onCalendarClick={this.loadCalendarEvents}
                                     onSidebarCloseClick={this.handleShowLeftSidebarClick}
                                     onCalendarChange={this.handleScheduleDate}
-                                onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
+                                    onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
                                     onCalendarOpenCalnendarView={this.openCalendarView}
                                     onCalendarDelete={this.deleteCalendar}
                                     onCalendarColorModify={this.calendarColorModify}   
@@ -2267,7 +2245,10 @@ export class Main extends Component {
 
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
-                                        <div className='control-wrapper'>
+                                        <div className={`
+                                        ${!this.layoutIframeNewEventView
+                                              ? 'control-wrapper'
+                                              : 'hidden'}`}>
                                             <ScheduleComponent
                                                 //delayUpdate='false'
                                                 id="schedule"
@@ -2275,6 +2256,7 @@ export class Main extends Component {
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
+                                                dateFormat='dd/M/yyyy'
                                                 allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
@@ -2300,7 +2282,7 @@ export class Main extends Component {
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
-                                                    <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Month' dateFormat='MMMM yyyy' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
@@ -2382,8 +2364,6 @@ export class Main extends Component {
                             </article>
                         </section>
                     </Fragment>
-
-
                     {this.layoutIframe && this.layoutIframeNewEventView || this.layoutIframeEditEventView ? (
                     <style jsx>{`
                         .e-dlg-overlay {

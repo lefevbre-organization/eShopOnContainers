@@ -213,7 +213,7 @@ export class MessageViewer extends Component {
 
   componentWillUnmount() {
     this.restoreSelectedList();
-    const { lexon } = this.props;
+    const { lexon, selected, folders, messageCache } = this.props;
 
     clearTimeout(this.refreshPollTimeout);
 
@@ -239,6 +239,59 @@ export class MessageViewer extends Component {
     ) {
       this.props.resetIdEmail(); // Se borra la información del email para que no vuelva a entrar si se refresca la ventana.
     }
+
+    if (selected && selected.length > 0){
+      window.dispatchEvent(new CustomEvent('ResetList'));
+      const prs = [];
+      for (let i = 0; i < selected.length; i++) {
+        console.log('Debug: LoadingMessage event:' +  selected[i].messageId);
+        if (selected[i].messageId && selected[i].folderId !== '' && selected[i].uid !== ''){
+          window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: selected[i].messageId}));
+          
+          const folder = folders.explodedItems[selected[i].folderId];
+          const messages = Array.from(messageCache[folder.folderId].values());
+          const message = messages.find(msg => msg.uid === selected[i].uid);
+          debugger;
+          console.log('Debug: Cache content');
+          console.log(message);
+          
+          console.log('Debug: Loading raw messages');
+          prs.push(readMessageRaw(
+            null,
+            this.props.credentials,
+            null,
+            folder,
+            message
+          ))
+          Promise.all(prs).then((msgs) => {
+            console.log('Debug: raw messages promise finished');
+            for (let i = 0; i < msgs.length; i++) {
+              console.log('Debug: sending checkclick event message'+i);
+              const msg = msgs[i];
+              
+              window.dispatchEvent(
+                new CustomEvent('Checkclick', {
+                  detail: {
+                    id: msg.message.messageId,
+                    extMessageId: msg.message.messageId,
+                    subject: msg.message.subject,
+                    sentDateTime: msg.message.receivedDate,
+                    chkselected: true,
+                    account: this.props.all.login.formValues.user,
+                    folder: folder.fullName,
+                    provider: 'IMAP',
+                    raw: msg.raw,
+                  },
+                })
+              );
+              msg.raw = null;
+            }
+            console.log('Debug: sending event loaded message');
+            window.dispatchEvent(new CustomEvent('LoadedMessage'));
+          })
+        }
+      }
+    }
   }
 
   onFolderClick(folder) {
@@ -263,9 +316,13 @@ const mapStateToProps = (state) => {
     currentFolder: getSelectedFolder(state) || {},
     selectedMessage: state.application.selectedMessage,
     selectedMessages: state.messages.selectedMessages,
+    selected: state.messages.selected,
+    messageCache: state.messages.cache,
     lexon: state.lexon,
     login: state.login,
     credentials: state.application.user.credentials,
+    folders: state.folders,
+    all: state,
   };
 };
 

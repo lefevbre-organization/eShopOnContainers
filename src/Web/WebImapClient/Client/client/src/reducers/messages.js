@@ -117,16 +117,16 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       newUpdateState.selected = [...state.selected];
       newUpdateState.selectedMessages = [...state.selectedMessages];
       action.payload.messages.forEach((message) => {
-        const indexOfMessage = newUpdateState.selected.indexOf(
+        const messageSelected = newUpdateState.selected.find( s => s.messageId ===
           message.messageId
         );
-        if (action.payload.selected && indexOfMessage < 0) {
+        if (action.payload.selected && !messageSelected) {
           // Select Message
-          newUpdateState.selected.push(message.messageId);
+          newUpdateState.selected.push({messageId: message.messageId, folderId: action.payload.folderId, uid: action.payload.uid});
         } else if (!action.payload.selected) {
           // Unselect message
           newUpdateState.selected = newUpdateState.selected.filter(
-            (messageId) => messageId !== message.messageId
+            (msg) => msg.messageId !== message.messageId
           );
         }
 
@@ -156,6 +156,10 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
     }
     case ActionTypes.MESSAGES_CLEAR_SELECTED: {
       const newUpdateState = { ...state, selected: [], selectedMessages: [] };
+      return newUpdateState;
+    }
+    case ActionTypes.MESSAGES_CLEAR_OPENED_AND_RECOVER_SELECTED: {
+      const newUpdateState = { ...state, selected: state.selected.filter(id => id !== action.payload)}
       return newUpdateState;
     }
     case ActionTypes.MESSAGES_LOCK_ADD: {

@@ -112,7 +112,7 @@ class MessageList extends Component {
     const folder = this.props.selectedFolder;
     const message = this.props.messages[index];
     const selected =
-      this.props.selectedMessages.indexOf(message.messageId) > -1;
+      this.props.selectedMessages.find( msg => msg.messageId === message.messageId);
 
     let attachments = message.hasAttachments;
     if (
@@ -229,6 +229,7 @@ class MessageList extends Component {
       event.nativeEvent.shiftKey &&
       this.props.selectedMessages.length > 0
     ) {
+      console.log('Debug: Messages selected with range');
       // Range selection
       const messagesToSelect = [];
       const lastSelectedMessageUid = this.props.selectedMessages[
@@ -236,9 +237,10 @@ class MessageList extends Component {
       ];
       let selecting = false;
       this.props.messages.forEach((m) => {
+        console.log('Debug: Reading message');
         if (
           m.messageId === message.messageId ||
-          m.messageId === lastSelectedMessageUid
+          m.messageId === lastSelectedMessageUid.messageId
         ) {
           selecting = !selecting;
           messagesToSelect.push(m);
@@ -246,21 +248,31 @@ class MessageList extends Component {
           messagesToSelect.push(m);
         }
       });
-      this.props.messageSelected(
-        messagesToSelect,
-        checked,
-        this.props.selectedFolder.fullName
-      );
+      console.log('Debug: All messages processed. Sending to redux');
+      for (let i = 0; i < messagesToSelect.length; i++) {
+        this.props.messageSelected(
+          [messagesToSelect[i]],
+          checked,
+          this.props.selectedFolder.fullName,
+          this.props.selectedFolder.folderId,
+          messagesToSelect[i].uid
+        )
+      }
 
       if (checked === true) {
+        console.log('Debug: Sending LoadingEvents to connector');
         console.log('LoadingMessage: 4');
-        window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: message.messageId}));
+        messagesToSelect.forEach( msg => {
+          console.log('Debug: Loading event message:' + msg.messageId);
+          window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: msg.messageId}));
+        })
       }
 
       const prs = [];
       for (let i = 0; i < messagesToSelect.length; i++) {
         const message = messagesToSelect[i];
         if (checked === true) {
+          console.log('Debug: Reading raw message:'+i);
           prs.push(
             readMessageRaw(
               null,
@@ -271,6 +283,7 @@ class MessageList extends Component {
             )
           );
         } else {
+          console.log('Debug: Sending uncheck event');
           window.dispatchEvent(
             new CustomEvent('Checkclick', {
               detail: {
@@ -294,15 +307,18 @@ class MessageList extends Component {
 
       if (checked === true) {
         Promise.all(prs).then((msgs) => {
+          console.log('Debug: raw messages promised finished');
           for (let i = 0; i < msgs.length; i++) {
+            console.log('Debug: sending checkclick event message'+i);
             const msg = msgs[i];
 
             // update redux message with raw data
-            this.props.messageSelected(
-              [{ ...message, raw: msg.raw }],
-              true,
-              this.props.selectedFolder.fullName
-            );
+            // this.props.messageSelected(
+            //   [{ ...message, raw: msg.raw }],
+            //   true,
+            //   this.props.selectedFolder.fullName,
+            //   this.props.selectedFolder.folderId
+            // );
 
             window.dispatchEvent(
               new CustomEvent('Checkclick', {
@@ -315,7 +331,7 @@ class MessageList extends Component {
                   account: this.props.all.login.formValues.user,
                   folder: this.props.selectedFolder.fullName,
                   provider: 'IMAP',
-                  raw: null// msg.raw,
+                  raw: msg.raw,
                 },
               })
             );
@@ -324,19 +340,24 @@ class MessageList extends Component {
               `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
             );
           }
+          console.log('Debug: sending event loaded message');
           console.log('LoadedMessage: 4');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
       }
     } else {
       // Single selection
+      console.log('Debug: Single event');
       this.props.messageSelected(
         [message],
         checked,
-        this.props.selectedFolder.fullName
+        this.props.selectedFolder.fullName,
+        this.props.selectedFolder.folderId,
+        message.uid
       );
 
       if (checked === true) {
+        console.log('Debug: message selected. Sending loadingMessage event')
         console.log('LoadingMessage: 5');
         window.dispatchEvent(new CustomEvent('LoadingMessage', {detail: message.messageId}));
         const rm = readMessageRaw(
@@ -352,7 +373,7 @@ class MessageList extends Component {
             checked,
             this.props.selectedFolder.fullName
           );*/
-
+          console.log('Debug: Sending Message content to connector');
           // Send message to connectors
           window.dispatchEvent(
             new CustomEvent('Checkclick', {
@@ -373,10 +394,12 @@ class MessageList extends Component {
           console.log(
             `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
           );
+          console.log('Debug: sending event loaded message');
           console.log('LoadedMessage: 3');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
       } else {
+        console.log('Debug: unselected message Sending uncheck to connector');
         console.log(
           'IdMessage seleccionado: ' +
             message.messageId +
@@ -416,6 +439,7 @@ class MessageList extends Component {
     } else {
       this.props.messageClicked(message);
     }  
+    window.dispatchEvent(new CustomEvent("ResetList"));
   } 
   /**
    * Preloads latest received messages whenever <b>new</b> messages are loaded in the list
@@ -510,8 +534,8 @@ const mapDispatchToProps = (dispatch) => ({
   newMessage: (sign) => editNewMessage(dispatch, [], sign),
   draftMessage: (selectedMessage, sign) =>
     draftMessage(dispatch, selectedMessage, sign),
-  messageSelected: (messages, selected, folderName) =>
-    dispatch(setSelected(messages, selected, folderName)),
+  messageSelected: (messages, selected, folderName, folderId, index) =>
+    dispatch(setSelected(messages, selected, folderName, folderId, index)),
   preloadMessages: (credentials, folder, messageUids) =>
     preloadMessages(dispatch, credentials, folder, messageUids),
   toggleMessageFlagged: (credentials, folder, message) =>

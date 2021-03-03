@@ -658,7 +658,7 @@ export class Main extends Component {
                 }
 
                 if (!this.scheduleData.find(x => x.Id === event.id)) {
-                    this.scheduleData.push({
+                    const event = {
                         Id: event.id,
                         CalendarId: calendarId,
                         Subject: event.summary,
@@ -676,7 +676,9 @@ export class Main extends Component {
                         EventType: eventType,
                         Reminders: reminders,
                         LexonClassification: lexonClassification
-                    });
+                    };
+                    this.scheduleData.push(event);
+                    //this.selectedEvent = event;
                 }
             }
         }
@@ -693,13 +695,8 @@ export class Main extends Component {
         }
 
         const {selectedMessages, User} = this.props;
-        let sm = this.selectedEvent ? [{...this.selectedEvent, Guid: this.selectedEvent.Id}] : [];
-        if(sm.length > 0) {
-            sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
-            if (!sm[0].Guid) {
-                sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
-            }
-        }
+        //let sm = this.selectedEvent ? [{...this.selectedEvent, Guid: this.selectedEvent.Id}] : [];
+        let sm = [this.createLexonEvent(this.selectedEvent)];
 
         if (this.state.showPromptImportContactsDialog) {
             sm = this.props.calendarsResult.calendars || []
@@ -722,9 +719,29 @@ export class Main extends Component {
         );
     }
 
+    createLexonEvent(event) {
+        return {
+            Subject: event.Subject,
+            Guid: event.Id,
+            StartTime: event.StartTime,
+            EndTime: event.EndTime,
+            calendar: {
+                title: event.calendar.summary,
+                description: '',
+                color: event.calendar.backgroundColor,
+                fgColor: '#000000'
+            },
+            EventType: event.eventType?{
+                eventTypeName: event.eventType.name,
+                eventTypeColor: event.eventType.color
+            }:undefined,
+            reminders: event.reminders
+        }
+    }
+
     handleGetUserFromLexonConnector() {
-        // const { userId } = this.props.lexon;
-        const userId = 'E1621396'
+        const { userId } = this.props.lexon;
+        //const userId = 'E1621396'
         if (userId) {
             this.sendMessagePutUser(userId);
         }
@@ -1062,7 +1079,8 @@ export class Main extends Component {
         if (validator.errorRules.length <= 0) {
             this.cancel = false;
             if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
-                // this.tabObj.refresh()               
+                // this.tabObj.refresh()
+
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id == undefined) {
                     this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
@@ -1275,7 +1293,8 @@ export class Main extends Component {
                 head.classList.add('hidden');
             }
 
-            this.selectedEvent = {...args.data, ...(this.scheduleData.find(item => item.Id === args.data.Id) || undefined)};
+            const calendar = this.props.calendarsResult.calendars.find( c => c.id === args.data.CalendarId);
+            this.selectedEvent = {...args.data, calendar, ...(this.scheduleData.find(item => item.Id === args.data.Id) || undefined)};
 
             this.scheduleObj.eventWindow.recurrenceEditor.frequencies = ['none', 'daily', 'weekly'];
 
@@ -1627,8 +1646,11 @@ export class Main extends Component {
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
 
+
+
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
+
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
                             this.scheduleObj.eventWindow.eventData.Subject = event.summary;
@@ -1658,6 +1680,9 @@ export class Main extends Component {
                             }
                         }
 
+
+                        const calendar =  this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId);
+                        this.selectedEvent = {...args.data[0], ...result, calendar};
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
@@ -2234,13 +2259,13 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
-
                                                 //delayUpdate='false' 
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
+                                                dateFormat='dd/M/yyyy'
                                                 allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
@@ -2268,7 +2293,8 @@ export class Main extends Component {
                                                                    eventTemplate={this.eventTemplate.bind(this)}/>
                                                     <ViewDirective option='WorkWeek'
                                                                    eventTemplate={this.eventTemplate.bind(this)}/>
-                                                    <ViewDirective option='Month'
+                                                    <ViewDirective option='Month' 
+                                                                   dateFormat='MMMM yyyy'
                                                                    eventTemplate={this.eventTemplate.bind(this)}/>
                                                     <ViewDirective option='Agenda'
                                                                    eventTemplate={this.eventTemplateAgendaView.bind(this)}/>
