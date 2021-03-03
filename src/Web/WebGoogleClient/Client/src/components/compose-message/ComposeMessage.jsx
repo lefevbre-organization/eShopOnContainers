@@ -865,13 +865,7 @@ export class ComposeMessage extends PureComponent {
         console.log('Error sending email:' + err);
       });
     this.resetFields();
-    // if(this.state.draftId) {
-    //   deleteDraft({ draftId: this.state.draftId }).then(() => {
-    //     this.closeModal();
-    //   });
-    // } else {
-    //   this.closeModal();
-    // } 
+    
     Promise.all(this.state.draftRequests).then(() => {
       deleteDraft({ draftId: this.state.draftId })
       .then(() => {
