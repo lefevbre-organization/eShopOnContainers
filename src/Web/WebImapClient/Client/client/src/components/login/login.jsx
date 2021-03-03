@@ -104,7 +104,7 @@ export class Login extends Component {
     const { account, userId } = this.props.lexon;
     console.log('userId: ' + userId + ' account: ' + account);
 
-    const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/imap/${account}`;
+    const url = `${window.API_GATEWAY_ACC}/api/v2/accounts/usermail/${userId}/account/imap/${account}`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -353,7 +353,7 @@ export class Login extends Component {
     if (account === '' || account === null) {
       account = this.state.values.user;
     }
-    const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/${PROVIDER}/${account}/config/addorupdate`;
+    const url = `${window.API_GATEWAY_ACC}/api/v2/accounts/usermail/${userId}/account/${PROVIDER}/${account}/config/addorupdate`;
     await fetch(url, {
       method: 'POST',
       headers: {

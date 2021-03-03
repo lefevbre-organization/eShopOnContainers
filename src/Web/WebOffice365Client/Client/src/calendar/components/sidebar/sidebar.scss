@@ -83,10 +83,12 @@
     }
 }*/
 
-.e-calendar, .e-bigger.e-small .e-calendar {
-    max-width: 250px !important;
-    min-width: 240px !important;
-    padding: 0;
+#left-sidebar {
+    .e-calendar, .e-bigger.e-small .e-calendar {
+        max-width: 100% !important;
+        min-width: 240px !important;
+        padding: 0;
+    }
 }
 
 
