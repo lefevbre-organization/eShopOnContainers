@@ -413,11 +413,11 @@ export function getEmbeddedImages(body) {
       res.push(image);
     }
   }
-  console.log('getEmbeddedImages:');
-  console.log(images);
-  let imagesData = images.map((x) => x.replace(/.*src="([^"]*)".*/, '$1'));
-  console.log('imagesData');
-  console.log(imagesData);
+  console.log('Debug: index.jsx (getEmbeddedImages())');
+  // console.log(images);
+  // let imagesData = images.map((x) => x.replace(/.*src="([^"]*)".*/, '$1'));
+  // console.log('imagesData');
+  // console.log(imagesData);
   //return images;
   return res;
 }
@@ -435,7 +435,7 @@ function genEmbedImgIds(images) {
       ids.push(`${name.replace('.', '')}__${random}`);
     }
   }
-  console.log('getEmbedImgIdsResult');
+  console.log('Debug: index.jsx (genEmbedImgIds(images))');
   console.log(ids);
   return ids;
 }
@@ -448,7 +448,7 @@ function getContentType(imageTag) {
   src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
   srcSplitted = src.split(';');
   contentType = srcSplitted[0].replace('data:', '');
-  console.log('getContentType:' + contentType);
+  console.log('Debug: index.jsx (getContentType(imageTag)):' + contentType);
   return contentType;
 }
 
@@ -459,7 +459,7 @@ function getContentName(imageTag) {
   if (imageTag === contentName)
     contentName = '';
     //contentName = `pastedImg_${uuidv4().slice(0, 8)}`;
-  console.log('getContentName:' + contentName);
+  console.log('Debug: index.jsx (getContentName(imageTag)):' + contentName);
   return contentName;
 }
 
@@ -544,6 +544,7 @@ export const dataUrlToFile = ({dataUrl, mimeType}) => {
 }
 
 export const deleteDraft = async ({ draftId }) => {
+  console.log('Debug: index.jsx (deleteDraft(draftId))');
   return new Promise((resolve, reject) => {
     const request = window.gapi.client.gmail.users.drafts.delete({
       userId: 'me',
@@ -553,6 +554,7 @@ export const deleteDraft = async ({ draftId }) => {
       if (err.error) {
         reject(err.error);
       } else {
+        console.log('Debug: draft deleted');
         resolve(err);
       }
     });
@@ -560,7 +562,7 @@ export const deleteDraft = async ({ draftId }) => {
 };
 
 export const createDraft = async ({ headers, body, attachments, draftId }) => {
- 
+  console.log('Debug: index.jsx (CreateDraft()) START');
   let email = '';
   let guidGlobal = uuidv4();
   let guidRelated = uuidv4();
@@ -685,7 +687,7 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
     const base64EncodedEmail = Base64.encodeURI(email);
     let draft = null;
     if(draftId != '') {
-      console.log('index.jsx|CreateDraft: (update) ' + draftId);
+      console.log('Debug: index.jsx|CreateDraft: (update) ' + draftId);
       draft =  window.gapi.client.gmail.users.drafts.update({
         userId: 'me',
         id: draftId,
@@ -696,7 +698,7 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
         },
       });
      } else {
-      console.log('index.jsx|CreateDraft: (create) ');
+      console.log('Debug: index.jsx|CreateDraft: (create) ');
       draft = window.gapi.client.gmail.users.drafts.create({
         userId: 'me',
         resource: {
@@ -711,6 +713,7 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
       if (err.error) {
         reject(err.error);
       } else {
+        console.log('Debug: Draft saved');
         resolve(err);
       }
     });
@@ -718,7 +721,8 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
 };
 
 
-export const sendMessage = async ({ headers, body, attachments }) => {
+export const sendMessage = async ({ headers, body, attachments, draftId }) => {
+  console.log('Debug: index.jsx (sendMessage()) START');
   let email = '';
   let guidGlobal = uuidv4();
   let guidRelated = uuidv4();
@@ -840,22 +844,46 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   }
   email += `--${guidGlobal}--`;
 
-  return new Promise((resolve, reject) => {
-    const base64EncodedEmail = Base64.encodeURI(email);
-    const request = window.gapi.client.gmail.users.messages.send({
-      userId: 'me',
-      resource: {
-        raw: base64EncodedEmail,
-      },
+  // if (draftId !== ''){
+  //   console.log('Debug: sending Draft');
+  //   return new Promise((resolve, reject) => {
+  //     const base64EncodedEmail = Base64.encodeURI(email);
+  //     const request = window.gapi.client.gmail.users.drafts.send({
+  //       userId: 'me',
+  //       id: draftId,
+  //       resource: {
+  //         raw: base64EncodedEmail,
+  //       },
+  //     });
+  //     request.execute((err, res) => {
+  //       if (err.error) {
+  //         reject(err.error);
+  //       } else {
+  //         console.log('Debug: message sent');
+  //         resolve(err);
+  //       }
+  //     });
+  //   });
+  // } else {
+    console.log('Debug: sending Message without draft');
+    return new Promise((resolve, reject) => {
+      const base64EncodedEmail = Base64.encodeURI(email);
+      const request = window.gapi.client.gmail.users.messages.send({
+        userId: 'me',
+        resource: {
+          raw: base64EncodedEmail,
+        },
+      });
+      request.execute((err, res) => {
+        if (err.error) {
+          reject(err.error);
+        } else {
+          console.log('Debug: message sent');
+          resolve(err);
+        }
+      });
     });
-    request.execute((err, res) => {
-      if (err.error) {
-        reject(err.error);
-      } else {
-        resolve(err);
-      }
-    });
-  });
+  // }
 };
 
 export const setMessageAsRead = async (messageId) =>

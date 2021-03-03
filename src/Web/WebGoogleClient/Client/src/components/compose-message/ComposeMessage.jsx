@@ -34,6 +34,7 @@ import { Notification, Confirmation } from '../notification/';
 import HeaderAddress from './header-address';
 import { getUser, classifyEmail } from '../../api/accounts';
 import ComposeMessageEditor from './composeMessageEditor';
+import Spinner from '../spinner/spinner';
 
 const Uppy = require('@uppy/core');
 const Tus = require('@uppy/tus');
@@ -155,7 +156,10 @@ export class ComposeMessage extends PureComponent {
       embeddedImgLoaded: false,
       draftInProgress: false,
       draftQueue: 0,
-      embeddedImgList: []
+      embeddedImgList: [],
+      sendingEmail: false,
+      draftRequests: [],
+      showSpinner: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -266,7 +270,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidMount(prevProps) {
-    console.log('ComposeMessage componentDidMount');
+    console.log('Debug: ComposeMessage componentDidMount');
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
     window.addEventListener(
@@ -282,25 +286,30 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    console.log('Debug: state.sendingEmail ' + this.state.sendingEmail);
+    console.log('Debug: draftRequests: ' + this.state.draftRequests.length );
+    // For messages in compose or resend and reply
     if((prevState.to !== this.state.to 
       || prevState.cc !== this.state.cc 
       || prevState.bcc !== this.state.bcc 
       || prevState.subject !== this.state.subject
       || prevState.content !== this.state.content
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
-      && !this.props.match.params.id) {
-        console.log('Checking draft in progress...');
+      && !this.props.match.params.id
+      && !this.state.sendingEmail) {
+        console.log('Debug: Checking draft in progress...');
         console.log(this.state.draftInProgress);
         if (!this.state.draftInProgress){
-          console.log('Setting draftInProgress to true and cleaning draftQueue');
+          console.log('Debug: Setting draftInProgress to true and cleaning draftQueue');
           this.setState({draftInProgress: true, draftQueue: 0});
           this.saveDraft();
         } else {
           this.setState({draftQueue: this.state.draftQueue + 1})
-          console.log('Draft queue:'+this.state.draftQueue);
+          console.log('Debug: Draft queue:'+this.state.draftQueue);
         }
     }   
 
+    // For messages in draft folder
     if((prevState.to !== this.state.to 
       || prevState.cc !== this.state.cc 
       || prevState.bcc !== this.state.bcc 
@@ -308,7 +317,8 @@ export class ComposeMessage extends PureComponent {
       || prevState.content !== this.state.content
       || prevState.uppyPreviews !== this.state.uppyPreviews) 
       && this.props.match.params.id 
-      && this.state.isDraftEdit) {
+      && this.state.isDraftEdit
+      && !this.state.sendingEmail) {
         console.log('Checking draft in progress...');
         console.log(this.state.draftInProgress);
 
@@ -591,9 +601,10 @@ export class ComposeMessage extends PureComponent {
       this.props.setMailContacts(null);
     }
     if(this.state.draftId) {
-        deleteDraft({ draftId: this.state.draftId }).then(() => {
-          this.closeModal();
-        });
+      this.closeModal();
+        // deleteDraft({ draftId: this.state.draftId }).then(() => {
+        //   this.closeModal();
+        // });
     } else {
       this.closeModal();
     } 
@@ -681,7 +692,8 @@ export class ComposeMessage extends PureComponent {
   }
 
   onSendEmail() {
-    this.setState({ showEmptySubjectWarning: false }, () => {
+    console.log('Debug: onSendEmail');
+    this.setState({ showEmptySubjectWarning: false, sendingEmail: true }, () => {
       this._sendEmail();
     });
   }
@@ -703,7 +715,11 @@ export class ComposeMessage extends PureComponent {
       return;
     }
 
-    this._sendEmail();
+    this.setState({ sendingEmail: true, showSpinner: true });
+    Promise.all(this.state.draftRequests).then( () => {
+      console.log('Debug: All promises finished');
+      this._sendEmail()
+    });
   }
 
   b64EncodeUnicode(str) {
@@ -752,7 +768,9 @@ export class ComposeMessage extends PureComponent {
 
     const fullTime = this.getTimeDraft();
 
-    console.log('saveDraft', this.state.content)
+    console.log('Debug: saveDraft', this.state.content)
+
+    var { draftRequests } = this.state;
 
     if(this.state.to != '' 
     || this.state.cc != ''
@@ -761,20 +779,20 @@ export class ComposeMessage extends PureComponent {
     || this.state.content != ''){
       //this.setState({draftPollingCount: this.state.draftPollingCount + 1});
       setTimeout(() => {
-        createDraft({
+        draftRequests.push( createDraft({
           headers,
           body: this.state.content ? this.state.content : 'null',
           attachments: Fileattached,
           draftId: this.state.draftId
         }).then((draft) => {
-          console.log('DRAFT GUARDADO: ' + draft.id)
+          console.log('Debug: saveDraft -> DRAFT GUARDADO: ' + draft.id)
           this.setState({draftTime: fullTime, draftId: draft.id, draftInProgress: false});
         })
         .catch((err) => {
-          console.log('ERROR GUARDANDO DRAFT');
-          console.log('Error sending email:' + err);
+          console.log('Debug: saveDraft -> ERROR GUARDANDO DRAFT: ' + err);
           this.setState({draftInProgress: false});
-        });
+        }));
+        this.setState({draftRequests: draftRequests});
       });
     }
     
@@ -825,6 +843,7 @@ export class ComposeMessage extends PureComponent {
       headers,
       body: this.state.content,
       attachments: Fileattached,
+      draftId: this.state.draftId,
     })
       .then((email) => {
         //this.sentEmail(email.id, this.state.subject);
@@ -846,13 +865,21 @@ export class ComposeMessage extends PureComponent {
         console.log('Error sending email:' + err);
       });
     this.resetFields();
-    if(this.state.draftId) {
-      deleteDraft({ draftId: this.state.draftId }).then(() => {
+    
+    Promise.all(this.state.draftRequests).then(() => {
+      deleteDraft({ draftId: this.state.draftId })
+      .then(() => {
+        this.setState({showSpinner: false});
+        this.closeModal();
+      })
+      .catch(err => {
+        console.log('Debug: Error deleting draft after promises: ');
+        console.log(err);
+        this.setState({showSpinner: false});
         this.closeModal();
       });
-    } else {
-      this.closeModal();
-    } 
+    })
+    
   }
 
   getContentByHeader(message, header) {
@@ -1158,7 +1185,8 @@ export class ComposeMessage extends PureComponent {
       messageNotification,
       showEmptySubjectWarning,
       errorNotification,
-      draftTime
+      draftTime,
+      showSpinner
     } = this.state;
     const { to2, cc2, bcc2 } = this.state;
 
@@ -1184,6 +1212,7 @@ export class ComposeMessage extends PureComponent {
           }}
           message={i18n.t('compose-message.no-subject-warning')}
         />
+        {( showSpinner) ? <Spinner/> : null}
         <div className='compose-dialog'>
           <div className='compose-panel'>
             <div className='d-flex justify-content-center align-items-center message-toolbar'>

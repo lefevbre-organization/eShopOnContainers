@@ -191,29 +191,36 @@ const toolbarSettings = {
 const UserSign = (props) => {
   const { onChange, defaultValue = '' } = props;
   return (
-    <RichTextEditorComponent
-      id='toolsRTE'
-      height={250}
-      showCharCount={false}
-      locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
-      toolbarSettings={toolbarSettings}
-      insertImageSettings={{ saveFormat: 'Base64' }}
-      value={defaultValue}
-      change={(content) => {
-        onChange && onChange(content.value);
-      }}>
-      <Inject
-        services={[
-          Toolbar,
-          Image,
-          Link,
-          HtmlEditor,
-          Count,
-          QuickToolbar,
-          Table,
-        ]}
-      />
-    </RichTextEditorComponent>
+    <>
+      <RichTextEditorComponent
+        id='toolsRTE'
+        height={250}
+        showCharCount={false}
+        locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
+        toolbarSettings={toolbarSettings}
+        insertImageSettings={{ saveFormat: 'Base64' }}
+        value={defaultValue}
+        change={(content) => {
+          onChange && onChange(content.value);
+        }}>
+        <Inject
+          services={[
+            Toolbar,
+            Image,
+            Link,
+            HtmlEditor,
+            Count,
+            QuickToolbar,
+            Table,
+          ]}
+        />
+      </RichTextEditorComponent>
+      <style jsx>{`
+        .e-rte-field .e-checkbox-wrapper {
+          display: none;
+        }
+      `}</style>
+    </>
   );
 };
 

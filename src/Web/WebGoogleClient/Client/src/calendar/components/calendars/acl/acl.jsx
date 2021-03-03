@@ -16,7 +16,7 @@ export class Acl extends React.Component {
         this.position = { X: 'Center', Y: 'Bottom' };        
         this.temp = 'roleData';
         this.fields = { text: 'Role', value: 'Id' };
-        this.value = "reader";
+        this.value = i18n.t('acl.reader');
         this.listviewInstance = null;     
         this.dataACLSource = [];
         this.fieldsList = { text: "text", iconCss: "icon" };
