@@ -55,7 +55,6 @@ import { getEventTypes } from "../../../api/accounts";
 import AttendeeAddress from './attendee/attendee-address';
 import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
-
 export class Main extends Component {
     constructor(props) {
         super(props);
@@ -173,7 +172,6 @@ export class Main extends Component {
         this.drowDownListVisibility = undefined;
         this.selectedEvent = undefined;
 
-
         // to change when api would be ready
         this.eventTypeDataSource =
             [
@@ -211,8 +209,6 @@ export class Main extends Component {
         this.TokensFlows();
     }
 
-
-
     onCloseDialog() {
         this.LoadCalendarList(true)
         const buttons = document.getElementsByClassName("e-footer-content");
@@ -221,7 +217,6 @@ export class Main extends Component {
                 buttons[i].style.visibility = 'visible';
             }
         }
-
 
         if (window != window.top) {
             window.top.postMessage(
@@ -278,11 +273,11 @@ export class Main extends Component {
         {
             this.layoutIframe = true;
         }
-
-        if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent != null) {
+        console.log('TokensFlows', this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null)
+        if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true
         }
-        else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
+        else if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null) {
             this.layoutIframeNewEventView = true
         }
 
@@ -301,7 +296,6 @@ export class Main extends Component {
             "backgroundColor": color,
             "foregroundColor": '#ffffff'
         }
-
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {
@@ -652,7 +646,6 @@ export class Main extends Component {
             </div>);
     }
 
-
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
         this.setState({
@@ -755,8 +748,6 @@ export class Main extends Component {
         }
         e.result = this.scheduleData;
     }
-
-
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -867,9 +858,6 @@ export class Main extends Component {
             );
         });
 
-
-
-
         this.sidebarCalendarList();
 
         //Firefox load is slow and need to take into account wait more time to be ready
@@ -883,12 +871,11 @@ export class Main extends Component {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
 
-
             // New event is called
             if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenNewEventEditor()
-                }, 1000);
+                }, 3000);
             }
 
             // Edit event is called
@@ -899,8 +886,6 @@ export class Main extends Component {
             }
 
         }, value);
-
-
 
         //if (this.layoutIframe) {
         //    setTimeout(function () {
@@ -928,19 +913,19 @@ export class Main extends Component {
     }
 
     getlistEventTypes() {
-
-
+        
         let email = this.props.googleUser.getBasicProfile().getEmail();
 
         getEventTypes(email)
             .then(result => {
-                this.onDataBindingEventTypeList(result.data.eventTypes)
+                if(result.data && result.data.eventTypes){
+                    this.onDataBindingEventTypeList(result.data.eventTypes)
+                }
             })
             .catch(error => {
                 console.log('error ->', error);
             });
     }
-
 
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
@@ -981,8 +966,6 @@ export class Main extends Component {
 
         window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
-
-
 
     buildEventoGoogle(values) {
         //Event basic data
@@ -1507,9 +1490,6 @@ export class Main extends Component {
 
     }
 
-
-
-
     addCalendarsButton(args) {
         let scheduleElement = document.getElementById('schedule');
         if (args.requestType === 'toolBarItemRendered') {
@@ -1944,14 +1924,8 @@ export class Main extends Component {
             return 1;
         })
 
-
-
-
-
-
-
-
     }
+
     predicateQueryEvents(calendarList, predicate) {
         if (calendarList != undefined) {
             calendarList.forEach(function (valor, indice) {
@@ -2117,7 +2091,7 @@ export class Main extends Component {
                 return this.renderSpinner();
             }
         }
-
+        console.log('this.layoutIframeNewEventView', this.layoutIframeNewEventView)
         console.log("Rendering.... " + this.scheduleData.length)
 
         return (
@@ -2199,7 +2173,7 @@ export class Main extends Component {
                                     onCalendarClick={this.loadCalendarEvents}
                                     onSidebarCloseClick={this.handleShowLeftSidebarClick}
                                     onCalendarChange={this.handleScheduleDate}
-                                onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
+                                    onCalendarOpenEditor={this.handleScheduleOpenNewEventEditor}
                                     onCalendarOpenCalnendarView={this.openCalendarView}
                                     onCalendarDelete={this.deleteCalendar}
                                     onCalendarColorModify={this.calendarColorModify}   
@@ -2266,7 +2240,10 @@ export class Main extends Component {
 
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
-                                        <div className='control-wrapper'>
+                                        <div className={`
+                                        ${!this.layoutIframeNewEventView
+                                              ? 'control-wrapper'
+                                              : 'hidden'}`}>
                                             <ScheduleComponent
                                                 //delayUpdate='false'
                                                 id="schedule"
