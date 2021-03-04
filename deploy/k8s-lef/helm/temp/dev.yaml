@@ -69,24 +69,31 @@ nextcloud:
   host: lexbox-dev-nextcloud.lefebvre.es
   username: admin
   password: admin_dev
+  existingSecret:
+    enabled: false
+    secretName: nextcloud-secrets
+    usernameKey: username
+    passwordKey: password
+    smtpUsernameKey: smtp_username
+    smtpPasswordKey: smtp_password
 
 mariadb:
   enabled: true
+  # existingSecret: nextcloud-secrets
   db:
     name: nextcloud_dev
     user: nextcloud_dev
-    password: elefebvre_dev_1234
+    password: oldelefebvre_dev_1234
     # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
     rootUser: 
-      password: sad324_VX_Zaq12
+      password: OLD_sad324_VX_Zaq12
       forcePassword: true
     replication:
-      password: _.qwewq56_12wssXVB_
+      password: OLD_.qwewq56_12wssXVB_
       forcePassword: true
 
   replication:
     enabled: false
-
 env:
   values:
     - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default

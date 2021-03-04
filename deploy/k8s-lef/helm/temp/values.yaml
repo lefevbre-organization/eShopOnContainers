@@ -209,10 +209,10 @@ externalDatabase:
 
   ## Use a existing secret
   existingSecret:
-    enabled: false
-    # secretName: nameofsecret
-    # usernameKey: username
-    # passwordKey: password
+    enabled: false #si esta activo no se generar secreto propio
+    secretName: nextcloud-secrets
+    usernameKey: mariadb-username
+    passwordKey: mariadb-password
 
 ##
 ## MariaDB chart configuration
@@ -220,16 +220,16 @@ externalDatabase:
 mariadb:
   ## Whether to deploy a mariadb server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
   enabled: true
-
+   
   db:
     name: nextcloud
     user: nextcloud
-    password: elefebvre_1234
+    # password: elefebvre_1234
     rootUser: # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
-      password: sad324_VX_Zaq12
+      # password: sad324_VX_Zaq12
       forcePassword: true
     replication:
-      password: .qwewq56_12wssXVB_
+      # password: .qwewq56_12wssXVB_
       forcePassword: true  
 
   replication:
@@ -241,7 +241,8 @@ mariadb:
   master:
     persistence:
       enabled: true
-      # storageClass: ""
+      storageClass: "efs-sc"
+      existingClaim: elefebvre-vol-nextcloud-mdb-claim 
       accessMode: ReadWriteOnce
       size: 8Gi
 
@@ -324,12 +325,12 @@ persistence:
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
   ##
-  # storageClass: "-"
+  storageClass: "efs-sc"
 
   ## A manually managed Persistent Volume and Claim
   ## Requires persistence.enabled: true
   ## If defined, PVC must be created manually before volume will be bound
-  # existingClaim:
+  existingClaim: elefebvre-vol-nextcloud-server-claim
 
   accessMode: ReadWriteOnce
   size: 8Gi
