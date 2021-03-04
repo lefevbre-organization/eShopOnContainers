@@ -6,13 +6,10 @@ Param(
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][string][ValidateSet('All', 'AllExceptInfra', 'OnlyClients', 'OnlyInfra', 'OnlyServices', 'OnlyGateways' , IgnoreCase=$false)]$deployType="All",
-    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
-    [parameter(Mandatory=$false)][bool]$deployCharts=$true,
-    [parameter(Mandatory=$false)][bool]$deployClients=$true,
-    [parameter(Mandatory=$false)][bool]$deployServices=$true,
-    [parameter(Mandatory=$false)][bool]$deployGateways=$true,
     [parameter(Mandatory=$false)][bool]$modeTest=$false,
     [parameter(Mandatory=$false)][bool]$modeDebug=$false,
+    [parameter(Mandatory=$false)][bool]$deployCharts=$true,
+    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string[]]$infras=(
         "rabbitmq", 
         "seq",
@@ -20,11 +17,13 @@ Param(
         # "sql-data",
         "nosql-data"
         ),
+    [parameter(Mandatory=$false)][bool]$deployClients=$true,
     [parameter(Mandatory=$false)][string[]]$clients=(
         # "websignature" # "webdatabase"
         "webcentinela", "webgoogle", "webgraph", "weblexon", "webportal", "webimap","websignature",
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela"
         ),
+    [parameter(Mandatory=$false)][bool]$deployServices=$true,
     [parameter(Mandatory=$false)][string[]]$services=(
         # "account-api" # "database-api",
         "account-api", "calendar-api", "centinela-api", "conference-api", "lexon-api", "signature-api", "userutils-api",
@@ -32,20 +31,21 @@ Param(
         "webimapserver",
         "webstatus"
          ),
+    [parameter(Mandatory=$false)][bool]$deployGateways=$true,
     [parameter(Mandatory=$false)][string[]]$gateways=(
         # "apigwacc" # "apigwdat"
         "apigwlex", "apigwacc", "apigwcen", "apigwsig"
         ),
-    [parameter(Mandatory=$false)][string]$aksName="",
-    [parameter(Mandatory=$false)][bool]$useLocalImages=$false,
-    [parameter(Mandatory=$false)][string]$aksRg="",
     [parameter(Mandatory=$false)][string]$imageTag="linux-dev-42.1",
-    [parameter(Mandatory=$false)][bool]$useLocalk8s=$false,
     [parameter(Mandatory=$false)][bool]$useMesh=$false,
+    [parameter(Mandatory=$false)][bool]$useLocalImages=$false,
+    [parameter(Mandatory=$false)][bool]$useLocalk8s=$false,
     [parameter(Mandatory=$false)][string][ValidateSet('Always','IfNotPresent','Never', IgnoreCase=$false)]$imagePullPolicy="Always",
-    [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','none','custom', IgnoreCase=$false)]$sslSupport = "none",
+    [parameter(Mandatory=$false)][string][ValidateSet('prod','staging','dev','custom', IgnoreCase=$false)]$sslSupport = "dev",
     [parameter(Mandatory=$false)][string]$tlsSecretName = "elef-tls-custom",
-    [parameter(Mandatory=$false)][string]$ingressMeshAnnotationsFile="ingress_values_linkerd.yaml"
+    [parameter(Mandatory=$false)][string]$ingressMeshAnnotationsFile="ingress_values_linkerd.yaml",
+    [parameter(Mandatory=$false)][string]$aksName="",
+    [parameter(Mandatory=$false)][string]$aksRg=""
     )
 
 function Install-Chart  {
@@ -116,6 +116,7 @@ function Uninstall-Chart  {
 
 }
 
+# By default is dev
 $dns = $externalDns
 $sslEnabled=$false
 $sslIssuer=""
