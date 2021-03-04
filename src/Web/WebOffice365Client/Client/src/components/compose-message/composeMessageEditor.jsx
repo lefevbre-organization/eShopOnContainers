@@ -219,7 +219,7 @@ const ComposeMessageEditor = props => {
 
   return (
     <Fragment>
-      <div ref={ref}>
+      <div ref={ref} className="text-editor-container">
         <RichTextEditorComponent
           id='toolsRTE_2'
           showCharCount={false}
@@ -247,6 +247,18 @@ const ComposeMessageEditor = props => {
         </RichTextEditorComponent>
       </div>
       <style jsx>{`
+        .text-editor-container {
+          height: auto;
+        }
+
+        .text-editor-container .e-richtexteditor:not(.e-rte-tb-expand) {
+          border: 0px solid rgba(0, 0, 0, 0.12);
+        }
+
+        .text-editor-container #toolsRTE_2 {
+          min-height: 90%;
+          max-height: 90%
+        }
         .e-rte-toolbar.e-toolbar {
           height: auto;
           position: fixed;
