@@ -258,42 +258,6 @@ class Calendar extends Component {
     return false;
   }
 
-  sendMessagePutUser(user) {
-      let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: this.selectedEvent.Id }] : [];
-      if (sm.length > 0) {
-          sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
-          if (!sm[0].Guid) {
-              sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
-          }
-      }
-      if (this.state.showPromptImportContactsDialog) {
-          sm = this.props.calendarsResult.calendars || [];
-      }
-    window.dispatchEvent(
-      new CustomEvent('PutUserFromLexonConnector', {
-        detail: {
-          user,
-          selectedMessages: selectedMessages,
-          idCaseFile: this.props.lexon.idCaseFile,
-          bbdd: this.props.lexon.bbdd,
-          idCompany: this.props.lexon.idCompany,
-          idEmail: this.props.lexon.idEmail,
-          idFolder: this.props.lexon.idFolder,
-          account: this.props.all.login.formValues.user,
-          provider: 'IMAP',
-          env: window.currentUser ? window.currentUser.env : null
-        }
-      })
-    );
-
-    if (
-      !this.props.lexon.idEmail &&
-      selectedMessages.length !== selected.length
-    ) {
-      console.log('LoadingMessage: 1');
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
-    }
-    }
 
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
@@ -1053,11 +1017,11 @@ class Calendar extends Component {
         const { email, lexon, calendarsResult } = this.props;
 
         const eventId = this.selectedEvent.Id.split("/").pop();
-        let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: eventId }] : [];
+        let sm = [this.createLexonEvent( { ...this.selectedEvent, Guid: eventId })];
+
         if (this.state.showPromptImportContactsDialog) {
             sm = calendarsResult.calendars || [];
         }
-
 
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
@@ -1074,6 +1038,26 @@ class Calendar extends Component {
                 }
             })
         );
+    }
+
+    createLexonEvent(event) {
+        return {
+            Subject: event.Subject,
+            Guid: event.Id,
+            StartTime: event.StartTime,
+            EndTime: event.EndTime,
+            calendar: {
+                title: event.calendar.summary,
+                description: '',
+                color: event.calendar.backgroundColor,
+                fgColor: '#000000'
+            },
+            EventType: event.eventType?{
+                eventTypeName: event.eventType.name,
+                eventTypeColor: event.eventType.color
+            }:undefined,
+            reminders: event.reminders
+        }
     }
 
     handleGetUserFromLexonConnector(event) {
@@ -2020,7 +2004,22 @@ class Calendar extends Component {
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
 
-                this.selectedEvent = { ...args.data[0] };
+                if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                    let item;
+                    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                    // create EventType with structure
+                    let eventType = [];
+                    if (item != undefined) {
+                        eventType.name = item.text;
+                        eventType.id = item.id;
+                        eventType.color = item.backgroundColor;
+                        args.data[0].eventType = eventType;
+                    }
+                }
+
+                const calendar = this.resourceCalendarData.find(x => x.id === this.selectedEvent.CalendarId);
+                this.selectedEvent = { ...args.data[0], calendar: { ...calendar } };
+
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
                         // refresh event data
@@ -2033,24 +2032,10 @@ class Calendar extends Component {
                         //args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
+
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] });
-                
-                        // Convert dropdown eventType in eventtype object to paint into schedule event
-                        if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
-                           let item;
-                           item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                           // create EventType with structure
-                           let eventType = [];
-                           if (item != undefined) {
-                            eventType.push({
-                                text: item.text,
-                                id: item.id,
-                                backgroundColor: item.backgroundColor
-                            });
-                            args.data[0].EventType = eventType;
-                           }
-                        }
+
                         this.toastObj.show(this.toasts[1]);
                         this.loadCalendarEvents(args.data[0].CalendarId, true);
                     })
