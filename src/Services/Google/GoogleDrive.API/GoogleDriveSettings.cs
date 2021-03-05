@@ -24,5 +24,7 @@
 
         public bool AzureStorageEnabled { get; set; }
         public long IdAppNavision { get; set; }
+
+        public string LexonApiGwUrl { get; set; }
     }
 }

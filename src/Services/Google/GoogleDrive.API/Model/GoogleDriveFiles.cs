@@ -23,6 +23,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
         public string iconLink { get; set; } 
         public bool hasThumbnail { get; set; } 
         public IEnumerable<GoogleDriveFile> files { get; set; }
+        public GoogleDriveErrorResponse error { get; set; }
 
     }
 
@@ -37,6 +38,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
     {
         public string mimeType { get; set; }
         public string content { get; set; }
+        public GoogleDriveErrorResponse error { get; set; }
     }
 
     public class GoogleDriveResonse
@@ -56,26 +58,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Model
         public string name { get; set; }
     }
 
-    public class GoogleDriveErrorResponse
-    {
-        public GoogleDriveError error { get; set; }
-    }
-
-    public class GoogleDriveError
-    {
-        public int code { get; set; }
-        public string message { get; set; }
-        public List<GoogleDriveErrorItem> errors { get; set; }
-    }
-
-    public class GoogleDriveErrorItem
-    {
-        public string domain { get; set; }
-        public string reason { get; set; }
-        public string message { get; set; }
-        public string locationType { get; set; }
-        public string location { get; set; }
-    }
+ 
 
     public class GoogleDriveExportMimeTypes
     {

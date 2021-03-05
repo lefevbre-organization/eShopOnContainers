@@ -172,7 +172,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada a la api fallo"), Codes.GoogleDrive.GetFiles, Codes.Areas.Google);
+                        if (getroot != null)
+                        {
+                            var resultMessage = getroot.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new GoogleDriveFile()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = new List<GoogleDriveFile>() { response };
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.GetFiles, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.GetFiles, Codes.Areas.Google);
+                        }
                     }
                 }
             }
@@ -208,13 +224,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada a la api fallo"), Codes.GoogleDrive.GetFiles, Codes.Areas.Google);
+                        if (get != null)
+                        {
+                            var resultMessage = get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new DriveCredential()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response ;
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.GetCredential, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.GetCredential, Codes.Areas.Google);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new GoogleDriveDomainException("Error in GetCredential", ex), Codes.GoogleDrive.GetFiles, Codes.Areas.Google);
+                TraceError(result.errors, new GoogleDriveDomainException("Error in GetCredential", ex), Codes.GoogleDrive.GetCredential, Codes.Areas.Google);
             }
 
             return result;
@@ -386,7 +418,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.CreateFolder, Codes.Areas.Google);
+                        if (get != null)
+                        {
+                            var resultMessage = get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new GoogleDriveResonse()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response;
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.CreateFolder, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.CreateFolder, Codes.Areas.Google);
+                        }
                     }
                 }
 
@@ -510,7 +558,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
+                        if (get != null)
+                        {
+                            var resultMessage = get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new GoogleDriveResonse()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response;
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.UploadFile, Codes.Areas.Google);
+                        }
                     }
                 }
 
@@ -561,7 +625,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                        if (get != null)
+                        {
+                            var resultMessage = get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new DownloadedFile()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response;
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                        }
                     }
                 }
 
@@ -605,7 +685,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.MoveElement, Codes.Areas.Google);
+                        if (get != null)
+                        {
+                            var resultMessage = get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new GoogleDriveResonse()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response;
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.MoveElement, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.MoveElement, Codes.Areas.Google);
+                        }
                     }
                 }
 
@@ -657,7 +753,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                     }
                     else
                     {
-                        TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                        if (get != null)
+                        {
+                            var resultMessage = get.Content.ReadAsStringAsync().Result;
+                            var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                            var response = new GoogleDriveResonse()
+                            {
+                                error = errorMessage
+                            };
+                            result.data = response;
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                        }
+                        else
+                        {
+
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                        }
                     }
                 }
 
@@ -710,12 +822,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                             };
                             result.data = response;
                             
-                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.GetFile, Codes.Areas.Google);
                         }
                         else
                         {
                             
-                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.RenameElement, Codes.Areas.Google);
+                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.GetFile, Codes.Areas.Google);
                         }
                        
                     }
@@ -789,6 +901,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                                 response.mimeTypes.Add("application/vnd.google-apps.script+json");
                                 break;
                         }
+                       
                         TraceInfo(result.infos, "formatos encontrados exitosamente");
                         result.data = response;
                     }
@@ -856,7 +969,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Infrastructur
                         }
                         else
                         {
-                            TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.DownloadFile, Codes.Areas.Google);
+                            if (get != null)
+                            {
+                                var resultMessage = get.Content.ReadAsStringAsync().Result;
+                                var errorMessage = JsonConvert.DeserializeObject<GoogleDriveErrorResponse>(resultMessage);
+                                var response = new DownloadedFile()
+                                {
+                                    error = errorMessage
+                                };
+                                result.data = response;
+
+                                TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.ExportGoogleWorkspace, Codes.Areas.Google);
+                            }
+                            else
+                            {
+
+                                TraceError(result.errors, new GoogleDriveDomainException("La Llamada Google Drive api falló"), Codes.GoogleDrive.ExportGoogleWorkspace, Codes.Areas.Google);
+                            }
                         }
                     }
                 }

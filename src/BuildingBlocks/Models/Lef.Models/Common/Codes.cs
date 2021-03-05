@@ -166,6 +166,9 @@
             public static readonly string MoveElement = "GD10";
             public static readonly string RenameElement = "GD11";
             public static readonly string ExportMimeType = "GD12";
+            public static readonly string ExportGoogleWorkspace = "GD13";
+            public static readonly string GetFile = "GD14";
+            public static readonly string GetCredential = "GD15";
         }
 
         public static class GoogleAccount

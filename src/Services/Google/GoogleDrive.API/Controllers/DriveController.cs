@@ -11,6 +11,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Http;
     using Model;
+    using Newtonsoft.Json.Linq;
+    using RestSharp;
 
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -36,22 +38,34 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
         public IActionResult Test()
         {
             var data = $"Google Drive v.{ _settings.Value.Version}";
+
             return Ok(new Result<string>(data));
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUser(string LefebvreCredential)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> GetUser([FromHeader] string Authorization)
         {
 
-            if(string.IsNullOrEmpty(LefebvreCredential))
-              return BadRequest("La Credencial de Lefebvre es requerida");
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Token de acceso no encontrado");
+
+            string LefebvreCredential = "";
+
+            if (!checkToken(httpRequest.Headers["Authorization"], out LefebvreCredential))
+                return BadRequest("Token de acceso invalido");
 
             var token = await _service.GetCredential(LefebvreCredential);
 
@@ -61,10 +75,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             return Ok(token);
         }
 
+        /*
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetFiles(string LefebvreCredential)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> GetFiles([FromHeader] string Authorization)
         {
 
             if(string.IsNullOrEmpty(LefebvreCredential))
@@ -83,9 +100,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Search(string LefebvreCredential, string Searcher)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> Search([FromHeader] string Authorization, string Searcher)
         {
 
             if(string.IsNullOrEmpty(LefebvreCredential))
@@ -107,9 +126,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Delete(string LefebvreCredential, string FileId)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> Delete([FromHeader] string Authorization, string FileId)
         {
 
             if(string.IsNullOrEmpty(LefebvreCredential))
@@ -127,9 +148,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Trash(string LefebvreCredential)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> Trash([FromHeader] string Authorization)
         {
 
             if(string.IsNullOrEmpty(LefebvreCredential))
@@ -140,9 +163,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpPost("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CreateFolder(string LefebvreCredential, string folderName, string parentId)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> CreateFolder([FromHeader] string Authorization, string folderName, string parentId)
         {
 
             if (string.IsNullOrEmpty(LefebvreCredential))
@@ -156,9 +181,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpPost("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UploadFile(string LefebvreCredential, IFormFile formFile, string parentId, string sessionId) { 
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> UploadFile([FromHeader] string Authorization, IFormFile formFile, string parentId, string sessionId) { 
 
             if (string.IsNullOrEmpty(LefebvreCredential))
                 return BadRequest("La Credencial de Lefebvre es requerida");
@@ -171,9 +198,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> DownloadFile(string LefebvreCredential, string fileId)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> DownloadFile([FromHeader] string Authorization, string fileId)
         {
 
             if (string.IsNullOrEmpty(LefebvreCredential))
@@ -187,8 +216,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpPatch("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
         public async Task<IActionResult> MoveElement(string LefebvreCredential, string elementId, string parentId, string destinationId)
         {
 
@@ -204,9 +235,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpPatch("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RenameElement(string LefebvreCredential, string elementId, string currentName, string newName)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> RenameElement([FromHeader] string Authorization, string elementId, string currentName, string newName)
         {
 
             if (string.IsNullOrEmpty(LefebvreCredential))
@@ -227,9 +260,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetAvailableExportTypes(string LefebvreCredential, string fileId)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> GetAvailableExportTypes([FromHeader] string Authorization, string fileId)
         {
 
             if (string.IsNullOrEmpty(LefebvreCredential))
@@ -245,9 +280,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
 
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ExportGoogleWorkspaceFile(string LefebvreCredential, string fileId, string mimeType)
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> ExportGoogleWorkspaceFile([FromHeader] string Authorization, string fileId, string mimeType)
         {
 
             if (string.IsNullOrEmpty(LefebvreCredential))
@@ -263,7 +300,42 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Google.Drive.API.Controllers
             var file = await _service.ExportFile(LefebvreCredential, fileId, mimeType);
             return Ok(file);
         }
+        */
+        #region Token
+        private bool checkToken(string authToken, out string LefebvreCredential)
+        {
+            bool valid = false;
+            var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/utils/Lexon/token/validation?validateCaducity=false");
+            client.Timeout = 10000;
 
+            var request = new RestRequest(Method.PUT);
+            request.AddHeader("Accept", "text/plain");
+            request.AddHeader("Content-Type", "application/json-patch+json");
+            request.AddParameter("application/json-patch+json,text/plain", $"\"{authToken}\"", ParameterType.RequestBody);
 
+            IRestResponse response = client.Execute(request);
+
+            if (response.IsSuccessful)
+            {
+                valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
+        
+            }
+            else
+            {
+                Console.WriteLine("Response is not successfull");
+            }
+
+            Console.WriteLine($"TokenValid:{valid} - {authToken}");
+
+            //if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
+            //Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            //{
+            //    return true;
+            //}
+            LefebvreCredential = "";
+
+            return valid;
+        }
+        #endregion
     }
 }
