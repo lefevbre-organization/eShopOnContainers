@@ -121,8 +121,6 @@ export class Main extends Component {
             eventType: undefined,
             isVisibility: false,
             to2: [],
-            idActuation: '',
-            idEvent: '',
             // sidebarCollapsed:false
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
@@ -281,14 +279,6 @@ export class Main extends Component {
         else if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null) {
             this.layoutIframeNewEventView = true
         }
-
-        this.setState({
-            idActuation: this.props.lexon.idActuation, 
-            idEvent: this.props.lexon.idEvent
-        });
-
-        this.props.resetIdActuation();
-        this.props.resetIdEvent();
 
     }
 
@@ -2415,9 +2405,7 @@ const mapDispatchToProps = dispatch =>
             //toggleSelected,
             selectCalendar,
             setGUID: ACTIONS.setGUID,
-            setSign: ACTIONS.setSign,
-            resetIdActuation: ACTIONS.resetIdActuation,
-            resetIdEvent: ACTIONS.resetIdEvent
+            setSign: ACTIONS.setSign
         },
         dispatch
     );
