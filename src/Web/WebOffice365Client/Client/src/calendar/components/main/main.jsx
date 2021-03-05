@@ -305,6 +305,13 @@ export class Main extends Component {
             this.layoutIframeNewEventView = true
         }
 
+        this.setState({
+            idActuation: this.props.lexon.idActuation, 
+            idEvent: this.props.lexon.idEvent
+        });
+
+        this.props.resetIdActuation();
+        this.props.resetIdEvent();
     }
 
     convertUnicode(input) {
@@ -2404,7 +2411,9 @@ const mapDispatchToProps = dispatch =>
             //toggleSelected,
             selectCalendar,
             setGUID: ACTIONS.setGUID,
-            setSign: ACTIONS.setSign
+            setSign: ACTIONS.setSign,
+            resetIdActuation: ACTIONS.resetIdActuation,
+            resetIdEvent: ACTIONS.resetIdEvent
         },
         dispatch
     );

@@ -10,7 +10,9 @@ export const ActionTypes = {
   LEXON_TOKEN: 'LEXON_TOKEN',
   LEXON_IDACTUATION: 'LEXON_IDACTUATION',
   LEXON_IDEVENT: 'LEXON_IDEVENT',
-  LEXON_TITLE: 'LEXON_TITLE'
+  LEXON_TITLE: 'LEXON_TITLE',
+  LEXON_RESET_IDACTUATION: 'LEXON_RESET_IDACTUATION',
+  LEXON_RESET_IDEVENT: 'LEXON_RESET_IDEVENT'
 };
 
 export const setUser = (user) => ({
@@ -73,6 +75,14 @@ export const setToken = (token) => ({
   payload: token,
 });
 
+export const resetIdActuation = () => ({
+  type: ActionTypes.LEXON_RESET_IDACTUATION   
+})
+
+export const resetIdEvent = () => ({
+  type: ActionTypes.LEXON_RESET_IDEVENT
+})
+
 export default {
   setUser,
   setCaseFile,
@@ -85,5 +95,7 @@ export default {
   setBBDD,
   setIdActuation,
   setIdEvent,
-  setTitle
+  setTitle,
+  resetIdActuation,
+  resetIdEvent
 };

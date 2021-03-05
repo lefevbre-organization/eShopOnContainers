@@ -84,23 +84,35 @@ export const lexon = (state = defaultLexon, action = {}) => {
         token: action.payload,
           };
 
-      case ActionTypes.LEXON_IDACTUATION:
-          return {
-              ...state,
-              idActuation: action.payload,
-          };
+    case ActionTypes.LEXON_IDACTUATION:
+      return {
+          ...state,
+          idActuation: action.payload,
+      };
 
-      case ActionTypes.LEXON_IDEVENT:
-          return {
-              ...state,
-              idEvent: action.payload,
-          }
+    case ActionTypes.LEXON_IDEVENT:
+      return {
+          ...state,
+          idEvent: action.payload,
+      }
 
-      case ActionTypes.LEXON_TITLE:
-          return {
-              ...state,
-              title: action.payload,
-          }
+    case ActionTypes.LEXON_TITLE:
+      return {
+          ...state,
+          title: action.payload,
+      }
+
+    case ActionTypes.LEXON_RESET_IDACTUATION:
+      return {
+          ...state,
+          idActuation: null,
+      }
+      
+    case ActionTypes.LEXON_RESET_IDEVENT:
+      return {
+          ...state,
+          idEvent: null,
+      }
 
     default:
       return state;
