@@ -132,6 +132,8 @@ class Calendar extends Component {
         calendars: [],
         schedule: null,
         to2: [],
+        idActuation: '', 
+        idEvent: '',
         isUpdatedDefaultAccount: false
       };
 
@@ -258,42 +260,6 @@ class Calendar extends Component {
     return false;
   }
 
-  sendMessagePutUser(user) {
-      let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: this.selectedEvent.Id }] : [];
-      if (sm.length > 0) {
-          sm[0].Subject = this.scheduleObj.eventWindow.eventData.Subject;
-          if (!sm[0].Guid) {
-              sm[0].Guid = this.scheduleObj.eventWindow.eventData.Id;
-          }
-      }
-      if (this.state.showPromptImportContactsDialog) {
-          sm = this.props.calendarsResult.calendars || [];
-      }
-    window.dispatchEvent(
-      new CustomEvent('PutUserFromLexonConnector', {
-        detail: {
-          user,
-          selectedMessages: selectedMessages,
-          idCaseFile: this.props.lexon.idCaseFile,
-          bbdd: this.props.lexon.bbdd,
-          idCompany: this.props.lexon.idCompany,
-          idEmail: this.props.lexon.idEmail,
-          idFolder: this.props.lexon.idFolder,
-          account: this.props.all.login.formValues.user,
-          provider: 'IMAP',
-          env: window.currentUser ? window.currentUser.env : null
-        }
-      })
-    );
-
-    if (
-      !this.props.lexon.idEmail &&
-      selectedMessages.length !== selected.length
-    ) {
-      console.log('LoadingMessage: 1');
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
-    }
-    }
 
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
@@ -343,7 +309,10 @@ class Calendar extends Component {
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
               <div id='target' className={styles.app}>
                   <Spinner
-                    visible={this.layoutIframeNewEventView}
+                    visible={
+                        this.layoutIframeNewEventView || 
+                        this.layoutIframeEditEventView
+                    }
                     className={styles.spinnerCalendar}
                     pathClassName={styles.spinnerPath}
                   />
@@ -379,7 +348,7 @@ class Calendar extends Component {
                       <div className='schedule-control-section'>
                           <div className='control-section'>
                               <div className={`
-                                ${!this.layoutIframeNewEventView
+                                ${!this.layoutIframeNewEventView 
                                       ? ''
                                       : styles['hidden']
                                   } `}>
@@ -563,7 +532,6 @@ class Calendar extends Component {
             }
         }
 
-
         if (window != window.top) {
             window.top.postMessage(
                 JSON.stringify({
@@ -595,7 +563,6 @@ class Calendar extends Component {
         this.currentClassification = undefined;
     }
 
-
     async setGlobalization() {
         if (window.navigator.language.includes("es-")
             || (window.navigator.language === "es")
@@ -610,27 +577,25 @@ class Calendar extends Component {
     }
 
     TokensFlows() {
-        //var closing = window.close;
-        //window.close = function () {
-        //    console.log('window close fired!');
-        //    closing();
-        //};
-        
         if (window != window.top) {
             this.layoutIframe = true;
         }
 
         if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
+            this.setState({
+                idActuation: this.props.lexon.idActuation, 
+                idEvent: this.props.lexon.idEvent 
+            });
         } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
-            console.log('TokensFlows', this.props.lexon.idActuation)
+            this.setState({
+                idActuation: this.props.lexon.idActuation
+            });
             this.layoutIframeNewEventView = true;
         }
-
+       
         this.props.resetIdActuation();
         this.props.resetIdEvent();
-
-
     }
 
     convertUnicode(input) {
@@ -1053,11 +1018,11 @@ class Calendar extends Component {
         const { email, lexon, calendarsResult } = this.props;
 
         const eventId = this.selectedEvent.Id.split("/").pop();
-        let sm = this.selectedEvent ? [{ ...this.selectedEvent, Guid: eventId }] : [];
+        let sm = [this.createLexonEvent( { ...this.selectedEvent, Guid: eventId })];
+
         if (this.state.showPromptImportContactsDialog) {
             sm = calendarsResult.calendars || [];
         }
-
 
         window.dispatchEvent(
             new CustomEvent('PutUserFromLexonConnector', {
@@ -1074,6 +1039,26 @@ class Calendar extends Component {
                 }
             })
         );
+    }
+
+    createLexonEvent(event) {
+        return {
+            Subject: event.Subject,
+            Guid: event.Id,
+            StartTime: event.StartTime,
+            EndTime: event.EndTime,
+            calendar: {
+                title: event.calendar.summary,
+                description: '',
+                color: event.calendar.backgroundColor,
+                fgColor: '#000000'
+            },
+            EventType: event.eventType?{
+                eventTypeName: event.eventType.name,
+                eventTypeColor: event.eventType.color
+            }:undefined,
+            reminders: event.reminders
+        }
     }
 
     handleGetUserFromLexonConnector(event) {
@@ -1142,10 +1127,15 @@ class Calendar extends Component {
 
         //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
+        const obj = this;
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
         }
-        const obj = this;
+
+        if(obj.layoutIframeNewEventView) {
+            value = 1000;
+        }
+       
         this.setState({ schedule: obj.scheduleObj });
         setTimeout(() => {
         obj.LoadCalendarList();
@@ -1209,7 +1199,9 @@ class Calendar extends Component {
        getEventTypes(this.props.email)
            .then(result => {
                if (result && result.data) {
-                   this.onDataBindingEventTypeList(result.data.eventTypes);
+                    if(result.data && result.data.eventTypes){
+                       this.onDataBindingEventTypeList(result.data.eventTypes);
+                    }
                }
            })
            .catch(error => {
@@ -2020,7 +2012,22 @@ class Calendar extends Component {
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
 
-                this.selectedEvent = { ...args.data[0] };
+                if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                    let item;
+                    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                    // create EventType with structure
+                    let eventType = [];
+                    if (item != undefined) {
+                        eventType.name = item.text;
+                        eventType.id = item.id;
+                        eventType.color = item.backgroundColor;
+                        args.data[0].eventType = eventType;
+                    }
+                }
+
+                const calendar = this.resourceCalendarData.find(x => x.id === this.selectedEvent.CalendarId);
+                this.selectedEvent = { ...args.data[0], calendar: { ...calendar } };
+
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
                         // refresh event data
@@ -2033,23 +2040,11 @@ class Calendar extends Component {
                         //args.data[0].Id = event.filename;
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
+
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] });
-                
-                        // Convert dropdown eventType in eventtype object to paint into schedule event
-                        if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
-                           let item;
-                           item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
-                           // create EventType with structure
-                           let eventType = [];
-                           if (item != undefined) {
-                            eventType.push({
-                                text: item.text,
-                                id: item.id,
-                                backgroundColor: item.backgroundColor
-                            });
-                            args.data[0].EventType = eventType;
-                           }
+                        if (window != window.top) {
+                            this.onCloseDialog();
                         }
                         this.toastObj.show(this.toasts[1]);
                         this.loadCalendarEvents(args.data[0].CalendarId, true);

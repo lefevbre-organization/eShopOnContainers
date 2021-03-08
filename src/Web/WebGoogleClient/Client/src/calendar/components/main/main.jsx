@@ -273,7 +273,6 @@ export class Main extends Component {
         {
             this.layoutIframe = true;
         }
-        console.log('TokensFlows', this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null)
         if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true
         }
@@ -887,7 +886,7 @@ export class Main extends Component {
             if (obj.layoutIframeEditEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenEditEventEditor()
-                }, 1000);
+                }, 3000);
             }
 
         }, value);
@@ -1744,6 +1743,10 @@ export class Main extends Component {
                             }
                         }
 
+                        if (window != window.top) {
+                            this.onCloseDialog();
+                        }
+
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
@@ -2166,9 +2169,10 @@ export class Main extends Component {
 
                             </div>
                         )}
-
+                         {this.layoutIframeNewEventView || 
+                         this.layoutIframeEditEventView ? 
+                         this.renderSpinner() : null}
                         <section className='main hbox space-between'>
-                           
                                 <Sidebar
                                     sideBarCollapsed={this.state.leftSideBar.collapsed}
                                     sideBarToggle={this.toggleSideBar}
@@ -2185,7 +2189,6 @@ export class Main extends Component {
                                     isIframeContainer={this.layoutIframe} 
                                     ref={sidebar => this.sidebarCalendarObj = sidebar}
                                 />
-                           
                            
                             <article className='d-flex flex-column position-relative'>
                                 <div className="hidden">
@@ -2246,7 +2249,8 @@ export class Main extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className={`
-                                        ${!this.layoutIframeNewEventView
+                                        ${!this.layoutIframeNewEventView 
+                                            || !this.layoutIframeEditEventView 
                                               ? 'control-wrapper'
                                               : 'hidden'}`}>
                                             <ScheduleComponent

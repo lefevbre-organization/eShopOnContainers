@@ -1327,7 +1327,7 @@ export class ComposeMessage extends Component {
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-right: 0 solid transparent !important;
             border-left: 0 solid transparent !important;
-            margin-top: 76px !important;
+            margin-top: 65px !important;
           }
 
         `}</style>

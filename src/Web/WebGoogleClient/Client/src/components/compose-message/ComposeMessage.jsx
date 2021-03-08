@@ -287,7 +287,7 @@ export class ComposeMessage extends PureComponent {
 
   componentDidUpdate(prevProps, prevState) {
     console.log('Debug: state.sendingEmail ' + this.state.sendingEmail);
-    console.log('Debug: draftRequests: ' + this.state.draftRequests.length );
+    console.log('Debug: state.draftRequests: ' + this.state.draftRequests.length );
     // For messages in compose or resend and reply
     if((prevState.to !== this.state.to 
       || prevState.cc !== this.state.cc 
@@ -319,22 +319,22 @@ export class ComposeMessage extends PureComponent {
       && this.props.match.params.id 
       && this.state.isDraftEdit
       && !this.state.sendingEmail) {
-        console.log('Checking draft in progress...');
+        console.log('Debug: Checking draft in progress...');
         console.log(this.state.draftInProgress);
 
         if (!this.state.draftInProgress){
-          console.log('Setting draftInProgress to true and cleaning draftQueue');
+          console.log('Debug: Setting draftInProgress to true and cleaning draftQueue');
 
           this.setState({draftInProgress: true, draftQueue: 0});
           this.saveDraft();
         } else {
           this.setState({draftQueue: this.state.draftQueue + 1})
-          console.log('Draft queue:'+this.state.draftQueue);
+          console.log('Debug: Draft queue:'+this.state.draftQueue);
         }   
     }
 
     if (this.state.draftQueue > 0 && !this.state.draftInProgress){
-      console.log('Queued changes, saving them...');
+      console.log('Debug: Queued changes, saving them...');
       this.setState({draftInProgress: true, draftQueue: 0});
       this.saveDraft();
     }
@@ -601,10 +601,14 @@ export class ComposeMessage extends PureComponent {
       this.props.setMailContacts(null);
     }
     if(this.state.draftId) {
-      this.closeModal();
-        // deleteDraft({ draftId: this.state.draftId }).then(() => {
-        //   this.closeModal();
-        // });
+        deleteDraft({ draftId: this.state.draftId })
+        .then(() => {
+          this.closeModal();
+        })
+        .catch(err => {
+          console.log('Error: ' + err);
+          this.closeModal();
+        });
     } else {
       this.closeModal();
     } 
@@ -744,7 +748,7 @@ export class ComposeMessage extends PureComponent {
   }
   
   saveDraft() {
-
+    console.log('Debug: saveDraft START');
     const validTo = getValidEmails(this.state.to);
     
     const headers = {
@@ -768,7 +772,7 @@ export class ComposeMessage extends PureComponent {
 
     const fullTime = this.getTimeDraft();
 
-    console.log('Debug: saveDraft', this.state.content)
+    console.log('Debug: saveDraft -> CONTENT: ', this.state.content)
 
     var { draftRequests } = this.state;
 
@@ -785,11 +789,11 @@ export class ComposeMessage extends PureComponent {
           attachments: Fileattached,
           draftId: this.state.draftId
         }).then((draft) => {
-          console.log('Debug: saveDraft -> DRAFT GUARDADO: ' + draft.id)
+          console.log('Debug: saveDraft END -> DRAFT GUARDADO: ' + draft.id)
           this.setState({draftTime: fullTime, draftId: draft.id, draftInProgress: false});
         })
         .catch((err) => {
-          console.log('Debug: saveDraft -> ERROR GUARDANDO DRAFT: ' + err);
+          console.log('Debug: saveDraft END -> ERROR GUARDANDO DRAFT: ' + err);
           this.setState({draftInProgress: false});
         }));
         this.setState({draftRequests: draftRequests});
@@ -1381,7 +1385,7 @@ export class ComposeMessage extends PureComponent {
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-right: 0 solid transparent !important;
             border-left: 0 solid transparent !important;
-            margin-top: 76px !important;
+            margin-top: 65px !important;
           }
           
         `}</style>

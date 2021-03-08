@@ -304,7 +304,6 @@ export class Main extends Component {
         } else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
             this.layoutIframeNewEventView = true
         }
-
     }
 
     convertUnicode(input) {
@@ -320,7 +319,6 @@ export class Main extends Component {
             "backgroundColor": color,
             "foregroundColor": '#ffffff'
         }
-
 
         updateCalendar(calendarId, calendarData)
             .then(result => {
@@ -658,7 +656,7 @@ export class Main extends Component {
                 }
 
                 if (!this.scheduleData.find(x => x.Id === event.id)) {
-                    const event = {
+                    const data = {
                         Id: event.id,
                         CalendarId: calendarId,
                         Subject: event.summary,
@@ -677,14 +675,13 @@ export class Main extends Component {
                         Reminders: reminders,
                         LexonClassification: lexonClassification
                     };
-                    this.scheduleData.push(event);
+                    this.scheduleData.push(data);
                     //this.selectedEvent = event;
                 }
             }
         }
         e.result = this.scheduleData;
     }
-
 
     sendMessagePutUser(user) {
         if(this.scheduleObj.eventWindow.eventData && !this.scheduleObj.eventWindow.eventData.Id) {
@@ -845,16 +842,18 @@ export class Main extends Component {
             );
         });
 
-
         this.sidebarCalendarList();
-
         //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
+        let obj = this;
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
         }
 
-        let obj = this;
+        if(obj.layoutIframeNewEventView) {
+            value = 1000;
+        }
+
         setTimeout(function () {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
@@ -863,14 +862,14 @@ export class Main extends Component {
             if (obj.layoutIframeNewEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenNewEventEditor()
-                }, 1000);
+                }, 2000);
             }
 
             // Edit event is called 
             if (obj.layoutIframeEditEventView) {
                 setTimeout(function () {
                     obj.handleScheduleOpenEditEventEditor()
-                }, 1000);
+                }, 2000);
             }
 
         }, value);
@@ -897,12 +896,13 @@ export class Main extends Component {
 
     getlistEventTypes() {
 
-
         let email = this.props.User.email;
 
         getEventTypes(email)
             .then(result => {
-                this.onDataBindingEventTypeList(result.data.eventTypes)
+                if(result.data && result.data.eventTypes){
+                    this.onDataBindingEventTypeList(result.data.eventTypes)
+                }
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -938,7 +938,6 @@ export class Main extends Component {
         );
         window.removeEventListener('ExportEventsProgress', this.onExportEvents)
     }
-
 
     buildEventoGoogle(values) {
         let timezoneEnd = 'Europe/Madrid'
@@ -1223,7 +1222,6 @@ export class Main extends Component {
             }
         }
 
-
         if (args.type === 'QuickInfo') {
             const currentClassification = args.data.LexonClassification;
             const content = document.getElementsByClassName("e-popup-content");
@@ -1263,7 +1261,6 @@ export class Main extends Component {
                 }
 
             }
-
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
@@ -1323,7 +1320,6 @@ export class Main extends Component {
                 }
             }
 
-
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
             args.element.style.width = "900px";
@@ -1334,7 +1330,6 @@ export class Main extends Component {
                 var validator = (formElement).ej2_instances[0];
                 validator.addRules('Subject', {required: [true, i18n.t("schedule.validator-required")]});
             }
-
 
             // Create required custom elements in initial time
             if (!args.element.querySelector('.custom-field-row')) {
@@ -1474,10 +1469,7 @@ export class Main extends Component {
         });
 
         scheduleElement.parentElement.appendChild(logoutContentEle);
-
-
     }
-
 
     addCalendarsButton(args) {
         let scheduleElement = document.getElementById('schedule');
@@ -1554,10 +1546,8 @@ export class Main extends Component {
                 })
 
                 if (desc) {
-
                     //reset reminders
                     desc.Reminders = [];
-
                     //Update Reminders                
                     let arrR = this.remObj.listviewInstance.dataSource;
                     if (arrR.length > 0) {
@@ -1569,7 +1559,6 @@ export class Main extends Component {
 
                         });
                     }
-
                     //reset attendess
                     desc.Attendees = [];
 
@@ -1580,7 +1569,6 @@ export class Main extends Component {
                             desc.Attendees.push({'email': att[key]});
                         });
                     }
-
                     //update eventType
                     //Convert dropdown eventType in eventtype object to paint into schedule event
                     if (desc.EventType != undefined && desc.EventType != null) {
@@ -1646,11 +1634,8 @@ export class Main extends Component {
                     delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
                 }
 
-
-
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
-
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
                             this.scheduleObj.eventWindow.eventData.Subject = event.summary;
@@ -1680,9 +1665,11 @@ export class Main extends Component {
                             }
                         }
 
-
                         const calendar =  this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId);
                         this.selectedEvent = {...args.data[0], ...result, calendar};
+                        if (window != window.top) {
+                            this.onCloseDialog();
+                        }
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
@@ -1788,7 +1775,6 @@ export class Main extends Component {
     loadCalendarEvents(calendar, checked) {
         this.scheduleObj.showSpinner();
 
-
         let predicate;
 
         getEventList(calendar, this.scheduleObj.selectedDate)
@@ -1848,7 +1834,6 @@ export class Main extends Component {
                 }
             })
         }
-
         // remove non calendar permissions
         //var result = [];
         //for (var i = 0; i < this.resourceCalendarData.length; i++) {
@@ -1857,17 +1842,13 @@ export class Main extends Component {
         //    }
         //}
         //this.resourceCalendarData = result;
-
-
         this.resourceCalendarData.sort(function (a, b) {
             if (a.id === calendar) {
                 return -1;
             }
             //if (a.firstname > {b.firstname) { return 1; }
             return 1;
-        })
-
-
+        });
     }
 
     predicateQueryEvents(calendarList, predicate) {
@@ -1889,7 +1870,6 @@ export class Main extends Component {
         this.scheduleObj.dataBind();
     }
 
-
     handleScheduleOpenNewEventEditor() {
         var endTimeDate = new Date();
         endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
@@ -1904,7 +1884,6 @@ export class Main extends Component {
         let eventData = this.scheduleData.find(x => x.Id == this.props.lexon.idEvent)
         this.scheduleObj.openEditor(eventData, 'Save');
     }
-
 
     sidebarCalendarList() {
         this.props.getCalendars();
@@ -1943,7 +1922,6 @@ export class Main extends Component {
     //            window.open(urlRedirect, '_self');
     //        });
     //}
-
     setEmailTags(tag) {
         this.setState({to2: [...tag]})
     }
@@ -1984,7 +1962,6 @@ export class Main extends Component {
         //this.profilePopup.hide();
         //this.openEventTypeView();
     }
-
     /**
      * Adds an address to the list matching the id.
      *
@@ -2003,7 +1980,6 @@ export class Main extends Component {
             }
         }
     }
-
     /**
      * Removes the address from the under the field matching the id.
      *
@@ -2031,7 +2007,6 @@ export class Main extends Component {
                 showPromptImportContactsDialog: true
             });
     }
-
     // Import Concatcs View Dialog
     dialogImportConcatcsClose(args) {
         //if (args == undefined) {
@@ -2185,7 +2160,9 @@ export class Main extends Component {
                                     `}</style>
                             </div>
                         )}
-
+                        {this.layoutIframeNewEventView || this.layoutIframeEditEventView  ? 
+                         this.renderSpinner() : null
+                        }
                         <section className='main hbox space-between'>
                             <Sidebar
                                 sideBarCollapsed={this.state.leftSideBar.collapsed}
@@ -2257,7 +2234,11 @@ export class Main extends Component {
 
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
-                                        <div className='control-wrapper'>
+                                        <div className={`
+                                        ${!this.layoutIframeNewEventView 
+                                            || !this.layoutIframeEditEventView 
+                                              ? 'control-wrapper'
+                                              : 'hidden'}`}>
                                             <ScheduleComponent
                                                 //delayUpdate='false' 
                                                 id="schedule"

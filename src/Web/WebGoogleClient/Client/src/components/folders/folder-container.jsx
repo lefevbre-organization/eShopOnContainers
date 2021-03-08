@@ -11,6 +11,7 @@ import {
     modifyMessages,
     removeMessageFromList
 } from "../content/message-list/actions/message-list.actions";
+import Spinner from "../spinner/spinner";
 
 //const moreId = uuid();
 
@@ -18,6 +19,10 @@ class FolderContainer extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            showSpinner: false
+        }
 
         this.tree = this.prepareTree();
 
@@ -203,12 +208,29 @@ class FolderContainer extends Component {
     onNodeClicked(args) {
         const nodeData = this.treeViewRef.current.getNode(args.node);
 
-        if(nodeData.selected === true) {
-            this.toClick = setTimeout(()=>{
-                this.navigateToList({nodeData});
-            }, 200);
+        console.log(this.props.composer.draftInProgress);
+        if (this.props.composer && this.props.composer.draftInProgress){
+            this.setState({showSpinner:true});
+            Promise.all(this.props.composer.draftRequests).then(() => {
+                if(nodeData.selected === true) {
+                    this.toClick = setTimeout(()=>{
+                        this.navigateToList({nodeData});
+                    }, 200);
 
-        }
+                    setTimeout(() => {
+                        this.setState({showSpinner:false});
+                    }, 300);
+        
+                }
+            })
+        } else {
+            if(nodeData.selected === true) {
+                this.toClick = setTimeout(()=>{
+                    this.navigateToList({nodeData});
+                }, 200);
+    
+            }
+        }   
     }
 
     nodeTemplate(data) {
@@ -230,11 +252,12 @@ class FolderContainer extends Component {
 
     render() {
         const { t } = this.props;
+        const { showSpinner } = this.state;
 
         return (
             <div className='tree-wrapper'>
                 <PerfectScrollbar className="tree-scrollbar">
-
+                {( showSpinner) ? <Spinner/> : null}
                 <div className="pl-2 nav-title">
                     <img
                         className="logo-ext"
@@ -587,6 +610,7 @@ function mapStateToProps(state) {
         selectedFolder: state.messagesResult.label,
         messagesResult: state.messagesResult,
         lexon: state.lexon,
+        composer: state.composer
     };
 }
 
