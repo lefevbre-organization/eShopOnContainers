@@ -38,7 +38,7 @@ data:
   urls__CentinelaApi: http://{{ .Values.app.ingress.entries.centinelaapi }}/api/v1/Centinela
   urls__Signature: https://{{ .Values.app.ingress.entries.signature }}
   urls__ByPassLexOnId: {{ .Values.userutils.bypass.lex.id | quote}}
-  urls__ByPassLexOnUrl: 'https://{{ $gwlex }}/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+  urls__ByPassLexOnUrl: https://{{ .Values.userutils.bypass.lex.url }}
   urls__ByPassSigId: {{ .Values.userutils.bypass.sig.id | quote}}
-  urls__ByPassSigUrl: 'https://{{ .Values.app.ingress.entries.signature }}/access/{tokenSignature}'
+  urls__ByPassSigUrl: https://{{ .Values.userutils.bypass.sig.url }}
 

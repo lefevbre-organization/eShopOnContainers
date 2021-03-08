@@ -10,7 +10,6 @@ configValues: |
   window.PATH_CL_IMAP='-webimap.lefebvre.es'
   window.PATH_CL_ILEX='-weblexon.lefebvre.es'
   window.URL_MF_DATABASE_BASE='http://localhost:3006'
-  window.URL_LEXON ='http://localhost:8080'
 
   window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
   window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
@@ -59,6 +58,6 @@ configValues: |
 
   window.NEXTCLOUD_URL = 'https://lexbox-dev-nextcloud.lefebvre.es';
   window.NEXTCOUD_ADMIN_USERNAME = 'admin';
-  window.NEXTCLOUD_ADMIN_PASSWD = 'admin_pre';
+  window.NEXTCLOUD_ADMIN_PASSWD = 'admin_dev';
   window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
   window.URL_LEXON= 'https://led-pre-front.lex-on.es';

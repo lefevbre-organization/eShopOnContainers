@@ -48,10 +48,10 @@ userutils:
   bypass:
     lex:
       id: 'Lex-On'
-      url: 'lexbox-pre-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+      url: 'lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
     sig:
       id: 'Signature-Direct'
-      url: 'lexbox-pre-websignature.lefebvre.es/access/{tokenSignature}'
+      url: 'lexbox-test-websignature.lefebvre.es/access/{tokenSignature}'
 
 conference:
   jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
