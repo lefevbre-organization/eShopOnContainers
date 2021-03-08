@@ -132,6 +132,8 @@ class Calendar extends Component {
         calendars: [],
         schedule: null,
         to2: [],
+        idActuation: '', 
+        idEvent: '',
         isUpdatedDefaultAccount: false
       };
 
@@ -307,7 +309,10 @@ class Calendar extends Component {
               {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
               <div id='target' className={styles.app}>
                   <Spinner
-                    visible={this.layoutIframeNewEventView}
+                    visible={
+                        this.layoutIframeNewEventView || 
+                        this.layoutIframeEditEventView
+                    }
                     className={styles.spinnerCalendar}
                     pathClassName={styles.spinnerPath}
                   />
@@ -343,7 +348,7 @@ class Calendar extends Component {
                       <div className='schedule-control-section'>
                           <div className='control-section'>
                               <div className={`
-                                ${!this.layoutIframeNewEventView
+                                ${!this.layoutIframeNewEventView 
                                       ? ''
                                       : styles['hidden']
                                   } `}>
@@ -527,7 +532,6 @@ class Calendar extends Component {
             }
         }
 
-
         if (window != window.top) {
             window.top.postMessage(
                 JSON.stringify({
@@ -559,7 +563,6 @@ class Calendar extends Component {
         this.currentClassification = undefined;
     }
 
-
     async setGlobalization() {
         if (window.navigator.language.includes("es-")
             || (window.navigator.language === "es")
@@ -574,27 +577,25 @@ class Calendar extends Component {
     }
 
     TokensFlows() {
-        //var closing = window.close;
-        //window.close = function () {
-        //    console.log('window close fired!');
-        //    closing();
-        //};
-        
         if (window != window.top) {
             this.layoutIframe = true;
         }
 
         if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
+            this.setState({
+                idActuation: this.props.lexon.idActuation, 
+                idEvent: this.props.lexon.idEvent 
+            });
         } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
-            console.log('TokensFlows', this.props.lexon.idActuation)
+            this.setState({
+                idActuation: this.props.lexon.idActuation
+            });
             this.layoutIframeNewEventView = true;
         }
-
+       
         this.props.resetIdActuation();
         this.props.resetIdEvent();
-
-
     }
 
     convertUnicode(input) {
@@ -1126,10 +1127,15 @@ class Calendar extends Component {
 
         //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
+        const obj = this;
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
         }
-        const obj = this;
+
+        if(obj.layoutIframeNewEventView) {
+            value = 1000;
+        }
+       
         this.setState({ schedule: obj.scheduleObj });
         setTimeout(() => {
         obj.LoadCalendarList();
@@ -1193,7 +1199,9 @@ class Calendar extends Component {
        getEventTypes(this.props.email)
            .then(result => {
                if (result && result.data) {
-                   this.onDataBindingEventTypeList(result.data.eventTypes);
+                    if(result.data && result.data.eventTypes){
+                       this.onDataBindingEventTypeList(result.data.eventTypes);
+                    }
                }
            })
            .catch(error => {
@@ -2035,7 +2043,9 @@ class Calendar extends Component {
 
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] });
-
+                        if (window != window.top) {
+                            this.onCloseDialog();
+                        }
                         this.toastObj.show(this.toasts[1]);
                         this.loadCalendarEvents(args.data[0].CalendarId, true);
                     })

@@ -304,7 +304,6 @@ export class Main extends Component {
         } else if (this.props.lexon.idActuation != undefined & this.props.lexon.idEvent == null) {
             this.layoutIframeNewEventView = true
         }
-
     }
 
     convertUnicode(input) {

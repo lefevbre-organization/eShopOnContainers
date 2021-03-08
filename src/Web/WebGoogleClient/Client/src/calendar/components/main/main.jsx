@@ -273,7 +273,6 @@ export class Main extends Component {
         {
             this.layoutIframe = true;
         }
-        console.log('TokensFlows', this.props.lexon.idActuation != undefined && this.props.lexon.idEvent == null)
         if (this.props.lexon.idActuation != undefined && this.props.lexon.idEvent != null) {
             this.layoutIframeEditEventView = true
         }

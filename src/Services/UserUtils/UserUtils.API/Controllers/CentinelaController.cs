@@ -45,6 +45,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
         [HttpPut("token/mail")]
+        [HttpPut("token/certification")]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenAsync(
@@ -55,10 +56,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
+            var msg = Request.Path.Value.Substring(Request.Path.Value.IndexOf("token"));
+
             var token = new TokenRequest() { idClienteNavision = idClienteNavision, idApp = _settings.Value.IdAppCentinela };
 
             var result = await _service.GetGenericTokenAsync(token, addTerminatorToToken);
-            result.infos.Add(new Info() { code = "UserUtils.Centinela", message = "token/mail" });
+            result.infos.Add(new Info() { code = "UserUtils.Centinela", message = msg });     
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
