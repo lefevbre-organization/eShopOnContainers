@@ -688,6 +688,7 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
     let draft = null;
     if(draftId != '') {
       console.log('Debug: index.jsx|CreateDraft: (update) ' + draftId);
+      console.log('Debug: raw: ' + base64EncodedEmail);
       draft =  window.gapi.client.gmail.users.drafts.update({
         userId: 'me',
         id: draftId,
@@ -699,6 +700,7 @@ export const createDraft = async ({ headers, body, attachments, draftId }) => {
       });
      } else {
       console.log('Debug: index.jsx|CreateDraft: (create) ');
+      console.log('Debug: raw: ' + base64EncodedEmail);
       draft = window.gapi.client.gmail.users.drafts.create({
         userId: 'me',
         resource: {

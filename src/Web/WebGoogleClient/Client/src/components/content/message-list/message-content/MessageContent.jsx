@@ -22,6 +22,7 @@ import { setMessageAsRead, getMessage, getLabelList } from '../../../../api';
 import MessageNotFound from '../../../message-not-found/MessageNotFound';
 import i18n from 'i18next';
 import {getLabels} from "../../../sidebar/sidebar.actions";
+import Spinner from '../../../spinner/spinner';
 
 //BEGIN functions for attachment functionality
 
@@ -49,7 +50,7 @@ function b64toBlob(b64Data, contentType, sliceSize) {
   return blob;
 }
 
-function getAttachments(messageID, parts, callback) {
+function getAttachments(messageID, parts, i = 0, callback) {
   var attachId = parts.body.attachmentId;
   var request = window.gapi.client.gmail.users.messages.attachments.get({
     id: attachId,
@@ -57,7 +58,7 @@ function getAttachments(messageID, parts, callback) {
     userId: 'me',
   });
   request.execute(function (attachment) {
-    callback(parts.filename, parts.mimeType, attachment);
+    callback(parts.filename, parts.mimeType, attachment, i);
   });
 }
 
@@ -141,6 +142,8 @@ export class MessageContent extends Component {
       attachment: true,
       attachments: [],
       showMessageNotFound: false,
+      showSpinner: false,
+      attachmentsNum: 0
     };
     this.attachments = [];
     this.refresh = false;
@@ -165,6 +168,8 @@ export class MessageContent extends Component {
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
     this.props.setOpenMessage(messageId);
+
+    this.setState({showSpinner: true});
 
     window.dispatchEvent(new CustomEvent('ResetList'));
   }
@@ -206,6 +211,7 @@ export class MessageContent extends Component {
 
   componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
+    var attachmentsProcessed = 0;
     if (
       prevProps.emailHeaderMessageResult.headers === null &&
       emailHeaderMessageResult.headers !== null
@@ -260,16 +266,19 @@ export class MessageContent extends Component {
       }
     }
 
-    if (!emailMessageResult.loading) {
+    if (prevProps.emailMessageResult.loading === true && !emailMessageResult.loading) {
       if (
         emailHeaderMessageResult.loading === false &&
         prevProps.emailHeaderMessageResult.loading === true
       ) {
+        console.log('Debug: loading true to false');
         return;
       }
+      console.log('Debug: Bucle');
 
       if (!emailMessageResult.failed) {
         this.markEmailAsRead(emailMessageResult.result);
+        
         if (this.state.attachment === true) {
           const { body } = this.iframeRef.current.contentWindow.document;
           if (body && body.style) {
@@ -283,7 +292,7 @@ export class MessageContent extends Component {
           var attach = [];
           if (emailMessageResult.attach)
             attach = findAttachments(emailMessageResult.attach);
-
+            console.log('Debug: attach.length: ' + attach.length);
           if (typeof attach !== 'undefined' && attach.length > 0) {
             const isFirefox = typeof InstallTrigger !== 'undefined';
             // if(isFirefox === false) {
@@ -301,19 +310,21 @@ export class MessageContent extends Component {
 
             this.props.clearOpenMessageAttachment();
             for (var i = 0; i < attach.length; i++) {
+              console.log('Debug: for de los attachments i: ' + i)
               if ((attach[i].filename && attach[i].filename.length > 0) || attach[i].headers.find(h => h.name === 'Content-ID')) {
                 const athc = attach[i];
                 if (!this.attachments[attach[i].partId]) {
-                  const msgid =
-                    emailMessageResult.id || emailMessageResult.result.id;
+                  const msgid = emailMessageResult.id || emailMessageResult.result.id;
                   this.attachments[attach[i].partId] = '1';
 
                   // console.log('*******||| IF');
                   getAttachments(
                     msgid,
                     attach[i],
-                    (filename, mimeType, attachment) => {
+                    i,
+                    (filename, mimeType, attachment, i) => {
                       if (attachment.code !== 400) {
+                        attachmentsProcessed = attachmentsProcessed + 1;
                         let dataBase64Rep = attachment.data
                           .replace(/-/g, '+')
                           .replace(/_/g, '/');
@@ -379,6 +390,12 @@ export class MessageContent extends Component {
                                   AttachmentDiv
                                 );
                             }
+
+                            console.log('Debug: Inside callback i: ' + i + ' Attach.length: ' + attach.length + ' AttachmentsProcessed: ' + attachmentsProcessed);
+                            if (attachmentsProcessed === attach.length){
+                              console.log('Debug: Debe cerrar el spinner');
+                              this.setState({showSpinner: false});
+                            }
                           }
                         }
                       }
@@ -387,6 +404,8 @@ export class MessageContent extends Component {
                 }
               }
             }
+          } else {
+            this.setState({showSpinner: false});
           }
         }
       } else {
@@ -506,7 +525,7 @@ export class MessageContent extends Component {
     if (this.props.emailMessageResult.loading) {
       return this.renderSpinner();
     }
-    const { showMessageNotFound } = this.state;
+    const { showMessageNotFound, showSpinner } = this.state;
 
     return (
       <React.Fragment>
@@ -518,7 +537,7 @@ export class MessageContent extends Component {
           onClick={this.modifyMessage}
           messageResult={this.props.emailMessageResult}
         />
-
+        {( showSpinner) ? <Spinner/> : null}  
         <MessageHeader />
 
         <div
