@@ -61,4 +61,5 @@ configValues: |
   window.NEXTCOUD_ADMIN_USERNAME = 'admin';
   window.NEXTCLOUD_ADMIN_PASSWD = 'admin_dev';
   window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
+  window.URL_LEXON= 'https://led-dev04-front.eu.els.local';
   

@@ -62,3 +62,4 @@ configValues: |
   window.NEXTCOUD_ADMIN_USERNAME = 'admin';
   window.NEXTCLOUD_ADMIN_PASSWD = 'admin_pro';
   window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
+  window.URL_LEXON= 'https://front.lex-on.es';

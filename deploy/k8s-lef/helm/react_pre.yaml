@@ -61,3 +61,4 @@ configValues: |
   window.NEXTCOUD_ADMIN_USERNAME = 'admin';
   window.NEXTCLOUD_ADMIN_PASSWD = 'admin_pre';
   window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
+  window.URL_LEXON= 'https://led-pre-front.lex-on.es';
