@@ -594,15 +594,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 AddClaimToPayload(payload, tokenRequestLogin.password, nameof(tokenRequestLogin.password));
             }
 
-            if (tokenRequest is TokenRequestEventNew tokenRequestEventNew)
+            if (tokenRequest is TokenRequestEvent tokenRequestEven)
             {
-                AddClaimToPayload(payload, tokenRequestEventNew.idActuation, nameof(tokenRequestEventNew.idActuation));
-                AddClaimToPayload(payload, tokenRequestEventNew.title, nameof(tokenRequestEventNew.title));
+                AddClaimToPayload(payload, tokenRequestEven.idActuation, nameof(tokenRequestEven.idActuation));
+                AddClaimToPayload(payload, tokenRequestEven.title, nameof(tokenRequestEven.title));
+                AddClaimToPayload(payload, tokenRequestEven.idEvent, nameof(tokenRequestEven.idEvent));
 
-                if (tokenRequest is TokenRequestEventOpen tokenRequestEventOpen)
-                {
-                    AddClaimToPayload(payload, tokenRequestEventOpen.idEvent, nameof(tokenRequestEventOpen.idEvent));
-                }
             }
         }
 
