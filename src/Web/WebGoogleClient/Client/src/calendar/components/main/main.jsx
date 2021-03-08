@@ -298,7 +298,6 @@ export class Main extends Component {
 
         updateCalendarList(calendarId, calendarData)
             .then(result => {
-                console.log(result)
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false
                 this.toastObj.show(this.toasts[1]);
@@ -856,7 +855,6 @@ export class Main extends Component {
                 })
             );
         });
-
         this.sidebarCalendarList();
 
         //Firefox load is slow and need to take into account wait more time to be ready
@@ -898,6 +896,15 @@ export class Main extends Component {
         //}
     }
 
+
+    // componentDidUpdate(prevProps, prevState) {
+    //     if(prevProps.calendarsResult.calendars.length !== this.props.calendarsResult.calendars.length) {
+    //         const account = this.props.calendarsResult.calendars.find(x => x.primary);
+    //         this.props.selectCalendar(account.id);
+    //     }
+    // }
+    
+
     onDataBindingEventTypeList(items) {
         this.eventTypeDataSource = [];
         if (items.length > 0) {
@@ -937,11 +944,11 @@ export class Main extends Component {
             .then(result => {
                 this.resourceCalendarData = orderBy(result.items, "primary");
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
+                this.props.selectCalendar(this.resourceCalendarData[0].id);
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
                     this.scheduleObj.refresh();
                 }
-
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -1148,7 +1155,6 @@ export class Main extends Component {
 
     ToogleCalendarResourceDirective(args) {
         if (args.data.Id !== undefined) {
-            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
             ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.add('disabledbutton');
@@ -1188,7 +1194,6 @@ export class Main extends Component {
 
         //Not allow to change calendar property on update events
         if (args.data.Id != undefined) {
-            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
             ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.add('disabledbutton');
@@ -1836,7 +1841,7 @@ export class Main extends Component {
                 }
             })
     }
-
+    
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
@@ -1852,10 +1857,7 @@ export class Main extends Component {
     }
 
     loadCalendarEvents(calendar, checked) {
-        this.scheduleObj.showSpinner();
-
         let predicate;
-
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
                 this.defaultCalendar = calendar;
@@ -1876,7 +1878,6 @@ export class Main extends Component {
                 }
 
                 this.props.selectCalendar(calendar);
-
                 // Filter selected calendar to pass to the query
                 let calendars = groupBy(this.resourceCalendarData, "checked");
 
@@ -1885,12 +1886,13 @@ export class Main extends Component {
 
                 // Load selected calendar to pass to the query
                 this.predicateQueryEvents(calendars.true, predicate)
+                
 
             })
             .catch(error => {
                 console.log('error ->', error);
             })
-
+            this.scheduleObj.showSpinner(document.getElementById('container'));
     }
 
     setDefaultCalendarField(calendarList, calendar) {
@@ -2099,9 +2101,7 @@ export class Main extends Component {
                 return this.renderSpinner();
             }
         }
-        console.log('this.layoutIframeNewEventView', this.layoutIframeNewEventView)
         console.log("Rendering.... " + this.scheduleData.length)
-
         return (
             <div id='target' className='control-section'>
                 <SidebarCnn
