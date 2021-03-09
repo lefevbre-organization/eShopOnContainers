@@ -28,10 +28,15 @@ const settings = {
 
 let attendees = [];
 
-export const caldav = new Caldav(settings);
+//export const caldav = new Caldav(settings);
 
 // Get calendars
-export const listCalendarList = async () => {
+export const listCalendarList = async userId => {
+  const caldav = new Caldav({
+    ...settings,
+    username: userId,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
   const calendars = await caldav.listCalendars({});
   return listCalendarParser(calendars.filter(c => c.ctag !== undefined));
 };
@@ -103,86 +108,85 @@ export const deleteCalendarEvent = async filename => {
 };
 
 function listEventsParser(list) {
+  const listParse = [];
+  if (list.length > 0) {
+    for (let i = 0; i < list.length; i++) {
+      attendees = [];
+      let recurrenceRule = [];
+      if (list[i].json.RRULE != undefined) {
+        recurrenceRule = [`RRULE:${list[i].json.RRULE}`];
+      } else {
+        recurrenceRule = null;
+      }
 
-    let listParse = [];
-    if (list.length > 0) {
-        for (let i = 0; i < list.length; i++) {   
-            attendees = [];
-            let recurrenceRule = [];
-            if(list[i].json.RRULE != undefined ) {
-                recurrenceRule = ["RRULE:" + list[i].json.RRULE]
-            } else {
-              recurrenceRule = null;
-            }
-            
-            let reminders = [];
-            if(list[i].json.VALARM) {
-                reminders = getReminders(list[i].json.VALARM);
-                list[i].json.VALARM = JSON.stringify(list[i].json.VALARM)
-            } 
+      let reminders = [];
+      if (list[i].json.VALARM) {
+        reminders = getReminders(list[i].json.VALARM);
+        list[i].json.VALARM = JSON.stringify(list[i].json.VALARM);
+      }
 
-            getAttendees(list[i].json, attendees);
-            listParse.push({
-                id: list[i].href,
-                filename: list[i].href,
-                summary: list[i].summary,
-                location: list[i].location,               
-                description: list[i].description,
-                start: { dateTime: moment(list[i].start), timeZone: 'Europe/Madrid' },
-                end: { dateTime: moment(list[i].end), timeZone: 'Europe/Madrid' },
-               // start: { dateTime: convertUTCDateToLocalDate(new Date(list[i].start), list[i].allDay), timeZone: 'Europe/Madrid' },
-               // end: { dateTime: convertUTCDateToLocalDate(new Date(list[i].end), list[i].allDay), timeZone: 'Europe/Madrid' },
-                //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
-                //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
-                IsAllDay: list[i].allDay,
-                //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
-                recurrence: recurrenceRule,
-                ImageName: "lefebvre",
-                attendees: attendees,
-                categories: list[i].categories,
-                color: list[i].color,
-                reminders: reminders,
-                lexonActuation: list[i].lexonActuation
-            });
-        }
+      getAttendees(list[i].json, attendees);
+      listParse.push({
+        id: list[i].href,
+        filename: list[i].href,
+        summary: list[i].summary,
+        location: list[i].location,
+        description: list[i].description,
+        start: { dateTime: moment(list[i].start), timeZone: 'Europe/Madrid' },
+        end: { dateTime: moment(list[i].end), timeZone: 'Europe/Madrid' },
+        // start: { dateTime: convertUTCDateToLocalDate(new Date(list[i].start), list[i].allDay), timeZone: 'Europe/Madrid' },
+        // end: { dateTime: convertUTCDateToLocalDate(new Date(list[i].end), list[i].allDay), timeZone: 'Europe/Madrid' },
+        //start: { dateTime: list[i].start.dateTime, timeZone: list[i].start.timeZone },
+        //end: { dateTime: list[i].end.dateTime, timeZone: list[i].end.timeZone },
+        IsAllDay: list[i].allDay,
+        //isSensitivity: list[i].sensitivity === 'normal' ? false : true,
+        recurrence: recurrenceRule,
+        ImageName: "lefebvre",
+        attendees: attendees,
+        categories: list[i].categories,
+        color: list[i].color,
+        reminders: reminders,
+        lexonActuation: list[i].lexonActuation
+      });
     }
-    let result;
-    let items;
-    items = ({ items: listParse });
-    result = ({ result: items });
-    return result
+  }
+  let result;
+  let items;
+  items = ({ items: listParse });
+  result = ({ result: items });
+  return result;
 }
 
 
 function getReminders(alarms) {
-    let reminders = [];
-    alarms.forEach(alarm => {
-        const trigger = alarm.TRIGGER.split('-')[1];
-        const time = moment.duration(trigger, moment.ISO_8601);
-        const timeSeconds = time.asSeconds()
-        reminders.push({
-            method: 'email',
-            minutes: timeSeconds
-        })
+  const reminders = [];
+  alarms.forEach(alarm => {
+    const trigger = alarm.TRIGGER.split('-')[1];
+    const time = moment.duration(trigger, moment.ISO_8601);
+    const timeSeconds = time.asSeconds();
+    reminders.push({
+      method: 'email',
+      minutes: timeSeconds
     });
-    return reminders;
+  });
+  return reminders;
 }
 
 function getAttendees(json, attendees) {
-  if(!attendees) {
+  if (!attendees) {
     return;
   }
-    for (const key in json) {
-        if (json.hasOwnProperty(key)) {
-            const attende = json[key];
-            if (attende != undefined) {
-                const emails = attende.split(':')
-                if (emails.length === 3) {
-                    getEmails(emails[2], attendees);
-                }
-            }
+  for (const key in json) {
+    if (json.hasOwnProperty(key)) {
+      const attende = json[key];
+      if (attende != undefined) {
+        const emails = attende.split(':');
+        if (emails.length === 3) {
+          getEmails(emails[2], attendees);
         }
       }
+    }
+  }
 }
 
 function getEmails(email, attendees) {
@@ -293,6 +297,7 @@ function listCalendarParser(list) {
 //}
 
 export const createCalendarUser = async name => {
+  debugger
   const auth = base64.encode(utf8.encode(`${window.NEXTCOUD_ADMIN_USERNAME}:${window.NEXTCLOUD_ADMIN_PASSWD}`));
   const params = new URLSearchParams();
   params.append('userid', name);

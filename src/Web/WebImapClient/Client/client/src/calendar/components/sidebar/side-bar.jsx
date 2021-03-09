@@ -55,7 +55,8 @@ class SideBar extends Component {
     } 
 
    getCalendars() {
-    listCalendarList()
+      const { userId } = this.props.lexon;
+    listCalendarList(userId)
         .then(result => {
             this.setState(
                 { calendars: result.items }

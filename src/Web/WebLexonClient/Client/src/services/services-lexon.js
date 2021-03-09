@@ -711,6 +711,7 @@ export const createAppoinment = async (bbdd, user, event) => {
         bbdd,
         subject: event.Subject,
         idEvent: event.Guid,
+        provider: user.provider,
         startDate: event.StartTime,
         endDate: event.EndTime,
         calendar: {

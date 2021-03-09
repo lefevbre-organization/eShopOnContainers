@@ -1068,7 +1068,7 @@
       box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12); }
     .e-btn.e-primary.e-active,
     .e-css.e-btn.e-primary.e-active {
-      background-color: #5263a3;
+      background-color: #001978;
       border-color: transparent;
       box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
       color: #fff; }
@@ -51290,4 +51290,8 @@ ejs-filemanager {
   background-color: #fafafa;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+}
+
+#reminder-container .e-combobox  {
+  pointer-events: none;   
 }

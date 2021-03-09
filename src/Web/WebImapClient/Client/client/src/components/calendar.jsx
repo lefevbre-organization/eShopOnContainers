@@ -1,31 +1,12 @@
 /* eslint-disable indent */
-import React, { Component, Fragment } from 'react';
+import React, { Component} from 'react';
 import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import * as uuid from 'uuid/v4';
-import Cookies from 'js-cookie';
 import history from '../routes/history';
 import Spinner from './spinner/spinner';
-import TopBar from './top-bar/top-bar';
 import MainBar from './main-bar/main-bar';
 import SideBar from '../calendar/components/sidebar/side-bar';
-import MessageEditor from './message-editor/message-editor';
-import MessageList from './message-list/message-list';
-import MessageViewer from './message-viewer/message-viewer';
-import MessageSnackbar from './message-snackbar/message-snackbar';
-import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
-import CentinelaComponent from '../apps/centinela_content';
-
-import {
-  clearUserCredentials,
-  selectMessage,
-  selectFolder,
-  outboxEventNotified,
-  editMessage,
-  setError
-} from '../actions/application';
-import { clearSelected, setSelected } from '../actions/messages';
+import {clearUserCredentials} from '../actions/application';
 import {
  setGUID,
  setSign,
@@ -34,46 +15,17 @@ import {
  resetIdEvent
 
 } from '../actions/lexon';
-
-//import { getSelectedFolder } from '../selectors/folders';
-
-import { AuthenticationException } from '../services/fetch';
-import { editNewMessage, clearSelectedMessage } from '../services/application';
-import { getFolders, findSentFolder, findSentFolderByName } from '../services/folder';
-import { resetFolderMessagesCache } from '../services/message';
-import { readMessage } from '../services/message-read';
-import { persistApplicationNewMessageContent } from '../services/indexed-db';
-
-
-import {
-  addOrUpdateAccount,
-  getUser,
-  classifyEmail
-} from '../services/accounts';
-
 import styles from './app.scss';
-
-import IconButton from './buttons/icon-button';
 import { translate } from 'react-i18next';
-
-
-//import Sidebar from 'react-sidebar';
-//import LexonComponent from '../apps/lexon_content';
-//import CalendarComponent from '../apps/calendar_content';
-//import DataBaseComponent from '../apps/database_content';
-import { PROVIDER } from '../constants';
-
-
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
-    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, timezoneData, DragEventArgs, ResourcesDirective, ResourceDirective
+    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, ResourcesDirective, ResourceDirective
 } from '@syncfusion/ej2-react-schedule';
-import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
+
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
-import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
+import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-//import AttendeeAddress from './attendee/attendee-address';
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
 import { setCulture, L10n, loadCldr, Internationalization, compile } from '@syncfusion/ej2-base';
 import currencies from 'cldr-data/main/es/currencies.json';
@@ -86,27 +38,27 @@ import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { createElement } from '@syncfusion/ej2-base';
-import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
-import ReactTagInput from "@pathofdev/react-tag-input/";
+import { TabComponent } from '@syncfusion/ej2-react-navigations';
 import "@pathofdev/react-tag-input/build/index.css";
-//import Sidebar from '../calendar/components/sidebar/sidebar';
-
-import { addCalendarEvent, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
+import {
+    addCalendarEvent,
+    getEventList,
+    deleteCalendar,
+    listCalendarList,
+    deleteCalendarEvent,
+    updateCalendarList,
+    createCalendarUser
+} from '../calendar/api/calendar-api';
 
 import Reminder from "../calendar/components/main/reminder/reminder";
 import { Popup } from '@syncfusion/ej2-popups';
-//import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../calendar/components/eventtypes/eventtype';
-//import { EventsImport } from '../events-import/events'
 import { getEventTypes } from '../services/accounts';
-//import HeaderAddress from '../../../components/compose-message/header-address';
-//import AttendeeAddress from '../calendar/components/';
 import { Calendars } from '../calendar/components/calendars/calendars';
 import AttendeeAddress from '../calendar/components/main/attendee/attendee-address';
 import './lefebvre-material.css';
 import {getCalendars, selectCalendar} from "../calendar/components/sidebar/sidebar.actions";
 import {bindActionCreators} from "redux";
-import ACTIONS from "../actions/lexon";
 import {Redirect} from "react-router-dom";
 import LexonComponentCalendar from "../apps/lexon_content_calendar";
 
@@ -144,14 +96,11 @@ class Calendar extends Component {
       const { t } = this.props;
 
       this.toggleSideBar = this.toggleSideBar.bind(this);
-
       this.dataManager = new DataManager();
       this.defaultCalendar = undefined;
-      this.scheduleData = [];
-      //this.CalendarList = [];
+      this.scheduleData = [];     
       this.position = { X: 'Center', Y: 'Bottom' };
-      this.resourceCalendarData = [];
-      //this.ownerData = [];
+      this.resourceCalendarData = [];     
       this.toasts = [
           { content: t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
           { content: t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
@@ -162,8 +111,6 @@ class Calendar extends Component {
       this.layoutIframe = false;
       this.layoutIframeNewEventView = false;
       this.layoutIframeEditEventView = false;
-
-
       this.openCalendarView = this.openCalendarView.bind(this);
       this.deleteCalendar = this.deleteCalendar.bind(this);
       this.calendarColorModify = this.calendarColorModify.bind(this);
@@ -180,7 +127,7 @@ class Calendar extends Component {
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
       );
-      // Calednar View Dialog
+     
       this.alertButtons = [{
           // Click the footer buttons to hide the Dialog
           click: () => {
@@ -219,12 +166,10 @@ class Calendar extends Component {
 
       // Syncfusion omponent translation
       this.setGlobalization();
-
       this.tabObj = undefined;
       this.drowDownListEventType = undefined;
       this.drowDownListVisibility = undefined;
       this.selectedEvent = undefined;
-
 
       // to change when api would be ready
       this.eventTypeDataSource = [];
@@ -256,7 +201,6 @@ class Calendar extends Component {
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
-
     return false;
   }
 
@@ -276,11 +220,7 @@ class Calendar extends Component {
 
         if (this.state.redirectToLogin) {
             return <Redirect to={"/login"}/>;
-        }
-
-        //if (!isUpdatedDefaultAccount) {
-        //    return null;
-        //}
+        }      
       return (
 
              <div
@@ -305,8 +245,7 @@ class Calendar extends Component {
                       </div>
               )}
 
-              <div id='mainnav-app' />
-              {/*<SplitPane split="vertical" minSize={200} maxSize={800} desfaultSize={450}  primary="second">*/}
+              <div id='mainnav-app' />             
               <div id='target' className={styles.app}>
                   <Spinner
                     visible={
@@ -352,9 +291,7 @@ class Calendar extends Component {
                                       ? ''
                                       : styles['hidden']
                                   } `}>
-                                <ScheduleComponent
-                                      //delayUpdate='false'
-                                    //   timezone='Europe/Madrid'
+                                <ScheduleComponent                                     
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
@@ -365,9 +302,7 @@ class Calendar extends Component {
                                       views={this.viewsCollections}
                                       actionComplete={this.onEventRendered.bind(this)}
                                       popupOpen={this.onPopupOpen.bind(this)}
-                                      actionBegin={this.onActionBegin.bind(this)}
-                                      //actionComplete={this.onActionComplete.bind(this)}
-                                      //allowVirtualScrolling = "true"
+                                      actionBegin={this.onActionBegin.bind(this)}                                     
                                       cellDoubleClick={this.doubleOpen.bind(this)}
                                       eventSettings={
                                           {
@@ -484,26 +419,7 @@ class Calendar extends Component {
                                 email={this.props.email}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>
-
-                        {/* <DialogComponent
-                            id='contactImports'
-                            isModal={true}
-                            header={t("contactimport.title")}
-                            visible={this.state.showPromptImportContactsDialog}
-                            showCloseIcon={true}
-                            animationSettings={this.animationSettings}
-                            width='900px'
-                            ref={dialog => this.promptDialogEventTypeInstance = dialog}
-                            target='#target'
-                            open={this.dialogOpen.bind(this)}
-                            close={this.dialogImportConcatcsClose.bind(this)}>
-                            <div>{(this.state.showPromptImportContactsDialog) ? <EventsImport
-                                getlistEventTypes={this.getlistEventTypes.bind(this)}
-                                googleUser={this.props.googleUser}
-                                close={this.dialogClose.bind(this)}
-                            /> : ''}</div>
-                        </DialogComponent> */}
+                        </DialogComponent>                      
 
                     </article >
                 </section >
@@ -521,7 +437,7 @@ class Calendar extends Component {
         collapsed: toggleCollapsed
       }
     });
-    }
+  }
 
     onCloseDialog() {
         this.LoadCalendarList(false);
@@ -715,10 +631,7 @@ class Calendar extends Component {
     }
 
     // Import Concatcs View Dialog
-    dialogImportConcatcsClose(args) {
-        //if (args == undefined) {
-        //    this.toastObj.show(this.toasts[1]);
-        //}
+    dialogImportConcatcsClose(args) {       
         this.setState({
             showPromptImportContactsDialog: false
         });
@@ -885,11 +798,9 @@ class Calendar extends Component {
         } else {
             subjectStr = t("schedule.notitle");
         }
-
-        //var eventstart = new Date('August 19, 1975 23:15:30 GMT+00:00');
+       
         return (
-            <div >
-                {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
+            <div >               
                 <div className="image">
                     <span className='eventicon truncate'>
                         <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
@@ -907,12 +818,7 @@ class Calendar extends Component {
                             )}
                     </span>
                     <span className='space' > {subjectStr} </span>
-
-                </div>
-
-                {/* <div className="subject">{props.Subject}</div>
-               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
-
+                </div> 
             </div>);
     }
 
@@ -945,26 +851,10 @@ class Calendar extends Component {
                     continue;
                 }
 
-                //managing all day from googe calendar issues
-                //if (event.end.date) {
-                //    let date1 = new Date(event.start.date);
-                //    let date2 = new Date(event.end.date);
-                //    const diffTime = Math.abs(date1 - date2);
-                //    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                //    if (diffDays == 1) {
-                //        date2.setDate(date2.getDate() - 1)
-                //        event.end.date = date2.toISOString();
-                //    }
-                //}
-
                // let when = event.start.dateTime;
                 const start = event.start.dateTime;
                 const end = event.end.dateTime;
-                //if (!when) {
-                //    when = event.start.date;
-                //    start = event.start.date;
-                //    end = event.end.date;
-                //}
+               
                 // Recurrence
                 let recurrenceRule;
                 if (event.recurrence != undefined) {
@@ -1062,8 +952,7 @@ class Calendar extends Component {
     }
 
     handleGetUserFromLexonConnector(event) {
-        const { userId } = this.props.lexon;
-        // const userId = 'E1621396';
+        const { userId } = this.props.lexon;       
         if (userId) {
             this.sendMessagePutUser(userId);
         }
@@ -1176,6 +1065,13 @@ class Calendar extends Component {
             //        obj.handleScheduleOpenEditor()
             //    }, 1000);
             //}
+
+        if(userId) {
+            setTimeout(async () => {
+                debugger
+                await createCalendarUser(userId);
+            });
+        }
     }
 
     onDataBindingEventTypeList(items) {
@@ -1210,8 +1106,9 @@ class Calendar extends Component {
     }
 
     LoadCalendarList(DisableloadSchedule) {
+        const { userId } = this.props.lexon;
         this.resourceCalendarData = [];
-        listCalendarList()
+        listCalendarList(userId)
         .then(result => {
             this.resourceCalendarData = orderBy(result.items, "primary");
             this.props.getCalendars(this.resourceCalendarData);
@@ -1234,27 +1131,7 @@ class Calendar extends Component {
         });
     }
 
-    componentWillUnmount() {
-
-        //console.log('#################close################')
-        //window.removeEventListener(
-        //    'EventClassified',
-        //    this.handleClassificatedEvent
-        //);
-        //window.removeEventListener(
-        //    'RemoveSelectedEvent',
-        //    this.handleClassificatedEventRemoved
-        //);
-        //window.removeEventListener(
-        //    'GetUserFromLexonConnector',
-        //    this.handleGetUserFromLexonConnector
-        //);
-        //window.removeEventListener(
-        //    'GetUserFromCentinelaConnector',
-        //    this.handleGetUserFromCentinelaConnector
-        //);
-        //window.removeEventListener('ExportEventsProgress', this.onExportEvents)
-    }
+  
 
     createGuid() {
         function _p8(s) {
@@ -1490,9 +1367,7 @@ class Calendar extends Component {
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
-            //else if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id != undefined){
-            //    this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
-            //}
+            
         } else {
             args.cancel = true;
         }
@@ -2329,8 +2204,7 @@ class Calendar extends Component {
                 const to2 = [...this.state.to2];
                 to2.push(address);
                 const to = to2.join(',');
-                this.setState({ to2, to });
-                // this.props.setMailContacts(to);
+                this.setState({ to2, to });              
             }
         }
     }
@@ -2346,27 +2220,15 @@ class Calendar extends Component {
             const to2 = [...this.state.to2];
             to2.splice(to2.indexOf(address), 1);
             const to = to2.join(',');
-            this.setState({ to2, to });
-            // this.props.setMailContacts(to);
+            this.setState({ to2, to });           
         }
     }
 }
 
 Calendar.propTypes = {
-  //application: PropTypes.object,
-  //outbox: PropTypes.object,
-  //folders: PropTypes.object,
-  //reloadFolders: PropTypes.func,
-  //reloadMessageCache: PropTypes.func,
-  //loadMessageByFolder: PropTypes.func,
-  //newMessage: PropTypes.func.isRequired,
-  //resetIdEmail: PropTypes.func,
+  
 };
 
-//const mapStateToProps = state => ({
-//    calendarsResult: state.calendarsResult,
-//    lexon: state.lexon,
-//});
 
 const mapStateToProps = state => ({
         calendarsResult: state.calendarsResult,
@@ -2413,10 +2275,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     setEmailShown: flag => dispatchProps.setEmailShown(flag),
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
     close: application => dispatchProps.close(stateProps.application),
-    setError: (err, msg) => dispatchProps.setError(err, msg),
-    //  resetIdEmail: () => dispatchProps.resetIdEmail(),
-      resetIdActuation: () => dispatchProps.resetIdActuation(),
-      resetIdEvent: () => dispatchProps.resetIdEvent(),
+    setError: (err, msg) => dispatchProps.setError(err, msg),   
+    resetIdActuation: () => dispatchProps.resetIdActuation(),
+    resetIdEvent: () => dispatchProps.resetIdEvent(),
     setCaseFile: casefile => dispatchProps.setCaseFile(casefile)
   });
 
