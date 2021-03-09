@@ -1,7 +1,10 @@
-variables:
+parameters:
 - name: tag
-  value: latest-core5 
+  displayName: Set Image Tag
+  type: string
+  default: latest-core5
+
 
 steps:
-- pwsh: ./deploy/k8s-lef/build-pipeline-api.ps1 -tagToPush ${{ variables.tag }}  -execPath /home/vsts/work/1/s/ 
+- pwsh: ./deploy/k8s-lef/build-pipeline-api.ps1 -tagToPush ${{ parameters.tag }}  -execPath /home/vsts/work/1/s/ 
 
