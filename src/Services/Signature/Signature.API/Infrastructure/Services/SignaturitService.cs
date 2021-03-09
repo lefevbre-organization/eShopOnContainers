@@ -723,13 +723,13 @@ namespace Signature.API.Infrastructure.Services
             client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
 
-            Console.WriteLine($"Adding parameters");
+            Console.WriteLine($"{_guid} - Adding parameters");
 
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
 
             foreach (UserFile file in docInfo.files)
             {
-                Console.WriteLine($"Sending file_{i}");
+                Console.WriteLine($"{_guid} - Sending file_{i}");
                 request.AddFileBytes($"file", file.file, file.fileName, file.contentType);
                 i += 1;
             }
@@ -738,6 +738,7 @@ namespace Signature.API.Infrastructure.Services
 
             if (response.IsSuccessful)
             {
+                Console.WriteLine($"{_guid} - Certification Response: Successfull");
                 var jsonContent = JsonConvert.DeserializeObject<CertDocument>(response.Content);
                 var resultInsert = await insertInMongo(docInfo, jsonContent);
                 
@@ -745,7 +746,34 @@ namespace Signature.API.Infrastructure.Services
                 {
                     Console.WriteLine($"{_guid} - Added to MongoDb OK");
                     // Descargo el documento de auditoría:
-                    response = await DownloadCertifiedDocumentAudit(jsonContent.ExternalId);
+                    var retries = 3;
+                    while (retries > 0)
+                    {
+                        try
+                        {
+                            await Task.Delay(1500);
+                            response = await DownloadCertifiedDocumentAudit(jsonContent.ExternalId);
+                            if (response.IsSuccessful)
+                            {
+                                Console.WriteLine($"{_guid} - Audit file downloaded");
+                                retries = 0;
+                            } else
+                            {
+                                throw new Exception(response.StatusCode.ToString());
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"{_guid} - Audit download failed... Retry:{retries}");
+                            --retries;
+                            if (retries <= 0)
+                            {
+                                throw;
+                            }
+                        }
+                    }
+                    
+                    
                 } else
                 {
                     Console.WriteLine($"{_guid} - Added to MongoDb ERROR");
