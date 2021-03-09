@@ -41,18 +41,19 @@ export class Reminder extends React.Component {
 
 
     onAddReminder(args) {   
-        let valueM = this.timeLogicTypetoSeconds(this.ReminType.value, this.numObj.value);
-        
-
-    let dataReminder = {
-      title: "email",
-        value: valueM,
-        minutesvalue: valueM,
-      id: 'n',
-      icon: 'delete-icon',
-    };
-    this.listviewInstance.addItem([dataReminder]);
-  }
+        console.log(this.ReminType.value, this.numObj.value)
+        if(this.ReminType.value && this.numObj.value) {
+            let valueM = this.timeLogicTypetoSeconds(this.ReminType.value, this.numObj.value);
+            let dataReminder = {
+                title: "email",
+                value: valueM,
+                minutesvalue: valueM,
+                id: 'n',
+                icon: 'delete-icon',
+            };
+            this.listviewInstance.addItem([dataReminder]);
+        }
+    }
 
   deleteItem(args) {
     args.stopPropagation();
@@ -159,9 +160,8 @@ export class Reminder extends React.Component {
 
   render() {
     return (
-      <div>
-           
-          <div >
+        <div id="reminder-container">
+          <div>
               <ListViewComponent
                   id='reminder-list'
                   dataSource={this.dataSource}
@@ -172,57 +172,54 @@ export class Reminder extends React.Component {
                   }}
               />
           </div>
-               
-          <div className='row'>
-              <div className='col-xs-3 col-sm-3 col-lg-3 col-md-3'>
-                            <div className='form-group'>
-                                <div className='e-float-input'>
-                                    <NumericTextBoxComponent
-                                        format=''
-                                        value={60}
-                                        min='0'
-                                        max= '4320'
-                                        ref={(nun) => {
-                                            this.numObj = nun;
-                                        }}></NumericTextBoxComponent>
-                                </div>
-                                <div id='noError' />
-                            </div>
+            <div className='row'>
+                <div className='col-xs-3 col-sm-3 col-lg-3 col-md-3'>
+                    <div className='form-group'>
+                        <div className='e-float-input'>
+                            <NumericTextBoxComponent
+                                format=''
+                                value={60}
+                                min='0'
+                                max= '4320'
+                                ref={(nun) => {
+                                    this.numObj = nun;
+                                }}></NumericTextBoxComponent>
                         </div>
-              <div className='col-xs-3 col-sm-3 col-lg-3 col-md-3'>
-                            <div className='form-group'>
-                                <div className='e-float-input'>
-                                    <ComboBoxComponent
-                                        id='type'
-                                        floatLabelType='None'
-                                        dataSource={this.datetimeData}
-                                        ref={(combobox) => {
-                                            this.ReminType = combobox;
-                                        }}
-                                        fields={this.fields}
-                                        change={this.onChange.bind(this)}
-                                        value={this.value}
-                                        popupHeight='220px'
-                                    />
-                                </div>
-                                <div id='noError' />
-                            </div>
+                        <div id='noError' />
+                    </div>
+                </div>
+                <div className='col-xs-3 col-sm-3 col-lg-3 col-md-3'>
+                    <div className='form-group'>
+                        <div className='e-float-input'>
+                            <ComboBoxComponent
+                                id='type'
+                                floatLabelType='None'
+                                dataSource={this.datetimeData}
+                                ref={(combobox) => {
+                                    this.ReminType = combobox;
+                                }}
+                                fields={this.fields}
+                                change={this.onChange.bind(this)}
+                                value={this.value}
+                                popupHeight='220px'
+                            />
                         </div>
-              <div className='col-xs-4 col-sm-4 col-lg-4 col-md-4'>
-                            <div className='e-float-input'>
-                                <ButtonComponent
-                                    cssClass='e-flat e-primary'
-                                    floatLabelType='None'
-                                    onClick={this.onAddReminder}>
-                                    Añadir Recordatorio
-                  </ButtonComponent>
-                            </div>
-                            </div>
-          </div>
+                        <div id='noError' />
+                    </div>
+                </div>
+                <div className='col-xs-4 col-sm-4 col-lg-4 col-md-4'>
+                    <div className='e-float-input'>
+                        <ButtonComponent
+                            cssClass='e-flat e-primary'
+                            floatLabelType='None'
+                            onClick={this.onAddReminder}>
+                            Añadir Recordatorio
+                        </ButtonComponent>
+                    </div>
+                </div>
+            </div>
               
-             
-        
-      </div>
+        </div>
     );
   }
 }
