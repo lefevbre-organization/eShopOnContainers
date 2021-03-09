@@ -1,4 +1,7 @@
-# for PowerShell Core
+variables:
+- name: tag
+  value: latest-core5 
+
 steps:
-- pwsh: ./deploy/k8s-lef/build-pipeline-api.ps1 -execPath /home/vsts/work/1/s/ 
+- pwsh: ./deploy/k8s-lef/build-pipeline-api.ps1 -tagToPush ${{ variables.tag }}  -execPath /home/vsts/work/1/s/ 
 
