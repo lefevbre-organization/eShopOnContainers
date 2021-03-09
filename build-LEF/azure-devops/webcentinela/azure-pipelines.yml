@@ -8,12 +8,12 @@ trigger:
   paths:
     include:
     - src/BuildingBlocks/*
-    - src/Web/WebImapClient/*
-    - k8s-LEF/helm/webimap/*            
+    - src/Web/WebCentinelaClient/*
+    - k8s-LEF/helm/webcentinela/*            
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webimapclient
+    services: webcentinelaclient
     registryEndpoint: $(registryEndpoint)          
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      

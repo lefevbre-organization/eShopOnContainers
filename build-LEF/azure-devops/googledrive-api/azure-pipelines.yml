@@ -8,12 +8,13 @@ trigger:
   paths:
     include:
     - src/BuildingBlocks/*
-    - src/Web/WebImapClient/*
-    - k8s-LEF/helm/webimap/*            
+    - src/Services/Google/GoogleDrive.API/*
+    - k8s/helm/googledrive-api/*
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webimapclient
-    registryEndpoint: $(registryEndpoint)          
+    services: googledrive.api
+    registryEndpoint: $(registryEndpoint)
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
-    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
+
