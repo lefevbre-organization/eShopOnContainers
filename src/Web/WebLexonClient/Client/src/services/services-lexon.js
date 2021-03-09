@@ -710,10 +710,8 @@ export const createAppoinment = async (bbdd, user, event) => {
       body: JSON.stringify({
         bbdd,
         subject: event.Subject,
-        idEvent: {
-          idEvent: event.Guid,
-          provider: event.Provider
-        },
+        idEvent: event.Guid,
+        provider: user.provider,
         startDate: event.StartTime,
         endDate: event.EndTime,
         calendar: {
