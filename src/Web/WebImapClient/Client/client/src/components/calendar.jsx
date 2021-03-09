@@ -91,7 +91,15 @@ import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
 //import Sidebar from '../calendar/components/sidebar/sidebar';
 
-import { addCalendarEvent, getEventList, deleteCalendar, listCalendarList, deleteCalendarEvent, updateCalendarList } from '../calendar/api/calendar-api';
+import {
+    addCalendarEvent,
+    getEventList,
+    deleteCalendar,
+    listCalendarList,
+    deleteCalendarEvent,
+    updateCalendarList,
+    createCalendarUser
+} from '../calendar/api/calendar-api';
 
 import Reminder from "../calendar/components/main/reminder/reminder";
 import { Popup } from '@syncfusion/ej2-popups';
@@ -1176,6 +1184,13 @@ class Calendar extends Component {
             //        obj.handleScheduleOpenEditor()
             //    }, 1000);
             //}
+
+        if(userId) {
+            setTimeout(async () => {
+                debugger
+                await createCalendarUser(userId);
+            });
+        }
     }
 
     onDataBindingEventTypeList(items) {
@@ -1210,8 +1225,9 @@ class Calendar extends Component {
     }
 
     LoadCalendarList(DisableloadSchedule) {
+        const { userId } = this.props.lexon;
         this.resourceCalendarData = [];
-        listCalendarList()
+        listCalendarList(userId)
         .then(result => {
             this.resourceCalendarData = orderBy(result.items, "primary");
             this.props.getCalendars(this.resourceCalendarData);
