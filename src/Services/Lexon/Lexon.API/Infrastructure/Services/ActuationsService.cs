@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     using BuidingBlocks.Lefebvre.Models;
@@ -49,7 +48,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
         }
 
         #region Common
-
 
         private string GetIdFilter(string idName, int idValue)
         {
@@ -116,30 +114,38 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 $" }}";
         }
 
-
         public string GetIdEventParameters(string name, string idEvent, string idProvider, bool withComma = true)
         {
             var comma = withComma ? ", " : "";
             return $"{comma}\"{name}\": {{ {GetTextFilter(name, idEvent, false)} {GetTextFilter("provider", idProvider)}}}";
         }
 
-        public string GetRemainders(string name, Reminder[] reminder, bool withComma = true)
+        public string GetRemainders(string name, Reminder[] reminders, bool withComma = true)
         {
+            if (reminders == null || reminders?.ToList().Count == 0)
+                return "";
+
             var comma = withComma ? ", " : "";
             var listReminders = "";
-            foreach (var rem in reminder){
+
+            foreach (var rem in reminders)
+            {
                 listReminders +=
                     $"{{ " +
                     $"{GetLongFilter(nameof(rem.minutesBefore), rem.minutesBefore, false)} " +
                     $"{GetTextFilter(nameof(rem.method), rem.method)}" +
                     $"  }},";
             }
+
             return $"{comma}\"{name}\": " +
                 $"[ " + listReminders.Remove(listReminders.Length - 1) + $"  ]";
         }
-       
+
         public string GetEventType(string name, EventType eventType, bool withComma = true)
         {
+            if (eventType == null )
+                return "";
+
             var comma = withComma ? ", " : "";
             return $"{comma}\"{name}\": " +
                 $"{{ " +
@@ -155,10 +161,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             return $"{comma}\"{name}\": " +
                 $"{{ " +
                 //$"{GetTextFilter(nameof(calendar.idCalendar), calendar.idCalendar, false)}  " +
-                $"{GetTextFilter(nameof(calendar.titulo), calendar.titulo, false)} " +
+                $"{GetTextFilter("titulo", calendar.title, false)} " +
                 $"{GetTextFilter(nameof(calendar.color), calendar.color)} " +
                 $"{GetTextFilter(nameof(calendar.fgcolor), calendar.fgcolor)} " +
-                $"{GetTextFilter(nameof(calendar.descripcion), calendar.descripcion)} " +
+                $"{GetTextFilter("descripcion", calendar.description)} " +
                 $"}}";
         }
 
@@ -267,7 +273,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetRemoveAppointmentActionFilter(idUser, bbdd, idRelation);
                     conn.Open();
-                    
+
                     using MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointmentAction, conn);
                     AddCommonParameters(idUser, command, "P_JSON", filtro);
                     await command.ExecuteNonQueryAsync();
@@ -318,7 +324,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetRelationsApointmentFilter(bbdd, idUser, idEvent);
                     conn.Open();
-                    
+
                     using MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchAppointmentRelations, conn);
                     AddCommonParameters(idUser, command, "P_FILTER", filtro);
                     AddListSearchParameters(pageSize, pageIndex, null, null, command);
@@ -389,7 +395,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     string filtro = GetAppointmentsSearchFilter(idUser, bbdd, fromDate, toDate);
                     conn.Open();
-            
+
                     using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAppointments, conn);
                     AddCommonParameters(idUser, command, "P_FILTER", filtro);
                     AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
@@ -456,7 +462,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = $"{{ {GetUserFilter(bbdd, idUser)} }}";
                     conn.Open();
-                    
+
                     using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationTypes, conn);
                     AddCommonParameters(idUser, command, "P_FILTER", filtro);
                     AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
@@ -513,7 +519,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = $"{{ {GetUserFilter(bbdd, idUser)} }}";
                     conn.Open();
-                    
+
                     using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuationCategories, conn);
                     AddCommonParameters(idUser, command, "P_FILTER", filtro);
                     AddListSearchParameters(0, 1, "ts", "DESC", command);
@@ -572,7 +578,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                 {
                     var filtro = GetActuationSearchFilter(idUser, bbdd, idType, idCategory, filter);
                     conn.Open();
-                    
+
                     using MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetActuations, conn);
                     AddCommonParameters(idUser, command, "P_FILTER", filtro);
                     AddListSearchParameters(pageSize, pageIndex, "ts", "DESC", command);
