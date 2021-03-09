@@ -8,12 +8,13 @@ trigger:
   paths:
     include:
     - src/BuildingBlocks/*
-    - src/Web/WebImapClient/*
-    - k8s-LEF/helm/webimap/*            
+    - src/Services/Account/Calendar.API/*
+    - k8s/helm/calendar-api/*
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webimapclient
-    registryEndpoint: $(registryEndpoint)          
+    services: calendar.api
+    registryEndpoint: $(registryEndpoint)
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
-    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
+

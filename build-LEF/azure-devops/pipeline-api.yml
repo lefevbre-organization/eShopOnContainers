@@ -1,4 +1,10 @@
-# for PowerShell Core
+parameters:
+- name: tag
+  displayName: Set Image Tag
+  type: string
+  default: latest-core5
+
+
 steps:
-- pwsh: ./deploy/k8s-lef/build-pipeline-api.ps1 -execPath /home/vsts/work/1/s/ 
+- pwsh: ./deploy/k8s-lef/build-pipeline-api.ps1 -tagToPush ${{ parameters.tag }}  -execPath /home/vsts/work/1/s/ 
 
