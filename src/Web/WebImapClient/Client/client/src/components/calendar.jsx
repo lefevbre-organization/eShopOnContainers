@@ -502,6 +502,7 @@ class Calendar extends Component {
             this.layoutIframe = true;
         }
 
+        debugger
         if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
             this.setState({
@@ -1038,7 +1039,7 @@ class Calendar extends Component {
         if (obj.layoutIframeNewEventView) {
             setTimeout(() => {
                 obj.handleScheduleOpenNewEventEditor();
-            }, 3000);
+            }, 20000);
         }
 
         // Edit event is called
@@ -1073,7 +1074,6 @@ class Calendar extends Component {
 
         if(userId) {
             setTimeout(async () => {
-                debugger
                 await createCalendarUser(userId);
             });
         }
@@ -2137,6 +2137,7 @@ class Calendar extends Component {
             endTime: endTimeDate
         };
         console.log('handleScheduleOpenNewEventEditor', this.state.schedule.openEditor)
+        debugger
         this.state.schedule.openEditor(cellData, 'Add');
     }
 

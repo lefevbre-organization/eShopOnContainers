@@ -251,7 +251,6 @@ export class MessageViewer extends Component {
           const folder = folders.explodedItems[selected[i].folderId];
           const messages = Array.from(messageCache[folder.folderId].values());
           const message = messages.find(msg => msg.uid === selected[i].uid);
-          debugger;
           console.log('Debug: Cache content');
           console.log(message);
           

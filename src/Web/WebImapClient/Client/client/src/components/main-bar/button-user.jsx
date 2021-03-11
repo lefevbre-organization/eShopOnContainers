@@ -31,12 +31,15 @@ export class ButtonFilter extends React.Component {
         isotip-position='bottom-end'
         isotip-size='small'
         isotip-hidden={dialogVisible.toString()}>
+        {application.user && application.user.credentials && application.user.credentials.name &&
+
         <MenuUser
           fullName={application.user.credentials.name}
           onToggleDialog={v => {
-            this.setState({ dialogVisible: v });
+            this.setState({dialogVisible: v});
           }}
         />
+        }
       </span>
     );
   }

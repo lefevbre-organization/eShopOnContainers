@@ -31,12 +31,14 @@ export class ButtonFilter extends React.Component {
         isotip-position='bottom-end'
         isotip-size='small'
         isotip-hidden={dialogVisible.toString()}>
-        <MenuMinihub
-          fullName={application.user.credentials.name}
-          onToggleDialog={v => {
-            this.setState({ dialogVisible: v });
-          }}
-        />
+        {application.user && application.user.credentials && application.user.credentials.name &&
+          <MenuMinihub
+              fullName={application.user.credentials.name}
+              onToggleDialog={v => {
+                this.setState({dialogVisible: v});
+              }}
+          />
+        }
       </span>
     );
   }

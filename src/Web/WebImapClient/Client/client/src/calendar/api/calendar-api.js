@@ -28,16 +28,16 @@ const settings = {
 
 let attendees = [];
 
-//export const caldav = new Caldav(settings);
+export const caldav = new Caldav(settings);
 
 // Get calendars
 export const listCalendarList = async userId => {
-  const caldav = new Caldav({
+  const cd = new Caldav({
     ...settings,
     username: userId,
     password: window.NEXTCLOUD_USERS_PASSWD
   });
-  const calendars = await caldav.listCalendars({});
+  const calendars = await cd.listCalendars({});
   return listCalendarParser(calendars.filter(c => c.ctag !== undefined));
 };
 
@@ -297,7 +297,6 @@ function listCalendarParser(list) {
 //}
 
 export const createCalendarUser = async name => {
-  debugger
   const auth = base64.encode(utf8.encode(`${window.NEXTCOUD_ADMIN_USERNAME}:${window.NEXTCLOUD_ADMIN_PASSWD}`));
   const params = new URLSearchParams();
   params.append('userid', name);

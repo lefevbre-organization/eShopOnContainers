@@ -240,7 +240,6 @@ class UserCalendar extends Component {
       isNewAccount,
     } = this.state;
 
-    debugger
     if (readyToRedirect) {
       return <Redirect to='/calendar' />;
     }
