@@ -61,6 +61,10 @@ import {getCalendars, selectCalendar} from "../calendar/components/sidebar/sideb
 import {bindActionCreators} from "redux";
 import {Redirect} from "react-router-dom";
 import LexonComponentCalendar from "../apps/lexon_content_calendar";
+import {
+    addEventToActuation,
+    createAppoinment
+} from "../calendar/api/lexon";
 
 class Calendar extends Component {
   constructor(props) {
@@ -123,6 +127,7 @@ class Calendar extends Component {
       this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
       this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
       this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
+      this.classifyEventOnLexon = this.classifyEventOnLexon.bind(this);
 
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
@@ -1922,6 +1927,12 @@ class Calendar extends Component {
                             this.onCloseDialog();
                         }
                         this.toastObj.show(this.toasts[1]);
+                        if(this.props.lexon.idActuation) {
+                            this.classifyEventOnLexon(args.data[0], this.props.lexon.idActuation).then(() => {
+                                console.log("Event classified on Lexon");
+                            });
+                        }
+
                         this.loadCalendarEvents(args.data[0].CalendarId, true);
                     })
                     .catch(error => {
@@ -1955,6 +1966,26 @@ class Calendar extends Component {
 
         //}
     }
+
+    async classifyEventOnLexon(event, idActuation) {
+        const { provider, userId, bbdd, env } = this.props.lexon;
+        const { idUser } = this.props.currentUser;
+
+        const calendar = this.resourceCalendarData.find( c => c.id === event.CalendarId);
+        const st = moment(event.StartTime).format('YYYY-MM-DD HH:mm');
+        const et = moment(event.EndTime).format('YYYY-MM-DD HH:mm');
+
+        const lexonEvent = {...event, Guid: event.Id, calendar, StartTime: st, EndTime: et};
+        let sc = await createAppoinment(bbdd, { idUser, provider }, lexonEvent);
+        await addEventToActuation(bbdd, idUser, sc.result.data, idActuation);
+
+        // Clear idActuation
+        this.props.resetIdActuation();
+        event.LexonClassification = idActuation;
+        await this.handleClassificatedEvent({detail: { ...event, Guid: event.Id }});
+        window.location.reload();
+    }
+
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
         addCalendarEvent(CalendarId, event)
@@ -2251,7 +2282,7 @@ const mapDispatchToProps = dispatch => ({
             },
             dispatch
         ),
-        logout: () => {
+    logout: () => {
             dispatch(clearUserCredentials());
             history.push('/login');
         }
