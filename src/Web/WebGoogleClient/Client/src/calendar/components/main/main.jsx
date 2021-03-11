@@ -944,8 +944,8 @@ export class Main extends Component {
             .then(result => {
                 this.resourceCalendarData = orderBy(result.items, "primary");
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
-                const selected = this.props.calendarsResult.calendars.find(x => x.selected);
-                // this.props.selectCalendar(selected.id);
+                const calendarsResult = orderBy(this.props.calendarsResult.calendars, "primary");
+                const selected = calendarsResult.find(x => x.selected);
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(selected.id, true);
                     this.scheduleObj.refresh();

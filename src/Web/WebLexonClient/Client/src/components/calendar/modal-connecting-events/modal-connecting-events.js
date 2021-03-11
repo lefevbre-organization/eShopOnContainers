@@ -169,7 +169,6 @@ class ModalConnectingEvents extends Component {
     let sc = null;
 
     try {
-        debugger
       if (step1Data.actuation > 1) {
           const st = moment(message.StartTime).format('YYYY-MM-DD HH:mm')
           const et = moment(message.EndTime).format('YYYY-MM-DD HH:mm')

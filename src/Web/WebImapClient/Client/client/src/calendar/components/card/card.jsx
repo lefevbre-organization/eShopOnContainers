@@ -3,6 +3,13 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
+import { setCulture, L10n, loadCldr, Internationalization, compile } from '@syncfusion/ej2-base';
+import currencies from 'cldr-data/main/es/currencies.json';
+import gregorian from 'cldr-data/main/es/ca-gregorian.json';
+import numbers from 'cldr-data/main/es/numbers.json';
+import timeZoneNames from 'cldr-data/main/es/timeZoneNames.json';
+import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
+import weekData from 'cldr-data/supplemental/weekData.json';// To load the culture based first day of week
 //import './schedule-component.css';
 import { DataManager } from '@syncfusion/ej2-data';
 //import { getEventList } from '../../../api/calendar-api';
@@ -26,6 +33,20 @@ export class Card extends Component {
         //    .catch(error => {
         //        console.log('error ->', error);
         //    });
+        this.setGlobalization();
+    }
+
+    async setGlobalization() {
+        if (window.navigator.language.includes("es-")
+            || (window.navigator.language === "es")
+            || (window.navigator.language === "ca")
+            || (window.navigator.language === "ga")
+            || (window.navigator.language === "eu")) {
+            loadCldr(currencies, numberingSystems, gregorian, numbers, timeZoneNames, weekData);
+            const data = await import('../../../calendar/syncfusion-resources/calendar-es.json');
+            setCulture('es');
+            L10n.load(data);
+        }
     }
 
     onDataBinding(e) {
