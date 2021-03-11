@@ -54,6 +54,10 @@ import { getEventTypes } from "../../../api/accounts";
 //import HeaderAddress from '../../../components/compose-message/header-address';
 import AttendeeAddress from './attendee/attendee-address';
 import {forEach} from "react-bootstrap/cjs/ElementChildren";
+import {
+    addEventToActuation,
+    createAppoinment
+} from "../../../api/lexon";
 
 export class Main extends Component {
     constructor(props) {
@@ -82,6 +86,7 @@ export class Main extends Component {
 
         this.handleClassificatedEvent = this.handleClassificatedEvent.bind(this);
         this.handleClassificatedEventRemoved = this.handleClassificatedEventRemoved.bind(this);
+        this.classifyEventOnLexon = this.classifyEventOnLexon.bind(this);
 
         this.cancel = false;
         this.currentClassification = null;
@@ -239,7 +244,6 @@ export class Main extends Component {
         const googleEvent = this.buildEventoGoogle(event.detail);
         let resp = await updateCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
         this.currentClassification = event.detail.LexonClassification;
-
 
         const evt = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
             return e.Id == event.detail.Id;
@@ -1015,6 +1019,7 @@ export class Main extends Component {
             }
         }
 
+        debugger
         if(values.LexonClassification != undefined) {
             const properties = {
                 ...(event.extendedProperties? event.extendedProperties.private || {} : {}),
@@ -1755,6 +1760,12 @@ export class Main extends Component {
                         }
 
                         this.toastObj.show(this.toasts[1]);
+
+                        if(this.props.lexon.idActuation) {
+                            this.classifyEventOnLexon(args.data[0], this.props.lexon.idActuation).then(() => {
+                                console.log("Event classified on Lexon");
+                            });
+                        }
                     })
                     .catch(error => {
                         if (error.result != undefined) {
@@ -1804,6 +1815,25 @@ export class Main extends Component {
 
         //}
 
+    }
+
+    async classifyEventOnLexon(event, idActuation) {
+        const { provider, userId, bbdd, env } = this.props.lexon;
+        const { idUser } = this.props.currentUser;
+
+        const calendar = this.resourceCalendarData.find( c => c.id === event.CalendarId);
+        const st = moment(event.StartTime).format('YYYY-MM-DD HH:mm');
+        const et = moment(event.EndTime).format('YYYY-MM-DD HH:mm');
+
+        const lexonEvent = {...event, Guid: event.Id, calendar, StartTime: st, EndTime: et}
+        let sc = await createAppoinment(bbdd, { idUser, provider }, lexonEvent);
+        await addEventToActuation(bbdd, idUser, sc.result.data, idActuation);
+
+        // Clear idActuation
+        this.props.setIdActuation(null);
+        event.LexonClassification = idActuation;
+        await this.handleClassificatedEvent({detail: { ...event }});
+        window.location.reload();
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
@@ -2398,10 +2428,11 @@ export class Main extends Component {
 const mapStateToProps = state => ({
     calendarsResult: state.calendarsResult,
     lexon: state.lexon,
+    currentUser: state.currentUser
 });
 
-const mapDispatchToProps = dispatch =>
-    bindActionCreators(
+const mapDispatchToProps = dispatch => ({
+    ...bindActionCreators(
         {
             getCalendars,
             //toggleSelected,
@@ -2410,7 +2441,9 @@ const mapDispatchToProps = dispatch =>
             setSign: ACTIONS.setSign
         },
         dispatch
-    );
+    ),
+    setIdActuation: (id) => dispatch(ACTIONS.setIdActuation(id)),
+})
 
 export default compose(
     withRouter,

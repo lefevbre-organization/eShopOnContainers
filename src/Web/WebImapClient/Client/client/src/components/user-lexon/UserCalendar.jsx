@@ -147,7 +147,7 @@ class UserCalendar extends Component {
     if (idFolder === null || idFolder === undefined || idFolder === 'NULL') {
       idFolder = 'INBOX';
       }
-      
+
     if (casefile) {
       this.props.setCaseFile({
         casefile: casefile,
@@ -159,6 +159,7 @@ class UserCalendar extends Component {
         bbdd: bbdd,
       });
     }
+
     if (idMessage) {
       this.props.setIdEmail({
         idEmail: idMessage,
@@ -238,6 +239,8 @@ class UserCalendar extends Component {
       readyToRedirectToLogin,
       isNewAccount,
     } = this.state;
+
+    debugger
     if (readyToRedirect) {
       return <Redirect to='/calendar' />;
     }
