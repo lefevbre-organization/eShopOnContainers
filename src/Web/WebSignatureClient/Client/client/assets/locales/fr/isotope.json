@@ -429,6 +429,17 @@
         "subtitle": "Aucun rappel n'a été envoyé à ce signataire"
       }
     },
+    "contentCard": {
+      "title": {
+        "title": "MESSAGE ENVOYÉ"
+      },
+      "subject":{
+        "title": "Sujet"
+      },
+      "body": {
+        "title": "CONTENU"
+      }
+    },
     "widgets": {
       "expiration": {
         "title": "Délais d expiration de signature",

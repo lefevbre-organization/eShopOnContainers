@@ -411,6 +411,17 @@
         "subtitle": "No reminders have been sent to this signer."
       }
     },
+    "contentCard": {
+      "title": {
+        "title": "MESSAGE SENT"
+      },
+      "subject":{
+        "title": "Subject"
+      },
+      "body": {
+        "title": "CONTENT"
+      }
+    },
     "widgets": {
       "expiration": {
         "title": "EXPIRATION CONFIGURATION",

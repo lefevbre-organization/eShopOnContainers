@@ -430,6 +430,17 @@
         "subtitle": "A este firmante no se le ha enviado ningún recordatorio."
       }
     },
+    "contentCard": {
+      "title": {
+        "title": "MENSAJE ENVIADO"
+      },
+      "subject":{
+        "title": "Asunto"
+      },
+      "body": {
+        "title": "Contenido"
+      }
+    },
     "widgets": {
       "expiration": {
         "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",

@@ -239,6 +239,12 @@
       color:#001978;
       font-weight:600;
       margin-right:20px;
+      padding-bottom: 10px;
+      .certification-subject {
+        color:#001978;
+        padding-left: 10px;
+        font-weight: 400;
+      }
     }
     .fecha{
       color:#777;
@@ -311,7 +317,7 @@
       margin-top: 1px;
     }
     
-     .seguimiento-certification-individual {
+    .seguimiento-certification-individual {
       width: 30%;
       text-align:center;
       font-size:40px;
@@ -376,20 +382,27 @@
       }
     }
 
- .container-certificate {
-    display: grid;
-    grid-template-columns: auto auto auto;
- }
+    .email-content {
+      border: none;
+      width: 100%;
+      background-color: #f4f4f4;
+      font-family: 'MTTMilano';  
+    }
+    
+    .container-certificate {
+      display: grid;
+      grid-template-columns: auto auto auto;
+    }
 
- .lf-icon-sms:before {
-    content: "\eac3";
-  }
+    .lf-icon-sms:before {
+      content: "\eac3";
+    }
 
-  .lf-icon-sms-open:before {
-    content: "\eac4";
-  }
+    .lf-icon-sms-open:before {
+      content: "\eac4";
+    }
 
- .seguimiento-certification-individual-sms {
+    .seguimiento-certification-individual-sms {
       text-align:center;
       font-size:40px;
       color:#001978;

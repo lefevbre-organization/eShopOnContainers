@@ -11,7 +11,8 @@ import {
   cancelSignature2 
 } from "../../services/api-signaturit";
 import moment from 'moment'
-import EmailList from './certificate-list/email-list';
+import EmailList from './email-list/email-list';
+import EmailContent from './email-list/email-content';
 import Details from './details/details';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
@@ -25,6 +26,24 @@ export function addressGroups(address) {
   ret.name = formattedFrom !== null ? formattedFrom[1] : address;
   ret.email = formattedFrom !== null ? address.substring(formattedFrom[0].length).trim().replace(/[<>]/g, '') : '';
   return ret;
+}
+
+function stripHtmlCustom(html)
+{
+  let res = html.replace("<div class=\"e-content e-lib e-keyboard\" id=\"toolsRTE_2_rte-edit-view\" contenteditable=\"true\" tabindex=\"0\">", "")
+                .replace(/<div>/g, "")
+                .replace(/<\/div>/g, "")
+                .replace(/<p>/g, "")
+                .replace(/<\/p>/g, "\r")
+                .replace(/<br>/g, "\n" );
+   return res || "";
+}
+
+function stripHtmlAll(html)
+{
+   let tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent || tmp.innerText || "";
 }
 
 export const modalCancelOk = `
@@ -259,7 +278,6 @@ export class EmailMessageViewer extends Component {
   dialogOpen(){
     this.alertDialogInstance.cssClass = 'e-fixed';
   }
-
  
   render() {
     const email = this.props.selectedEmail;
@@ -282,6 +300,8 @@ export class EmailMessageViewer extends Component {
    
     let emailConfig = email.data.find(x => x.key === "roles");
     let certificationType = email.data.find(x => x.key === "certification_type" || x.key === "type");
+    let subject = email.data.find(x => x.key === "subject");
+    let content = email.data.find(x => x.key === "body");
 
     switch (email.status) {
       case 'declined':
@@ -345,9 +365,16 @@ export class EmailMessageViewer extends Component {
                  getSingleEventDate={this.getSingleEventDate}
                  downloadTrailDocument={this.downloadTrailDocument}
                  auth={this.props.auth}
-                ></EmailList>            
+                ></EmailList>   
                 )
               })}
+              <EmailContent
+                subject={subject.value}
+                // content={stripHtml2(content.value)}
+                content={content.value}
+                styles={styles}
+                certificationType={certificationType}
+              />
             </div>
             <div className={styles.clearfix}></div>
         </div>
