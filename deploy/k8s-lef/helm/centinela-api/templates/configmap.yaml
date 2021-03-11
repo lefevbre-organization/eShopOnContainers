@@ -12,6 +12,8 @@ metadata:
     chart: {{ template "centinela-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }} 
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
@@ -20,3 +22,5 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   centinela__ConnectionString: mongodb://{{ $mongo }}
   centinela__Database: {{ .Values.inf.mongo.centinela.database }}
+  all__Version: {{ .Chart.Version | quote }}
+  urls__CentinelaUrlExternal: https://{{ .Values.centinela.url }}

@@ -1,7 +1,52 @@
-﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+﻿namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
     public static class Codes
     {
+        public static class MailAccounts
+        {
+            public static readonly string UserCreate = "AC01";
+            public static readonly string UserUpsert = "AC02";
+            public static readonly string UserGet = "AC03";
+            public static readonly string UserStateChangue = "AC04";
+            public static readonly string UserConfigUpsert = "AC05";
+            public static readonly string UserRemove = "AC06";
+
+            public static readonly string AccountGet = "AC10";
+            public static readonly string AccountGetDefault = "AC11";
+            public static readonly string AccountRemove = "AC12";
+            public static readonly string AccountResetDefault = "AC13";
+            public static readonly string AccountUpsert = "AC14";
+            public static readonly string AccountConfigUpsert = "AC15";
+
+            public static readonly string RelationUpsert = "AC20";
+            public static readonly string RelationRemove = "AC21";
+            public static readonly string RelationGet = "AC22";
+
+            public static readonly string RawGet = "AC30";
+            public static readonly string RawCreate = "AC31";
+            public static readonly string RawRemove = "AC32";
+
+
+        }
+
+        public static class Calendar
+        {
+            public static readonly string EventTypeGet = "AC40";
+            public static readonly string EventTypeUpsert = "AC41";
+            public static readonly string EventTypeRemove = "AC42";
+            public static readonly string EventTypeAdd = "AC43";
+            public static readonly string EventTypeAccountRemove = "AC44";
+
+            public static readonly string CalGet = "AC50";
+            public static readonly string CalUpsert = "AC51";
+            public static readonly string CalRemove = "AC52";
+            public static readonly string CalAdd = "AC53";
+            public static readonly string CalAccountRemove = "AC54";
+
+        }
+
+
+
         public static class LexonActuations
         {
             public static readonly string UpsertAppointment = "LX50";
@@ -49,6 +94,7 @@
 
             public static readonly string GetFile = "LX40";
             public static readonly string PostFile = "LX41";
+            public static readonly string GetIdCompany = "LX42";
         }
 
         public static class UserUtils
@@ -84,7 +130,20 @@
             public static readonly string CertificationPost = "CE10";
             public static readonly string GetSmsContacts = "CE11";
 
+            public static readonly string RepositoryUnknow = "CE20";
         }
+
+        public static class Database
+        {
+            public static readonly string GetSession = "DA01";
+            public static readonly string GetEncodeUser = "DA02";
+            public static readonly string GetDocuments;
+            public static readonly string GetDocumentsByNref;
+            public static readonly string GetDocumentsFromDb;
+
+            public static string GetDocumentsCount { get; set; }
+        }
+
         public static class Areas
         {
             public static readonly string Api = "API";
@@ -98,6 +157,7 @@
             public static readonly string MySqlConn = "MYSQLCONN";
             public static readonly string MySql = "MYSQL";
             public static readonly string Mongo = "MONGO";
+            public static readonly string Google = "GOOGLE";
         }
 
         public static class Conferences
@@ -117,6 +177,32 @@
             public static readonly string RoomSecure = "CN23";
             public static readonly string RoomReservation = "CN24";
             public static readonly string RoomGet = "CN25";
+
+        }
+
+        public static class GoogleDrive
+        {
+            public static readonly string Create = "GD01";
+            public static readonly string GetFiles = "GD02";
+            public static readonly string GetToken = "GD03";
+            public static readonly string Delete = "GD04";
+            public static readonly string Trash = "GD05";
+            public static readonly string GetRoot = "GD06";
+        }
+
+        public static class GoogleAccount
+        {
+            public static readonly string Create = "GA01";
+            public static readonly string Get = "GA02";
+            public static readonly string Delete = "GA03";
+            public static readonly string GetCredentials ="GA04";
+            public static readonly string UpdateCredentials = "GA05";
+            public static readonly string GoogleAuthorization = "GA06";
+        }
+
+        public static class Signature
+        {
+
         }
     }
 }

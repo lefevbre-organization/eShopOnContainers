@@ -1,8 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Database.API.Models;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -16,20 +12,22 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Repositories;
+    using Exceptions;
+    using Models;
+
     public class DatabaseService : BaseClass<DatabaseService>, IDatabaseService
     {
         public readonly IDatabaseRepository _repo;
         private readonly IEventBus _eventBus;
-        private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientOnline;
-        private readonly HttpClient _clientUserUtils;
         private readonly IOptions<DatabaseSettings> _settings;
 
         public DatabaseService(
                 IOptions<DatabaseSettings> settings
                 , IDatabaseRepository databaseRepository
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
                 , ILogger<DatabaseService> logger
             ) : base(logger)
         {
@@ -37,13 +35,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             _repo = databaseRepository ?? throw new ArgumentNullException(nameof(databaseRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-
-            _clientOnline = _clientFactory.CreateClient();
-            _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
-
-            _clientOnline = _clientFactory.CreateClient();
-            _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
+            _clientOnline = new HttpClient { BaseAddress = new Uri(_settings.Value.OnlineUrl) };
 
             var authData = Convert.ToBase64String(
                 Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
@@ -51,9 +43,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             _clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
 
-            _clientUserUtils = _clientFactory.CreateClient();
-            _clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
-            _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
         public async Task<Result<string>> GetSesionAsync(string idNavisionUser)
@@ -79,22 +68,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     }
                     else
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "Error_Get_Session",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetSession, Codes.Areas.Online);
                     }
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "594",
-                    detail = $"General error when call Online GetSesion",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetSesion {ex.Message}", ex), Codes.Database.GetSession, Codes.Areas.Online);
             }
 
             return result;
@@ -121,21 +101,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Error_EncodeUser_Service",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetEncodeUser, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online encode user",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetSesion {ex.Message}", ex), Codes.Database.GetEncodeUser, Codes.Areas.Online);
             }
 
             return result;
@@ -165,21 +136,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Erro_Get_Documents",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocuments, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "594",
-                    detail = $"General error when call centinela GetDocuments",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocuments {ex.Message}", ex), Codes.Database.GetDocuments, Codes.Areas.Online); 
             }
 
             return result;
@@ -205,25 +167,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("jurisprudencia"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.DESCRIPCION} {doc.EDJ} {doc.NREF}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrina"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO} {doc.EDD} {doc.NREF}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("legislación"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO} {doc.EDL} {doc.NREF}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("convenios"))
                 {
-                    //doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO} {doc.BOLETIN} {doc.CODIGO}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
@@ -251,7 +209,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     doc.ENTRADILLA = doc.TITULO;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                   // doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().EndsWith("formularios"))
                 {
@@ -263,13 +220,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("esquemasquantor"))
                 {
                     doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("bibliografia"))
                 {
@@ -293,17 +248,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrinalibros"))
                 {
-                    //doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
-                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
                 }
                 else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrinaarticulos"))
                 {
-                    //doc.ENTRADILLA = doc.ENTRADILLA;
                     doc.TITULO = $"{doc.TITULO}".Trim();
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
@@ -344,8 +295,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
                 }
 
-
-
             }
             return resultado;
         }
@@ -373,21 +322,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Error_DocumentCount_Service",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocumentsCount, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online GetDocumentsCount",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocumentsCount {ex.Message}", ex), Codes.Database.GetDocumentsCount, Codes.Areas.Online);
             }
 
             return result;
@@ -415,21 +355,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Error_DocumentByNref_Service",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocumentsByNref, Codes.Areas.Online);
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online getDocumentsByNref",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocumentsByNref {ex.Message}", ex), Codes.Database.GetDocumentsByNref, Codes.Areas.Online);
             }
 
             return result;
@@ -456,21 +387,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 }
                 else
                 {
-                    result.errors.Add(new ErrorInfo
-                    {
-                        code = "Erro_Get_DocumentsDb",
-                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                    });
+                    TraceError(result.errors, new DatabaseDomainException($"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"), Codes.Database.GetDocumentsFromDb, Codes.Areas.Online);
+
                 }
             }
             catch (Exception ex)
             {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "594",
-                    detail = $"General error when call DocumentsDb service",
-                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
-                });
+                TraceError(result.errors, new DatabaseDomainException($"General error when call Online GetDocumentsFromDb {ex.Message}", ex), Codes.Database.GetDocumentsFromDb, Codes.Areas.Online);
             }
 
             return result;

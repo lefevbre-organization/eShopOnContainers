@@ -3,7 +3,7 @@
 
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class RemoveAccountIntegrationEvent : IntegrationEvent
+    public record RemoveAccountIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 

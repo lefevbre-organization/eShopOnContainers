@@ -11,6 +11,8 @@ metadata:
     chart: {{ template "apigwlex.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -22,6 +24,10 @@ spec:
       labels:
         app: {{ template "apigwlex.name" . }}
         release: {{ .Release.Name }}
+      {{ if .Values.inf.mesh.enabled -}}
+      annotations:
+        linkerd.io/inject: enabled
+      {{- end }}
     spec:
       {{ if .Values.inf.registry -}}
       imagePullSecrets:

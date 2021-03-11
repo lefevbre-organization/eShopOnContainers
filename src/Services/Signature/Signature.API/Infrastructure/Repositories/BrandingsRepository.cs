@@ -1,22 +1,14 @@
-﻿namespace Signature.API.Infrastructure.Repositories
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using System;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
 {
     #region using
-    using Signature.API.IntegrationsEvents.Events;
-    using Signature.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Bson;
-    using MongoDB.Bson.Serialization;
-    using MongoDB.Driver;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Model;
+    using BuidingBlocks.Lefebvre.Models;
 
     #endregion
     public class BrandingsRepository : BaseClass<BrandingsRepository>, IBrandingsRepository
@@ -242,13 +234,6 @@
             return result;
         }
 
-        #endregion
-
-        #region Helpers
-        private static UpdateOptions GetUpsertOptions()
-        {
-            return new UpdateOptions { IsUpsert = true };
-        }
         #endregion
 
     }

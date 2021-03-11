@@ -7,7 +7,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
+        "calendar.api", "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
         "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
@@ -15,7 +15,7 @@ Param(
         ),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
+        "calendar.api", "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
         "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
         "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
         "ocelotapigw", 
@@ -220,8 +220,8 @@ if ($deployKubernetes){
         --from-literal=apigwlex_e=http://$($externalDns)/weblexonapigw `
         --from-literal=apigwacc_e=http://$($externalDns)/webaccountapigw `
         --from-literal=lexon_e=http://$($externalDns)/lexon-api `
-        --from-literal=account_e=http://$($externalDns)/account-api `
-        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api' 
+        --from-literal=account_e=http://$($externalDns)/account-api'
+       # --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api 
 
     ExecKube -cmd 'label configmap urls app=elefebvre'
 
@@ -240,7 +240,7 @@ if ($deployKubernetes){
     Write-Host "DeployKubernetes 11: Update Image containers to use prefix '$registry$dockerOrg' and tag '$tagToPush'" -ForegroundColor Yellow
 
     ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$tagToPush'
-    ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$tagToPush'
+   # ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$tagToPush'
     ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$tagToPush'
     ExecKube -cmd 'set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$tagToPush'
     ExecKube -cmd 'set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$tagToPush'
@@ -257,7 +257,7 @@ if ($deployKubernetes){
 
     Write-Host "DeployKubernetes 12: Execute rollout..." -ForegroundColor Yellow
     ExecKube -cmd 'rollout resume deployments/lexon'
-    ExecKube -cmd 'rollout resume deployments/lexonmysql'
+   # ExecKube -cmd 'rollout resume deployments/lexonmysql'
     ExecKube -cmd 'rollout resume deployments/account'
     ExecKube -cmd 'rollout resume deployments/webportalclient'
     ExecKube -cmd 'rollout resume deployments/webgoogleclient'

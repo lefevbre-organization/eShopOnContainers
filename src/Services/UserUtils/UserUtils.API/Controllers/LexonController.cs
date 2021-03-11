@@ -1,15 +1,14 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Services;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class LexonController : ControllerBase
@@ -196,8 +195,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [HttpPut("token/event/new")]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenAsync(
-            [FromBody] TokenRequestEventNew tokenRequest
+        public async Task<IActionResult> TokenEventNewAsync(
+            [FromBody] TokenRequestEvent tokenRequest
             , bool addTerminatorToToken = true
             )
         {
@@ -222,14 +221,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [HttpPut("token/event/open")]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenAsync(
-            [FromBody] TokenRequestEventOpen tokenRequest
+        public async Task<IActionResult> TokenEventOpenAsync(
+            [FromBody] TokenRequestEvent tokenRequest
             , bool addTerminatorToToken = true
             )
         {
             if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
                 || string.IsNullOrEmpty(tokenRequest.idEvent))
-                return BadRequest("Must be a valid idClient and valid idMail");
+                return BadRequest("Must be a valid idClient and valid idEvent");
 
             if (tokenRequest.idApp == null)
                 tokenRequest.idApp = _settings.Value.IdAppLexon;

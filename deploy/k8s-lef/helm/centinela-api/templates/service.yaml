@@ -7,6 +7,8 @@ metadata:
     chart: {{ template "centinela-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }} 
 spec:
   type: {{ .Values.service.type }}
   ports:

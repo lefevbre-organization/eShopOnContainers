@@ -1,5 +1,9 @@
 apiVersion: v1
-appVersion: "1.0"
-description: A Helm chart for Kubernetes
 name: webcentinela
-version: 0.1.0
+description: Centinela for mail clients   
+home: https://github.com/lefevbre-organization/eShopOnContainers
+icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
+keywords: ["imap", "gmail", "outlook", "addon", "centinela", "webclient"]
+version: 0.42
+sources:
+  - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/web/WebCentinelaClient

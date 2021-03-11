@@ -3,7 +3,7 @@
     #region Using
 
     using Account.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using BuidingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

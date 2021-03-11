@@ -10,6 +10,8 @@ metadata:
     chart: {{ template "database-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -21,6 +23,10 @@ spec:
       labels:
         app: {{ template "database-api.name" . }}
         release: {{ .Release.Name }}
+      {{ if .Values.inf.mesh.enabled -}}
+      annotations:
+        linkerd.io/inject: enabled
+      {{- end }}
     spec:
       {{ if .Values.inf.registry -}}
       imagePullSecrets:
@@ -50,6 +56,16 @@ spec:
                   key: {{ .key }}
           {{- end -}}
           {{- end }}
+            - name: OnlineLogin
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: svconline_login
+            - name: OnlinePassword
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: svconline_pass
           ports:
             - name: http
               containerPort: 80

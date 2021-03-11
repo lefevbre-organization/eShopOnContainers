@@ -1,8 +1,5 @@
-﻿using Signature.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -12,10 +9,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Storage;
 
-namespace Signature.API.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Model;
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class SignatureContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {

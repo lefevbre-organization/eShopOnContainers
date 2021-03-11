@@ -1,6 +1,10 @@
 {{- $name := include "signature-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
+{{- $cen := include "url-of" (list .Values.app.ingress.entries.centinelaapi .) -}}
+{{- $lexgw := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
+{{- $sig := include "url-of" (list .Values.app.ingress.entries.signatureapi .) -}}
+{{- $clientsig := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
 {{- $mongo := include "mongo-name" . -}}
 
 apiVersion: v1
@@ -12,6 +16,8 @@ metadata:
     chart: {{ template "signature-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
@@ -20,3 +26,14 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   signature__ConnectionString: mongodb://{{ $mongo }}
   signature__Database: {{ .Values.inf.mongo.signature.database }}
+  all__Version: {{ .Chart.Version | quote }}
+  urls__SignatureUrlExternal: https://{{ .Values.signature.url }}
+  urls__LexonUrlExternal: https://{{ .Values.lexon.dev.url }}
+  urls__LexonApi: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1'
+  urls__LexonApi_bis: https://{{ .Values.app.ingress.entries.lexonapigw}}/api/v1
+  urls__CentinelaApi: https://{{ .Values.app.ingress.entries.centinelaapi }}/api/v1
+  urls__SignatureApi: https://{{ .Values.app.ingress.entries.signatureapi }}/api/v1
+  urls__SignatureClient: https://{{ .Values.signature.callback_url }}/completed
+  urls__SignatureNotification: https://{{ .Values.signature.gw_url }}{{ .Values.signature.paths.mail}}
+  urls__SignatureNotificationCertified: https://{{ .Values.signature.gw_url }}{{ .Values.signature.paths.certified_mail}}
+  urls__SignatureSmsCertified: https://{{ .Values.signature.gw_url }}{{ .Values.signature.paths.certified_sms}}

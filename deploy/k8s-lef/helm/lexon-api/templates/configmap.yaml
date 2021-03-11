@@ -12,6 +12,8 @@ metadata:
     chart: {{ template "lexon-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
@@ -20,3 +22,14 @@ data:
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   lexon__ConnectionString: mongodb://{{ $mongo }}
   lexon__Database: {{ .Values.inf.mongo.lexon.database }}
+  all__Version: {{ .Chart.Version | quote }}
+  lexon__Devs: {{ .Values.lexon.devs.env }}
+  lexon__DevsUrl: https://{{ .Values.lexon.devs.url }}
+  lexon__Dev: {{ .Values.lexon.dev.env }}
+  lexon__DevUrl: https://{{ .Values.lexon.dev.url }}
+  lexon__Qa: {{ .Values.lexon.qa.env }}
+  lexon__QaUrl: https://{{ .Values.lexon.qa.url }}
+  lexon__Pre: {{ .Values.lexon.pre.env }}
+  lexon__PreUrl: https://{{ .Values.lexon.pre.url }}
+  lexon__Pro: {{ .Values.lexon.pro.env }}
+  lexon__ProUrl: https://{{ .Values.lexon.pro.url }}

@@ -1,41 +1,22 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
-namespace Signature.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    #region Using
-    using Signature.API;
-    using Signature.API.Model;
-    using Signature.API.Infrastructure.Repositories;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Text;
-    using System.Threading.Tasks;
-    using MongoDB.Bson;
-    using RestSharp;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json.Linq;
-    #endregion
+    using Model;
+    using Repositories;
+    using BuidingBlocks.Lefebvre.Models;
 
     public class DocumentsService : IDocumentsService
     {
         public readonly IDocumentsRepository _documentsRepository;
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
-        private readonly int _timeout;
-        private readonly int _timeoutFile;
+        //private readonly int _timeout;
+        //private readonly int _timeoutFile;
 
         public DocumentsService(
             IOptions<SignatureSettings> settings
@@ -48,8 +29,8 @@ namespace Signature.API.Infrastructure.Services
             _documentsRepository = documentsRepository ?? throw new ArgumentNullException(nameof(documentsRepository));
             //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _configuration = configuration;
-            _timeout = 5000;
-            _timeoutFile = 90000;
+            //_timeout = 5000;
+            //_timeoutFile = 90000;
 
         }
 

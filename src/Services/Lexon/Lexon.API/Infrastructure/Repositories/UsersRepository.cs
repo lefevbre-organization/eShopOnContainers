@@ -1,9 +1,6 @@
-﻿using Lexon.API.IntegrationsEvents.Events;
-using Lexon.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -15,8 +12,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using IntegrationsEvents.Events;
+    using Models;
+
     public class UsersRepository : BaseClass<UsersRepository>, IUsersRepository
     {
         private readonly LexonContext _context;
@@ -426,12 +427,11 @@ namespace Lexon.API.Infrastructure.Repositories
             var listaActuaciones = new List<LexActuation>();
             try
             {
-                var options = new AggregateOptions() { AllowDiskUse = true, UseCursor = false };
+                var options = GetAggregateOptions();
 
                 PipelineDefinition<LexUser, BsonDocument> pipeline = new BsonDocument[]
                     {
                     new BsonDocument("$match", new BsonDocument()
-                        //.Add("idUser", idUser)
                         .Add("$or", new BsonArray
                                 {
                                     new BsonDocument().Add("idUser", idUser),
@@ -582,24 +582,11 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<Result<bool>> UpsertCompaniesAsync(Result<List<LexCompany>> companiesToInsert, string idUser)
         {
             var result = new Result<bool>();
-            //var companiesToInsert = new List<LexCompany>();
             var filterUser = GetFilterLexUser(idUser);
 
             try
             {
                 var user = await _context.LexUsers.Find(filterUser).FirstOrDefaultAsync();
-
-                //if (user != null)
-                //{
-                //    foreach (var comp in lexUser.data.companies)
-                //    {
-                //        var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
-                //        if (companySearch == 0)
-                //        {
-                //            companiesToInsert.Add(comp);
-                //        }
-                //    }
-                //}
 
                 var update = Builders<LexUser>.Update.AddToSetEach(x => x.companies, companiesToInsert.data?.ToArray());
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(filterUser, update);

@@ -1,0 +1,18 @@
+Release "it-elefebvre-nextcloud" does not exist. Installing it now.
+NAME: it-elefebvre-nextcloud
+LAST DEPLOYED: Thu Mar  4 17:45:39 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+1. Get the nextcloud URL by running:
+
+  export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=it-elefebvre-nextcloud" -o jsonpath="{.items[0].metadata.name}")
+  echo http://127.0.0.1:8080/
+  kubectl port-forward $POD_NAME 8080:80
+
+2. Get your nextcloud login credentials by running:
+
+  echo User:     admin
+  echo Password: $(kubectl get secret --namespace default it-elefebvre-nextcloud -o jsonpath="{.data.nextcloud-password}" | base64 --decode)

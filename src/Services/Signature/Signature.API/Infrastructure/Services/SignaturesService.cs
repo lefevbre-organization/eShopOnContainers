@@ -1,65 +1,37 @@
-﻿namespace Signature.API.Infrastructure.Services
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MongoDB.Bson;
+using RestSharp;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    #region Using
-    using Signature.API;
-    using Signature.API.Model;
-    using Signature.API.Infrastructure.Repositories;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using Newtonsoft.Json;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Diagnostics;
-    using System.Net.Http;
-    using System.Net.Http.Headers;
-    using System.Text;
-    using System.Threading.Tasks;
-    using MongoDB.Bson;
-    using RestSharp;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json.Linq;
+    using Model;
+    using Repositories;
+    using BuidingBlocks.Lefebvre.Models;
 
-
-    #endregion
     public class SignaturesService : ISignaturesService
     {
         public readonly ISignaturesRepository _signaturesRepository;
-        //private readonly IEventBus _eventBus;
-        //private readonly IHttpClientFactory _clientFactory;
-        //private readonly HttpClient _client;
-        //private readonly HttpClient _clientFiles;
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
         private readonly int _timeout;
         private readonly int _timeoutGetSendFile;
 
 
-        //public UsersService(
-        //        IOptions<SignatureSettings> settings
-        //        , IUsersRepository usersRepository
-        //        , IEventBus eventBus
-        //        , IHttpClientFactory clientFactory
-        //        , ILogger<UsersService> logger
-        //    ) : base(logger)
         public SignaturesService(
                 IOptions<SignatureSettings> settings
                 , ISignaturesRepository signaturesRepository
-            , IConfiguration configuration
-            //, IEventBus eventBus
+                , IConfiguration configuration
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _signaturesRepository = signaturesRepository ?? throw new ArgumentNullException(nameof(signaturesRepository));
-            //_eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-            //_client = _clientFactory.CreateClient();
-            //_client.BaseAddress = new Uri(_settings.Value.SignatureMySqlUrl);
-            //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
             _configuration = configuration;
             _timeout = 5000;
             _timeoutGetSendFile = 90000;

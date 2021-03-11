@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.svc.googleaccountapi }}
+  labels:
+    app: {{ template "googleaccount-api.name" . }}
+    chart: {{ template "googleaccount-api.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "googleaccount-api.name" . }}
+    release: {{ .Release.Name }}

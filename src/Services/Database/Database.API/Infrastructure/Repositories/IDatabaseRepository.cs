@@ -1,9 +1,9 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
     public interface IDatabaseRepository
     {
       

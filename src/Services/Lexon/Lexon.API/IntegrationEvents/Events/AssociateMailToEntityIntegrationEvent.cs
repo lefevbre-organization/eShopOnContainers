@@ -1,7 +1,7 @@
-﻿namespace Lexon.API.IntegrationsEvents.Events
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events
 {
 
-    public class AssociateMailToEntityIntegrationEvent: DissociateMailFromEntityIntegrationEvent
+    public record AssociateMailToEntityIntegrationEvent: DissociateMailFromEntityIntegrationEvent
     {
 
         public string SubjectMail { get; set; }

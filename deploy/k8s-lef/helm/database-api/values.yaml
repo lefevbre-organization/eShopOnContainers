@@ -46,15 +46,10 @@ env:
       key: database__ConnectionString
     - name: Database
       key: database__Database
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
     - name: OnlineUrl
-      value: 'http://herculesppd.lefebvre.es/webclient46'
-    - name: OrchestratorType
-      value: 'K8S'
-    - name: OnlineLogin
-      value: 'ws'
-    - name: OnlinePasssword
-      value: '22lcqsp11lsw'
+      key: urls__OnlineUrlExternal
+    - name: DeployVersion
+      key: all__Version
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+#  values: {}
+

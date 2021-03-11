@@ -9,6 +9,8 @@ metadata:
     chart: {{ template "apigwcen.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   {{ (.Files.Glob "configuration-centinela.json").AsConfig  | indent 2 }}
 

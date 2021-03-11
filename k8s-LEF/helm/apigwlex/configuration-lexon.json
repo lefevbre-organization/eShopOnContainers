@@ -3,7 +3,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE"  ],
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon-api",
@@ -12,20 +12,6 @@
       ],
       "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
       "DownstreamPathTemplate": "/api/{version}/{everything}"
-    },
-    {
-      "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "lexonmysql-api",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "Priority": 0
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
@@ -92,6 +78,32 @@
       ],
       "UpstreamPathTemplate": "/api/{version}/con/{everything}",
       "DownstreamPathTemplate": "/api/{version}/Conference/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "googleaccount-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/gac/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "googledrive-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/gdr/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     }
 
   ],

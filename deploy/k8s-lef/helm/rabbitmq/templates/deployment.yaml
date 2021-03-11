@@ -36,8 +36,8 @@ spec:
 {{ toYaml .Values.resources | indent 12 }}
 # Montamos rabbitmq-now-data en /var/lib/rabbitmq (donde rabbit guarda las colas por defecto)
           volumeMounts:
-           - mountPath: /var/lib/rabbitmq
-             name: rabbitmq-now-data
+            - mountPath: /var/lib/rabbitmq
+              name: rabbitmq-now-data
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

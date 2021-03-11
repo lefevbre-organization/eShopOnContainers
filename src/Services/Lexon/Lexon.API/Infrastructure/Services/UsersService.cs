@@ -1,8 +1,4 @@
-﻿using Lexon.API;
-using Lexon.API.Infrastructure.Exceptions;
-using Lexon.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
@@ -16,8 +12,14 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using Lexon.API;
+    using Models;
+
     public class UsersService : LexonBaseClass<UsersService>, IUsersService
     {
         public readonly IUsersRepository _usersRepository;
@@ -27,7 +29,6 @@ namespace Lexon.Infrastructure.Services
         private readonly IOptions<LexonSettings> _settings;
         private string _conn;
         private string _urlLexon;
-
 
         public UsersService(
                 IOptions<LexonSettings> settings
@@ -70,7 +71,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), Codes.Lexon.GetUser, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get user of {idNavisionUser}", ex), Codes.Lexon.GetUser, Codes.Areas.MySqlConn);
                 }
             }
 
@@ -82,7 +83,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), Codes.Lexon.GetUser, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user {idNavisionUser}"), Codes.Lexon.GetUser, Codes.Areas.MySqlConn);
                     var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -114,7 +115,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), Codes.Lexon.GetCompaniesUser, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Error when get user companies of {idUser}", ex), Codes.Lexon.GetCompaniesUser, Codes.Areas.MySql);
                 }
             }
 
@@ -126,7 +127,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), Codes.Lexon.GetCompaniesUser, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t recover the user with companies of {idUser}"), Codes.Lexon.GetCompaniesUser, Codes.Areas.MySql);
                     var resultMongo = await _usersRepository.GetUserAsync(idUser);
                     AddToFinalResult(result, resultMongo);
                 }
@@ -193,7 +194,7 @@ namespace Lexon.Infrastructure.Services
                 catch (Exception ex)
                 {
                     result.data = null;
-                    TraceError(result.errors, new LexonDomainException($"Error when get exon user id", ex), Codes.Lexon.GetUserId, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get exon user id", ex), Codes.Lexon.GetUserId, Codes.Areas.MySqlConn);
                 }
             }
 
@@ -232,7 +233,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add classification", ex), Codes.Lexon.AddClassificationToList, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add classification", ex), Codes.Lexon.AddClassificationToList, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -288,13 +289,13 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when remove classification", ex), Codes.Lexon.RemoveClassificationFromList, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when remove classification", ex), Codes.Lexon.RemoveClassificationFromList, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
             {
                 if (result.data == 0)
-                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove of the classification"), Codes.Lexon.RemoveClassificationFromList, "MYSQL");
+                    TraceError(result.errors, new LexonDomainException($"Mysql don´t remove of the classification"), Codes.Lexon.RemoveClassificationFromList, Codes.Areas.MySql);
                 //else
                 //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             }
@@ -351,7 +352,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetClassificationFromList, "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetClassificationFromList, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", Codes.Lexon.GetClassificationFromList);
                                 }
@@ -362,7 +363,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get classifications", ex), Codes.Lexon.GetClassificationFromList, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get classifications", ex), Codes.Lexon.GetClassificationFromList, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -410,7 +411,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntities, "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntities, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", Codes.Lexon.GetEntities);
                                 }
@@ -421,7 +422,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get entities", ex), Codes.Lexon.GetEntities, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get entities", ex), Codes.Lexon.GetEntities, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -469,7 +470,7 @@ namespace Lexon.Infrastructure.Services
                                     else
                                     {
                                         if (resultMySql.Infos.Count > 1)
-                                            TraceError(resultMySql.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntity, "MYSQL");
+                                            TraceError(resultMySql.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetEntity, Codes.Areas.MySql);
                                         else
                                             TraceInfo(resultMySql.Infos, "MySql get and empty string with this search", Codes.Lexon.GetEntity);
                                     }
@@ -481,7 +482,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get entitiy by id", ex), Codes.Lexon.GetEntity, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get entitiy by id", ex), Codes.Lexon.GetEntity, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -522,7 +523,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get master entities", ex), Codes.Lexon.GetEntityTypes, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get master entities", ex), Codes.Lexon.GetEntityTypes, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -561,7 +562,7 @@ namespace Lexon.Infrastructure.Services
                                     }
                                     else
                                     {
-                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.CheckRelationsMail, "MYSQL");
+                                        TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.CheckRelationsMail, Codes.Areas.MySql);
                                     }
                                 }
                         }
@@ -570,7 +571,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when check relations from mail", ex), Codes.Lexon.CheckRelationsMail, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when check relations from mail", ex), Codes.Lexon.CheckRelationsMail, Codes.Areas.MySqlConn);
             }
             return result;
         }
@@ -582,14 +583,12 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
             return await _svcContacts.GetContactAsync(entitySearch.env, entitySearch.idUser, entitySearch.bbdd, (short)entitySearch.idType, (long)entitySearch.idEntity);
-
         }
 
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
             var resultadoPaginado = await _svcContacts.GetAllContactsAsync(search.env, search.idUser, search.bbdd, null, 0, 0);
-            return new Result<List<LexContact>>() { data = (List<LexContact>)resultadoPaginado.data.Data, errors=resultadoPaginado.errors, infos = resultadoPaginado.infos};
-           
+            return new Result<List<LexContact>>() { data = (List<LexContact>)resultadoPaginado.data.Data, errors = resultadoPaginado.errors, infos = resultadoPaginado.infos };
         }
 
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
@@ -721,7 +720,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (result.Infos.Count > 1)
-                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetNestedFolders, "MYSQL");
+                                        TraceError(result.Errors, new LexonDomainException($"MySql get an extrange or empty string with this search"), Codes.Lexon.GetNestedFolders, Codes.Areas.MySql);
                                     else
                                         TraceInfo(result.Infos, "MySql get and empty string with this search", Codes.Lexon.GetNestedFolders);
                                 }
@@ -732,7 +731,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.Errors, new LexonDomainException($"Error when get folder and files entities", ex), Codes.Lexon.GetNestedFolders, "MYSQLCONN");
+                TraceError(result.Errors, new LexonDomainException($"Error when get folder and files entities", ex), Codes.Lexon.GetNestedFolders, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -755,13 +754,13 @@ namespace Lexon.Infrastructure.Services
 
                         await command.ExecuteNonQueryAsync();
                         CheckErrorOutParameters(command, result.errors, Codes.Lexon.AddFolderToEntity, nameof(AddFolderToEntityAsync));
-                         result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
+                        result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add folder to entity", ex), Codes.Lexon.AddFolderToEntity, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add folder to entity", ex), Codes.Lexon.AddFolderToEntity, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -780,9 +779,16 @@ namespace Lexon.Infrastructure.Services
 
             try
             {
+                var resultId = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env);
+                if(resultId.data == 0 || resultId.errors?.Count > 0)
+                {
+                    AddResultTrace(resultId, result);
+                    return result;
+
+                }
                 var lexonFile = new LexGetFile
                 {
-                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
+                    idCompany = resultId.data,
                     idUser = fileMail.idUser,
                     idDocument = fileMail.idEntity ?? 0
                 };
@@ -832,19 +838,18 @@ namespace Lexon.Infrastructure.Services
 
             try
             {
-                var lexonFile = await GetFileDataByTypeActuation(fileMail);
-                lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
-                var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
+                var lexonFileResult = await GetFileDataByTypeActuation(fileMail);
+                if (lexonFileResult.errors?.Count > 0)
+                {
+                    AddResultTrace(lexonFileResult, result);
+                    return result;
+                }
 
-                name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
-                name = string.Concat(name.Split(Path.GetInvalidPathChars()));
-                var maxlenght = name.Length > 55 ? 55 : name.Length;
-                lexonFile.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFile.fileName)}";
+                CleanFileName(lexonFileResult);
 
-                var json = JsonConvert.SerializeObject(lexonFile);
+                var json = JsonConvert.SerializeObject(lexonFileResult.data);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
-
                 SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
 
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
@@ -875,6 +880,17 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
+        private void CleanFileName(Result<LexPostFile> lexonFileResult)
+        {
+            lexonFileResult.data.fileName = RemoveProblematicChars(lexonFileResult.data.fileName);
+            var name = Path.GetFileNameWithoutExtension(lexonFileResult.data.fileName);
+
+            name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
+            name = string.Concat(name.Split(Path.GetInvalidPathChars()));
+            var maxlenght = name.Length > 55 ? 55 : name.Length;
+            lexonFileResult.data.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFileResult.data.fileName)}";
+        }
+
         private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
         {
             url = $"{_urlLexon}{path}";
@@ -885,47 +901,77 @@ namespace Lexon.Infrastructure.Services
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
-        private async Task<LexPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        private async Task<Result<LexPostFile>> GetFileDataByTypeActuation(MailFileView fileMail)
         {
-            var lexonFile = new LexPostFile
+            var result = new Result<LexPostFile>(new LexPostFile());
+
+            try
             {
-                idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
-                fileName = fileMail.Name,
-                idUser = fileMail.idUser,
-                idEntityType = fileMail.idType ?? 0
-            };
-            if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
-            {
-                lexonFile.idFolder = fileMail.IdParent ?? 0;
-                lexonFile.idEntity = fileMail.idEntity ?? 0;
+                var resultId = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env);
+
+                if (resultId.data == 0 || resultId.errors?.Count > 0)
+                {
+                    AddResultTrace(resultId, result);
+                    return result;
+                }
+
+                var lexonFile = new LexPostFile
+                {
+                    idCompany = resultId.data,
+                    fileName = fileMail.Name,
+                    idUser = fileMail.idUser,
+                    idEntityType = fileMail.idType ?? 0
+                };
+                if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
+                {
+                    lexonFile.idFolder = fileMail.IdParent ?? 0;
+                    lexonFile.idEntity = fileMail.idEntity ?? 0;
+                }
+                else
+                {
+                    lexonFile.idFolder = 0;
+                    lexonFile.idEntity = (long)fileMail.IdActuation;
+                };
+
+                result.data = lexonFile;
             }
-            else
+            catch (Exception ex)
             {
-                lexonFile.idFolder = 0;
-                lexonFile.idEntity = (long)fileMail.IdActuation;
-            };
-            return lexonFile;
+
+                TraceError(result.errors, new LexonDomainException($"Error al componer fichero para envio", ex), Codes.Lexon.PostFile, Codes.Areas.InternalApi);
+            }
+         
+            return result;
         }
 
-        private async Task<long> GetIdCompany(string idUser, string bbdd, string env)
+        private async Task<Result<long>> GetIdCompany(string idUser, string bbdd, string env)
         {
-            var resultadoCompanies = await GetCompaniesFromUserAsync(idUser, env);
-            var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
-            var idCompany = companies?.FirstOrDefault()?.idCompany;
-            return idCompany ?? 0; // "88";
+            var resultId = new Result<long>(0);
+            try
+            {
+                var resultadoCompanies = await GetCompaniesFromUserAsync(idUser, env);
+                AddResultTrace(resultadoCompanies, resultId);
+                var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
+                var idCompany = companies?.FirstOrDefault()?.idCompany;
+
+                resultId.data = idCompany ?? 0;
+            }
+            catch (Exception ex)
+            {
+                TraceError(resultId.errors, new LexonDomainException($"Error al obtener id de compañia", ex), Codes.Lexon.GetIdCompany, Codes.Areas.MySql);
+            }
+
+            return resultId;
         }
 
         #endregion Files
 
         #region Common
 
-   
-        private string GiveMeBaseFilter(string bbdd, string idUser)
-        {
-            return $"{{ {GetUserFilter(bbdd, idUser)} }}";
-        }
-
-
+        //private string GiveMeBaseFilter(string bbdd, string idUser)
+        //{
+        //    return $"{{ {GetUserFilter(bbdd, idUser)} }}";
+        //}
 
         private string GiveMeRelationMultipleFilter(string bbdd, string idUser, MailInfo[] listaMails, short? idType, long? idRelated)
         {

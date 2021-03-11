@@ -4,7 +4,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.IntegrationEvents.
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class RemoveUserMailIntegrationEvent : IntegrationEvent
+    public record RemoveUserMailIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 

@@ -4,7 +4,7 @@
 
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+    using BuidingBlocks.Lefebvre.Models;
     using Repositories;
     using System;
     using System.Collections.Generic;

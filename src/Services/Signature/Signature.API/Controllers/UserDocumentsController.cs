@@ -1,22 +1,16 @@
-﻿namespace Signature.API.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System;
+using System.Net;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Controllers
 {
     #region Usings
+    using BuidingBlocks.Lefebvre.Models;
     using Infrastructure.Services;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    //using Microsoft.eShopOnContainers.Services.Signature.API.Model;
-    using Microsoft.Extensions.Options;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Threading.Tasks;
     using Signature.API.Model;
-    using RestSharp;
-    using Microsoft.Extensions.Configuration;
     #endregion
 
     [Route("api/v1/CertifiedDocuments")]

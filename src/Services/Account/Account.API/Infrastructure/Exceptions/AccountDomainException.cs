@@ -1,6 +1,7 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions
+﻿using System;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions
 {
-    using System;
 
     /// <summary>
     /// Exception type for app exceptions

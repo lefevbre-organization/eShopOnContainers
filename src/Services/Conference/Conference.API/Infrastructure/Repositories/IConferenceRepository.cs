@@ -1,10 +1,9 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Conference.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.Repositories
 {
+    using Models;
+    using BuidingBlocks.Lefebvre.Models;
     public interface IConferenceRepository
     {
       

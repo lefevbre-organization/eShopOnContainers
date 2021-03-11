@@ -54,76 +54,82 @@ env:
     - name: HealthChecksUI__HealthChecks__4__Uri
       key: internalurls__weblexon__hc
     - name: HealthChecksUI__HealthChecks__5__Name
-      key: name__accountapi__hc
-    - name: HealthChecksUI__HealthChecks__5__Uri
-      key: internalurls__accountapi__hc
-    - name: HealthChecksUI__HealthChecks__6__Name
-      key: name__accountapigw__hc
-    - name: HealthChecksUI__HealthChecks__6__Uri
-      key: internalurls__accountapigw__hc
-    - name: HealthChecksUI__HealthChecks__7__Name
-      key: name__lexonapi__hc
-    - name: HealthChecksUI__HealthChecks__7__Uri
-      key: internalurls__lexonapi__hc
-    - name: HealthChecksUI__HealthChecks__8__Name
-      key: name__lexonmysqlapi__hc
-    - name: HealthChecksUI__HealthChecks__8__Uri
-      key: internalurls__lexonmysqlapi__hc
-    - name: HealthChecksUI__HealthChecks__9__Name
-      key: name__lexonapigw__hc
-    - name: HealthChecksUI__HealthChecks__9__Uri
-      key: internalurls__lexonapigw__hc
-    - name: HealthChecksUI__HealthChecks__10__Name
-      key: name__centinelaapi__hc
-    - name: HealthChecksUI__HealthChecks__10__Uri
-      key: internalurls__centinelaapi__hc
-    - name: HealthChecksUI__HealthChecks__11__Name
-      key: name__centinelaapigw__hc
-    - name: HealthChecksUI__HealthChecks__11__Uri
-      key: internalurls__centinelaapigw__hc
-    - name: HealthChecksUI__HealthChecks__12__Name
-      key: name__userutilsapi__hc
-    - name: HealthChecksUI__HealthChecks__12__Uri
-      key: internalurls__userutilsapi__hc
-    - name: HealthChecksUI__HealthChecks__13__Name
-      key: name__signatureapi__hc
-    - name: HealthChecksUI__HealthChecks__13__Uri
-      key: internalurls__signatureapi__hc
-    - name: HealthChecksUI__HealthChecks__14__Name
-      key: name__signatureapigw__hc
-    - name: HealthChecksUI__HealthChecks__14__Uri
-      key: internalurls__signatureapigw__hc
-    - name: HealthChecksUI__HealthChecks__15__Name
-      key: name__databaseapi__hc
-    - name: HealthChecksUI__HealthChecks__15__Uri
-      key: internalurls__databaseapi__hc
-    - name: HealthChecksUI__HealthChecks__16__Name
-      key: name__databaseapigw__hc
-    - name: HealthChecksUI__HealthChecks__16__Uri
-      key: internalurls__databaseapigw__hc
-    - name: HealthChecksUI__HealthChecks__17__Name
-      key: name__websignature__hc
-    - name: HealthChecksUI__HealthChecks__17__Uri
-      key: internalurls__websignature__hc
-    - name: HealthChecksUI__HealthChecks__18__Name
       key: name__webcentinela__hc
-    - name: HealthChecksUI__HealthChecks__18__Uri
+    - name: HealthChecksUI__HealthChecks__5__Uri
       key: internalurls__webcentinela__hc       
-    - name: HealthChecksUI__HealthChecks__19__Name
+    - name: HealthChecksUI__HealthChecks__6__Name
+      key: name__websignature__hc
+    - name: HealthChecksUI__HealthChecks__6__Uri
+      key: internalurls__websignature__hc
+    - name: HealthChecksUI__HealthChecks__7__Name
       key: name__webaddonlauncher__hc
-    - name: HealthChecksUI__HealthChecks__19__Uri
+    - name: HealthChecksUI__HealthChecks__7__Uri
       key: internalurls__webaddonlauncher__hc
-    - name: HealthChecksUI__HealthChecks__20__Name
+    - name: HealthChecksUI__HealthChecks__8__Name
       key: name__weboffice365addonlexon__hc
-    - name: HealthChecksUI__HealthChecks__20__Uri
+    - name: HealthChecksUI__HealthChecks__8__Uri
       key: internalurls__weboffice365addonlexon__hc         
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: OrchestratorType
-      value: 'K8S'
-    - name: EvaluationTimeOnSeconds
-      value: 90
-    - name: MinimumSecondsBetweenFailureNotifications
-      value: 90
+    - name: HealthChecksUI__HealthChecks__9__Name
+      key: name__weboffice365addoncentinela__hc
+    - name: HealthChecksUI__HealthChecks__9__Uri
+      key: internalurls__weboffice365addoncentinela__hc
+    - name: HealthChecksUI__HealthChecks__10__Name
+      key: name__accountapi__hc
+    - name: HealthChecksUI__HealthChecks__10__Uri
+      key: internalurls__accountapi__hc
+    - name: HealthChecksUI__HealthChecks__11__Name
+      key: name__accountapigw__hc
+    - name: HealthChecksUI__HealthChecks__11__Uri
+      key: internalurls__accountapigw__hc
+    - name: HealthChecksUI__HealthChecks__12__Name
+      key: name__lexonapi__hc
+    - name: HealthChecksUI__HealthChecks__12__Uri
+      key: internalurls__lexonapi__hc
+    - name: HealthChecksUI__HealthChecks__13__Name
+      key: name__lexonapigw__hc
+    - name: HealthChecksUI__HealthChecks__13__Uri
+      key: internalurls__lexonapigw__hc
+    - name: HealthChecksUI__HealthChecks__14__Name
+      key: name__centinelaapi__hc
+    - name: HealthChecksUI__HealthChecks__14__Uri
+      key: internalurls__centinelaapi__hc
+    - name: HealthChecksUI__HealthChecks__15__Name
+      key: name__centinelaapigw__hc
+    - name: HealthChecksUI__HealthChecks__15__Uri
+      key: internalurls__centinelaapigw__hc
+    - name: HealthChecksUI__HealthChecks__16__Name
+      key: name__conferenceapi__hc
+    - name: HealthChecksUI__HealthChecks__16__Uri
+      key: internalurls__conferenceapi__hc
+    - name: HealthChecksUI__HealthChecks__17__Name
+      key: name__userutilsapi__hc
+    - name: HealthChecksUI__HealthChecks__17__Uri
+      key: internalurls__userutilsapi__hc
+    - name: HealthChecksUI__HealthChecks__18__Name
+      key: name__signatureapi__hc
+    - name: HealthChecksUI__HealthChecks__18__Uri
+      key: internalurls__signatureapi__hc
+    - name: HealthChecksUI__HealthChecks__19__Name
+      key: name__signatureapigw__hc
+    - name: HealthChecksUI__HealthChecks__19__Uri
+      key: internalurls__signatureapigw__hc
+    - name: HealthChecksUI__HealthChecks__20__Name
+      key: name__calendarapi__hc
+    - name: HealthChecksUI__HealthChecks__20__Uri
+      key: internalurls__calendarapi__hc
+    - name: HealthChecksUI__HealthChecks__21__Name
+      key: name__googledriveapi__hc
+    - name: HealthChecksUI__HealthChecks__21__Uri
+      key: internalurls__googledriveapi__hc
+    - name: HealthChecksUI__HealthChecks__22__Name
+      key: name__databaseapi__hc
+    - name: HealthChecksUI__HealthChecks__22__Uri
+      key: internalurls__databaseapi__hc
+    - name: HealthChecksUI__HealthChecks__23__Name
+      key: name__databaseapigw__hc
+    - name: HealthChecksUI__HealthChecks__23__Uri
+      key: internalurls__databaseapigw__hc
+    - name: DeployVersion
+      key: all__Version
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+#  values: {}

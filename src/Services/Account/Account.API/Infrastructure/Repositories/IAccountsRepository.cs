@@ -1,13 +1,10 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
-    #region using
-
     using Account.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-
-    #endregion using
+    using BuidingBlocks.Lefebvre.Models;
 
     public interface IAccountsRepository
     {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace eShopConContainers.WebSPA
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebDatabase
 {
     public class Program
     {
@@ -27,9 +27,9 @@ namespace eShopConContainers.WebSPA
                     builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     builder.AddConsole();
                     builder.AddDebug();
-                    builder.AddAzureWebAppDiagnostics();
+                    //builder.AddAzureWebAppDiagnostics();
                 })
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .UseSerilog((builderContext, config) =>
                 {
                     config

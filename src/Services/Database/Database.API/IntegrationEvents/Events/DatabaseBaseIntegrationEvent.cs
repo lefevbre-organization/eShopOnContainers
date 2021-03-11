@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.IntegrationsEvents.Events
 {
-    public class DatabaseBaseIntegrationEvent : IntegrationEvent
+    public record DatabaseBaseIntegrationEvent : IntegrationEvent
     {
         public long IdAppNavision { get; set; }
         public string UserId { get; set; }

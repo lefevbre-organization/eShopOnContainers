@@ -7,7 +7,7 @@ metadata:
 data:
   lexon__ConnectionString: mongodb://nosql-data
   lexon__Database: LexonApiDb
-  lexon__LexonMySqlUrl: todo
+#  lexon__LexonMySqlUrl: todo
   lexon__LexonFilesUrl: todo
   lexonmysql__ConnectionString: Server=sql-data;Initial Catalog=Microsoft.eShopOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word;
   lexonmysql__LexonHubUrl: todo-a-eliminar-por-userutils

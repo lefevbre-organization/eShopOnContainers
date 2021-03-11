@@ -1,7 +1,4 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -12,25 +9,30 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
+
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
 {
+    using Infrastructure.Repositories;
+    using Infrastructure.Services;
+
     public static class CustomExtensionsMethods
     {
-        public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+            //services.AddMvc(options =>
+            //{
+            //    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+            //})
+            //    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            //    .AddControllersAsServices();
 
             services.AddCors(options =>
             {
@@ -42,8 +44,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
                     .AllowCredentials());
             });
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUserUtilsService, UserUtilsService>();
             services.AddTransient<IUserUtilsRepository, UserUtilsRepository>();
+            services.AddOptions();
             return services;
         }
 
@@ -94,18 +98,41 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSwaggerGen(options =>
+            services.AddSwaggerGen(op =>
             {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                //c.DescribeAllEnumsAsStrings();
+                op.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Lefebvre Now - User Utils HTTP API",
                     Version = "v1",
-                    Description = "The User utils Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    TermsOfService = "Terms Of Service"
+                    Description = "The UserUtils Microservice HTTP API"
+                   //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
+
+                op.OperationFilter<FormDataOperationFilter>();
+                op.OperationFilter<MultiPartFormDataOperationFilter>();
+
+
+                //c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                //{
+                //    Type = SecuritySchemeType.OAuth2,
+                //    Flows = new OpenApiOAuthFlows()
+                //    {
+                //        Implicit = new OpenApiOAuthFlow()
+                //        {
+                //            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+                //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                //            Scopes = new Dictionary<string, string>()
+                //            {
+                //                { "userutils", "Userutils API" }
+                //            }
+                //        }
+                //    }
+                //});
+
+                //c.OperationFilter<AuthorizeCheckOperationFilter>();
             });
 
             return services;

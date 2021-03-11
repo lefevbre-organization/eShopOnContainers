@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Signature.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Model
 {
     public class EventSignature
     {

@@ -50,6 +50,11 @@ spec:
                   key: {{ .key }}
           {{- end -}}
           {{- end }}
+            - name: Signaturit
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: signature_pass
           ports:
             - name: http
               containerPort: 80

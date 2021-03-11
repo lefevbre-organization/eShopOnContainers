@@ -1,0 +1,27 @@
+{{- $name := include "googleaccount-api.fullname" . -}}
+{{- $sqlsrv := include "sql-name" . -}}
+{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
+{{- $mongo := include "mongo-name" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "googleaccount-api.name" . }}
+    chart: {{ template "googleaccount-api.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }} 
+data:
+  urls__IdentityUrl: http://{{ $identity }}
+  urls__IdentityUrlExternal: http://{{ $identity }}
+  all__EventBusConnection: {{ .Values.inf.eventbus.constr }}
+  all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
+  all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
+  googleaccount__ConnectionString: mongodb://{{ $mongo }}
+  googleaccount__Database: {{ .Values.inf.mongo.googleaccount.database }}
+  urls__RedirectSuccessDrive: "{{ .Values.googleaccount.redirecturl }}"
+  urls__InternalRedirection: "{{ .Values.googleaccount.internalurl }}"
+  all__Version: {{ .Chart.Version | quote }}

@@ -3,16 +3,15 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using eShopOnContainers.WebSPA;
 
-namespace eShopConContainers.WebSPA.Server.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebDatabase.Server.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IHostingEnvironment _env;
+        private readonly IWebHostEnvironment _env;
         private readonly IOptionsSnapshot<AppSettings> _settings;
 
-        public HomeController(IHostingEnvironment env, IOptionsSnapshot<AppSettings> settings)
+        public HomeController(IWebHostEnvironment env, IOptionsSnapshot<AppSettings> settings)
         {
             _env = env;
             _settings = settings;

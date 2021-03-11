@@ -34,14 +34,4 @@ env:
     - name: UseLoadTest
       key: all__EnableLoadTest
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: OrchestratorType
-      value: 'K8S'
-    - name: IsClusterEnv
-      value: 'True'
-configValues: |
-  window.REACT_APP_ENVIRONMENT='PRODUCTION'
-  window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
-  window.RELEASE = 'RC 0.36'
+#  values: {}

@@ -45,43 +45,33 @@ env:
       key: userutils__ConnectionString
     - name: Database
       key: userutils__Database
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: DefaultEnvironment
-      value: PRE
-    - name: MinihubUrl
-      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
-    - name: OnlineUrl
-      value: 'https://herculesppd.lefebvre.es/webclient46/ws'
-    - name: LoginUrl
-      value: 'http://led-pre-servicecomtools.eu.els.local'
-    - name: CentinelaApiUrl
-      value: 'http://centinela-api/api/v1/Centinela'
-    - name: LexonApiUrl
-      value: 'http://lexon-api/api/v1/Lexon'
-    - name: ClavesUrl
-      value: 'https://led-pre-serviceclaves.lefebvre.es'
-    - name: SignaturitApiUrl
-      value: 'http://signature-api/api/v1/Signaturit'
-    - name: ByPassUrls__0__NameService
-      value: Lex-On
-    - name: ByPassUrls__0__UrlByPass
-      value: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
-    - name: ByPassUrls__1__NameService
-      value: Signature-Direct
-    - name: ByPassUrls__1__UrlByPass
-      value: 'https://lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}'
-    - name: OrchestratorType
-      value: 'K8S'
-    - name: OnlineLogin
-      value: 'ws'
-    - name: OnlinePasssword
-      value: '22lcqsp11lsw'
+    - name: DeployVersion
+      key: all__Version
     - name: TokenCaducity
-      value: 1500
-    - name: TokenKey
-      value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+      key: userutils__TokenCaducity
+    - name: MinihubUrl
+      key: urls__HubUrlExternal
+    - name: OnlineUrl
+      key: urls__OnlineUrlExternal
+    - name: LoginUrl
+      key: urls__ComToolsUrlExternal 
+    - name: ClavesUrl
+      key: urls__ClavesUrlExternal 
+    - name: LexonApiUrl
+      key: urls__LexonApi  
+    - name: CentinelaApiUrl
+      key: urls__CentinelaApi 
+    - name: SignaturitApiUrl
+      key: urls__SignatureApi
+    - name: ByPassUrls__0__NameService
+      key: urls__ByPassLexOnId #Lex-On
+    - name: ByPassUrls__0__UrlByPass
+      key: urls__ByPassLexOnUrl
+    - name: ByPassUrls__1__NameService
+      key: urls__ByPassSigId #Signature-Direct
+    - name: ByPassUrls__1__UrlByPass
+      key: urls__ByPassSigUrl
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+#  values: {}
 
 

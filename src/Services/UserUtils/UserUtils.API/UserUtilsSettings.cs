@@ -1,32 +1,21 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-
-namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
-    public class UserUtilsSettings
-    {
-        public string ConnectionString { get; set; }
-        public string Database { get; set; }
-        public string Collection { get; set; }
-        public string CollectionByPass { get; set; }
-        public short Version { get; set; }
-        public string DefaultEnvironment { get; set; }
+    using BuidingBlocks.Lefebvre.Models;
+    using Models;
 
-        public string CollectionEvents { get; set; }
+    public class UserUtilsSettings: BaseSettings
+    {
+        public string CollectionByPass { get; set; }
+        public string DefaultEnvironment { get; set; }
 
         public string MinihubUrl { get; set; }
         public string OnlineUrl { get; set; }
         public string LoginUrl { get; set; }
         public string ClavesUrl { get; set; }
+        public string IdentityUrlExternal { get; set; }
+        public string IdentityUrl { get; set; }
 
-        public string EventBusConnection { get; set; }
-        public string EventBusUserName { get; set; }
-        public string EventBusPassword { get; set; }
-        public int EventBusPort { get; set; }
-        public short EventBusRetryCount { get; set; }
 
-        public bool UseCustomizationData { get; set; }
-
-        public bool AzureStorageEnabled { get; set; }
         public short IdAppUserUtils { get; set; }
         public short IdAppLexon { get; set; }
         public short IdAppCentinela { get; set; }

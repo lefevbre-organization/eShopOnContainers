@@ -9,6 +9,8 @@ metadata:
     chart: {{ template "apigwlex.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   {{ (.Files.Glob "configuration-lexon.json").AsConfig  | indent 2 }}
 

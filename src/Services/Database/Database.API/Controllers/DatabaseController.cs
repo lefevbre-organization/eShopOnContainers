@@ -1,16 +1,16 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.Database.API.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers
 {
+    using Infrastructure.Services;
+    using Models;
+    using BuidingBlocks.Lefebvre.Models;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class DatabaseController : ControllerBase

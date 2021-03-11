@@ -62,8 +62,8 @@ env:
       value: 'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'
     - name: CallBackUrl
       value: 'https://lexbox-test-websignature.lefebvre.es/completed'
-    - name: Signaturit
-      value: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'
+    # - name: Signaturit
+    #   value: 'dUOCDEBBbBfZlycygqbVpRhToLHIzSAxmzdZsUrrhBkRwStavdTLMrMBYACZUckFMbNrwFFmWLUqLmhxxuahvy'
     - name: SignatureNotificationUrl
       value: 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice/SignaturitEvent/signature/post.json'
     - name: CertifiedEmailNotificationUrl

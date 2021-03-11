@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.IntegrationsEvents.Events
 {
-    public class AddFileToContentIntegrationEvent : IntegrationEvent
+    public record AddFileToContentIntegrationEvent : IntegrationEvent
     {
         public string UserId { get; set; }
 
