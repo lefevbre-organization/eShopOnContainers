@@ -414,7 +414,7 @@ class Calendar extends Component {
                         <DialogComponent
                             id='eventTypes'
                             isModal={true}
-                            header={t("contactimport.title")}
+                            header={t("eventtype.title")}
                             visible={this.state.hidePromptEventTypeDialog}
                             showCloseIcon={true}
                             animationSettings={this.animationSettings}
