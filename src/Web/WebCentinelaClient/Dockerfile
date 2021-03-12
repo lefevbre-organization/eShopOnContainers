@@ -11,7 +11,6 @@ COPY ["src/Web/WebCentinelaClient/Client/", "./"]
 RUN ["npm", "install", "--silent"]
 #COPY ["src/Web/WebCentinelaClient/Client/", "./"]
 RUN ["npm", "run", "build", "--silent"]
-# RUN ls -lha /web
 # RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build

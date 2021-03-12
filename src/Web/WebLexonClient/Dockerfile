@@ -1,4 +1,4 @@
-ARG NODE_IMAGE=node:12
+ARG NODE_IMAGE=node:14.15-alpine3.13
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -6,9 +6,10 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY ["src/Web/WebLexonClient/Client/package.json", "src/Web/WebLexonClient/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
 COPY ["src/Web/WebLexonClient/Client/", "./"]
+#COPY ["src/Web/WebLexonClient/Client/package.json", "src/Web/WebLexonClient/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--silent"]
+#COPY ["src/Web/WebLexonClient/Client/", "./"]
 RUN ["npm", "run", "build", "--silent"]
  #RUN ls -lha /web/build
 
