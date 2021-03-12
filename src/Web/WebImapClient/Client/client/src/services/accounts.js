@@ -113,6 +113,7 @@ export const classifyEmail = async (
 
 export const getEventTypes = async (account) => {
   let url = `${window.URL_GET_EVENTSTYPE}/ev/get`;
+  debugger
 
   let value = {
       "email": account
