@@ -4,6 +4,7 @@ import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/
 import { createCalendar } from "../../api/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { updateCalendarList } from '../../../calendar/api/calendar-api';
+import Styles from './calendars.scss';
 //import { Acl } from './acl/acl';
 import i18n from 'i18next';
 
@@ -141,7 +142,9 @@ export class Calendars extends React.Component {
         }
 
         return (
-            <div className="row custom-margin custom-padding-5 material2">
+            <div 
+            id={Styles['calendars-containers']} 
+            className="row custom-margin custom-padding-5 material2" >
                 <div className="col-xs-12 col-sm-12 col-lg-12 col-md-12">
                     <div id="formComponents">
                         <div className='validation_wrapper'>
@@ -204,7 +207,7 @@ export class Calendars extends React.Component {
                                 )}
 
                             <div className="row">
-                                <div className="submitRow">
+                                <div className={Styles['submitRow']}>
                                     <div style={{ display: 'inline-block' }}>
                                         <ButtonComponent
                                             id="modify"
