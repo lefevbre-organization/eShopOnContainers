@@ -102,6 +102,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
                    setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Database.API V1");
                    setup.OAuthClientId("databaseswaggerui");
                    setup.OAuthAppName("Database Swagger UI");
+                   setup.RoutePrefix = @"api";
                });
 
             app.UseRouting();
