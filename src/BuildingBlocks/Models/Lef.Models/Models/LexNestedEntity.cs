@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
     /// <summary>
     /// Se utiliza para recuperar estructuras de directorios y archivos anidados

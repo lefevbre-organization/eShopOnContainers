@@ -68,3 +68,4 @@ configValues: |
   window.NEXTCLOUD_USERS_PASSWD = 'users_passwd';
   window.SHOW_EXPERIMENTAL='1'
   window.RELEASE = 'RC 0.42.1'
+  window.URL_LEXON= 'https://led-pre-front.lex-on.es';

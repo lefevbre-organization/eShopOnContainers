@@ -1,9 +1,9 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Lexon.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Models
 {
+    using BuidingBlocks.Lefebvre.Models;
     [BsonIgnoreExtraElements]
     public class LexonMaster: MongoModel, ILexonList<LexonEntityType>
     {

@@ -1,14 +1,9 @@
-﻿namespace Signature.API.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Model
 {
-    using System;
-    using System.Collections.Generic;
-
-    using System.Globalization;
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
-
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
+    using System.Collections.Generic;
 
     public partial class UserEmails
     {

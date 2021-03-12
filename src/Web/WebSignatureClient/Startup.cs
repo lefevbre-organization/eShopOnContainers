@@ -1,8 +1,4 @@
 ﻿using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Clients.WebSignature.Infrastructure;
-
-//using Microsoft.ApplicationInsights.Extensibility;
-//using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -17,6 +13,8 @@ using System.IO;
 
 namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
 {
+    using Infrastructure;
+    
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -40,8 +38,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddUrlGroup(new Uri(Configuration["SignatureApiUrlHC"]), name: "signatureapi-check", tags: new string[] { "signatureapi" })
-                ;
+                .AddUrlGroup(new Uri(Configuration["SignatureApiUrlHC"]), name: "signatureapi-check", tags: new string[] { "signatureapi" });
 
             services.Configure<AppSettings>(Configuration);
 

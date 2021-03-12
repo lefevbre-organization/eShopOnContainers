@@ -91,33 +91,11 @@
       <FileName>Models\LexApp.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexPostFile">
-    <Position X="9.25" Y="3.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAACABAAAA=</HashCode>
-      <FileName>Models\LexPostFile.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexGetFile">
-    <Position X="11" Y="4" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
-      <FileName>Models\LexGetFile.cs</FileName>
-      <NewMemberFileName>MySql\LexonFile.cs</NewMemberFileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
-    <Position X="14" Y="1.75" Width="2" />
+    <Position X="10.5" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgBQAAAAAgEIQAYAAAABAAAIQAEAAEEAA=</HashCode>
       <FileName>Models\MySqlCompany.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexFile">
-    <Position X="10" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Models\LexFile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntityType">
@@ -138,21 +116,21 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlList&lt;T, TItems&gt;">
-    <Position X="16.25" Y="1.5" Width="2.75" />
+    <Position X="13.25" Y="0.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgASAABAAAEAQAIAAAABAAAIQAEAAAAAA=</HashCode>
       <FileName>Common\MySqlList.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexActuationCategory">
-    <Position X="15" Y="7.5" Width="1.5" />
+    <Position X="14" Y="6.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\LexActuationType.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexActuationTypeList">
-    <Position X="16.25" Y="6.25" Width="1.75" />
+    <Position X="14" Y="5.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\LexActuationTypeList.cs</FileName>

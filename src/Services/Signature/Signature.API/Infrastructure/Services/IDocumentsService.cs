@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Signature.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
-    #region Using
-    using Signature.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using System;
-    #endregion Using
+    using Model;
+    using BuidingBlocks.Lefebvre.Models;
 
     public interface IDocumentsService
     {

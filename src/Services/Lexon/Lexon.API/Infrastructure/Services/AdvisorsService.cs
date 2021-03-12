@@ -1,22 +1,20 @@
-﻿using Lexon.API;
-using Lexon.API.Infrastructure.Exceptions;
-using Lexon.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using ViewModel;
+
     public class AdvisorsService : LexonBaseClass<AdvisorsService>, IAdvisorsService
     {
         public readonly IUsersRepository _usersRepository;
@@ -86,7 +84,7 @@ namespace Lexon.Infrastructure.Services
                 }
                 catch (Exception ex)
                 {
-                    TraceError(result.errors, new LexonDomainException($"Error when get advisor files", ex), Codes.LexonAdvisors.GetAdvisorFiles, "MYSQLCONN");
+                    TraceError(result.errors, new LexonDomainException($"Error when get advisor files", ex), Codes.LexonAdvisors.GetAdvisorFiles, Codes.Areas.MySqlConn);
                 }
             }
 

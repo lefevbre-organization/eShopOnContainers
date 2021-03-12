@@ -1,28 +1,19 @@
-﻿namespace Signature.API.Infrastructure.Repositories
-{
-    #region using
-    using Signature.API.IntegrationsEvents.Events;
-    using Signature.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Bson;
-    using MongoDB.Bson.Serialization;
-    using MongoDB.Driver;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.WindowsAzure.Storage;
-    using System.Net.NetworkInformation;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-    #endregion
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Repositories
+{
+    using Model;
+    using BuidingBlocks.Lefebvre.Models;
+
     public class SignaturesRepository : BaseClass<SignaturesRepository>, ISignaturesRepository
     {
         private readonly SignatureContext _context;
@@ -539,10 +530,6 @@
         #endregion
 
         #region Helpers
-        private static UpdateOptions GetUpsertOptions()
-        {
-            return new UpdateOptions { IsUpsert = true };
-        }
 
         private UserSignatures GetNewUserSignature(string user, string externalId, string guid, string app, List<Document> documents)
         {

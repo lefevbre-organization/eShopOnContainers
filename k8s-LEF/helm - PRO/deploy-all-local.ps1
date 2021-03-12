@@ -70,7 +70,7 @@ Write-Host "Begin eShopOnContainers installation using Helm" -ForegroundColor Gr
 
 
 $infras = ( "nosql-data", "rabbitmq")
-$charts = ( "apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api" , "apigwsig", "signature-api", "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "webimapserver", "websignature", "webstatus")
+$charts = ( "apigwlex", "lexon-api", "apigwacc", "account-api" , "apigwsig", "signature-api", "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "webimapserver", "websignature", "webstatus")
 
 if ($deployInfrastructure) {
     foreach ($infra in $infras) {

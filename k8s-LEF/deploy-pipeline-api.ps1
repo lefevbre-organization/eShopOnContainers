@@ -7,14 +7,14 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
+        "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
      #   "googledrive.api", "googleaccount.api",
         "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
         "webstatus"
         ),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api",
+        "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api",
      #   "googledrive.api", "googleaccount.api",
         "ocelotapigw", 
         "webstatuslef"

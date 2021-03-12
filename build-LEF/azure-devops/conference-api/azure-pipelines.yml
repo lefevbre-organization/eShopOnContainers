@@ -1,0 +1,20 @@
+variables:
+    registryEndpoint: lefebvre-docker
+trigger:
+  branches:
+    include:
+    - lef-main-containers
+    - lef-i41-us/Core5
+  paths:
+    include:
+    - src/BuildingBlocks/*
+    - src/Services/Conference/*
+    - k8s/helm/conference-api/*
+jobs:
+- template: ../buildimages.yaml
+  parameters:
+    services: conference.api
+    registryEndpoint: $(registryEndpoint)
+    helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
+

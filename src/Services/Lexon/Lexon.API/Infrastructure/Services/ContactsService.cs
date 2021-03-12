@@ -1,21 +1,20 @@
-﻿using Lexon.API;
-using Lexon.API.Infrastructure.Exceptions;
-using Lexon.API.Infrastructure.Repositories;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Exceptions;
+    using Infrastructure.Repositories;
+    using ViewModel;
+
     public class ContactsService : LexonBaseClass<ContactsService>, IContactsService
     {
         public readonly IUsersRepository _usersRepository;
@@ -90,7 +89,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), Codes.Lexon.AddContactsToMail, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when add classification contacts", ex), Codes.Lexon.AddContactsToMail, Codes.Areas.MySqlConn);
             }
 
             if (_settings.Value.UseMongo)
@@ -129,7 +128,7 @@ namespace Lexon.Infrastructure.Services
                                 }
                                 else
                                 {
-                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, "MYSQL");
+                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetContact, Codes.Areas.MySql);
                                 }
                             }
                         }
@@ -138,7 +137,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get contact", ex), Codes.Lexon.GetContact, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get contact", ex), Codes.Lexon.GetContact, Codes.Areas.MySqlConn);
             }
 
             return result;
@@ -174,7 +173,7 @@ namespace Lexon.Infrastructure.Services
                                 }
                                 else
                                 {
-                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, "MYSQL");
+                                    TraceError(result.errors, new LexonDomainException("MySql get and empty string with this search"), Codes.Lexon.GetAllContacts, Codes.Areas.MySql);
                                 }
                             }
                         }
@@ -183,7 +182,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceError(result.errors, new LexonDomainException($"Error when get contacts", ex), Codes.Lexon.GetAllContacts, "MYSQLCONN");
+                TraceError(result.errors, new LexonDomainException($"Error when get contacts", ex), Codes.Lexon.GetAllContacts, Codes.Areas.MySqlConn);
             }
             return result;
         }

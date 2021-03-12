@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Signature.API.Infrastructure.ActionResults
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.ActionResults
 {
     public class InternalServerErrorObjectResult : ObjectResult
     {

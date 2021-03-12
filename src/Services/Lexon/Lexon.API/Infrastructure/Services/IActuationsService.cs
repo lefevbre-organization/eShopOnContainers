@@ -1,11 +1,11 @@
-﻿using Lexon.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Models;
+    using ViewModel;
     public interface IActuationsService
     {
         Task<Result<PaginatedItemsViewModel<LexActuationType>>> GetActuationTypesAsync(string env,
@@ -14,7 +14,7 @@ namespace Lexon.Infrastructure.Services
         Task<Result<PaginatedItemsViewModel<LexActuationCategory>>> GetActuationCategoriesAsync(string env,
                                                                                                 string idUser,
                                                                                                 string bbdd);
-        Task<Result<int>> UpsertAppointmentAsync(LexAppointment appointment,
+        Task<Result<int>> UpsertAppointmentAsync(LexAppointmentInsert appointment,
                                               string env,
                                               string idUser,
                                               string bbdd);

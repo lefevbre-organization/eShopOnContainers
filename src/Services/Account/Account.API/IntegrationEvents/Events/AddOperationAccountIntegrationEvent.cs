@@ -2,7 +2,7 @@
 {
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class AddOperationAccountIntegrationEvent : IntegrationEvent
+    public record AddOperationAccountIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 

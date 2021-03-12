@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+﻿namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
     public class LexApp
     {
@@ -8,6 +8,5 @@
         public string descHerramienta { get; set; }
         public string url { get; set; }
 
-        //"indAcceso":1,"icono":"lf-icon-qmemento","idHerramienta":1,"descHerramienta":"Bases de datos","url":"https://herculesppd.lefebvre.es/webclient46/login.do?ei=f3NrcnZs"
     }
 }

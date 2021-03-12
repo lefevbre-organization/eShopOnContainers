@@ -1,0 +1,93 @@
+lef:
+  env: 'pre'
+
+centinela:
+  url: 'compliance-api.affin.es/api/secure'
+
+lexon:
+  devs:
+    env: 'DEVS'
+    url: 'led-dev-lexon.eu.els.local'
+  dev:
+    env: 'DEV'
+    url: 'led-dev-lexon.eu.els.local'
+  qa:
+    env: 'QA'
+    url: 'www-led-pre.lex-on.es'
+  pre:
+    env: 'PRE'
+    url: 'www-led-pre.lex-on.es'
+  pro:
+    env: 'PRO'
+    url: 'www.lex-on.es'      
+
+signature:
+  url: 'api.sandbox.signaturit.com/v3' # name: SignaturitApiUrl
+  lex_url: 'https://led-pre-lexon.eu.els.local' #name : LexonFilesUrl
+  callbackurl: 'lexbox-pre-websignature.lefebvre.es'   # name: CallBackUrl
+  paths:
+    mail: '/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
+    certified_mail: '/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
+    certified_sms: '/SignaturitEvent/certifiedSms/post.json'   # name: CertifiedSmsNotificationUrl
+
+svchub:
+  url: 'led-pre-servicehub.eu.els.local' # name: MinihubUrl
+
+svconline:
+  url: 'herculesppd.lefebvre.es' # name: OnlineUrl
+
+svccomtools:
+  url: 'led-pre-servicecomtools.eu.els.local' # name: LoginUrl
+  
+svcclaves:
+  url: 'led-pre-serviceclaves.lefebvre.es' # name: ClavesUrl  
+
+userutils:
+  token:
+    caducity: 1500
+  bypass:
+    lex:
+      id: 'Lex-On'
+      url: 'lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+    sig:
+      id: 'Signature-Direct'
+      url: 'lexbox-test-websignature.lefebvre.es/access/{tokenSignature}'
+
+conference:
+  jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
+  jitsiroom: 'https://meet-test.lefebvre.es'
+
+nextcloud:
+  host: lexbox-pre-nextcloud.lefebvre.es
+  username: admin
+  password: admin_pre
+
+
+mariadb:
+  enabled: true
+  db:
+    name: nextcloud_pre
+    user: nextcloud_pre
+    password: elefebvre_pre_1234
+    # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
+    rootUser: 
+      password: PRE_sad324_VX_Zaq12
+      forcePassword: true
+    replication:
+      password: PRE_.qwewq56_12wssXVB_
+      forcePassword: true
+      
+env:
+  values:
+    - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default
+      value: Development
+    - name: OrchestratorType
+      value: 'K8S'
+    - name: DefaultEnvironment #use if not include de env variable in the internal and external requests
+      value: 'PRE'
+    - name: UseMongo  # if set to true, use de mongo to admi use without external 
+      value: false
+    - name: Environments # list of environments admit in the cluster
+      value: ['DEVS','DEV','QA','PRE']
+    - name: IsClusterEnv
+      value: 'True'

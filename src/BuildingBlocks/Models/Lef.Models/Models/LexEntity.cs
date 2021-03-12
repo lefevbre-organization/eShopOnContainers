@@ -1,5 +1,5 @@
 ﻿
-namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
 
     public class LexEntity

@@ -1,5 +1,9 @@
 apiVersion: v1
-appVersion: "1.0"
-description: A Helm chart for Kubernetes
 name: webimap
-version: 0.1.0
+description: Imap client   
+home: https://github.com/lefevbre-organization/eShopOnContainers
+icon: https://github.com/lefevbre-organization/eShopOnContainers/blob/lef-main-containers/img/eshop_logo.png
+keywords: ["imap", "lexon", "centinela", "webclient"]
+version: 0.42
+sources:
+  - https://github.com/lefevbre-organization/eShopOnContainers/tree/lef-main-containers/src/web/WebImapClient

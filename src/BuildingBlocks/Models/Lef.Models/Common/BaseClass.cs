@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
     public class BaseClass<T>
     {
@@ -86,6 +86,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             System.Diagnostics.Trace.WriteLine(msg);
         }
 
+        public void WriteInfo(string msg)
+        {
+            log.LogInformation(msg);
+            //System.Diagnostics.Trace.WriteLine(msg);
+        }
+
         public void TraceLog(
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
@@ -101,12 +107,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             WriteLine(builder.ToString(), false);
         }
 
-        //public Exception GetInfoErrorFromParameters(object codeError, object valueError)
-        //{
-        //    if (codeError == null || exMessage == null || !(exMessage is string))
-        //        return;
-        //}
-
         public void TraceOutputMessage(
             List<ErrorInfo> errors,
             object exMessage,
@@ -116,8 +116,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            //if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
-            //    return;
             if (codeError == null || exMessage == null || !(exMessage is string))
                 return;
 
@@ -207,9 +205,11 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             return null;
         }
-        public static UpdateOptions GetUpsertOptions()
+
+
+        public static ReplaceOptions GetUpsertOptions()
         {
-            return new UpdateOptions { IsUpsert = true };
+            return new ReplaceOptions() { IsUpsert = true };
         }
 
         public void ConfigureByEnv(string env, List<Info> infos, IEnvSettings envSettings, out string finalConn, out string finalUrl, string code)
@@ -269,5 +269,63 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             resultOut.errors.AddRange(resultIn.errors);
             resultOut.infos.AddRange(resultIn.infos);
         }
+
+        public string ManageUpsert<U>(string msgError, string msgModify, string msgInsert, Result<U> result, ReplaceOneResult resultReplace, string code)
+        {
+            if (resultReplace.IsAcknowledged)
+            {
+                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, msgModify, code);
+                }
+                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                {
+                    TraceInfo(result.infos, msgInsert, code);
+                    return resultReplace.UpsertedId.ToString();
+                }
+            }
+            else
+            {
+                TraceError(result.errors,
+                           new BaseDomainException(msgError),
+                           code,
+                           Codes.Areas.Mongo);
+            }
+            return null;
+        }
+
+        public bool ManageUpdate<U>(string errorMsg, string modifyMsg, Result<U> result, UpdateResult resultUpdate, string code)
+        {
+            if (resultUpdate.IsAcknowledged)
+            {
+                if (resultUpdate.MatchedCount == 0)
+                {
+                    TraceInfo(result.infos, "No se encuentran datos, asegurese que existe el elemento", code);
+                }
+                else if (resultUpdate.MatchedCount > 0)
+                {
+                    if (resultUpdate.ModifiedCount == 0)
+                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones", code);
+                    else
+                        TraceInfo(result.infos, modifyMsg, code);
+
+                    return resultUpdate.ModifiedCount > 0;
+                }
+            }
+            else
+            {
+                TraceError(result.errors,
+                           new BaseDomainException(errorMsg),
+                           code,
+                           Codes.Areas.Mongo);
+            }
+            return false;
+        }
+
+        public AggregateOptions GetAggregateOptions()
+        {
+            return new AggregateOptions() { AllowDiskUse = true };
+        }
     }
+
 }

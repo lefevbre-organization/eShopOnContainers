@@ -11,32 +11,32 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            CreateHostBuilder(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHost CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
              .UseStartup<Startup>()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureAppConfiguration((builderContext, config) =>
-                {
-                    config.AddEnvironmentVariables();
-                })
-                .ConfigureLogging((hostingContext, builder) =>
-                {
-                    builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    builder.AddConsole();
-                    builder.AddDebug();
-                    builder.AddAzureWebAppDiagnostics();
-                })
-               // .UseApplicationInsights()
-                .UseSerilog((builderContext, config) =>
-                {
-                    config
-                        .MinimumLevel.Information()
-                        .Enrich.FromLogContext()
-                        .WriteTo.Console();
-                })
-                .Build();       
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .ConfigureAppConfiguration((builderContext, config) =>
+            {
+                config.AddEnvironmentVariables();
+            })
+            .ConfigureLogging((hostingContext, builder) =>
+            {
+                builder.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                builder.AddConsole();
+                builder.AddDebug();
+                //builder.AddAzureWebAppDiagnostics();
+            })
+            // .UseApplicationInsights()
+            .UseSerilog((builderContext, config) =>
+            {
+                config
+                    .MinimumLevel.Information()
+                    .Enrich.FromLogContext()
+                    .WriteTo.Console();
+            })
+            .Build();       
     }
 }

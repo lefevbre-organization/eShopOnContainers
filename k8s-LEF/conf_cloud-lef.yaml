@@ -9,6 +9,8 @@ data:
   userutils__Database: UserUtilsDb
   account__ConnectionString: mongodb://nosql-data
   account__Database: LocationsDb #MailAccounts
+  calendar__ConnectionString: mongodb://nosql-data
+  calendar__Database: CalendarsDb 
   lexon__ConnectionString: mongodb://nosql-data
   lexon__Database: LexonApiDb
   centinela__ConnectionString: mongodb://nosql-data

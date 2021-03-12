@@ -803,7 +803,7 @@ export class Main extends Component {
         if (this.layoutIframe) {
             this.setState({leftSideBar: {collapsed: true}})
         }
-
+        document.title = 'Lefebvre Calendar';
         window.addEventListener(
             'EventClassified',
             this.handleClassificatedEvent

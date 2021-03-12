@@ -1,11 +1,8 @@
-﻿namespace Signature.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Infrastructure.Services
 {
     #region using
-    using Signature.API.Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-    using System.Collections.Generic;
+    using Model;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
     #endregion
 
     public interface ISignaturitService

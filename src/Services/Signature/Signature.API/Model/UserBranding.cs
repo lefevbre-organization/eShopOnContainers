@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace Signature.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Model
 {
     public class UserBranding
     {

@@ -1,0 +1,1615 @@
+Release "it-elefebvre-nextcloud" does not exist. Installing it now.
+NAME: it-elefebvre-nextcloud
+LAST DEPLOYED: Wed Mar  3 18:25:46 2021
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+app:
+  ingress:
+    entries:
+      accountapi: account-api
+      accountapigw: accountapigw
+      addonlauncher: webaddonlauncher
+      calendarapi: calendar-api
+      centinela: webcentinela
+      centinelaapi: centinela-api
+      centinelaapigw: centinelaapigw
+      conferenceapi: conference-api
+      database: webdatabase
+      databaseapi: database-api
+      databaseapigw: databaseapigw
+      google: webgoogle
+      googleaccountapi: googleaccount-api
+      googledriveapi: googledrive-api
+      graph: webgraph
+      identity: identity
+      imap: webimap
+      imapserver: webimapserver
+      lexon: weblexon
+      lexonapi: lexon-api
+      lexonapigw: lexonapigw
+      nextcloud: nextcloud
+      office365addoncentinela: weboffice365addoncentinela
+      office365addonlexon: weboffice365addonlexon
+      portal: webportal
+      seq: seq
+      signature: websignature
+      signatureapi: signature-api
+      signatureapigw: signatureapigw
+      status: webstatus
+      userutilsapi: userutils-api
+      vault: vault
+      webhooks: webhooks-api
+      webhooksweb: webhooks-web
+  name: elefebvre
+  svc:
+    accountapi: account-api
+    accountapigw: accountapigw
+    addonlauncher: webaddonlauncher
+    calendarapi: calendar-api
+    centinela: webcentinela
+    centinelaapi: centinela-api
+    centinelaapigw: centinelaapigw
+    conferenceapi: conference-api
+    database: webdatabase
+    databaseapi: database-api
+    databaseapigw: databaseapigw
+    google: webgoogle
+    googleaccountapi: googleaccount-api
+    googledriveapi: googledrive-api
+    graph: webgraph
+    identity: identity
+    imap: webimap
+    imapserver: webimapserver
+    lexon: weblexon
+    lexonapi: lexon-api
+    lexonapigw: lexonapigw
+    nextcloud: nextcloud
+    office365addoncentinela: weboffice365addoncentinela
+    office365addonlexon: weboffice365addonlexon
+    portal: webportal
+    seq: seq
+    signature: websignature
+    signatureapi: signature-api
+    signatureapigw: signatureapigw
+    status: webstatus
+    userutilsapi: userutils-api
+    vault: vault
+    webhooks: webhooks-api
+    webhooksweb: webhooks-web
+centinela:
+  url: compliance-api.affin.es/api/secure
+conference:
+  jitsi: http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com
+  jitsiroom: https://meet-test.lefebvre.es
+env:
+  values:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: OrchestratorType
+    value: K8S
+  - name: DefaultEnvironment
+    value: QA
+  - name: UseMongo
+    value: false
+  - name: Environments
+    value:
+    - DEVS
+    - DEV
+    - QA
+    - PRE
+  - name: IsClusterEnv
+    value: "True"
+googleaccount:
+  internalurl: https://lexbox-dev-apigwlex.lefebvre.es/{loquesea}
+  redirecturl: https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac/auth/drive
+googledrive:
+  tokenurl: https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac
+inf:
+  appinsights:
+    key: ""
+  eventbus:
+    constr: rabbitmq
+    svc: rabbitmq
+    useAzure: false
+  k8s:
+    dns: ""
+    local: false
+  mesh:
+    enabled: false
+  misc:
+    useAzureStorage: false
+    useLoadTest: false
+  mongo:
+    account:
+      database: LocationsDb
+    calendar:
+      database: CalendarsDb
+    centinela:
+      database: CentinelaApiDb
+    conference:
+      database: ConferenceApiDb
+    database:
+      database: DatabaseApiDb
+    googleaccount:
+      database: GoogleAccountApiDB
+    lexon:
+      database: LexonApiDb
+    signature:
+      database: signature
+    userutils:
+      database: UserUtilsDb
+  registry:
+    login: freyeslefebvre
+    mail: f.reyes-ext@lefebvre.es
+    pwd: NetEb9221
+    secretName: elefebvre-docker-secret
+    server: index.docker.io
+  sql:
+    common:
+      pid: Developer
+      pwd: Pass@word
+      user: sa
+    identity:
+      db: IdentityDb
+    webhooks:
+      db: WebhooksDb
+  tls:
+    enabled: false
+    issuer: ""
+ingress:
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: 50mb
+    ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.class: addon-http-application-routing
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  hosts:
+  - ""
+  mesh:
+    annotations:
+      nginx.ingress.kubernetes.io/configuration-snippet: |-
+        proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+        proxy_hide_header l5d-remote-ip;
+        proxy_hide_header l5d-server-id;
+lef:
+  env: dev
+lexon:
+  dev:
+    env: DEV
+    url: led-dev-lexon.eu.els.local
+  devs:
+    env: DEVS
+    url: led-dev-lexon.eu.els.local
+  pre:
+    env: PRE
+    url: www-led-pre.lex-on.es
+  pro:
+    env: PRO
+    url: www.lex-on.es
+  qa:
+    env: QA
+    url: www-led-pre.lex-on.es
+mariadb:
+  db:
+    name: nextcloud_dev
+    replication:
+      forcePassword: true
+    rootUser:
+      forcePassword: true
+    user: nextcloud_dev
+  enabled: true
+  existingSecret: nextcloud-secrets
+  replication:
+    enabled: false
+nextcloud:
+  existingSecret:
+    enabled: true
+    passwordKey: password
+    secretName: nextcloud-secrets
+    smtpPasswordKey: smtp_password
+    smtpUsernameKey: smtp_username
+    usernameKey: username
+  host: lexbox-dev-nextcloud.lefebvre.es
+  username: admin
+signature:
+  callback_url: lexbox-dev-websignature.lefebvre.es
+  gw_url: lexbox-dev-apigwsig.lefebvre.es
+  lex_url: https://led-dev-lexon.eu.els.local
+  paths:
+    certified_mail: /api/v1/signservice/SignaturitEvent/certifiedEmail/post.json
+    certified_sms: /api/v1/signservice/SignaturitEvent/certifiedSms/post.json
+    mail: /api/v1/signservice/SignaturitEvent/signature/post.json
+  url: api.sandbox.signaturit.com/v3
+svcclaves:
+  url: led-pre-serviceclaves.lefebvre.es
+svccomtools:
+  url: led-pre-servicecomtools.eu.els.local
+svchub:
+  url: led-pre-servicehub.eu.els.local
+svconline:
+  url: herculesppd.lefebvre.es
+userutils:
+  bypass:
+    lex:
+      id: Lex-On
+      url: lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
+    sig:
+      id: Signature-Direct
+      url: lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}
+  token:
+    caducity: 1500
+
+COMPUTED VALUES:
+affinity: {}
+app:
+  ingress:
+    entries:
+      accountapi: account-api
+      accountapigw: accountapigw
+      addonlauncher: webaddonlauncher
+      calendarapi: calendar-api
+      centinela: webcentinela
+      centinelaapi: centinela-api
+      centinelaapigw: centinelaapigw
+      conferenceapi: conference-api
+      database: webdatabase
+      databaseapi: database-api
+      databaseapigw: databaseapigw
+      google: webgoogle
+      googleaccountapi: googleaccount-api
+      googledriveapi: googledrive-api
+      graph: webgraph
+      identity: identity
+      imap: webimap
+      imapserver: webimapserver
+      lexon: weblexon
+      lexonapi: lexon-api
+      lexonapigw: lexonapigw
+      nextcloud: nextcloud
+      office365addoncentinela: weboffice365addoncentinela
+      office365addonlexon: weboffice365addonlexon
+      portal: webportal
+      seq: seq
+      signature: websignature
+      signatureapi: signature-api
+      signatureapigw: signatureapigw
+      status: webstatus
+      userutilsapi: userutils-api
+      vault: vault
+      webhooks: webhooks-api
+      webhooksweb: webhooks-web
+  name: elefebvre
+  svc:
+    accountapi: account-api
+    accountapigw: accountapigw
+    addonlauncher: webaddonlauncher
+    calendarapi: calendar-api
+    centinela: webcentinela
+    centinelaapi: centinela-api
+    centinelaapigw: centinelaapigw
+    conferenceapi: conference-api
+    database: webdatabase
+    databaseapi: database-api
+    databaseapigw: databaseapigw
+    google: webgoogle
+    googleaccountapi: googleaccount-api
+    googledriveapi: googledrive-api
+    graph: webgraph
+    identity: identity
+    imap: webimap
+    imapserver: webimapserver
+    lexon: weblexon
+    lexonapi: lexon-api
+    lexonapigw: lexonapigw
+    nextcloud: nextcloud
+    office365addoncentinela: weboffice365addoncentinela
+    office365addonlexon: weboffice365addonlexon
+    portal: webportal
+    seq: seq
+    signature: websignature
+    signatureapi: signature-api
+    signatureapigw: signatureapigw
+    status: webstatus
+    userutilsapi: userutils-api
+    vault: vault
+    webhooks: webhooks-api
+    webhooksweb: webhooks-web
+centinela:
+  url: compliance-api.affin.es/api/secure
+conference:
+  jitsi: http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com
+  jitsiroom: https://meet-test.lefebvre.es
+cronjob:
+  annotations: {}
+  curlInsecure: false
+  enabled: false
+  failedJobsHistoryLimit: 5
+  image: {}
+  schedule: '*/5 * * * *'
+  successfulJobsHistoryLimit: 2
+env:
+  values:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: OrchestratorType
+    value: K8S
+  - name: DefaultEnvironment
+    value: QA
+  - name: UseMongo
+    value: false
+  - name: Environments
+    value:
+    - DEVS
+    - DEV
+    - QA
+    - PRE
+  - name: IsClusterEnv
+    value: "True"
+externalDatabase:
+  database: nextcloud
+  enabled: false
+  existingSecret:
+    enabled: true
+    passwordKey: mariadb-password
+    secretName: nextcloud-secrets
+    usernameKey: mariadb-username
+  host: null
+  password: null
+  type: mysql
+  user: nextcloud
+fullnameOverride: ""
+googleaccount:
+  internalurl: https://lexbox-dev-apigwlex.lefebvre.es/{loquesea}
+  redirecturl: https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac/auth/drive
+googledrive:
+  tokenurl: https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac
+hpa:
+  cputhreshold: 60
+  enabled: false
+  maxPods: 10
+  minPods: 1
+image:
+  pullPolicy: Always
+  pullSecrets:
+  - elefebvre-docker-secret
+  repository: elefebvreoncontainers/nextcloud
+  tag: linux-dev-40.1
+inf:
+  appinsights:
+    key: ""
+  eventbus:
+    constr: rabbitmq
+    svc: rabbitmq
+    useAzure: false
+  k8s:
+    dns: ""
+    local: false
+  mesh:
+    enabled: false
+  misc:
+    useAzureStorage: false
+    useLoadTest: false
+  mongo:
+    account:
+      database: LocationsDb
+    calendar:
+      database: CalendarsDb
+    centinela:
+      database: CentinelaApiDb
+    conference:
+      database: ConferenceApiDb
+    database:
+      database: DatabaseApiDb
+    googleaccount:
+      database: GoogleAccountApiDB
+    lexon:
+      database: LexonApiDb
+    signature:
+      database: signature
+    userutils:
+      database: UserUtilsDb
+  registry:
+    login: freyeslefebvre
+    mail: f.reyes-ext@lefebvre.es
+    pwd: NetEb9221
+    secretName: elefebvre-docker-secret
+    server: index.docker.io
+  sql:
+    common:
+      pid: Developer
+      pwd: Pass@word
+      user: sa
+    identity:
+      db: IdentityDb
+    webhooks:
+      db: WebhooksDb
+  tls:
+    enabled: false
+    issuer: ""
+ingress:
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: 50mb
+    ingress.kubernetes.io/ssl-redirect: "false"
+    kubernetes.io/ingress.class: addon-http-application-routing
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  enabled: false
+  hosts:
+  - ""
+  labels: {}
+  mesh:
+    annotations:
+      nginx.ingress.kubernetes.io/configuration-snippet: |-
+        proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
+        proxy_hide_header l5d-remote-ip;
+        proxy_hide_header l5d-server-id;
+internalDatabase:
+  enabled: false
+  name: nextcloud
+lef:
+  env: dev
+lexon:
+  dev:
+    env: DEV
+    url: led-dev-lexon.eu.els.local
+  devs:
+    env: DEVS
+    url: led-dev-lexon.eu.els.local
+  pre:
+    env: PRE
+    url: www-led-pre.lex-on.es
+  pro:
+    env: PRO
+    url: www.lex-on.es
+  qa:
+    env: QA
+    url: www-led-pre.lex-on.es
+lifecycle: {}
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+mariadb:
+  db:
+    forcePassword: false
+    injectSecretsAsVolume: false
+    name: nextcloud_dev
+    password: ""
+    replication:
+      forcePassword: true
+    rootUser:
+      forcePassword: true
+    user: nextcloud_dev
+  enabled: true
+  existingSecret: nextcloud-secrets
+  global: {}
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnami/mariadb
+    tag: 10.3.24-debian-10-r17
+  master:
+    affinity: {}
+    antiAffinity: soft
+    config: |-
+      [mysqld]
+      skip-name-resolve
+      explicit_defaults_for_timestamp
+      basedir=/opt/bitnami/mariadb
+      plugin_dir=/opt/bitnami/mariadb/plugin
+      port=3306
+      socket=/opt/bitnami/mariadb/tmp/mysql.sock
+      tmpdir=/opt/bitnami/mariadb/tmp
+      max_allowed_packet=16M
+      bind-address=0.0.0.0
+      pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+      log-error=/opt/bitnami/mariadb/logs/mysqld.log
+      character-set-server=UTF8
+      collation-server=utf8_general_ci
+
+      [client]
+      port=3306
+      socket=/opt/bitnami/mariadb/tmp/mysql.sock
+      default-character-set=UTF8
+      plugin_dir=/opt/bitnami/mariadb/plugin
+
+      [manager]
+      port=3306
+      socket=/opt/bitnami/mariadb/tmp/mysql.sock
+      pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    extraInitContainers: []
+    livenessProbe:
+      enabled: true
+      failureThreshold: 3
+      initialDelaySeconds: 120
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    nodeSelector: {}
+    persistence:
+      accessMode: ReadWriteOnce
+      accessModes:
+      - ReadWriteOnce
+      annotations: {}
+      enabled: true
+      mountPath: /bitnami/mariadb
+      selector: {}
+      size: 8Gi
+      storageClass: efs-sc
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
+    readinessProbe:
+      enabled: true
+      failureThreshold: 3
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    resources: {}
+    service:
+      annotations: {}
+    tolerations: []
+    updateStrategy:
+      type: RollingUpdate
+  metrics:
+    annotations:
+      prometheus.io/port: "9104"
+      prometheus.io/scrape: "true"
+    enabled: false
+    extraArgs:
+      master: []
+      slave: []
+    image:
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: bitnami/mysqld-exporter
+      tag: 0.12.1-debian-10-r199
+    livenessProbe:
+      enabled: true
+      failureThreshold: 3
+      initialDelaySeconds: 120
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    readinessProbe:
+      enabled: true
+      failureThreshold: 3
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    resources: {}
+    serviceMonitor:
+      enabled: false
+      selector:
+        prometheus: kube-prometheus
+  rbac:
+    create: false
+  replication:
+    enabled: false
+    forcePassword: false
+    injectSecretsAsVolume: false
+    password: ""
+    user: replicator
+  rootUser:
+    forcePassword: false
+    injectSecretsAsVolume: false
+    password: ""
+  secret:
+    annotations: {}
+    requirePasswords: true
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+  service:
+    port: 3306
+    type: ClusterIP
+  serviceAccount:
+    annotations: {}
+    create: false
+  slave:
+    affinity: {}
+    antiAffinity: soft
+    config: |-
+      [mysqld]
+      skip-name-resolve
+      explicit_defaults_for_timestamp
+      basedir=/opt/bitnami/mariadb
+      port=3306
+      socket=/opt/bitnami/mariadb/tmp/mysql.sock
+      tmpdir=/opt/bitnami/mariadb/tmp
+      max_allowed_packet=16M
+      bind-address=0.0.0.0
+      pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+      log-error=/opt/bitnami/mariadb/logs/mysqld.log
+      character-set-server=UTF8
+      collation-server=utf8_general_ci
+
+      [client]
+      port=3306
+      socket=/opt/bitnami/mariadb/tmp/mysql.sock
+      default-character-set=UTF8
+
+      [manager]
+      port=3306
+      socket=/opt/bitnami/mariadb/tmp/mysql.sock
+      pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    livenessProbe:
+      enabled: true
+      failureThreshold: 3
+      initialDelaySeconds: 120
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    nodeSelector: {}
+    persistence:
+      accessModes:
+      - ReadWriteOnce
+      enabled: true
+      selector: {}
+      size: 8Gi
+    podDisruptionBudget:
+      enabled: false
+      minAvailable: 1
+    readinessProbe:
+      enabled: true
+      failureThreshold: 3
+      initialDelaySeconds: 45
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+    replicas: 1
+    resources: {}
+    service:
+      annotations: {}
+    tolerations: []
+    updateStrategy:
+      type: RollingUpdate
+  volumePermissions:
+    enabled: false
+    image:
+      pullPolicy: Always
+      registry: docker.io
+      repository: bitnami/minideb
+      tag: buster
+    resources: {}
+metrics:
+  enabled: false
+  https: false
+  image:
+    pullPolicy: IfNotPresent
+    repository: xperimental/nextcloud-exporter
+    tag: v0.3.0
+  replicaCount: 1
+  service:
+    annotations:
+      prometheus.io/port: "9205"
+      prometheus.io/scrape: "true"
+    labels: {}
+    type: ClusterIP
+  timeout: 5s
+nameOverride: ""
+nextcloud:
+  configs: {}
+  datadir: /var/www/html/data
+  defaultConfigs:
+    .htaccess: true
+    apache-pretty-urls.config.php: true
+    apcu.config.php: true
+    apps.config.php: true
+    autoconfig.php: true
+    redis.config.php: true
+    smtp.config.php: true
+  existingSecret:
+    enabled: true
+    passwordKey: password
+    secretName: nextcloud-secrets
+    smtpPasswordKey: smtp_password
+    smtpUsernameKey: smtp_username
+    usernameKey: username
+  extraEnv: null
+  extraVolumeMounts: null
+  extraVolumes: null
+  host: lexbox-dev-nextcloud.lefebvre.es
+  mail:
+    domain: domain.com
+    enabled: false
+    fromAddress: user
+    smtp:
+      authtype: LOGIN
+      host: domain.com
+      name: user
+      password: pass
+      port: 465
+      secure: ssl
+  password: changeme
+  persistence:
+    subPath: null
+  phpConfigs: {}
+  strategy:
+    type: Recreate
+  tableprefix: null
+  update: 0
+  username: admin
+nginx:
+  config:
+    default: true
+  enabled: false
+  image:
+    pullPolicy: IfNotPresent
+    repository: nginx
+    tag: alpine
+  resources: {}
+nodeSelector: {}
+persistence:
+  accessMode: ReadWriteOnce
+  annotations: {}
+  enabled: true
+  size: 8Gi
+  storageClass: efs-sc
+postgresql:
+  audit:
+    clientMinMessages: error
+    logConnections: false
+    logDisconnections: false
+    logHostname: false
+    logLinePrefix: ""
+    logTimezone: ""
+    pgAuditLog: ""
+    pgAuditLogCatalog: "off"
+  common:
+    exampleValue: common-chart
+    global:
+      postgresql:
+        postgresqlDatabase: nextcloud
+        postgresqlPassword: changeme
+        postgresqlUsername: nextcloud
+  commonAnnotations: {}
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+  customLivenessProbe: {}
+  customReadinessProbe: {}
+  enabled: false
+  extraDeploy: []
+  extraEnv: []
+  global:
+    postgresql:
+      postgresqlDatabase: nextcloud
+      postgresqlPassword: changeme
+      postgresqlUsername: nextcloud
+  image:
+    debug: false
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: 11.9.0-debian-10-r48
+  ldap:
+    baseDN: ""
+    bind_password: null
+    bindDN: ""
+    enabled: false
+    port: ""
+    prefix: ""
+    scheme: ""
+    search_attr: ""
+    search_filter: ""
+    server: ""
+    suffix: ""
+    tls: false
+    url: ""
+  livenessProbe:
+    enabled: true
+    failureThreshold: 6
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  master:
+    affinity: {}
+    annotations: {}
+    extraInitContainers: []
+    extraVolumeMounts: []
+    extraVolumes: []
+    labels: {}
+    nodeSelector: {}
+    podAnnotations: {}
+    podLabels: {}
+    priorityClassName: ""
+    service: {}
+    sidecars: []
+    tolerations: []
+  masterAsStandBy:
+    enabled: false
+  metrics:
+    enabled: false
+    extraEnvVars: {}
+    image:
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: bitnami/postgres-exporter
+      tag: 0.8.0-debian-10-r242
+    livenessProbe:
+      enabled: true
+      failureThreshold: 6
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    prometheusRule:
+      additionalLabels: {}
+      enabled: false
+      namespace: ""
+      rules: []
+    readinessProbe:
+      enabled: true
+      failureThreshold: 6
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    securityContext:
+      enabled: false
+      runAsUser: 1001
+    service:
+      annotations:
+        prometheus.io/port: "9187"
+        prometheus.io/scrape: "true"
+      loadBalancerIP: null
+      type: ClusterIP
+    serviceMonitor:
+      additionalLabels: {}
+      enabled: false
+  networkPolicy:
+    allowExternal: true
+    enabled: false
+    explicitNamespacesSelector: {}
+  persistence:
+    accessModes:
+    - ReadWriteOnce
+    annotations: {}
+    enabled: false
+    mountPath: /bitnami/postgresql
+    size: 8Gi
+    subPath: ""
+  postgresqlDataDir: /bitnami/postgresql/data
+  postgresqlDbUserConnectionLimit: null
+  postgresqlMaxConnections: null
+  postgresqlPghbaRemoveFilters: null
+  postgresqlPostgresConnectionLimit: null
+  postgresqlSharedPreloadLibraries: pgaudit
+  postgresqlStatementTimeout: null
+  postgresqlTcpKeepalivesCount: null
+  postgresqlTcpKeepalivesIdle: null
+  postgresqlTcpKeepalivesInterval: null
+  postgresqlUsername: postgres
+  psp:
+    create: false
+  rbac:
+    create: false
+  readinessProbe:
+    enabled: true
+    failureThreshold: 6
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  replication:
+    applicationName: my_application
+    enabled: false
+    numSynchronousReplicas: 0
+    password: repl_password
+    slaveReplicas: 1
+    synchronousCommit: "off"
+    user: repl_user
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+  service:
+    annotations: {}
+    port: 5432
+    type: ClusterIP
+  serviceAccount:
+    enabled: false
+  shmVolume:
+    chmod:
+      enabled: true
+    enabled: true
+  slave:
+    affinity: {}
+    annotations: {}
+    extraInitContainers: []
+    extraVolumeMounts: []
+    extraVolumes: []
+    labels: {}
+    nodeSelector: {}
+    persistence:
+      enabled: true
+    podAnnotations: {}
+    podLabels: {}
+    priorityClassName: ""
+    resources: {}
+    service: {}
+    sidecars: []
+    tolerations: []
+  tls:
+    certCAFilename: null
+    certFilename: ""
+    certKeyFilename: ""
+    certificatesSecret: ""
+    crlFilename: null
+    enabled: false
+    preferServerCiphers: true
+  updateStrategy:
+    type: RollingUpdate
+  volumePermissions:
+    enabled: false
+    image:
+      pullPolicy: Always
+      registry: docker.io
+      repository: bitnami/minideb
+      tag: buster
+    securityContext:
+      runAsUser: 0
+readinessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+redis:
+  cluster:
+    enabled: true
+    slaveCount: 2
+  clusterDomain: cluster.local
+  configmap: |-
+    # Enable AOF https://redis.io/topics/persistence#append-only-file
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+  enabled: false
+  global:
+    redis: {}
+  image:
+    pullPolicy: IfNotPresent
+    registry: docker.io
+    repository: bitnami/redis
+    tag: 6.0.8-debian-10-r0
+  master:
+    affinity: {}
+    command: /run.sh
+    configmap: null
+    customLivenessProbe: {}
+    customReadinessProbe: {}
+    disableCommands:
+    - FLUSHDB
+    - FLUSHALL
+    extraEnvVars: []
+    extraEnvVarsCM: []
+    extraEnvVarsSecret: []
+    extraFlags: []
+    livenessProbe:
+      enabled: true
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 5
+    persistence:
+      accessModes:
+      - ReadWriteOnce
+      enabled: true
+      matchExpressions: {}
+      matchLabels: {}
+      path: /data
+      size: 8Gi
+      subPath: ""
+    podAnnotations: {}
+    podLabels: {}
+    preExecCmds: ""
+    priorityClassName: {}
+    readinessProbe:
+      enabled: true
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 1
+    service:
+      annotations: {}
+      labels: {}
+      loadBalancerIP: null
+      port: 6379
+      type: ClusterIP
+    shareProcessNamespace: false
+    statefulset:
+      updateStrategy: RollingUpdate
+  metrics:
+    enabled: false
+    image:
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: bitnami/redis-exporter
+      tag: 1.11.1-debian-10-r12
+    podAnnotations:
+      prometheus.io/port: "9121"
+      prometheus.io/scrape: "true"
+    prometheusRule:
+      additionalLabels: {}
+      enabled: false
+      namespace: ""
+      rules: []
+    service:
+      annotations: {}
+      labels: {}
+      type: ClusterIP
+    serviceMonitor:
+      enabled: false
+      selector:
+        prometheus: kube-prometheus
+  networkPolicy:
+    enabled: false
+    ingressNSMatchLabels: {}
+    ingressNSPodMatchLabels: {}
+  password: ""
+  persistence:
+    existingClaim: null
+  podDisruptionBudget:
+    enabled: false
+    minAvailable: 1
+  podSecurityPolicy:
+    create: false
+  rbac:
+    create: false
+    role:
+      rules: []
+  redisPort: 6379
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+  sentinel:
+    configmap: null
+    customLivenessProbe: {}
+    customReadinessProbe: {}
+    downAfterMilliseconds: 60000
+    enabled: false
+    failoverTimeout: 18000
+    image:
+      pullPolicy: IfNotPresent
+      registry: docker.io
+      repository: bitnami/redis-sentinel
+      tag: 6.0.8-debian-10-r1
+    initialCheckTimeout: 5
+    livenessProbe:
+      enabled: true
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 5
+    masterSet: mymaster
+    parallelSyncs: 1
+    port: 26379
+    quorum: 2
+    readinessProbe:
+      enabled: true
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 1
+    service:
+      annotations: {}
+      labels: {}
+      loadBalancerIP: null
+      redisPort: 6379
+      sentinelPort: 26379
+      type: ClusterIP
+    staticID: false
+    usePassword: true
+  serviceAccount:
+    create: false
+    name: null
+  slave:
+    affinity: {}
+    command: /run.sh
+    configmap: null
+    customLivenessProbe: {}
+    customReadinessProbe: {}
+    disableCommands:
+    - FLUSHDB
+    - FLUSHALL
+    extraEnvVars: []
+    extraEnvVarsCM: []
+    extraEnvVarsSecret: []
+    extraFlags: []
+    livenessProbe:
+      enabled: true
+      failureThreshold: 5
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 5
+    persistence:
+      accessModes:
+      - ReadWriteOnce
+      enabled: true
+      matchExpressions: {}
+      matchLabels: {}
+      path: /data
+      size: 8Gi
+      subPath: ""
+    podAnnotations: {}
+    podLabels: {}
+    port: 6379
+    preExecCmds: ""
+    readinessProbe:
+      enabled: true
+      failureThreshold: 5
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 10
+    service:
+      annotations: {}
+      labels: {}
+      loadBalancerIP: null
+      port: 6379
+      type: ClusterIP
+    shareProcessNamespace: false
+    spreadConstraints: {}
+    statefulset:
+      updateStrategy: RollingUpdate
+  sysctlImage:
+    command: []
+    enabled: false
+    mountHostSys: false
+    pullPolicy: Always
+    registry: docker.io
+    repository: bitnami/minideb
+    resources: {}
+    tag: buster
+  tls:
+    authClients: true
+    certCAFilename: null
+    certFilename: null
+    certKeyFilename: null
+    certificatesSecret: null
+    enabled: false
+  usePassword: false
+  usePasswordFile: false
+  volumePermissions:
+    enabled: false
+    image:
+      pullPolicy: Always
+      registry: docker.io
+      repository: bitnami/minideb
+      tag: buster
+    resources: {}
+replicaCount: 1
+resources: {}
+service:
+  loadBalancerIP: nil
+  nodePort: nil
+  port: 8080
+  type: ClusterIP
+signature:
+  callback_url: lexbox-dev-websignature.lefebvre.es
+  gw_url: lexbox-dev-apigwsig.lefebvre.es
+  lex_url: https://led-dev-lexon.eu.els.local
+  paths:
+    certified_mail: /api/v1/signservice/SignaturitEvent/certifiedEmail/post.json
+    certified_sms: /api/v1/signservice/SignaturitEvent/certifiedSms/post.json
+    mail: /api/v1/signservice/SignaturitEvent/signature/post.json
+  url: api.sandbox.signaturit.com/v3
+startupProbe:
+  enabled: false
+  failureThreshold: 30
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+svcclaves:
+  url: led-pre-serviceclaves.lefebvre.es
+svccomtools:
+  url: led-pre-servicecomtools.eu.els.local
+svchub:
+  url: led-pre-servicehub.eu.els.local
+svconline:
+  url: herculesppd.lefebvre.es
+tolerations: []
+userutils:
+  bypass:
+    lex:
+      id: Lex-On
+      url: lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
+    sig:
+      id: Signature-Direct
+      url: lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}
+  token:
+    caducity: 1500
+
+HOOKS:
+MANIFEST:
+---
+# Source: nextcloud/charts/mariadb/templates/master-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: "mariadb"
+    component: "master"
+    chart: "mariadb-7.10.2"
+    release: "it-elefebvre-nextcloud"
+    heritage: "Helm"
+data:
+  my.cnf: |-
+    [mysqld]
+    skip-name-resolve
+    explicit_defaults_for_timestamp
+    basedir=/opt/bitnami/mariadb
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    tmpdir=/opt/bitnami/mariadb/tmp
+    max_allowed_packet=16M
+    bind-address=0.0.0.0
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+    log-error=/opt/bitnami/mariadb/logs/mysqld.log
+    character-set-server=UTF8
+    collation-server=utf8_general_ci
+    
+    [client]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    default-character-set=UTF8
+    plugin_dir=/opt/bitnami/mariadb/plugin
+    
+    [manager]
+    port=3306
+    socket=/opt/bitnami/mariadb/tmp/mysql.sock
+    pid-file=/opt/bitnami/mariadb/tmp/mysqld.pid
+---
+# Source: nextcloud/templates/nextcloud-pvc.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: it-elefebvre-nextcloud-pvc
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: app
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "8Gi"
+  storageClassName: "efs-sc"
+---
+# Source: nextcloud/charts/mariadb/templates/master-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: "mariadb"
+    component: "master"
+    chart: "mariadb-7.10.2"
+    release: "it-elefebvre-nextcloud"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
+  selector:
+    app: "mariadb"
+    component: "master"
+    release: "it-elefebvre-nextcloud"
+---
+# Source: nextcloud/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: app
+    env: dev
+    version: "2.5.1"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app.kubernetes.io/name: nextcloud
+---
+# Source: nextcloud/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: it-elefebvre-nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    helm.sh/chart: nextcloud-2.5.1
+    app.kubernetes.io/instance: it-elefebvre-nextcloud
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: app
+    env: dev
+    version: "2.5.1"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+      app.kubernetes.io/instance: it-elefebvre-nextcloud
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nextcloud
+        app.kubernetes.io/instance: it-elefebvre-nextcloud
+        app.kubernetes.io/component: app
+    spec:
+      imagePullSecrets:
+        - name: elefebvre-docker-secret
+      containers:
+      - name: nextcloud
+        image: "elefebvreoncontainers/nextcloud:linux-dev-40.1"
+        imagePullPolicy: Always
+        env:
+        - name: MYSQL_HOST
+          value: it-elefebvre-nextcloud-mariadb
+        - name: MYSQL_DATABASE
+          value: "nextcloud_dev"
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secrets
+              key: mariadb-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secrets
+              key: mariadb-password
+        - name: NEXTCLOUD_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secrets
+              key: username
+        - name: NEXTCLOUD_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nextcloud-secrets
+              key: password
+        - name: NEXTCLOUD_TRUSTED_DOMAINS
+          value: lexbox-dev-nextcloud.lefebvre.es
+        - name: NEXTCLOUD_DATA_DIR
+          value: "/var/www/html/data"
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /status.php
+            port: http
+            httpHeaders:
+            - name: Host
+              value: "lexbox-dev-nextcloud.lefebvre.es"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /status.php
+            port: http
+            httpHeaders:
+            - name: Host
+              value: "lexbox-dev-nextcloud.lefebvre.es"
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3            
+        resources:
+          {}
+        volumeMounts:
+        - name: nextcloud-data
+          mountPath: /var/www/
+          subPath: root
+        - name: nextcloud-data
+          mountPath: /var/www/html
+          subPath: html
+        - name: nextcloud-data
+          mountPath: /var/www/html/data
+          subPath: data
+        - name: nextcloud-data
+          mountPath: /var/www/html/config
+          subPath: config
+        - name: nextcloud-data
+          mountPath: /var/www/html/custom_apps
+          subPath: custom_apps
+        - name: nextcloud-data
+          mountPath: /var/www/tmp
+          subPath: tmp
+        - name: nextcloud-data
+          mountPath: /var/www/html/themes
+          subPath: themes
+      volumes:
+      - name: nextcloud-data
+        persistentVolumeClaim:
+          claimName: it-elefebvre-nextcloud-pvc
+      # Will mount configuration files as www-data (id: 33) for nextcloud
+      securityContext:
+        fsGroup: 33
+---
+# Source: nextcloud/charts/mariadb/templates/master-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: it-elefebvre-nextcloud-mariadb
+  namespace: default
+  labels:
+    app: mariadb
+    chart: mariadb-7.10.2
+    release: it-elefebvre-nextcloud
+    heritage: Helm
+    component: master
+    
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+      release: it-elefebvre-nextcloud
+      component: master
+  serviceName: it-elefebvre-nextcloud-mariadb
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        chart: mariadb-7.10.2
+        release: it-elefebvre-nextcloud
+        heritage: Helm
+        component: master
+        
+    spec:
+      serviceAccountName: default
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: mariadb
+                    release: it-elefebvre-nextcloud      
+      initContainers:
+      containers:
+        - name: "mariadb"
+          image: docker.io/bitnami/mariadb:10.3.24-debian-10-r17
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: mariadb-root-password
+            - name: MARIADB_USER
+              value: "nextcloud_dev"
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: mariadb-password
+            - name: MARIADB_DATABASE
+              value: "nextcloud_dev"
+          ports:
+            - name: mysql
+              containerPort: 3306
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  password_aux="${MARIADB_ROOT_PASSWORD:-}"
+                  if [ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]; then
+                      password_aux=$(cat $MARIADB_ROOT_PASSWORD_FILE)
+                  fi
+                  mysqladmin status -uroot -p$password_aux
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  password_aux="${MARIADB_ROOT_PASSWORD:-}"
+                  if [ -f "${MARIADB_ROOT_PASSWORD_FILE:-}" ]; then
+                      password_aux=$(cat $MARIADB_ROOT_PASSWORD_FILE)
+                  fi
+                  mysqladmin status -uroot -p$password_aux
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/mariadb
+            - name: config
+              mountPath: /opt/bitnami/mariadb/conf/my.cnf
+              subPath: my.cnf
+      volumes:
+        - name: config
+          configMap:
+            name: it-elefebvre-nextcloud-mariadb
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app: "mariadb"
+          component: "master"
+          release: "it-elefebvre-nextcloud"
+          heritage: "Helm"
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        storageClassName: efs-sc
+
+NOTES:
+1. Get the nextcloud URL by running:
+
+  export POD_NAME=$(kubectl get pods --namespace default -l "app.kubernetes.io/name=it-elefebvre-nextcloud" -o jsonpath="{.items[0].metadata.name}")
+  echo http://127.0.0.1:8080/
+  kubectl port-forward $POD_NAME 8080:80
+
+2. Get your nextcloud login credentials by running:
+
+  echo User:     admin
+  echo Password: $(kubectl get secret --namespace default it-elefebvre-nextcloud -o jsonpath="{.data.nextcloud-password}" | base64 --decode)

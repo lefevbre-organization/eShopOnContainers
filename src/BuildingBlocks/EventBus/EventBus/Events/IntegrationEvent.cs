@@ -1,9 +1,9 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events
 {
-    public class IntegrationEvent
+    public record IntegrationEvent
     {
         public IntegrationEvent()
         {
@@ -19,12 +19,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events
         }
 
         [JsonProperty]
-        public Guid Id { get; private set; }
+        public Guid Id { get; private init; }
 
         /// <summary>
         /// Changue setter for MongoDb Event 
         /// </summary>
         [JsonProperty]
-        public DateTime CreationDate { get; private set; }
+        public DateTime CreationDate { get; private init; }
     }
 }

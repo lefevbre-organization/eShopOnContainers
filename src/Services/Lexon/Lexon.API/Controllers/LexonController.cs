@@ -1,20 +1,19 @@
-﻿using Lexon.API.Model;
-using Lexon.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Services;
+    using ViewModel;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class LexonController : ControllerBase
@@ -80,7 +79,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            Result<LexUserSimple> resultUser = await _usersService.GetUserIdAsync(idNavisionUser, env);
+            var resultUser = await _usersService.GetUserIdAsync(idNavisionUser, env);
             return Ok(resultUser);
         }
 
@@ -127,7 +126,7 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
-            Result<List<LexActuation>> actuaciones = new Result<List<LexActuation>>
+            var actuaciones = new Result<List<LexActuation>>
             {
                 data = result.DataActuation,
                 errors = result.Errors,
@@ -145,7 +144,6 @@ namespace Lexon.API.Controllers
 
             return Ok(actuaciones);
 
-            // return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPut]
@@ -189,7 +187,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
 
-            Result<LexContact> result = await _usersService.GetContactAsync(entitySearch);
+            var result = await _usersService.GetContactAsync(entitySearch);
             return Ok(result);
         }
 
@@ -202,7 +200,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(search.idUser) || string.IsNullOrEmpty(search.bbdd))
                 return BadRequest("values invalid. Must be a valid user and bbdd");
 
-            Result<List<LexContact>> result = await _usersService.GetAllContactsAsync(search);
+            var result = await _usersService.GetAllContactsAsync(search);
             return Ok(result);
         }
 
@@ -218,7 +216,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
                 return BadRequest("values invalid. Must be a valid idUser, idMail and account to search the relations of mail");
 
-            Result<LexUserSimpleCheck> result = await _usersService.CheckRelationsMailAsync(idUser, env, mail);
+            var result = await _usersService.CheckRelationsMailAsync(idUser, env, mail);
             return Ok(result);
         }
 
@@ -277,7 +275,7 @@ namespace Lexon.API.Controllers
             [FromBody] MailFileView fileMail
             )
         {
-            Result<MailFileView> resultFile = new Result<MailFileView>(fileMail);
+            var resultFile = new Result<MailFileView>(fileMail);
             var result = await _usersService.FilePostAsync(fileMail);
             
             if(result.errors.Count == 0)
@@ -368,7 +366,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idFolder <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd type and idFolder for get the nested folders");
 
-            Result<LexNestedEntity> result = await _usersService.GetNestedFolderAsync(entityFolder);
+            var result = await _usersService.GetNestedFolderAsync(entityFolder);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

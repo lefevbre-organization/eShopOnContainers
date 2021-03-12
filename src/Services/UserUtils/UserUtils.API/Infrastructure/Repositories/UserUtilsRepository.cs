@@ -1,7 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Exceptions;
-using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -12,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Exceptions;
+    using Models;
+
     public class UserUtilsRepository : BaseClass<UserUtilsRepository>, IUserUtilsRepository
     {
         private readonly UserUtilsContext _context;
@@ -133,15 +134,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             return Builders<UserUtilsModel>.Filter.Eq(u => u.idNavision, idNavision.ToUpperInvariant());
         }
 
-        //Task<Result<LexUser>> IUserUtilsRepository.GetLexonUserAsync(string idNavision)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
         {

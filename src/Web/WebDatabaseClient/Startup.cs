@@ -1,7 +1,4 @@
-﻿using eShopOnContainers.WebSPA;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights.ServiceFabric;
-using Microsoft.AspNetCore.Antiforgery;
+﻿using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -10,16 +7,17 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using StackExchange.Redis;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
-using WebSPA.Infrastructure;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace eShopConContainers.WebSPA
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebDatabase
 {
+    using Infrastructure;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -29,11 +27,8 @@ namespace eShopConContainers.WebSPA
 
         public IConfiguration Configuration { get; }
 
-        private IHostingEnvironment _hostingEnv;
-        public Startup(IHostingEnvironment env)
+        public Startup()
         {
-            _hostingEnv = env;
-
             var localPath = new Uri(Configuration["ASPNETCORE_URLS"])?.LocalPath ?? "/";
             Configuration["BaseUrl"] = localPath;
         }
@@ -42,38 +37,36 @@ namespace eShopConContainers.WebSPA
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            RegisterAppInsights(services);
+            //RegisterAppInsights(services);
 
             services.AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy())
-                ;
+                .AddCheck("self", () => HealthCheckResult.Healthy());
 
             services.Configure<AppSettings>(Configuration);
 
-            if (Configuration.GetValue<string>("IsClusterEnv") == bool.TrueString)
-            {
-                services.AddDataProtection(opts =>
-                {
-                    opts.ApplicationDiscriminator = "eshop.webspa";
-                })
-                .PersistKeysToRedis(ConnectionMultiplexer.Connect(Configuration["DPConnectionString"]), "DataProtection-Keys");
-            }
+            //if (Configuration.GetValue<string>("IsClusterEnv") == bool.TrueString)
+            //{
+            //    services.AddDataProtection(opts =>
+            //    {
+            //        opts.ApplicationDiscriminator = "eshop.webspa";
+            //    })
+            //    //.PersistKeysToRedis(ConnectionMultiplexer.Connect(Configuration["DPConnectionString"]), "DataProtection-Keys");
+            //}
 
             services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                });
+                 .AddJsonOptions(options =>
+                 {
+                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                 });
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
         {
-            loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
+            //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
 
             if (env.IsDevelopment())
             {
@@ -85,16 +78,6 @@ namespace eShopConContainers.WebSPA
                 app.UseHsts();
             }
 
-            app.UseHealthChecks("/liveness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
-            });
-
-            app.UseHealthChecks("/hc", new HealthCheckOptions()
-            {
-                Predicate = _ => true,
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
 
             // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page 
             // load and passed back token on every subsequent async request            
@@ -134,26 +117,39 @@ namespace eShopConContainers.WebSPA
             
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+            });
         }
 
-        private void RegisterAppInsights(IServiceCollection services)
-        {
-            services.AddApplicationInsightsTelemetry(Configuration);
-            var orchestratorType = Configuration.GetValue<string>("OrchestratorType");
+        //private void RegisterAppInsights(IServiceCollection services)
+        //{
+        //    services.AddApplicationInsightsTelemetry(Configuration);
+        //    var orchestratorType = Configuration.GetValue<string>("OrchestratorType");
 
-            if (orchestratorType?.ToUpper() == "K8S")
-            {
-                // Enable K8s telemetry initializer
-                services.AddApplicationInsightsKubernetesEnricher();
-            }
-            if (orchestratorType?.ToUpper() == "SF")
-            {
-                // Enable SF telemetry initializer
-                services.AddSingleton<ITelemetryInitializer>((serviceProvider) =>
-                    new FabricTelemetryInitializer());
-            }
-        }
+        //    if (orchestratorType?.ToUpper() == "K8S")
+        //    {
+        //        // Enable K8s telemetry initializer
+        //        services.AddApplicationInsightsKubernetesEnricher();
+        //    }
+        //    if (orchestratorType?.ToUpper() == "SF")
+        //    {
+        //        // Enable SF telemetry initializer
+        //        services.AddSingleton<ITelemetryInitializer>((serviceProvider) =>
+        //            new FabricTelemetryInitializer());
+        //    }
+        //}
     }
 }

@@ -1,8 +1,6 @@
-﻿using Lexon.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -13,8 +11,10 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Models;
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class LexonContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {
@@ -67,50 +67,27 @@ namespace Lexon.API.Infrastructure
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            //if (!BsonClassMap.IsClassMapRegistered(typeof(LexonUser))) { BsonClassMap.RegisterClassMap<LexonUser>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(LexUser))) { BsonClassMap.RegisterClassMap<LexUser>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(LexonMaster))) { BsonClassMap.RegisterClassMap<LexonMaster>(); }
         }
 
-        //public IMongoCollection<LexonUser> LexonUsers
-        //{
-        //    get { return Database.GetCollection<LexonUser>(_settings.Value.Collection); }
-        //}
+        public IMongoCollection<LexUser> LexUsers 
+            => Database.GetCollection<LexUser>(_settings.Value.Collection);
 
-        public IMongoCollection<LexUser> LexUsers
-        {
-            get { return Database.GetCollection<LexUser>(_settings.Value.Collection); }
-        }
+        public IMongoCollection<LexUser> LexUsersTransaction(IClientSessionHandle session) 
+            => session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexUser>(_settings.Value.Collection);
 
-        public IMongoCollection<LexUser> LexUsersTransaction(IClientSessionHandle session)
-        {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexUser>(_settings.Value.Collection);
-        }
+        public IMongoCollection<LexonMaster> LexonMasters 
+            => Database.GetCollection<LexonMaster>(_settings.Value.CollectionMasters);
 
-        //public IMongoCollection<LexonUser> LexonUsersTransaction(IClientSessionHandle session)
-        //{
-        //    return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>(_settings.Value.Collection);
-        //}
+        public IMongoCollection<LexonMaster> LexonMastersTransaction(IClientSessionHandle session) 
+            => session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonMaster>(_settings.Value.CollectionMasters);
 
-        public IMongoCollection<LexonMaster> LexonMasters
-        {
-            get { return Database.GetCollection<LexonMaster>(_settings.Value.CollectionMasters); }
-        }
-
-        public IMongoCollection<LexonMaster> LexonMastersTransaction(IClientSessionHandle session)
-        {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonMaster>(_settings.Value.CollectionMasters);
-        }
-
-        public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
-        {
-            get { return Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents); }
-        }
+        public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs 
+            => Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents);
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogsTransaction(IClientSessionHandle session)
-        {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents);
-        }
+            => session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents);
 
         public async Task PublishThroughEventBusAsync(IntegrationEvent evt, IClientSessionHandle session)
         {

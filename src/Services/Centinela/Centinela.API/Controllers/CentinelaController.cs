@@ -1,7 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,6 +9,10 @@ using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Services;
+    using Models;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class CentinelaController : ControllerBase
@@ -58,7 +59,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
             if (string.IsNullOrEmpty(idNavisionUser))
                 return BadRequest("Must be a valid idUserNavision");
 
-            Result<CenUser> result = await _service.GetUserAsync(idNavisionUser);
+            var result = await _service.GetUserAsync(idNavisionUser);
 
             return result.data?.evaluations?.Length > 0 ? Ok(result) : (IActionResult)BadRequest(result);
         }
@@ -182,15 +183,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         }
 
         [HttpGet("concepts/files/get")]
-        [ProducesResponseType(typeof(Result<String>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FileGet(
             [FromQuery] string idNavisionUser = "E1669460",
             [FromQuery] string idDocument = "78927"
             )
         {
 
-            Result<string> result = await _service.FileGetAsync(idNavisionUser, idDocument);
+            var result = await _service.FileGetAsync(idNavisionUser, idDocument);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
         }
@@ -205,7 +206,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         {
             Console.WriteLine($"START {Request.Path.Value}");
 
-            Result<ConceptFile> resultFile = new Result<ConceptFile>(file);
+            var resultFile = new Result<ConceptFile>(file);
             var result = await _service.FilePostAsync(file, Request.Path.Value);
 
             if (result.errors.Count == 0)
@@ -214,7 +215,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
                 resultFile.infos = result.infos;
                 return StatusCode(201, resultFile);
             }
-
 
             Console.WriteLine($"END {Request.Path.Value}");
 
@@ -231,7 +231,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         {
             Console.WriteLine($"START {Request.Path.Value}");
 
-            Result<CertificationFile> resultFile = new Result<CertificationFile>(file);
+           var resultFile = new Result<CertificationFile>(file);
             var result = await _service.CertificationPostAsync(file, Request.Path.Value);
 
             if (result.errors.Count == 0)

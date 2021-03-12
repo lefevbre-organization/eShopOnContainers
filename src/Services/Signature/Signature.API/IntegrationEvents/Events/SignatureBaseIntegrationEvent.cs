@@ -1,8 +1,8 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace Signature.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.IntegrationsEvents.Events
 {
-    public class SignatureBaseIntegrationEvent : IntegrationEvent
+    public record SignatureBaseIntegrationEvent : IntegrationEvent
     {
         public long IdAppNavision { get; set; }
         public string UserId { get; set; }

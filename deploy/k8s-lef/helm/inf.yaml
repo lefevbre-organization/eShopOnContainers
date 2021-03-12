@@ -23,6 +23,8 @@ inf:
       database: UserUtilsDb
     account:
       database: LocationsDb #MailAccounts
+    calendar:
+      database: CalendarsDb
     lexon:
       database: LexonApiDb
     centinela:
@@ -32,7 +34,9 @@ inf:
     database:
       database: DatabaseApiDb
     conference:
-      database: ConferenceApiDb    
+      database: ConferenceApiDb
+    googleaccount:
+      database: GoogleAccountApiDB    
 
   eventbus:
     svc: rabbitmq           # Name of k8s svc for rabbitmq
@@ -46,13 +50,11 @@ inf:
   misc:                     # inf.misc contains miscellaneous configuration related to infrastructure
     useLoadTest: false      # If running under loading test or not
     useAzureStorage: false  # If catalog api uses azure storage or not
-  version:
-    major: 0
-    minor: 34
-    complete: RC 00.36
-#  registry:                # Uncomment "registry" to specify registry secret
-#    secretName:            # secretName is the name of the secret inside k8s   
-#    server:                # Registry login server
-#    login:                 # User login
-#    pwd:                   # User pwd
+
+  registry:                # Uncomment "registry" to specify registry secret
+    secretName: elefebvre-docker-secret               # name of the secret inside k8s   
+    server: index.docker.io                           # Registry login server
+    login: changue_name                               # User login
+    pwd: changue_pass                                 # User pwd
+    mail: f.reyes-ext@lefebvre.es                     # mail of user (optional)
 

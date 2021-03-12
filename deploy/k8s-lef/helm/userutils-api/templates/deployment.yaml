@@ -10,6 +10,8 @@ metadata:
     chart: {{ template "userutils-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -21,20 +23,40 @@ spec:
       labels:
         app: {{ template "userutils-api.name" . }}
         release: {{ .Release.Name }}
+      {{ if .Values.inf.mesh.enabled -}}
+      annotations:
+        linkerd.io/inject: enabled
+      {{- end }}
     spec:
+      volumes:
+      - name: ca-root-st
+        secret:
+          secretName: ca-root-secret
       {{ if .Values.inf.registry -}}
       imagePullSecrets:
       - name: {{ .Values.inf.registry.secretName }}
-      {{- end }}
+      {{- end }} 
       hostAliases:
       - ip: "10.38.6.5"
         hostnames:
         - "led-pre-servicecomtools.eu.els.local"
-        - "led-pre-servicehub.eu.els.local"
+      - ip: "10.38.6.248"
+        hostnames:
+        - "led-servicehub.eu.els.local"
+      - ip: "192.168.131.44"
+        hostnames:
+        - "led-servicecomtools-ntt.eu.els.local"
+        - "led-servicehub-ntt.eu.els.local"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /usr/local/share/ca-certificates
+            name: ca-root-st
+            readOnly: true
           env:
             - name: PATH_BASE
               value: {{ include "pathBase" . }}
@@ -55,6 +77,21 @@ spec:
                   key: {{ .key }}
           {{- end -}}
           {{- end }}
+            - name: OnlineLogin
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: svconline_login
+            - name: OnlinePassword
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: svconline_pass
+            - name: TokenKey
+              valueFrom:
+                secretKeyRef:
+                  name: elefebvre-api-secrets
+                  key: userutils_token_key
           ports:
             - name: http
               containerPort: 80
@@ -73,4 +110,3 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
-

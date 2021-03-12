@@ -208,8 +208,9 @@ if ($deployKubernetes){
         --from-literal=userutils_e=http://$($externalDns)/userutils-api `
         --from-literal=signature_e=http://$($externalDns)/signature-api `
         --from-literal=lexon_e=http://$($externalDns)/lexon-api `
-        --from-literal=account_e=http://$($externalDns)/account-api `
-        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api' 
+        --from-literal=account_e=http://$($externalDns)/account-api'
+
+   #     --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api 
 
     ExecKube -cmd 'label configmap urls app=elefebvre'
 
@@ -228,7 +229,7 @@ if ($deployKubernetes){
     Write-Host "Update Image containers to use prefix '$registry$dockerOrg' and tag '$imageTag'" -ForegroundColor Yellow
 
     ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$imageTag'
-    ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$imageTag'
+    # ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$imageTag'
     ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$imageTag'
     ExecKube -cmd 'set image deployments/centinela centinela=${registryPath}${dockerOrg}/centinela.api:$imageTag'
     ExecKube -cmd 'set image deployments/signature signature=${registryPath}${dockerOrg}/signature.api:$imageTag'
@@ -250,7 +251,7 @@ if ($deployKubernetes){
 
     Write-Host "Execute rollout..." -ForegroundColor Yellow
     ExecKube -cmd 'rollout resume deployments/lexon'
-    ExecKube -cmd 'rollout resume deployments/lexonmysql'
+#    ExecKube -cmd 'rollout resume deployments/lexonmysql'
     ExecKube -cmd 'rollout resume deployments/account'
     ExecKube -cmd 'rollout resume deployments/centinela'
     ExecKube -cmd 'rollout resume deployments/signature'

@@ -146,4 +146,48 @@ webhooks:
       resources:
       - serviceintentions
   sideEffects: None
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: {{ template "consul.fullname" . }}-controller-webhook
+      namespace: {{ .Release.Namespace }}
+      path: /mutate-v1alpha1-ingressgateway
+  failurePolicy: Fail
+  admissionReviewVersions:
+    - "v1beta1"
+    - "v1"
+  name: mutate-ingressgateway.consul.hashicorp.com
+  rules:
+    - apiGroups:
+        - consul.hashicorp.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - ingressgateways
+  sideEffects: None
+- clientConfig:
+    caBundle: Cg==
+    service:
+      name: {{ template "consul.fullname" . }}-controller-webhook
+      namespace: {{ .Release.Namespace }}
+      path: /mutate-v1alpha1-terminatinggateway
+  failurePolicy: Fail
+  admissionReviewVersions:
+    - "v1beta1"
+    - "v1"
+  name: mutate-terminatinggateway.consul.hashicorp.com
+  rules:
+    - apiGroups:
+        - consul.hashicorp.com
+      apiVersions:
+        - v1alpha1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - terminatinggateways
+  sideEffects: None
 {{- end }}

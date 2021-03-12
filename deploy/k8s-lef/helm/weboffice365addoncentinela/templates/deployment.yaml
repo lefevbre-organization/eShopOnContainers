@@ -8,8 +8,9 @@ metadata:
     ufo: {{ $cfgname}}
     app: {{ template "weboffice365addoncentinela.name" . }}
     chart: {{ template "weboffice365addoncentinela.chart" . }}
-    release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -21,6 +22,10 @@ spec:
       labels:
         app: {{ template "weboffice365addoncentinela.name" . }}
         release: {{ .Release.Name }}
+      {{ if .Values.inf.mesh.enabled -}}
+      annotations:
+        linkerd.io/inject: enabled
+      {{- end }}
     spec:
       {{ if .Values.inf.registry -}}
       imagePullSecrets:
@@ -28,7 +33,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http

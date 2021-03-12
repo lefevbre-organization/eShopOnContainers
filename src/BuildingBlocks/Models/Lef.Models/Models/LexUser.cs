@@ -2,10 +2,10 @@
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
-    [BsonIgnoreExtraElements]
-    public class LexUser : MongoModel
+   // [BsonIgnoreExtraElements]
+    public class LexUser //: MongoModel
     {
         /// <summary>
         /// id  del Usuario en formato Bsonid autogenerado por mongo

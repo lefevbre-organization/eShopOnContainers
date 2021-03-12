@@ -1,0 +1,110 @@
+lef:
+  env: 'dev'
+
+centinela:
+  url: 'compliance-api.affin.es/api/secure'
+
+lexon:
+  devs:
+    env: 'DEVS'
+    url: 'led-dev-lexon.eu.els.local'
+  dev:
+    env: 'DEV'
+    url: 'led-dev-lexon.eu.els.local'
+  qa:
+    env: 'QA'
+    url: 'www-led-pre.lex-on.es'
+  pre:
+    env: 'PRE'
+    url: 'www-led-pre.lex-on.es'
+  pro:
+    env: 'PRO'
+    url: 'www.lex-on.es'      
+
+signature:
+  url: 'api.sandbox.signaturit.com/v3'
+  lex_url: 'https://led-dev-lexon.eu.els.local'
+  callback_url: 'lexbox-dev-websignature.lefebvre.es' 
+  gw_url: 'lexbox-dev-apigwsig.lefebvre.es' 
+  paths:
+    mail: '/api/v1/signservice/SignaturitEvent/signature/post.json'   # name: SignatureNotificationUrl
+    certified_mail: '/api/v1/signservice/SignaturitEvent/certifiedEmail/post.json'   # name: CertifiedEmailNotificationUrl
+    certified_sms: '/api/v1/signservice/SignaturitEvent/certifiedSms/post.json'   # name: CertifiedSmsNotificationUrl
+
+svchub:
+  url: 'led-pre-servicehub.eu.els.local' # name: MinihubUrl
+
+svconline:
+  url: 'herculesppd.lefebvre.es' # name: OnlineUrl
+
+svccomtools:
+  url: 'led-pre-servicecomtools.eu.els.local' # name: LoginUrl
+  
+svcclaves:
+  url: 'led-pre-serviceclaves.lefebvre.es' # name: ClavesUrl  
+
+userutils:
+  token:
+    caducity: 1500
+  bypass:
+    lex:
+      id: 'Lex-On'
+      url: 'lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+    sig:
+      id: 'Signature-Direct'
+      url: 'lexbox-dev-websignature.lefebvre.es/access/{tokenSignature}'
+
+conference:
+  jitsi: 'http://jitsi-ecs-alb-active-331930970.eu-west-3.elb.amazonaws.com'
+  jitsiroom: 'https://meet-test.lefebvre.es'
+
+googleaccount:
+  redirecturl: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac/auth/drive'
+  internalurl: 'https://lexbox-dev-apigwlex.lefebvre.es/{loquesea}'
+
+googledrive:
+  tokenurl: 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/gac'
+
+nextcloud:
+  host: lexbox-dev-nextcloud.lefebvre.es
+  username: admin
+  password: admin_dev
+  existingSecret:
+    enabled: false
+    secretName: nextcloud-secrets
+    usernameKey: username
+    passwordKey: password
+    smtpUsernameKey: smtp_username
+    smtpPasswordKey: smtp_password
+
+mariadb:
+  enabled: true
+  # existingSecret: nextcloud-secrets
+  db:
+    name: nextcloud_dev
+    user: nextcloud_dev
+    password: oldelefebvre_dev_1234
+    # https://help.nextcloud.com/t/nextcloud-kubernetes-redeploying-not-working/60296/5
+    rootUser: 
+      password: OLD_sad324_VX_Zaq12
+      forcePassword: true
+    replication:
+      password: OLD_.qwewq56_12wssXVB_
+      forcePassword: true
+
+  replication:
+    enabled: false
+env:
+  values:
+    - name: ASPNETCORE_ENVIRONMENT # selector of appsettings by default
+      value: Development
+    - name: OrchestratorType
+      value: 'K8S'
+    - name: DefaultEnvironment #use if not include de env variable in the internal and external requests
+      value: 'QA'
+    - name: UseMongo  # if set to true, use de mongo to admi use without external 
+      value: false
+    - name: Environments # list of environments admit in the cluster
+      value: [DEVS,DEV,QA,PRE]
+    - name: IsClusterEnv
+      value: 'True'

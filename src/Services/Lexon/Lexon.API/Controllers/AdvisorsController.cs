@@ -1,20 +1,16 @@
-﻿using Lexon.API.Model;
-using Lexon.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Infrastructure.Services;
+    using ViewModel;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class AdvisorsController : ControllerBase

@@ -1,13 +1,12 @@
-﻿using Lexon.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {
+    using BuidingBlocks.Lefebvre.Models;
+    using Models;
     public interface IUsersRepository
-    {
-      
+    {  
         Task<Result<LexUser>> GetUserAsync(string idUser);
 
         Task<Result<List<LexCompany>>> GetCompaniesListAsync(string idUser);

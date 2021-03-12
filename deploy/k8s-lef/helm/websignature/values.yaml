@@ -35,26 +35,6 @@ env:
       key: all__EnableLoadTest
     - name: SignatureApiUrlHC
       key: internalurls__signatureapi__hc
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
-    - name: OrchestratorType
-      value: 'K8S'
-    - name: IsClusterEnv
-      value: 'True'
-configValues: |
-  window.REACT_APP_ENVIRONMENT = 'PREPRODUCTION'
-  window.API_SIGN_GATEWAY = 'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/signservice'
-  window.API_UTILS_GATEWAY = 'https://lexbox-dev-apigwsig.lefebvre.es/api/v1/utils'
-  window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
-  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
-  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
-  window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
-  window.URL_GET_ACCOUNTS = 'https://lexbox-dev-apigwacc.lefebvre.es/api/v2/accounts/usermail'
-  window.URL_GET_USER = 'https://lexbox-dev-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
-  window.API_GATEWAY_LEX = 'https://lexbox-dev-apigwlex.lefebvre.es'
-  window.API_GATEWAY_CEN = 'https://lexbox-dev-apigwcen.lefebvre.es'
-  window.API_GATEWAY_ACC = 'https://lexbox-dev-apigwcen.lefebvre.es'
-  window.POLLING_INTERVAL = 10000
-  window.RELEASE = 'RC 0.36'
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+#  values: {}
+

@@ -2,7 +2,7 @@
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.API.IntegrationsEvents.Events
 {
-    public class ConferenceBaseIntegrationEvent : IntegrationEvent
+    public record ConferenceBaseIntegrationEvent : IntegrationEvent
     {
         public long IdAppNavision { get; set; }
         public string UserId { get; set; }

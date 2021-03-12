@@ -65,3 +65,4 @@ configValues: |
   window.URL_LEXON ='http://localhost:8080'
   window.SHOW_EXPERIMENTAL='1'  
   window.RELEASE = 'RC 0.42.1'
+  window.URL_LEXON= 'https://led-pre-front.lex-on.es';

@@ -1,14 +1,14 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 {
+    using Infrastructure.Services;
+    using BuidingBlocks.Lefebvre.Models;
+
     [Route("api/v1/[controller]")]
     [ApiController]
     public class CentinelaController : ControllerBase

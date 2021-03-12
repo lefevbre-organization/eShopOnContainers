@@ -6,12 +6,6 @@
     public class ServiceComUser
     {
         
-        //{"_nombre":"Francisco","_primerapellido":"Reyes","_segundoapellido":"Bardasano",
-        //"_pwd":null,"_idEntrada":"E1639056","_estado":"activa",
-        //"_email":"f.reyes-ext@lefebvreelderecho.com",
-        //"_idClienteNav":51,"_idClienteCrm":0,"_numConcurrencias":"0","_idCliente":616267,
-        //"_login":"f.reyes-ext@lefebvreelderecho.com","_idEntradaEncriptada":"eHRpd3ZkYA%3D%3D",
-        //"_tipoAcceso":"Usuario + Pwd","_ip":"","_fechaCreacionFormateada":"19/07/2018","_tratamiento":"","_dobleoptin":false}
         public string _nombre { get; set; }
         public string _primerapellido { get; set; }
         public string _segundoapellido { get; set; }

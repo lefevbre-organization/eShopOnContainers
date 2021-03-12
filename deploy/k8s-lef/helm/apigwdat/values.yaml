@@ -34,22 +34,21 @@ env:
     - name: IdentityUrlHC
       key: internalurls__identity__hc
     - name: AccountApiUrlHC
-      key: internalurls__account__hc
-    - name: LexonApiUrlHC
-      key: internalurls__lexon__hc
-    - name: LexonMySqlApiUrlHC
-      key: internalurls__lexonmysql__hc
+      key: internalurls__accountapi__hc
     - name: CentinelaApiUrlHC
-      key: internalurls__centinela__hc
-    - name: UserUtilsApiUrlHC
-      key: internalurls__userutils__hc
+      key: internalurls__centinelaapi__hc
+    - name: ConferenceApiUrlHC
+      key: internalurls__conferenceapi__hc
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
     - name: SignatureApiUrlHC
-      key: internalurls__signature__hc
-    - name: DatabaseApiUrlHC
-      key: internalurls__database__hc
-  values:
-    - name: ASPNETCORE_ENVIRONMENT
-      value: Development
+      key: internalurls__signatureapi__hc
+    - name: UserUtilsApiUrlHC
+      key: internalurls__userutilsapi__hc
+    - name: DeployVersion
+      key: all__Version
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+#  values: {}
 
 ocelot:
   configPath: /app/configuration

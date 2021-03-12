@@ -9,6 +9,8 @@ metadata:
     chart: {{ template "apigwsig.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   {{ (.Files.Glob "configuration-signature.json").AsConfig  | indent 2 }}
 

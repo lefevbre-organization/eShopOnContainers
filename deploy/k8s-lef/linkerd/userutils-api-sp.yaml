@@ -1,0 +1,27 @@
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  creationTimestamp: null
+  name: userutils-api.default.svc.cluster.local
+  namespace: default
+spec:
+  routes:
+  - condition:
+      method: GET
+      pathRegex: /userutils-api/api/v1/userutils/user/apps
+    name: GET /v1/userutils/user/apps
+    isRetryable: true
+  - condition:
+      method: GET
+      pathRegex: /userutils-api/api/v1/userutils/user/areas
+    name: GET /v1/userutils/user/areas
+    isRetryable: true
+  - condition:
+      method: GET
+      pathRegex: /userutils-api/api/v1/userutils/user/encode
+    name: GET /v1/userutils/user/encode
+    isRetryable: true
+  retryBudget:
+    retryRatio: 0.2
+    minRetriesPerSecond: 10
+    ttl: 10s

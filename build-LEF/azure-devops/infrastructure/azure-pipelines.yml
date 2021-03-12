@@ -5,8 +5,8 @@ variables:
 trigger:
   branches:
     include:
-    - master
-    - dev
+    - lef-main-containers
+    - lef-i41-us/Core5
   paths:
     include:
     - k8s/helm/basket-data/*

@@ -1,16 +1,14 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Lexon.API.Infrastructure.Repositories;
-using Lexon.API.IntegrationsEvents.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 
-namespace Lexon.API.IntegrationsEvents.EventHandling
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.EventHandling
 {
+    using Infrastructure.Repositories;
+    using Events;
+
     public class AddFileToUserIntegrationEventHandler: IIntegrationEventHandler<AddFileToUserIntegrationEvent>
     {
         private readonly IUsersRepository _repository;

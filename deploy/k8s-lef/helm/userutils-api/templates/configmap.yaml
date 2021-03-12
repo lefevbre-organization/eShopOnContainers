@@ -1,7 +1,11 @@
 {{- $name := include "userutils-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
-{{- $signature := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
+{{- $gwlex := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
+{{- $cen := include "url-of" (list .Values.app.ingress.entries.centinelaapi .) -}}
+{{- $lex := include "url-of" (list .Values.app.ingress.entries.lexonapi .) -}}
+{{- $sig := include "url-of" (list .Values.app.ingress.entries.signatureapi .) -}}
+{{- $clientsig := include "url-of" (list .Values.app.ingress.entries.signature .) -}}
 {{- $mongo := include "mongo-name" . -}}
 
 apiVersion: v1
@@ -13,12 +17,28 @@ metadata:
     chart: {{ template "userutils-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    env: {{ .Values.lef.env }}
+    version: {{ .Chart.Version | quote }}
 data:
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
-  urls__Signature: https://{{ $signature }}
   all__EventBusConnection: {{ .Values.inf.eventbus.constr }}
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   userutils__ConnectionString: mongodb://{{ $mongo }}
   userutils__Database: {{ .Values.inf.mongo.centinela.database }}
+  userutils__TokenCaducity: {{ .Values.userutils.token.caducity | quote}}
+  all__Version: {{ .Chart.Version | quote }}
+  urls__HubUrlExternal: http://{{ .Values.svchub.url }}/Herramientas/get
+  urls__OnlineUrlExternal: https://{{ .Values.svconline.url }}/webclient46/ws
+  urls__ComToolsUrlExternal: http://{{ .Values.svccomtools.url }}
+  urls__ClavesUrlExternal: https://{{ .Values.svcclaves.url }}
+  urls__LexonApi: http://{{ .Values.app.ingress.entries.lexonapi }}/api/v1/Lexon
+  urls__SignatureApi: http://{{ .Values.app.ingress.entries.signatureapi }}/api/v1/Signaturit
+  urls__CentinelaApi: http://{{ .Values.app.ingress.entries.centinelaapi }}/api/v1/Centinela
+  urls__Signature: https://{{ .Values.app.ingress.entries.signature }}
+  urls__ByPassLexOnId: {{ .Values.userutils.bypass.lex.id | quote}}
+  urls__ByPassLexOnUrl: https://{{ .Values.userutils.bypass.lex.url }}
+  urls__ByPassSigId: {{ .Values.userutils.bypass.sig.id | quote}}
+  urls__ByPassSigUrl: https://{{ .Values.userutils.bypass.sig.url }}
+

@@ -32,7 +32,7 @@ spec:
         hasDNS: "true"
       annotations:
         "consul.hashicorp.com/connect-inject": "false"
-        "consul.hashicorp.com/config-checksum": {{ .Values.client.extraConfig | sha256sum }}
+        "consul.hashicorp.com/config-checksum": {{ include (print $.Template.BasePath "/client-config-configmap.yaml") . | sha256sum }}
         {{- if .Values.client.annotations }}
           {{- tpl .Values.client.annotations . | nindent 8 }}
         {{- end }}
@@ -47,6 +47,11 @@ spec:
     {{- end }}
       terminationGracePeriodSeconds: 10
       serviceAccountName: {{ template "consul.fullname" . }}-client
+
+      {{- if not .Values.global.openshift.enabled }}
+      securityContext:
+        {{- toYaml .Values.client.securityContext | nindent 8 -}}
+      {{- end }}
 
       {{- if .Values.client.priorityClassName }}
       priorityClassName: {{ .Values.client.priorityClassName | quote }}
@@ -121,12 +126,12 @@ spec:
             - name: ADVERTISE_IP
               valueFrom:
                 fieldRef:
-                  {{- if not .Values.client.exposeGossipPorts }}
-                  fieldPath: status.podIP
-                  {{- else }}
-                  # Clients will be exposed on their node's hostPort for external-to-k8s communication,
-                  # so they need to advertise their host ip instead of their pod ip.
+                  {{- if .Values.client.exposeGossipPorts }}
+                  {{- /* Clients will be exposed on their node's hostPort for external-to-k8s communication,
+                  so they need to advertise their host ip instead of their pod ip. */}}
                   fieldPath: status.hostIP
+                  {{- else }}
+                  fieldPath: status.podIP
                   {{- end }}
             - name: NAMESPACE
               valueFrom:
@@ -219,8 +224,9 @@ spec:
                 {{- end }}
                 {{- else }}
                 {{- if .Values.server.enabled }}
+                {{- $serverSerfLANPort  := .Values.server.ports.serflan.port -}}
                 {{- range $index := until (.Values.server.replicas | int) }}
-                -retry-join="${CONSUL_FULLNAME}-server-{{ $index }}.${CONSUL_FULLNAME}-server.${NAMESPACE}.svc" \
+                -retry-join="${CONSUL_FULLNAME}-server-{{ $index }}.${CONSUL_FULLNAME}-server.${NAMESPACE}.svc:{{ $serverSerfLANPort }}" \
                 {{- end }}
                 {{- end }}
                 {{- end }}
@@ -275,10 +281,6 @@ spec:
               {{- end }}
               protocol: "UDP"
               name: serflan-udp
-            - containerPort: 8302
-              name: serfwan
-            - containerPort: 8300
-              name: server
             - containerPort: 8600
               name: dns-tcp
               protocol: "TCP"

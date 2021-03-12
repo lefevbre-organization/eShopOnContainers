@@ -3,7 +3,7 @@
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class ChangueStateUserMailIntegrationEvent : IntegrationEvent
+    public record ChangueStateUserMailIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
         public bool State { get; set; }

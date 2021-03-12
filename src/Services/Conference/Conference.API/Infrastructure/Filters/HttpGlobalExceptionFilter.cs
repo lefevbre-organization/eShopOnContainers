@@ -11,7 +11,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Infrastructure.
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
-        //private readonly IHostingEnvironment env;
         private readonly IWebHostEnvironment env;
 
         private readonly ILogger<HttpGlobalExceptionFilter> logger;

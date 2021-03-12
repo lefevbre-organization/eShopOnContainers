@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+namespace Lefebvre.eLefebvreOnContainers.BuidingBlocks.Lefebvre.Models
 {
     /// <summary>
     /// Modelo de token para trbajar con entradas de usuario
