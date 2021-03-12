@@ -4,12 +4,11 @@ trigger:
   branches:
     include:
     - lef-main-containers
-    - lef-i41-us/Core5
   paths:
     include:
     - src/BuildingBlocks/*
     - src/Web/WebAddonLauncher/*
-    - k8s-LEF/helm/webaddonlauncher/*            
+    - deploy/k8s-lef/helm/webaddonlauncher/*            
 jobs:
 - template: ../buildimages.yaml
   parameters:
