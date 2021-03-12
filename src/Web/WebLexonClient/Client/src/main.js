@@ -196,7 +196,7 @@ class Main extends Component {
   }
 
   handleKeyPress(event) {
-    console.log('HandleEvent Client -> Lexon - Checkclick');
+    console.log('HandleEvent Client -> Lexon - Checkclick', global);
     const checked = this.props.loadingMessages.find(m => m === event.detail.extMessageId);
     const saveMessageInfo = (event, attachments) => {
       this.props.addMessage({
@@ -219,14 +219,22 @@ class Main extends Component {
       if (attachments !== null) { //Google Client sends attachments in a separate node
         saveMessageInfo(event, attachments);
       } else {
-        global.mimeParserAsync(event.detail.raw).then(  mime => {
-          attachments = findAttachments(JSON.parse(mime));
+        if(global.mimeParserAsync) {
+            global.mimeParserAsync(event.detail.raw).then(mime => {
+            attachments = findAttachments(JSON.parse(mime));
+            saveMessageInfo(event, attachments);
+            if (this.props.loadingMessages.length === this.props.selectedMessages.length)
+              this.props.setShowSpinner(false);
+            }).catch(err => {
+              console.log(err);
+            });
+        } else {
+          const mime = parse(event.detail.raw);
+          attachments = findAttachments(mime);
           saveMessageInfo(event, attachments);
           if (this.props.loadingMessages.length === this.props.selectedMessages.length)
             this.props.setShowSpinner(false);
-      }).catch(err => {
-        console.log(err);
-      });
+        }
       }
     } else {
       this.props.deleteMessage(event.detail.extMessageId);
