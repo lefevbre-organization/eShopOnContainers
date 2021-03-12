@@ -1942,6 +1942,7 @@ class Calendar extends Component {
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = event.attendees;
 
+                        debugger
                         //args.data[0].ImageName = "lefebvre";
                         this.setState({ to2: [] });
                         if (window != window.top) {

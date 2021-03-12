@@ -233,7 +233,6 @@ export class Main extends Component {
                 window.URL_LEXON
             );
         }
-
     }
 
     async handleClassificatedEvent(event) {
@@ -1755,16 +1754,19 @@ export class Main extends Component {
                             }
                         }
 
-                        if (window != window.top) {
-                            this.onCloseDialog();
-                        }
-
                         this.toastObj.show(this.toasts[1]);
 
                         if(this.props.lexon.idActuation) {
                             this.classifyEventOnLexon(args.data[0], this.props.lexon.idActuation).then(() => {
+                                if (window != window.top) {
+                                    this.onCloseDialog();
+                                }
                                 console.log("Event classified on Lexon");
                             });
+                        } else {
+                            if (window != window.top) {
+                                this.onCloseDialog();
+                            }
                         }
                     })
                     .catch(error => {
@@ -1820,8 +1822,9 @@ export class Main extends Component {
     async classifyEventOnLexon(event, idActuation) {
         const { provider, userId, bbdd, env } = this.props.lexon;
         const { idUser } = this.props.currentUser;
+        console.log(this.props.calendarsResult.calendars);
 
-        const calendar = this.resourceCalendarData.find( c => c.id === event.CalendarId);
+        const calendar = this.props.calendarsResult.calendars.find( c => c.id === event.CalendarId);
         const st = moment(event.StartTime).format('YYYY-MM-DD HH:mm');
         const et = moment(event.EndTime).format('YYYY-MM-DD HH:mm');
 
@@ -1833,7 +1836,6 @@ export class Main extends Component {
         this.props.setIdActuation(null);
         event.LexonClassification = idActuation;
         await this.handleClassificatedEvent({detail: { ...event }});
-        window.location.reload();
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {

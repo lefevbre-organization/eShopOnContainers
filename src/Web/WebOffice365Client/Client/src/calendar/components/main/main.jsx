@@ -1731,7 +1731,7 @@ export class Main extends Component {
         const { provider, userId, bbdd, env } = this.props.lexon;
         const { idUser } = this.props.currentUser;
 
-        const calendar = this.resourceCalendarData.find( c => c.id === event.CalendarId);
+        const calendar = this.props.calendarsResult.calendars.find( c => c.id === event.CalendarId);
         const st = moment(event.StartTime).format('YYYY-MM-DD HH:mm');
         const et = moment(event.EndTime).format('YYYY-MM-DD HH:mm');
 
