@@ -142,7 +142,7 @@ class SideBar extends Component {
           </span>
         </div>
             <PerfectScrollbar>
-                <div className='calendar-control-section' style={{ overflow: 'auto', innerWidth: '40%',Height: '40%' }}>
+                <div className='calendar-control-section' style={{ overflow: 'hidden', innerWidth: '40%',Height: '40%' }}>
                     <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>
                 </div> 
 
