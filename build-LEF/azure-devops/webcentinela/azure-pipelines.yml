@@ -4,12 +4,11 @@ trigger:
   branches:
     include:
     - lef-main-containers
-    - lef-i41-us/Core5
   paths:
     include:
     - src/BuildingBlocks/*
     - src/Web/WebCentinelaClient/*
-    - k8s-LEF/helm/webcentinela/*            
+    - deploy/k8s-lef/helm/webcentinela/*            
 jobs:
 - template: ../buildimages.yaml
   parameters:
