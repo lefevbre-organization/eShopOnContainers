@@ -114,6 +114,30 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Signature.API.Extensions
                     //TODO: conseguir uri: TermsOfService = "Terms Of Service"
                 });
 
+                op.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer 12345abcdef')",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                op.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        System.Array.Empty<string>()
+                    }
+                });
+
                 //c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 //{
                 //    Type = SecuritySchemeType.OAuth2,
