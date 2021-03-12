@@ -69,7 +69,9 @@ import {
 class Calendar extends Component {
   constructor(props) {
     super(props);
+
     this.localEvents = [];
+    this.loading = false;
 
     this.state = {
         redirectToLogin: this.props.lexon.user ? false : true,
@@ -88,7 +90,7 @@ class Calendar extends Component {
         calendars: [],
         schedule: null,
         to2: [],
-        idActuation: '', 
+        idActuation: '',
         idEvent: '',
         isUpdatedDefaultAccount: false
       };
@@ -102,9 +104,9 @@ class Calendar extends Component {
       this.toggleSideBar = this.toggleSideBar.bind(this);
       this.dataManager = new DataManager();
       this.defaultCalendar = undefined;
-      this.scheduleData = [];     
+      this.scheduleData = [];
       this.position = { X: 'Center', Y: 'Bottom' };
-      this.resourceCalendarData = [];     
+      this.resourceCalendarData = [];
       this.toasts = [
           { content: t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
           { content: t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
@@ -132,7 +134,7 @@ class Calendar extends Component {
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
           this
       );
-     
+
       this.alertButtons = [{
           // Click the footer buttons to hide the Dialog
           click: () => {
@@ -225,7 +227,7 @@ class Calendar extends Component {
 
         if (this.state.redirectToLogin) {
             return <Redirect to={"/login"}/>;
-        }      
+        }
       return (
 
              <div
@@ -250,11 +252,11 @@ class Calendar extends Component {
                       </div>
               )}
 
-              <div id='mainnav-app' />             
+              <div id='mainnav-app' />
               <div id='target' className={styles.app}>
                   <Spinner
                     visible={
-                        this.layoutIframeNewEventView || 
+                        this.layoutIframeNewEventView ||
                         this.layoutIframeEditEventView
                     }
                     className={styles.spinnerCalendar}
@@ -292,11 +294,11 @@ class Calendar extends Component {
                       <div className='schedule-control-section'>
                           <div className='control-section'>
                               <div className={`
-                                ${!this.layoutIframeNewEventView 
+                                ${!this.layoutIframeNewEventView
                                       ? ''
-                                      : styles['hidden']
+                                      : styles.hidden
                                   } `}>
-                                <ScheduleComponent                                     
+                                <ScheduleComponent
                                       id="schedule"
                                       cssClass='schedule-header-bar'
                                       ref={schedule => this.scheduleObj = schedule}
@@ -307,7 +309,7 @@ class Calendar extends Component {
                                       views={this.viewsCollections}
                                       actionComplete={this.onEventRendered.bind(this)}
                                       popupOpen={this.onPopupOpen.bind(this)}
-                                      actionBegin={this.onActionBegin.bind(this)}                                     
+                                      actionBegin={this.onActionBegin.bind(this)}
                                       cellDoubleClick={this.doubleOpen.bind(this)}
                                       eventSettings={
                                           {
@@ -424,7 +426,7 @@ class Calendar extends Component {
                                 email={this.props.email}
                                 close={this.dialogClose.bind(this)}
                             /> : ''}</div>
-                        </DialogComponent>                      
+                        </DialogComponent>
 
                     </article >
                 </section >
@@ -445,7 +447,7 @@ class Calendar extends Component {
   }
 
     onCloseDialog() {
-        this.LoadCalendarList(false);
+        this.loadCalendarList(false);
         const buttons = document.getElementsByClassName("e-footer-content");
         if (buttons) {
             for (let i = 0; i < buttons.length; i++) {
@@ -463,7 +465,6 @@ class Calendar extends Component {
                 window.URL_LEXON
             );
         }
-
     }
 
     async handleClassificatedEvent(event) {
@@ -474,6 +475,7 @@ class Calendar extends Component {
         const evt = this.scheduleObj.dataModule.dataManager.dataSource.json.find(e => e.Id.endsWith(event.detail.Id));
         console.log(evt);
         evt.LexonClassification = event.detail.LexonClassification;
+        console.log("Refreshing Data 1");
         this.scheduleObj.refresh();
     }
 
@@ -502,12 +504,12 @@ class Calendar extends Component {
             this.layoutIframe = true;
         }
 
-        debugger
+
         if (this.props.lexon.idActuation && this.props.lexon.idEvent) {
             this.layoutIframeEditEventView = true;
             this.setState({
-                idActuation: this.props.lexon.idActuation, 
-                idEvent: this.props.lexon.idEvent 
+                idActuation: this.props.lexon.idActuation,
+                idEvent: this.props.lexon.idEvent
             });
         } else if (this.props.lexon.idActuation && !this.props.lexon.idEvent) {
             this.setState({
@@ -515,7 +517,7 @@ class Calendar extends Component {
             });
             this.layoutIframeNewEventView = true;
         }
-       
+
         this.props.resetIdActuation();
         this.props.resetIdEvent();
     }
@@ -541,7 +543,7 @@ class Calendar extends Component {
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false;
                 this.toastObj.show(this.toasts[1]);
-                this.LoadCalendarList(true);
+                this.loadCalendarList(true);
                 this.sidebarCalendarList();
             })
             .catch(error => {
@@ -559,7 +561,7 @@ class Calendar extends Component {
 
         deleteCalendar(args.currentTarget.id)
             .then(result => {
-                this.LoadCalendarList(true);
+                this.loadCalendarList(true);
                 this.sidebarCalendarList();
                 this.scheduleData = this.scheduleData.filter(obj => obj.CalendarId !== calendarid);
                 this.scheduleObj.refreshEvents();
@@ -586,7 +588,7 @@ class Calendar extends Component {
     // Calednar View Dialog
     dialogClose(args) {
         if (args == undefined) {
-            this.LoadCalendarList(true);
+            this.loadCalendarList(true);
             this.sidebarCalendarList();
 
             this.toastObj.show(this.toasts[1]);
@@ -637,7 +639,7 @@ class Calendar extends Component {
     }
 
     // Import Concatcs View Dialog
-    dialogImportConcatcsClose(args) {       
+    dialogImportConcatcsClose(args) {
         this.setState({
             showPromptImportContactsDialog: false
         });
@@ -804,9 +806,9 @@ class Calendar extends Component {
         } else {
             subjectStr = t("schedule.notitle");
         }
-       
+
         return (
-            <div >               
+            <div >
                 <div className="image">
                     <span className='eventicon truncate'>
                         <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />
@@ -824,7 +826,7 @@ class Calendar extends Component {
                             )}
                     </span>
                     <span className='space' > {subjectStr} </span>
-                </div> 
+                </div>
             </div>);
     }
 
@@ -860,7 +862,7 @@ class Calendar extends Component {
                // let when = event.start.dateTime;
                 const start = event.start.dateTime;
                 const end = event.end.dateTime;
-               
+
                 // Recurrence
                 let recurrenceRule;
                 if (event.recurrence != undefined) {
@@ -914,7 +916,7 @@ class Calendar extends Component {
         const { email, lexon, calendarsResult } = this.props;
 
         const eventId = this.selectedEvent.Id.split("/").pop();
-        let sm = [this.createLexonEvent( { ...this.selectedEvent, Guid: eventId })];
+        let sm = [this.createLexonEvent({ ...this.selectedEvent, Guid: eventId })];
 
         if (this.state.showPromptImportContactsDialog) {
             sm = calendarsResult.calendars || [];
@@ -949,16 +951,16 @@ class Calendar extends Component {
                 color: event.calendar.backgroundColor,
                 fgColor: '#000000'
             },
-            EventType: event.eventType?{
+            EventType: event.eventType ? {
                 eventTypeName: event.eventType.name,
                 eventTypeColor: event.eventType.color
-            }:undefined,
+            } : undefined,
             reminders: event.reminders
-        }
+        };
     }
 
     handleGetUserFromLexonConnector(event) {
-        const { userId } = this.props.lexon;       
+        const { userId } = this.props.lexon;
         if (userId) {
             this.sendMessagePutUser(userId);
         }
@@ -991,6 +993,8 @@ class Calendar extends Component {
     }
 
     async componentDidMount() {
+        console.log("***************** componentDidMount *****************")
+
         if (this.layoutIframe) {
             this.setState({ leftSideBar: { collapsed: true } });
         }
@@ -1018,6 +1022,12 @@ class Calendar extends Component {
         const { email } = this.props;
           console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
 
+          if (userId) {
+            setTimeout(async () => {
+                await createCalendarUser(userId);
+            });
+        }
+
          this.sidebarCalendarList();
 
         //Firefox load is slow and need to take into account wait more time to be ready
@@ -1027,28 +1037,41 @@ class Calendar extends Component {
             value = 250;
         }
 
-        if(obj.layoutIframeNewEventView) {
+        if (obj.layoutIframeNewEventView) {
             value = 1000;
         }
-       
-        this.setState({ schedule: obj.scheduleObj });
-        setTimeout(() => {
-        obj.LoadCalendarList();
-       obj.getlistEventTypes();
-        // New event is called
-        if (obj.layoutIframeNewEventView) {
-            setTimeout(() => {
-                obj.handleScheduleOpenNewEventEditor();
-            }, 20000);
-        }
 
-        // Edit event is called
-        if (obj.layoutIframeEditEventView) {
+        this.setState({ schedule: obj.scheduleObj }, () => {
             setTimeout(() => {
-                obj.handleScheduleOpenEditEventEditor();
-            }, 3000);
-        }
-    }, value);
+                obj.loadCalendarList(obj.layoutIframeNewEventView || obj.layoutIframeEditEventView);
+                obj.getlistEventTypes();
+
+                const openEditorFnc = (me, mode) => {
+                    if (this.loading === false || this.scheduleObj === null) {
+                        if (mode === 'new') {
+                            me.handleScheduleOpenNewEventEditor();
+                        } else if (mode === 'edit') {
+                            me.handleScheduleOpenEditEventEditor();
+                        }
+                    } else {
+                        setTimeout(() => {
+                            openEditorFnc(me, mode);
+                        }, 1000);
+                    }
+                };
+
+
+                // New event is called
+                if (obj.layoutIframeNewEventView) {
+                    openEditorFnc(obj, 'new');
+                }
+
+                // Edit event is called
+                if (obj.layoutIframeEditEventView) {
+                    openEditorFnc(obj, 'edit');
+                }
+            }, value);
+        });
 
         window.addEventListener(
             'GetUserFromLexonConnector',
@@ -1065,18 +1088,6 @@ class Calendar extends Component {
             'RemoveSelectedEvent',
             this.handleClassificatedEventRemoved
         );
-
-            //if (this.layoutIframe) {
-            //    setTimeout(function () {
-            //        obj.handleScheduleOpenEditor()
-            //    }, 1000);
-            //}
-
-        if(userId) {
-            setTimeout(async () => {
-                await createCalendarUser(userId);
-            });
-        }
     }
 
     onDataBindingEventTypeList(items) {
@@ -1097,21 +1108,28 @@ class Calendar extends Component {
     }
 
     getlistEventTypes() {
-       getEventTypes(this.props.email)
-           .then(result => {
-               if (result && result.data) {
-                    if(result.data && result.data.eventTypes){
-                       this.onDataBindingEventTypeList(result.data.eventTypes);
+        if (this.props.email) {
+            getEventTypes(this.props.email)
+                .then(result => {
+                    if (result && result.data) {
+                        if (result.data && result.data.eventTypes) {
+                            this.onDataBindingEventTypeList(result.data.eventTypes);
+                        }
                     }
-               }
-           })
-           .catch(error => {
-               console.log('error ->', error);
-           });
+                })
+                .catch(error => {
+                    console.log('error ->', error);
+                });
+        }
     }
 
-    LoadCalendarList(DisableloadSchedule) {
+    loadCalendarList(DisableloadSchedule) {
+        console.log("***************** loadCalendarList *****************")
+
         const { userId } = this.props.lexon;
+        this.loading = true;
+
+
         this.resourceCalendarData = [];
         listCalendarList(userId)
         .then(result => {
@@ -1124,19 +1142,22 @@ class Calendar extends Component {
                 this.setState({ calendars: result.items });
                 this.resourceCalendarData = orderBy(result.items, "primary");
                 this.props.getCalendars(this.resourceCalendarData);
-                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
+                this.resourceCalendarData.find(x => x.id === this.resourceCalendarData[0].id).checked = true;
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                    console.log("Refreshing Data 2");
                     this.scheduleObj.refresh();
                 }
+                this.loading = false;
             }
+            this.loading = false;
         })
         .catch(error => {
+            this.loading = false;
             console.log('error ->', error);
         });
     }
 
-  
 
     createGuid() {
         function _p8(s) {
@@ -1241,14 +1262,14 @@ class Calendar extends Component {
         }
         event.organizer = organizerData;
 
-        if(this.remObj && this.remObj.listviewInstance ) {
+        if (this.remObj && this.remObj.listviewInstance) {
             const arrR = this.remObj.listviewInstance.dataSource;
             if (arrR.length > 0) {
                 event.reminders = [];
-                Object.keys(arrR).forEach(function (key) {
+                Object.keys(arrR).forEach(key => {
                     event.reminders.push({
                         type: 'display',
-                        trigger: arrR[key].minutesvalue,
+                        trigger: arrR[key].minutesvalue
                     });
                 });
             }
@@ -1341,7 +1362,7 @@ class Calendar extends Component {
             this.cancel = false;
             if (args.selectedIndex === 0 && args.selectingIndex === 1) {
                 const subjectElement = document.getElementsByClassName('e-subject')[0];
-                if(this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
+                if (this.selectedEvent && (!this.selectedEvent.Subject) || (this.selectedEvent.Subject === '')) {
                     this.selectedEvent.Subject = subjectElement ? subjectElement.textContent : '';
                 }
 
@@ -1372,7 +1393,6 @@ class Calendar extends Component {
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
                 }
             }
-            
         } else {
             args.cancel = true;
         }
@@ -1677,6 +1697,7 @@ class Calendar extends Component {
                 } else {
                     console.log(this.tabInstance);
                     this.tabObj.selectedItem = 0;
+                    console.log("Refreshing Data 3");
                     this.tabObj.refresh();
                     //}
                 }
@@ -1817,7 +1838,7 @@ class Calendar extends Component {
                        Object.keys(arrR).forEach(key => {
                            desc.Reminders.push({
                                type: 'display',
-                               trigger: arrR[key].value,
+                               trigger: arrR[key].value
                            });
                        });
                     }
@@ -1877,7 +1898,7 @@ class Calendar extends Component {
             case 'eventCreated':
 
                 // if event is all day add one less day
-                const EndTime = moment(args.data[0].EndTime);   //.add(1, 'days');
+                const EndTime = moment(args.data[0].EndTime); //.add(1, 'days');
                 args.data[0].StartTime = moment(args.data[0].StartTime).add(1, 'days');
 
                 if (args.data[0].IsAllDay) {
@@ -1894,9 +1915,9 @@ class Calendar extends Component {
 
                 if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
                     let item;
-                    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType);
                     // create EventType with structure
-                    let eventType = [];
+                    const eventType = [];
                     if (item != undefined) {
                         eventType.name = item.text;
                         eventType.id = item.id;
@@ -1927,7 +1948,7 @@ class Calendar extends Component {
                             this.onCloseDialog();
                         }
                         this.toastObj.show(this.toasts[1]);
-                        if(this.props.lexon.idActuation) {
+                        if (this.props.lexon.idActuation) {
                             this.classifyEventOnLexon(args.data[0], this.props.lexon.idActuation).then(() => {
                                 console.log("Event classified on Lexon");
                             });
@@ -1971,12 +1992,12 @@ class Calendar extends Component {
         const { provider, userId, bbdd, env } = this.props.lexon;
         const { idUser } = this.props.currentUser;
 
-        const calendar = this.resourceCalendarData.find( c => c.id === event.CalendarId);
+        const calendar = this.resourceCalendarData.find(c => c.id === event.CalendarId);
         const st = moment(event.StartTime).format('YYYY-MM-DD HH:mm');
         const et = moment(event.EndTime).format('YYYY-MM-DD HH:mm');
 
         const lexonEvent = {...event, Guid: event.Id, calendar, StartTime: st, EndTime: et};
-        let sc = await createAppoinment(bbdd, { idUser, provider }, lexonEvent);
+        const sc = await createAppoinment(bbdd, { idUser, provider }, lexonEvent);
         await addEventToActuation(bbdd, idUser, sc.result.data, idActuation);
 
         // Clear idActuation
@@ -2034,8 +2055,9 @@ class Calendar extends Component {
         }
         let predicate;
 
+
         const obj = this;
-        getEventList(calendar, '')
+        getEventList(calendar, this.props.lexon.userId, '')
             .then(result => {
                 this.defaultCalendar = calendar;
                 //Set checkedCalendarResourceData calendar items as cheked
@@ -2136,9 +2158,9 @@ class Calendar extends Component {
             startTime: new Date(),
             endTime: endTimeDate
         };
-        console.log('handleScheduleOpenNewEventEditor', this.state.schedule.openEditor)
-        debugger
-        this.state.schedule.openEditor(cellData, 'Add');
+        console.log('handleScheduleOpenNewEventEditor', this.state.schedule.openEditor);
+
+        this.scheduleObj.openEditor(cellData, 'Add');
     }
 
     handleScheduleOpenEditEventEditor() {
@@ -2236,7 +2258,7 @@ class Calendar extends Component {
                 const to2 = [...this.state.to2];
                 to2.push(address);
                 const to = to2.join(',');
-                this.setState({ to2, to });              
+                this.setState({ to2, to });
             }
         }
     }
@@ -2252,13 +2274,13 @@ class Calendar extends Component {
             const to2 = [...this.state.to2];
             to2.splice(to2.indexOf(address), 1);
             const to = to2.join(',');
-            this.setState({ to2, to });           
+            this.setState({ to2, to });
         }
     }
 }
 
 Calendar.propTypes = {
-  
+
 };
 
 
@@ -2307,7 +2329,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     setEmailShown: flag => dispatchProps.setEmailShown(flag),
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
     close: application => dispatchProps.close(stateProps.application),
-    setError: (err, msg) => dispatchProps.setError(err, msg),   
+    setError: (err, msg) => dispatchProps.setError(err, msg),
     resetIdActuation: () => dispatchProps.resetIdActuation(),
     resetIdEvent: () => dispatchProps.resetIdEvent(),
     setCaseFile: casefile => dispatchProps.setCaseFile(casefile)

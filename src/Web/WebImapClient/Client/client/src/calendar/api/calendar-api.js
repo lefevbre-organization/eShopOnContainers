@@ -85,8 +85,13 @@ export const listEvents = async calendar => {
 };
 
 // Get events
-export const getEventList = async (calendar, selectedDate) => {
-  const events = await caldav.listEvents({
+export const getEventList = async (calendar, username, selectedDate) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+  const events = await cd.listEvents({
     filename: calendar.replace(settings.basePath, ''),
     start: '20200601T000000Z',
     end: "20240630T115959Z"
