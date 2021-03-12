@@ -42,11 +42,17 @@ export const listCalendarList = async userId => {
 };
 
 // Create Calendar
-export const createCalendar = async calendar => {
-  const cal = await caldav.createCalendar({
+export const createCalendar = async (calendar, username) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+
+  const cal = await cd.createCalendar({
     name: calendar.summary,
     timezone: 'Europe/Madrid', // only to override settings
-    filename: `/calendars/admin/${calendar.summary}`,
+    filename: `/calendars/${username}/${calendar.summary}`,
     color: calendar.color,
     description: calendar.description
   });
@@ -54,8 +60,14 @@ export const createCalendar = async calendar => {
 };
 
 // Update Calendar
-export const updateCalendarList = async (calendarId, calendar) => {
-  const cal = await caldav.updateCalendar({
+export const updateCalendarList = async (calendarId, calendar, username) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+
+  const cal = await cd.updateCalendar({
     name: calendar.summary,
     timezone: 'Europe/Madrid', // only to override settings
     filename: calendarId,
@@ -67,16 +79,28 @@ export const updateCalendarList = async (calendarId, calendar) => {
 
 // Deelte Calendar
 
-export const deleteCalendar = async calendar => {
-  const cal = await caldav.deleteCalendar({
+export const deleteCalendar = async (calendar, username) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+
+  const cal = await cd.deleteCalendar({
     filename: calendar
   });
   return cal;
 };
 
 // Get events to deprecate
-export const listEvents = async calendar => {
-  const events = await caldav.listEvents({
+export const listEvents = async (calendar, username) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+
+  const events = await cd.listEvents({
     filename: calendar.replace(settings.basePath, ''),
     start: '20200601T000000Z',
     end: "20240630T115959Z"
@@ -100,13 +124,25 @@ export const getEventList = async (calendar, username, selectedDate) => {
 };
 
 // Create and update event
-export const addCalendarEvent = async (calendar, event) => {
-  const response = await caldav.createEvent(event);
+export const addCalendarEvent = async (calendar, event, username) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+
+  const response = await cd.createEvent(event);
   return response;
 };
 
-export const deleteCalendarEvent = async filename => {
-  const response = await caldav.deleteEvent({
+export const deleteCalendarEvent = async (filename, username) => {
+  const cd = new Caldav({
+    ...settings,
+    username,
+    password: window.NEXTCLOUD_USERS_PASSWD
+  });
+
+  const response = await cd.deleteEvent({
     filename: filename
   });
   return response;
@@ -288,18 +324,6 @@ function listCalendarParser(list) {
   return items;
 }
 
-//loadCalendarEvents(calendar, checked) {
-//    listEvents(calendar/*, this.scheduleObj.selectedDate*/)
-//        .then(result => {
-//            this.dataManager = result.result;
-//            this.onDataBinding(this.dataManager, calendar);
-//            this.scheduleObj.dataBind(this.scheduleData);
-//            this.scheduleObj.refreshEvents();
-//        })
-//        .catch(error => {
-//            console.log('error ->', error);
-//        })
-//}
 
 export const createCalendarUser = async name => {
   const auth = base64.encode(utf8.encode(`${window.NEXTCOUD_ADMIN_USERNAME}:${window.NEXTCLOUD_ADMIN_PASSWD}`));
