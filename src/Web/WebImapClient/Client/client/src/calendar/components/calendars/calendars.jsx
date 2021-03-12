@@ -43,45 +43,42 @@ export class Calendars extends React.Component {
     }
 
     onAddClick(args) {
-        this.setState({ buttonDisabled: true })
-        let { userId } = this.props;
-
-        //if (this.descriptionObj.value === undefined) {
-        //    this.descriptionObj.value = "";
-        //}
-
-        let color = this.getRandomColor();
-
-        let calendar = {
-            "summary": this.nameObj.value,
-            "description": this.descriptionObj.value,
-            "color": color
+        if(this.nameObj && this.nameObj.value !== null) {
+            this.setState({ buttonDisabled: true })
+            let { userId } = this.props;
+    
+            let color = this.getRandomColor();
+    
+            let calendar = {
+                "summary": this.nameObj.value,
+                "description": this.descriptionObj.value,
+                "color": color
+            }
+            this.toastObj.showProgressBar = true
+            this.toastObj.timeOut = 10000;
+            this.toastObj.show(this.toasts[0]);
+            createCalendar(calendar, userId)
+                .then(result => {
+                
+                    this.toastObj.hide('All');
+                    this.toastObj.showProgressBar = false
+                    this.toastObj.timeOut = 1000;
+                    this.toastObj.show(this.toasts[1]);
+                    this.setState({ buttonDisabled: false })
+                    this.props.close();
+                
+                })
+                .catch(error => {
+                    console.log('error ->', error);
+                    this.toastObj.showProgressBar = false
+                    this.toastObj.hide('All');
+                    this.toastObj.timeOut = 1000;
+                    this.toastObj.show(this.toasts[2]);
+                    this.addBtn.properties.disabled = false
+                    this.setState({ buttonDisabled: false })
+                });
         }
-
-        this.toastObj.showProgressBar = true
-        this.toastObj.timeOut = 10000;
-        this.toastObj.show(this.toasts[0]);
-
-        createCalendar(calendar, userId)
-            .then(result => {
-              
-                this.toastObj.hide('All');
-                this.toastObj.showProgressBar = false
-                this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[1]);
-                this.setState({ buttonDisabled: false })
-                this.props.close();
-
-            })
-            .catch(error => {
-                console.log('error ->', error);
-                this.toastObj.showProgressBar = false
-                this.toastObj.hide('All');
-                this.toastObj.timeOut = 1000;
-                this.toastObj.show(this.toasts[2]);
-                this.addBtn.properties.disabled = false
-                this.setState({ buttonDisabled: false })
-            });
+            
     }
 
     onModifyClick(args) {
