@@ -311,6 +311,7 @@ class Calendar extends Component {
                                       popupOpen={this.onPopupOpen.bind(this)}
                                       actionBegin={this.onActionBegin.bind(this)}
                                       cellDoubleClick={this.doubleOpen.bind(this)}
+                                      dataBound={()=>{console.log("DataBound")}}
                                       eventSettings={
                                           {
                                               dataSource: this.scheduleData,
@@ -404,6 +405,7 @@ class Calendar extends Component {
                             open={this.dialogOpen.bind(this)}
                             close={this.dialogClose.bind(this)}>
                             <div>{(this.state.hidePromptDialog) ? <Calendars
+                                userId={this.props.lexon.userId}
                                 calendarId={this.state.calendarToEdit}
                                 calendars={calendars}
                                 close={this.dialogClose.bind(this)}
@@ -469,7 +471,7 @@ class Calendar extends Component {
 
     async handleClassificatedEvent(event) {
         const caldavEvent = this.buildEventoCalDav(event.detail);
-        const resp = await addCalendarEvent(event.detail.CalendarId, caldavEvent);
+        const resp = await addCalendarEvent(event.detail.CalendarId, caldavEvent, this.props.lexon.userId);
         this.currentClassification = event.detail.LexonClassification;
 
         const evt = this.scheduleObj.dataModule.dataManager.dataSource.json.find(e => e.Id.endsWith(event.detail.Id));
@@ -482,7 +484,7 @@ class Calendar extends Component {
     async handleClassificatedEventRemoved(event) {
         event.detail.LexonClassification = undefined;
         const googleEvent = this.buildEventoCalDav(event.detail);
-        const resp = await addCalendarEvent(event.detail.CalendarId, event.detail.Id, googleEvent);
+        const resp = await addCalendarEvent(event.detail.CalendarId, googleEvent, this.props.lexon.userId);
         this.currentClassification = undefined;
     }
 
@@ -559,7 +561,7 @@ class Calendar extends Component {
         const calendarid = args.currentTarget.id;
 
 
-        deleteCalendar(args.currentTarget.id)
+        deleteCalendar(args.currentTarget.id, this.props.lexon.userId)
             .then(result => {
                 this.loadCalendarList(true);
                 this.sidebarCalendarList();
@@ -670,7 +672,7 @@ class Calendar extends Component {
             };
 
             try {
-                const res = await addCalendarEvent(calendar, lefEvent);
+                const res = await addCalendarEvent(calendar, lefEvent, this.props.lexon.userId);
                 eventsImported++;
             } catch (err) {
                 errors.push({ event: events[i], error: err });
@@ -1043,7 +1045,7 @@ class Calendar extends Component {
 
         this.setState({ schedule: obj.scheduleObj }, () => {
             setTimeout(() => {
-                obj.loadCalendarList(obj.layoutIframeNewEventView || obj.layoutIframeEditEventView);
+                obj.loadCalendarList();
                 obj.getlistEventTypes();
 
                 const openEditorFnc = (me, mode) => {
@@ -1124,7 +1126,7 @@ class Calendar extends Component {
     }
 
     loadCalendarList(DisableloadSchedule) {
-        console.log("***************** loadCalendarList *****************")
+        console.log("***************** loadCalendarList ***************** " + DisableloadSchedule?'true':'false')
 
         const { userId } = this.props.lexon;
         this.loading = true;
@@ -1143,14 +1145,13 @@ class Calendar extends Component {
                 this.resourceCalendarData = orderBy(result.items, "primary");
                 this.props.getCalendars(this.resourceCalendarData);
                 this.resourceCalendarData.find(x => x.id === this.resourceCalendarData[0].id).checked = true;
+                this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
                 if (!DisableloadSchedule) {
-                    this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+
                     console.log("Refreshing Data 2");
                     this.scheduleObj.refresh();
                 }
-                this.loading = false;
             }
-            this.loading = false;
         })
         .catch(error => {
             this.loading = false;
@@ -1925,11 +1926,10 @@ class Calendar extends Component {
                         args.data[0].eventType = eventType;
                     }
                 }
-
-                const calendar = this.resourceCalendarData.find(x => x.id === this.selectedEvent.CalendarId);
                 this.selectedEvent = { ...args.data[0], calendar: { ...calendar } };
+                const calendar = this.resourceCalendarData.find(x => x.id === this.selectedEvent.CalendarId);
 
-                addCalendarEvent(args.data[0].CalendarId, event)
+                addCalendarEvent(args.data[0].CalendarId, event, this.props.lexon.userId)
                     .then(result => {
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
@@ -2009,7 +2009,7 @@ class Calendar extends Component {
 
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
-        addCalendarEvent(CalendarId, event)
+        addCalendarEvent(CalendarId, event, this.props.lexon.userId)
             .then(result => {
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
@@ -2023,7 +2023,7 @@ class Calendar extends Component {
 
     deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
         const filename = item;
-        deleteCalendarEvent(filename)
+        deleteCalendarEvent(filename, this.props.lexon.userId)
             .then(result => {
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
@@ -2036,7 +2036,7 @@ class Calendar extends Component {
     }
 
     updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
-        addCalendarEvent(calendarId, event)
+        addCalendarEvent(calendarId, event, this.props.lexon.userId)
             .then(result => {
                 this.loadCalendarEvents(calendarId, true);
                 if (!hiddeMessage) {
@@ -2083,8 +2083,10 @@ class Calendar extends Component {
 
                 // Load selected calendar to pass to the query
                 this.predicateQueryEvents(calendars.true, predicate);
+                this.loading = false;
             })
             .catch(error => {
+                this.loading = false;
                 console.log('error ->', error);
             });
     }

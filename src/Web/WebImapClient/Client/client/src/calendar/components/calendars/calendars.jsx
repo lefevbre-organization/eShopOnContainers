@@ -44,6 +44,7 @@ export class Calendars extends React.Component {
 
     onAddClick(args) {
         this.setState({ buttonDisabled: true })
+        let { userId } = this.props;
 
         //if (this.descriptionObj.value === undefined) {
         //    this.descriptionObj.value = "";
@@ -61,7 +62,7 @@ export class Calendars extends React.Component {
         this.toastObj.timeOut = 10000;
         this.toastObj.show(this.toasts[0]);
 
-        createCalendar(calendar)
+        createCalendar(calendar, userId)
             .then(result => {
               
                 this.toastObj.hide('All');
@@ -84,6 +85,7 @@ export class Calendars extends React.Component {
     }
 
     onModifyClick(args) {
+        let { userId } = this.props;
 
         let calendarData = {
             "summary": this.nameObj.value,
@@ -93,7 +95,7 @@ export class Calendars extends React.Component {
 
         this.toastObj.showProgressBar = true
         this.toastObj.show(this.toasts[0]);
-        updateCalendarList(this.props.calendarId, calendarData)
+        updateCalendarList(this.props.calendarId, calendarData, userId)
             .then(result => {
                
                 this.toastObj.hide('All');
