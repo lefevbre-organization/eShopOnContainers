@@ -4,12 +4,11 @@ trigger:
   branches:
     include:
     - lef-main-containers
-    - lef-i41-us/Core5
   paths:
     include:
     - src/BuildingBlocks/*
     - src/Services/Database/*
-    - k8s/helm/database-api/*
+    - deploy/k8s-lef/helm/database-api/*
 jobs:
 - template: ../buildimages.yaml
   parameters:

@@ -1,4 +1,4 @@
-ARG NODE_IMAGE=node:12
+ARG NODE_IMAGE=node:14.15-alpine3.13
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
@@ -6,11 +6,12 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY ["src/Web/WebPortalClient/Client/package.json", "src/Web/WebPortalClient/Client/package-lock.json", "./"]
-RUN ["npm", "install", "--production", "--silent"]
 COPY ["src/Web/WebPortalClient/Client/", "./"]
+#COPY ["src/Web/WebPortalClient/Client/package.json", "src/Web/WebPortalClient/Client/package-lock.json", "./"]
+RUN ["npm", "install", "--production", "--silent"]
+#COPY ["src/Web/WebPortalClient/Client/", "./"]
 RUN ["npm", "run", "build", "--silent"]
-#RUN ls -lha /web
+ #RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
@@ -32,15 +33,14 @@ COPY "src/BuildingBlocks/EventBus/IntegrationEventLogEF/IntegrationEventLogEF.cs
 COPY "src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj" "src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/"
 COPY "src/Services/Account/Account.API/Account.API.csproj" "src/Services/Account/Account.API/"
 COPY "src/Services/Account/Calendar.API/Calendar.API.csproj" "src/Services/Account/Calendar.API/"
-COPY "src/Services/Lexon/Lexon.API/Lexon.API.csproj" "src/Services/Lexon/Lexon.API/"
-COPY "src/Services/Signature/Signature.API/Signature.API.csproj" "src/Services/Signature/Signature.API/"
 COPY "src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj" "src/Services/UserUtils/UserUtils.API/"
 COPY "src/Services/Centinela/Centinela.API/Centinela.API.csproj" "src/Services/Centinela/Centinela.API/"
-COPY "src/Services/Signature/Signature.API/Signature.API.csproj" "src/Services/Signature/Signature.API/"
-COPY "src/Services/Database/Database.API/Database.API.csproj" "src/Services/Database/Database.API/"
 COPY "src/Services/Conference/Conference.API/Conference.API.csproj" "src/Services/Conference/Conference.API/"
+COPY "src/Services/Database/Database.API/Database.API.csproj" "src/Services/Database/Database.API/"
 COPY "src/Services/Google/GoogleAccount.API/GoogleAccount.API.csproj" "src/Services/Google/GoogleAccount.API/"
 COPY "src/Services/Google/GoogleDrive.API/GoogleDrive.API.csproj" "src/Services/Google/GoogleDrive.API/"
+COPY "src/Services/Lexon/Lexon.API/Lexon.API.csproj" "src/Services/Lexon/Lexon.API/"
+COPY "src/Services/Signature/Signature.API/Signature.API.csproj" "src/Services/Signature/Signature.API/"
 COPY "src/Web/WebGoogleClient/WebGoogleClient.csproj" "src/Web/WebGoogleClient/"
 COPY "src/Web/WebLexonClient/WebLexonClient.csproj" "src/Web/WebLexonClient/"
 COPY "src/Web/WebAddonLauncher/WebAddonLauncher.csproj" "src/Web/WebAddonLauncher/"

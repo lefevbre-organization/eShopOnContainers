@@ -7,7 +7,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
-        "weblexonclient"
+        "webofficeclient"
         # "calendar.api", "conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api",  "database.api", "googleaccount.api", "googledrive.api"        
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient" ,
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela" 
@@ -16,14 +16,14 @@ Param(
          ),  
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=(
-        "weblexonclient"
+        "webofficeclient"
         # "calendar.api","conference.api", "account.api", "lexon.api", "centinela.api", "userutils.api", "signature.api", "database.api", "googleaccount.api", "googledrive.api"
         # "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webdatabaseclient",
         # "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela"
         # "ocelotapigw" 
         # "webstatuslef"
         ),
-    [parameter(Mandatory=$false)][string]$imageEnv="core5-42.5",
+    [parameter(Mandatory=$false)][string]$imageEnv="core5-42.6",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
