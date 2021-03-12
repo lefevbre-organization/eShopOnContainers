@@ -1,4 +1,0 @@
-
-# for PowerShell Core
-steps:
-- pwsh: ./k8s-LEF/deploy-pipeline.ps1 -execPath /home/vsts/work/1/s/ 
